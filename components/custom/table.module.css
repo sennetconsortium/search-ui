@@ -1,0 +1,19 @@
+.element {
+	display: table;
+}
+
+.label {
+    display: table-cell;
+}
+
+.text {
+	padding-left: 10px;
+	display: table-cell;
+}
+
+.result__sub_title {
+	font-size: 1.4em;
+	font-weight: 400;
+	color: #777777;
+	text-decoration: none;
+}
