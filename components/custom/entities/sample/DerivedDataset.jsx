@@ -16,37 +16,41 @@ export default class DerivedDataset extends React.Component {
                             <th>SenNet ID</th>
                             <th>Data Types</th>
                             <th>Status</th>
-                            <th>Count</th>
+                            <th>Derived Dataset Count</th>
                             <th>Last Modified</th>
                         </tr>
                         </thead>
                         <tbody>
                         {/*TODO: Need to replace hubmap with sennet, also this might be ancestor instead of descendant*/}
+                        {/*TODO: Need to make the id a hyperlink*/}
                         {this.props.data.descendants.map(function (descendant_data, index) {
-                            return (
-                                <tr key={"descendant_data_" + index}>
-                                    <td>{descendant_data.hubmap_id}</td>
-                                    <td>
-                                        {descendant_data.data_types.map(function (data_type, i) {
-                                            return (
-                                                <span key={i}>
+                            if(descendant_data.entity_type == 'Dataset') {
+                                return (
+                                    <tr key={"descendant_data_" + index}>
+                                        <td>{descendant_data.hubmap_id}</td>
+                                        <td>
+                                            {descendant_data.data_types.map(function (data_type, i) {
+                                                return (
+                                                    <span key={i}>
                                                                             {data_type}
-                                                    {(i > 0) &&
-                                                        <span>,</span>
-                                                    }
+                                                        {(i > 0) &&
+                                                            <span>,</span>
+                                                        }
                                                                         </span>
-                                            )
-                                        })}
-                                    </td>
-                                    <td>{descendant_data.status}</td>
-                                    <td>{descendant_data.hubmap_id}</td>
-                                    <td>{new Intl.DateTimeFormat('en-US', {
-                                        year: 'numeric',
-                                        month: '2-digit',
-                                        day: '2-digit'
-                                    }).format(descendant_data.last_modified_timestamp)}</td>
-                                </tr>
-                            )
+                                                )
+                                            })}
+                                        </td>
+                                        <td>{descendant_data.status}</td>
+                                        {/*TODO: Need to figure out where derived dataset count comes from*/}
+                                        <td>Count</td>
+                                        <td>{new Intl.DateTimeFormat('en-US', {
+                                            year: 'numeric',
+                                            month: '2-digit',
+                                            day: '2-digit'
+                                        }).format(descendant_data.last_modified_timestamp)}</td>
+                                    </tr>
+                                )
+                            }
                         })}
                         </tbody>
                     </Table>

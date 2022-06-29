@@ -9,12 +9,14 @@ export default class Tissue extends React.Component {
                     <span className="sui-result__title">Tissue</span>
                 </div>
                 <div className="card-body">
-                    <Table>
+                    <Table borderless>
                         <thead>
                         <tr>
                             <th>Organ Type</th>
                             <th>Specimen Type</th>
-                            <th>Tissue Location</th>
+                            {this.props.data.rui_location &&
+                                <th>Tissue Location</th>
+                            }
                         </tr>
                         </thead>
                         <tbody>
@@ -28,7 +30,9 @@ export default class Tissue extends React.Component {
                                 }
                             </td>
                             <td>{this.props.data.mapped_specimen_type}</td>
-                            <td>{this.props.data.rui_location}</td>
+                            {this.props.data.rui_location &&
+                                <td>{this.props.data.rui_location}</td>
+                            }
                         </tr>
                         </tbody>
                     </Table>

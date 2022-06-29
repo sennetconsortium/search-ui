@@ -13,6 +13,8 @@ import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import Tissue from "../components/custom/entities/sample/Tissue";
 import Provenance from "../components/custom/entities/sample/Provenance";
+import Metadata from "../components/custom/entities/sample/Metadata";
+import Attribution from "../components/custom/entities/sample/Attribution";
 
 function ViewSample() {
     const router = useRouter()
@@ -92,28 +94,29 @@ function ViewSample() {
             }
             {data && !error &&
                 <Layout
-                    header={
-                        <div>
-                            <h4>Sample</h4>
-                            {/*TODO: Change to sennet_id*/}
-                            <h3>{data.hubmap_id}</h3>
-                        </div>
-                    }
                     sideContent={
                         <div>
                             <div className="sui-facet">
                                 <div>
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
-                                        <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Derived-Dataset">Derived
-                                            Dataset</a>
-                                        </li>
+                                        {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link" href="#Derived-Dataset">Derived
+                                                Dataset</a>
+                                            </li>
+                                        }
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Tissue">Tissue</a>
                                         </li>
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
+                                        </li>
+                                        <li className="sui-single-option-facet__item"><a
+                                            className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
+                                        </li>
+                                        <li className="sui-single-option-facet__item"><a
+                                            className="sui-single-option-facet__link" href="#Attribution">Attribution</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -122,8 +125,18 @@ function ViewSample() {
                     }
 
                     bodyHeader={
-                        <div className="ms-auto pb-2">
-                            <Button href="" variant="primary"><FiletypeJson/></Button>{' '}
+                        //TODO: Need to add the style to global css
+                        <div style={{width: '100%'}}>
+                            <h4>Sample</h4>
+                            {/*TODO: Change to sennet_id*/}
+                            <h3>{data.hubmap_id}</h3>
+                            <div className="d-flex justify-content-between mb-2" style={{display: 'inline-block'}}>
+                                <div style={{fontSize: '16px'}}>{data.mapped_organ} | {data.mapped_specimen_type}</div>
+                                <div>
+                                    <Button variant="primary"><FiletypeJson/></Button>
+                                </div>
+                            </div>
+
                         </div>
                     }
 
@@ -134,7 +147,7 @@ function ViewSample() {
                                 <Description data={data}/>
 
                                 {/*Derived Dataset*/}
-                                {data.descendant_counts && data.descendant_counts.entity_type.Dataset &&
+                                {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
                                     <DerivedDataset data={data}/>
                                 }
 
@@ -142,7 +155,20 @@ function ViewSample() {
                                 <Tissue data={data}/>
 
                                 {/*Provenance*/}
-                                <Provenance data={data}/>
+                                {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
+                                    <Provenance data={data}/>
+                                }
+
+                                {/*Protocols*/}
+
+                                {/*Metadata*/}
+                                {/*TODO: change donor to source*/}
+                                {!!(data.donor && Object.keys(data.donor).length && Object.keys(data.donor.mapped_metadata)) &&
+                                    <Metadata data={data}/>
+                                }
+
+                                {/*Attribution*/}
+                                <Attribution data={data}/>
 
                             </ul>
                         </div>
