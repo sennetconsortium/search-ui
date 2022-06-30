@@ -76,7 +76,7 @@ export default function search() {
                     </div>
                   }
                   sideContent={
-                    <div>
+                    <>
                       {wasSearched && (
                       <Sorting
                         label={"Sort by"}
@@ -86,7 +86,7 @@ export default function search() {
 
                     <Facets fields={config.searchQuery} />
                  
-                    </div>
+                    </>
 
                   }
                   bodyContent={

@@ -24,8 +24,8 @@ export default class Provenance extends React.Component {
                                     <Col>
                                         <h4>Sources</h4>
                                         {/*TODO: Need to change Donor to Source and will most likely need to change ancestors to descendants*/}
-                                        {this.props.data.ancestors.map(function (ancestor_data, index) {
-                                            if (ancestor_data.entity_type == 'Donor') {
+                                        {this.props.data.ancestors.map((ancestor_data, index) => {
+                                            if (ancestor_data.entity_type === 'Donor') {
                                                 return (
                                                     // TODO: need to update the href
                                                     <a key={"source_" + index} className={styles.card_link} href="#">
@@ -53,7 +53,7 @@ export default class Provenance extends React.Component {
                                     </Col>
                                     <Col>
                                         <h4>Samples</h4>
-                                        {this.props.data.ancestors.map(function (ancestor_data) {
+                                        {this.props.data.ancestors.map((ancestor_data) => {
                                             if (ancestor_data.entity_type == 'Sample') {
                                                 {
                                                     source_count++
@@ -61,11 +61,13 @@ export default class Provenance extends React.Component {
                                                 return (
                                                     <ProvenanceSample key={"sample_" + source_count}
                                                                       ancestor_data={ancestor_data}
+                                                                      data={this.props.data}
                                                                       source_count={source_count}/>
                                                 )
                                             }
                                         })}
                                         <ProvenanceSample key={"sample_" + source_count} ancestor_data={this.props.data}
+                                                          data={this.props.data}
                                                           source_count={source_count} bg="light"/>
 
                                     </Col>

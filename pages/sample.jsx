@@ -100,10 +100,13 @@ function ViewSample() {
                                 <div>
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
+                                        <li className="sui-single-option-facet__item"><a
+                                            className="sui-single-option-facet__link" href="#Summary">Summary</a>
+                                        </li>
                                         {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#Derived-Dataset">Derived
-                                                Dataset</a>
+                                                className="sui-single-option-facet__link" href="#Derived-Datasets">Derived
+                                                Datasets</a>
                                             </li>
                                         }
                                         <li className="sui-single-option-facet__item"><a
@@ -113,10 +116,14 @@ function ViewSample() {
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li>
                                         <li className="sui-single-option-facet__item"><a
+                                            className="sui-single-option-facet__link" href="#Protocols">Protocols</a>
+                                        </li>
+                                        <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
                                         </li>
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Attribution">Attribution</a>
+                                            className="sui-single-option-facet__link"
+                                            href="#Attribution">Attribution</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -131,7 +138,10 @@ function ViewSample() {
                             {/*TODO: Change to sennet_id*/}
                             <h3>{data.hubmap_id}</h3>
                             <div className="d-flex justify-content-between mb-2" style={{display: 'inline-block'}}>
-                                <div style={{fontSize: '16px'}}>{data.mapped_organ} | {data.mapped_specimen_type}</div>
+                                {data.origin_sample &&
+                                    <div
+                                        style={{fontSize: '16px'}}>{data.origin_sample.mapped_organ} | {data.mapped_specimen_type}</div>
+                                }
                                 <div>
                                     <Button variant="primary"><FiletypeJson/></Button>
                                 </div>
