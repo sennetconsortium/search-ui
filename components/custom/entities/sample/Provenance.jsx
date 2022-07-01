@@ -33,11 +33,13 @@ export default class Provenance extends React.Component {
                                                             <Card.Body>
                                                                 <Card.Subtitle><PersonFill/> {ancestor_data.hubmap_id}
                                                                 </Card.Subtitle>
-                                                                <Card.Text className={styles.provenance_text}>
-                                                                    {ancestor_data.mapped_metadata.sex} | {ancestor_data.mapped_metadata.age_value} {ancestor_data.mapped_metadata.age_unit}
-                                                                    <br></br>
-                                                                    {ancestor_data.mapped_metadata.race.join(", ")}
-                                                                </Card.Text>
+                                                                {'mapped_metadata' in ancestor_data &&
+                                                                    <Card.Text className={styles.provenance_text}>
+                                                                        {ancestor_data.mapped_metadata.sex} | {ancestor_data.mapped_metadata.age_value} {ancestor_data.mapped_metadata.age_unit}
+                                                                        <br></br>
+                                                                        {ancestor_data.mapped_metadata.race.join(", ")}
+                                                                    </Card.Text>
+                                                                }
                                                             </Card.Body>
                                                             {/*TODO: Need to add additional info to footer*/}
                                                             <Card.Footer

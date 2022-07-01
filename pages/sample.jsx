@@ -118,9 +118,11 @@ function ViewSample() {
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Protocols">Protocols</a>
                                         </li>
-                                        <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
-                                        </li>
+                                        {!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
+                                            </li>
+                                        }
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link"
                                             href="#Attribution">Attribution</a>
@@ -143,7 +145,7 @@ function ViewSample() {
                                         style={{fontSize: '16px'}}>{data.origin_sample.mapped_organ} | {data.mapped_specimen_type}</div>
                                 }
                                 <div>
-                                    <Button variant="primary"><FiletypeJson/></Button>
+                                    <Button href={`/api/json/sample?uuid=${data.uuid}`} variant="primary"><FiletypeJson/></Button>
                                 </div>
                             </div>
 
@@ -173,7 +175,7 @@ function ViewSample() {
 
                                 {/*Metadata*/}
                                 {/*TODO: change donor to source*/}
-                                {!!(data.donor && Object.keys(data.donor).length && Object.keys(data.donor.mapped_metadata)) &&
+                                {!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&
                                     <Metadata data={data}/>
                                 }
 

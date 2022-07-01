@@ -6,18 +6,20 @@ export default class Description extends React.Component {
         return (
             <li className="sui-result" id="Summary">
                 <div className="card-body">
-                    <Table borderless>
-                        <thead>
-                        <tr>
-                            <th>Description</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>{this.props.data.description}</td>
-                        </tr>
-                        </tbody>
-                    </Table>
+                    {this.props.data.description &&
+                        <Table borderless>
+                            <thead>
+                            <tr>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{this.props.data.description}</td>
+                            </tr>
+                            </tbody>
+                        </Table>
+                    }
                     <Table borderless>
                         <thead>
                         <tr>

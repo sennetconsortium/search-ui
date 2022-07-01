@@ -2,6 +2,7 @@ import moment from "moment";
 import React from 'react';
 import {useRouter} from 'next/router';
 import SearchAPIConnector from "../search-ui/packages/search-api-connector";
+import cookieCutter from 'cookie-cutter'
 
 //const auth_token = JSON.parse(localStorage.getItem("info")).auth_token
 // const ls = window.localStorage
@@ -18,8 +19,7 @@ const INDEX = "portal"
 
 export function getAuth() {
     if (typeof window !== "undefined") {
-        //console.log("getAuth()", localStorage.getItem("info"))
-        return JSON.parse(localStorage.getItem("info")).groups_token
+        return cookieCutter.get("groups_token")
     }
     return ""
 }
@@ -31,6 +31,10 @@ export function getIndex() {
 // points to the search-api endpoint
 export function getSearchEndPoint() {
     return "http://localhost:4444/"
+}
+
+export function getRootURL() {
+    return "http://localhost:3000/"
 }
 
 export const connector = new SearchAPIConnector({

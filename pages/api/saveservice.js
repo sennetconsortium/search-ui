@@ -7,7 +7,7 @@ export default function handler(req, res) {
 	if (req.method === 'POST') {
 		//console.log(req.data)
 		res.status(200).json(req.body)
-	} else if (req.method === 'GET' {
+	} else if (req.method === 'GET') {
  		const res = await fetch(`http://localhost:3000/api/mockservice/?uuid=461bbfdc344442673e381f632510b3333333333`)
   		const data = await res.json()
   		res.status(200).json(data)
