@@ -1,0 +1,12 @@
+.no_sidebar .sui-layout-sidebar {
+    width: 0 !important;
+    padding: 0 !important;
+}
+
+.no_sidebar .sui-layout-main {
+    width: 100% !important;
+}
+
+.required {
+    color: red;
+}

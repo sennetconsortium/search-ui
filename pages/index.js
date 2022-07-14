@@ -3,11 +3,10 @@ import Link from 'next/link'
 import {useRouter} from 'next/router';
 import React from 'react';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import {APP_TITLE} from "../config/config"
+import {APP_TITLE, getRootURL} from "../config/config"
 
 import 'bootstrap/dist/css/bootstrap.css';
 import cookieCutter from 'cookie-cutter'
-//import 'css/app.css';
 
 export default function Home() {
     const login_url = `http://localhost:8484/login`;
@@ -21,7 +20,7 @@ export default function Home() {
         localStorage.setItem("isAuthenticated", true);
         //console.log(router.query);
         // Redirect to home page without query string
-        window.location.replace(`http://localhost:3000/search`);
+        window.location.replace(getRootURL() + "/search");
     }
 
     return (

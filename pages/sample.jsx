@@ -1,13 +1,10 @@
 import React, {useState, useEffect} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
-import {FORM_FIELD_DEF} from "../config/formdefinitions";
 import {Navbar, Nav, Container, Button} from 'react-bootstrap';
 import {FiletypeJson} from 'react-bootstrap-icons';
 import {getAuth, APP_TITLE} from '../config/config';
-import {
-    Layout
-} from "@elastic/react-search-ui-views";
+import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
@@ -18,21 +15,24 @@ import Attribution from "../components/custom/entities/sample/Attribution";
 
 function ViewSample() {
     const router = useRouter()
-    const [whichPage, setWhichPage] = useState(0)
-    const [form, setForm] = useState(FORM_FIELD_DEF)
-    const [editMode, setEditMode] = useState(null)
     const [data, setData] = useState(null)
-    const [uuid, setUuid] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
-    const [query, setQuery] = useState(router.query)
+
+    const handleQueryChange = (event) => {
+        console.log("CHANGE")
+        console.log(event)
+    }
+
+    useEffect(() => {
+        window.addEventListener('hashchange', handleQueryChange);
+        return () => {
+            window.removeEventListener('hashchange', handleQueryChange);
+        }
+    },);
 
     // only executed on init rendering, see the []
     useEffect(() => {
-
-        console.log('ROUTER CHANGED: useEffect: query:', router.query.uuid)
-        setQuery(router.query)
-
         // declare the async data fetching function
         const fetchData = async (uuid) => {
             var myHeaders = new Headers();
@@ -65,7 +65,7 @@ function ViewSample() {
                 .catch(console.error);
             ;
         } else {
-            setData({});
+            setData(null);
         }
     }, [router]);
 
@@ -145,7 +145,9 @@ function ViewSample() {
                                         style={{fontSize: '16px'}}>{data.origin_sample.mapped_organ} | {data.mapped_specimen_type}</div>
                                 }
                                 <div>
-                                    <Button href={`/api/json/sample?uuid=${data.uuid}`} variant="primary"><FiletypeJson/></Button>
+                                    <Button href={`/edit/sample?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}
+                                    <Button href={`/api/json/sample?uuid=${data.uuid}`}
+                                            variant="primary"><FiletypeJson/></Button>
                                 </div>
                             </div>
 
@@ -192,7 +194,9 @@ function ViewSample() {
 
             {!data &&
                 <div className="text-center p-3">
-                    <span className="spinner-border spinner-border-lg align-center alert alert-info">Loading, please wait...</span>
+                    <span>Loading, please wait...</span>
+                    <br></br>
+                    <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
                 </div>
             }
         </div>

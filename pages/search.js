@@ -1,117 +1,117 @@
-import React, { useState, useEffect} from "react";
-import { useRouter } from 'next/router'
+import React, {useState, useEffect} from "react";
+import {useRouter} from 'next/router'
 import Head from 'next/head'
-import Link from 'next/link'
-import Image from 'next/image'
 import {
-  ErrorBoundary,
-  Facet,
-  SearchProvider,
-  SearchBox,
-  Results,
-  PagingInfo,
-  ResultsPerPage,
-  Paging,
-  Sorting,
-  WithSearch
+    ErrorBoundary,
+    SearchProvider,
+    SearchBox,
+    Results,
+    PagingInfo,
+    ResultsPerPage,
+    Paging,
+    Sorting,
+    WithSearch
 } from "@elastic/react-search-ui";
 import {
-  Layout,
-  SingleSelectFacet,
-  SingleLinksFacet,
-  BooleanFacet
+    Layout
 } from "@elastic/react-search-ui-views";
-import ClearSearchBox  from '../search-ui/components/core/ClearSearchBox';
+import ClearSearchBox from '../search-ui/components/core/ClearSearchBox';
 import Facets from "../search-ui/components/core/Facets";
-import { TableResults, TableRowDetail } from "../components/custom/TableResults";
-import { FORM_FIELD_DEF } from '../config/formdefinitions';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import {TableResults, TableRowDetail} from "../components/custom/TableResults";
+import {Navbar, Nav, Container} from 'react-bootstrap';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
-import { config, connector, SORT_OPTIONS,APP_TITLE } from "../config/config";
+import {config, SORT_OPTIONS, APP_TITLE, getFilters, getAuth} from "../config/config";
 
 
-//export default function Home() {
-export default function search() {
+function Search() {
+    const router = useRouter();
+    const [authorized, setAuthorized] = useState(true);
 
-   // setting the default form with is '0' in the formdefinition.js file
-   const [currentPageData, setCurrentPageData] = useState(FORM_FIELD_DEF[0]);
-   const [authorized, setAuthorized] = useState(true);
-   const router = useRouter()
+    useEffect(() => {
+        console.log('ROUTER CHANGED: useEffect: query:', router.query)
 
-   if (authorized === true) {
-  return (
-    <div>
-      <Head>
-        <title>{APP_TITLE}</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
- 
-   <SearchProvider config={config}>
-      <WithSearch mapContextToProps={({ wasSearched }) => ({ wasSearched })}>
-        {({ wasSearched }) => {
-          return (
-            <div className="App">
+        if (router.query.hasOwnProperty("filters[0][values][0]")) {
+            console.log("QUERY FILTERS: " + router.query["filters[0][values][0]"])
+        }
+    }, [router.query]);
 
-              <Navbar className="navbar navbar-expand-lg navbar-light">
-                <Container fluid={true}>
-                  <Navbar.Brand href="#home">
-                    {APP_TITLE}
-                  </Navbar.Brand>
 
-                    <Nav className="justify-content-end">
-                    <Nav.Link href="/editform/?action=create">Register Dataset</Nav.Link> 
-                    <Nav.Link href="http://localhost:8484/logout">| Sign-out</Nav.Link>
-                    </Nav>
-                </Container>
-              </Navbar>
-              <ErrorBoundary>
+    if (authorized === true) {
+        return (
+            <div>
+                <Head>
+                    <title>{APP_TITLE}</title>
+                    <link rel="icon" href="/favicon.ico"/>
+                </Head>
 
-                <Layout
-                  header={
-                    <div>
-                    <div>Data Explorer</div>
-                    <SearchBox />
-                    <ClearSearchBox />
-                    </div>
-                  }
-                  sideContent={
-                    <>
-                      {wasSearched && (
-                      <Sorting
-                        label={"Sort by"}
-                        sortOptions={SORT_OPTIONS}
-                      />
-                    )}
+                <SearchProvider config={config}>
+                    <WithSearch mapContextToProps={({wasSearched}) => ({wasSearched})}>
+                        {({wasSearched}) => {
+                            return (
+                                <div className="App">
 
-                    <Facets fields={config.searchQuery} />
-                 
-                    </>
+                                    <Navbar className="navbar navbar-expand-lg navbar-light">
+                                        <Container fluid={true}>
+                                            <Navbar.Brand href="#home">
+                                                {APP_TITLE}
+                                            </Navbar.Brand>
 
-                  }
-                  bodyContent={
-                    <Results
-                      view={TableResults} resultView={TableRowDetail}
-                    />
-                  }
-                  bodyHeader={
-                    <React.Fragment>
-                      {wasSearched && <PagingInfo />}
-                      {<Paging />}
-                      {wasSearched && <ResultsPerPage />}
-                    </React.Fragment>
-                  }
-                  bodyFooter={<Paging />}
-                />
-              </ErrorBoundary>
+                                            <Nav className="justify-content-end">
+                                                <Nav.Link href="/edit/sample?uuid=create">Register Sample</Nav.Link>
+                                                <Nav.Link href="http://localhost:8484/logout">Sign-out</Nav.Link>
+                                            </Nav>
+                                        </Container>
+                                    </Navbar>
+                                    <ErrorBoundary>
+
+                                        <Layout
+                                            header={
+                                                <div>
+                                                    <div>Data Explorer</div>
+                                                    <SearchBox/>
+                                                    <ClearSearchBox/>
+                                                </div>
+                                            }
+                                            sideContent={
+                                                <>
+                                                    {wasSearched && (
+                                                        <Sorting
+                                                            label={"Sort by"}
+                                                            sortOptions={SORT_OPTIONS}
+                                                        />
+                                                    )}
+
+                                                    <Facets fields={config.searchQuery}/>
+
+                                                </>
+
+                                            }
+                                            bodyContent={
+                                                <Results
+                                                    view={TableResults} resultView={TableRowDetail}
+                                                />
+                                            }
+                                            bodyHeader={
+                                                <React.Fragment>
+                                                    {wasSearched && <PagingInfo/>}
+                                                    {<Paging/>}
+                                                    {wasSearched && <ResultsPerPage/>}
+                                                </React.Fragment>
+                                            }
+                                            bodyFooter={<Paging/>}
+                                        />
+                                    </ErrorBoundary>
+                                </div>
+                            );
+                        }}
+                    </WithSearch>
+                </SearchProvider>
             </div>
-          );
-        }}
-      </WithSearch>
-    </SearchProvider> 
-    </div>
-  )
-} else {
-  return (<div>Loading...</div>)
+        )
+    } else {
+        return (<div>Loading...</div>)
+    }
 }
-}
+
+export default Search

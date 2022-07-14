@@ -17,6 +17,10 @@ export const APP_TITLE = "SenNet: Data Sharing Portal"
 const INDEX = "portal"
 
 
+export function getFilters() {
+    return cookieCutter.get("filters")
+}
+
 export function getAuth() {
     if (typeof window !== "undefined") {
         return cookieCutter.get("groups_token")
@@ -64,7 +68,7 @@ export const config = {
         //     }
         //   }
         // },
-   // disjunctiveFacets: ["entity_type"],
+        // disjunctiveFacets: ["entity_type"],
         facets: {
             entity_type: {
                 label: "Entity Type",
@@ -89,12 +93,22 @@ export const config = {
             },
 
         },
+        // conditionalFacets: {
+        //
+        // },
         search_fields: {
-            title: {type: "value"},
             description: {type: "value"},
-            uuid: {type: "value"},
-            entity_type: {type: "value"},
-            specimen_type: {type: "value"}
+            hubmap_id: {type: "value"},
+            submission_id: {type: "value"},
+            display_doi: {type: "value"},
+            lab_donor_id: {type: "value"},
+            display_subtype: {type: "value"},
+            lab_name: {type: "value"},
+            lab_tissue_sample_id: {type: "value"},
+            lab_dataset_id: {type: "value"},
+            created_by_user_displayname: {type: "value"},
+            created_by_user_email: {type: "value"},
+            dataset_info: {type: "value"}
         }
     },
 
@@ -134,19 +148,55 @@ export const SORT_OPTIONS = [
         value: []
     },
     {
-        name: "Entity Type",
+        name: "Created By",
         value: [
             {
-                field: "entity_type.keyword",
+                field: "created_by_user_displayname.keyword",
                 direction: "asc"
             }
         ]
     },
     {
-        name: "Date Created",
+        name: "SenNet ID",
         value: [
             {
-                field: "created_timestamp",
+                field: "hubmap_id.keyword",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Submission ID",
+        value: [
+            {
+                field: "submission_id.keyword",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Lab ID",
+        value: [
+            {
+                field: "lab_tissue_sample_id.keyword",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Type",
+        value: [
+            {
+                field: "mapped_specimen_type.keyword",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Group Name",
+        value: [
+            {
+                field: "group_name.keyword",
                 direction: "asc"
             }
         ]
