@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
+import log from "loglevel";
 
 const SimpleSelect = ({...props}) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   let valueDict = {}
-  console.log(props.values)
+  log.debug(props.values)
 
   // This is used to update the form fields whenever an item is being edited
     useEffect(() => {
-        console.log(props.defaultValue)
+        log.debug(props.defaultValue)
 		valueDict.label = props.defaultValue
 		valueDict.value = props.defaultValue
 		if(props.defaultValue != undefined) {

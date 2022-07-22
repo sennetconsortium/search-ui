@@ -22,6 +22,7 @@ import {Navbar, Nav, Container} from 'react-bootstrap';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
 import {config, SORT_OPTIONS, APP_TITLE, getFilters, getAuth} from "../config/config";
+import log from "loglevel";
 
 
 function Search() {
@@ -29,10 +30,10 @@ function Search() {
     const [authorized, setAuthorized] = useState(true);
 
     useEffect(() => {
-        console.log('ROUTER CHANGED: useEffect: query:', router.query)
+        log.debug('ROUTER CHANGED: useEffect: query:', router.query)
 
         if (router.query.hasOwnProperty("filters[0][values][0]")) {
-            console.log("QUERY FILTERS: " + router.query["filters[0][values][0]"])
+            log.debug("QUERY FILTERS: " + router.query["filters[0][values][0]"])
         }
     }, [router.query]);
 

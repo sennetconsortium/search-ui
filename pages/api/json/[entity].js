@@ -1,5 +1,6 @@
 import {getRootURL} from "../../../config/config";
 import Cookies from 'cookies'
+import log from "loglevel";
 
 export default function handler(req, res) {
     const cookies = new Cookies(req, res)
@@ -13,11 +14,11 @@ export default function handler(req, res) {
         method: 'GET',
         headers: myHeaders
     }
-    console.log('sample: getting data...', uuid)
+    log.info('sample: getting data...', uuid)
     fetch(getRootURL() + "api/find?uuid=" + uuid, requestOptions)
         .then(response => response.json())
         .then(result => {
-            console.log(result)
+            log.debug(result)
 
             if (result.hasOwnProperty("error")) {
                 res.status(401).json(result)
@@ -25,7 +26,7 @@ export default function handler(req, res) {
                 res.status(200).json(result)
             }
         }).catch(error => {
-        console.log(error)
+        log.error(error)
         res.status(500).json(error)
     });
 }

@@ -1,30 +1,32 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
-import {Navbar, Nav, Container, Form, Button, Col, Row} from 'react-bootstrap';
-import {getAuth, APP_TITLE} from '../../config/config';
+import {Button, Col, Container, Form, Nav, Navbar, Row} from 'react-bootstrap';
+import {APP_TITLE, getAuth} from '../../config/config';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import {FORM_FIELD_DEF} from "../../config/formdefinitions";
-import styles from "../../components/custom/table.module.css";
-import {TISSUE_TYPES} from "../../config/constants"
 import TissueSample from "../../components/custom/edit/sample/TissueSample";
+import SourceInformationBox from "../../components/custom/edit/sample/SourceInformationBox";
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import log from "loglevel";
 
 function EditSample() {
     const router = useRouter()
     const [validated, setValidated] = useState(false);
     const [editMode, setEditMode] = useState(null)
     const [data, setData] = useState(null)
+    const [source, setSource] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [query, setQuery] = useState(router.query)
     const [values, setValues] = useState({});
 
-
     // only executed on init rendering, see the []
     useEffect(() => {
 
-        console.log('ROUTER CHANGED: useEffect: query:', router.query.uuid)
+        log.debug('ROUTER CHANGED: useEffect: query:', router.query.uuid)
         setQuery(router.query)
 
         // declare the async data fetching function
@@ -36,13 +38,13 @@ function EditSample() {
                 method: 'GET',
                 headers: myHeaders
             }
-            console.log('editSample: getting data...', uuid)
+            log.debug('editSample: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, requestOptions);
             // convert the data to json
             const data = await response.json();
 
-            console.log('editSample: Got data', data)
+            log.debug('editSample: Got data', data)
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
@@ -51,6 +53,19 @@ function EditSample() {
                 setData(data);
                 setValues(data);
                 setEditMode("edit")
+
+                // TODO: Need to change this is descendant for sennet
+                if (data.hasOwnProperty("ancestors")) {
+                    const response = await fetch("/api/find?uuid=" + data.ancestors[0].uuid, requestOptions);
+                    // convert the data to json
+                    const source = await response.json();
+                    if (source.hasOwnProperty("error")) {
+                        setError(true)
+                        setErrorMessage(data["error"])
+                    } else {
+                        setSource(source);
+                    }
+                }
             }
         }
 
@@ -67,26 +82,27 @@ function EditSample() {
             }
         } else {
             setData(null);
+            setSource(null)
         }
     }, [router]);
 
     // effect runs when user state is updated
     useEffect(() => {
         // reset form with user data
-        console.log("editSample: RESET data...")
+        log.debug("editSample: RESET data...")
         //reset(data);
     }, [data]);
 
     // callback provided to components to update the main list of form values
     const onChange = (e, fieldId, value) => {
-        console.log('onChange', fieldId, value)
+        log.debug('onChange', fieldId, value)
         // use a callback to find the field in the value list and update it
         setValues((currentValues) => {
             currentValues[fieldId] = value;
             return currentValues;
         });
 
-        console.log("Values: " + JSON.stringify(values))
+        log.debug("Values: " + JSON.stringify(values))
         e.default
     };
 
@@ -97,9 +113,12 @@ function EditSample() {
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
+            log.debug("Form is invalid")
+        } else {
+            log.debug("Form is valid")
         }
 
-        console.log("Form is valid")
+
         setValidated(true);
     };
 
@@ -152,45 +171,31 @@ function EditSample() {
                         bodyContent={
                             <Form noValidate validated={validated} onSubmit={handleSubmit}>
                                 {/*Source ID*/}
-                                <Form.Group className="mb-3" controlId="origin_sample.hubmap_id">
+                                <Form.Group className="mb-3" controlId="ancestors[0].hubmap_id">
                                     <Form.Label>Source ID <span
-                                        className="required">*</span></Form.Label>
+                                        className="required">* </span>
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={
+                                                <Popover>
+                                                    <Popover.Body>
+                                                        The HuBMAP Unique identifier of the direct origin entity,
+                                                        other sample or donor, where this sample came from.
+                                                    </Popover.Body>
+                                                </Popover>
+                                            }
+                                        >
+                                            <QuestionCircleFill/>
+                                        </OverlayTrigger>
+                                    </Form.Label>
                                     <Form.Control required type="text" placeholder=""
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}
-                                                  defaultValue={data.origin_sample?.hubmap_id || ""}/>
+                                                  defaultValue={data.ancestors?.[0].hubmap_id || ""}/>
                                 </Form.Group>
 
-                                {data.origin_sample &&
-                                    <li className="sui-result w-50 mx-auto">
-                                        <div className="sui-result__body">
-                                            <ul className="sui-result__details">
-                                                <li className={styles.element}>
-                                                    <span
-                                                        className={`sui-result__key`}>Source Type</span>
-                                                    <span
-                                                        className={`sui-result__value fluid `}>{data.origin_sample?.mapped_specimen_type || ""}</span>
-                                                </li>
-                                                <li className={styles.element}>
-                                                    <span
-                                                        className={`sui-result__key `}>Organ Type</span>
-                                                    <span
-                                                        className={`sui-result__value fluid `}>{data.origin_sample?.mapped_organ || ""}</span>
-                                                </li>
-                                                <li className={styles.element}>
-                                                    <span
-                                                        className={`sui-result__key `}>Submission ID</span>
-                                                    <span
-                                                        className={`sui-result__value fluid `}>{data.origin_sample?.submission_id || ""}</span>
-                                                </li>
-                                                <li className={styles.element}>
-                                                    <span
-                                                        className={`sui-result__key `}>Group Name</span>
-                                                    <span
-                                                        className={`sui-result__value fluid `}>{data.group_name || ""}</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
+                                {/*Source Information Box*/}
+                                {source &&
+                                    <SourceInformationBox source={source}/>
                                 }
 
                                 {/*/!*Tissue Sample Type*!/*/}
@@ -200,40 +205,90 @@ function EditSample() {
                                 }
 
                                 {/*/!*Preparation Protocol*!/*/}
-                                {/*<Form.Group className="mb-3" controlId="preparationProtocol">*/}
-                                {/*    <Form.Label>Preparation Protocol <span className="required">*</span></Form.Label>*/}
-                                {/*    <Form.Control type="text" required placeholder="" defaultValue={data.protocol_url}/>*/}
-                                {/*</Form.Group>*/}
+                                <Form.Group className="mb-3" controlId="protocol_url">
+                                    <Form.Label>Preparation Protocol <span className="required">* </span>
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={
+                                                <Popover>
+                                                    <Popover.Body>
+                                                        The protocol used when procuring or preparing the tissue.
+                                                        This must be provided as a protocols.io DOI URL see
+                                                        https://www.protocols.io/
+                                                    </Popover.Body>
+                                                </Popover>
+                                            }
+                                        >
+                                            <QuestionCircleFill/>
+                                        </OverlayTrigger>
+                                    </Form.Label>
+                                    <Form.Control type="text" required
+                                                  pattern={"(^(http(s)?:\/\/)?dx.doi.org\/10\.17504\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10\.17504\/protocols\.io\..+)"}
+                                                  placeholder="protocols.io DOI"
+                                                  defaultValue={data.protocol_url}
+                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                </Form.Group>
 
                                 {/*/!*Lab Sample ID*!/*/}
-                                {/*<Form.Group className="mb-3" controlId="labSampleId">*/}
-                                {/*    <Form.Label>Lab Sample ID</Form.Label>*/}
-                                {/*    <Form.Control type="text" placeholder="" defaultValue={data.lab_tissue_sample_id}/>*/}
-                                {/*</Form.Group>*/}
+                                <Form.Group className="mb-3" controlId="lab_tissue_sample_id">
+                                    <Form.Label>Lab Sample ID<span> </span>
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={
+                                                <Popover>
+                                                    <Popover.Body>
+                                                        An identifier used by the lab to identify the specimen, this can
+                                                        be an identifier from the system used to track the specimen in
+                                                        the lab. This field will be entered by the user.
+                                                    </Popover.Body>
+                                                </Popover>
+                                            }
+                                        >
+                                            <QuestionCircleFill/>
+                                        </OverlayTrigger>
+                                    </Form.Label>
+                                    <Form.Control type="text" placeholder="Lab specific alpha-numeric ID"
+                                                  defaultValue={data.lab_tissue_sample_id}
+                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                </Form.Group>
 
                                 {/*/!*Description*!/*/}
-                                {/*<Form.Group className="mb-3" controlId="description">*/}
-                                {/*    <Form.Label>Description</Form.Label>*/}
-                                {/*    <Form.Control as="textarea" rows={3} defaultValue={data.description}/>*/}
-                                {/*</Form.Group>*/}
+                                <Form.Group className="mb-3" controlId="description">
+                                    <Form.Label>Description<span> </span>
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={
+                                                <Popover>
+                                                    <Popover.Body>
+                                                        A free text description of the specimen.
+                                                    </Popover.Body>
+                                                </Popover>
+                                            }
+                                        >
+                                            <QuestionCircleFill/>
+                                        </OverlayTrigger>
+                                    </Form.Label>
+                                    <Form.Control as="textarea" rows={4} defaultValue={data.description}
+                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                </Form.Group>
 
                                 {/*/!*Metadata*!/*/}
-                                {/*<Form.Group controlId="metadataFile" className="mb-3">*/}
-                                {/*    <Form.Label>Add a Metadata file</Form.Label>*/}
-                                {/*    <Form.Control type="file"/>*/}
-                                {/*</Form.Group>*/}
+                                <Form.Group controlId="metadataFile" className="mb-3">
+                                    <Form.Label>Add a Metadata file</Form.Label>
+                                    <Form.Control type="file"/>
+                                </Form.Group>
 
                                 {/*/!*Image*!/*/}
-                                {/*<Form.Group controlId="imageFile" className="mb-3">*/}
-                                {/*    <Form.Label>Add a Image file</Form.Label>*/}
-                                {/*    <Form.Control type="file"/>*/}
-                                {/*</Form.Group>*/}
+                                <Form.Group controlId="imageFile" className="mb-3">
+                                    <Form.Label>Add a Image file</Form.Label>
+                                    <Form.Control type="file"/>
+                                </Form.Group>
 
                                 {/*/!*Thumbnail*!/*/}
-                                {/*<Form.Group controlId="thumbnailFile" className="mb-3">*/}
-                                {/*    <Form.Label>Add a Thumbnail file</Form.Label>*/}
-                                {/*    <Form.Control type="file"/>*/}
-                                {/*</Form.Group>*/}
+                                <Form.Group controlId="thumbnailFile" className="mb-3">
+                                    <Form.Label>Add a Thumbnail file</Form.Label>
+                                    <Form.Control type="file"/>
+                                </Form.Group>
 
                                 <Button variant="primary" type="submit">
                                     Submit

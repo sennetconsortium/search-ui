@@ -12,6 +12,7 @@ import Link from "next/link";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
 import { ENTITY_TYPES } from "../../config/config"
+import log from "loglevel";
 
 
 const fieldMeetsCondition = (values) => (field) => {
@@ -44,7 +45,7 @@ const Form = (props) => {
 
   // this effect will run when the `page` changes
   useEffect(() => {
-    console.log('FORM2:  form state has changed...')
+    log.debug('FORM2:  form state has changed...')
     const upcomingPageData = FORM_FIELD_DEF[page];
     setCurrentPageData(upcomingPageData);
     // setValues((currentValues) => {
@@ -70,14 +71,14 @@ const Form = (props) => {
 
   useEffect(() => {
         // reset form with user data
-        console.log("FORM2: values have changed...")
+        log.debug("FORM2: values have changed...")
        setValues(props.data)
     }, [props.data]);
 
 
   // callback provided to components to update the main list of form values
   const fieldchanged = (fieldId, value) => {
-    console.log('fieldchanged',fieldId, value)
+    log.debug('fieldchanged',fieldId, value)
     // use a callback to find the field in the value list and update it
     setValues((currentValues) => {
       currentValues[fieldId] = value;
@@ -93,12 +94,12 @@ const Form = (props) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-      console.log('Form OnSubmit', e)
+      log.debug('Form OnSubmit', e)
     // todo - send data somewhere
-    //console.log(e.currentTarget.elements)
+    //log.debug(e.currentTarget.elements)
     props.onsubmit({data: values, mode: editMode})
 
-    //console.log('Submitted Values', values)
+    //log.debug('Submitted Values', values)
   };
 
   const handleEntityTypeChange = (selected, event) => {
@@ -140,7 +141,7 @@ const Form = (props) => {
 			      {currentPageData.fields
 			        .filter(fieldMeetsCondition(values))
 			        .map((field) => {
-			        console.log(field)
+			        log.debug(field)
 			          switch (field.component) {
 			            case "field_group":
 			              return (

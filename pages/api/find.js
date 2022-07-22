@@ -1,13 +1,14 @@
 import {simple_query_builder} from "../../search-ui/lib/search-tools";
 import request from "../../search-ui/packages/search-api-connector/request";
 import {getSearchEndPoint, getIndex} from "../../config/config";
+import log from "loglevel";
 
 // a mock service to return some data
 export default function handler(req, res) {
     var error_messages = [{error: "Only support GET/POST"}, {error: "UUID Not found, please check for the correct id"}]
 
     process.env.IN
-    console.log("FIND API...")
+    log.debug("FIND API...")
 
     // only allow POST
     if (req.method == "GET" || req.method == "POST") {
@@ -18,7 +19,7 @@ export default function handler(req, res) {
         if (uuid) {
             // need to convert into a ES ready query
             let queryBody = simple_query_builder("uuid", uuid)
-            console.log('QUERY', JSON.stringify(queryBody))
+            log.debug('QUERY', JSON.stringify(queryBody))
             var myHeaders = new Headers();
             myHeaders.append("Authorization", req.headers.authorization);
             myHeaders.append("Content-Type", "application/json");
@@ -30,13 +31,13 @@ export default function handler(req, res) {
             };
             // request("POST", "search", queryBody, getAuth(), getSearchEndPoint()).then(json =>
             //       //adaptResponse(json, this.indexName)
-            //       console.log(json)
+            //       log.debug(json)
             //       //res.status(200).json(json)
             //     )
             fetch(getSearchEndPoint() + getIndex() + "/search", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log(result)
+                    log.debug(result)
 
                     if (result.hasOwnProperty("error")) {
                         res.status(401).json(result)
@@ -51,7 +52,7 @@ export default function handler(req, res) {
                     }
                 })
                 .catch(error => {
-                    console.log(error)
+                    log.debug(error)
                     res.status(500).json(error)
                 });
         } else {

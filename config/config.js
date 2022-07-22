@@ -6,7 +6,6 @@ import cookieCutter from 'cookie-cutter'
 
 //const auth_token = JSON.parse(localStorage.getItem("info")).auth_token
 // const ls = window.localStorage
-// console.log(ls)
 //const auth_token = ""
 
 export const APP_TITLE = "SenNet: Data Sharing Portal"

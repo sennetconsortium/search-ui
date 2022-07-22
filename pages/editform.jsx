@@ -9,6 +9,8 @@ import {save_update, find} from '../search-ui/lib/services';
 import {uuid_query} from '../search-ui/lib/search-tools';
 import {convertFacetArrayToStringArray, getUUID} from '../search-ui/lib/utils';
 import {getSearchEndPoint, getAuth, APP_TITLE} from '../config/config';
+import log from "loglevel";
+
 //import useSWR from 'swr'
 
 //const fetcher = (...args) => fetch(...args).then(res => res.json())
@@ -29,7 +31,7 @@ function EditForm() {
     // only executed on init rendering, see the []
     useEffect(() => {
 
-        console.log('ROUTER CHANGED: useEffect: query:', router.query.uuid)
+        log.debug('ROUTER CHANGED: useEffect: query:', router.query.uuid)
         setQuery(router.query)
 
         // declare the async data fetching function
@@ -41,13 +43,13 @@ function EditForm() {
                 method: 'GET',
                 headers: myHeaders
             }
-            console.log('editForm: getting data...', uuid)
+            log.debug('editForm: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, requestOptions);
             // convert the data to json
             const data = await response.json();
 
-            console.log('editform: Got data', data)
+            log.debug('editform: Got data', data)
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
@@ -71,14 +73,14 @@ function EditForm() {
     // effect runs when user state is updated
     useEffect(() => {
         // reset form with user data
-        console.log("editform: RESET data...")
+        log.debug("editform: RESET data...")
         //reset(data);
     }, [data]);
 
 
     const onSubmit = (props) => {
 
-        console.log('editform: Submitted Values', props.data)
+        log.debug('editform: Submitted Values', props.data)
 
         var data = props.data
         var uuid = getUUID() // props.data["uuid"]
@@ -86,11 +88,11 @@ function EditForm() {
         data["uuid"] = uuid
         data["experimental_approach"] = convertFacetArrayToStringArray(props.data["experimental_approach"])
 
-        console.log('Submitted Values (after)', data)
+        log.debug('Submitted Values (after)', data)
 
         var ret = save_update(uuid, data, props.mode)
 
-        console.log(ret)
+        log.debug(ret)
         // NEED A BETTER WAY TO TELL IF RECORD DID SAVE (FROM API)
         router.push('/search')
 

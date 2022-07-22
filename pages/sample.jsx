@@ -12,6 +12,7 @@ import Tissue from "../components/custom/entities/sample/Tissue";
 import Provenance from "../components/custom/entities/sample/Provenance";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
+import log from "loglevel";
 
 function ViewSample() {
     const router = useRouter()
@@ -20,8 +21,8 @@ function ViewSample() {
     const [errorMessage, setErrorMessage] = useState(null)
 
     const handleQueryChange = (event) => {
-        console.log("CHANGE")
-        console.log(event)
+        log.debug("CHANGE")
+        log.debug(event)
     }
 
     useEffect(() => {
@@ -42,13 +43,13 @@ function ViewSample() {
                 method: 'GET',
                 headers: myHeaders
             }
-            console.log('sample: getting data...', uuid)
+            log.debug('sample: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, requestOptions);
             // convert the data to json
             const data = await response.json();
 
-            console.log('sample: Got data', data)
+            log.debug('sample: Got data', data)
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
@@ -72,7 +73,7 @@ function ViewSample() {
     // effect runs when user state is updated
     useEffect(() => {
         // reset form with user data
-        console.log("sample: RESET data...")
+        log.debug("sample: RESET data...")
         //reset(data);
     }, [data]);
 
