@@ -1,75 +1,9 @@
 import React from 'react';
-import {Form, Row, Col} from 'react-bootstrap';
-import {TISSUE_TYPES, ORGAN_TYPES} from "../../../../config/constants";
+import {Col, Form, Row} from 'react-bootstrap';
+import {ORGAN_TYPES, TISSUE_TYPES} from "../../../../config/constants";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-
-const handleTissueChange = (e, onChange) => {
-    // If specimen type is 'Other' then display the 'specimen_other' input group
-    if (e.target.value === 'other') {
-        //Specimen Type Other set display and require
-        document.getElementById("specimen_type_other_group").style.display = "";
-        document.getElementById("specimen_type_other").setAttribute("required", "")
-
-        //Organ Type set display hidden and remove required
-        resetOrganType(e, onChange);
-    }
-    // If specimen type is 'Organ' then display the organ type input group
-    else if (e.target.value === 'organ') {
-        //Organ Type set display and require
-        document.getElementById("organ_group").style.display = "";
-        document.getElementById("organ").setAttribute("required", "")
-
-        //Specimen Type Other set display hidden and remove required
-        resetSpecimenTypeOther(e, onChange);
-
-    } else {
-        //Specimen Type Other/Organ Type set display hidden and remove required
-        resetSpecimenTypeOther(e, onChange);
-
-        resetOrganType(e, onChange);
-    }
-};
-
-const handleOrganChange = (e, onChange) => {
-    // If organ type is 'Other' then display organ_other group
-    if (e.target.value === 'OT') {
-        document.getElementById("organ_other").style.display = "";
-        document.getElementById("organ_other").setAttribute("required", "")
-
-    } else {
-        resetOrganTypeOther(e, onChange);
-    }
-}
-
-// Reset forms fields
-const resetSpecimenTypeOther = (e, onChange) => {
-    document.getElementById("specimen_type_other_group").style.display = "none";
-    document.getElementById("specimen_type_other").removeAttribute("required")
-    // Empty the value of the fields and trigger onChange
-    document.getElementById("specimen_type_other").value = "";
-    onChange(e, "specimen_type_other", null)
-}
-
-const resetOrganType = (e, onChange) => {
-    document.getElementById("organ_group").style.display = "none";
-    document.getElementById("organ").removeAttribute("required")
-    // Empty the value of the fields and trigger onChange
-    document.getElementById("organ").value = "";
-    onChange(e, "organ", null)
-
-    // Need to also reset organ_other
-    resetOrganTypeOther(e, onChange);
-}
-
-const resetOrganTypeOther = (e, onChange) => {
-    document.getElementById("organ_other").style.display = "none";
-    document.getElementById("organ_other").removeAttribute("required")
-    // Empty the value of the fields and trigger onChange
-    document.getElementById("organ_other").value = "";
-    onChange(e, "organ_other", null)
-}
 
 export default class Tissue extends React.Component {
     constructor(props) {
@@ -88,6 +22,72 @@ export default class Tissue extends React.Component {
         if (props.data.specimen_type === 'organ') {
             this.state.organ_group_hide = '';
         }
+    }
+
+    handleTissueChange = (e, onChange) => {
+        // If specimen type is 'Other' then display the 'specimen_other' input group
+        if (e.target.value === 'other') {
+            //Specimen Type Other set display and require
+            this.setState({specimen_type_other_group_hide: ''})
+            document.getElementById("specimen_type_other").setAttribute("required", "")
+
+            //Organ Type set display hidden and remove required
+            this.resetOrganType(e, onChange);
+        }
+        // If specimen type is 'Organ' then display the organ type input group
+        else if (e.target.value === 'organ') {
+            //Organ Type set display and require
+            this.setState({organ_group_hide: ''})
+            document.getElementById("organ").setAttribute("required", "")
+
+            //Specimen Type Other set display hidden and remove required
+            this.resetSpecimenTypeOther(e, onChange);
+
+        } else {
+            //Specimen Type Other/Organ Type set display hidden and remove required
+            this.resetSpecimenTypeOther(e, onChange);
+
+            this.resetOrganType(e, onChange);
+        }
+    };
+
+    handleOrganChange = (e, onChange) => {
+        // If organ type is 'Other' then display organ_other group
+        if (e.target.value === 'OT') {
+            this.setState({organ_other_hide: ''})
+            document.getElementById("organ_other").setAttribute("required", "")
+
+        } else {
+            this.resetOrganTypeOther(e, onChange);
+        }
+    }
+
+    // Reset forms fields
+    resetSpecimenTypeOther = (e, onChange) => {
+        this.setState({specimen_type_other_group_hide: 'none'})
+        document.getElementById("specimen_type_other").removeAttribute("required")
+        // Empty the value of the fields and trigger onChange
+        document.getElementById("specimen_type_other").value = "";
+        onChange(e, "specimen_type_other", null)
+    }
+
+    resetOrganType = (e, onChange) => {
+        this.setState({organ_group_hide: 'none'})
+        document.getElementById("organ").removeAttribute("required")
+        // Empty the value of the fields and trigger onChange
+        document.getElementById("organ").value = "";
+        onChange(e, "organ", null)
+
+        // Need to also reset organ_other
+        this.resetOrganTypeOther(e, onChange);
+    }
+
+    resetOrganTypeOther = (e, onChange) => {
+        this.setState({organ_other_hide: 'none'})
+        document.getElementById("organ_other").removeAttribute("required")
+        // Empty the value of the fields and trigger onChange
+        document.getElementById("organ_other").value = "";
+        onChange(e, "organ_other", null)
     }
 
     render() {
@@ -113,7 +113,7 @@ export default class Tissue extends React.Component {
 
                     <Form.Select required aria-label="Tissue Sample Type"
                                  onChange={e => {
-                                     handleTissueChange(e, this.props.onChange);
+                                     this.handleTissueChange(e, this.props.onChange);
                                      this.props.onChange(e, e.target.id, e.target.value)
                                  }}
                                  defaultValue={this.props.data.specimen_type}>
@@ -170,7 +170,7 @@ export default class Tissue extends React.Component {
                         className="required">*</span></Form.Label>
                     <Col sm="6">
                         <Form.Select aria-label="Organ Type" id="organ" onChange={e => {
-                            handleOrganChange(e, this.props.onChange);
+                            this.handleOrganChange(e, this.props.onChange);
                             this.props.onChange(e, e.target.id, e.target.value)
                         }}
                                      defaultValue={this.props.data.organ}>>

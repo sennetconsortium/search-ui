@@ -5,6 +5,7 @@ import {Button, Col, Container, Form, Nav, Navbar, Row} from 'react-bootstrap';
 import {APP_TITLE, getAuth} from '../../config/config';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
+import SourceId from "../../components/custom/edit/sample/SourceId";
 import TissueSample from "../../components/custom/edit/sample/TissueSample";
 import SourceInformationBox from "../../components/custom/edit/sample/SourceInformationBox";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -31,16 +32,9 @@ function EditSample() {
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-            var myHeaders = new Headers();
-            myHeaders.append("Authorization", "Bearer " + getAuth());
-            myHeaders.append("Content-Type", "application/json");
-            var requestOptions = {
-                method: 'GET',
-                headers: myHeaders
-            }
             log.debug('editSample: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, requestOptions);
+            const response = await fetch("/api/find?uuid=" + uuid, getRequestOptions());
             // convert the data to json
             const data = await response.json();
 
@@ -56,15 +50,7 @@ function EditSample() {
 
                 // TODO: Need to change this is descendant for sennet
                 if (data.hasOwnProperty("ancestors")) {
-                    const response = await fetch("/api/find?uuid=" + data.ancestors[0].uuid, requestOptions);
-                    // convert the data to json
-                    const source = await response.json();
-                    if (source.hasOwnProperty("error")) {
-                        setError(true)
-                        setErrorMessage(data["error"])
-                    } else {
-                        setSource(source);
-                    }
+                    await fetchSource(data.ancestors[0].uuid)
                 }
             }
         }
@@ -105,6 +91,28 @@ function EditSample() {
         log.debug("Values: " + JSON.stringify(values))
         e.default
     };
+
+    const getRequestOptions = () => {
+        var myHeaders = new Headers();
+        myHeaders.append("Authorization", "Bearer " + getAuth());
+        myHeaders.append("Content-Type", "application/json");
+        return {
+            method: 'GET',
+            headers: myHeaders
+        };
+    }
+
+    const fetchSource = async (sourceId) => {
+        const response = await fetch("/api/find?uuid=" + sourceId, getRequestOptions());
+        // convert the data to json
+        const source = await response.json();
+        if (source.hasOwnProperty("error")) {
+            setError(true)
+            setErrorMessage(data["error"])
+        } else {
+            setSource(source);
+        }
+    }
 
 
     const handleSubmit = (event) => {
@@ -171,27 +179,10 @@ function EditSample() {
                         bodyContent={
                             <Form noValidate validated={validated} onSubmit={handleSubmit}>
                                 {/*Source ID*/}
-                                <Form.Group className="mb-3" controlId="ancestors[0].hubmap_id">
-                                    <Form.Label>Source ID <span
-                                        className="required">* </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        The HuBMAP Unique identifier of the direct origin entity,
-                                                        other sample or donor, where this sample came from.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control required type="text" placeholder=""
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}
-                                                  defaultValue={data.ancestors?.[0].hubmap_id || ""}/>
-                                </Form.Group>
+                                {/*editMode is only set when page is ready to load */}
+                                {editMode &&
+                                    <SourceId data={data} onChange={onChange} fetchSource={fetchSource}/>
+                                }
 
                                 {/*Source Information Box*/}
                                 {source &&
@@ -199,7 +190,6 @@ function EditSample() {
                                 }
 
                                 {/*/!*Tissue Sample Type*!/*/}
-                                {/*editMode is only set when page is ready to load */}
                                 {editMode &&
                                     <TissueSample data={data} editMode={editMode} onChange={onChange}/>
                                 }

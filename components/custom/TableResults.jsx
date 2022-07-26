@@ -24,34 +24,35 @@ const TableResults = ({children}) => (
 );
 
 
-const TableRowDetail = ({result: record}) => {
-    var hotlink = "/" + record.entity_type.raw.toLowerCase() + "?uuid=" + record.uuid.raw
+const TableRowDetail = ({result, urlField}) => {
+    //Overriding `urlField` to utilize onClick functionality
+    var hotlink = "/" + result.entity_type.raw.toLowerCase() + "?uuid=" + result.uuid.raw
 
     return (
-        <tr onClick={event =>  window.location.href=hotlink}>
-            <td>{record.created_by_user_displayname.raw}</td>
-            <td>{record.hubmap_id.raw}</td>
+        <tr onClick={urlField!= null ?()=> urlField(this, result.uuid.raw):() => window.location.href = hotlink}>
+            <td>{result.created_by_user_displayname.raw}</td>
+            <td>{result.hubmap_id.raw}</td>
             <td>
-                {record.submission_id ? (
-                    <>{record.submission_id.raw}</>
+                {result.submission_id ? (
+                    <>{result.submission_id.raw}</>
                 ) : null
                 }
 
             </td>
             <td>
-                {record.lab_tissue_sample_id ? (
-                    <>{record.lab_tissue_sample_id.raw}</>
+                {result.lab_tissue_sample_id ? (
+                    <>{result.lab_tissue_sample_id.raw}</>
                 ) : null
                 }
             </td>
             <td>
-                {record.mapped_specimen_type ? (
-                    <>{record.mapped_specimen_type.raw}</>
+                {result.mapped_specimen_type ? (
+                    <>{result.mapped_specimen_type.raw}</>
                 ) : null
                 }
             </td>
-            <td>{record.group_name.raw}</td>
-            <td>{record.created_by_user_email.raw}</td>
+            <td>{result.group_name.raw}</td>
+            <td>{result.created_by_user_email.raw}</td>
         </tr>
     );
 };

@@ -132,6 +132,8 @@ export const config = {
     //   size: 4
     // }
     //},
+    // Setting trackUrlState disables the URL from updating the query parameters on filters/serach
+    trackUrlState: false,
     apiConnector: connector,
     hasA11yNotifications: true,
     a11yNotificationMessages: {
