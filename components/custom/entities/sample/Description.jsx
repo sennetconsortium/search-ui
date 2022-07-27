@@ -23,8 +23,8 @@ export default class Description extends React.Component {
                     <Table borderless>
                         <thead>
                         <tr>
-                            <th>Creation Date</th>
-                            <th>Modification Date</th>
+                            <th>{this.props.primaryDateTitle}</th>
+                            <th>{this.props.secondaryDateTitle}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -33,12 +33,12 @@ export default class Description extends React.Component {
                                 year: 'numeric',
                                 month: '2-digit',
                                 day: '2-digit'
-                            }).format(this.props.data.created_timestamp)}</td>
+                            }).format(this.props.primaryDate)}</td>
                             <td>{new Intl.DateTimeFormat('en-US', {
                                 year: 'numeric',
                                 month: '2-digit',
                                 day: '2-digit'
-                            }).format(this.props.data.last_modified_timestamp)}</td>
+                            }).format(this.props.secondaryDate)}</td>
                         </tr>
                         </tbody>
                     </Table>

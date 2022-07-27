@@ -7,15 +7,14 @@ import {APP_TITLE} from '../config/config';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
-import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
-import Tissue from "../components/custom/entities/sample/Tissue";
 import Provenance from "../components/custom/entities/sample/Provenance";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {getRequestOptions} from "../components/custom/js/functions";
+import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 
-function ViewSample() {
+function ViewSource() {
     const router = useRouter()
     const [data, setData] = useState(null)
     const [error, setError] = useState(false)
@@ -37,13 +36,13 @@ function ViewSample() {
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-            log.debug('sample: getting data...', uuid)
+            log.debug('source: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestOptions());
             // convert the data to json
             const data = await response.json();
 
-            log.debug('sample: Got data', data)
+            log.debug('source: Got data', data)
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
@@ -67,7 +66,7 @@ function ViewSample() {
     // effect runs when user state is updated
     useEffect(() => {
         // reset form with user data
-        log.debug("sample: RESET data...")
+        log.debug("source: RESET data...")
         //reset(data);
     }, [data]);
 
@@ -98,26 +97,23 @@ function ViewSample() {
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Summary">Summary</a>
                                         </li>
-                                        {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
+                                        {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#Derived-Datasets">Derived
-                                                Datasets</a>
+                                                className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
                                             </li>
                                         }
-                                        <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Tissue">Tissue</a>
-                                        </li>
+                                        {!!(data.descendant_counts && Object.keys(data.descendant_counts).length) &&
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link"
+                                                href="#Derived-Datasets">Derived</a>
+                                            </li>
+                                        }
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li>
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Protocols">Protocols</a>
                                         </li>
-                                        {!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
-                                            </li>
-                                        }
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link"
                                             href="#Attribution">Attribution</a>
@@ -130,22 +126,16 @@ function ViewSample() {
 
                     bodyHeader={
                         <div style={{width: '100%'}}>
-                            <h4>Sample</h4>
+                            <h4>Source</h4>
                             {/*TODO: Change to sennet_id*/}
-                            <h3>{data.hubmap_id}</h3>
-                            <div className="d-flex justify-content-between mb-2" style={{display: 'inline-block'}}>
-                                {data.origin_sample &&
-                                    <div className="entity_subtitle">
-                                        {data.origin_sample.mapped_organ} | {data.mapped_specimen_type}
-                                    </div>
-                                }
-                                <div>
-                                    <Button href={`/edit/sample?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}
-                                    <Button href={`/api/json/sample?uuid=${data.uuid}`}
-                                            variant="primary"><FiletypeJson/></Button>
-                                </div>
-                            </div>
 
+                            <div className="d-flex justify-content-between mb-2">
+                                <h3>{data.hubmap_id}</h3>
+
+                                <Button href={`/api/json/source?uuid=${data.uuid}`} variant="primary">
+                                    <FiletypeJson/>
+                                </Button>
+                            </div>
                         </div>
                     }
 
@@ -158,28 +148,24 @@ function ViewSample() {
                                              secondaryDate={data.last_modified_timestamp}
                                              data={data}/>
 
-                                {/*Derived Dataset*/}
-                                {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
-                                    <DerivedDataset data={data}/>
+                                {/*Metadata*/}
+                                {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
+                                    <Metadata data={data.mapped_metadata} filename={data.hubmap_id}/>
                                 }
 
-                                {/*Tissue*/}
-                                <Tissue data={data}/>
+                                {/*Derived Dataset*/}
+                                {!!(data.descendant_counts && Object.keys(data.descendant_counts).length) &&
+                                    <DerivedDataset includeSample={true} data={data}/>
+                                }
 
                                 {/*Provenance*/}
                                 {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
                                 }
 
+
                                 {/*Protocols*/}
                                 {/*TODO: Need to add protocols section*/}
-
-                                {/*Metadata*/}
-                                {/*TODO: change donor to source*/}
-                                {!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&
-                                    <Metadata metadataKey='donor.' data={data.donor.mapped_metadata}
-                                              filename={data.hubmap_id}/>
-                                }
 
                                 {/*Attribution*/}
                                 <Attribution data={data}/>
@@ -204,4 +190,4 @@ function ViewSample() {
 }
 
 
-export default ViewSample
+export default ViewSource

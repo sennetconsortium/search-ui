@@ -1,12 +1,11 @@
 import React from 'react';
-import {Container, Row, Col, Card, Tab, Tabs} from 'react-bootstrap';
-import {PersonFill} from 'react-bootstrap-icons';
-import styles from '../../style.module.css'
-import ProvenanceSample from "./ProvenanceSample";
+import {Col, Container, Row, Tab, Tabs} from 'react-bootstrap';
+import ProvenanceItem from "./ProvenanceItem";
 
 export default class Provenance extends React.Component {
     render() {
-        let source_count = 0;
+        let sources_count = 0;
+        let sample_count = 0;
         return (
             <li className="sui-result">
                 <div className="sui-result__header" id="Provenance">
@@ -26,55 +25,53 @@ export default class Provenance extends React.Component {
                                         {/*TODO: Need to change Donor to Source and will most likely need to change ancestors to descendants*/}
                                         {this.props.data.ancestors.map((ancestor_data, index) => {
                                             if (ancestor_data.entity_type === 'Donor') {
+                                                {
+                                                    sources_count++
+                                                }
                                                 return (
-                                                    // TODO: need to update the href
-                                                    <a key={"source_" + index} className={styles.card_link} href="#">
-                                                        <Card>
-                                                            <Card.Body>
-                                                                <Card.Subtitle><PersonFill/> {ancestor_data.hubmap_id}
-                                                                </Card.Subtitle>
-                                                                {'mapped_metadata' in ancestor_data &&
-                                                                    <Card.Text className={styles.provenance_text}>
-                                                                        {ancestor_data.mapped_metadata.sex} | {ancestor_data.mapped_metadata.age_value} {ancestor_data.mapped_metadata.age_unit}
-                                                                        <br></br>
-                                                                        {ancestor_data.mapped_metadata.race.join(", ")}
-                                                                    </Card.Text>
-                                                                }
-                                                            </Card.Body>
-                                                            {/*TODO: Need to add additional info to footer*/}
-                                                            <Card.Footer
-                                                                className={`text-muted ${styles.provenance_subtext}`}>
-                                                                Modified {ancestor_data.mapped_last_modified_timestamp.substring(0, 10)}
-                                                            </Card.Footer>
-                                                        </Card>
-                                                    </a>
+                                                    <ProvenanceItem key={"sample_" + sources_count}
+                                                                    ancestor_uuid={ancestor_data.uuid}
+                                                                    data={this.props.data}
+                                                                    entity_count={sources_count}/>
                                                 )
                                             }
                                         })}
+                                         {this.props.data.entity_type === 'Donor' &&
+                                            <ProvenanceItem ancestor_uuid={this.props.data.uuid}
+                                                            data={this.props.data}
+                                                            entity_count={sample_count} bg="light"/>
+                                        }
 
                                     </Col>
                                     <Col>
                                         <h4>Samples</h4>
                                         {this.props.data.ancestors.map((ancestor_data) => {
-                                            if (ancestor_data.entity_type == 'Sample') {
+                                            if (ancestor_data.entity_type === 'Sample') {
                                                 {
-                                                    source_count++
+                                                    sample_count++
                                                 }
                                                 return (
-                                                    <ProvenanceSample key={"sample_" + source_count}
-                                                                      ancestor_data={ancestor_data}
-                                                                      data={this.props.data}
-                                                                      source_count={source_count}/>
+                                                    <ProvenanceItem key={"sample_" + sample_count}
+                                                                    ancestor_uuid={ancestor_data.uuid}
+                                                                    data={this.props.data}
+                                                                    entity_count={sample_count}/>
                                                 )
                                             }
                                         })}
-                                        <ProvenanceSample key={"sample_" + source_count} ancestor_data={this.props.data}
-                                                          data={this.props.data}
-                                                          source_count={source_count} bg="light"/>
+                                        {this.props.data.entity_type === 'Sample' &&
+                                            <ProvenanceItem ancestor_uuid={this.props.data.uuid}
+                                                            data={this.props.data}
+                                                            entity_count={sample_count} bg="light"/>
+                                        }
 
                                     </Col>
                                     <Col>
                                         <h4>Datasets</h4>
+                                        {this.props.data.entity_type === 'Dataset' &&
+                                            <ProvenanceItem ancestor_uuid={this.props.data.uuid}
+                                                            data={this.props.data}
+                                                            bg="light"/>
+                                        }
                                     </Col>
                                 </Row>
 

@@ -8,15 +8,14 @@ import {createDownloadUrl, tableDataToTSV} from "../../js/functions";
 
 export default class Metadata extends React.Component {
     render() {
-        const tableDataTSV = tableDataToTSV(this.props.data.donor.mapped_metadata);
+        const tableDataTSV = tableDataToTSV(this.props.data);
         const downloadURL = createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
         return (
             <li className="sui-result">
                 <div className="sui-result__header" id="Metadata">
                     <span className="sui-result__title">Metadata</span>
-                    {/*TODO: Need to make this button functional*/}
                     <div className="d-flex justify-content-between mb-2" style={{display: 'inline-block'}}>
-                        <a href={downloadURL} download={`${this.props.data.hubmap_id}.tsv`}><Button variant="primary"><Download/></Button></a>
+                        <a href={downloadURL} download={`${this.props.filename}.tsv`}><Button variant="primary"><Download/></Button></a>
                     </div>
                 </div>
                 <div className="card-body">
@@ -30,11 +29,11 @@ export default class Metadata extends React.Component {
                             </thead>
                             <tbody>
                             {/*TODO: change donor to source*/}
-                            {Object.entries(this.props.data.donor.mapped_metadata).map(([key, value]) => {
+                            {Object.entries(this.props.data).map(([key, value]) => {
                                 return (
                                     <tr key={"metadata_" + key}>
-                                        <td>donor.{key}</td>
-                                        <td>{value.join(", ")}</td>
+                                        <td>{this.props.metadataKey}{key}</td>
+                                        <td>{Array.isArray(value) ? value.join(', ') : value}</td>
                                     </tr>
                                 )
                             })}

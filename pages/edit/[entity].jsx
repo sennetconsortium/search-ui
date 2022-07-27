@@ -12,6 +12,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
+import {getRequestOptions} from "../../components/custom/js/functions";
 
 function EditSample() {
     const router = useRouter()
@@ -92,23 +93,13 @@ function EditSample() {
         e.default
     };
 
-    const getRequestOptions = () => {
-        var myHeaders = new Headers();
-        myHeaders.append("Authorization", "Bearer " + getAuth());
-        myHeaders.append("Content-Type", "application/json");
-        return {
-            method: 'GET',
-            headers: myHeaders
-        };
-    }
-
     const fetchSource = async (sourceId) => {
         const response = await fetch("/api/find?uuid=" + sourceId, getRequestOptions());
         // convert the data to json
         const source = await response.json();
         if (source.hasOwnProperty("error")) {
             setError(true)
-            setErrorMessage(data["error"])
+            setErrorMessage(source["error"])
         } else {
             setSource(source);
         }
@@ -116,7 +107,7 @@ function EditSample() {
 
 
     const handleSubmit = (event) => {
-        //TODO: Need to remove keys where value is null
+        //TODO: Need to remove keys where value is null. This will ensure that 'other' fields don't get added unnecessarily
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.preventDefault();
