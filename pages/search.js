@@ -1,28 +1,26 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router'
 import Head from 'next/head'
 import {
     ErrorBoundary,
-    SearchProvider,
-    SearchBox,
-    Results,
-    PagingInfo,
-    ResultsPerPage,
     Paging,
+    PagingInfo,
+    Results,
+    ResultsPerPage,
+    SearchBox,
+    SearchProvider,
     Sorting,
     WithSearch
 } from "@elastic/react-search-ui";
-import {
-    Layout
-} from "@elastic/react-search-ui-views";
+import {Layout} from "@elastic/react-search-ui-views";
 import ClearSearchBox from '../search-ui/components/core/ClearSearchBox';
 import Facets from "../search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../components/custom/TableResults";
-import {Navbar, Nav, Container} from 'react-bootstrap';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
-import {config, SORT_OPTIONS, APP_TITLE, getFilters, getAuth} from "../config/config";
+import {APP_TITLE, config, SORT_OPTIONS} from "../config/config";
 import log from "loglevel";
+import AppNavbar from "../components/custom/layout/AppNavbar";
 
 
 function Search() {
@@ -50,20 +48,9 @@ function Search() {
                     <WithSearch mapContextToProps={({wasSearched}) => ({wasSearched})}>
                         {({wasSearched}) => {
                             return (
-                                <div className="App">
+                                <div>
+                                    <AppNavbar/>
 
-                                    <Navbar className="navbar navbar-expand-lg navbar-light">
-                                        <Container fluid={true}>
-                                            <Navbar.Brand href="#home">
-                                                {APP_TITLE}
-                                            </Navbar.Brand>
-
-                                            <Nav className="justify-content-end">
-                                                <Nav.Link href="/edit/sample?uuid=create">Register Sample</Nav.Link>
-                                                <Nav.Link href="http://localhost:8484/logout">Sign-out</Nav.Link>
-                                            </Nav>
-                                        </Container>
-                                    </Navbar>
                                     <ErrorBoundary>
 
                                         <Layout

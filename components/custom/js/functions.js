@@ -17,6 +17,7 @@ export async function fetchEntity(ancestorId) {
     const entity = await response.json();
     if (entity.hasOwnProperty("error")) {
         log.error(entity["error"])
+        return entity;
     } else {
         return entity;
     }

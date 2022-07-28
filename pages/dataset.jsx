@@ -3,7 +3,6 @@ import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button, Container, Nav, Navbar} from 'react-bootstrap';
 import {BoxArrowUpRight, CircleFill, FiletypeJson} from 'react-bootstrap-icons';
-import {APP_TITLE} from '../config/config';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
@@ -13,6 +12,7 @@ import Contributors from "../components/custom/entities/dataset/Contributors";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {getRequestOptions, getStatusColor} from "../components/custom/js/functions";
+import AppNavbar from "../components/custom/layout/AppNavbar";
 
 function ViewDataset() {
     const router = useRouter()
@@ -73,16 +73,8 @@ function ViewDataset() {
 
     return (
         <div>
-            <Navbar className="navbar navbar-expand-lg navbar-light">
-                <Container fluid={true}>
-                    <Navbar.Brand href="/search">
-                        {APP_TITLE}
-                    </Navbar.Brand>
-                    <Nav className="justify-content-end">
-                        <Nav.Link href="http://localhost:8484/logout">Sign-out</Nav.Link>
-                    </Nav>
-                </Container>
-            </Navbar>
+           <AppNavbar/>
+
             {error &&
                 <div className="alert alert-warning" role="alert">{errorMessage}</div>
             }

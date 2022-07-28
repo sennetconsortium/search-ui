@@ -85,7 +85,6 @@ export default class ProvenanceItem extends React.Component {
                                         })()}
                                     </Card.Text>
                                 </Card.Body>
-                                {/*TODO: For each ancestor_data.uuid we need to get the json and then display the descendant_counts for each entity type*/}
                                 <Card.Footer
                                     className={`text-muted ${styles.provenance_subtext}`}>
                                     <div className="d-flex justify-content-between"

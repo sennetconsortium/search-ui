@@ -22,7 +22,6 @@ export default class Contributors extends React.Component {
                             </tr>
                             </thead>
                             <tbody>
-                            {/*TODO: change donor to source*/}
                             {this.props.data.map((contributor, index) => {
                                 return (
                                     <tr key={"contributor" + index}>

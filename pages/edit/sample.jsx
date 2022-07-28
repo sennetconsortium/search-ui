@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
-import {Button, Col, Container, Form, Nav, Navbar, Row} from 'react-bootstrap';
-import {APP_TITLE, getAuth} from '../../config/config';
+import {Button, Col, Container, Form, Row} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SourceId from "../../components/custom/edit/sample/SourceId";
@@ -12,7 +11,8 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
-import {getRequestOptions} from "../../components/custom/js/functions";
+import {fetchEntity, getRequestOptions} from "../../components/custom/js/functions";
+import AppNavbar from "../../components/custom/layout/AppNavbar";
 
 function EditSample() {
     const router = useRouter()
@@ -51,13 +51,13 @@ function EditSample() {
 
                 // TODO: Need to change this is descendant for sennet
                 if (data.hasOwnProperty("ancestors")) {
-                    await fetchSource(data.ancestors[0].uuid)
+                    await fetchSource(data.ancestors[0].uuid);
                 }
             }
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (router.query.uuid == 'create') {
+            if (router.query.uuid === 'create') {
                 setData(true)
                 setEditMode("create")
             } else {
@@ -94,9 +94,7 @@ function EditSample() {
     };
 
     const fetchSource = async (sourceId) => {
-        const response = await fetch("/api/find?uuid=" + sourceId, getRequestOptions());
-        // convert the data to json
-        const source = await response.json();
+        let source = await fetchEntity(sourceId);
         if (source.hasOwnProperty("error")) {
             setError(true)
             setErrorMessage(source["error"])
@@ -124,16 +122,8 @@ function EditSample() {
 
     return (
         <div>
-            <Navbar className="navbar navbar-expand-lg navbar-light">
-                <Container fluid={true}>
-                    <Navbar.Brand href="/search">
-                        {APP_TITLE}
-                    </Navbar.Brand>
-                    <Nav className="justify-content-end">
-                        <Nav.Link href="http://localhost:8484/logout">Sign-out</Nav.Link>
-                    </Nav>
-                </Container>
-            </Navbar>
+            <AppNavbar/>
+
             {error &&
                 <div className="alert alert-warning" role="alert">{errorMessage}</div>
             }
@@ -261,13 +251,39 @@ function EditSample() {
 
                                 {/*/!*Image*!/*/}
                                 <Form.Group controlId="imageFile" className="mb-3">
-                                    <Form.Label>Add a Image file</Form.Label>
+                                    <Form.Label>Add a Image file <span> </span>
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={
+                                                <Popover>
+                                                    <Popover.Body>
+                                                        Upload deidentified images only.
+                                                    </Popover.Body>
+                                                </Popover>
+                                            }
+                                        >
+                                            <QuestionCircleFill/>
+                                        </OverlayTrigger>
+                                    </Form.Label>
                                     <Form.Control type="file"/>
                                 </Form.Group>
 
                                 {/*/!*Thumbnail*!/*/}
                                 <Form.Group controlId="thumbnailFile" className="mb-3">
-                                    <Form.Label>Add a Thumbnail file</Form.Label>
+                                    <Form.Label>Add a Thumbnail file <span> </span>
+                                        <OverlayTrigger
+                                            placement="top"
+                                            overlay={
+                                                <Popover>
+                                                    <Popover.Body>
+                                                        Upload deidentified images only.
+                                                    </Popover.Body>
+                                                </Popover>
+                                            }
+                                        >
+                                            <QuestionCircleFill/>
+                                        </OverlayTrigger>
+                                    </Form.Label>
                                     <Form.Control type="file"/>
                                 </Form.Group>
 

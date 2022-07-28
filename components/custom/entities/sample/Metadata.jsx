@@ -4,8 +4,6 @@ import styles from '../../style.module.css'
 import {Download} from "react-bootstrap-icons";
 import {createDownloadUrl, tableDataToTSV} from "../../js/functions";
 
-
-
 export default class Metadata extends React.Component {
     render() {
         const tableDataTSV = tableDataToTSV(this.props.data);
@@ -28,7 +26,6 @@ export default class Metadata extends React.Component {
                             </tr>
                             </thead>
                             <tbody>
-                            {/*TODO: change donor to source*/}
                             {Object.entries(this.props.data).map(([key, value]) => {
                                 return (
                                     <tr key={"metadata_" + key}>
