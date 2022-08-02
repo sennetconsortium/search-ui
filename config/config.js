@@ -1,6 +1,4 @@
-import moment from "moment";
 import React from 'react';
-import {useRouter} from 'next/router';
 import SearchAPIConnector from "../search-ui/packages/search-api-connector";
 import cookieCutter from 'cookie-cutter'
 
@@ -49,25 +47,6 @@ export const connector = new SearchAPIConnector({
 export const config = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
-        // result_fields: {
-        //   publisher: { raw: {} },
-        //   publisher_email: { raw: {} },
-        //   title: {
-        //     snippet: {
-        //       size: 100,
-        //       fallback: true
-        //     }
-        //   },
-        //   doi_url: { raw: {} },
-        //   globus_url: { raw: {} },
-        //   description: {
-        //     snippet: {
-        //       size: 100,
-        //       fallback: true
-        //     }
-        //   }
-        // },
-        // disjunctiveFacets: ["entity_type"],
         facets: {
             entity_type: {
                 label: "Entity Type",
@@ -92,6 +71,7 @@ export const config = {
             },
 
         },
+        disjunctiveFacets: ["entity_type"],
         // conditionalFacets: {
         //
         // },

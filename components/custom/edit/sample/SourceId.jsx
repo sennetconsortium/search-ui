@@ -99,7 +99,6 @@ export default class SourceId extends React.Component {
                                         <Layout
                                             header={
                                                 <div>
-                                                    <div>Data Explorer</div>
                                                     <SearchBox/>
                                                     <ClearSearchBox/>
                                                 </div>

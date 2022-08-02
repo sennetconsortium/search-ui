@@ -56,7 +56,6 @@ function Search() {
                                         <Layout
                                             header={
                                                 <div>
-                                                    <div>Data Explorer</div>
                                                     <SearchBox/>
                                                     <ClearSearchBox/>
                                                 </div>

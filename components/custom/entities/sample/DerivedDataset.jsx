@@ -41,8 +41,10 @@ export default class DerivedDataset extends React.Component {
                                         {this.props.data.descendants.map((descendant_data, index) => {
                                             if (descendant_data.entity_type == 'Sample') {
                                                 return (
-                                                    <DerivedDatasetItem index={index} data={this.props.data}
-                                                                        descendant_uuid={descendant_data.uuid}/>
+                                                    <React.Fragment key={index}>
+                                                        <DerivedDatasetItem index={index} data={this.props.data}
+                                                                            descendant_uuid={descendant_data.uuid}/>
+                                                    </React.Fragment>
                                                 )
                                             }
                                         })}
@@ -68,8 +70,10 @@ export default class DerivedDataset extends React.Component {
                                     {this.props.data.descendants.map((descendant_data, index) => {
                                         if (descendant_data.entity_type == 'Dataset') {
                                             return (
-                                                <DerivedDatasetItem index={index} data={this.props.data}
-                                                                    descendant_uuid={descendant_data.uuid}/>
+                                                <React.Fragment key={index}>
+                                                    <DerivedDatasetItem index={index} data={this.props.data}
+                                                                        descendant_uuid={descendant_data.uuid}/>
+                                                </React.Fragment>
                                             )
                                         }
                                     })}
