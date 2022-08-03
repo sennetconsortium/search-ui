@@ -93,8 +93,8 @@ export default class SourceId extends React.Component {
                 >
                     <Modal.Body>
                         <SearchProvider config={config}>
-                            <WithSearch mapContextToProps={({wasSearched}) => ({wasSearched})}>
-                                {({wasSearched}) => {
+                            <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
+                                {({wasSearched, filters}) => {
                                     return (
                                         <Layout
                                             header={
@@ -118,7 +118,8 @@ export default class SourceId extends React.Component {
 
                                             }
                                             bodyContent={
-                                                <Results view={TableResults}
+                                                <Results view={TableResults} filters={filters}
+                                                         titleField={filters}
                                                          resultView={TableRowDetail}
                                                          urlField={this.changeSource}
                                                 />

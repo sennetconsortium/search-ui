@@ -135,7 +135,7 @@ function EditSample() {
                                 <Row md={12}>
                                     <h4>Sample Information</h4>
                                 </Row>
-                                {editMode == 'edit' &&
+                                {editMode === 'edit' &&
                                     <>
                                         <Row>
                                             <Col md={6}><h5>SenNet ID: {data.hubmap_id}</h5></Col>

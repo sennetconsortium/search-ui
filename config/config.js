@@ -72,9 +72,18 @@ export const config = {
 
         },
         disjunctiveFacets: ["entity_type"],
-        // conditionalFacets: {
-        //
-        // },
+        conditionalFacets: {
+            // Only show 'mapped_specimen_type' facet if 'Sample' is selected from the entity type facet
+            'mapped_specimen_type': ({filters}) => {
+                return filters.some(filter => filter.field === 'entity_type' && filter.values.includes('Sample'));
+            },
+
+            // Only show 'origin_sample' facet if 'Sample' or 'Dataset' is selected from the entity type facet
+            'origin_sample.mapped_organ': ({filters}) => {
+                return filters.some(filter => filter.field === 'entity_type' && (filter.values.includes('Sample')
+                    || filter.values.includes("Dataset")));
+            },
+        },
         search_fields: {
             description: {type: "value"},
             hubmap_id: {type: "value"},

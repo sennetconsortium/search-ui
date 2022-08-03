@@ -45,8 +45,8 @@ function Search() {
                 </Head>
 
                 <SearchProvider config={config}>
-                    <WithSearch mapContextToProps={({wasSearched}) => ({wasSearched})}>
-                        {({wasSearched}) => {
+                    <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
+                        {({wasSearched, filters}) => {
                             return (
                                 <div>
                                     <AppNavbar/>
@@ -75,7 +75,7 @@ function Search() {
 
                                             }
                                             bodyContent={
-                                                <Results
+                                                <Results filters={filters} titleField={filters}
                                                     view={TableResults} resultView={TableRowDetail}
                                                 />
                                             }
