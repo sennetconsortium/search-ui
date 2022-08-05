@@ -51,7 +51,12 @@ const DefaultTableRowDetails = ({result, urlField, titleField}) => {
                 ) : null
                 }
             </td>
-            <td>{result.group_name.raw}</td>
+            <td>
+                {result.group_name ? (
+                    <>{result.group_name.raw}</>
+                ) : null
+                }
+            </td>
             <td>{result.created_by_user_email.raw}</td>
         </tr>
     )
@@ -121,7 +126,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
     // We will override `urlField` to utilize onClick functionality (this will allow a user to select a source in the edit Sample page.
     // We will override `titleField` to pass the filters selected by the user to this
     var hotlink = "/" + result.entity_type.raw.toLowerCase() + "?uuid=" + result.uuid.raw
-
+    // console.log(result)
     return (
         <>
             {titleField.length > 0 ? (<>
@@ -132,7 +137,12 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                 <tr key={index}
                                     onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
                                     <td>{result.hubmap_id.raw}</td>
-                                    <td>{result.group_name.raw}</td>
+                                    <td>
+                                        {result.group_name ? (
+                                            <>{result.group_name.raw}</>
+                                        ) : null
+                                        }
+                                    </td>
                                     <td>
                                         {result.mapped_metadata && result.mapped_metadata.raw.age_value ? (
                                             <>{result.mapped_metadata.raw.age_value[0]}</>
@@ -171,7 +181,12 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                 <tr key={index}
                                     onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
                                     <td>{result.hubmap_id.raw}</td>
-                                    <td>{result.group_name.raw}</td>
+                                    <td>
+                                        {result.group_name ? (
+                                            <>{result.group_name.raw}</>
+                                        ) : null
+                                        }
+                                    </td>
                                     <td>
                                         {result.mapped_data_types ? (
                                             <>{result.mapped_data_types.raw}</>

@@ -2,21 +2,7 @@ import React from 'react';
 import SearchAPIConnector from "../search-ui/packages/search-api-connector";
 import cookieCutter from 'cookie-cutter'
 
-//const auth_token = JSON.parse(localStorage.getItem("info")).auth_token
-// const ls = window.localStorage
-//const auth_token = ""
-
 export const APP_TITLE = "SenNet: Data Sharing Portal"
-//export const auth_token = getAuth();
-
-
-// points to the search-api configured index
-const INDEX = "portal"
-
-
-export function getFilters() {
-    return cookieCutter.get("filters")
-}
 
 export function getAuth() {
     if (typeof window !== "undefined") {
@@ -26,16 +12,16 @@ export function getAuth() {
 }
 
 export function getIndex() {
-    return INDEX;
+    return process.env.NEXT_PUBLIC_INDEX;
 }
 
 // points to the search-api endpoint
 export function getSearchEndPoint() {
-    return "http://localhost:4444/"
+    return process.env.NEXT_PUBLIC_SEARCH_API_ENDPOINT
 }
 
 export function getRootURL() {
-    return "http://localhost:3000/"
+    return process.env.NEXT_PUBLIC_APP_ROOT_URL
 }
 
 export const connector = new SearchAPIConnector({

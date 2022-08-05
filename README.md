@@ -1,28 +1,37 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).# bcrf
+## Working with submodule
 
-For Local Development:
-
-Import the search-ui submodule by running:
+This repository relies on the [search-ui](https://github.com/dbmi-pitt/search-ui) as a submodule to function. The
+file `.gitmodules` contains the configuration for the URL and specific branch of the submodule that is to be used. Once
+you already have cloned this repository and switched to the target branch, to load the latest `search-ui` submodule:
 
 ```
-$ git submodule update --init --remote
+git submodule update --init --remote
 ```
 
-start ingest-api  (manually)\
-*Note: For the time being for local development change the variable `GLOBUS_CLIENT_APP_URI` in `app.cfg` to
-be 'http://localhost:3000/'
+## For Local Development
+
+Create a file called `.env.local` at the root of the project with the same structure as `sample.env`. Modify the
+variables as needed.
+
+### Required services
+
+The `ingest-api` must be running locally and for the time being you must change the variable `GLOBUS_CLIENT_APP_URI`
+in `app.cfg` to be 'http://localhost:3000/' for redirects to work properly. You can start the `ingest-api` with the
+following command:
 
 ```
 $ ingest-api/src/python app.py
 ```
 
-search-api
+The `search-api` must be running via Docker to avoid CORS related problems. You can start the `search-api` with the
+following command:
 
 ```
 $ ./search-api-docker.sh localhost start
 ```
 
-to start
+To start the application run the following commands:\
+ **_Note:_** This application requires Node.js 12.22.0 or later
 
 ```
 $ npm install
