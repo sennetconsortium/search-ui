@@ -71,7 +71,7 @@ export function getStatusColor(status) {
 export function cleanJson(json) {
     Object.entries(json).forEach(([key, val]) =>
         (val && typeof val === 'object') && cleanJson(val) ||
-        (val === null || val === "") && delete json[key]
+        (val === null || val === "" || val === undefined) && delete json[key]
     );
     return json;
 }

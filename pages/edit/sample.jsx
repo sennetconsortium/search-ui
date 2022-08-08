@@ -54,9 +54,20 @@ function EditSample() {
                 setError(true)
                 setErrorMessage(data["error"])
             } else {
-                // set state with the result
                 setData(data);
-                setValues(data);
+                // Set state with default values that will be PUT to Entity API to update
+                // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
+                setValues({
+                    'specimen_type': data.specimen_type,
+                    'specimen_type_other': data.specimen_type,
+                    'organ': data.organ,
+                    'organ_other': data.organ_other,
+                    'protocol_url': data.protocol_url,
+                    'lab_tissue_sample_id': data.lab_tissue_sample_id,
+                    'description': data.description,
+                    'direct_ancestor_uuid': data.ancestors[0].uuid
+                })
+                // setValues(data);
                 setEditMode("edit")
 
                 // TODO: Need to change this is descendant for sennet
@@ -92,14 +103,14 @@ function EditSample() {
 
     // callback provided to components to update the main list of form values
     const onChange = (e, fieldId, value) => {
-        log.debug('onChange', fieldId, value)
+        // log.debug('onChange', fieldId, value)
         // use a callback to find the field in the value list and update it
         setValues((currentValues) => {
             currentValues[fieldId] = value;
             return currentValues;
         });
 
-        // log.debug("Values: " + JSON.stringify(values))
+        log.debug("Values: ", values)
     };
 
     const fetchSource = async (sourceId) => {
@@ -115,7 +126,6 @@ function EditSample() {
 
 
     const handleSubmit = async (event) => {
-        //TODO: Need to remove keys where value is null. This will ensure that 'other' fields don't get added unnecessarily
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.preventDefault();
@@ -126,19 +136,25 @@ function EditSample() {
             log.debug("Form is valid")
 
             // Remove empty strings
-            let data = cleanJson(values);
+            let json = cleanJson(values);
+            log.info(json)
             let uuid = data.uuid
 
-            await update_create_entity(uuid, data, editMode, "Sample", router).then((response) => {
-                log.info(response)
+            await update_create_entity(uuid, json, editMode, "Sample", router).then((response) => {
+                setShowModal(true)
+
                 if (response.status === 200) {
-                    setModalTitle("Sample Created")
-                    setModalBody("Sample was created successfully.")
+                    if (editMode === 'edit') {
+                        setModalTitle("Sample Updated")
+                        setModalBody("Sample was updated successfully.")
+                    } else {
+                        setModalTitle("Sample Created")
+                        setModalBody("Sample was created successfully.")
+                    }
                 } else {
                     setModalTitle("Error Creating Sample")
-                    setModalBody(response)
+                    setModalBody(response.statusText)
                 }
-                setShowModal(true)
             })
         }
 

@@ -189,6 +189,7 @@ export default class Tissue extends React.Component {
                     <Col sm="4">
                         <Form.Control style={{display: this.state.organ_other_hide}} type="text"
                                       id="organ_other"
+                                      defaultValue={this.props.data.organ_other}
                                       onChange={e => {
                                           this.props.onChange(e, e.target.id, e.target.value)
                                       }}
