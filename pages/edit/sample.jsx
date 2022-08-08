@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button, Col, Container, Form, Row} from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import SourceId from "../../components/custom/edit/sample/SourceId";
@@ -11,8 +12,9 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
-import {fetchEntity, getRequestOptions} from "../../components/custom/js/functions";
+import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
+import {update_create_entity} from "../../lib/services";
 
 function EditSample() {
     const router = useRouter()
@@ -20,10 +22,18 @@ function EditSample() {
     const [editMode, setEditMode] = useState(null)
     const [data, setData] = useState(null)
     const [source, setSource] = useState(null)
+    const [sourceId, setSourceId] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [query, setQuery] = useState(router.query)
     const [values, setValues] = useState({});
+    const [showModal, setShowModal] = useState(false)
+    const [modalBody, setModalBody] = useState(null)
+    const [modalTitle, setModalTitle] = useState(null)
+
+    const handleClose = () => setShowModal(false);
+    const handleHome = () => router.push('/search');
+
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -35,7 +45,7 @@ function EditSample() {
         const fetchData = async (uuid) => {
             log.debug('editSample: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestOptions());
+            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
             const data = await response.json();
 
@@ -65,11 +75,11 @@ function EditSample() {
                 fetchData(router.query.uuid)
                     // make sure to catch any error
                     .catch(console.error);
-                ;
             }
         } else {
             setData(null);
             setSource(null)
+            setSourceId(null)
         }
     }, [router]);
 
@@ -89,8 +99,7 @@ function EditSample() {
             return currentValues;
         });
 
-        log.debug("Values: " + JSON.stringify(values))
-        e.default
+        // log.debug("Values: " + JSON.stringify(values))
     };
 
     const fetchSource = async (sourceId) => {
@@ -100,11 +109,12 @@ function EditSample() {
             setErrorMessage(source["error"])
         } else {
             setSource(source);
+            setSourceId(source.hubmap_id)
         }
     }
 
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         //TODO: Need to remove keys where value is null. This will ensure that 'other' fields don't get added unnecessarily
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
@@ -112,7 +122,24 @@ function EditSample() {
             event.stopPropagation();
             log.debug("Form is invalid")
         } else {
+            event.preventDefault();
             log.debug("Form is valid")
+
+            // Remove empty strings
+            let data = cleanJson(values);
+            let uuid = data.uuid
+
+            await update_create_entity(uuid, data, editMode, "Sample", router).then((response) => {
+                log.info(response)
+                if (response.status === 200) {
+                    setModalTitle("Sample Created")
+                    setModalBody("Sample was created successfully.")
+                } else {
+                    setModalTitle("Error Creating Sample")
+                    setModalBody(response)
+                }
+                setShowModal(true)
+            })
         }
 
 
@@ -162,7 +189,7 @@ function EditSample() {
                                 {/*Source ID*/}
                                 {/*editMode is only set when page is ready to load */}
                                 {editMode &&
-                                    <SourceId data={data} onChange={onChange} fetchSource={fetchSource}/>
+                                    <SourceId source={source} onChange={onChange} fetchSource={fetchSource}/>
                                 }
 
                                 {/*Source Information Box*/}
@@ -171,8 +198,8 @@ function EditSample() {
                                 }
 
                                 {/*/!*Tissue Sample Type*!/*/}
-                                {editMode &&
-                                    <TissueSample data={data} editMode={editMode} onChange={onChange}/>
+                                {((editMode === 'edit' && source) || (editMode === 'create')) &&
+                                    <TissueSample data={data} source={source} editMode={editMode} onChange={onChange}/>
                                 }
 
                                 {/*/!*Preparation Protocol*!/*/}
@@ -302,6 +329,21 @@ function EditSample() {
                     <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
                 </div>
             }
+
+            <Modal show={showModal}>
+                <Modal.Header>
+                    <Modal.Title>{modalTitle}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>{modalBody}</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={handleHome}>
+                        Go Home
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }

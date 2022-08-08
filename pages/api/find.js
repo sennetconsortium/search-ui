@@ -1,4 +1,4 @@
-import {simple_query_builder} from "../../search-ui/lib/search-tools";
+import {simple_query_builder} from "search-ui/lib/search-tools";
 import {getIndex, getSearchEndPoint} from "../../config/config";
 import log from "loglevel";
 
@@ -10,7 +10,7 @@ export default function handler(req, res) {
     log.info("FIND API...")
 
     // only allow POST
-    if (req.method == "GET" || req.method == "POST") {
+    if (req.method === "GET" || req.method === "POST") {
 
         // use the f
         let uuid = req.query.uuid

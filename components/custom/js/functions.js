@@ -1,7 +1,7 @@
 import {getAuth} from "../../../config/config";
 import log from "loglevel";
 
-export function getRequestOptions() {
+export function getRequestHeaders() {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", "Bearer " + getAuth());
     myHeaders.append("Content-Type", "application/json");
@@ -12,7 +12,7 @@ export function getRequestOptions() {
 }
 
 export async function fetchEntity(ancestorId) {
-    const response = await fetch("/api/find?uuid=" + ancestorId, getRequestOptions());
+    const response = await fetch("/api/find?uuid=" + ancestorId, getRequestHeaders());
     // convert the data to json
     const entity = await response.json();
     if (entity.hasOwnProperty("error")) {
@@ -66,4 +66,12 @@ export function getStatusColor(status) {
     log.warn('Invalid status', status);
     return '';
 
+}
+
+export function cleanJson(json) {
+    Object.entries(json).forEach(([key, val]) =>
+        (val && typeof val === 'object') && cleanJson(val) ||
+        (val === null || val === "") && delete json[key]
+    );
+    return json;
 }

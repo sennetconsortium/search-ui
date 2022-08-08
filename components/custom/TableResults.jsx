@@ -26,7 +26,7 @@ const DefaultTableResults = ({children}) => {
     )
 }
 
-const DefaultTableRowDetails = ({result, urlField, titleField}) => {
+const DefaultTableRowDetails = ({result, urlField, hotlink}) => {
     return (
         <tr key="results_detail"
             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
@@ -215,11 +215,11 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                 </tr>
                             )
                         } else {
-                            return (DefaultTableRowDetails({result, urlField, titleField}))
+                            return (DefaultTableRowDetails({result, urlField, hotlink}))
                         }
                     })}
                 </>
-            ) : (DefaultTableRowDetails({result, urlField, titleField}))}
+            ) : (DefaultTableRowDetails({result, urlField, hotlink}))}
         </>
     );
 };

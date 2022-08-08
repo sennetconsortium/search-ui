@@ -25,14 +25,11 @@ export default class Provenance extends React.Component {
                                         {/*TODO: Need to change Donor to Source and will most likely need to change ancestors to descendants*/}
                                         {this.props.data.ancestors.map((ancestor_data, index) => {
                                             if (ancestor_data.entity_type === 'Donor') {
-                                                {
-                                                    sources_count++
-                                                }
                                                 return (
                                                     <ProvenanceItem key={"sample_" + sources_count}
                                                                     ancestor_uuid={ancestor_data.uuid}
                                                                     data={this.props.data}
-                                                                    entity_count={sources_count}/>
+                                                                    entity_count={sources_count++}/>
                                                 )
                                             }
                                         })}
@@ -47,14 +44,11 @@ export default class Provenance extends React.Component {
                                         <h4>Samples</h4>
                                         {this.props.data.ancestors.map((ancestor_data) => {
                                             if (ancestor_data.entity_type === 'Sample') {
-                                                {
-                                                    sample_count++
-                                                }
                                                 return (
                                                     <ProvenanceItem key={"sample_" + sample_count}
                                                                     ancestor_uuid={ancestor_data.uuid}
                                                                     data={this.props.data}
-                                                                    entity_count={sample_count}/>
+                                                                    entity_count={sample_count++}/>
                                                 )
                                             }
                                         })}

@@ -23,7 +23,7 @@ export default class ProvenanceItem extends React.Component {
             <>
                 {this.state.ancestor_data != null &&
                     <div>
-                        {this.props.entity_count > 1 &&
+                        {this.props.entity_count > 0 &&
                             <div className="d-flex justify-content-center fs-2 my-3">
                                 <CaretDownFill/>
                             </div>

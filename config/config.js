@@ -20,6 +20,14 @@ export function getSearchEndPoint() {
     return process.env.NEXT_PUBLIC_SEARCH_API_ENDPOINT
 }
 
+export function getEntityEndPoint() {
+    return process.env.NEXT_PUBLIC_ENTITY_API_ENDPOINT
+}
+
+export function getIngestLogin() {
+    return process.env.NEXT_PUBLIC_INGEST_LOGIN
+}
+
 export function getRootURL() {
     return process.env.NEXT_PUBLIC_APP_ROOT_URL
 }
@@ -72,6 +80,7 @@ export const config = {
         },
         search_fields: {
             description: {type: "value"},
+            group_name: {type: "value"},
             hubmap_id: {type: "value"},
             submission_id: {type: "value"},
             display_doi: {type: "value"},

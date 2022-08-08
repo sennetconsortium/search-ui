@@ -12,7 +12,7 @@ import Provenance from "../components/custom/entities/sample/Provenance";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestOptions} from "../components/custom/js/functions";
+import {getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 
 function ViewSample() {
@@ -39,7 +39,7 @@ function ViewSample() {
         const fetchData = async (uuid) => {
             log.debug('sample: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestOptions());
+            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
             const data = await response.json();
 

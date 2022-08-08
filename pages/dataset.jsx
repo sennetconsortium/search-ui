@@ -11,7 +11,7 @@ import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestOptions, getStatusColor} from "../components/custom/js/functions";
+import {getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 
 function ViewDataset() {
@@ -38,7 +38,7 @@ function ViewDataset() {
         const fetchData = async (uuid) => {
             log.debug('dataset: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestOptions());
+            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
             const data = await response.json();
 

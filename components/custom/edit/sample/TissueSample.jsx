@@ -68,7 +68,7 @@ export default class Tissue extends React.Component {
         document.getElementById("specimen_type_other").removeAttribute("required")
         // Empty the value of the fields and trigger onChange
         document.getElementById("specimen_type_other").value = "";
-        onChange(e, "specimen_type_other", null)
+        onChange(e, "specimen_type_other", "")
     }
 
     resetOrganType = (e, onChange) => {
@@ -76,7 +76,7 @@ export default class Tissue extends React.Component {
         document.getElementById("organ").removeAttribute("required")
         // Empty the value of the fields and trigger onChange
         document.getElementById("organ").value = "";
-        onChange(e, "organ", null)
+        onChange(e, "organ", "")
 
         // Need to also reset organ_other
         this.resetOrganTypeOther(e, onChange);
@@ -87,7 +87,7 @@ export default class Tissue extends React.Component {
         document.getElementById("organ_other").removeAttribute("required")
         // Empty the value of the fields and trigger onChange
         document.getElementById("organ_other").value = "";
-        onChange(e, "organ_other", null)
+        onChange(e, "organ_other", "")
     }
 
     render() {
@@ -118,8 +118,8 @@ export default class Tissue extends React.Component {
                                  }}
                                  defaultValue={this.props.data.specimen_type}>
                         <option value="">----</option>
-                        {this.props.editMode === 'edit' && this.props.data.specimen_type != 'organ' ? (
-                            TISSUE_TYPES[this.props.data.entity_type].map((optgs, index) => {
+                        {this.props.source ? (
+                            TISSUE_TYPES[this.props.source.entity_type].map((optgs, index) => {
                                 return (
                                     <optgroup
                                         key={index}

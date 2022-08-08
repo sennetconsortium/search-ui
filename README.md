@@ -23,7 +23,7 @@ following command:
 $ ingest-api/src/python app.py
 ```
 
-The `search-api` must be running via Docker to avoid CORS related problems. You can start the `search-api` with the
+The `search-api` and `entity-api` must be running via Docker to avoid CORS related problems. You can start the `search-api` with the
 following command:
 
 ```

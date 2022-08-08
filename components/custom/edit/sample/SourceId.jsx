@@ -28,17 +28,8 @@ export default class SourceId extends React.Component {
         super(props);
         this.state = {
             showHideModal: false,
-            sourceId: '',
-            source: null
         };
-
-        if (props.data.ancestors && props.data.ancestors.length > 0) {
-            this.state.sourceId = props.data.ancestors[0].hubmap_id;
-            this.state.source = props.data.ancestors[0];
-            log.info(this.state.sourceId)
-        }
     }
-
 
     showModal = () => {
         this.setState({showHideModal: true})
@@ -49,11 +40,9 @@ export default class SourceId extends React.Component {
 
     // Handles when updates are made to `Source ID` when the search feature is used
     changeSource = async (e, sourceId) => {
-        this.setState({sourceId: sourceId})
+        this.props.onChange(e, 'direct_ancestor_uuid', sourceId);
         this.props.fetchSource(sourceId);
         this.hideModal();
-        // log.debug(e);
-        log.debug(this.state.sourceId)
     }
 
     render() {
@@ -66,7 +55,7 @@ export default class SourceId extends React.Component {
                         overlay={
                             <Popover>
                                 <Popover.Body>
-                                    The HuBMAP Unique identifier of the direct origin entity,
+                                    The SenNet Unique identifier of the direct origin entity,
                                     other sample or donor, where this sample came from.
                                 </Popover.Body>
                             </Popover>
@@ -75,10 +64,10 @@ export default class SourceId extends React.Component {
                         <QuestionCircleFill/>
                     </OverlayTrigger>
                 </Form.Label>
-                <InputGroup className="mb-3" id="ancestors[0].hubmap_id">
+                <InputGroup className="mb-3" id="direct_ancestor_uuid">
                     <Form.Control required type="text" placeholder=""
                                   onChange={e => this.props.onChange(e, e.target.id, e.target.value)}
-                                  defaultValue={this.state.sourceId}/>
+                                  defaultValue={this.props.source?.hubmap_id}/>
                     <Button variant="primary" onClick={this.showModal}>
                         <Search/>
                     </Button>

@@ -3,14 +3,15 @@ import Link from 'next/link'
 import {useRouter} from 'next/router';
 import React from 'react';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import {APP_TITLE, getRootURL} from "../config/config"
+import {APP_TITLE, getEntityEndPoint, getIngestLogin, getRootURL} from "../config/config"
 
 import 'bootstrap/dist/css/bootstrap.css';
 import cookieCutter from 'cookie-cutter'
 import log from "loglevel";
 
 export default function Home() {
-    const login_url = `http://localhost:8484/login`;
+    const login_url = getIngestLogin();
+    log.info(getEntityEndPoint())
     const router = useRouter();
     if (router.query['info']) {
         cookieCutter.set("groups_token", JSON.parse(router.query['info']).groups_token)
