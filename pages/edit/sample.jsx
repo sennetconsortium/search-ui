@@ -30,6 +30,7 @@ function EditSample() {
     const [showModal, setShowModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
+    const [disableSubmit, setDisableSubmit] = useState(false)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -67,7 +68,6 @@ function EditSample() {
                     'description': data.description,
                     'direct_ancestor_uuid': data.ancestors[0].uuid
                 })
-                // setValues(data);
                 setEditMode("edit")
 
                 // TODO: Need to change this is descendant for sennet
@@ -109,8 +109,6 @@ function EditSample() {
             currentValues[fieldId] = value;
             return currentValues;
         });
-
-        log.debug("Values: ", values)
     };
 
     const fetchSource = async (sourceId) => {
@@ -126,22 +124,25 @@ function EditSample() {
 
 
     const handleSubmit = async (event) => {
+        setDisableSubmit(true);
+
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
             log.debug("Form is invalid")
+            setDisableSubmit(false);
         } else {
             event.preventDefault();
             log.debug("Form is valid")
 
             // Remove empty strings
             let json = cleanJson(values);
-            log.info(json)
             let uuid = data.uuid
 
             await update_create_entity(uuid, json, editMode, "Sample", router).then((response) => {
                 setShowModal(true)
+                setDisableSubmit(false);
 
                 if (response.status === 200) {
                     if (editMode === 'edit') {
@@ -330,7 +331,7 @@ function EditSample() {
                                     <Form.Control type="file"/>
                                 </Form.Group>
 
-                                <Button variant="primary" type="submit">
+                                <Button variant="primary" type="submit" disabled={disableSubmit}>
                                     Submit
                                 </Button>
                             </Form>
@@ -356,7 +357,7 @@ function EditSample() {
                         Close
                     </Button>
                     <Button variant="primary" onClick={handleHome}>
-                        Go Home
+                        Home page
                     </Button>
                 </Modal.Footer>
             </Modal>
