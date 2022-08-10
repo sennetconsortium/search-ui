@@ -17,7 +17,7 @@ import Modal from 'react-bootstrap/Modal';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
-import {config, SORT_OPTIONS} from "../../../../config/config";
+import {config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../../config/config";
 import ClearSearchBox from "search-ui/components/core/ClearSearchBox";
 import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
@@ -117,7 +117,7 @@ export default class SourceId extends React.Component {
                                                 <React.Fragment>
                                                     {wasSearched && <PagingInfo/>}
                                                     {<Paging/>}
-                                                    {wasSearched && <ResultsPerPage/>}
+                                                    {wasSearched && <ResultsPerPage options={RESULTS_PER_PAGE}/>}
                                                 </React.Fragment>
                                             }
                                             bodyFooter={<Paging/>}

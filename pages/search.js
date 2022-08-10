@@ -18,7 +18,7 @@ import Facets from "../search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../components/custom/TableResults";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
-import {APP_TITLE, config, SORT_OPTIONS} from "../config/config";
+import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import log from "loglevel";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 
@@ -83,7 +83,7 @@ function Search() {
                                                 <React.Fragment>
                                                     {wasSearched && <PagingInfo/>}
                                                     {<Paging/>}
-                                                    {wasSearched && <ResultsPerPage/>}
+                                                    {wasSearched && <ResultsPerPage options={RESULTS_PER_PAGE}/>}
                                                 </React.Fragment>
                                             }
                                             bodyFooter={<Paging/>}

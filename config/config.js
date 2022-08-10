@@ -94,6 +94,9 @@ export const config = {
             dataset_info: {type: "value"}
         }
     },
+    initialState: {
+        resultsPerPage: 10
+    },
 
     // autocompleteQuery: {
     //   results: {
@@ -125,6 +128,10 @@ export const config = {
             `Searching for "${searchTerm}". Showing ${start} to ${end} results out of ${totalResults}.`
     },
 };
+
+export const RESULTS_PER_PAGE = [
+    10, 20, 30
+]
 
 // some sort fields require .keyword in order to sort them
 export const SORT_OPTIONS = [
