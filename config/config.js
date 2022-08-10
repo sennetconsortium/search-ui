@@ -49,6 +49,13 @@ export const config = {
                 filterType: "any",
                 isFilterable: false
             },
+            group_name: {
+                label: "Group Name",
+                type: "value",
+                field: "group_name.keyword",
+                filterType: "any",
+                isFilterable: false
+            },
             mapped_specimen_type: {
                 label: "Specimen Type",
                 type: "value",
@@ -65,7 +72,7 @@ export const config = {
             },
 
         },
-        disjunctiveFacets: ["entity_type"],
+        disjunctiveFacets: ["entity_type", "group_name"],
         conditionalFacets: {
             // Only show 'mapped_specimen_type' facet if 'Sample' is selected from the entity type facet
             'mapped_specimen_type': ({filters}) => {
@@ -93,6 +100,9 @@ export const config = {
             created_by_user_email: {type: "value"},
             dataset_info: {type: "value"}
         }
+    },
+    initialState: {
+        resultsPerPage: 10
     },
 
     // autocompleteQuery: {
@@ -125,6 +135,10 @@ export const config = {
             `Searching for "${searchTerm}". Showing ${start} to ${end} results out of ${totalResults}.`
     },
 };
+
+export const RESULTS_PER_PAGE = [
+    10, 20, 30
+]
 
 // some sort fields require .keyword in order to sort them
 export const SORT_OPTIONS = [
