@@ -54,13 +54,6 @@ export const config = {
                 filterType: "any",
                 isFilterable: false
             },
-            group_name: {
-                label: "Group Name",
-                type: "value",
-                field: "group_name.keyword",
-                filterType: "any",
-                isFilterable: false
-            },
             mapped_specimen_type: {
                 label: "Specimen Type",
                 type: "value",
@@ -75,9 +68,23 @@ export const config = {
                 filterType: "any",
                 isFilterable: false
             },
+            group_name: {
+                label: "Group Name",
+                type: "value",
+                field: "group_name.keyword",
+                filterType: "any",
+                isFilterable: false
+            },
+            created_by_user_displayname: {
+                label: "Registered By",
+                type: "value",
+                field: "created_by_user_displayname.keyword",
+                filterType: "anty",
+                isFilterable: false
+            }
 
         },
-        disjunctiveFacets: ["entity_type", "group_name"],
+        disjunctiveFacets: ["entity_type", "group_name", "created_by_user_displayname"],
         conditionalFacets: {
             // Only show 'mapped_specimen_type' facet if 'Sample' is selected from the entity type facet
             'mapped_specimen_type': ({filters}) => {
