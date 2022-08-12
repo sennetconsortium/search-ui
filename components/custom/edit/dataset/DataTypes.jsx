@@ -68,7 +68,6 @@ export default class DataTypes extends React.Component {
                         </OverlayTrigger>
                     </Form.Label>
 
-                    {/*TODO: Need to figure out the correct default value*/}
                     <Form.Select required aria-label="Data Types"
                                  onChange={e => {
                                      this.handleDataTypeChange(e, this.props.onChange)

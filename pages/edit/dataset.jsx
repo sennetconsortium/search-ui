@@ -11,7 +11,7 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_dataset, update_create_entity} from "../../lib/services";
+import {update_create_dataset} from "../../lib/services";
 import DataTypes from "../../components/custom/edit/dataset/DataTypes";
 import SourceIds from "../../components/custom/edit/dataset/SourceIds";
 
@@ -57,9 +57,12 @@ function EditDataset() {
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
-
+                    'lab_dataset_id': lab_dataset_id,
+                    'data_types': [data.data_types[0]],
                     'description': data.description,
-                    'direct_ancestor_uuids': [data.immediate_ancestors[0].uuid]
+                    'dataset_info': data.dataset_info,
+                    'direct_ancestor_uuids': [data.immediate_ancestors[0].uuid],
+                    'contains_human_genetic_sequences': data.contains_human_genetic_sequences
                 })
                 setEditMode("edit")
 
@@ -241,7 +244,7 @@ function EditDataset() {
                                         </OverlayTrigger>
                                     </Form.Label>
                                     <Form.Control type="text" placeholder="Lab Name or ID"
-                                                  defaultValue={data.lab_tissue_sample_id}
+                                                  defaultValue={data.lab_dataset_id}
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
 
@@ -285,46 +288,48 @@ function EditDataset() {
                                             <QuestionCircleFill/>
                                         </OverlayTrigger>
                                     </Form.Label>
-                                    <Form.Control as="textarea" rows={4} defaultValue={data.description}
+                                    <Form.Control as="textarea" rows={4} defaultValue={data.dataset_info}
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
 
                                 {/*/!*Gene Sequences*!/*/}
-                                <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
-                                    <Form.Label>Gene Sequences <span className="required">* </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        {/*   TODO: Need to add gene sequences tool tip */}
-                                                        Does this dataset contain human genetic sequences
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Check
-                                        required
-                                        type="radio"
-                                        label="No"
-                                        name="contains_human_genetic_sequences"
-                                        value={false}
-                                        defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'edit') ? true : false}
-                                        onChange={e => onChange(e, e.target.id, e.target.value)}
-                                    />
-                                    <Form.Check
-                                        required
-                                        type="radio"
-                                        label="Yes"
-                                        name="contains_human_genetic_sequences"
-                                        value={true}
-                                        defaultChecked={data.contains_human_genetic_sequences ? true : false}
-                                        onChange={e => onChange(e, e.target.id, e.target.value)}
-                                    />
-                                </Form.Group>
+                                {editMode &&
+                                    <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
+                                        <Form.Label>Gene Sequences <span className="required">* </span>
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            {/*   TODO: Need to add gene sequences tool tip */}
+                                                            Does this dataset contain human genetic sequences
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <QuestionCircleFill/>
+                                            </OverlayTrigger>
+                                        </Form.Label>
+                                        <Form.Check
+                                            required
+                                            type="radio"
+                                            label="No"
+                                            name="contains_human_genetic_sequences"
+                                            value={false}
+                                            defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'edit') ? true : false}
+                                            onChange={e => onChange(e, e.target.id, e.target.value)}
+                                        />
+                                        <Form.Check
+                                            required
+                                            type="radio"
+                                            label="Yes"
+                                            name="contains_human_genetic_sequences"
+                                            value={true}
+                                            defaultChecked={data.contains_human_genetic_sequences ? true : false}
+                                            onChange={e => onChange(e, e.target.id, e.target.value)}
+                                        />
+                                    </Form.Group>
+                                }
 
                                 {/*/!*Data Types*!/*/}
                                 {editMode &&

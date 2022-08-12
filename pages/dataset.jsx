@@ -121,14 +121,23 @@ function ViewDataset() {
                             <h3>{data.hubmap_id}</h3>
 
                             <div className="d-flex justify-content-between mb-2">
-                                {data.origin_sample &&
-                                    <a href={data.doi_url} className="entity_subtitle link_with_icon">
-                                            <span
-                                                className="me-1">{data.mapped_data_types[0]} | {data.origin_sample.mapped_organ} |
-                                                doi:{data.registered_doi}</span> <BoxArrowUpRight/>
-
-                                    </a>
-                                }
+                                <div className="entity_subtitle link_with_icon">
+                                    {data.mapped_data_types &&
+                                        <span>
+                                            {data.mapped_data_types[0]} |
+                                        </span>
+                                    }
+                                    {data.origin_sample &&
+                                        <span className="ms-1">
+                                            {data.origin_sample.mapped_organ} |
+                                        </span>
+                                    }
+                                    {data.doi_url &&
+                                        <a href={data.doi_url} className="ms-1 link_with_icon">
+                                            <span className="me-1">doi:{data.registered_doi}</span> <BoxArrowUpRight/>
+                                        </a>
+                                    }
+                                </div>
                                 <div className="entity_subtitle link_with_icon">
                                     <CircleFill
                                         className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} | {data.mapped_data_access_level} Access
