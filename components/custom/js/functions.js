@@ -45,25 +45,28 @@ export function tableDataToTSV(tableData) {
 }
 
 export function getStatusColor(status) {
-    status = status.toUpperCase();
+    if(status) {
+        status = status.toUpperCase();
 
-    if (['NEW', 'REOPENED', 'QA', 'LOCKED', 'PROCESSING', 'HOLD'].includes(status)) {
-        return 'text-info';
+        if (['NEW', 'REOPENED', 'QA', 'LOCKED', 'PROCESSING', 'HOLD'].includes(status)) {
+            return 'info';
+        }
+
+        if (['INVALID', 'ERROR'].includes(status)) {
+            return 'error';
+        }
+
+        if (['UNPUBLISHED', 'DEPRECATED', 'Retracted' /* sub_status gets title caps. */].includes(status)) {
+            return 'warning';
+        }
+
+        if (status === 'PUBLISHED') {
+            return 'success';
+        }
+
+        log.warn('Invalid status', status);
+        return '';
     }
-
-    if (['INVALID', 'ERROR'].includes(status)) {
-        return 'text-error';
-    }
-
-    if (['UNPUBLISHED', 'DEPRECATED', 'Retracted' /* sub_status gets title caps. */].includes(status)) {
-        return 'text-warning';
-    }
-
-    if (status === 'PUBLISHED') {
-        return 'text-success';
-    }
-
-    log.warn('Invalid status', status);
     return '';
 
 }

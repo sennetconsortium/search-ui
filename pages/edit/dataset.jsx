@@ -5,24 +5,22 @@ import {Button, Col, Container, Form, Row} from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import SourceId from "../../components/custom/edit/sample/SourceId";
-import TissueSample from "../../components/custom/edit/sample/TissueSample";
-import SourceInformationBox from "../../components/custom/edit/sample/SourceInformationBox";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_entity} from "../../lib/services";
+import {update_create_dataset, update_create_entity} from "../../lib/services";
+import DataTypes from "../../components/custom/edit/dataset/DataTypes";
+import SourceIds from "../../components/custom/edit/dataset/SourceIds";
 
-function EditSample() {
+function EditDataset() {
     const router = useRouter()
     const [validated, setValidated] = useState(false);
     const [editMode, setEditMode] = useState(null)
     const [data, setData] = useState(null)
-    const [source, setSource] = useState(null)
-    const [sourceId, setSourceId] = useState(null)
+    const [sources, setSources] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [query, setQuery] = useState(router.query)
@@ -44,13 +42,13 @@ function EditSample() {
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-            log.debug('editSample: getting data...', uuid)
+            log.debug('editDataset: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
             const data = await response.json();
 
-            log.debug('editSample: Got data', data)
+            log.debug('editDataset: Got data', data)
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
@@ -59,20 +57,17 @@ function EditSample() {
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
-                    'specimen_type': data.specimen_type,
-                    'specimen_type_other': data.specimen_type,
-                    'organ': data.organ,
-                    'organ_other': data.organ_other,
-                    'protocol_url': data.protocol_url,
-                    'lab_tissue_sample_id': data.lab_tissue_sample_id,
+
                     'description': data.description,
-                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
+                    'direct_ancestor_uuids': [data.immediate_ancestors[0].uuid]
                 })
                 setEditMode("edit")
 
                 // TODO: Need to change this is descendant for sennet
                 if (data.hasOwnProperty("immediate_ancestors")) {
-                    await fetchSource(data.immediate_ancestors[0].uuid);
+                    for (const ancestor of data.immediate_ancestors) {
+                        await fetchSources(ancestor.uuid);
+                    }
                 }
             }
         }
@@ -89,15 +84,14 @@ function EditSample() {
             }
         } else {
             setData(null);
-            setSource(null)
-            setSourceId(null)
+            setSources(null)
         }
     }, [router]);
 
     // effect runs when user state is updated
     useEffect(() => {
         // reset form with user data
-        log.debug("editSample: RESET data...")
+        log.debug("editDataset: RESET data...")
         //reset(data);
     }, [data]);
 
@@ -109,17 +103,31 @@ function EditSample() {
             currentValues[fieldId] = value;
             return currentValues;
         });
+        log.debug(values)
     };
 
-    const fetchSource = async (sourceId) => {
-        let source = await fetchEntity(sourceId);
+    const fetchSources = async (source_uuid) => {
+        let source = await fetchEntity(source_uuid);
         if (source.hasOwnProperty("error")) {
             setError(true)
             setErrorMessage(source["error"])
         } else {
-            setSource(source);
-            setSourceId(source.hubmap_id)
+            if (sources) {
+                const old_sources = [...sources];
+                old_sources.push(source);
+                setSources(old_sources);
+            } else {
+                setSources([source])
+            }
         }
+    }
+
+    const deleteSource = (source_uuid) => {
+        const old_sources = [...sources];
+        log.debug(old_sources)
+        let updated_sources = old_sources.filter(e => e.uuid !== source_uuid);
+        setSources(updated_sources);
+        log.debug(updated_sources);
     }
 
 
@@ -134,29 +142,35 @@ function EditSample() {
             setDisableSubmit(false);
         } else {
             event.preventDefault();
-            log.debug("Form is valid")
-
-            // Remove empty strings
-            let json = cleanJson(values);
-            let uuid = data.uuid
-
-            await update_create_entity(uuid, json, editMode, "Sample", router).then((response) => {
-                setShowModal(true)
+            if (values['direct_ancestor_uuids'] === undefined || values['direct_ancestor_uuids'].length === 0) {
+                event.stopPropagation();
                 setDisableSubmit(false);
+            } else {
 
-                if (response.status === 200) {
-                    if (editMode === 'edit') {
-                        setModalTitle("Sample Updated")
-                        setModalBody("Sample was updated successfully.")
+                log.debug("Form is valid")
+
+                // Remove empty strings
+                let json = cleanJson(values);
+                let uuid = data.uuid
+
+                await update_create_dataset(uuid, json, editMode, router).then((response) => {
+                    setShowModal(true)
+                    setDisableSubmit(false);
+
+                    if (response.status === 200) {
+                        if (editMode === 'edit') {
+                            setModalTitle("Dataset Updated")
+                            setModalBody("Dataset was updated successfully.")
+                        } else {
+                            setModalTitle("Dataset Created")
+                            setModalBody("Dataset was created successfully.")
+                        }
                     } else {
-                        setModalTitle("Sample Created")
-                        setModalBody("Sample was created successfully.")
+                        setModalTitle("Error Creating Dataset")
+                        setModalBody(response.statusText)
                     }
-                } else {
-                    setModalTitle("Error Creating Sample")
-                    setModalBody(response.statusText)
-                }
-            })
+                })
+            }
         }
 
 
@@ -177,7 +191,7 @@ function EditSample() {
                         bodyHeader={
                             <Container className="px-0" fluid={true}>
                                 <Row md={12}>
-                                    <h4>Sample Information</h4>
+                                    <h4>Dataset Information</h4>
                                 </Row>
                                 {editMode === 'edit' &&
                                     <>
@@ -206,30 +220,19 @@ function EditSample() {
                                 {/*Source ID*/}
                                 {/*editMode is only set when page is ready to load */}
                                 {editMode &&
-                                    <SourceId source={source} onChange={onChange} fetchSource={fetchSource}/>
+                                    <SourceIds values={values} sources={sources} onChange={onChange}
+                                               fetchSources={fetchSources} deleteSource={deleteSource}/>
                                 }
 
-                                {/*Source Information Box*/}
-                                {source &&
-                                    <SourceInformationBox source={source}/>
-                                }
-
-                                {/*/!*Tissue Sample Type*!/*/}
-                                {((editMode === 'edit' && source) || (editMode === 'create')) &&
-                                    <TissueSample data={data} source={source} onChange={onChange}/>
-                                }
-
-                                {/*/!*Preparation Protocol*!/*/}
-                                <Form.Group className="mb-3" controlId="protocol_url">
-                                    <Form.Label>Preparation Protocol <span className="required">* </span>
+                                {/*/!*Lab Name or ID*!/*/}
+                                <Form.Group className="mb-3" controlId="lab_dataset_id">
+                                    <Form.Label>Lab Name or ID<span> </span>
                                         <OverlayTrigger
                                             placement="top"
                                             overlay={
                                                 <Popover>
                                                     <Popover.Body>
-                                                        The protocol used when procuring or preparing the tissue.
-                                                        This must be provided as a protocols.io DOI URL see
-                                                        https://www.protocols.io/
+                                                        Lab Name or ID
                                                     </Popover.Body>
                                                 </Popover>
                                             }
@@ -237,35 +240,11 @@ function EditSample() {
                                             <QuestionCircleFill/>
                                         </OverlayTrigger>
                                     </Form.Label>
-                                    <Form.Control type="text" required
-                                                  pattern={"(^(http(s)?:\/\/)?dx.doi.org\/10\.17504\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10\.17504\/protocols\.io\..+)"}
-                                                  placeholder="protocols.io DOI"
-                                                  defaultValue={data.protocol_url}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
-
-                                {/*/!*Lab Sample ID*!/*/}
-                                <Form.Group className="mb-3" controlId="lab_tissue_sample_id">
-                                    <Form.Label>Lab Sample ID<span> </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        An identifier used by the lab to identify the specimen, this can
-                                                        be an identifier from the system used to track the specimen in
-                                                        the lab. This field will be entered by the user.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control type="text" placeholder="Lab specific alpha-numeric ID"
+                                    <Form.Control type="text" placeholder="Lab Name or ID"
                                                   defaultValue={data.lab_tissue_sample_id}
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
+
 
                                 {/*/!*Description*!/*/}
                                 <Form.Group className="mb-3" controlId="description">
@@ -275,7 +254,8 @@ function EditSample() {
                                             overlay={
                                                 <Popover>
                                                     <Popover.Body>
-                                                        A free text description of the specimen.
+                                                        Add information here which can be used to find this data
+                                                        including lab specific (non-PHI) identifiers.
                                                     </Popover.Body>
                                                 </Popover>
                                             }
@@ -287,21 +267,17 @@ function EditSample() {
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
 
-                                {/*/!*Metadata*!/*/}
-                                <Form.Group controlId="metadata-file" className="mb-3">
-                                    <Form.Label>Add a Metadata file</Form.Label>
-                                    <Form.Control type="file"/>
-                                </Form.Group>
 
-                                {/*/!*Image*!/*/}
-                                <Form.Group controlId="slide-image-file" className="mb-3">
-                                    <Form.Label>Add a Slide Image file <span> </span>
+                                {/*/!*Additional Information*!/*/}
+                                <Form.Group className="mb-3" controlId="dataset_info">
+                                    <Form.Label>Additional Information<span> </span>
                                         <OverlayTrigger
                                             placement="top"
                                             overlay={
                                                 <Popover>
                                                     <Popover.Body>
-                                                        Upload deidentified images only.
+                                                        Add information here which can be used to find this data
+                                                        including lab specific (non-PHI) identifiers.
                                                     </Popover.Body>
                                                 </Popover>
                                             }
@@ -309,18 +285,20 @@ function EditSample() {
                                             <QuestionCircleFill/>
                                         </OverlayTrigger>
                                     </Form.Label>
-                                    <Form.Control type="file"/>
+                                    <Form.Control as="textarea" rows={4} defaultValue={data.description}
+                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
 
-                                {/*/!*Thumbnail*!/*/}
-                                <Form.Group controlId="thumbnail-file" className="mb-3">
-                                    <Form.Label>Add a Thumbnail file <span> </span>
+                                {/*/!*Gene Sequences*!/*/}
+                                <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
+                                    <Form.Label>Gene Sequences <span className="required">* </span>
                                         <OverlayTrigger
                                             placement="top"
                                             overlay={
                                                 <Popover>
                                                     <Popover.Body>
-                                                        Upload deidentified images only.
+                                                        {/*   TODO: Need to add gene sequences tool tip */}
+                                                        Does this dataset contain human genetic sequences
                                                     </Popover.Body>
                                                 </Popover>
                                             }
@@ -328,8 +306,30 @@ function EditSample() {
                                             <QuestionCircleFill/>
                                         </OverlayTrigger>
                                     </Form.Label>
-                                    <Form.Control type="file"/>
+                                    <Form.Check
+                                        required
+                                        type="radio"
+                                        label="No"
+                                        name="contains_human_genetic_sequences"
+                                        value={false}
+                                        defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'edit') ? true : false}
+                                        onChange={e => onChange(e, e.target.id, e.target.value)}
+                                    />
+                                    <Form.Check
+                                        required
+                                        type="radio"
+                                        label="Yes"
+                                        name="contains_human_genetic_sequences"
+                                        value={true}
+                                        defaultChecked={data.contains_human_genetic_sequences ? true : false}
+                                        onChange={e => onChange(e, e.target.id, e.target.value)}
+                                    />
                                 </Form.Group>
+
+                                {/*/!*Data Types*!/*/}
+                                {editMode &&
+                                    <DataTypes values={values} data={data} onChange={onChange}/>
+                                }
 
                                 <Button variant="primary" type="submit" disabled={disableSubmit}>
                                     Submit
@@ -366,4 +366,4 @@ function EditSample() {
 }
 
 
-export default EditSample
+export default EditDataset

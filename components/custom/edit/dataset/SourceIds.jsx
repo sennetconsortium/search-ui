@@ -1,0 +1,156 @@
+import React from 'react';
+import {Form} from 'react-bootstrap';
+import {
+    Paging,
+    PagingInfo,
+    Results,
+    ResultsPerPage,
+    SearchBox,
+    SearchProvider,
+    Sorting,
+    WithSearch
+} from "@elastic/react-search-ui";
+import {Layout} from "@elastic/react-search-ui-views";
+import InputGroup from 'react-bootstrap/InputGroup';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
+import {PlusLg, QuestionCircleFill} from "react-bootstrap-icons";
+import {config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../../config/config";
+import ClearSearchBox from "search-ui/components/core/ClearSearchBox";
+import Facets from "search-ui/components/core/Facets";
+import {TableResults, TableRowDetail} from "../../TableResults";
+import SourcesTable from "./SourcesTable";
+
+export default class SourceIds extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showHideModal: false,
+        };
+    }
+
+    showModal = () => {
+        this.setState({showHideModal: true})
+    }
+    hideModal = () => {
+        this.setState({showHideModal: false})
+    }
+
+    // Handles when updates are made to `Source ID` when the search feature is used
+    changeSource = async (e, sourceId) => {
+        let old_uuids = [];
+        if (this.props.values.direct_ancestor_uuids !== undefined) {
+            old_uuids = [...this.props.values.direct_ancestor_uuids]
+        }
+        old_uuids.push(sourceId);
+        this.props.onChange(e, 'direct_ancestor_uuids', old_uuids);
+        this.props.fetchSources(sourceId);
+        this.hideModal();
+    }
+
+    render() {
+        return (
+            <>
+                <Form.Label>Source(s) <span
+                    className="required">* </span>
+                    <OverlayTrigger
+                        placement="top"
+                        overlay={
+                            <Popover>
+                                <Popover.Body>
+                                    The source tissue samples or data from which this data was derived. At least one
+                                    source is required, but multiple may be specified.
+                                </Popover.Body>
+                            </Popover>
+                        }
+                    >
+                        <QuestionCircleFill/>
+                    </OverlayTrigger>
+                </Form.Label>
+                <Form.Group controlId="direct_ancestor_uuids">
+
+                    <Form.Control style={{display: 'none'}}
+                                  isInvalid={this.props.values.direct_ancestor_uuids === undefined || this.props.values.direct_ancestor_uuids.length === 0}></Form.Control>
+                    <Form.Control.Feedback type="invalid">
+                        Please add at least one source
+                    </Form.Control.Feedback>
+                </Form.Group>
+
+                {/*Source Information Box*/}
+                {this.props.sources &&
+                    <SourcesTable values={this.props.values} onChange={this.props.onChange}
+                                  sources={this.props.sources} deleteSource={this.props.deleteSource}/>
+                }
+
+                <InputGroup className="mb-3" id="direct_ancestor_uuid_button">
+                    <Button variant="primary" onClick={this.showModal}>
+                        Add another source <PlusLg/>
+                    </Button>
+                </InputGroup>
+
+                <Modal
+                    size="xl"
+                    show={this.state.showHideModal}
+                    onHide={this.hideModal}
+                    backdrop="static"
+                    keyboard={false}
+                >
+                    <Modal.Body>
+                        <SearchProvider config={config}>
+                            <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
+                                {({wasSearched, filters}) => {
+                                    return (
+                                        <Layout
+                                            header={
+                                                <div>
+                                                    <SearchBox/>
+                                                    <ClearSearchBox/>
+                                                </div>
+                                            }
+                                            sideContent={
+                                                <>
+                                                    {wasSearched && (
+                                                        <Sorting
+                                                            label={"Sort by"}
+                                                            sortOptions={SORT_OPTIONS}
+                                                        />
+                                                    )}
+
+                                                    <Facets fields={config.searchQuery}/>
+
+                                                </>
+
+                                            }
+                                            bodyContent={
+                                                <Results view={TableResults} filters={filters}
+                                                         titleField={filters}
+                                                         resultView={TableRowDetail}
+                                                         urlField={this.changeSource}
+                                                />
+                                            }
+                                            bodyHeader={
+                                                <React.Fragment>
+                                                    {wasSearched && <PagingInfo/>}
+                                                    {<Paging/>}
+                                                    {wasSearched && <ResultsPerPage options={RESULTS_PER_PAGE}/>}
+                                                </React.Fragment>
+                                            }
+                                            bodyFooter={<Paging/>}
+                                        />
+                                    );
+                                }}
+                            </WithSearch>
+                        </SearchProvider>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.hideModal}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </>
+        )
+    }
+}

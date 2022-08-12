@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
-import {Button, Container, Nav, Navbar} from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
 import {BoxArrowUpRight, CircleFill, FiletypeJson} from 'react-bootstrap-icons';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
@@ -73,7 +73,7 @@ function ViewDataset() {
 
     return (
         <div>
-           <AppNavbar/>
+            <AppNavbar/>
 
             {error &&
                 <div className="alert alert-warning" role="alert">{errorMessage}</div>
@@ -131,9 +131,12 @@ function ViewDataset() {
                                 }
                                 <div className="entity_subtitle link_with_icon">
                                     <CircleFill
-                                        className={`me-1 ${getStatusColor(data.status)}`}/> {data.status} | {data.mapped_data_access_level} Access
-                                    | <Button href={`/api/json/dataset?uuid=${data.uuid}`} className="ms-1"
-                                              variant="primary"><FiletypeJson/></Button>
+                                        className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} | {data.mapped_data_access_level} Access
+
+                                    <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
+                                            variant="primary">Edit</Button>{' '}
+                                    <Button className="ms-1" href={`/api/json/dataset?uuid=${data.uuid}`}
+                                            variant="primary"><FiletypeJson/></Button>
                                 </div>
                             </div>
                         </div>

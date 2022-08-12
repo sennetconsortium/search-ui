@@ -1,7 +1,7 @@
 import styles from "../../table.module.css";
 import React from 'react';
 
-export default class Tissue extends React.Component {
+export default class SourceInformationBox extends React.Component {
     render() {
         return (
             <li className="sui-result w-50 mx-auto">

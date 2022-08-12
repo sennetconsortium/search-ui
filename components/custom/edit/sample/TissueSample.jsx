@@ -5,7 +5,7 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
-export default class Tissue extends React.Component {
+export default class TissueSample extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
