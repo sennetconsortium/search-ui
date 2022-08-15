@@ -97,19 +97,16 @@ function ViewSample() {
                                             </li>
                                         }
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Tissue">Tissue</a>
-                                        </li>
-                                        <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li>
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Protocols">Protocols</a>
                                         </li>
-                                        {!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
-                                            </li>
-                                        }
+                                        {/*{!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&*/}
+                                        {/*    <li className="sui-single-option-facet__item"><a*/}
+                                        {/*        className="sui-single-option-facet__link" href="#Metadata">Metadata</a>*/}
+                                        {/*    </li>*/}
+                                        {/*}*/}
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link"
                                             href="#Attribution">Attribution</a>
@@ -155,8 +152,6 @@ function ViewSample() {
                                     <DerivedDataset data={data}/>
                                 }
 
-                                {/*Tissue*/}
-                                <Tissue data={data}/>
 
                                 {/*Provenance*/}
                                 {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
@@ -167,11 +162,11 @@ function ViewSample() {
                                 {/*TODO: Need to add protocols section*/}
 
                                 {/*Metadata*/}
-                                {/*TODO: change donor to source*/}
-                                {!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&
-                                    <Metadata metadataKey='donor.' data={data.donor.mapped_metadata}
-                                              filename={data.hubmap_id}/>
-                                }
+                                {/*/!*TODO: change donor to source*!/*/}
+                                {/*{!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&*/}
+                                {/*    <Metadata metadataKey='donor.' data={data.donor.mapped_metadata}*/}
+                                {/*              filename={data.hubmap_id}/>*/}
+                                {/*}*/}
 
                                 {/*Attribution*/}
                                 <Attribution data={data}/>

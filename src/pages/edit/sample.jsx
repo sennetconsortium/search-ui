@@ -5,7 +5,7 @@ import {Button, Col, Container, Form, Row} from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import SourceId from "../../components/custom/edit/sample/SourceId";
+import AncestorId from "../../components/custom/edit/sample/AncestorId";
 import TissueSample from "../../components/custom/edit/sample/TissueSample";
 import SourceInformationBox from "../../components/custom/edit/sample/SourceInformationBox";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -203,10 +203,10 @@ function EditSample() {
                         }
                         bodyContent={
                             <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                                {/*Source ID*/}
+                                {/*Ancestor ID*/}
                                 {/*editMode is only set when page is ready to load */}
                                 {editMode &&
-                                    <SourceId source={source} onChange={onChange} fetchSource={fetchSource}/>
+                                    <AncestorId source={source} onChange={onChange} fetchSource={fetchSource}/>
                                 }
 
                                 {/*Source Information Box*/}
