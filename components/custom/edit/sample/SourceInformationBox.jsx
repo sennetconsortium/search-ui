@@ -8,7 +8,7 @@ export default class SourceInformationBox extends React.Component {
                 <div className="sui-result__body">
                     <ul className="sui-result__details">
                         <li className={styles.element}>
-                            <span className={`sui-result__key`}>Source Type</span>
+                            <span className={`sui-result__key`}>Ancestor Type</span>
                             <span
                                 className={`sui-result__value fluid `}>{this.props.source?.mapped_specimen_type ||
                                 this.props.source.entity_type}</span>

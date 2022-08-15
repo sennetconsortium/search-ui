@@ -23,7 +23,7 @@ import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
 import log from "loglevel";
 
-export default class SourceId extends React.Component {
+export default class AncestorId extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -48,7 +48,7 @@ export default class SourceId extends React.Component {
     render() {
         return (
             <>
-                <Form.Label>Source ID <span
+                <Form.Label>Ancestor ID <span
                     className="required">* </span>
                     <OverlayTrigger
                         placement="top"
