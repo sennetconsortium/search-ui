@@ -31,7 +31,7 @@ $ ./search-api-docker.sh localhost start
 ```
 
 To start the application run the following commands:\
- **_Note:_** This application requires Node.js 12.22.0 or later
+ **_Note:_** This application requires Node.js 18 or later
 
 ```
 $ npm install

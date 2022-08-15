@@ -1,0 +1,9 @@
+version: "3.7"
+
+services:
+
+  portal-ui:
+    build: ./portal-ui
+    # Build the image with name and tag
+    # Exit with an error message containing err if unset or empty in the environment
+    image: sennet/portal-ui:${PORTAL_UI_VERSION:?err}

@@ -1,0 +1,23 @@
+.no_sidebar .sui-layout-sidebar {
+    width: 0 !important;
+    padding: 0 !important;
+}
+
+.no_sidebar .sui-layout-main {
+    width: 100% !important;
+}
+
+.required {
+    color: red;
+}
+
+.entity_subtitle {
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.link_with_icon {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
