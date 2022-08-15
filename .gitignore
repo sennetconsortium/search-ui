@@ -34,4 +34,8 @@ yarn-error.log*
 # UI react-app
 package-lock.json
 
+# VSCode Files
 .idea/
+.vscode/
+.vscode/bookmarks.json
+sennet.code-workspace

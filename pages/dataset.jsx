@@ -97,9 +97,9 @@ function ViewDataset() {
                                                 className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
                                             </li>
                                         }
-                                        <li className="sui-single-option-facet__item"><a
+                                        {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Files">Files</a>
-                                        </li>
+                                        </li> */}
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link"
                                             href="#Contributors">Contributors</a>

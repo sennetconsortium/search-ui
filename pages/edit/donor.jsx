@@ -268,13 +268,13 @@ function EditSource() {
                                 </Form.Group>
 
                                 {/*/!*Metadata*!/*/}
-                                <Form.Group controlId="metadata-file" className="mb-3">
+                                {/* <Form.Group controlId="metadata-file" className="mb-3">
                                     <Form.Label>Add a Metadata file</Form.Label>
                                     <Form.Control type="file"/>
-                                </Form.Group>
+                                </Form.Group> */}
 
                                 {/*/!*Image*!/*/}
-                                <Form.Group controlId="image-file" className="mb-3">
+                                {/* <Form.Group controlId="image-file" className="mb-3">
                                     <Form.Label>Add an Image file <span> </span>
                                         <OverlayTrigger
                                             placement="top"
@@ -290,7 +290,7 @@ function EditSource() {
                                         </OverlayTrigger>
                                     </Form.Label>
                                     <Form.Control type="file"/>
-                                </Form.Group>
+                                </Form.Group> */}
 
                                 <Button variant="primary" type="submit" disabled={disableSubmit}>
                                     Submit
