@@ -1,5 +1,39 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+#ignore emacs backup files
+*~
+
+BUILD
+
+# mounted VERSION and BUILD file
+src/portal-ui/BUILD
+src/portl-ui/VERSION
+
+# Docker copied stuff
+docker/portal-ui/src
+
+# Ignore log files created by docker
+src/log
+
+# log files in any path
+**/*.log
+
+# Rotated log files
+**/*.log*
+
+# UI react-app
+src/node_modules
+src/portalt-ui/.pnp
+src/portal-ui/.pnp.js
+src/package-lock.json
+
+# testing
+src/react-app/coverage
+
+# env files
+src/.env.*
+src/.env
+
 .next
 
 # dependencies
