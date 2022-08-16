@@ -51,7 +51,7 @@ RUN npm install && \
 
 # The EXPOSE instruction informs Docker that the container listens on the specified network ports at runtime. 
 # Here 80 for nginx to serve the react generated static site
-EXPOSE 80
+EXPOSE 80 8080
 
 # Set an entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh

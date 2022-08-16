@@ -6,6 +6,8 @@ services:
   portal-ui:
     hostname: portal-ui
     container_name: portal-ui
+    ports:
+      - "8888:8080"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080"]
       interval: 1m30s
