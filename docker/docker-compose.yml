@@ -18,12 +18,14 @@ services:
     init: true
     restart: always
     volumes:
+      # Mount conf.d on host machine to the nginx conf.d on container
+      - "./portal-ui/nginx/conf.d:/etc/nginx/conf.d"
       # Mount the logging to container
       - "../log:/usr/src/app/log"
     networks:
-      - gateway_sennet
+      - sennet_docker_network
 
 networks:
   # This is the network created by gateway to enable communicaton between multiple docker-compose projects
-  gateway_sennet:
+  sennet_docker_network:
     external: true

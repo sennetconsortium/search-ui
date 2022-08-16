@@ -26,24 +26,26 @@ module_hotfixes=true\n'\
 # 3 - Install nginx (using the custom yum repo specified earlier)
 # 4 - Remove the default nginx config file
 # 5 - Overwrite the nginx.conf with ours to run nginx as non-root
-# 6 - Use our nginx config file for ingest-ui
+# 6 - Remove the nginx directory copied from host machine (nginx/conf.d gets mounted to the container)
 # 7 - Add Node.js stable release Yum Repository
 # 8 - Install Node.js v18.x (includes npm)
-# 9 - Clean all yum cache
+# 9 - Make the start script executable
+# 10 - Clean all yum cache
 RUN yum install -y yum-utils && \
     yum-config-manager --enable nginx-mainline && \
     yum install -y nginx && \
     rm /etc/nginx/conf.d/default.conf && \
-    mv nginx.conf /etc/nginx/nginx.conf && \
-    mv portal-ui.conf /etc/nginx/conf.d && \
+    mv nginx/nginx.conf /etc/nginx/nginx.conf && \
+    rm -rf nginx && \
     curl -sL https://rpm.nodesource.com/setup_18.x | bash - && \
     yum install -y nodejs && \
+    chmod +x start.sh && \
     yum clean all
     
 # Change to source code directory
 WORKDIR /usr/src/app/src
 
-# Install npm dependencies and generate static site
+# Install npm dependencies
 RUN npm install && \
     npm run build
 
@@ -57,4 +59,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/usr/src/app/start.sh"]
