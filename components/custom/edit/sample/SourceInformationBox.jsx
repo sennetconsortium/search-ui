@@ -11,7 +11,7 @@ export default class SourceInformationBox extends React.Component {
             // <li className="sui-result w-50 mx-auto">
             <li className="sui-result">
             <div className="sui-result__header" id="SourceInformationBox">
-                <span className="sui-result__title">Source Information</span>
+                <span className="sui-result__title">Ancestor</span>
             </div>
 
                 <div className="card-body"> 

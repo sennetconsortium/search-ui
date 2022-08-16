@@ -88,19 +88,22 @@ function ViewDataset() {
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Summary">Summary</a>
+                                            className="sui-single-option-facet__link" 
+                                            href="#Summary">Summary</a>
                                         </li>
                                         {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li> */}
                                         {data.ancestors &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#SourceInformationBox">Source</a>
+                                                className="sui-single-option-facet__link" 
+                                                href="#SourceInformationBox">Ancestor</a>
                                             </li>
                                         }
                                         {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
+                                                className="sui-single-option-facet__link" 
+                                                href="#Metadata">Metadata</a>
                                             </li>
                                         }
                                         <li className="sui-single-option-facet__item"><a

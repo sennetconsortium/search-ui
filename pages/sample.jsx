@@ -89,11 +89,13 @@ function ViewSample() {
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Summary">Summary</a>
+                                            className="sui-single-option-facet__link" 
+                                            href="#Summary">Summary</a>
                                         </li>
                                         {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#Derived-Datasets">Derived
+                                                className="sui-single-option-facet__link" 
+                                                href="#Derived-Datasets">Derived
                                                 Datasets</a>
                                             </li>
                                         }
@@ -102,11 +104,13 @@ function ViewSample() {
                                         </li> */}
                                         {data.ancestors &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#SourceInformationBox">Source</a>
+                                                className="sui-single-option-facet__link" 
+                                                href="#SourceInformationBox">Ancestor</a>
                                             </li>
                                         }
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Protocols">Protocols</a>
+                                            className="sui-single-option-facet__link" 
+                                            href="#Protocols">Protocols</a>
                                         </li>
                                         {/*{!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&*/}
                                         {/*    <li className="sui-single-option-facet__item"><a*/}
