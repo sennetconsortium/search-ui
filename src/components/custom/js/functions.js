@@ -53,7 +53,7 @@ export function getStatusColor(status) {
         }
 
         if (['INVALID', 'ERROR'].includes(status)) {
-            return 'error';
+            return 'danger';
         }
 
         if (['UNPUBLISHED', 'DEPRECATED', 'Retracted' /* sub_status gets title caps. */].includes(status)) {
