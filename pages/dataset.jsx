@@ -7,6 +7,7 @@ import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 // import Provenance from "../components/custom/entities/sample/Provenance";
+import SourceInformationBox from "../components/custom/edit/sample/SourceInformationBox";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import Attribution from "../components/custom/entities/sample/Attribution";
@@ -92,6 +93,11 @@ function ViewDataset() {
                                         {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li> */}
+                                        {data.ancestors &&
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link" href="#SourceInformationBox">Source</a>
+                                            </li>
+                                        }
                                         {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
                                             <li className="sui-single-option-facet__item"><a
                                                 className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
@@ -164,6 +170,12 @@ function ViewDataset() {
                                 {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
                                 } */}
+                                
+                                {/*Source Information Box*/}
+                                {data.ancestors &&
+                                    <SourceInformationBox source={data}/>
+                                }
+                                
 
                                 {/*Metadata*/}
                                 {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
