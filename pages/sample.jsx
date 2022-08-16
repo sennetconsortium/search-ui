@@ -8,7 +8,7 @@ import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import Tissue from "../components/custom/entities/sample/Tissue";
-import Provenance from "../components/custom/entities/sample/Provenance";
+// import Provenance from "../components/custom/entities/sample/Provenance";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
@@ -96,9 +96,9 @@ function ViewSample() {
                                                 Datasets</a>
                                             </li>
                                         }
-                                        <li className="sui-single-option-facet__item"><a
+                                        {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                        </li>
+                                        </li> */}
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Protocols">Protocols</a>
                                         </li>
@@ -154,9 +154,9 @@ function ViewSample() {
 
 
                                 {/*Provenance*/}
-                                {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
+                                {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
-                                }
+                                } */}
 
                                 {/*Protocols*/}
                                 {/*TODO: Need to add protocols section*/}
