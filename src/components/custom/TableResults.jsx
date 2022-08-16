@@ -1,6 +1,8 @@
 import React from 'react';
 import styles from './style.module.css'
 import {Table} from 'react-bootstrap';
+import {getStatusColor} from "./js/functions";
+import Badge from 'react-bootstrap/Badge';
 
 
 const DefaultTableResults = ({children}) => {
@@ -201,7 +203,8 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                     </td>
                                     <td>
                                         {result.status ? (
-                                            <>{result.status.raw}</>
+                                            <Badge pill
+                                                   bg={getStatusColor(result.status.raw)}>{result.status.raw}</Badge>
                                         ) : null
                                         }
                                     </td>

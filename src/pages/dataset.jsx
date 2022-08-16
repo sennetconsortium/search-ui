@@ -128,14 +128,18 @@ function ViewDataset() {
                                         </span>
                                     }
                                     {data.origin_sample &&
-                                        <span className="ms-1">
-                                            {data.origin_sample.mapped_organ} |
+                                        <span className="ms-1 me-1">
+                                            {data.origin_sample.mapped_organ}
                                         </span>
                                     }
                                     {data.doi_url &&
-                                        <a href={data.doi_url} className="ms-1 link_with_icon">
-                                            <span className="me-1">doi:{data.registered_doi}</span> <BoxArrowUpRight/>
-                                        </a>
+                                        <>
+                                            |
+                                            <a href={data.doi_url} className="ms-1 link_with_icon">
+                                                <span className="me-1">doi:{data.registered_doi}</span>
+                                                <BoxArrowUpRight/>
+                                            </a>
+                                        </>
                                     }
                                 </div>
                                 <div className="entity_subtitle link_with_icon">
