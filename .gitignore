@@ -1,19 +1,13 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-#ignore emacs backup files
+# Ignore emacs backup files
 *~
 
+# Ignore generated BUILD file
 BUILD
-
-# mounted VERSION and BUILD file
-src/portal-ui/BUILD
-src/portl-ui/VERSION
 
 # Docker copied stuff
 docker/portal-ui/src
-
-# Ignore log files created by docker
-src/log
 
 # log files in any path
 **/*.log
@@ -34,22 +28,9 @@ src/react-app/coverage
 src/.env.*
 src/.env
 
-.next
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
+# nextjs
+src/.next
+src/out
 
 # misc
 .DS_Store
@@ -58,14 +39,5 @@ src/.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# local env files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# UI react-app
-package-lock.json
 
 .idea/
