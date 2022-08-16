@@ -12,7 +12,7 @@ git submodule update --init --remote
 
 ## For Local Development
 
-Create a file called `.env.local` at the root of the project with the same structure as `sample.env`. Modify the
+Create a file called `.env.local` in `/src` with the same structure as `example.env`. Modify the
 variables as needed.
 
 ### Required services
@@ -32,7 +32,7 @@ following command:
 $ ./search-api-docker.sh localhost start
 ```
 
-To start the application run the following commands:\
+To start the application run the following commands inside `/src`:\
  **_Note:_** This application requires Node.js 18 or later
 
 ```
