@@ -178,14 +178,13 @@ function EditSource() {
                             <Form noValidate validated={validated} onSubmit={handleSubmit}>
                                 {/*Lab's Source Non-PHI ID*/}
                                 <Form.Group className="mb-3" controlId="lab_donor_id">
-                                    <Form.Label>Lab's Source Non-PHI ID <span className="required">* </span>
+                                    <Form.Label>Lab's Source Non-PHI ID or Name<span className="required">* </span>
                                         <OverlayTrigger
                                             placement="top"
                                             overlay={
                                                 <Popover>
                                                     <Popover.Body>
-                                                        An identifier used by the lab to identify the source. This field
-                                                        will be entered by the user.
+                                                        An identifier used by the lab to identify the source.
                                                     </Popover.Body>
                                                 </Popover>
                                             }
@@ -194,31 +193,8 @@ function EditSource() {
                                         </OverlayTrigger>
                                     </Form.Label>
                                     <Form.Control type="text" required
-                                                  placeholder="An non-PHI ID used by the lab when referring to the source."
+                                                  placeholder="An non-PHI ID or deidentified name used by the lab when referring to the source."
                                                   defaultValue={data.lab_donor_id}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
-
-                                {/*Deidentified Name*/}
-                                <Form.Group className="mb-3" controlId="label">
-                                    <Form.Label>Deidentified Name <span className="required">* </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        A deidentified name used by the lab to identify the source (e.g.
-                                                        SenNet Source 1).
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control type="text" required
-                                                  placeholder="A deidentified name used by the lab to identify the source (e.g. SenNet Source 1)."
-                                                  defaultValue={data.label}
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
 
@@ -268,13 +244,13 @@ function EditSource() {
                                 </Form.Group>
 
                                 {/*/!*Metadata*!/*/}
-                                <Form.Group controlId="metadata-file" className="mb-3">
+                                {/* <Form.Group controlId="metadata-file" className="mb-3">
                                     <Form.Label>Add a Metadata file</Form.Label>
                                     <Form.Control type="file"/>
-                                </Form.Group>
+                                </Form.Group> */}
 
                                 {/*/!*Image*!/*/}
-                                <Form.Group controlId="image-file" className="mb-3">
+                                {/* <Form.Group controlId="image-file" className="mb-3">
                                     <Form.Label>Add an Image file <span> </span>
                                         <OverlayTrigger
                                             placement="top"
@@ -290,7 +266,7 @@ function EditSource() {
                                         </OverlayTrigger>
                                     </Form.Label>
                                     <Form.Control type="file"/>
-                                </Form.Group>
+                                </Form.Group> */}
 
                                 <Button variant="primary" type="submit" disabled={disableSubmit}>
                                     Submit

@@ -1,14 +1,14 @@
 import styles from "../../table.module.css";
 import React from 'react';
 
-export default class Tissue extends React.Component {
+export default class SourceInformationBox extends React.Component {
     render() {
         return (
             <li className="sui-result w-50 mx-auto">
                 <div className="sui-result__body">
                     <ul className="sui-result__details">
                         <li className={styles.element}>
-                            <span className={`sui-result__key`}>Source Type</span>
+                            <span className={`sui-result__key`}>Ancestor Type</span>
                             <span
                                 className={`sui-result__value fluid `}>{this.props.source?.mapped_specimen_type ||
                                 this.props.source.entity_type}</span>

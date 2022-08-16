@@ -11,7 +11,7 @@ const DefaultTableResults = ({children}) => {
                 <tr>
                     <th>Created By</th>
                     <th>SenNet ID</th>
-                    <th>Submisson ID</th>
+                    <th>Submission ID</th>
                     <th>Lab ID</th>
                     <th>Type</th>
                     <th>Group</th>

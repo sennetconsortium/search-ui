@@ -24,6 +24,11 @@ export function getEntityEndPoint() {
     return process.env.NEXT_PUBLIC_ENTITY_API_ENDPOINT
 }
 
+export function getIngestEndPoint() {
+    return process.env.NEXT_PUBLIC_INGEST_API_ENDPOINT
+}
+
+
 export function getIngestLogin() {
     return process.env.NEXT_PUBLIC_INGEST_LOGIN
 }

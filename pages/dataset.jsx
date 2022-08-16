@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
-import {Button, Container, Nav, Navbar} from 'react-bootstrap';
+import {Button} from 'react-bootstrap';
 import {BoxArrowUpRight, CircleFill, FiletypeJson} from 'react-bootstrap-icons';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
@@ -73,7 +73,7 @@ function ViewDataset() {
 
     return (
         <div>
-           <AppNavbar/>
+            <AppNavbar/>
 
             {error &&
                 <div className="alert alert-warning" role="alert">{errorMessage}</div>
@@ -97,9 +97,9 @@ function ViewDataset() {
                                                 className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
                                             </li>
                                         }
-                                        <li className="sui-single-option-facet__item"><a
+                                        {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Files">Files</a>
-                                        </li>
+                                        </li> */}
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link"
                                             href="#Contributors">Contributors</a>
@@ -121,19 +121,31 @@ function ViewDataset() {
                             <h3>{data.hubmap_id}</h3>
 
                             <div className="d-flex justify-content-between mb-2">
-                                {data.origin_sample &&
-                                    <a href={data.doi_url} className="entity_subtitle link_with_icon">
-                                            <span
-                                                className="me-1">{data.mapped_data_types[0]} | {data.origin_sample.mapped_organ} |
-                                                doi:{data.registered_doi}</span> <BoxArrowUpRight/>
-
-                                    </a>
-                                }
+                                <div className="entity_subtitle link_with_icon">
+                                    {data.mapped_data_types &&
+                                        <span>
+                                            {data.mapped_data_types[0]} |
+                                        </span>
+                                    }
+                                    {data.origin_sample &&
+                                        <span className="ms-1">
+                                            {data.origin_sample.mapped_organ} |
+                                        </span>
+                                    }
+                                    {data.doi_url &&
+                                        <a href={data.doi_url} className="ms-1 link_with_icon">
+                                            <span className="me-1">doi:{data.registered_doi}</span> <BoxArrowUpRight/>
+                                        </a>
+                                    }
+                                </div>
                                 <div className="entity_subtitle link_with_icon">
                                     <CircleFill
-                                        className={`me-1 ${getStatusColor(data.status)}`}/> {data.status} | {data.mapped_data_access_level} Access
-                                    | <Button href={`/api/json/dataset?uuid=${data.uuid}`} className="ms-1"
-                                              variant="primary"><FiletypeJson/></Button>
+                                        className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} | {data.mapped_data_access_level} Access
+
+                                    <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
+                                            variant="primary">Edit</Button>{' '}
+                                    <Button className="ms-1" href={`/api/json/dataset?uuid=${data.uuid}`}
+                                            variant="primary"><FiletypeJson/></Button>
                                 </div>
                             </div>
                         </div>
