@@ -2,19 +2,20 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button} from 'react-bootstrap';
-import {FiletypeJson} from 'react-bootstrap-icons';
+import {BoxArrowUpRight, CircleFill, FiletypeJson} from 'react-bootstrap-icons';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
-import Provenance from "../components/custom/entities/sample/Provenance";
+// import Provenance from "../components/custom/entities/sample/Provenance";
+import SourceInformationBox from "../components/custom/edit/sample/SourceInformationBox";
 import Metadata from "../components/custom/entities/sample/Metadata";
+import Contributors from "../components/custom/entities/dataset/Contributors";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestHeaders} from "../components/custom/js/functions";
-import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
+import {getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 
-function ViewSource() {
+function ViewDataset() {
     const router = useRouter()
     const [data, setData] = useState(null)
     const [error, setError] = useState(false)
@@ -36,13 +37,13 @@ function ViewSource() {
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-            log.debug('source: getting data...', uuid)
+            log.debug('dataset: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
             const data = await response.json();
 
-            log.debug('source: Got data', data)
+            log.debug('dataset: Got data', data)
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
@@ -66,7 +67,7 @@ function ViewSource() {
     // effect runs when user state is updated
     useEffect(() => {
         // reset form with user data
-        log.debug("source: RESET data...")
+        log.debug("dataset: RESET data...")
         //reset(data);
     }, [data]);
 
@@ -87,24 +88,30 @@ function ViewSource() {
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Summary">Summary</a>
+                                            className="sui-single-option-facet__link" 
+                                            href="#Summary">Summary</a>
                                         </li>
-                                        {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
-                                            </li>
-                                        }
-                                        {!!(data.descendant_counts && Object.keys(data.descendant_counts).length) &&
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link"
-                                                href="#Derived-Datasets">Derived</a>
-                                            </li>
-                                        }
-                                        <li className="sui-single-option-facet__item"><a
+                                        {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                        </li>
+                                        </li> */}
+                                        {data.ancestors &&
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link" 
+                                                href="#SourceInformationBox">Ancestor</a>
+                                            </li>
+                                        }
+                                        {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link" 
+                                                href="#Metadata">Metadata</a>
+                                            </li>
+                                        }
+                                        {/* <li className="sui-single-option-facet__item"><a
+                                            className="sui-single-option-facet__link" href="#Files">Files</a>
+                                        </li> */}
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Protocols">Protocols</a>
+                                            className="sui-single-option-facet__link"
+                                            href="#Contributors">Contributors</a>
                                         </li>
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link"
@@ -118,17 +125,40 @@ function ViewSource() {
 
                     bodyHeader={
                         <div style={{width: '100%'}}>
-                            <h4>Source</h4>
+                            <h4>Dataset</h4>
                             {/*TODO: Change to sennet_id*/}
+                            <h3>{data.hubmap_id}</h3>
 
                             <div className="d-flex justify-content-between mb-2">
-                                <h3>{data.hubmap_id}</h3>
+                                <div className="entity_subtitle link_with_icon">
+                                    {data.mapped_data_types &&
+                                        <span>
+                                            {data.mapped_data_types[0]} |
+                                        </span>
+                                    }
+                                    {data.origin_sample &&
+                                        <span className="ms-1 me-1">
+                                            {data.origin_sample.mapped_organ}
+                                        </span>
+                                    }
+                                    {data.doi_url &&
+                                        <>
+                                            |
+                                            <a href={data.doi_url} className="ms-1 link_with_icon">
+                                                <span className="me-1">doi:{data.registered_doi}</span>
+                                                <BoxArrowUpRight/>
+                                            </a>
+                                        </>
+                                    }
+                                </div>
+                                <div className="entity_subtitle link_with_icon">
+                                    <CircleFill
+                                        className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} | {data.mapped_data_access_level} Access
 
-                                <div>
-                                    <Button href={`/edit/donor?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}
-                                    <Button href={`/api/json/source?uuid=${data.uuid}`} variant="primary">
-                                        <FiletypeJson/>
-                                    </Button>
+                                    <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
+                                            variant="primary">Edit</Button>{' '}
+                                    <Button className="ms-1" href={`/api/json/dataset?uuid=${data.uuid}`}
+                                            variant="primary"><FiletypeJson/></Button>
                                 </div>
                             </div>
                         </div>
@@ -138,29 +168,34 @@ function ViewSource() {
                         <div>
                             <ul className="sui-results-container">
                                 {/*Description*/}
-                                <Description primaryDateTitle="Creation Date" primaryDate={data.created_timestamp}
+                                <Description primaryDateTitle="Publication Date" primaryDate={data.published_timestamp}
                                              secondaryDateTitle="Modification Date"
                                              secondaryDate={data.last_modified_timestamp}
                                              data={data}/>
 
-                                {/*Metadata*/}
-                                {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
-                                    <Metadata data={data.mapped_metadata} filename={data.hubmap_id}/>
-                                }
-
-                                {/*Derived Dataset*/}
-                                {!!(data.descendant_counts && Object.keys(data.descendant_counts).length) &&
-                                    <DerivedDataset includeSample={true} data={data}/>
-                                }
-
                                 {/*Provenance*/}
-                                {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
+                                {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
+                                } */}
+                                
+                                {/*Source Information Box*/}
+                                {data.ancestors &&
+                                    <SourceInformationBox source={data}/>
+                                }
+                                
+
+                                {/*Metadata*/}
+                                {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
+                                    <Metadata data={data.metadata.metadata} filename={data.hubmap_id}/>
                                 }
 
+                                {/*Files*/}
+                                {/*TODO: Need to create files section*/}
 
-                                {/*Protocols*/}
-                                {/*TODO: Need to add protocols section*/}
+                                {/*Contributors*/}
+                                {!!(data.contributors && Object.keys(data.contributors).length) &&
+                                    <Contributors data={data.contributors}/>
+                                }
 
                                 {/*Attribution*/}
                                 <Attribution data={data}/>
@@ -185,4 +220,4 @@ function ViewSource() {
 }
 
 
-export default ViewSource
+export default ViewDataset

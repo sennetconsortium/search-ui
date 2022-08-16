@@ -1,3 +1,5 @@
+# SenNet Data Portal
+
 ## Working with submodule
 
 This repository relies on the [search-ui](https://github.com/dbmi-pitt/search-ui) as a submodule to function. The
@@ -31,11 +33,34 @@ $ ./search-api-docker.sh localhost start
 ```
 
 To start the application run the following commands:\
- **_Note:_** This application requires Node.js 12.22.0 or later
+ **_Note:_** This application requires Node.js 18 or later
 
 ```
 $ npm install
 $ npm run dev
 ```
 
+## Docker deployment
+
+For docker deployment, first create `.env` file base on `example.env` file in the same `src` directory.
+
+### Docker build for DEV development
+
+There are a few configurable environment variables to keep in mind:
+
+- `HOST_UID`: the user id on the host machine to be mapped to the container. Default to 1000 if not set or null.
+- `HOST_GID`: the user's group id on the host machine to be mapped to the container. Default to 1000 if not set or null.
+
+```
+cd docker
+./docker-development.sh [check|config|build|start|stop|down]
+```
+
+### Docker build for deployment on TEST/STAGE/PROD
+
+```
+cd docker
+docker pull hubmap/portal-ui:1.0.0 (replace with the actual released version number)
+./docker-deployment.sh [start|stop|down]
+```
 
