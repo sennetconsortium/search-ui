@@ -4,3 +4,6 @@ Dockerfile
 # Ignore itself
 .dockerignore
 
+# Ignore the node_modules directory and the package-lock.json file
+src/node_modules
+src/package-lock.json
