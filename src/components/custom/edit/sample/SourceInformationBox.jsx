@@ -1,11 +1,20 @@
 import styles from "../../table.module.css";
 import React from 'react';
 
+
+
+
 export default class SourceInformationBox extends React.Component {
     render() {
         return (
-            <li className="sui-result w-50 mx-auto">
-                <div className="sui-result__body">
+           
+            // <li className="sui-result w-50 mx-auto">
+            <li className="sui-result">
+            <div className="sui-result__header" id="SourceInformationBox">
+                <span className="sui-result__title">Ancestor</span>
+            </div>
+
+                <div className="card-body"> 
                     <ul className="sui-result__details">
                         <li className={styles.element}>
                             <span className={`sui-result__key`}>Ancestor Type</span>

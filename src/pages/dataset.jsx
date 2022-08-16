@@ -6,7 +6,8 @@ import {BoxArrowUpRight, CircleFill, FiletypeJson} from 'react-bootstrap-icons';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
-import Provenance from "../components/custom/entities/sample/Provenance";
+// import Provenance from "../components/custom/entities/sample/Provenance";
+import SourceInformationBox from "../components/custom/edit/sample/SourceInformationBox";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import Attribution from "../components/custom/entities/sample/Attribution";
@@ -87,14 +88,22 @@ function ViewDataset() {
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Summary">Summary</a>
+                                            className="sui-single-option-facet__link" 
+                                            href="#Summary">Summary</a>
                                         </li>
-                                        <li className="sui-single-option-facet__item"><a
+                                        {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                        </li>
+                                        </li> */}
+                                        {data.ancestors &&
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link" 
+                                                href="#SourceInformationBox">Ancestor</a>
+                                            </li>
+                                        }
                                         {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
+                                                className="sui-single-option-facet__link" 
+                                                href="#Metadata">Metadata</a>
                                             </li>
                                         }
                                         <li className="sui-single-option-facet__item"><a
@@ -165,9 +174,15 @@ function ViewDataset() {
                                              data={data}/>
 
                                 {/*Provenance*/}
-                                {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
+                                {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
+                                } */}
+                                
+                                {/*Source Information Box*/}
+                                {data.ancestors &&
+                                    <SourceInformationBox source={data}/>
                                 }
+                                
 
                                 {/*Metadata*/}
                                 {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&

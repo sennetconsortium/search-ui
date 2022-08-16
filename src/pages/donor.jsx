@@ -6,7 +6,8 @@ import {FiletypeJson} from 'react-bootstrap-icons';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
-import Provenance from "../components/custom/entities/sample/Provenance";
+// import Provenance from "../components/custom/entities/sample/Provenance";
+import SourceInformationBox from "../components/custom/edit/sample/SourceInformationBox";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
@@ -87,11 +88,13 @@ function ViewSource() {
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Summary">Summary</a>
+                                            className="sui-single-option-facet__link" 
+                                            href="#Summary">Summary</a>
                                         </li>
                                         {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#Metadata">Metadata</a>
+                                                className="sui-single-option-facet__link" 
+                                                href="#Metadata">Metadata</a>
                                             </li>
                                         }
                                         {!!(data.descendant_counts && Object.keys(data.descendant_counts).length) &&
@@ -100,11 +103,18 @@ function ViewSource() {
                                                 href="#Derived-Datasets">Derived</a>
                                             </li>
                                         }
-                                        <li className="sui-single-option-facet__item"><a
+                                        {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                        </li>
+                                        </li> */}
+                                        {data.ancestors &&
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link" 
+                                                href="#SourceInformationBox">Ancestor</a>
+                                            </li>
+                                        }
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Protocols">Protocols</a>
+                                            className="sui-single-option-facet__link" 
+                                            href="#Protocols">Protocols</a>
                                         </li>
                                         <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link"
@@ -154,8 +164,13 @@ function ViewSource() {
                                 }
 
                                 {/*Provenance*/}
-                                {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
+                                {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
+                                } */}
+
+                                {/*Source Information Box*/}
+                                {data.ancestors &&
+                                    <SourceInformationBox source={data}/>
                                 }
 
 

@@ -8,7 +8,8 @@ import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import Tissue from "../components/custom/entities/sample/Tissue";
-import Provenance from "../components/custom/entities/sample/Provenance";
+// import Provenance from "../components/custom/entities/sample/Provenance";
+import SourceInformationBox from "../components/custom/edit/sample/SourceInformationBox";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
@@ -88,19 +89,28 @@ function ViewSample() {
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Summary">Summary</a>
+                                            className="sui-single-option-facet__link" 
+                                            href="#Summary">Summary</a>
                                         </li>
                                         {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" href="#Derived-Datasets">Derived
+                                                className="sui-single-option-facet__link" 
+                                                href="#Derived-Datasets">Derived
                                                 Datasets</a>
                                             </li>
                                         }
-                                        <li className="sui-single-option-facet__item"><a
+                                        {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                        </li>
+                                        </li> */}
+                                        {data.ancestors &&
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link" 
+                                                href="#SourceInformationBox">Ancestor</a>
+                                            </li>
+                                        }
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Protocols">Protocols</a>
+                                            className="sui-single-option-facet__link" 
+                                            href="#Protocols">Protocols</a>
                                         </li>
                                         {/*{!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&*/}
                                         {/*    <li className="sui-single-option-facet__item"><a*/}
@@ -154,8 +164,13 @@ function ViewSample() {
 
 
                                 {/*Provenance*/}
-                                {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
-                                    <Provenance data={data}/>
+                                {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
+                                    <Provenance data={  }/>
+                                } */}
+
+                                {/*Source Information Box*/}
+                                {data.ancestors &&
+                                    <SourceInformationBox source={data}/>
                                 }
 
                                 {/*Protocols*/}
