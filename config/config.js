@@ -114,7 +114,7 @@ export const config = {
         }
     },
     initialState: {
-        resultsPerPage: 10
+        resultsPerPage: 2
     },
 
     // autocompleteQuery: {
@@ -149,7 +149,7 @@ export const config = {
 };
 
 export const RESULTS_PER_PAGE = [
-    10, 20, 30
+    2, 20, 30
 ]
 
 // some sort fields require .keyword in order to sort them
@@ -208,6 +208,78 @@ export const SORT_OPTIONS = [
         value: [
             {
                 field: "group_name.keyword",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Data Types",
+        value: [
+            {
+                field: "data_types.keyword",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Organ",
+        value: [
+            {
+                field: "origin_sample.mapped_organ.keyword",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Status",
+        value: [
+            {
+                field: "status.keyword",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Last Modified",
+        value: [
+            {
+                field: "mapped_last_modified_timestamp.keyword",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Age",
+        value: [
+            {
+                field: "mapped_metadata.age_value",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "BMI",
+        value: [
+            {
+                field: "mapped_metadata.body_mass_index_value",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Sex",
+        value: [
+            {
+                field: "mapped_metadata.sex.keyword",
+                direction: "asc"
+            }
+        ]
+    },
+    {
+        name: "Race",
+        value: [
+            {
+                field: "mapped_metadata.race.keyword",
                 direction: "asc"
             }
         ]
