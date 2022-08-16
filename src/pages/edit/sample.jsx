@@ -288,13 +288,13 @@ function EditSample() {
                                 </Form.Group>
 
                                 {/*/!*Metadata*!/*/}
-                                <Form.Group controlId="metadata-file" className="mb-3">
+                                {/* <Form.Group controlId="metadata-file" className="mb-3">
                                     <Form.Label>Add a Metadata file</Form.Label>
                                     <Form.Control type="file"/>
-                                </Form.Group>
+                                </Form.Group> */}
 
                                 {/*/!*Image*!/*/}
-                                <Form.Group controlId="slide-image-file" className="mb-3">
+                                {/* <Form.Group controlId="slide-image-file" className="mb-3">
                                     <Form.Label>Add a Slide Image file <span> </span>
                                         <OverlayTrigger
                                             placement="top"
@@ -310,10 +310,10 @@ function EditSample() {
                                         </OverlayTrigger>
                                     </Form.Label>
                                     <Form.Control type="file"/>
-                                </Form.Group>
+                                </Form.Group> */}
 
                                 {/*/!*Thumbnail*!/*/}
-                                <Form.Group controlId="thumbnail-file" className="mb-3">
+                                {/* <Form.Group controlId="thumbnail-file" className="mb-3">
                                     <Form.Label>Add a Thumbnail file <span> </span>
                                         <OverlayTrigger
                                             placement="top"
@@ -329,7 +329,7 @@ function EditSample() {
                                         </OverlayTrigger>
                                     </Form.Label>
                                     <Form.Control type="file"/>
-                                </Form.Group>
+                                </Form.Group> */}
 
                                 <Button variant="primary" type="submit" disabled={disableSubmit}>
                                     Submit
