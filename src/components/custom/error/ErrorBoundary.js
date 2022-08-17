@@ -32,7 +32,7 @@ class ErrorBoundary extends React.Component {
                         <div className={"col-sm"}>
                             <h2>Oops, there was a client side error!</h2>
                             <button
-                                className="btn btn-primary"
+                                className="btn btn-outline-primary"
                                 type="button"
                                 onClick={() => this.setState({hasError: false})}
                             >
