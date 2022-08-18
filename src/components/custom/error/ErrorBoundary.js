@@ -27,19 +27,26 @@ class ErrorBoundary extends React.Component {
             // You can render any custom fallback UI
             return (
                 <div className={"container"}>
-                    <div className={"row"}>
-                        <div className={"col-sm"}></div>
-                        <div className={"col-sm"}>
+                    <div className={"row align-items-center"} style={{height: "35em"}}>
+                        <div className={"col"}></div>
+                        <div className={"col text-center"}>
                             <h2>Oops, there was a client side error!</h2>
-                            <button
-                                className="btn btn-outline-primary"
-                                type="button"
-                                onClick={() => this.setState({hasError: false})}
-                            >
-                                Try again?
-                            </button>
+                            <div className={"row"}>
+                                <div className={"col"}></div>
+                                <div className={"col text-center"}>
+                                    <button
+                                        className="btn btn-outline-primary"
+                                        type="button"
+                                        onClick={() => this.setState({hasError: false})}
+                                    >
+                                        Try again?
+                                    </button>
+                                </div>
+                                <div className={"col"}></div>
+                            </div>
+
                         </div>
-                        <div className={"col-sm"}></div>
+                        <div className={"col"}></div>
                     </div>
                 </div>
             )

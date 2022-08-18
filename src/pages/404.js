@@ -12,7 +12,7 @@ export default function Custom404() {
                         temporarily unavailable</p>
                     <div className={"row"}>
                         <div className={"col"}></div>
-                        <div className={"col"}>
+                        <div className={"col text-center"}>
                             <a className="btn btn-outline-primary" role={"button"} href={"/search"}>Home</a>
                         </div>
                         <div className={"col"}></div>

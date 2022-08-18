@@ -10,7 +10,7 @@ export default function Custom500() {
                     <h2>Oops! We've encountered an internal server error</h2>
                     <div className={"row"}>
                         <div className={"col"}></div>
-                        <div className={"col"}>
+                        <div className={"col text-center"}>
                             <a className="btn btn-outline-primary" role={"button"} href={"/search"}>Home</a>
                         </div>
                         <div className={"col"}></div>
