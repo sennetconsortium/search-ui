@@ -25,3 +25,15 @@
 .card-body{
     padding: 0 24px !important;
 }
+
+.login-container {
+    padding: 1%;
+}
+
+.error-heading {
+    text-align: center;
+}
+
+.error-row {
+    height: 35em;
+}
