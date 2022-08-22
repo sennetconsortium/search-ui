@@ -24,7 +24,7 @@ export default function Home() {
     }
 
     return (
-        <div className="container" style={{paddingTop: "1%"}}>
+        <div className="container login-container">
             <Head>
                 <title>{APP_TITLE}</title>
                 <link rel="icon" href="/favicon.ico"/>
