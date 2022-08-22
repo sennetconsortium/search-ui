@@ -111,14 +111,8 @@ export const config = {
             created_by_user_displayname: {type: "value"},
             created_by_user_email: {type: "value"},
             dataset_info: {type: "value"},
-            mapped_last_modified_timestamp: {type: "value"},
-            mapped_metadata: {
-                type: "object",
-                age_value: {type: "value"},
-                body_mass_index_value: {type: "value"},
-                sex: {type: "value"},
-                race: {type: "value"},
-            }
+            "mapped_metadata.race": {type: "value"},
+            "mapped_metadata.sex": {type: "value"},
         }
     },
     initialState: {
