@@ -116,7 +116,7 @@ export const config = {
         }
     },
     initialState: {
-        resultsPerPage: 3
+        resultsPerPage: 10
     },
 
     // autocompleteQuery: {
@@ -151,7 +151,7 @@ export const config = {
 };
 
 export const RESULTS_PER_PAGE = [
-    3, 20, 30
+    10, 20, 30
 ]
 
 // some sort fields require .keyword in order to sort them
