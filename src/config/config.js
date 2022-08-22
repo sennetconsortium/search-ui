@@ -110,11 +110,19 @@ export const config = {
             lab_dataset_id: {type: "value"},
             created_by_user_displayname: {type: "value"},
             created_by_user_email: {type: "value"},
-            dataset_info: {type: "value"}
+            dataset_info: {type: "value"},
+            mapped_last_modified_timestamp: {type: "value"},
+            mapped_metadata: {
+                type: "object",
+                age_value: {type: "value"},
+                body_mass_index_value: {type: "value"},
+                sex: {type: "value"},
+                race: {type: "value"},
+            }
         }
     },
     initialState: {
-        resultsPerPage: 10
+        resultsPerPage: 3
     },
 
     // autocompleteQuery: {
@@ -149,7 +157,7 @@ export const config = {
 };
 
 export const RESULTS_PER_PAGE = [
-    10, 20, 30
+    3, 20, 30
 ]
 
 // some sort fields require .keyword in order to sort them
