@@ -292,17 +292,16 @@ function EditDataset() {
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
 
-                                {/*/!*Gene Sequences*!/*/}
+                                {/*/!*Human Gene Sequences*!/*/}
                                 {editMode &&
                                     <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
-                                        <Form.Label>Gene Sequences <span className="required">* </span>
+                                        <Form.Label>Human Gene Sequences <span className="required">* </span>
                                             <OverlayTrigger
                                                 placement="top"
                                                 overlay={
                                                     <Popover>
                                                         <Popover.Body>
-                                                            {/*   TODO: Need to add gene sequences tool tip */}
-                                                            Does this dataset contain human genetic sequences
+                                                            Does this data contain any human genetic sequences?
                                                         </Popover.Body>
                                                     </Popover>
                                                 }
@@ -310,6 +309,7 @@ function EditDataset() {
                                                 <QuestionCircleFill/>
                                             </OverlayTrigger>
                                         </Form.Label>
+                                        <div className="mb-2 text-muted">Does this data contain any human genetic sequences?</div>
                                         <Form.Check
                                             required
                                             type="radio"

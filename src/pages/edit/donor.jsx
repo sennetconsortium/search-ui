@@ -58,6 +58,7 @@ function EditSource() {
                     'label': data.label,
                     'protocol_url': data.protocol_url,
                     'description': data.description,
+                    'source_type': data.source_type
                 })
                 setEditMode("edit")
             }
