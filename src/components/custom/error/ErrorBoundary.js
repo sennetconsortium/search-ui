@@ -27,7 +27,7 @@ class ErrorBoundary extends React.Component {
             // You can render any custom fallback UI
             return (
                 <div className={"container"}>
-                    <div className={"row align-items-center"} style={{height: "35em"}}>
+                    <div className={"row align-items-center error-row"}>
                         <div className={"col"}></div>
                         <div className={"col text-center"}>
                             <h2>Oops, there was a client side error!</h2>
