@@ -110,7 +110,9 @@ export const config = {
             lab_dataset_id: {type: "value"},
             created_by_user_displayname: {type: "value"},
             created_by_user_email: {type: "value"},
-            dataset_info: {type: "value"}
+            dataset_info: {type: "value"},
+            "mapped_metadata.race": {type: "value"},
+            "mapped_metadata.sex": {type: "value"},
         }
     },
     initialState: {
