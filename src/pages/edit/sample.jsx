@@ -59,8 +59,8 @@ function EditSample() {
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
-                    'specimen_type': data.specimen_type,
-                    'specimen_type_other': data.specimen_type,
+                    'sample_category': data.sample_category,
+                    // 'specimen_type_other': data.specimen_type,
                     'organ': data.organ,
                     'organ_other': data.organ_other,
                     'protocol_url': data.protocol_url,
@@ -214,6 +214,7 @@ function EditSample() {
                                     <SourceInformationBox source={source}/>
                                 }
 
+                                {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}
                                 {/*/!*Tissue Sample Type*!/*/}
                                 {((editMode === 'edit' && source) || (editMode === 'create')) &&
                                     <TissueSample data={data} source={source} onChange={onChange}/>

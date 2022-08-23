@@ -148,6 +148,7 @@ export default class TissueSample extends React.Component {
                     </Form.Select>
                 </Form.Group>
 
+                {/*TODO: Need to remove all instances of "specimen_type_other" as it won't be needed after the rework of this component*/}
                 {/*Specimen Type Other*/}
                 <Form.Group as={Row} className="mb-3" id="specimen_type_other_group"
                             style={{display: this.state.specimen_type_other_group_hide}}>
