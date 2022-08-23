@@ -7,18 +7,17 @@ import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
-import Tissue from "../components/custom/entities/sample/Tissue";
 // import Provenance from "../components/custom/entities/sample/Provenance";
 import SourceInformationBox from "../components/custom/edit/sample/SourceInformationBox";
-import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestHeaders} from "../components/custom/js/functions";
+import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 
 function ViewSample() {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [source, setSource] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
 
@@ -51,6 +50,9 @@ function ViewSample() {
             } else {
                 // set state with the result
                 setData(data);
+                if (data.hasOwnProperty("immediate_ancestors")) {
+                    await fetchSource(data.immediate_ancestors[0].uuid);
+                }
             }
         }
 
@@ -72,6 +74,15 @@ function ViewSample() {
         //reset(data);
     }, [data]);
 
+    const fetchSource = async (sourceId) => {
+        let source = await fetchEntity(sourceId);
+        if (source.hasOwnProperty("error")) {
+            setError(true)
+            setErrorMessage(source["error"])
+        } else {
+            setSource(source);
+        }
+    }
 
     return (
         <div>
@@ -89,12 +100,12 @@ function ViewSample() {
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" 
+                                            className="sui-single-option-facet__link"
                                             href="#Summary">Summary</a>
                                         </li>
                                         {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" 
+                                                className="sui-single-option-facet__link"
                                                 href="#Derived-Datasets">Derived
                                                 Datasets</a>
                                             </li>
@@ -104,12 +115,12 @@ function ViewSample() {
                                         </li> */}
                                         {data.ancestors &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" 
+                                                className="sui-single-option-facet__link"
                                                 href="#SourceInformationBox">Ancestor</a>
                                             </li>
                                         }
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" 
+                                            className="sui-single-option-facet__link"
                                             href="#Protocols">Protocols</a>
                                         </li>
                                         {/*{!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&*/}
@@ -169,8 +180,8 @@ function ViewSample() {
                                 } */}
 
                                 {/*Source Information Box*/}
-                                {data.ancestors &&
-                                    <SourceInformationBox source={data}/>
+                                {source &&
+                                    <SourceInformationBox source={source}/>
                                 }
 
                                 {/*Protocols*/}
