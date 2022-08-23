@@ -39,10 +39,11 @@ export default class DerivedDataset extends React.Component {
                                         </thead>
                                         <tbody>
                                         {this.props.data.descendants.map((descendant_data, index) => {
-                                            if (descendant_data.entity_type == 'Sample') {
+                                            if (descendant_data.entity_type === 'Sample') {
                                                 return (
                                                     <React.Fragment key={index}>
                                                         <DerivedDatasetItem index={index} data={this.props.data}
+                                                                            data_type="Sample"
                                                                             descendant_uuid={descendant_data.uuid}/>
                                                     </React.Fragment>
                                                 )
@@ -68,10 +69,11 @@ export default class DerivedDataset extends React.Component {
                                     </thead>
                                     <tbody>
                                     {this.props.data.descendants.map((descendant_data, index) => {
-                                        if (descendant_data.entity_type == 'Dataset') {
+                                        if (descendant_data.entity_type === 'Dataset') {
                                             return (
                                                 <React.Fragment key={index}>
                                                     <DerivedDatasetItem index={index} data={this.props.data}
+                                                                        data_type="Dataset"
                                                                         descendant_uuid={descendant_data.uuid}/>
                                                 </React.Fragment>
                                             )

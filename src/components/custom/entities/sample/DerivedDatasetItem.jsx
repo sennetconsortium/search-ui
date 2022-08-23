@@ -1,6 +1,7 @@
 import React from 'react';
-import {fetchEntity} from "../../js/functions";
+import {fetchEntity, getStatusColor} from "../../js/functions";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
+import Badge from 'react-bootstrap/Badge';
 
 export default class DerivedDatasetItem extends React.Component {
     constructor(props) {
@@ -27,17 +28,21 @@ export default class DerivedDatasetItem extends React.Component {
                             </a>
                         </td>
                         {(() => {
-                            if (this.state.descendant_data.entity_type === 'Dataset') {
+                            if (this.props.data_type === 'Dataset') {
                                 return (
                                     <>
                                         <td>
                                             {Array.isArray(this.state.descendant_data.data_types) ?
                                                 this.state.descendant_data.data_types.join(', ') : this.state.descendant_data.data_types}
                                         </td>
-                                        <td>{this.state.descendant_data.status}</td>
+                                        <td>
+                                            <Badge pill bg={getStatusColor(this.state.descendant_data.status)}>
+                                                {this.state.descendant_data.status}
+                                            </Badge>
+                                        </td>
                                     </>
                                 )
-                            } else if (this.state.descendant_data.entity_type === 'Sample') {
+                            } else if (this.props.data_type === 'Sample') {
                                 return (
                                     <>
                                         <td>{this.state.descendant_data.origin_sample.mapped_organ}</td>
