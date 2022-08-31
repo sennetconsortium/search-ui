@@ -13,7 +13,7 @@ export default class DataTypes extends React.Component {
         };
 
         // Show data type other input if data type is 'other'
-        if (props.data.mapped_data_types?.[0] === 'other') {
+        if (props.data.data_types?.[0] === 'other') {
             this.state.data_types_other_group_hide = '';
         }
     }

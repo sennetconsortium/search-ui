@@ -7,17 +7,18 @@ import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 // import Provenance from "../components/custom/entities/sample/Provenance";
-import SourceInformationBox from "../components/custom/edit/sample/SourceInformationBox";
+import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
+import {fetchEntity, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 
 function ViewDataset() {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [ancestor, setAncestor] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
 
@@ -50,6 +51,9 @@ function ViewDataset() {
             } else {
                 // set state with the result
                 setData(data);
+                if (data.hasOwnProperty("immediate_ancestors")) {
+                    await fetchAncestor(data.immediate_ancestors[0].uuid);
+                }
             }
         }
 
@@ -71,6 +75,15 @@ function ViewDataset() {
         //reset(data);
     }, [data]);
 
+    const fetchAncestor = async (ancestorId) => {
+        let ancestor = await fetchEntity(ancestorId);
+        if (ancestor.hasOwnProperty("error")) {
+            setError(true)
+            setErrorMessage(source["error"])
+        } else {
+            setAncestor(ancestor);
+        }
+    }
 
     return (
         <div>
@@ -88,7 +101,7 @@ function ViewDataset() {
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" 
+                                            className="sui-single-option-facet__link"
                                             href="#Summary">Summary</a>
                                         </li>
                                         {/* <li className="sui-single-option-facet__item"><a
@@ -96,13 +109,13 @@ function ViewDataset() {
                                         </li> */}
                                         {data.ancestors &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" 
+                                                className="sui-single-option-facet__link"
                                                 href="#SourceInformationBox">Ancestor</a>
                                             </li>
                                         }
                                         {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" 
+                                                className="sui-single-option-facet__link"
                                                 href="#Metadata">Metadata</a>
                                             </li>
                                         }
@@ -130,14 +143,14 @@ function ViewDataset() {
 
                             <div className="d-flex justify-content-between mb-2">
                                 <div className="entity_subtitle link_with_icon">
-                                    {data.mapped_data_types &&
+                                    {data.data_types &&
                                         <span>
-                                            {data.mapped_data_types[0]} |
+                                            {data.data_types[0]}
                                         </span>
                                     }
-                                    {data.origin_sample &&
+                                    {data.origin_sample &&  Object.keys(data.origin_sample).length > 0 &&
                                         <span className="ms-1 me-1">
-                                            {data.origin_sample.mapped_organ}
+                                            | {data.origin_sample.mapped_organ}
                                         </span>
                                     }
                                     {data.doi_url &&
@@ -152,7 +165,7 @@ function ViewDataset() {
                                 </div>
                                 <div className="entity_subtitle link_with_icon">
                                     <CircleFill
-                                        className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status}
+                                        className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} |
                                     {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
 
                                     <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
@@ -177,10 +190,10 @@ function ViewDataset() {
                                 {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
                                 } */}
-                                
+
                                 {/*Source Information Box*/}
-                                {data.ancestors &&
-                                    <SourceInformationBox source={data}/>
+                                {ancestor &&
+                                    <AncestorInformationBox ancestor={ancestor}/>
                                 }
                                 
 

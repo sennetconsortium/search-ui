@@ -7,7 +7,7 @@ import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import AncestorId from "../../components/custom/edit/sample/AncestorId";
 import TissueSample from "../../components/custom/edit/sample/TissueSample";
-import SourceInformationBox from "../../components/custom/edit/sample/SourceInformationBox";
+import AncestorInformationBox from "../../components/custom/edit/sample/AncestorInformationBox";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill} from "react-bootstrap-icons";
@@ -211,7 +211,7 @@ function EditSample() {
 
                                 {/*Source Information Box*/}
                                 {source &&
-                                    <SourceInformationBox source={source}/>
+                                    <AncestorInformationBox ancestor={source}/>
                                 }
 
                                 {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}
