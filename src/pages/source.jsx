@@ -129,13 +129,12 @@ function ViewSource() {
                     bodyHeader={
                         <div style={{width: '100%'}}>
                             <h4>Source</h4>
-                            {/*TODO: Change to sennet_id*/}
 
                             <div className="d-flex justify-content-between mb-2">
-                                <h3>{data.hubmap_id}</h3>
+                                <h3>{data.sennet_id}</h3>
 
                                 <div>
-                                    <Button href={`/edit/donor?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}
+                                    <Button href={`/edit/source?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}
                                     <Button href={`/api/json/source?uuid=${data.uuid}`} variant="primary">
                                         <FiletypeJson/>
                                     </Button>
@@ -155,7 +154,7 @@ function ViewSource() {
 
                                 {/*Metadata*/}
                                 {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
-                                    <Metadata data={data.mapped_metadata} filename={data.hubmap_id}/>
+                                    <Metadata data={data.mapped_metadata} filename={data.sennet_id}/>
                                 }
 
                                 {/*Derived Dataset*/}

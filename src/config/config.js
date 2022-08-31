@@ -54,10 +54,10 @@ export const config = {
                 filterType: "any",
                 isFilterable: false
             },
-            mapped_specimen_type: {
-                label: "Specimen Type",
+            sample_category: {
+                label: "Sample Category",
                 type: "value",
-                field: "mapped_specimen_type.keyword",
+                field: "sample_category.keyword",
                 filterType: "any",
                 isFilterable: false
             },
@@ -86,8 +86,8 @@ export const config = {
         },
         disjunctiveFacets: ["entity_type", "group_name", "created_by_user_displayname"],
         conditionalFacets: {
-            // Only show 'mapped_specimen_type' facet if 'Sample' is selected from the entity type facet
-            'mapped_specimen_type': ({filters}) => {
+            // Only show 'sample_category' facet if 'Sample' is selected from the entity type facet
+            'sample_category': ({filters}) => {
                 return filters.some(filter => filter.field === 'entity_type' && filter.values.includes('Sample'));
             },
 
@@ -100,10 +100,9 @@ export const config = {
         search_fields: {
             description: {type: "value"},
             group_name: {type: "value"},
-            hubmap_id: {type: "value"},
-            submission_id: {type: "value"},
+            sennet_id: {type: "value"},
             display_doi: {type: "value"},
-            lab_donor_id: {type: "value"},
+            lab_source_id: {type: "value"},
             display_subtype: {type: "value"},
             lab_name: {type: "value"},
             lab_tissue_sample_id: {type: "value"},
@@ -173,16 +172,7 @@ export const SORT_OPTIONS = [
         name: "SenNet ID",
         value: [
             {
-                field: "hubmap_id.keyword",
-                direction: "asc"
-            }
-        ]
-    },
-    {
-        name: "Submission ID",
-        value: [
-            {
-                field: "submission_id.keyword",
+                field: "sennet_id.keyword",
                 direction: "asc"
             }
         ]
@@ -200,7 +190,7 @@ export const SORT_OPTIONS = [
         name: "Type",
         value: [
             {
-                field: "mapped_specimen_type.keyword",
+                field: "sample_category.keyword",
                 direction: "asc"
             }
         ]

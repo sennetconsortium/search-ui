@@ -32,7 +32,7 @@ export default class DerivedDataset extends React.Component {
                                         <tr>
                                             <th>SenNet ID</th>
                                             <th>Organ</th>
-                                            <th>Specimen</th>
+                                            <th>Sample Category</th>
                                             <th>Derived Dataset Count</th>
                                             <th>Last Modified</th>
                                         </tr>

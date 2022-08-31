@@ -22,9 +22,8 @@ export default class Provenance extends React.Component {
                                 <Row>
                                     <Col>
                                         <h4>Sources</h4>
-                                        {/*TODO: Need to change Donor to Source and will most likely need to change ancestors to descendants*/}
                                         {this.props.data.ancestors.map((ancestor_data, index) => {
-                                            if (ancestor_data.entity_type === 'Donor') {
+                                            if (ancestor_data.entity_type === 'Source') {
                                                 return (
                                                     <ProvenanceItem key={"sample_" + sources_count}
                                                                     ancestor_uuid={ancestor_data.uuid}
@@ -33,7 +32,7 @@ export default class Provenance extends React.Component {
                                                 )
                                             }
                                         })}
-                                         {this.props.data.entity_type === 'Donor' &&
+                                         {this.props.data.entity_type === 'Source' &&
                                             <ProvenanceItem ancestor_uuid={this.props.data.uuid}
                                                             data={this.props.data}
                                                             entity_count={sample_count} bg="light"/>

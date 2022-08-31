@@ -11,7 +11,6 @@ import log from "loglevel";
 
 export default function Home() {
     const login_url = getIngestLogin();
-    log.info(getEntityEndPoint())
     const router = useRouter();
     if (router.query['info']) {
         cookieCutter.set("groups_token", JSON.parse(router.query['info']).groups_token)

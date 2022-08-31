@@ -126,8 +126,7 @@ function ViewDataset() {
                     bodyHeader={
                         <div style={{width: '100%'}}>
                             <h4>Dataset</h4>
-                            {/*TODO: Change to sennet_id*/}
-                            <h3>{data.hubmap_id}</h3>
+                            <h3>{data.sennet_id}</h3>
 
                             <div className="d-flex justify-content-between mb-2">
                                 <div className="entity_subtitle link_with_icon">
@@ -153,7 +152,8 @@ function ViewDataset() {
                                 </div>
                                 <div className="entity_subtitle link_with_icon">
                                     <CircleFill
-                                        className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} | {data.mapped_data_access_level} Access
+                                        className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status}
+                                    {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
 
                                     <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
                                             variant="primary">Edit</Button>{' '}
@@ -186,7 +186,7 @@ function ViewDataset() {
 
                                 {/*Metadata*/}
                                 {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                    <Metadata data={data.metadata.metadata} filename={data.hubmap_id}/>
+                                    <Metadata data={data.metadata.metadata} filename={data.sennet_id}/>
                                 }
 
                                 {/*Files*/}

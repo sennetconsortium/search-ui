@@ -57,6 +57,7 @@ function EditDataset() {
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
+                    // TODO: Need to set group_uuid
                     'lab_dataset_id': lab_dataset_id,
                     'data_types': [data.data_types[0]],
                     'description': data.description,
@@ -199,8 +200,8 @@ function EditDataset() {
                                 {editMode === 'edit' &&
                                     <>
                                         <Row>
-                                            <Col md={6}><h5>SenNet ID: {data.hubmap_id}</h5></Col>
-                                            <Col md={6}><h5>Submission ID: {data.submission_id}</h5></Col>
+                                            <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
+                                            <Col md={6}><h5>Group: {data.group_name}</h5></Col>
                                         </Row>
                                         <Row>
                                             <Col md={6}><h5>Entered By: {data.created_by_user_email}</h5></Col>
@@ -309,7 +310,9 @@ function EditDataset() {
                                                 <QuestionCircleFill/>
                                             </OverlayTrigger>
                                         </Form.Label>
-                                        <div className="mb-2 text-muted">Does this data contain any human genetic sequences?</div>
+                                        <div className="mb-2 text-muted">Does this data contain any human genetic
+                                            sequences?
+                                        </div>
                                         <Form.Check
                                             required
                                             type="radio"

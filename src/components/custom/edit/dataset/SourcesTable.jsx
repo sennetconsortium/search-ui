@@ -19,7 +19,6 @@ export default class SourcesTable extends React.Component {
                 <thead>
                 <tr>
                     <th>Source ID</th>
-                    <th>Submission ID</th>
                     <th>Subtype</th>
                     <th>Group Name</th>
                     <th>Status</th>
@@ -30,8 +29,7 @@ export default class SourcesTable extends React.Component {
                 {this.props.sources.map((source, index) => {
                     return (
                         <tr key={index}>
-                            <td>{source.hubmap_id}</td>
-                            <td>{source?.submission_id}</td>
+                            <td>{source.sennet_id}</td>
                             <td>{source?.display_subtype}</td>
                             <td>{source.group_name}</td>
                             <td><Badge pill bg={getStatusColor(source?.status)}>{source?.status}</Badge></td>
