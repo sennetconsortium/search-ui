@@ -16,7 +16,7 @@ export default class AppNavbar extends React.Component {
                             <NavDropdown.Item
                                 href="/edit/sample?uuid=create">Sample</NavDropdown.Item>
                             <NavDropdown.Item
-                                href="/edit/donor?uuid=create">Source</NavDropdown.Item>
+                                href="/edit/source?uuid=create">Source</NavDropdown.Item>
                             <NavDropdown.Item
                                 href="/edit/dataset?uuid=create">Dataset</NavDropdown.Item>
                         </NavDropdown>

@@ -13,7 +13,7 @@ export default class Tissue extends React.Component {
                         <thead>
                         <tr>
                             <th>Organ Type</th>
-                            <th>Specimen Type</th>
+                            <th>Sample Category</th>
                             {this.props.data.rui_location &&
                                 <th>Tissue Location</th>
                             }
@@ -29,7 +29,7 @@ export default class Tissue extends React.Component {
                                     </span>
                                 }
                             </td>
-                            <td>{this.props.data.mapped_specimen_type}</td>
+                            <td>{this.props.data.sample_category}</td>
                             {this.props.data.rui_location &&
                                 <td>{this.props.data.rui_location}</td>
                             }

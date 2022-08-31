@@ -54,7 +54,8 @@ function EditSource() {
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
-                    'lab_donor_id': data.lab_donor_id,
+                    // TODO: Need to set group_uuid
+                    'lab_source_id': data.lab_source_id,
                     'label': data.label,
                     'protocol_url': data.protocol_url,
                     'description': data.description,
@@ -115,7 +116,7 @@ function EditSource() {
             let json = cleanJson(values);
             let uuid = data.uuid
 
-            await update_create_entity(uuid, json, editMode, "Donor", router).then((response) => {
+            await update_create_entity(uuid, json, editMode, "Source", router).then((response) => {
                 setShowModal(true)
                 setDisableSubmit(false);
 
@@ -156,8 +157,8 @@ function EditSource() {
                                 {editMode == 'edit' &&
                                     <>
                                         <Row>
-                                            <Col md={6}><h5>SenNet ID: {data.hubmap_id}</h5></Col>
-                                            <Col md={6}><h5>Submission ID: {data.submission_id}</h5></Col>
+                                            <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
+                                            <Col md={6}><h5>Group: {data.group_name}</h5></Col>
                                         </Row>
                                         <Row>
                                             <Col md={6}><h5>Entered By: {data.created_by_user_email}</h5></Col>
@@ -178,7 +179,7 @@ function EditSource() {
                         bodyContent={
                             <Form noValidate validated={validated} onSubmit={handleSubmit}>
                                 {/*Lab's Source Non-PHI ID*/}
-                                <Form.Group className="mb-3" controlId="lab_donor_id">
+                                <Form.Group className="mb-3" controlId="lab_source_id">
                                     <Form.Label>Lab's Source Non-PHI ID or Name<span className="required">* </span>
                                         <OverlayTrigger
                                             placement="top"
@@ -195,7 +196,7 @@ function EditSource() {
                                     </Form.Label>
                                     <Form.Control type="text" required
                                                   placeholder="An non-PHI ID or deidentified name used by the lab when referring to the source."
-                                                  defaultValue={data.lab_donor_id}
+                                                  defaultValue={data.lab_source_id}
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
 

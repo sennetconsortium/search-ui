@@ -18,10 +18,7 @@ export default class SourceInformationBox extends React.Component {
                             {this.props.source.mapped_organ &&
                                 <th>Organ Type</th>
                             }
-                            {this.props.source.submission_id &&
-                                <th>Submission ID</th>
-                            }
-                            {this.props.source.lab_donor_id &&
+                            {this.props.source.lab_source_id &&
                                 <th>Lab ID</th>
                             }
                             {this.props.source.group_name &&
@@ -35,11 +32,8 @@ export default class SourceInformationBox extends React.Component {
                             {this.props.source.mapped_organ &&
                                 <td>{this.props.source.mapped_organ}</td>
                             }
-                            {this.props.source.submission_id &&
-                                <td>{this.props.source.submission_id}</td>
-                            }
-                            {this.props.source.lab_donor_id &&
-                                <td>{this.props.source.lab_donor_id}</td>
+                            {this.props.source.lab_source_id &&
+                                <td>{this.props.source.lab_source_id}</td>
                             }
                             {this.props.source.group_name &&
                                 <td>{this.props.source.group_name}</td>

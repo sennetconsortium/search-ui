@@ -56,7 +56,7 @@ export default class AncestorId extends React.Component {
                             <Popover>
                                 <Popover.Body>
                                     The SenNet Unique identifier of the direct origin entity,
-                                    other sample or donor, where this sample came from.
+                                    other sample or source, where this sample came from.
                                 </Popover.Body>
                             </Popover>
                         }
@@ -67,7 +67,7 @@ export default class AncestorId extends React.Component {
                 <InputGroup className="mb-3" id="direct_ancestor_uuid">
                     <Form.Control required type="text" placeholder=""
                                   onChange={e => this.props.onChange(e, e.target.id, e.target.value)}
-                                  defaultValue={this.props.source?.hubmap_id}/>
+                                  defaultValue={this.props.source?.sennet_id}/>
                     <Button variant="primary" onClick={this.showModal}>
                         <Search/>
                     </Button>

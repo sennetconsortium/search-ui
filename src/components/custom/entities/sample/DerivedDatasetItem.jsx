@@ -24,7 +24,7 @@ export default class DerivedDatasetItem extends React.Component {
                     <tr key={"descendant_data_" + this.props.index}>
                         <td>
                             <a href={`/dataset?uuid=${this.state.descendant_data.uuid}`} className="link_with_icon">
-                                <span className="me-1">{this.state.descendant_data.hubmap_id}</span> <BoxArrowUpRight/>
+                                <span className="me-1">{this.state.descendant_data.sennet_id}</span> <BoxArrowUpRight/>
                             </a>
                         </td>
                         {(() => {
@@ -46,7 +46,7 @@ export default class DerivedDatasetItem extends React.Component {
                                 return (
                                     <>
                                         <td>{this.state.descendant_data.origin_sample.mapped_organ}</td>
-                                        <td>{this.state.descendant_data.mapped_specimen_type}</td>
+                                        <td>{this.state.descendant_data.sample_category}</td>
                                     </>
                                 )
                             }

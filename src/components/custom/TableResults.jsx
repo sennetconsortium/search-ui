@@ -13,9 +13,8 @@ const DefaultTableResults = ({children}) => {
                 <tr>
                     <th>Created By</th>
                     <th>SenNet ID</th>
-                    <th>Submission ID</th>
                     <th>Lab ID</th>
-                    <th>Type</th>
+                    <th>Category</th>
                     <th>Group</th>
                     <th>Created By</th>
                 </tr>
@@ -33,14 +32,7 @@ const DefaultTableRowDetails = ({result, urlField, hotlink}) => {
         <tr key="results_detail"
             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
             <td>{result.created_by_user_displayname.raw}</td>
-            <td>{result.hubmap_id.raw}</td>
-            <td>
-                {result.submission_id ? (
-                    <>{result.submission_id.raw}</>
-                ) : null
-                }
-
-            </td>
+            <td>{result.sennet_id.raw}</td>
             <td>
                 {result.lab_tissue_sample_id ? (
                     <>{result.lab_tissue_sample_id.raw}</>
@@ -48,8 +40,8 @@ const DefaultTableRowDetails = ({result, urlField, hotlink}) => {
                 }
             </td>
             <td>
-                {result.mapped_specimen_type ? (
-                    <>{result.mapped_specimen_type.raw}</>
+                {result.sample_category ? (
+                    <>{result.sample_category.raw}</>
                 ) : null
                 }
             </td>
@@ -69,7 +61,7 @@ const TableResults = ({children, filters}) => {
         <>
             {filters.length > 0 ? (<>
                     {filters.map((filter, index) => {
-                        if (filter.field === 'entity_type' && filter.values.length === 1 && filter.values[0] === 'Donor') {
+                        if (filter.field === 'entity_type' && filter.values.length === 1 && filter.values[0] === 'Source') {
                             return (
                                 // Table view for Source
                                 <div key={`source_${index}`} className={styles.search_table_wrapper}>
@@ -78,10 +70,11 @@ const TableResults = ({children, filters}) => {
                                         <tr>
                                             <th>SenNet ID</th>
                                             <th>Group</th>
-                                            <th>Age</th>
-                                            <th>BMI</th>
-                                            <th>Sex</th>
-                                            <th>Race</th>
+                                            <th>Type</th>
+                                            {/*<th>Age</th>*/}
+                                            {/*<th>BMI</th>*/}
+                                            {/*<th>Sex</th>*/}
+                                            {/*<th>Race</th>*/}
                                             <th>Last Modified</th>
                                         </tr>
                                         </thead>
@@ -134,11 +127,11 @@ const TableRowDetail = ({result, urlField, titleField}) => {
             {titleField.length > 0 ? (<>
                     {titleField.map((filter, index) => {
                         // Table results for Source
-                        if (filter.field === 'entity_type' && filter.values.length === 1 && filter.values[0] === 'Donor') {
+                        if (filter.field === 'entity_type' && filter.values.length === 1 && filter.values[0] === 'Source') {
                             return (
                                 <tr key={index}
                                     onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
-                                    <td>{result.hubmap_id.raw}</td>
+                                    <td>{result.sennet_id.raw}</td>
                                     <td>
                                         {result.group_name ? (
                                             <>{result.group_name.raw}</>
@@ -146,29 +139,35 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                         }
                                     </td>
                                     <td>
-                                        {result.mapped_metadata && result.mapped_metadata.raw.age_value ? (
-                                            <>{result.mapped_metadata.raw.age_value[0]}</>
+                                        {result.source_type ? (
+                                            <>{result.source_type.raw}</>
                                         ) : null
                                         }
                                     </td>
-                                    <td>
-                                        {result.mapped_metadata && result.mapped_metadata.raw.body_mass_index_value ? (
-                                            <>{result.mapped_metadata.raw.body_mass_index_value[0]}</>
-                                        ) : null
-                                        }
-                                    </td>
-                                    <td>
-                                        {result.mapped_metadata && result.mapped_metadata.raw.sex ? (
-                                            <>{result.mapped_metadata.raw.sex[0]}</>
-                                        ) : null
-                                        }
-                                    </td>
-                                    <td>
-                                        {result.mapped_metadata && result.mapped_metadata.raw.race ? (
-                                            <>{result.mapped_metadata.raw.race[0]}</>
-                                        ) : null
-                                        }
-                                    </td>
+                                    {/*<td>*/}
+                                    {/*    {result.mapped_metadata && result.mapped_metadata.raw.age_value ? (*/}
+                                    {/*        <>{result.mapped_metadata.raw.age_value[0]}</>*/}
+                                    {/*    ) : null*/}
+                                    {/*    }*/}
+                                    {/*</td>*/}
+                                    {/*<td>*/}
+                                    {/*    {result.mapped_metadata && result.mapped_metadata.raw.body_mass_index_value ? (*/}
+                                    {/*        <>{result.mapped_metadata.raw.body_mass_index_value[0]}</>*/}
+                                    {/*    ) : null*/}
+                                    {/*    }*/}
+                                    {/*</td>*/}
+                                    {/*<td>*/}
+                                    {/*    {result.mapped_metadata && result.mapped_metadata.raw.sex ? (*/}
+                                    {/*        <>{result.mapped_metadata.raw.sex[0]}</>*/}
+                                    {/*    ) : null*/}
+                                    {/*    }*/}
+                                    {/*</td>*/}
+                                    {/*<td>*/}
+                                    {/*    {result.mapped_metadata && result.mapped_metadata.raw.race ? (*/}
+                                    {/*        <>{result.mapped_metadata.raw.race[0]}</>*/}
+                                    {/*    ) : null*/}
+                                    {/*    }*/}
+                                    {/*</td>*/}
 
                                     <td>{new Intl.DateTimeFormat('en-US', {
                                         year: 'numeric',
@@ -182,7 +181,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                             return (
                                 <tr key={index}
                                     onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
-                                    <td>{result.hubmap_id.raw}</td>
+                                    <td>{result.sennet_id.raw}</td>
                                     <td>
                                         {result.group_name ? (
                                             <>{result.group_name.raw}</>
