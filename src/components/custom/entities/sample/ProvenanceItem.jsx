@@ -73,7 +73,7 @@ export default class ProvenanceItem extends React.Component {
                                                     <>
                                                         {this.state.ancestor_data.origin_sample.mapped_organ}
                                                         <br></br>
-                                                        {this.state.ancestor_data.mapped_data_types[0]}
+                                                        {this.state.ancestor_data.data_types[0]}
 
                                                     </>
                                                 )

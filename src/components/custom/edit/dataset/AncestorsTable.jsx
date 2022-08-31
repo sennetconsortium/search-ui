@@ -4,7 +4,7 @@ import {getStatusColor} from "../../js/functions";
 import Badge from 'react-bootstrap/Badge';
 import {TrashFill} from "react-bootstrap-icons";
 
-export default class SourcesTable extends React.Component {
+export default class AncestorsTable extends React.Component {
     deleteSource = async (e, sourceId) => {
         const old_uuids = [...this.props.values.direct_ancestor_uuids]
         let updated_uuids = old_uuids.filter(e => e !== sourceId)
@@ -18,7 +18,7 @@ export default class SourcesTable extends React.Component {
             <Table>
                 <thead>
                 <tr>
-                    <th>Source ID</th>
+                    <th>Ancestor ID</th>
                     <th>Subtype</th>
                     <th>Group Name</th>
                     <th>Status</th>

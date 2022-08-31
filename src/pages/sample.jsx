@@ -8,7 +8,7 @@ import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 // import Provenance from "../components/custom/entities/sample/Provenance";
-import SourceInformationBox from "../components/custom/edit/sample/SourceInformationBox";
+import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
@@ -179,7 +179,7 @@ function ViewSample() {
 
                                 {/*Source Information Box*/}
                                 {source &&
-                                    <SourceInformationBox source={source}/>
+                                    <AncestorInformationBox ancestor={source}/>
                                 }
 
                                 {/*Protocols*/}

@@ -13,7 +13,7 @@ import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {update_create_dataset} from "../../lib/services";
 import DataTypes from "../../components/custom/edit/dataset/DataTypes";
-import SourceIds from "../../components/custom/edit/dataset/SourceIds";
+import AncestorIds from "../../components/custom/edit/dataset/AncestorIds";
 
 function EditDataset() {
     const router = useRouter()
@@ -224,8 +224,8 @@ function EditDataset() {
                                 {/*Source ID*/}
                                 {/*editMode is only set when page is ready to load */}
                                 {editMode &&
-                                    <SourceIds values={values} sources={sources} onChange={onChange}
-                                               fetchSources={fetchSources} deleteSource={deleteSource}/>
+                                    <AncestorIds values={values} sources={sources} onChange={onChange}
+                                                 fetchSources={fetchSources} deleteSource={deleteSource}/>
                                 }
 
                                 {/*/!*Lab Name or ID*!/*/}

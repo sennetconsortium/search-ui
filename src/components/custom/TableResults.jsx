@@ -189,8 +189,8 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                         }
                                     </td>
                                     <td>
-                                        {result.mapped_data_types ? (
-                                            <>{result.mapped_data_types.raw}</>
+                                        {result.data_types ? (
+                                            <>{result.data_types.raw}</>
                                         ) : null
                                         }
                                     </td>
