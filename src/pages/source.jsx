@@ -7,7 +7,7 @@ import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 // import Provenance from "../components/custom/entities/sample/Provenance";
-import SourceInformationBox from "../components/custom/edit/sample/SourceInformationBox";
+import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
@@ -129,13 +129,12 @@ function ViewSource() {
                     bodyHeader={
                         <div style={{width: '100%'}}>
                             <h4>Source</h4>
-                            {/*TODO: Change to sennet_id*/}
 
                             <div className="d-flex justify-content-between mb-2">
-                                <h3>{data.hubmap_id}</h3>
+                                <h3>{data.sennet_id}</h3>
 
                                 <div>
-                                    <Button href={`/edit/donor?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}
+                                    <Button href={`/edit/source?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}
                                     <Button href={`/api/json/source?uuid=${data.uuid}`} variant="primary">
                                         <FiletypeJson/>
                                     </Button>
@@ -155,7 +154,7 @@ function ViewSource() {
 
                                 {/*Metadata*/}
                                 {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
-                                    <Metadata data={data.mapped_metadata} filename={data.hubmap_id}/>
+                                    <Metadata data={data.mapped_metadata} filename={data.sennet_id}/>
                                 }
 
                                 {/*Derived Dataset*/}
@@ -167,12 +166,6 @@ function ViewSource() {
                                 {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
                                 } */}
-
-                                {/*Source Information Box*/}
-                                {data.ancestors &&
-                                    <SourceInformationBox source={data}/>
-                                }
-
 
                                 {/*Protocols*/}
                                 {/*TODO: Need to add protocols section*/}

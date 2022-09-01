@@ -7,7 +7,7 @@ import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import AncestorId from "../../components/custom/edit/sample/AncestorId";
 import TissueSample from "../../components/custom/edit/sample/TissueSample";
-import SourceInformationBox from "../../components/custom/edit/sample/SourceInformationBox";
+import AncestorInformationBox from "../../components/custom/edit/sample/AncestorInformationBox";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill} from "react-bootstrap-icons";
@@ -60,7 +60,7 @@ function EditSample() {
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
                     'sample_category': data.sample_category,
-                    // 'specimen_type_other': data.specimen_type,
+                    // TODO: Need to set group_uuid
                     'organ': data.organ,
                     'organ_other': data.organ_other,
                     'protocol_url': data.protocol_url,
@@ -118,7 +118,7 @@ function EditSample() {
             setErrorMessage(source["error"])
         } else {
             setSource(source);
-            setSourceId(source.hubmap_id)
+            setSourceId(source.sennet_id)
         }
     }
 
@@ -182,8 +182,8 @@ function EditSample() {
                                 {editMode === 'edit' &&
                                     <>
                                         <Row>
-                                            <Col md={6}><h5>SenNet ID: {data.hubmap_id}</h5></Col>
-                                            <Col md={6}><h5>Submission ID: {data.submission_id}</h5></Col>
+                                            <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
+                                            <Col md={6}><h5>Group: {data.group_name}</h5></Col>
                                         </Row>
                                         <Row>
                                             <Col md={6}><h5>Entered By: {data.created_by_user_email}</h5></Col>
@@ -211,7 +211,7 @@ function EditSample() {
 
                                 {/*Source Information Box*/}
                                 {source &&
-                                    <SourceInformationBox source={source}/>
+                                    <AncestorInformationBox ancestor={source}/>
                                 }
 
                                 {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}

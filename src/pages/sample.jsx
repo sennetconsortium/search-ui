@@ -8,7 +8,7 @@ import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 // import Provenance from "../components/custom/entities/sample/Provenance";
-import SourceInformationBox from "../components/custom/edit/sample/SourceInformationBox";
+import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
@@ -123,7 +123,7 @@ function ViewSample() {
                                             className="sui-single-option-facet__link"
                                             href="#Protocols">Protocols</a>
                                         </li>
-                                        {/*{!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&*/}
+                                        {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
                                         {/*    <li className="sui-single-option-facet__item"><a*/}
                                         {/*        className="sui-single-option-facet__link" href="#Metadata">Metadata</a>*/}
                                         {/*    </li>*/}
@@ -141,14 +141,12 @@ function ViewSample() {
                     bodyHeader={
                         <div style={{width: '100%'}}>
                             <h4>Sample</h4>
-                            {/*TODO: Change to sennet_id*/}
-                            <h3>{data.hubmap_id}</h3>
+                            <h3>{data.sennet_id}</h3>
                             <div className="d-flex justify-content-between mb-2" style={{display: 'inline-block'}}>
-                                {data.origin_sample &&
-                                    <div className="entity_subtitle">
-                                        {data.origin_sample.mapped_organ} | {data.mapped_specimen_type}
-                                    </div>
-                                }
+                                <div className="entity_subtitle">
+                                    {data.sample_category}
+                                    {/*TODO: add back?   {data.origin_sample.mapped_organ} */}
+                                </div>
                                 <div>
                                     <Button href={`/edit/sample?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}
                                     <Button href={`/api/json/sample?uuid=${data.uuid}`}
@@ -181,17 +179,16 @@ function ViewSample() {
 
                                 {/*Source Information Box*/}
                                 {source &&
-                                    <SourceInformationBox source={source}/>
+                                    <AncestorInformationBox ancestor={source}/>
                                 }
 
                                 {/*Protocols*/}
-                                {/*TODO: Need to add protocols section*/}
+                                {/*TODO: Need to add prot   ocols section*/}
 
                                 {/*Metadata*/}
-                                {/*/!*TODO: change donor to source*!/*/}
-                                {/*{!!(data.donor && Object.keys(data.donor).length && 'mapped_metadata' in data.donor) &&*/}
-                                {/*    <Metadata metadataKey='donor.' data={data.donor.mapped_metadata}*/}
-                                {/*              filename={data.hubmap_id}/>*/}
+                                {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
+                                {/*    <Metadata metadataKey='source.' data={data.source.mapped_metadata}*/}
+                                {/*              filename={data.sennet_id}/>*/}
                                 {/*}*/}
 
                                 {/*Attribution*/}

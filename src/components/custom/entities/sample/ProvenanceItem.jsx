@@ -33,7 +33,7 @@ export default class ProvenanceItem extends React.Component {
                                 <Card.Body>
                                     <Card.Subtitle className="link_with_icon">
                                         {(() => {
-                                            if (this.state.ancestor_data.entity_type === 'Donor') {
+                                            if (this.state.ancestor_data.entity_type === 'Source') {
                                                 return (
                                                     <PersonFill/>
                                                 )
@@ -47,11 +47,11 @@ export default class ProvenanceItem extends React.Component {
                                                 )
                                             }
                                         })()}
-                                        <span className="ms-1">{this.state.ancestor_data.hubmap_id}</span>
+                                        <span className="ms-1">{this.state.ancestor_data.sennet_id}</span>
                                     </Card.Subtitle>
                                     <Card.Text className={styles.provenance_text}>
                                         {(() => {
-                                            if (this.state.ancestor_data.entity_type === 'Donor' && this.state.ancestor_data.mapped_metadata) {
+                                            if (this.state.ancestor_data.entity_type === 'Source' && this.state.ancestor_data.mapped_metadata) {
                                                 return (
                                                     <>
                                                         {this.state.ancestor_data.mapped_metadata.sex} | {this.state.ancestor_data.mapped_metadata.age_value} {this.state.ancestor_data.mapped_metadata.age_unit}
@@ -73,7 +73,7 @@ export default class ProvenanceItem extends React.Component {
                                                     <>
                                                         {this.state.ancestor_data.origin_sample.mapped_organ}
                                                         <br></br>
-                                                        {this.state.ancestor_data.mapped_data_types[0]}
+                                                        {this.state.ancestor_data.data_types[0]}
 
                                                     </>
                                                 )

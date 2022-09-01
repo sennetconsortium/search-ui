@@ -21,9 +21,9 @@ import {config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../../config/config"
 import ClearSearchBox from "search-ui/components/core/ClearSearchBox";
 import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
-import SourcesTable from "./SourcesTable";
+import AncestorsTable from "./AncestorsTable";
 
-export default class SourceIds extends React.Component {
+export default class AncestorIds extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -53,15 +53,15 @@ export default class SourceIds extends React.Component {
     render() {
         return (
             <>
-                <Form.Label>Source(s) <span
+                <Form.Label>Ancestors(s) <span
                     className="required">* </span>
                     <OverlayTrigger
                         placement="top"
                         overlay={
                             <Popover>
                                 <Popover.Body>
-                                    The source tissue samples or data from which this data was derived. At least one
-                                    source is required, but multiple may be specified.
+                                    The ancestor samples or data from which this data was derived. At least one
+                                    ancestor is required, but multiple may be specified.
                                 </Popover.Body>
                             </Popover>
                         }
@@ -74,19 +74,19 @@ export default class SourceIds extends React.Component {
                     <Form.Control style={{display: 'none'}}
                                   isInvalid={this.props.values.direct_ancestor_uuids === undefined || this.props.values.direct_ancestor_uuids.length === 0}></Form.Control>
                     <Form.Control.Feedback type="invalid">
-                        Please add at least one source
+                        Please add at least one ancestor
                     </Form.Control.Feedback>
                 </Form.Group>
 
-                {/*Source Information Box*/}
+                {/*Ancestor Information Box*/}
                 {this.props.sources &&
-                    <SourcesTable values={this.props.values} onChange={this.props.onChange}
-                                  sources={this.props.sources} deleteSource={this.props.deleteSource}/>
+                    <AncestorsTable values={this.props.values} onChange={this.props.onChange}
+                                    sources={this.props.sources} deleteSource={this.props.deleteSource}/>
                 }
 
                 <InputGroup className="mb-3" id="direct_ancestor_uuid_button">
                     <Button variant="primary" onClick={this.showModal}>
-                        Add another source <PlusLg/>
+                        Add another ancestor <PlusLg/>
                     </Button>
                 </InputGroup>
 
