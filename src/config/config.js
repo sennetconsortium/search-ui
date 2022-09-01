@@ -187,7 +187,7 @@ export const SORT_OPTIONS = [
         ]
     },
     {
-        name: "Type",
+        name: "Sample Category",
         value: [
             {
                 field: "sample_category.keyword",
@@ -213,15 +213,15 @@ export const SORT_OPTIONS = [
             }
         ]
     },
-    {
-        name: "Organ",
-        value: [
-            {
-                field: "origin_sample.mapped_organ.keyword",
-                direction: "asc"
-            }
-        ]
-    },
+    // {
+    //     name: "Organ",
+    //     value: [
+    //         {
+    //             field: "origin_sample.mapped_organ.keyword",
+    //             direction: "asc"
+    //         }
+    //     ]
+    // },
     {
         name: "Status",
         value: [
@@ -235,47 +235,47 @@ export const SORT_OPTIONS = [
         name: "Last Modified",
         value: [
             {
-                field: "mapped_last_modified_timestamp.keyword",
+                field: "last_modified_timestamp",
                 direction: "asc"
             }
         ]
     },
-    {
-        name: "Age",
-        value: [
-            {
-                field: "mapped_metadata.age_value",
-                direction: "asc"
-            }
-        ]
-    },
-    {
-        name: "BMI",
-        value: [
-            {
-                field: "mapped_metadata.body_mass_index_value",
-                direction: "asc"
-            }
-        ]
-    },
-    {
-        name: "Sex",
-        value: [
-            {
-                field: "mapped_metadata.sex.keyword",
-                direction: "asc"
-            }
-        ]
-    },
-    {
-        name: "Race",
-        value: [
-            {
-                field: "mapped_metadata.race.keyword",
-                direction: "asc"
-            }
-        ]
-    }
+    // {
+    //     name: "Age",
+    //     value: [
+    //         {
+    //             field: "mapped_metadata.age_value",
+    //             direction: "asc"
+    //         }
+    //     ]
+    // },
+    // {
+    //     name: "BMI",
+    //     value: [
+    //         {
+    //             field: "mapped_metadata.body_mass_index_value",
+    //             direction: "asc"
+    //         }
+    //     ]
+    // },
+    // {
+    //     name: "Sex",
+    //     value: [
+    //         {
+    //             field: "mapped_metadata.sex.keyword",
+    //             direction: "asc"
+    //         }
+    //     ]
+    // },
+    // {
+    //     name: "Race",
+    //     value: [
+    //         {
+    //             field: "mapped_metadata.race.keyword",
+    //             direction: "asc"
+    //         }
+    //     ]
+    // }
 ];
 
 export const ENTITY_TYPES = [
