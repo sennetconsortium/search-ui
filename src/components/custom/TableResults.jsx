@@ -61,52 +61,54 @@ const TableResults = ({children, filters}) => {
         <>
             {filters.length > 0 ? (<>
                     {filters.map((filter, index) => {
-                        if (filter.field === 'entity_type' && filter.values.length === 1 && filter.values[0] === 'Source') {
-                            return (
-                                // Table view for Source
-                                <div key={`source_${index}`} className={styles.search_table_wrapper}>
-                                    <Table responsive hover>
-                                        <thead>
-                                        <tr>
-                                            <th>SenNet ID</th>
-                                            <th>Group</th>
-                                            <th>Type</th>
-                                            {/*<th>Age</th>*/}
-                                            {/*<th>BMI</th>*/}
-                                            {/*<th>Sex</th>*/}
-                                            {/*<th>Race</th>*/}
-                                            <th>Last Modified</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {children}
-                                        </tbody>
-                                    </Table>
-                                </div>
-                            )
-                        } else if (filter.field === 'entity_type' && filter.values.length === 1 && filter.values[0] === 'Dataset') {
-                            return (
-                                // Table view for Dataset
-                                <div key={`dataset_${index}`} className={styles.search_table_wrapper}>
-                                    <Table responsive hover>
-                                        <thead>
-                                        <tr>
-                                            <th>SenNet ID</th>
-                                            <th>Group</th>
-                                            <th>Data Types</th>
-                                            <th>Organ</th>
-                                            <th>Status</th>
-                                            <th>Last Modified</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {children}
-                                        </tbody>
-                                    </Table>
-                                </div>
-                            )
-                        } else {
-                            return (DefaultTableResults({children}))
+                        if (filter.field === 'entity_type') {
+                            if (filter.values.length === 1 && filter.values[0] === 'Source') {
+                                return (
+                                    // Table view for Source
+                                    <div key={`source_${index}`} className={styles.search_table_wrapper}>
+                                        <Table responsive hover>
+                                            <thead>
+                                            <tr>
+                                                <th>SenNet ID</th>
+                                                <th>Group</th>
+                                                <th>Type</th>
+                                                {/*<th>Age</th>*/}
+                                                {/*<th>BMI</th>*/}
+                                                {/*<th>Sex</th>*/}
+                                                {/*<th>Race</th>*/}
+                                                <th>Last Modified</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {children}
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                )
+                            } else if (filter.values.length === 1 && filter.values[0] === 'Dataset') {
+                                return (
+                                    // Table view for Dataset
+                                    <div key={`dataset_${index}`} className={styles.search_table_wrapper}>
+                                        <Table responsive hover>
+                                            <thead>
+                                            <tr>
+                                                <th>SenNet ID</th>
+                                                <th>Group</th>
+                                                <th>Data Types</th>
+                                                <th>Organ</th>
+                                                <th>Status</th>
+                                                <th>Last Modified</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {children}
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                )
+                            } else {
+                                return (DefaultTableResults({children}))
+                            }
                         }
                     })}
                 </>
@@ -127,97 +129,99 @@ const TableRowDetail = ({result, urlField, titleField}) => {
             {titleField.length > 0 ? (<>
                     {titleField.map((filter, index) => {
                         // Table results for Source
-                        if (filter.field === 'entity_type' && filter.values.length === 1 && filter.values[0] === 'Source') {
-                            return (
-                                <tr key={index}
-                                    onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
-                                    <td>{result.sennet_id.raw}</td>
-                                    <td>
-                                        {result.group_name ? (
-                                            <>{result.group_name.raw}</>
-                                        ) : null
-                                        }
-                                    </td>
-                                    <td>
-                                        {result.source_type ? (
-                                            <>{result.source_type.raw}</>
-                                        ) : null
-                                        }
-                                    </td>
-                                    {/*<td>*/}
-                                    {/*    {result.mapped_metadata && result.mapped_metadata.raw.age_value ? (*/}
-                                    {/*        <>{result.mapped_metadata.raw.age_value[0]}</>*/}
-                                    {/*    ) : null*/}
-                                    {/*    }*/}
-                                    {/*</td>*/}
-                                    {/*<td>*/}
-                                    {/*    {result.mapped_metadata && result.mapped_metadata.raw.body_mass_index_value ? (*/}
-                                    {/*        <>{result.mapped_metadata.raw.body_mass_index_value[0]}</>*/}
-                                    {/*    ) : null*/}
-                                    {/*    }*/}
-                                    {/*</td>*/}
-                                    {/*<td>*/}
-                                    {/*    {result.mapped_metadata && result.mapped_metadata.raw.sex ? (*/}
-                                    {/*        <>{result.mapped_metadata.raw.sex[0]}</>*/}
-                                    {/*    ) : null*/}
-                                    {/*    }*/}
-                                    {/*</td>*/}
-                                    {/*<td>*/}
-                                    {/*    {result.mapped_metadata && result.mapped_metadata.raw.race ? (*/}
-                                    {/*        <>{result.mapped_metadata.raw.race[0]}</>*/}
-                                    {/*    ) : null*/}
-                                    {/*    }*/}
-                                    {/*</td>*/}
+                        if (filter.field === 'entity_type') {
+                            if (filter.values.length === 1 && filter.values[0] === 'Source') {
+                                return (
+                                    <tr key={index}
+                                        onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
+                                        <td>{result.sennet_id.raw}</td>
+                                        <td>
+                                            {result.group_name ? (
+                                                <>{result.group_name.raw}</>
+                                            ) : null
+                                            }
+                                        </td>
+                                        <td>
+                                            {result.source_type ? (
+                                                <>{result.source_type.raw}</>
+                                            ) : null
+                                            }
+                                        </td>
+                                        {/*<td>*/}
+                                        {/*    {result.mapped_metadata && result.mapped_metadata.raw.age_value ? (*/}
+                                        {/*        <>{result.mapped_metadata.raw.age_value[0]}</>*/}
+                                        {/*    ) : null*/}
+                                        {/*    }*/}
+                                        {/*</td>*/}
+                                        {/*<td>*/}
+                                        {/*    {result.mapped_metadata && result.mapped_metadata.raw.body_mass_index_value ? (*/}
+                                        {/*        <>{result.mapped_metadata.raw.body_mass_index_value[0]}</>*/}
+                                        {/*    ) : null*/}
+                                        {/*    }*/}
+                                        {/*</td>*/}
+                                        {/*<td>*/}
+                                        {/*    {result.mapped_metadata && result.mapped_metadata.raw.sex ? (*/}
+                                        {/*        <>{result.mapped_metadata.raw.sex[0]}</>*/}
+                                        {/*    ) : null*/}
+                                        {/*    }*/}
+                                        {/*</td>*/}
+                                        {/*<td>*/}
+                                        {/*    {result.mapped_metadata && result.mapped_metadata.raw.race ? (*/}
+                                        {/*        <>{result.mapped_metadata.raw.race[0]}</>*/}
+                                        {/*    ) : null*/}
+                                        {/*    }*/}
+                                        {/*</td>*/}
 
-                                    <td>{new Intl.DateTimeFormat('en-US', {
-                                        year: 'numeric',
-                                        month: '2-digit',
-                                        day: '2-digit'
-                                    }).format(result.last_modified_timestamp.raw)}</td>
-                                </tr>
-                            )
-                        } else if (filter.field === 'entity_type' && filter.values.length === 1 && filter.values[0] === 'Dataset') {
-                            // Table results for Dataset
-                            return (
-                                <tr key={index}
-                                    onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
-                                    <td>{result.sennet_id.raw}</td>
-                                    <td>
-                                        {result.group_name ? (
-                                            <>{result.group_name.raw}</>
-                                        ) : null
-                                        }
-                                    </td>
-                                    <td>
-                                        {result.data_types ? (
-                                            <>{result.data_types.raw}</>
-                                        ) : null
-                                        }
-                                    </td>
-                                    <td>
-                                        {result.origin_sample && result.origin_sample.raw.mapped_organ ? (
-                                            <>{result.origin_sample.raw.mapped_organ}</>
-                                        ) : null
-                                        }
-                                    </td>
-                                    <td>
-                                        {result.status ? (
-                                            <Badge pill
-                                                   bg={getStatusColor(result.status.raw)}>{result.status.raw}</Badge>
-                                        ) : null
-                                        }
-                                    </td>
+                                        <td>{new Intl.DateTimeFormat('en-US', {
+                                            year: 'numeric',
+                                            month: '2-digit',
+                                            day: '2-digit'
+                                        }).format(result.last_modified_timestamp.raw)}</td>
+                                    </tr>
+                                )
+                            } else if (filter.values.length === 1 && filter.values[0] === 'Dataset') {
+                                // Table results for Dataset
+                                return (
+                                    <tr key={index}
+                                        onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
+                                        <td>{result.sennet_id.raw}</td>
+                                        <td>
+                                            {result.group_name ? (
+                                                <>{result.group_name.raw}</>
+                                            ) : null
+                                            }
+                                        </td>
+                                        <td>
+                                            {result.data_types ? (
+                                                <>{result.data_types.raw}</>
+                                            ) : null
+                                            }
+                                        </td>
+                                        <td>
+                                            {result.origin_sample && result.origin_sample.raw.mapped_organ ? (
+                                                <>{result.origin_sample.raw.mapped_organ}</>
+                                            ) : null
+                                            }
+                                        </td>
+                                        <td>
+                                            {result.status ? (
+                                                <Badge pill
+                                                       bg={getStatusColor(result.status.raw)}>{result.status.raw}</Badge>
+                                            ) : null
+                                            }
+                                        </td>
 
 
-                                    <td>{new Intl.DateTimeFormat('en-US', {
-                                        year: 'numeric',
-                                        month: '2-digit',
-                                        day: '2-digit'
-                                    }).format(result.last_modified_timestamp.raw)}</td>
-                                </tr>
-                            )
-                        } else {
-                            return (DefaultTableRowDetails({result, urlField, hotlink}))
+                                        <td>{new Intl.DateTimeFormat('en-US', {
+                                            year: 'numeric',
+                                            month: '2-digit',
+                                            day: '2-digit'
+                                        }).format(result.last_modified_timestamp.raw)}</td>
+                                    </tr>
+                                )
+                            } else {
+                                return (DefaultTableRowDetails({result, urlField, hotlink}))
+                            }
                         }
                     })}
                 </>
