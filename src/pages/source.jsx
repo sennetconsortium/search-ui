@@ -7,7 +7,6 @@ import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 // import Provenance from "../components/custom/entities/sample/Provenance";
-import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
@@ -88,12 +87,12 @@ function ViewSource() {
                                     <div className="sui-facet__title">Sections</div>
                                     <ul className="sui-single-option-facet">
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" 
+                                            className="sui-single-option-facet__link"
                                             href="#Summary">Summary</a>
                                         </li>
                                         {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" 
+                                                className="sui-single-option-facet__link"
                                                 href="#Metadata">Metadata</a>
                                             </li>
                                         }
@@ -108,12 +107,12 @@ function ViewSource() {
                                         </li> */}
                                         {data.ancestors &&
                                             <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link" 
+                                                className="sui-single-option-facet__link"
                                                 href="#SourceInformationBox">Ancestor</a>
                                             </li>
                                         }
                                         <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" 
+                                            className="sui-single-option-facet__link"
                                             href="#Protocols">Protocols</a>
                                         </li>
                                         <li className="sui-single-option-facet__item"><a
@@ -129,17 +128,21 @@ function ViewSource() {
                     bodyHeader={
                         <div style={{width: '100%'}}>
                             <h4>Source</h4>
+                            <h3>{data.sennet_id}</h3>
 
                             <div className="d-flex justify-content-between mb-2">
-                                <h3>{data.sennet_id}</h3>
-
+                                <div className="entity_subtitle link_with_icon">
+                                    {data.source_type}
+                                </div>
                                 <div>
-                                    <Button href={`/edit/source?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}
+                                    <Button href={`/edit/source?uuid=${data.uuid}`}
+                                            variant="primary">Edit</Button>{' '}
                                     <Button href={`/api/json/source?uuid=${data.uuid}`} variant="primary">
                                         <FiletypeJson/>
                                     </Button>
                                 </div>
                             </div>
+
                         </div>
                     }
 

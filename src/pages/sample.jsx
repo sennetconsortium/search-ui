@@ -142,8 +142,8 @@ function ViewSample() {
                         <div style={{width: '100%'}}>
                             <h4>Sample</h4>
                             <h3>{data.sennet_id}</h3>
-                            <div className="d-flex justify-content-between mb-2" style={{display: 'inline-block'}}>
-                                <div className="entity_subtitle">
+                            <div className="d-flex justify-content-between mb-2">
+                                <div className="entity_subtitle link_with_icon">
                                     {data.sample_category}
                                     {/*TODO: add back?   {data.origin_sample.mapped_organ} */}
                                 </div>
