@@ -19,15 +19,17 @@ export default class DataTypes extends React.Component {
     }
 
     handleDataTypeChange = (e, onChange) => {
-        let old_data_types = [];
-        if (this.props.values.data_types !== undefined) {
-            old_data_types = [...this.props.values.data_types]
-        }
-        old_data_types.push(e.target.value);
-        this.props.onChange(e, 'data_types', old_data_types);
+        // We may want to support setting multiple data types
+
+        // let old_data_types = [];
+        // if (this.props.values.data_types !== undefined) {
+        //     old_data_types = [...this.props.values.data_types]
+        // }
+        // old_data_types.push(e.target.value);
+        this.props.onChange(e, 'data_types', [e.target.value]);
 
         // If data type is 'Other' then display the 'data_other' input group
-        if (e.target.value === 'other') {
+        if (e.target.value === 'Other') {
             //data Type Other set display and require
             this.setState({data_types_other_group_hide: ''})
             document.getElementById("data_types_other").setAttribute("required", "")

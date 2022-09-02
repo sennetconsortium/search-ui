@@ -66,6 +66,7 @@ export default class AncestorId extends React.Component {
                 </Form.Label>
                 <InputGroup className="mb-3" id="direct_ancestor_uuid">
                     <Form.Control required type="text" placeholder=""
+                                  disabled
                                   onChange={e => this.props.onChange(e, e.target.id, e.target.value)}
                                   defaultValue={this.props.source?.sennet_id}/>
                     <Button variant="primary" onClick={this.showModal}>
