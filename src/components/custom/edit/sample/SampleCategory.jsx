@@ -1,6 +1,6 @@
 import React from 'react';
 import {Col, Form, Row} from 'react-bootstrap';
-import {ORGAN_TYPES, SAMPLE_TYPES,SAMPLE_CATEGORY} from "../../../../config/constants";
+import {ORGAN_TYPES, SAMPLE_CATEGORY} from "../../../../config/constants";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -9,66 +9,37 @@ export default class SampleCategory extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            specimen_type_other_group_hide: 'none',
             organ_group_hide: 'none',
             organ_other_hide: 'none'
         };
 
-        // Show specimen type other input if specimen type is 'other'
-        if (props.data.specimen_type === 'other') {
-            this.state.specimen_type_other_group_hide = '';
-        }
-        // Show organ input group if specimen type is 'organ'
-        if (props.data.specimen_type === 'organ') {
+        // Show organ input group if sample category is 'organ'
+        if (props.data.sample_category === 'organ') {
             this.state.organ_group_hide = '';
         }
     }
 
-    handleTissueChange = (e, onChange) => {
-        // If specimen type is 'Other' then display the 'specimen_other' input group
-        if (e.target.value === 'other') {
-            //Specimen Type Other set display and require
-            this.setState({specimen_type_other_group_hide: ''})
-            document.getElementById("specimen_type_other").setAttribute("required", "")
-
-            //Organ Type set display hidden and remove required
-            this.resetOrganType(e, onChange);
-        }
-        // If specimen type is 'Organ' then display the organ type input group
-        else if (e.target.value === 'organ') {
+    handleSampleCategoryChange = (e, onChange) => {
+        // If sample category is 'Organ' then display the organ type input group
+        if (e.target.value === 'organ') {
             //Organ Type set display and require
             this.setState({organ_group_hide: ''})
             document.getElementById("organ").setAttribute("required", "")
 
-            //Specimen Type Other set display hidden and remove required
-            this.resetSpecimenTypeOther(e, onChange);
-
         } else {
-            //Specimen Type Other/Organ Type set display hidden and remove required
-            this.resetSpecimenTypeOther(e, onChange);
-
             this.resetOrganType(e, onChange);
         }
     };
 
     handleOrganChange = (e, onChange) => {
         // If organ type is 'Other' then display organ_other group
-        if (e.target.value === 'OT') {
+        if (e.target.value === 'other') {
             this.setState({organ_other_hide: ''})
             document.getElementById("organ_other").setAttribute("required", "")
 
         } else {
             this.resetOrganTypeOther(e, onChange);
         }
-    }
-
-    // Reset forms fields
-    resetSpecimenTypeOther = (e, onChange) => {
-        this.setState({specimen_type_other_group_hide: 'none'})
-        document.getElementById("specimen_type_other").removeAttribute("required")
-        // Empty the value of the fields and trigger onChange
-        document.getElementById("specimen_type_other").value = "";
-        onChange(e, "specimen_type_other", "")
     }
 
     resetOrganType = (e, onChange) => {
@@ -92,17 +63,17 @@ export default class SampleCategory extends React.Component {
 
     render() {
         return (
-            //Specimen Type
+            //Sample Category
             <>
-                <Form.Group className="mb-3" controlId="specimen_type">
-                    <Form.Label>Sample Type <span
+                <Form.Group className="mb-3" controlId="sample_category">
+                    <Form.Label>Sample Category <span
                         className="required">* </span>
                         <OverlayTrigger
                             placement="top"
                             overlay={
                                 <Popover>
                                     <Popover.Body>
-                                        The type of specimen.
+                                        The category this sample belongs to.
                                     </Popover.Body>
                                 </Popover>
                             }
@@ -111,57 +82,22 @@ export default class SampleCategory extends React.Component {
                         </OverlayTrigger>
                     </Form.Label>
 
-                    <Form.Select required aria-label="Sample Type"
+                    <Form.Select required aria-label="Sample Category"
                                  onChange={e => {
-                                     this.handleTissueChange(e, this.props.onChange);
+                                     this.handleSampleCategoryChange(e, this.props.onChange);
                                      this.props.onChange(e, e.target.id, e.target.value)
                                  }}
-                                 defaultValue={this.props.data.specimen_type}>
+                                 defaultValue={this.props.data.sample_category}>
                         <option value="">----</option>
-                        {this.props.source ? (
-                            SAMPLE_TYPES[this.props.source.entity_type].map((optgs, index) => {
-                                return (
-                                    <optgroup
-                                        key={index}
-                                        label="____________________________________________________________"
-                                    >
-                                        {Object.entries(optgs).map(op => {
-                                            return (
-                                                <option key={op[0]} value={op[0]}>
-                                                    {op[1]}
-                                                </option>
-                                            );
-
-                                        })}
-                                    </optgroup>
-                                );
-                            })
-                        ) : (
-                            <optgroup
-                                label="____________________________________________________________">
-                                <option value="organ">
-                                    Organ
+                        {Object.entries(SAMPLE_CATEGORY).map(op => {
+                            return (
+                                <option key={op[0]} value={op[0]}>
+                                    {op[1]}
                                 </option>
-                            </optgroup>
-                        )
-                        }
-                    </Form.Select>
-                </Form.Group>
+                            );
 
-                {/*TODO: Need to remove all instances of "specimen_type_other" as it won't be needed after the rework of this component*/}
-                {/*Specimen Type Other*/}
-                <Form.Group as={Row} className="mb-3" id="specimen_type_other_group"
-                            style={{display: this.state.specimen_type_other_group_hide}}>
-                    <Form.Label column sm="2">Tissue Type Other <span
-                        className="required">*</span></Form.Label>
-                    <Col sm="4">
-                        <Form.Control type="text" id="specimen_type_other"
-                                      onChange={e => {
-                                          this.props.onChange(e, e.target.id, e.target.value)
-                                      }}
-                                      defaultValue={this.props.data.specimen_type_other}
-                                      placeholder="Please specify"/>
-                    </Col>
+                        })}
+                    </Form.Select>
                 </Form.Group>
 
                 {/*Organ Type*/}

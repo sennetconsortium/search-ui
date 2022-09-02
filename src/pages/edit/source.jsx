@@ -12,6 +12,7 @@ import log from "loglevel";
 import {cleanJson, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {update_create_entity} from "../../lib/services";
+import SourceType from "../../components/custom/edit/source/SourceType";
 
 function EditSource() {
     const router = useRouter()
@@ -56,7 +57,6 @@ function EditSource() {
                 setValues({
                     // TODO: Need to set group_uuid
                     'lab_source_id': data.lab_source_id,
-                    'label': data.label,
                     'protocol_url': data.protocol_url,
                     'description': data.description,
                     'source_type': data.source_type
@@ -97,6 +97,7 @@ function EditSource() {
             currentValues[fieldId] = value;
             return currentValues;
         });
+        log.info(values);
     };
 
 
@@ -199,6 +200,9 @@ function EditSource() {
                                                   defaultValue={data.lab_source_id}
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
+
+                                {/*Source Type*/}
+                                <SourceType data={data} onChange={onChange}/>
 
 
                                 {/*Case Selection Protocol*/}

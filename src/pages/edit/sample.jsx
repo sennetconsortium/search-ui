@@ -109,6 +109,7 @@ function EditSample() {
             currentValues[fieldId] = value;
             return currentValues;
         });
+        log.info(values)
     };
 
     const fetchSource = async (sourceId) => {
