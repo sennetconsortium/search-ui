@@ -129,12 +129,10 @@ function ViewSource() {
                     bodyHeader={
                         <div style={{width: '100%'}}>
                             <h4>Source</h4>
-
                                 <h3>{data.sennet_id}</h3>
-
                                 <div className="d-flex justify-content-between mb-2" style={{display: 'inline-block'}}>
                                     <div className="entity_subtitle">
-                                        {data.display_subtype}
+                                        {data.source_type}
                                     </div>
                                     <div>
                                     <Button href={`/edit/source?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}

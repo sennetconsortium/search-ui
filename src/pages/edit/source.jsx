@@ -179,6 +179,8 @@ function EditSource() {
                         }
                         bodyContent={
                             <Form noValidate validated={validated} onSubmit={handleSubmit}>
+
+
                                 {/*Lab's Source Non-PHI ID*/}
                                 <Form.Group className="mb-3" controlId="lab_source_id">
                                     <Form.Label>Lab's Source Non-PHI ID or Name<span className="required">* </span>
@@ -201,16 +203,10 @@ function EditSource() {
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
 
-
                                 {/*Source Type*/}
-
-                                {((editMode === 'edit' && source) || (editMode === 'create')) &&
-                                    <SourceType data={data} source={source} onChange={onChange}/>
+                                {editMode &&
+                                    <SourceType data={data} source={source} onChange={onChange}/> 
                                 }
-
-
-                               
-
 
                                 {/*Case Selection Protocol*/}
                                 <Form.Group className="mb-3" controlId="protocol_url">
