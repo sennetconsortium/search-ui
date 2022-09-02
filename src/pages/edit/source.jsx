@@ -12,6 +12,7 @@ import log from "loglevel";
 import {cleanJson, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {update_create_entity} from "../../lib/services";
+import SourceType from '../../components/custom/edit/source/SourceType';
 
 function EditSource() {
     const router = useRouter()
@@ -199,6 +200,16 @@ function EditSource() {
                                                   defaultValue={data.lab_source_id}
                                                   onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                 </Form.Group>
+
+
+                                {/*Source Type*/}
+
+                                {((editMode === 'edit' && source) || (editMode === 'create')) &&
+                                    <SourceType data={data} source={source} onChange={onChange}/>
+                                }
+
+
+                               
 
 
                                 {/*Case Selection Protocol*/}

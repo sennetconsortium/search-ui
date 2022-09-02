@@ -178,3 +178,14 @@ export const DATA_TYPES = {
 }
 
 export const RUI_ORGAN_TYPES = ["SK", "LI", "HT", "LK", "RK", "SP", "BR", "LL", "RL", "LY", "TH"];
+
+
+export const SOURCE_TYPES = {
+    "Human":"Human",
+    "Human organoid":"Human organoid",
+    "Mouse":"Mouse",
+    "Mouse organoid" :"Mouse organoid" ,
+    "Unknown":"Unknown",
+};
+
+
