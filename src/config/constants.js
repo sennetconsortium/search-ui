@@ -107,18 +107,18 @@ export const SAMPLE_CATEGORY = {
 }
 
 export const ORGAN_TYPES = {
-    "Adipose":"adipose_tissue",
-    "Blood":"blood",
-    "Brain":"brain",
-    "Breast":"breast",
-    "Large Intestine": "large_intestine",
-    "Liver":"liver",
-    "Lung":"lung",
-    "Kidney":"kidney",
-    "Muscle":"muscle_organ",
-    "Ovary":"ovary",
-    "Skin":"skin_of_body",
-    "Other":"",
+    "adipose_tissue": "Adipose",
+    "blood": "Blood",
+    "brain": "Brain",
+    "breast": "Breast",
+    "large_intestine": "Large Intestine",
+    "liver": "Liver",
+    "lung": "Lung",
+    "kidney": "Kidney",
+    "muscle_organ":"Muscle",
+    "ovary": "Ovary",
+    "skin_of_body": "Skin",
+    "other": "Other"
 };
 
 export const DATA_TYPES = {

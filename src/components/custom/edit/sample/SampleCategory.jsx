@@ -1,6 +1,6 @@
 import React from 'react';
 import {Col, Form, Row} from 'react-bootstrap';
-import {ORGAN_TYPES, SAMPLE_TYPES} from "../../../../config/constants";
+import {ORGAN_TYPES, SAMPLE_TYPES,SAMPLE_CATEGORY} from "../../../../config/constants";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
