@@ -122,23 +122,23 @@ export const ORGAN_TYPES = {
 };
 
 export const DATA_TYPES = {
-   "Bulk RNA-seq":"",
-   "CITE-seq":"",
-   "CODEX":"",
-   "CosMX - RNA":"",
-   "DBiT-seq":"",
-   "FACS - Fluorescence-activated Cell Sorting":"",
-   "GeoMX - RNA":"",
-   "LC-MS":"",
-   "MIBI":"",
-   "Mint-ChIP":"",
-   "Multiplexed":"" ,
-   "SASP":"",
-   "scRNA-seq":"", 
-   "snATAC-seq":"", 
-   "snRNA-seq":"",
-   "Stained Slides":"",
-   "Visium":""
+   "Bulk RNA-seq":"Bulk RNA-seq",
+   "CITE-seq":"CITE-seq",
+   "CODEX":"CODEX",
+   "CosMX - RNA":"CosMX - RNA",
+   "DBiT-seq":"DBiT-seq",
+   "FACS - Fluorescence-activated Cell Sorting":"FACS - Fluorescence-activated Cell Sorting",
+   "GeoMX - RNA":"GeoMX - RNA",
+   "LC-MS":"LC-MS",
+   "MIBI":"MIBI",
+   "Mint-ChIP":"Mint-ChIP",
+   "Multiplexed":"Multiplexed",
+   "SASP":"SASP",
+   "scRNA-seq" : "scRNA-seq", 
+   "snATAC-seq":"snATAC-seq" ,
+   "snRNA-seq": "snRNA-seq",
+   "Stained Slides" : "Stained Slides",
+   "Visium" :"Visium"
 };
 
 export const RUI_ORGAN_TYPES = ["SK", "LI", "HT", "LK", "RK", "SP", "BR", "LL", "RL", "LY", "TH"];

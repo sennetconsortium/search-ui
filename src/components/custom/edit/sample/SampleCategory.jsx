@@ -1,11 +1,11 @@
 import React from 'react';
 import {Col, Form, Row} from 'react-bootstrap';
-import {ORGAN_TYPES, TISSUE_TYPES} from "../../../../config/constants";
+import {ORGAN_TYPES, SAMPLE_TYPES} from "../../../../config/constants";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
-export default class TissueSample extends React.Component {
+export default class SampleCategory extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -95,7 +95,7 @@ export default class TissueSample extends React.Component {
             //Specimen Type
             <>
                 <Form.Group className="mb-3" controlId="specimen_type">
-                    <Form.Label>Tissue Sample Type <span
+                    <Form.Label>Sample Type <span
                         className="required">* </span>
                         <OverlayTrigger
                             placement="top"
@@ -111,7 +111,7 @@ export default class TissueSample extends React.Component {
                         </OverlayTrigger>
                     </Form.Label>
 
-                    <Form.Select required aria-label="Tissue Sample Type"
+                    <Form.Select required aria-label="Sample Type"
                                  onChange={e => {
                                      this.handleTissueChange(e, this.props.onChange);
                                      this.props.onChange(e, e.target.id, e.target.value)
@@ -119,7 +119,7 @@ export default class TissueSample extends React.Component {
                                  defaultValue={this.props.data.specimen_type}>
                         <option value="">----</option>
                         {this.props.source ? (
-                            TISSUE_TYPES[this.props.source.entity_type].map((optgs, index) => {
+                            SAMPLE_TYPES[this.props.source.entity_type].map((optgs, index) => {
                                 return (
                                     <optgroup
                                         key={index}

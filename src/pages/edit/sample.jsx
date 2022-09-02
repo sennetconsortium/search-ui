@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import AncestorId from "../../components/custom/edit/sample/AncestorId";
-import TissueSample from "../../components/custom/edit/sample/TissueSample";
+import SampleCategory from "../../components/custom/edit/sample/SampleCategory";
 import AncestorInformationBox from "../../components/custom/edit/sample/AncestorInformationBox";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
@@ -217,7 +217,7 @@ function EditSample() {
                                 {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}
                                 {/*/!*Tissue Sample Type*!/*/}
                                 {((editMode === 'edit' && source) || (editMode === 'create')) &&
-                                    <TissueSample data={data} source={source} onChange={onChange}/>
+                                    <SampleCategory data={data} source={source} onChange={onChange}/>
                                 }
 
                                 {/*/!*Preparation Protocol*!/*/}
