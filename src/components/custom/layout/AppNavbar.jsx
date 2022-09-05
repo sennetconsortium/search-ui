@@ -1,5 +1,5 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap';
-import {APP_TITLE} from "../../../config/config";
+import {APP_TITLE, getIngestEndPoint} from "../../../config/config";
 import React from "react";
 
 export default class AppNavbar extends React.Component {
@@ -20,7 +20,7 @@ export default class AppNavbar extends React.Component {
                             <NavDropdown.Item
                                 href="/edit/dataset?uuid=create">Dataset</NavDropdown.Item>
                         </NavDropdown>
-                        <Nav.Link href="http://localhost:8484/logout">Sign-out</Nav.Link>
+                        <Nav.Link href={getIngestEndPoint() + 'logout'}>Sign-out</Nav.Link>
                     </Nav>
                 </Container>
             </Navbar>
