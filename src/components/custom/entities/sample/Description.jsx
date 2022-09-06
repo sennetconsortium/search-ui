@@ -23,22 +23,30 @@ export default class Description extends React.Component {
                     <Table borderless>
                         <thead>
                         <tr>
-                            <th>{this.props.primaryDateTitle}</th>
-                            <th>{this.props.secondaryDateTitle}</th>
+                            {this.props.primaryDate &&
+                                <th>{this.props.primaryDateTitle}</th>
+                            }
+                            {this.props.secondaryDate &&
+                                <th>{this.props.secondaryDateTitle}</th>
+                            }
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td>{new Intl.DateTimeFormat('en-US', {
-                                year: 'numeric',
-                                month: '2-digit',
-                                day: '2-digit'
-                            }).format(this.props.primaryDate)}</td>
-                            <td>{new Intl.DateTimeFormat('en-US', {
-                                year: 'numeric',
-                                month: '2-digit',
-                                day: '2-digit'
-                            }).format(this.props.secondaryDate)}</td>
+                            {this.props.primaryDate &&
+                                <td>{new Intl.DateTimeFormat('en-US', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit'
+                                }).format(this.props.primaryDate)}</td>
+                            }
+                            {this.props.secondaryDate &&
+                                <td>{new Intl.DateTimeFormat('en-US', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit'
+                                }).format(this.props.secondaryDate)}</td>
+                            }
                         </tr>
                         </tbody>
                     </Table>
