@@ -45,7 +45,7 @@ export function tableDataToTSV(tableData) {
 }
 
 export function getStatusColor(status) {
-    if(status) {
+    if (status) {
         status = status.toUpperCase();
 
         if (['NEW', 'REOPENED', 'QA', 'LOCKED', 'PROCESSING', 'HOLD'].includes(status)) {
@@ -69,6 +69,18 @@ export function getStatusColor(status) {
     }
     return '';
 
+}
+
+export function checkFilterEntityType(filters) {
+    let hasEntityType = false;
+    filters.map((filter, index) => {
+         if (filter.field === 'entity_type') {
+             hasEntityType = true;
+         }
+    });
+
+    console.log(hasEntityType)
+    return hasEntityType;
 }
 
 export function cleanJson(json) {
