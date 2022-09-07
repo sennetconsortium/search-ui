@@ -1,15 +1,17 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import {useRouter} from 'next/router';
-import React from 'react';
+import React, {useState} from 'react';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import {APP_TITLE, getEntityEndPoint, getIngestLogin, getRootURL} from "../config/config"
 
 import 'bootstrap/dist/css/bootstrap.css';
 import cookieCutter from 'cookie-cutter'
 import log from "loglevel";
+import {get_read_write_privileges} from "../lib/services";
 
 export default function Home() {
+    const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const login_url = getIngestLogin();
     const router = useRouter();
     if (router.query['info']) {
@@ -18,8 +20,16 @@ export default function Home() {
         localStorage.setItem("info", router.query['info']);
         localStorage.setItem("isAuthenticated", true);
         log.debug(router.query);
-        // Redirect to home page without query string
-        window.location.replace(getRootURL() + "/search");
+        get_read_write_privileges().then(read_write_privileges => {
+            if (read_write_privileges.read_privs === true) {
+                // Redirect to home page without query string
+                window.location.replace(getRootURL() + "/search");
+            } else {
+                setIsLoginPermitted(false)
+            }
+        }).catch(error => {
+            log.error(error)
+        })
     }
 
     return (
@@ -30,7 +40,7 @@ export default function Home() {
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
             </Head>
 
-
+            {!isLoginPermitted && <div className={'alert alert-danger text-center'}>You have not been granted access to use the SenNet Data Sharing Portal</div>}
             <div className="card alert alert-success">
                 <div className="card-body">
                     <h3 className="card-title">{APP_TITLE}</h3>

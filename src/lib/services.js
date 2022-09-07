@@ -20,6 +20,20 @@ export async function update_create_dataset(uuid, body, action = "edit", router)
     return call_service(raw, url, method)
 }
 
+export async function get_read_write_privileges() {
+    log.info('GET READ WRITE PRIVILEGES')
+    const url = getIngestEndPoint() + 'privs/for_groups_token/' + getAuth()
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", "Bearer " + getAuth())
+    const request_options = {
+        method: 'GET',
+        headers: headers
+    }
+    const response = await fetch(url, request_options)
+    return await response.json()
+}
+
 async function call_service(raw, url, method) {
     var headers = new Headers();
     headers.append("Content-Type", "application/json");
