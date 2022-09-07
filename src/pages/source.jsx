@@ -13,12 +13,14 @@ import log from "loglevel";
 import {getRequestHeaders} from "../components/custom/js/functions";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import AppNavbar from "../components/custom/layout/AppNavbar";
+import {write_privilege_for_group_uuid} from "../lib/services";
 
 function ViewSource() {
     const router = useRouter()
     const [data, setData] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
+    const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
     const handleQueryChange = (event) => {
         log.debug("CHANGE")
@@ -49,6 +51,9 @@ function ViewSource() {
             } else {
                 // set state with the result
                 setData(data);
+                write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                    setHasWritePrivilege(response.has_write_privs)
+                })
             }
         }
 
@@ -69,7 +74,6 @@ function ViewSource() {
         log.debug("source: RESET data...")
         //reset(data);
     }, [data]);
-
 
     return (
         <div>
@@ -135,8 +139,8 @@ function ViewSource() {
                                     {data.source_type}
                                 </div>
                                 <div>
-                                    <Button href={`/edit/source?uuid=${data.uuid}`}
-                                            variant="primary">Edit</Button>{' '}
+                                    {hasWritePrivilege && <Button href={`/edit/source?uuid=${data.uuid}`}
+                                                                  variant="primary">Edit</Button>}{' '}
                                     <Button href={`/api/json/source?uuid=${data.uuid}`} variant="primary">
                                         <FiletypeJson/>
                                     </Button>
