@@ -1,14 +1,12 @@
 import Head from 'next/head'
-import Link from 'next/link'
 import {useRouter} from 'next/router';
 import React, {useState} from 'react';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import {APP_TITLE, getEntityEndPoint, getIngestLogin, getRootURL} from "../config/config"
-
+import {APP_TITLE, getIngestLogin, getRootURL} from "../config/config"
 import 'bootstrap/dist/css/bootstrap.css';
 import cookieCutter from 'cookie-cutter'
 import log from "loglevel";
-import {get_read_write_privileges} from "../lib/services";
+import {read_write_privileges} from "../lib/services";
 
 export default function Home() {
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
@@ -20,7 +18,7 @@ export default function Home() {
         localStorage.setItem("info", router.query['info']);
         localStorage.setItem("isAuthenticated", true);
         log.debug(router.query);
-        get_read_write_privileges().then(read_write_privileges => {
+        read_write_privileges.then(read_write_privileges => {
             if (read_write_privileges.read_privs === true) {
                 // Redirect to home page without query string
                 window.location.replace(getRootURL() + "/search");
