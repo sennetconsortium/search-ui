@@ -53,7 +53,7 @@ function ViewSource() {
                 setData(data);
                 write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
-                })
+                }).catch(log.error)
             }
         }
 

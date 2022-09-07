@@ -13,6 +13,7 @@ import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
+import {write_privilege_for_group_uuid} from "../lib/services";
 
 function ViewSample() {
     const router = useRouter()
@@ -20,6 +21,7 @@ function ViewSample() {
     const [source, setSource] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
+    const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
     const handleQueryChange = (event) => {
         log.debug("CHANGE")
@@ -53,6 +55,9 @@ function ViewSample() {
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     await fetchSource(data.immediate_ancestors[0].uuid);
                 }
+                write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                    setHasWritePrivilege(response.has_write_privs)
+                }).catch(log.error)
             }
         }
 
@@ -148,7 +153,7 @@ function ViewSample() {
                                     {/*TODO: add back?   {data.origin_sample.mapped_organ} */}
                                 </div>
                                 <div>
-                                    <Button href={`/edit/sample?uuid=${data.uuid}`} variant="primary">Edit</Button>{' '}
+                                    {hasWritePrivilege && <Button href={`/edit/sample?uuid=${data.uuid}`} variant="primary">Edit</Button>}{' '}
                                     <Button href={`/api/json/sample?uuid=${data.uuid}`}
                                             variant="primary"><FiletypeJson/></Button>
                                 </div>
