@@ -25,6 +25,7 @@ export default function Home() {
                 // Redirect to home page without query string
                 window.location.replace(getRootURL() + "/search");
             } else {
+                router.replace('/', undefined, { shallow: true });
                 setIsLoginPermitted(false)
             }
         }).catch(error => {
