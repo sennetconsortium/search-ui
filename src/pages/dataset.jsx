@@ -14,7 +14,7 @@ import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {write_privilege_for_group_uuid} from "../lib/services";
+import {get_write_privilege_for_group_uuid, write_privilege_for_group_uuid} from "../lib/services";
 
 function ViewDataset() {
     const router = useRouter()
@@ -56,7 +56,7 @@ function ViewDataset() {
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     await fetchAncestor(data.immediate_ancestors[0].uuid);
                 }
-                write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
             }

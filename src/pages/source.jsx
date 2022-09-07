@@ -13,7 +13,7 @@ import log from "loglevel";
 import {getRequestHeaders} from "../components/custom/js/functions";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {write_privilege_for_group_uuid} from "../lib/services";
+import {get_write_privilege_for_group_uuid, write_privilege_for_group_uuid} from "../lib/services";
 
 function ViewSource() {
     const router = useRouter()
@@ -51,7 +51,7 @@ function ViewSource() {
             } else {
                 // set state with the result
                 setData(data);
-                write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
             }
