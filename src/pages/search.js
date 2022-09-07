@@ -21,7 +21,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import log from "loglevel";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {read_write_privileges} from "../lib/services";
+import {get_read_write_privileges, read_write_privileges} from "../lib/services";
 
 
 function Search() {
@@ -29,7 +29,7 @@ function Search() {
     const [authorized, setAuthorized] = useState(true);
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
 
-    read_write_privileges.then(response => {
+    get_read_write_privileges().then(response => {
         setAuthorized(response.read_privs)
         setIsRegisterHidden(!response.write_privs)
     }).catch(error => log.error(error))

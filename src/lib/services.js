@@ -28,8 +28,6 @@ function get_headers() {
     return headers;
 }
 
-export let read_write_privileges = get_read_write_privileges()
-
 export async function get_read_write_privileges() {
     log.info('GET READ WRITE PRIVILEGES')
     const url = getIngestEndPoint() + 'privs/for_groups_token/' + getAuth()
