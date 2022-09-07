@@ -25,6 +25,7 @@ function EditSource() {
     const [query, setQuery] = useState(router.query)
     const [values, setValues] = useState({});
     const [showModal, setShowModal] = useState(false)
+    const [showHideModal, setShowHideModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
@@ -97,7 +98,6 @@ function EditSource() {
             currentValues[fieldId] = value;
             return currentValues;
         });
-        log.info(values);
     };
 
 
@@ -121,17 +121,24 @@ function EditSource() {
                 setShowModal(true)
                 setDisableSubmit(false);
 
-                if (response.status === 200) {
+                if ('uuid' in response) {
                     if (editMode === 'edit') {
                         setModalTitle("Source Updated")
-                        setModalBody("Source was updated successfully.")
+                        setModalBody("Your Source was updated:\n" +
+                            "Source type: " + response.source_type + "\n" +
+                            "Group Name: " + response.group_name + "\n" +
+                            "SenNet ID: " + response.sennet_id)
                     } else {
                         setModalTitle("Source Created")
-                        setModalBody("Source was created successfully.")
+                        setModalBody("Your Source was created:\n" +
+                            "Source type: " + response.source_type + "\n" +
+                            "Group Name: " + response.group_name + "\n" +
+                            "SenNet ID: " + response.sennet_id)
                     }
                 } else {
                     setModalTitle("Error Creating Source")
                     setModalBody(response.statusText)
+                    setShowHideModal(true);
                 }
             })
         }
@@ -294,11 +301,13 @@ function EditSource() {
                 <Modal.Header>
                     <Modal.Title>{modalTitle}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>{modalBody}</Modal.Body>
+                <Modal.Body><p>{modalBody}</p></Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
+                    {showHideModal &&
+                        <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>
+                    }
                     <Button variant="primary" onClick={handleHome}>
                         Home page
                     </Button>

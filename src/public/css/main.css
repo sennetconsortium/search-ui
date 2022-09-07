@@ -22,7 +22,7 @@
     text-decoration: none;
 }
 
-.card-body{
+.card-body {
     padding: 0 24px !important;
 }
 
@@ -36,4 +36,8 @@
 
 .error-row {
     height: 35em;
+}
+
+p {
+    white-space: pre;
 }
