@@ -10,6 +10,7 @@
   "dependencies": {
     "cookie-cutter": "^0.2.0",
     "cookies": "^0.8.0",
+    "cookies-next": "^2.1.1",
     "react-bootstrap-icons": "^1.8.4",
     "search-ui": "file:search-ui"
   }
