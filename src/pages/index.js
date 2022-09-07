@@ -18,16 +18,14 @@ export default function Home() {
         cookieCutter.set("groups_token", JSON.parse(router.query['info']).groups_token)
         cookieCutter.set("info", router.query['info'])
         localStorage.setItem("info", router.query['info']);
+        localStorage.setItem("isAuthenticated", true);
         log.debug(router.query);
         get_read_write_privileges().then(read_write_privileges => {
             if (read_write_privileges.read_privs === true) {
-                cookieCutter.set("isAuthenticated", true);
                 // Redirect to home page without query string
                 window.location.replace(getRootURL() + "/search");
             } else {
-                cookieCutter.set("isAuthenticated", false);
                 setIsLoginPermitted(false)
-                router.replace('/', undefined, { shallow: true });
             }
         }).catch(error => {
             log.error(error)
