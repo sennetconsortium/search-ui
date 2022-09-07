@@ -11,8 +11,10 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_entity} from "../../lib/services";
+import {get_read_write_privileges, update_create_entity} from "../../lib/services";
 import SourceType from "../../components/custom/edit/source/SourceType";
+import Unauthorized from "../../components/custom/layout/Unauthorized";
+import {getCookie} from "cookies-next";
 
 function EditSource() {
     const router = useRouter()
@@ -28,9 +30,14 @@ function EditSource() {
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
+    const [authorized, setAuthorized] = useState(true)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
+
+    get_read_write_privileges().then(response => {
+        setAuthorized(response.read_privs)
+    }).catch(error => log.error(error))
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -140,8 +147,9 @@ function EditSource() {
         setValidated(true);
     };
 
-    return (
-        <div>
+    if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <div>
             <AppNavbar/>
 
             {error &&
@@ -305,7 +313,12 @@ function EditSource() {
                 </Modal.Footer>
             </Modal>
         </div>
-    )
+        )
+    } else {
+        return (
+            <Unauthorized/>
+        )
+    }
 }
 
 

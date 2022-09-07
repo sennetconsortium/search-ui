@@ -14,7 +14,13 @@ import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_write_privilege_for_group_uuid, write_privilege_for_group_uuid} from "../lib/services";
+import {
+    get_read_write_privileges,
+    get_write_privilege_for_group_uuid,
+    write_privilege_for_group_uuid
+} from "../lib/services";
+import {getCookie} from "cookies-next";
+import Unauthorized from "../components/custom/layout/Unauthorized";
 
 function ViewDataset() {
     const router = useRouter()
@@ -23,11 +29,16 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
+    const [authorized, setAuthorized] = useState(true)
 
     const handleQueryChange = (event) => {
         log.debug("CHANGE")
         log.debug(event)
     }
+
+    get_read_write_privileges().then(response => {
+        setAuthorized(response.read_privs)
+    }).catch(error => log.error(error))
 
     useEffect(() => {
         window.addEventListener('hashchange', handleQueryChange);
@@ -90,151 +101,159 @@ function ViewDataset() {
         }
     }
 
-    return (
-        <div>
-            <AppNavbar/>
+    if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <div>
+                <AppNavbar/>
 
-            {error &&
-                <div className="alert alert-warning" role="alert">{errorMessage}</div>
-            }
-            {data && !error &&
-                <Layout
-                    sideContent={
-                        <div>
-                            <div className="sui-facet">
-                                <div>
-                                    <div className="sui-facet__title">Sections</div>
-                                    <ul className="sui-single-option-facet">
-                                        <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link"
-                                            href="#Summary">Summary</a>
-                                        </li>
-                                        {/* <li className="sui-single-option-facet__item"><a
+                {error &&
+                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                }
+                {data && !error &&
+                    <Layout
+                        sideContent={
+                            <div>
+                                <div className="sui-facet">
+                                    <div>
+                                        <div className="sui-facet__title">Sections</div>
+                                        <ul className="sui-single-option-facet">
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link"
+                                                href="#Summary">Summary</a>
+                                            </li>
+                                            {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li> */}
-                                        {data.ancestors &&
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link"
-                                                href="#SourceInformationBox">Ancestor</a>
-                                            </li>
-                                        }
-                                        {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link"
-                                                href="#Metadata">Metadata</a>
-                                            </li>
-                                        }
-                                        {/* <li className="sui-single-option-facet__item"><a
+                                            {data.ancestors &&
+                                                <li className="sui-single-option-facet__item"><a
+                                                    className="sui-single-option-facet__link"
+                                                    href="#SourceInformationBox">Ancestor</a>
+                                                </li>
+                                            }
+                                            {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
+                                                <li className="sui-single-option-facet__item"><a
+                                                    className="sui-single-option-facet__link"
+                                                    href="#Metadata">Metadata</a>
+                                                </li>
+                                            }
+                                            {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Files">Files</a>
                                         </li> */}
-                                        <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link"
-                                            href="#Contributors">Contributors</a>
-                                        </li>
-                                        <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link"
-                                            href="#Attribution">Attribution</a>
-                                        </li>
-                                    </ul>
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link"
+                                                href="#Contributors">Contributors</a>
+                                            </li>
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link"
+                                                href="#Attribution">Attribution</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        }
 
-                    bodyHeader={
-                        <div style={{width: '100%'}}>
-                            <h4>Dataset</h4>
-                            <h3>{data.sennet_id}</h3>
+                        bodyHeader={
+                            <div style={{width: '100%'}}>
+                                <h4>Dataset</h4>
+                                <h3>{data.sennet_id}</h3>
 
-                            <div className="d-flex justify-content-between mb-2">
-                                <div className="entity_subtitle link_with_icon">
-                                    {data.data_types &&
-                                        <span>
+                                <div className="d-flex justify-content-between mb-2">
+                                    <div className="entity_subtitle link_with_icon">
+                                        {data.data_types &&
+                                            <span>
                                             {data.data_types[0]}
                                         </span>
-                                    }
-                                    {data.origin_sample &&  Object.keys(data.origin_sample).length > 0 &&
-                                        <span className="ms-1 me-1">
+                                        }
+                                        {data.origin_sample && Object.keys(data.origin_sample).length > 0 &&
+                                            <span className="ms-1 me-1">
                                             | {data.origin_sample.mapped_organ}
                                         </span>
-                                    }
-                                    {data.doi_url &&
-                                        <>
-                                            |
-                                            <a href={data.doi_url} className="ms-1 link_with_icon">
-                                                <span className="me-1">doi:{data.registered_doi}</span>
-                                                <BoxArrowUpRight/>
-                                            </a>
-                                        </>
-                                    }
-                                </div>
-                                <div className="entity_subtitle link_with_icon">
-                                    <CircleFill
-                                        className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} |
-                                    {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
+                                        }
+                                        {data.doi_url &&
+                                            <>
+                                                |
+                                                <a href={data.doi_url} className="ms-1 link_with_icon">
+                                                    <span className="me-1">doi:{data.registered_doi}</span>
+                                                    <BoxArrowUpRight/>
+                                                </a>
+                                            </>
+                                        }
+                                    </div>
+                                    <div className="entity_subtitle link_with_icon">
+                                        <CircleFill
+                                            className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} |
+                                        {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
 
-                                    {hasWritePrivilege && <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
-                                                                  variant="primary">Edit</Button>}{' '}
-                                    <Button className="ms-1" href={`/api/json/dataset?uuid=${data.uuid}`}
-                                            variant="primary"><FiletypeJson/></Button>
+                                        {hasWritePrivilege &&
+                                            <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
+                                                    variant="primary">Edit</Button>}{' '}
+                                        <Button className="ms-1" href={`/api/json/dataset?uuid=${data.uuid}`}
+                                                variant="primary"><FiletypeJson/></Button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        }
 
-                    bodyContent={
-                        <div>
-                            <ul className="sui-results-container">
-                                {/*Description*/}
-                                <Description primaryDateTitle="Publication Date" primaryDate={data.published_timestamp}
-                                             secondaryDateTitle="Modification Date"
-                                             secondaryDate={data.last_modified_timestamp}
-                                             data={data}/>
+                        bodyContent={
+                            <div>
+                                <ul className="sui-results-container">
+                                    {/*Description*/}
+                                    <Description primaryDateTitle="Publication Date"
+                                                 primaryDate={data.published_timestamp}
+                                                 secondaryDateTitle="Modification Date"
+                                                 secondaryDate={data.last_modified_timestamp}
+                                                 data={data}/>
 
-                                {/*Provenance*/}
-                                {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
+                                    {/*Provenance*/}
+                                    {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
                                 } */}
 
-                                {/*Source Information Box*/}
-                                {ancestor &&
-                                    <AncestorInformationBox ancestor={ancestor}/>
-                                }
-                                
+                                    {/*Source Information Box*/}
+                                    {ancestor &&
+                                        <AncestorInformationBox ancestor={ancestor}/>
+                                    }
 
-                                {/*Metadata*/}
-                                {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                    <Metadata data={data.metadata.metadata} filename={data.sennet_id}/>
-                                }
 
-                                {/*Files*/}
-                                {/*TODO: Need to create files section*/}
+                                    {/*Metadata*/}
+                                    {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
+                                        <Metadata data={data.metadata.metadata} filename={data.sennet_id}/>
+                                    }
 
-                                {/*Contributors*/}
-                                {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                    <Contributors data={data.contributors}/>
-                                }
+                                    {/*Files*/}
+                                    {/*TODO: Need to create files section*/}
 
-                                {/*Attribution*/}
-                                <Attribution data={data}/>
+                                    {/*Contributors*/}
+                                    {!!(data.contributors && Object.keys(data.contributors).length) &&
+                                        <Contributors data={data.contributors}/>
+                                    }
 
-                            </ul>
-                        </div>
-                    }
+                                    {/*Attribution*/}
+                                    <Attribution data={data}/>
 
-                />
+                                </ul>
+                            </div>
+                        }
 
-            }
+                    />
 
-            {!data &&
-                <div className="text-center p-3">
-                    <span>Loading, please wait...</span>
-                    <br></br>
-                    <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                </div>
-            }
-        </div>
-    )
+                }
+
+                {!data &&
+                    <div className="text-center p-3">
+                        <span>Loading, please wait...</span>
+                        <br></br>
+                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+                    </div>
+                }
+            </div>
+        )
+    } else {
+        return (
+            <Unauthorized/>
+        )
+    }
 }
 
 
