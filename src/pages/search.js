@@ -21,11 +21,12 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import log from "loglevel";
 import AppNavbar from "../components/custom/layout/AppNavbar";
+import cookieCutter from "cookie-cutter";
 
 
 function Search() {
     const router = useRouter();
-    const [authorized, setAuthorized] = useState(true);
+    const [authorized, setAuthorized] = useState(cookieCutter().get('isAuthenticated'));
 
     useEffect(() => {
         log.debug('ROUTER CHANGED: useEffect: query:', router.query)
@@ -97,7 +98,9 @@ function Search() {
             </div>
         )
     } else {
-        return (<div>Loading...</div>)
+        return (<div className={'login-container container'}>
+            {!authorized && <div className={'alert alert-danger text-center'}>You have not been granted access to use the SenNet Data Sharing Portal</div>}
+        </div>)
     }
 }
 
