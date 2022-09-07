@@ -38,6 +38,10 @@ export async function get_read_write_privileges() {
         headers: get_headers()
     }
     const response = await fetch(url, request_options)
+    if (!response.ok) {
+        const message = `An error has occurred: ${response.status}`;
+        throw new Error(message);
+    }
     let json = response.json()
     return await json
 }
@@ -52,6 +56,10 @@ export async function get_write_privilege_for_group_uuid(group_uuid) {
         headers: get_headers()
     }
     const response = await fetch(url, request_options)
+    if (!response.ok) {
+        const message = `An error has occurred: ${response.status}`;
+        throw new Error(message);
+    }
     let json = response.json()
     return await json
 }
