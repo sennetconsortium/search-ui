@@ -12,7 +12,7 @@ export default class AppNavbar extends React.Component {
                     </Navbar.Brand>
 
                     <Nav className="justify-content-end">
-                        <NavDropdown title="Register" id="basic-nav-dropdown">
+                        <NavDropdown hidden={this.props.hidden} title="Register" id="basic-nav-dropdown">
                             <NavDropdown.Item
                                 href="/edit/sample?uuid=create">Sample</NavDropdown.Item>
                             <NavDropdown.Item

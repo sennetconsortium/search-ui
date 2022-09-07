@@ -21,11 +21,18 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import log from "loglevel";
 import AppNavbar from "../components/custom/layout/AppNavbar";
+import {read_write_privileges} from "../lib/services";
 
 
 function Search() {
     const router = useRouter();
     const [authorized, setAuthorized] = useState(true);
+    const [isRegisterHidden, setIsRegisterHidden] = useState(false)
+
+    read_write_privileges.then(response => {
+        setAuthorized(response.read_privs)
+        setIsRegisterHidden(!response.write_privs)
+    }).catch(error => log.error(error))
 
     useEffect(() => {
         log.debug('ROUTER CHANGED: useEffect: query:', router.query)
@@ -49,7 +56,7 @@ function Search() {
                         {({wasSearched, filters}) => {
                             return (
                                 <div>
-                                    <AppNavbar/>
+                                    <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
 
@@ -97,7 +104,11 @@ function Search() {
             </div>
         )
     } else {
-        return (<div>Loading...</div>)
+        return (
+            <div className={'container login-container'}>
+                {!authorized && <div className={'alert alert-danger text-center'}>You have not been granted access to use the <a href={'/'}>SenNet Data Sharing Portal</a></div>}
+            </div>
+        )
     }
 }
 
