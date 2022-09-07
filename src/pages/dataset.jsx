@@ -14,6 +14,7 @@ import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
+import {write_privilege_for_group_uuid} from "../lib/services";
 
 function ViewDataset() {
     const router = useRouter()
@@ -21,6 +22,7 @@ function ViewDataset() {
     const [ancestor, setAncestor] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
+    const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
     const handleQueryChange = (event) => {
         log.debug("CHANGE")
@@ -54,6 +56,9 @@ function ViewDataset() {
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     await fetchAncestor(data.immediate_ancestors[0].uuid);
                 }
+                write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                    setHasWritePrivilege(response.has_write_privs)
+                }).catch(log.error)
             }
         }
 
@@ -168,8 +173,8 @@ function ViewDataset() {
                                         className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} |
                                     {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
 
-                                    <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
-                                            variant="primary">Edit</Button>{' '}
+                                    {hasWritePrivilege && <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
+                                                                  variant="primary">Edit</Button>}{' '}
                                     <Button className="ms-1" href={`/api/json/dataset?uuid=${data.uuid}`}
                                             variant="primary"><FiletypeJson/></Button>
                                 </div>
