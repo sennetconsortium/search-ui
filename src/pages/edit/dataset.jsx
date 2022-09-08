@@ -28,6 +28,7 @@ function EditDataset() {
     const [query, setQuery] = useState(router.query)
     const [values, setValues] = useState({});
     const [showModal, setShowModal] = useState(false)
+    const [showHideModal, setShowHideModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
@@ -107,13 +108,12 @@ function EditDataset() {
 
     // callback provided to components to update the main list of form values
     const onChange = (e, fieldId, value) => {
-        // log.debug('onChange', fieldId, value)
+
         // use a callback to find the field in the value list and update it
         setValues((currentValues) => {
             currentValues[fieldId] = value;
             return currentValues;
         });
-        log.debug(values)
     };
 
     const fetchSources = async (source_uuid) => {
@@ -167,17 +167,24 @@ function EditDataset() {
                     setShowModal(true)
                     setDisableSubmit(false);
 
-                    if (response.status === 200) {
+                    if ('uuid' in response) {
                         if (editMode === 'edit') {
                             setModalTitle("Dataset Updated")
-                            setModalBody("Dataset was updated successfully.")
+                            setModalBody("Your Dataset was updated:\n" +
+                                "Data type: " + response.data_types[0] + "\n" +
+                                "Group Name: " + response.group_name + "\n" +
+                                "SenNet ID: " + response.sennet_id)
                         } else {
                             setModalTitle("Dataset Created")
-                            setModalBody("Dataset was created successfully.")
+                            setModalBody("Your Dataset was created:\n" +
+                                "Data type: " + response.data_types[0] + "\n" +
+                                "Group Name: " + response.group_name + "\n" +
+                                "SenNet ID: " + response.sennet_id)
                         }
                     } else {
                         setModalTitle("Error Creating Dataset")
                         setModalBody(response.statusText)
+                        setShowHideModal(true);
                     }
                 })
             }
@@ -326,7 +333,7 @@ function EditDataset() {
                                                 name="contains_human_genetic_sequences"
                                                 value={false}
                                                 defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'edit') ? true : false}
-                                                onChange={e => onChange(e, e.target.id, e.target.value)}
+                                                onChange={e => onChange(e, e.target.id, Boolean(e.target.value))}
                                             />
                                             <Form.Check
                                                 required
@@ -335,7 +342,7 @@ function EditDataset() {
                                                 name="contains_human_genetic_sequences"
                                                 value={true}
                                                 defaultChecked={data.contains_human_genetic_sequences ? true : false}
-                                                onChange={e => onChange(e, e.target.id, e.target.value)}
+                                                onChange={e => onChange(e, e.target.id, Boolean(e.target.value))}
                                             />
                                         </Form.Group>
                                     }
@@ -365,11 +372,13 @@ function EditDataset() {
                     <Modal.Header>
                         <Modal.Title>{modalTitle}</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>{modalBody}</Modal.Body>
+                    <Modal.Body><p>{modalBody}</p></Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Close
-                        </Button>
+                        {showHideModal &&
+                            <Button variant="secondary" onClick={handleClose}>
+                                Close
+                            </Button>
+                        }
                         <Button variant="primary" onClick={handleHome}>
                             Home page
                         </Button>

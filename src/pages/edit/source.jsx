@@ -27,6 +27,7 @@ function EditSource() {
     const [query, setQuery] = useState(router.query)
     const [values, setValues] = useState({});
     const [showModal, setShowModal] = useState(false)
+    const [showHideModal, setShowHideModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
@@ -104,7 +105,6 @@ function EditSource() {
             currentValues[fieldId] = value;
             return currentValues;
         });
-        log.info(values);
     };
 
 
@@ -128,17 +128,24 @@ function EditSource() {
                 setShowModal(true)
                 setDisableSubmit(false);
 
-                if (response.status === 200) {
+                if ('uuid' in response) {
                     if (editMode === 'edit') {
                         setModalTitle("Source Updated")
-                        setModalBody("Source was updated successfully.")
+                        setModalBody("Your Source was updated:\n" +
+                            "Source type: " + response.source_type + "\n" +
+                            "Group Name: " + response.group_name + "\n" +
+                            "SenNet ID: " + response.sennet_id)
                     } else {
                         setModalTitle("Source Created")
-                        setModalBody("Source was created successfully.")
+                        setModalBody("Your Source was created:\n" +
+                            "Source type: " + response.source_type + "\n" +
+                            "Group Name: " + response.group_name + "\n" +
+                            "SenNet ID: " + response.sennet_id)
                     }
                 } else {
                     setModalTitle("Error Creating Source")
                     setModalBody(response.statusText)
+                    setShowHideModal(true);
                 }
             })
         }
@@ -150,121 +157,122 @@ function EditSource() {
     if (authorized && getCookie('isAuthenticated')) {
         return (
             <div>
-            <AppNavbar/>
+                <AppNavbar/>
 
-            {error &&
-                <div className="alert alert-warning" role="alert">{errorMessage}</div>
-            }
-            {data && !error &&
-                <div className="no_sidebar">
-                    <Layout
-                        bodyHeader={
-                            <Container className="px-0" fluid={true}>
-                                <Row md={12}>
-                                    <h4>Source Information</h4>
-                                </Row>
-                                {editMode == 'edit' &&
-                                    <>
-                                        <Row>
-                                            <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
-                                            <Col md={6}><h5>Group: {data.group_name}</h5></Col>
-                                        </Row>
-                                        <Row>
-                                            <Col md={6}><h5>Entered By: {data.created_by_user_email}</h5></Col>
-                                            <Col md={6}><h5>Entry Date: {new Intl.DateTimeFormat('en-US', {
-                                                year: 'numeric',
-                                                month: '2-digit',
-                                                day: '2-digit',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                second: '2-digit'
-                                            }).format(data.created_timestamp)}</h5></Col>
-                                        </Row>
-                                    </>
-                                }
+                {error &&
+                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                }
+                {data && !error &&
+                    <div className="no_sidebar">
+                        <Layout
+                            bodyHeader={
+                                <Container className="px-0" fluid={true}>
+                                    <Row md={12}>
+                                        <h4>Source Information</h4>
+                                    </Row>
+                                    {editMode == 'edit' &&
+                                        <>
+                                            <Row>
+                                                <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
+                                                <Col md={6}><h5>Group: {data.group_name}</h5></Col>
+                                            </Row>
+                                            <Row>
+                                                <Col md={6}><h5>Entered By: {data.created_by_user_email}</h5></Col>
+                                                <Col md={6}><h5>Entry Date: {new Intl.DateTimeFormat('en-US', {
+                                                    year: 'numeric',
+                                                    month: '2-digit',
+                                                    day: '2-digit',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    second: '2-digit'
+                                                }).format(data.created_timestamp)}</h5></Col>
+                                            </Row>
+                                        </>
+                                    }
 
-                            </Container>
-                        }
-                        bodyContent={
-                            <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                                {/*Lab's Source Non-PHI ID*/}
-                                <Form.Group className="mb-3" controlId="lab_source_id">
-                                    <Form.Label>Lab's Source Non-PHI ID or Name<span className="required">* </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        An identifier used by the lab to identify the source.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control type="text" required
-                                                  placeholder="An non-PHI ID or deidentified name used by the lab when referring to the source."
-                                                  defaultValue={data.lab_source_id}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
+                                </Container>
+                            }
+                            bodyContent={
+                                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                    {/*Lab's Source Non-PHI ID*/}
+                                    <Form.Group className="mb-3" controlId="lab_source_id">
+                                        <Form.Label>Lab's Source Non-PHI ID or Name<span className="required">* </span>
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            An identifier used by the lab to identify the source.
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <QuestionCircleFill/>
+                                            </OverlayTrigger>
+                                        </Form.Label>
+                                        <Form.Control type="text" required
+                                                      placeholder="An non-PHI ID or deidentified name used by the lab when referring to the source."
+                                                      defaultValue={data.lab_source_id}
+                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                    </Form.Group>
 
-                                {/*Source Type*/}
-                                <SourceType data={data} onChange={onChange}/>
+                                    {/*Source Type*/}
+                                    <SourceType data={data} onChange={onChange}/>
 
 
-                                {/*Case Selection Protocol*/}
-                                <Form.Group className="mb-3" controlId="protocol_url">
-                                    <Form.Label>Case Selection Protocol <span className="required">* </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        The protocol used when choosing and acquiring the source. This
-                                                        can be supplied as a DOI from https://www.protocols.io/.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control type="text" required
-                                                  pattern={"(^(http(s)?:\/\/)?dx.doi.org\/10\.17504\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10\.17504\/protocols\.io\..+)"}
-                                                  placeholder="protocols.io DOI"
-                                                  defaultValue={data.protocol_url}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
+                                    {/*Case Selection Protocol*/}
+                                    <Form.Group className="mb-3" controlId="protocol_url">
+                                        <Form.Label>Case Selection Protocol <span className="required">* </span>
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            The protocol used when choosing and acquiring the source.
+                                                            This
+                                                            can be supplied as a DOI from https://www.protocols.io/.
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <QuestionCircleFill/>
+                                            </OverlayTrigger>
+                                        </Form.Label>
+                                        <Form.Control type="text" required
+                                                      pattern={"(^(http(s)?:\/\/)?dx.doi.org\/10\.17504\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10\.17504\/protocols\.io\..+)"}
+                                                      placeholder="protocols.io DOI"
+                                                      defaultValue={data.protocol_url}
+                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                    </Form.Group>
 
-                                {/*/!*Description*!/*/}
-                                <Form.Group className="mb-3" controlId="description">
-                                    <Form.Label>Description<span> </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        Free text field to enter a description of the source.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control as="textarea" rows={4} defaultValue={data.description}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
+                                    {/*/!*Description*!/*/}
+                                    <Form.Group className="mb-3" controlId="description">
+                                        <Form.Label>Description<span> </span>
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            Free text field to enter a description of the source.
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <QuestionCircleFill/>
+                                            </OverlayTrigger>
+                                        </Form.Label>
+                                        <Form.Control as="textarea" rows={4} defaultValue={data.description}
+                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                    </Form.Group>
 
-                                {/*/!*Metadata*!/*/}
-                                {/* <Form.Group controlId="metadata-file" className="mb-3">
+                                    {/*/!*Metadata*!/*/}
+                                    {/* <Form.Group controlId="metadata-file" className="mb-3">
                                     <Form.Label>Add a Metadata file</Form.Label>
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                {/*/!*Image*!/*/}
-                                {/* <Form.Group controlId="image-file" className="mb-3">
+                                    {/*/!*Image*!/*/}
+                                    {/* <Form.Group controlId="image-file" className="mb-3">
                                     <Form.Label>Add an Image file <span> </span>
                                         <OverlayTrigger
                                             placement="top"
@@ -282,37 +290,39 @@ function EditSource() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                <Button variant="primary" type="submit" disabled={disableSubmit}>
-                                    Submit
-                                </Button>
-                            </Form>
-                        }
-                    />
-                </div>
-            }
-            {!data &&
-                <div className="text-center p-3">
-                    <span>Loading, please wait...</span>
-                    <br></br>
-                    <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                </div>
-            }
+                                    <Button variant="primary" type="submit" disabled={disableSubmit}>
+                                        Submit
+                                    </Button>
+                                </Form>
+                            }
+                        />
+                    </div>
+                }
+                {!data &&
+                    <div className="text-center p-3">
+                        <span>Loading, please wait...</span>
+                        <br></br>
+                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+                    </div>
+                }
 
-            <Modal show={showModal}>
-                <Modal.Header>
-                    <Modal.Title>{modalTitle}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>{modalBody}</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={handleHome}>
-                        Home page
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
+                <Modal show={showModal}>
+                    <Modal.Header>
+                        <Modal.Title>{modalTitle}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body><p>{modalBody}</p></Modal.Body>
+                    <Modal.Footer>
+                        {showHideModal &&
+                            <Button variant="secondary" onClick={handleClose}>
+                                Close
+                            </Button>
+                        }
+                        <Button variant="primary" onClick={handleHome}>
+                            Home page
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </div>
         )
     } else {
         return (
