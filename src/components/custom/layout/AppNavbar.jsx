@@ -1,6 +1,7 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap';
 import {APP_TITLE, getIngestEndPoint} from "../../../config/config";
 import React from "react";
+import {setCookie} from "cookies-next";
 
 export default class AppNavbar extends React.Component {
     render() {
@@ -20,7 +21,7 @@ export default class AppNavbar extends React.Component {
                             <NavDropdown.Item
                                 href="/edit/dataset?uuid=create">Dataset</NavDropdown.Item>
                         </NavDropdown>
-                        <Nav.Link href={getIngestEndPoint() + 'logout'}>Sign-out</Nav.Link>
+                        <Nav.Link href={getIngestEndPoint() + 'logout'} onClick={()=>setCookie('isAuthenticated', false)}>Sign-out</Nav.Link>
                     </Nav>
                 </Container>
             </Navbar>

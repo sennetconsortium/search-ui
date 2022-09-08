@@ -13,7 +13,13 @@ import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_write_privilege_for_group_uuid, write_privilege_for_group_uuid} from "../lib/services";
+import {
+    get_read_write_privileges,
+    get_write_privilege_for_group_uuid,
+    write_privilege_for_group_uuid
+} from "../lib/services";
+import {getCookie} from "cookies-next";
+import Unauthorized from "../components/custom/layout/Unauthorized";
 
 function ViewSample() {
     const router = useRouter()
@@ -22,11 +28,16 @@ function ViewSample() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
+    const [authorized, setAuthorized] = useState(true)
 
     const handleQueryChange = (event) => {
         log.debug("CHANGE")
         log.debug(event)
     }
+
+    get_read_write_privileges().then(response => {
+        setAuthorized(response.read_privs)
+    }).catch(error => log.error(error))
 
     useEffect(() => {
         window.addEventListener('hashchange', handleQueryChange);
@@ -89,133 +100,140 @@ function ViewSample() {
         }
     }
 
-    return (
-        <div>
-            <AppNavbar/>
+    if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <div>
+                <AppNavbar/>
 
-            {error &&
-                <div className="alert alert-warning" role="alert">{errorMessage}</div>
-            }
-            {data && !error &&
-                <Layout
-                    sideContent={
-                        <div>
-                            <div className="sui-facet">
-                                <div>
-                                    <div className="sui-facet__title">Sections</div>
-                                    <ul className="sui-single-option-facet">
-                                        <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link"
-                                            href="#Summary">Summary</a>
-                                        </li>
-                                        {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
+                {error &&
+                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                }
+                {data && !error &&
+                    <Layout
+                        sideContent={
+                            <div>
+                                <div className="sui-facet">
+                                    <div>
+                                        <div className="sui-facet__title">Sections</div>
+                                        <ul className="sui-single-option-facet">
                                             <li className="sui-single-option-facet__item"><a
                                                 className="sui-single-option-facet__link"
-                                                href="#Derived-Datasets">Derived
-                                                Datasets</a>
+                                                href="#Summary">Summary</a>
                                             </li>
-                                        }
-                                        {/* <li className="sui-single-option-facet__item"><a
+                                            {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
+                                                <li className="sui-single-option-facet__item"><a
+                                                    className="sui-single-option-facet__link"
+                                                    href="#Derived-Datasets">Derived
+                                                    Datasets</a>
+                                                </li>
+                                            }
+                                            {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li> */}
-                                        {data.ancestors &&
+                                            {data.ancestors &&
+                                                <li className="sui-single-option-facet__item"><a
+                                                    className="sui-single-option-facet__link"
+                                                    href="#SourceInformationBox">Ancestor</a>
+                                                </li>
+                                            }
                                             <li className="sui-single-option-facet__item"><a
                                                 className="sui-single-option-facet__link"
-                                                href="#SourceInformationBox">Ancestor</a>
+                                                href="#Protocols">Protocols</a>
                                             </li>
-                                        }
-                                        <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link"
-                                            href="#Protocols">Protocols</a>
-                                        </li>
-                                        {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
-                                        {/*    <li className="sui-single-option-facet__item"><a*/}
-                                        {/*        className="sui-single-option-facet__link" href="#Metadata">Metadata</a>*/}
-                                        {/*    </li>*/}
-                                        {/*}*/}
-                                        <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link"
-                                            href="#Attribution">Attribution</a>
-                                        </li>
-                                    </ul>
+                                            {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
+                                            {/*    <li className="sui-single-option-facet__item"><a*/}
+                                            {/*        className="sui-single-option-facet__link" href="#Metadata">Metadata</a>*/}
+                                            {/*    </li>*/}
+                                            {/*}*/}
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link"
+                                                href="#Attribution">Attribution</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        }
 
-                    bodyHeader={
-                        <div style={{width: '100%'}}>
-                            <h4>Sample</h4>
-                            <h3>{data.sennet_id}</h3>
-                            <div className="d-flex justify-content-between mb-2">
-                                <div className="entity_subtitle link_with_icon">
-                                    {data.sample_category}
-                                    {/*TODO: add back?   {data.origin_sample.mapped_organ} */}
+                        bodyHeader={
+                            <div style={{width: '100%'}}>
+                                <h4>Sample</h4>
+                                <h3>{data.sennet_id}</h3>
+                                <div className="d-flex justify-content-between mb-2">
+                                    <div className="entity_subtitle link_with_icon">
+                                        {data.sample_category}
+                                        {/*TODO: add back?   {data.origin_sample.mapped_organ} */}
+                                    </div>
+                                    <div>
+                                        {hasWritePrivilege && <Button href={`/edit/sample?uuid=${data.uuid}`}
+                                                                      variant="primary">Edit</Button>}{' '}
+                                        <Button href={`/api/json/sample?uuid=${data.uuid}`}
+                                                variant="primary"><FiletypeJson/></Button>
+                                    </div>
                                 </div>
-                                <div>
-                                    {hasWritePrivilege && <Button href={`/edit/sample?uuid=${data.uuid}`} variant="primary">Edit</Button>}{' '}
-                                    <Button href={`/api/json/sample?uuid=${data.uuid}`}
-                                            variant="primary"><FiletypeJson/></Button>
-                                </div>
+
                             </div>
+                        }
 
-                        </div>
-                    }
+                        bodyContent={
+                            <div>
+                                <ul className="sui-results-container">
+                                    {/*Description*/}
+                                    <Description primaryDateTitle="Creation Date" primaryDate={data.created_timestamp}
+                                                 secondaryDateTitle="Modification Date"
+                                                 secondaryDate={data.last_modified_timestamp}
+                                                 data={data}/>
 
-                    bodyContent={
-                        <div>
-                            <ul className="sui-results-container">
-                                {/*Description*/}
-                                <Description primaryDateTitle="Creation Date" primaryDate={data.created_timestamp}
-                                             secondaryDateTitle="Modification Date"
-                                             secondaryDate={data.last_modified_timestamp}
-                                             data={data}/>
-
-                                {/*Derived Dataset*/}
-                                {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
-                                    <DerivedDataset data={data}/>
-                                }
+                                    {/*Derived Dataset*/}
+                                    {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
+                                        <DerivedDataset data={data}/>
+                                    }
 
 
-                                {/*Provenance*/}
-                                {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
+                                    {/*Provenance*/}
+                                    {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={  }/>
                                 } */}
 
-                                {/*Source Information Box*/}
-                                {source &&
-                                    <AncestorInformationBox ancestor={source}/>
-                                }
+                                    {/*Source Information Box*/}
+                                    {source &&
+                                        <AncestorInformationBox ancestor={source}/>
+                                    }
 
-                                {/*Protocols*/}
-                                {/*TODO: Need to add prot   ocols section*/}
+                                    {/*Protocols*/}
+                                    {/*TODO: Need to add prot   ocols section*/}
 
-                                {/*Metadata*/}
-                                {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
-                                {/*    <Metadata metadataKey='source.' data={data.source.mapped_metadata}*/}
-                                {/*              filename={data.sennet_id}/>*/}
-                                {/*}*/}
+                                    {/*Metadata*/}
+                                    {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
+                                    {/*    <Metadata metadataKey='source.' data={data.source.mapped_metadata}*/}
+                                    {/*              filename={data.sennet_id}/>*/}
+                                    {/*}*/}
 
-                                {/*Attribution*/}
-                                <Attribution data={data}/>
+                                    {/*Attribution*/}
+                                    <Attribution data={data}/>
 
-                            </ul>
-                        </div>
-                    }
+                                </ul>
+                            </div>
+                        }
 
-                />
+                    />
 
-            }
+                }
 
-            {!data &&
-                <div className="text-center p-3">
-                    <span>Loading, please wait...</span>
-                    <br></br>
-                    <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                </div>
-            }
-        </div>
-    )
+                {!data &&
+                    <div className="text-center p-3">
+                        <span>Loading, please wait...</span>
+                        <br></br>
+                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+                    </div>
+                }
+            </div>
+        )
+    } else {
+        return (
+            <Unauthorized/>
+        )
+    }
 }
 
 

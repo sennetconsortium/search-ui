@@ -22,6 +22,8 @@ import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/confi
 import log from "loglevel";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_read_write_privileges, read_write_privileges} from "../lib/services";
+import {getCookie} from "cookies-next";
+import Unauthorized from "../components/custom/layout/Unauthorized";
 
 
 function Search() {
@@ -43,7 +45,7 @@ function Search() {
     }, [router.query]);
 
 
-    if (authorized === true) {
+    if (authorized && getCookie('isAuthenticated')) {
         return (
             <div>
                 <Head>
@@ -103,11 +105,10 @@ function Search() {
                 </SearchProvider>
             </div>
         )
-    } else {
+    }
+    else {
         return (
-            <div className={'container login-container'}>
-                {!authorized && <div className={'alert alert-danger text-center'}>You have not been granted access to use the <a href={'/'}>SenNet Data Sharing Portal</a></div>}
-            </div>
+            <Unauthorized/>
         )
     }
 }

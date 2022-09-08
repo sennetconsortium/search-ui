@@ -11,9 +11,11 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_dataset} from "../../lib/services";
+import {get_read_write_privileges, update_create_dataset} from "../../lib/services";
 import DataTypes from "../../components/custom/edit/dataset/DataTypes";
 import AncestorIds from "../../components/custom/edit/dataset/AncestorIds";
+import {getCookie} from "cookies-next";
+import Unauthorized from "../../components/custom/layout/Unauthorized";
 
 function EditDataset() {
     const router = useRouter()
@@ -29,10 +31,14 @@ function EditDataset() {
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
+    const [authorized, setAuthorized] = useState(true)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
 
+    get_read_write_privileges().then(response => {
+        setAuthorized(response.read_privs)
+    }).catch(error => log.error(error))
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -181,128 +187,62 @@ function EditDataset() {
         setValidated(true);
     };
 
+    if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <div>
+                <AppNavbar/>
 
-    return (
-        <div>
-            <AppNavbar/>
+                {error &&
+                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                }
+                {data && !error &&
+                    <div className="no_sidebar">
+                        <Layout
+                            bodyHeader={
+                                <Container className="px-0" fluid={true}>
+                                    <Row md={12}>
+                                        <h4>Dataset Information</h4>
+                                    </Row>
+                                    {editMode === 'edit' &&
+                                        <>
+                                            <Row>
+                                                <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
+                                                <Col md={6}><h5>Group: {data.group_name}</h5></Col>
+                                            </Row>
+                                            <Row>
+                                                <Col md={6}><h5>Entered By: {data.created_by_user_email}</h5></Col>
+                                                <Col md={6}><h5>Entry Date: {new Intl.DateTimeFormat('en-US', {
+                                                    year: 'numeric',
+                                                    month: '2-digit',
+                                                    day: '2-digit',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    second: '2-digit'
+                                                }).format(data.created_timestamp)}</h5></Col>
+                                            </Row>
+                                        </>
+                                    }
 
-            {error &&
-                <div className="alert alert-warning" role="alert">{errorMessage}</div>
-            }
-            {data && !error &&
-                <div className="no_sidebar">
-                    <Layout
-                        bodyHeader={
-                            <Container className="px-0" fluid={true}>
-                                <Row md={12}>
-                                    <h4>Dataset Information</h4>
-                                </Row>
-                                {editMode === 'edit' &&
-                                    <>
-                                        <Row>
-                                            <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
-                                            <Col md={6}><h5>Group: {data.group_name}</h5></Col>
-                                        </Row>
-                                        <Row>
-                                            <Col md={6}><h5>Entered By: {data.created_by_user_email}</h5></Col>
-                                            <Col md={6}><h5>Entry Date: {new Intl.DateTimeFormat('en-US', {
-                                                year: 'numeric',
-                                                month: '2-digit',
-                                                day: '2-digit',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                second: '2-digit'
-                                            }).format(data.created_timestamp)}</h5></Col>
-                                        </Row>
-                                    </>
-                                }
+                                </Container>
+                            }
+                            bodyContent={
+                                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                    {/*Source ID*/}
+                                    {/*editMode is only set when page is ready to load */}
+                                    {editMode &&
+                                        <AncestorIds values={values} sources={sources} onChange={onChange}
+                                                     fetchSources={fetchSources} deleteSource={deleteSource}/>
+                                    }
 
-                            </Container>
-                        }
-                        bodyContent={
-                            <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                                {/*Source ID*/}
-                                {/*editMode is only set when page is ready to load */}
-                                {editMode &&
-                                    <AncestorIds values={values} sources={sources} onChange={onChange}
-                                                 fetchSources={fetchSources} deleteSource={deleteSource}/>
-                                }
-
-                                {/*/!*Lab Name or ID*!/*/}
-                                <Form.Group className="mb-3" controlId="lab_dataset_id">
-                                    <Form.Label>Lab Name or ID<span> </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        Lab Name or ID
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control type="text" placeholder="Lab Name or ID"
-                                                  defaultValue={data.lab_dataset_id}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
-
-
-                                {/*/!*Description*!/*/}
-                                <Form.Group className="mb-3" controlId="description">
-                                    <Form.Label>Description<span> </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        Add information here which can be used to find this data
-                                                        including lab specific (non-PHI) identifiers.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control as="textarea" rows={4} defaultValue={data.description}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
-
-
-                                {/*/!*Additional Information*!/*/}
-                                <Form.Group className="mb-3" controlId="dataset_info">
-                                    <Form.Label>Additional Information<span> </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        Add information here which can be used to find this data
-                                                        including lab specific (non-PHI) identifiers.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control as="textarea" rows={4} defaultValue={data.dataset_info}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
-
-                                {/*/!*Human Gene Sequences*!/*/}
-                                {editMode &&
-                                    <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
-                                        <Form.Label>Human Gene Sequences <span className="required">* </span>
+                                    {/*/!*Lab Name or ID*!/*/}
+                                    <Form.Group className="mb-3" controlId="lab_dataset_id">
+                                        <Form.Label>Lab Name or ID<span> </span>
                                             <OverlayTrigger
                                                 placement="top"
                                                 overlay={
                                                     <Popover>
                                                         <Popover.Body>
-                                                            Does this data contain any human genetic sequences?
+                                                            Lab Name or ID
                                                         </Popover.Body>
                                                     </Popover>
                                                 }
@@ -310,67 +250,138 @@ function EditDataset() {
                                                 <QuestionCircleFill/>
                                             </OverlayTrigger>
                                         </Form.Label>
-                                        <div className="mb-2 text-muted">Does this data contain any human genetic
-                                            sequences?
-                                        </div>
-                                        <Form.Check
-                                            required
-                                            type="radio"
-                                            label="No"
-                                            name="contains_human_genetic_sequences"
-                                            value={false}
-                                            defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'edit') ? true : false}
-                                            onChange={e => onChange(e, e.target.id, e.target.value)}
-                                        />
-                                        <Form.Check
-                                            required
-                                            type="radio"
-                                            label="Yes"
-                                            name="contains_human_genetic_sequences"
-                                            value={true}
-                                            defaultChecked={data.contains_human_genetic_sequences ? true : false}
-                                            onChange={e => onChange(e, e.target.id, e.target.value)}
-                                        />
+                                        <Form.Control type="text" placeholder="Lab Name or ID"
+                                                      defaultValue={data.lab_dataset_id}
+                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
                                     </Form.Group>
-                                }
 
-                                {/*/!*Data Types*!/*/}
-                                {editMode &&
-                                    <DataTypes values={values} data={data} onChange={onChange}/>
-                                }
 
-                                <Button variant="primary" type="submit" disabled={disableSubmit}>
-                                    Submit
-                                </Button>
-                            </Form>
-                        }
-                    />
-                </div>
-            }
-            {!data &&
-                <div className="text-center p-3">
-                    <span>Loading, please wait...</span>
-                    <br></br>
-                    <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                </div>
-            }
+                                    {/*/!*Description*!/*/}
+                                    <Form.Group className="mb-3" controlId="description">
+                                        <Form.Label>Description<span> </span>
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            Add information here which can be used to find this data
+                                                            including lab specific (non-PHI) identifiers.
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <QuestionCircleFill/>
+                                            </OverlayTrigger>
+                                        </Form.Label>
+                                        <Form.Control as="textarea" rows={4} defaultValue={data.description}
+                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                    </Form.Group>
 
-            <Modal show={showModal}>
-                <Modal.Header>
-                    <Modal.Title>{modalTitle}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>{modalBody}</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={handleHome}>
-                        Home page
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
-    )
+
+                                    {/*/!*Additional Information*!/*/}
+                                    <Form.Group className="mb-3" controlId="dataset_info">
+                                        <Form.Label>Additional Information<span> </span>
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            Add information here which can be used to find this data
+                                                            including lab specific (non-PHI) identifiers.
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <QuestionCircleFill/>
+                                            </OverlayTrigger>
+                                        </Form.Label>
+                                        <Form.Control as="textarea" rows={4} defaultValue={data.dataset_info}
+                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                    </Form.Group>
+
+                                    {/*/!*Human Gene Sequences*!/*/}
+                                    {editMode &&
+                                        <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
+                                            <Form.Label>Human Gene Sequences <span className="required">* </span>
+                                                <OverlayTrigger
+                                                    placement="top"
+                                                    overlay={
+                                                        <Popover>
+                                                            <Popover.Body>
+                                                                Does this data contain any human genetic sequences?
+                                                            </Popover.Body>
+                                                        </Popover>
+                                                    }
+                                                >
+                                                    <QuestionCircleFill/>
+                                                </OverlayTrigger>
+                                            </Form.Label>
+                                            <div className="mb-2 text-muted">Does this data contain any human genetic
+                                                sequences?
+                                            </div>
+                                            <Form.Check
+                                                required
+                                                type="radio"
+                                                label="No"
+                                                name="contains_human_genetic_sequences"
+                                                value={false}
+                                                defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'edit') ? true : false}
+                                                onChange={e => onChange(e, e.target.id, e.target.value)}
+                                            />
+                                            <Form.Check
+                                                required
+                                                type="radio"
+                                                label="Yes"
+                                                name="contains_human_genetic_sequences"
+                                                value={true}
+                                                defaultChecked={data.contains_human_genetic_sequences ? true : false}
+                                                onChange={e => onChange(e, e.target.id, e.target.value)}
+                                            />
+                                        </Form.Group>
+                                    }
+
+                                    {/*/!*Data Types*!/*/}
+                                    {editMode &&
+                                        <DataTypes values={values} data={data} onChange={onChange}/>
+                                    }
+
+                                    <Button variant="primary" type="submit" disabled={disableSubmit}>
+                                        Submit
+                                    </Button>
+                                </Form>
+                            }
+                        />
+                    </div>
+                }
+                {!data &&
+                    <div className="text-center p-3">
+                        <span>Loading, please wait...</span>
+                        <br></br>
+                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+                    </div>
+                }
+
+                <Modal show={showModal}>
+                    <Modal.Header>
+                        <Modal.Title>{modalTitle}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>{modalBody}</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>
+                        <Button variant="primary" onClick={handleHome}>
+                            Home page
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </div>
+        )
+    } else {
+        return (
+            <Unauthorized/>
+        )
+    }
 }
 
 

@@ -14,7 +14,9 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_entity} from "../../lib/services";
+import {get_read_write_privileges, update_create_entity} from "../../lib/services";
+import {getCookie} from "cookies-next";
+import Unauthorized from "../../components/custom/layout/Unauthorized";
 
 function EditSample() {
     const router = useRouter()
@@ -31,10 +33,14 @@ function EditSample() {
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
+    const [authorized, setAuthorized] = useState(true)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
 
+    get_read_write_privileges().then(response => {
+        setAuthorized(response.read_privs)
+    }).catch(error => log.error(error))
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -164,139 +170,141 @@ function EditSample() {
         setValidated(true);
     };
 
+    if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <div>
+                <AppNavbar/>
 
-    return (
-        <div>
-            <AppNavbar/>
+                {error &&
+                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                }
+                {data && !error &&
+                    <div className="no_sidebar">
+                        <Layout
+                            bodyHeader={
+                                <Container className="px-0" fluid={true}>
+                                    <Row md={12}>
+                                        <h4>Sample Information</h4>
+                                    </Row>
+                                    {editMode === 'edit' &&
+                                        <>
+                                            <Row>
+                                                <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
+                                                <Col md={6}><h5>Group: {data.group_name}</h5></Col>
+                                            </Row>
+                                            <Row>
+                                                <Col md={6}><h5>Entered By: {data.created_by_user_email}</h5></Col>
+                                                <Col md={6}><h5>Entry Date: {new Intl.DateTimeFormat('en-US', {
+                                                    year: 'numeric',
+                                                    month: '2-digit',
+                                                    day: '2-digit',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    second: '2-digit'
+                                                }).format(data.created_timestamp)}</h5></Col>
+                                            </Row>
+                                        </>
+                                    }
 
-            {error &&
-                <div className="alert alert-warning" role="alert">{errorMessage}</div>
-            }
-            {data && !error &&
-                <div className="no_sidebar">
-                    <Layout
-                        bodyHeader={
-                            <Container className="px-0" fluid={true}>
-                                <Row md={12}>
-                                    <h4>Sample Information</h4>
-                                </Row>
-                                {editMode === 'edit' &&
-                                    <>
-                                        <Row>
-                                            <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
-                                            <Col md={6}><h5>Group: {data.group_name}</h5></Col>
-                                        </Row>
-                                        <Row>
-                                            <Col md={6}><h5>Entered By: {data.created_by_user_email}</h5></Col>
-                                            <Col md={6}><h5>Entry Date: {new Intl.DateTimeFormat('en-US', {
-                                                year: 'numeric',
-                                                month: '2-digit',
-                                                day: '2-digit',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                second: '2-digit'
-                                            }).format(data.created_timestamp)}</h5></Col>
-                                        </Row>
-                                    </>
-                                }
+                                </Container>
+                            }
+                            bodyContent={
+                                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                    {/*Ancestor ID*/}
+                                    {/*editMode is only set when page is ready to load */}
+                                    {editMode &&
+                                        <AncestorId source={source} onChange={onChange} fetchSource={fetchSource}/>
+                                    }
 
-                            </Container>
-                        }
-                        bodyContent={
-                            <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                                {/*Ancestor ID*/}
-                                {/*editMode is only set when page is ready to load */}
-                                {editMode &&
-                                    <AncestorId source={source} onChange={onChange} fetchSource={fetchSource}/>
-                                }
+                                    {/*Source Information Box*/}
+                                    {source &&
+                                        <AncestorInformationBox ancestor={source}/>
+                                    }
 
-                                {/*Source Information Box*/}
-                                {source &&
-                                    <AncestorInformationBox ancestor={source}/>
-                                }
+                                    {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}
+                                    {/*/!*Tissue Sample Type*!/*/}
+                                    {((editMode === 'edit' && source) || (editMode === 'create')) &&
+                                        <SampleCategory data={data} source={source} onChange={onChange}/>
+                                    }
 
-                                {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}
-                                {/*/!*Tissue Sample Type*!/*/}
-                                {((editMode === 'edit' && source) || (editMode === 'create')) &&
-                                    <SampleCategory data={data} source={source} onChange={onChange}/>
-                                }
+                                    {/*/!*Preparation Protocol*!/*/}
+                                    <Form.Group className="mb-3" controlId="protocol_url">
+                                        <Form.Label>Preparation Protocol <span className="required">* </span>
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            The protocol used when procuring or preparing the tissue.
+                                                            This must be provided as a protocols.io DOI URL see
+                                                            https://www.protocols.io/
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <QuestionCircleFill/>
+                                            </OverlayTrigger>
+                                        </Form.Label>
+                                        <Form.Control type="text" required
+                                                      pattern={"(^(http(s)?:\/\/)?dx.doi.org\/10\.17504\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10\.17504\/protocols\.io\..+)"}
+                                                      placeholder="protocols.io DOI"
+                                                      defaultValue={data.protocol_url}
+                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                    </Form.Group>
 
-                                {/*/!*Preparation Protocol*!/*/}
-                                <Form.Group className="mb-3" controlId="protocol_url">
-                                    <Form.Label>Preparation Protocol <span className="required">* </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        The protocol used when procuring or preparing the tissue.
-                                                        This must be provided as a protocols.io DOI URL see
-                                                        https://www.protocols.io/
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control type="text" required
-                                                  pattern={"(^(http(s)?:\/\/)?dx.doi.org\/10\.17504\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10\.17504\/protocols\.io\..+)"}
-                                                  placeholder="protocols.io DOI"
-                                                  defaultValue={data.protocol_url}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
+                                    {/*/!*Lab Sample ID*!/*/}
+                                    <Form.Group className="mb-3" controlId="lab_tissue_sample_id">
+                                        <Form.Label>Lab Sample ID<span> </span>
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            An identifier used by the lab to identify the specimen, this
+                                                            can
+                                                            be an identifier from the system used to track the specimen
+                                                            in
+                                                            the lab. This field will be entered by the user.
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <QuestionCircleFill/>
+                                            </OverlayTrigger>
+                                        </Form.Label>
+                                        <Form.Control type="text" placeholder="Lab specific alpha-numeric ID"
+                                                      defaultValue={data.lab_tissue_sample_id}
+                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                    </Form.Group>
 
-                                {/*/!*Lab Sample ID*!/*/}
-                                <Form.Group className="mb-3" controlId="lab_tissue_sample_id">
-                                    <Form.Label>Lab Sample ID<span> </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        An identifier used by the lab to identify the specimen, this can
-                                                        be an identifier from the system used to track the specimen in
-                                                        the lab. This field will be entered by the user.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control type="text" placeholder="Lab specific alpha-numeric ID"
-                                                  defaultValue={data.lab_tissue_sample_id}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
+                                    {/*/!*Description*!/*/}
+                                    <Form.Group className="mb-3" controlId="description">
+                                        <Form.Label>Description<span> </span>
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            A free text description of the specimen.
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }
+                                            >
+                                                <QuestionCircleFill/>
+                                            </OverlayTrigger>
+                                        </Form.Label>
+                                        <Form.Control as="textarea" rows={4} defaultValue={data.description}
+                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
+                                    </Form.Group>
 
-                                {/*/!*Description*!/*/}
-                                <Form.Group className="mb-3" controlId="description">
-                                    <Form.Label>Description<span> </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        A free text description of the specimen.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control as="textarea" rows={4} defaultValue={data.description}
-                                                  onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                </Form.Group>
-
-                                {/*/!*Metadata*!/*/}
-                                {/* <Form.Group controlId="metadata-file" className="mb-3">
+                                    {/*/!*Metadata*!/*/}
+                                    {/* <Form.Group controlId="metadata-file" className="mb-3">
                                     <Form.Label>Add a Metadata file</Form.Label>
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                {/*/!*Image*!/*/}
-                                {/* <Form.Group controlId="slide-image-file" className="mb-3">
+                                    {/*/!*Image*!/*/}
+                                    {/* <Form.Group controlId="slide-image-file" className="mb-3">
                                     <Form.Label>Add a Slide Image file <span> </span>
                                         <OverlayTrigger
                                             placement="top"
@@ -314,8 +322,8 @@ function EditSample() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                {/*/!*Thumbnail*!/*/}
-                                {/* <Form.Group controlId="thumbnail-file" className="mb-3">
+                                    {/*/!*Thumbnail*!/*/}
+                                    {/* <Form.Group controlId="thumbnail-file" className="mb-3">
                                     <Form.Label>Add a Thumbnail file <span> </span>
                                         <OverlayTrigger
                                             placement="top"
@@ -333,38 +341,43 @@ function EditSample() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                <Button variant="primary" type="submit" disabled={disableSubmit}>
-                                    Submit
-                                </Button>
-                            </Form>
-                        }
-                    />
-                </div>
-            }
-            {!data &&
-                <div className="text-center p-3">
-                    <span>Loading, please wait...</span>
-                    <br></br>
-                    <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                </div>
-            }
+                                    <Button variant="primary" type="submit" disabled={disableSubmit}>
+                                        Submit
+                                    </Button>
+                                </Form>
+                            }
+                        />
+                    </div>
+                }
+                {!data &&
+                    <div className="text-center p-3">
+                        <span>Loading, please wait...</span>
+                        <br></br>
+                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+                    </div>
+                }
 
-            <Modal show={showModal}>
-                <Modal.Header>
-                    <Modal.Title>{modalTitle}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>{modalBody}</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={handleHome}>
-                        Home page
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
-    )
+                <Modal show={showModal}>
+                    <Modal.Header>
+                        <Modal.Title>{modalTitle}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>{modalBody}</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>
+                        <Button variant="primary" onClick={handleHome}>
+                            Home page
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </div>
+        )
+    } else {
+        return (
+            <Unauthorized/>
+        )
+    }
 }
 
 

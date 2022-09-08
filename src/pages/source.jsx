@@ -13,7 +13,13 @@ import log from "loglevel";
 import {getRequestHeaders} from "../components/custom/js/functions";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_write_privilege_for_group_uuid, write_privilege_for_group_uuid} from "../lib/services";
+import {
+    get_read_write_privileges,
+    get_write_privilege_for_group_uuid,
+    write_privilege_for_group_uuid
+} from "../lib/services";
+import {getCookie} from "cookies-next";
+import Unauthorized from "../components/custom/layout/Unauthorized";
 
 function ViewSource() {
     const router = useRouter()
@@ -21,11 +27,16 @@ function ViewSource() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
+    const [authorized, setAuthorized] = useState(true)
 
     const handleQueryChange = (event) => {
         log.debug("CHANGE")
         log.debug(event)
     }
+
+    get_read_write_privileges().then(response => {
+        setAuthorized(response.read_privs)
+    }).catch(error => log.error(error))
 
     useEffect(() => {
         window.addEventListener('hashchange', handleQueryChange);
@@ -75,8 +86,9 @@ function ViewSource() {
         //reset(data);
     }, [data]);
 
-    return (
-        <div>
+    if (authorized && getCookie('isAuthenticated')){
+        return (
+            <div>
             <AppNavbar/>
 
             {error &&
@@ -196,7 +208,13 @@ function ViewSource() {
                 </div>
             }
         </div>
-    )
+        )
+    } else {
+        return (
+            <Unauthorized/>
+        )
+    }
+
 }
 
 

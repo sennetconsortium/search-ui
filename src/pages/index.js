@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import cookieCutter from 'cookie-cutter'
 import log from "loglevel";
 import {get_read_write_privileges} from "../lib/services";
+import { setCookie } from 'cookies-next';
 
 export default function Home() {
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
@@ -20,6 +21,7 @@ export default function Home() {
         log.debug(router.query);
         get_read_write_privileges().then(read_write_privileges => {
             if (read_write_privileges.read_privs === true) {
+                setCookie('isAuthenticated',true)
                 // Redirect to home page without query string
                 window.location.replace(getRootURL() + "/search");
             } else {
