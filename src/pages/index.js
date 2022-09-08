@@ -47,11 +47,11 @@ export default function Home() {
                 <div className="card alert alert-success">
                     <div className="card-body">
                         <h3 className="card-title">{APP_TITLE}</h3>
-                        <p className="card-text">User authentication is required to search the dataset catalog. Please click
+                        <div className="card-text">User authentication is required to search the dataset catalog. Please click
                             the button below and you will be redirected to a Globus page to select your institution. After
                             selecting your
                             institution, you will be redirected to your institutional login page to enter your credentials.
-                        </p>
+                        </div>
                         <hr/>
                         <a className="btn btn-primary btn-lg" href={login_url}>
                             Log in with your institution credentials
