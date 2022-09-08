@@ -24,6 +24,48 @@ export async function update_create_dataset(uuid, body, action = "edit", router)
     }
 }
 
+
+function get_headers() {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", "Bearer " + getAuth())
+    return headers;
+}
+
+export async function get_read_write_privileges() {
+    log.info('GET READ WRITE PRIVILEGES')
+    const url = getIngestEndPoint() + 'privs/for_groups_token/' + getAuth()
+    const request_options = {
+        method: 'GET',
+        headers: get_headers()
+    }
+    const response = await fetch(url, request_options)
+    if (!response.ok) {
+        const message = `An error has occurred: ${response.status}`;
+        throw new Error(message);
+    }
+    let json = response.json()
+    return await json
+}
+
+export const write_privilege_for_group_uuid = (group_uuid) => get_write_privilege_for_group_uuid(group_uuid)
+
+export async function get_write_privilege_for_group_uuid(group_uuid) {
+    log.info('GET WRITE PRIVILEGE FOR GROUP UUID')
+    const url = getIngestEndPoint() + 'privs/for_groups_token/' + getAuth() + '/has_write_on_group_uuid/' + group_uuid
+    const request_options = {
+        method: 'GET',
+        headers: get_headers()
+    }
+    const response = await fetch(url, request_options)
+    if (!response.ok) {
+        const message = `An error has occurred: ${response.status}`;
+        throw new Error(message);
+    }
+    let json = response.json()
+    return await json
+}
+
 async function call_service(raw, url, method) {
     var headers = new Headers();
     headers.append("Content-Type", "application/json");

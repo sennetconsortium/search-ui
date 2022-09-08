@@ -106,40 +106,18 @@ export const config = {
             display_subtype: {type: "value"},
             lab_name: {type: "value"},
             lab_tissue_sample_id: {type: "value"},
+            sample_category: {type: "value"},
             lab_dataset_id: {type: "value"},
             created_by_user_displayname: {type: "value"},
             created_by_user_email: {type: "value"},
-            dataset_info: {type: "value"},
-            "mapped_metadata.race": {type: "value"},
-            "mapped_metadata.sex": {type: "value"},
+            dataset_info: {type: "value"}
+            // "mapped_metadata.race": {type: "value"},
+            // "mapped_metadata.sex": {type: "value"},
         }
     },
     initialState: {
         resultsPerPage: 10
     },
-
-    // autocompleteQuery: {
-    //   results: {
-    //     resultsPerPage: 5,
-    //     result_fields: {
-    //       title: {
-    //         snippet: {
-    //           size: 100,
-    //           fallback: true
-    //         }
-    //       }
-    //     }
-    //   },
-    // suggestions: {
-    //   types: {
-    //     documents: {
-    //       fields: ["title"]
-    //     }
-    //   },
-    //   size: 4
-    // }
-    //},
-    // Setting trackUrlState disables the URL from updating the query parameters on filters/serach
     trackUrlState: false,
     apiConnector: connector,
     hasA11yNotifications: true,
@@ -278,8 +256,87 @@ export const SORT_OPTIONS = [
     // }
 ];
 
-export const ENTITY_TYPES = [
-    "Dataset",
-    "Sample",
-    "Source"
-];
+export const exclude_dataset_config = {
+    alwaysSearchOnInitialLoad: true,
+    searchQuery: {
+        facets: {
+            entity_type: {
+                label: "Entity Type",
+                type: "value",
+                field: "entity_type.keyword",
+                filterType: "any",
+                isFilterable: false
+            },
+            sample_category: {
+                label: "Sample Category",
+                type: "value",
+                field: "sample_category.keyword",
+                filterType: "any",
+                isFilterable: false
+            },
+            "origin_sample.mapped_organ": {
+                label: "Organ",
+                type: "value",
+                field: "origin_sample.mapped_organ.keyword",
+                filterType: "any",
+                isFilterable: false
+            },
+            group_name: {
+                label: "Group Name",
+                type: "value",
+                field: "group_name.keyword",
+                filterType: "any",
+                isFilterable: false
+            },
+            created_by_user_displayname: {
+                label: "Registered By",
+                type: "value",
+                field: "created_by_user_displayname.keyword",
+                filterType: "anty",
+                isFilterable: false
+            }
+
+        },
+        excludeFilters: [{
+            keyword: "entity_type.keyword",
+            value: "Dataset"
+        }],
+        conditionalFacets: {
+            // Only show 'sample_category' facet if 'Sample' is selected from the entity type facet
+            'sample_category': ({filters}) => {
+                return filters.some(filter => filter.field === 'entity_type' && filter.values.includes('Sample'));
+            },
+
+            // Only show 'origin_sample' facet if 'Sample' or 'Dataset' is selected from the entity type facet
+            'origin_sample.mapped_organ': ({filters}) => {
+                return filters.some(filter => filter.field === 'entity_type' && (filter.values.includes('Sample')
+                    || filter.values.includes("Dataset")));
+            },
+        },
+        search_fields: {
+            description: {type: "value"},
+            group_name: {type: "value"},
+            sennet_id: {type: "value"},
+            display_doi: {type: "value"},
+            lab_source_id: {type: "value"},
+            display_subtype: {type: "value"},
+            lab_name: {type: "value"},
+            lab_tissue_sample_id: {type: "value"},
+            sample_category: {type: "value"},
+            lab_dataset_id: {type: "value"},
+            created_by_user_displayname: {type: "value"},
+            created_by_user_email: {type: "value"},
+            dataset_info: {type: "value"}
+        }
+    },
+    initialState: {
+        resultsPerPage: 10
+    },
+    trackUrlState: false,
+    apiConnector: connector,
+    hasA11yNotifications: true,
+    a11yNotificationMessages: {
+        searchResults: ({start, end, totalResults, searchTerm}) =>
+            `Searching for "${searchTerm}". Showing ${start} to ${end} results out of ${totalResults}.`
+    },
+};

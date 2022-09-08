@@ -21,11 +21,20 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import log from "loglevel";
 import AppNavbar from "../components/custom/layout/AppNavbar";
+import {get_read_write_privileges, read_write_privileges} from "../lib/services";
+import {getCookie} from "cookies-next";
+import Unauthorized from "../components/custom/layout/Unauthorized";
 
 
 function Search() {
     const router = useRouter();
     const [authorized, setAuthorized] = useState(true);
+    const [isRegisterHidden, setIsRegisterHidden] = useState(false)
+
+    get_read_write_privileges().then(response => {
+        setAuthorized(response.read_privs)
+        setIsRegisterHidden(!response.write_privs)
+    }).catch(error => log.error(error))
 
     useEffect(() => {
         log.debug('ROUTER CHANGED: useEffect: query:', router.query)
@@ -36,7 +45,7 @@ function Search() {
     }, [router.query]);
 
 
-    if (authorized === true) {
+    if (authorized && getCookie('isAuthenticated')) {
         return (
             <div>
                 <Head>
@@ -49,7 +58,7 @@ function Search() {
                         {({wasSearched, filters}) => {
                             return (
                                 <div>
-                                    <AppNavbar/>
+                                    <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
 
@@ -96,8 +105,11 @@ function Search() {
                 </SearchProvider>
             </div>
         )
-    } else {
-        return (<div>Loading...</div>)
+    }
+    else {
+        return (
+            <Unauthorized/>
+        )
     }
 }
 
