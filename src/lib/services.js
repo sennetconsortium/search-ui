@@ -34,7 +34,7 @@ function get_headers() {
 
 export async function get_read_write_privileges() {
     log.info('GET READ WRITE PRIVILEGES')
-    const url = getIngestEndPoint() + 'privs/for_groups_token/' + getAuth()
+    const url = getIngestEndPoint() + 'privs'
     const request_options = {
         method: 'GET',
         headers: get_headers()
@@ -52,7 +52,7 @@ export const write_privilege_for_group_uuid = (group_uuid) => get_write_privileg
 
 export async function get_write_privilege_for_group_uuid(group_uuid) {
     log.info('GET WRITE PRIVILEGE FOR GROUP UUID')
-    const url = getIngestEndPoint() + 'privs/for_groups_token/' + getAuth() + '/has_write_on_group_uuid/' + group_uuid
+    const url = getIngestEndPoint() + 'privs/' + group_uuid + '/has-write'
     const request_options = {
         method: 'GET',
         headers: get_headers()
