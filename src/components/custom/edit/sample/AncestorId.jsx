@@ -17,7 +17,7 @@ import Modal from 'react-bootstrap/Modal';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
-import {config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../../config/config";
+import {config, exclude_dataset_config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../../config/config";
 import ClearSearchBox from "search-ui/components/core/ClearSearchBox";
 import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
@@ -82,7 +82,7 @@ export default class AncestorId extends React.Component {
                     keyboard={false}
                 >
                     <Modal.Body>
-                        <SearchProvider config={config}>
+                        <SearchProvider config={exclude_dataset_config}>
                             <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
                                 {({wasSearched, filters}) => {
                                     return (
@@ -102,7 +102,7 @@ export default class AncestorId extends React.Component {
                                                         />
                                                     )}
 
-                                                    <Facets fields={config.searchQuery}/>
+                                                    <Facets fields={exclude_dataset_config.searchQuery}/>
 
                                                 </>
 
