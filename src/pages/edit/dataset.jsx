@@ -33,6 +33,7 @@ function EditDataset() {
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
     const [authorized, setAuthorized] = useState(true)
+    const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -194,6 +195,14 @@ function EditDataset() {
         setValidated(true);
     };
 
+    function handleContainsHumanGeneticSequencesYes() {
+        setContainsHumanGeneticSequences(true)
+    }
+
+    function handleContainsHumanGeneticSequencesNo() {
+        setContainsHumanGeneticSequences(false)
+    }
+
     if (authorized && getCookie('isAuthenticated')) {
         return (
             <div>
@@ -333,7 +342,7 @@ function EditDataset() {
                                                 name="contains_human_genetic_sequences"
                                                 value={false}
                                                 defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'edit') ? true : false}
-                                                onChange={e => onChange(e, e.target.id, Boolean(e.target.value))}
+                                                onChange={handleContainsHumanGeneticSequencesNo}
                                             />
                                             <Form.Check
                                                 required
@@ -342,7 +351,7 @@ function EditDataset() {
                                                 name="contains_human_genetic_sequences"
                                                 value={true}
                                                 defaultChecked={data.contains_human_genetic_sequences ? true : false}
-                                                onChange={e => onChange(e, e.target.id, Boolean(e.target.value))}
+                                                onChange={handleContainsHumanGeneticSequencesYes}
                                             />
                                         </Form.Group>
                                     }
