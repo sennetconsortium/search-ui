@@ -33,6 +33,7 @@ function EditDataset() {
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
     const [authorized, setAuthorized] = useState(true)
+    const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -160,6 +161,8 @@ function EditDataset() {
                 log.debug("Form is valid")
 
                 // Remove empty strings
+                values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
+                log.info("Contains dna : " + values['contains_human_genetic_sequences'])
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
@@ -193,6 +196,14 @@ function EditDataset() {
 
         setValidated(true);
     };
+
+    function handleContainsHumanGeneticSequencesYes() {
+        setContainsHumanGeneticSequences(true)
+    }
+
+    function handleContainsHumanGeneticSequencesNo() {
+        setContainsHumanGeneticSequences(false)
+    }
 
     if (authorized && getCookie('isAuthenticated')) {
         return (
@@ -332,8 +343,8 @@ function EditDataset() {
                                                 label="No"
                                                 name="contains_human_genetic_sequences"
                                                 value={false}
-                                                defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'edit') ? true : false}
-                                                onChange={e => onChange(e, e.target.id, Boolean(e.target.value))}
+                                                defaultChecked={!!Boolean(values['contains_human_genetic_sequences'])}
+                                                onChange={handleContainsHumanGeneticSequencesNo}
                                             />
                                             <Form.Check
                                                 required
@@ -341,8 +352,8 @@ function EditDataset() {
                                                 label="Yes"
                                                 name="contains_human_genetic_sequences"
                                                 value={true}
-                                                defaultChecked={data.contains_human_genetic_sequences ? true : false}
-                                                onChange={e => onChange(e, e.target.id, Boolean(e.target.value))}
+                                                defaultChecked={Boolean(values['contains_human_genetic_sequences'])}
+                                                onChange={handleContainsHumanGeneticSequencesYes}
                                             />
                                         </Form.Group>
                                     }
