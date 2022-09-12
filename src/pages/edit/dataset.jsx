@@ -343,7 +343,7 @@ function EditDataset() {
                                                 label="No"
                                                 name="contains_human_genetic_sequences"
                                                 value={false}
-                                                defaultChecked={!!Boolean(values['contains_human_genetic_sequences'])}
+                                                defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'edit') ? true : false}
                                                 onChange={handleContainsHumanGeneticSequencesNo}
                                             />
                                             <Form.Check
@@ -352,7 +352,7 @@ function EditDataset() {
                                                 label="Yes"
                                                 name="contains_human_genetic_sequences"
                                                 value={true}
-                                                defaultChecked={Boolean(values['contains_human_genetic_sequences'])}
+                                                defaultChecked={data.contains_human_genetic_sequences ? true : false}
                                                 onChange={handleContainsHumanGeneticSequencesYes}
                                             />
                                         </Form.Group>
