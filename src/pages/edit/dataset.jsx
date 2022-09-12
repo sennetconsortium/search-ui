@@ -161,8 +161,6 @@ function EditDataset() {
                 log.debug("Form is valid")
 
                 // Remove empty strings
-                values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
-                log.info("Contains dna : " + values['contains_human_genetic_sequences'])
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
