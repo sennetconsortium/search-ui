@@ -66,7 +66,7 @@ function EditDataset() {
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
                     // TODO: Need to set group_uuid
-                    'lab_dataset_id': lab_dataset_id,
+                    'lab_dataset_id': data.lab_dataset_id,
                     'data_types': [data.data_types[0]],
                     'description': data.description,
                     'dataset_info': data.dataset_info,
