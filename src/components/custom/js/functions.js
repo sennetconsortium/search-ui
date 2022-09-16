@@ -23,6 +23,22 @@ export async function fetchEntity(ancestorId) {
     }
 }
 
+export async function fetchProtocols(protocolUrl) {
+    const regex = new RegExp('[^\.]+$', 'g');
+    console.log(protocolUrl)
+    const protocolId = regex.exec(protocolUrl)[0]
+    const response = await fetch("https://www.protocols.io/api/v3/protocols/" + protocolId);
+
+    const protocol = await response.json();
+    if (protocol.hasOwnProperty("error")) {
+        log.error(protocol["error"])
+        return protocol;
+    } else {
+        return protocol.protocol;
+    }
+
+}
+
 export function createDownloadUrl(fileStr, fileType) {
     return window.URL.createObjectURL(new Blob([fileStr], {type: fileType}));
 }
@@ -74,9 +90,9 @@ export function getStatusColor(status) {
 export function checkFilterEntityType(filters) {
     let hasEntityType = false;
     filters.map((filter, index) => {
-         if (filter.field === 'entity_type') {
-             hasEntityType = true;
-         }
+        if (filter.field === 'entity_type') {
+            hasEntityType = true;
+        }
     });
 
     console.log(hasEntityType)

@@ -13,13 +13,10 @@ import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {
-    get_read_write_privileges,
-    get_write_privilege_for_group_uuid,
-    write_privilege_for_group_uuid
-} from "../lib/services";
+import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
+import Protocols from "../components/custom/entities/sample/Protocols";
 
 function ViewSample() {
     const router = useRouter()
@@ -136,10 +133,12 @@ function ViewSample() {
                                                     href="#SourceInformationBox">Ancestor</a>
                                                 </li>
                                             }
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link"
-                                                href="#Protocols">Protocols</a>
-                                            </li>
+                                            {data.protocol_url &&
+                                                <li className="sui-single-option-facet__item"><a
+                                                    className="sui-single-option-facet__link"
+                                                    href="#Protocols">Protocols</a>
+                                                </li>
+                                            }
                                             {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
                                             {/*    <li className="sui-single-option-facet__item"><a*/}
                                             {/*        className="sui-single-option-facet__link" href="#Metadata">Metadata</a>*/}
@@ -201,7 +200,9 @@ function ViewSample() {
                                     }
 
                                     {/*Protocols*/}
-                                    {/*TODO: Need to add prot   ocols section*/}
+                                    {data.protocol_url &&
+                                        <Protocols protocol_url={data.protocol_url}/>
+                                    }
 
                                     {/*Metadata*/}
                                     {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
