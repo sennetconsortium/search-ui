@@ -4,7 +4,6 @@ import React, {useState} from 'react';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import {APP_TITLE, getIngestLogin, getRootURL} from "../config/config"
 import 'bootstrap/dist/css/bootstrap.css';
-import cookieCutter from 'cookie-cutter'
 import log from "loglevel";
 import {get_read_write_privileges} from "../lib/services";
 import { setCookie } from 'cookies-next';
@@ -15,8 +14,8 @@ export default function Home() {
     const login_url = getIngestLogin();
     const router = useRouter();
     if (router.query['info']) {
-        cookieCutter.set("groups_token", JSON.parse(router.query['info']).groups_token)
-        cookieCutter.set("info", router.query['info'])
+        setCookie("groups_token", JSON.parse(router.query['info']).groups_token)
+        setCookie("info", router.query['info'])
         localStorage.setItem("info", router.query['info']);
         localStorage.setItem("isAuthenticated", true);
         log.debug(router.query);
