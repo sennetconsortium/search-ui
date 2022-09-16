@@ -4,7 +4,6 @@ import React, {useEffect, useState} from 'react';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import {APP_TITLE, getIngestLogin, getRootURL} from "../config/config"
 import 'bootstrap/dist/css/bootstrap.css';
-import cookieCutter from 'cookie-cutter'
 import log from "loglevel";
 import {get_read_write_privileges} from "../lib/services";
 import {setCookie} from 'cookies-next';
@@ -17,8 +16,8 @@ export default function Home() {
 
     useEffect(() => {
         if (router.query['info']) {
-            cookieCutter.set("groups_token", JSON.parse(router.query['info']).groups_token)
-            cookieCutter.set("info", router.query['info'])
+            setCookie("groups_token", JSON.parse(router.query['info']).groups_token)
+            setCookie("info", router.query['info'])
             localStorage.setItem("info", router.query['info']);
             localStorage.setItem("isAuthenticated", true);
             log.debug(router.query);
@@ -52,12 +51,10 @@ export default function Home() {
                     <div className="card-body">
                         <h3 className="card-title">{APP_TITLE}</h3>
                         <div className="card-text">User authentication is required to search the dataset catalog. Please
-                            click
-                            the button below and you will be redirected to a Globus page to select your institution.
-                            After
-                            selecting your
-                            institution, you will be redirected to your institutional login page to enter your
-                            credentials.
+                            click the button below and you will be redirected to a Globus page to select your
+                            institution.
+                            After selecting your institution, you will be redirected to your institutional login page to
+                            enter your credentials.
                         </div>
                         <hr/>
                         <a className="btn btn-primary btn-lg" href={login_url}>

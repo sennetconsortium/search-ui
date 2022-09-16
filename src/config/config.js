@@ -1,12 +1,12 @@
 import React from 'react';
 import SearchAPIConnector from "../search-ui/packages/search-api-connector";
-import cookieCutter from 'cookie-cutter'
+import {getCookie} from 'cookies-next';
 
 export const APP_TITLE = "SenNet: Data Sharing Portal"
 
 export function getAuth() {
     if (typeof window !== "undefined") {
-        return cookieCutter.get("groups_token")
+        return getCookie("groups_token")
     }
     return ""
 }
