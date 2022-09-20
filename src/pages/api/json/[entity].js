@@ -1,14 +1,13 @@
 import {getRootURL} from "../../../config/config";
-import Cookies from 'cookies'
 import log from "loglevel";
+import {getCookie} from "cookies-next";
 
 export default function handler(req, res) {
-    const cookies = new Cookies(req, res)
     const uuid = req.query.uuid
-    let auth = cookies.get("groups_token")
+    let auth = getCookie("groups_token", {req, res})
 
     let myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + auth );
+    myHeaders.append("Authorization", "Bearer " + auth);
     myHeaders.append("Content-Type", "application/json");
     let requestOptions = {
         method: 'GET',

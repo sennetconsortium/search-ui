@@ -4,6 +4,9 @@ import {getCookie} from 'cookies-next';
 
 export const APP_TITLE = "SenNet: Data Sharing Portal"
 
+// Set this to be the time in milliseconds
+export const IDLE_TIMEOUT = 1000 * 60 * 60
+
 export function getAuth() {
     if (typeof window !== "undefined") {
         return getCookie("groups_token")

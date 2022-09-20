@@ -21,7 +21,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import log from "loglevel";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, read_write_privileges} from "../lib/services";
+import {get_read_write_privileges} from "../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 
@@ -31,18 +31,12 @@ function Search() {
     const [authorized, setAuthorized] = useState(true);
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
 
-    get_read_write_privileges().then(response => {
-        setAuthorized(response.read_privs)
-        setIsRegisterHidden(!response.write_privs)
-    }).catch(error => log.error(error))
-
     useEffect(() => {
-        log.debug('ROUTER CHANGED: useEffect: query:', router.query)
-
-        if (router.query.hasOwnProperty("filters[0][values][0]")) {
-            log.debug("QUERY FILTERS: " + router.query["filters[0][values][0]"])
-        }
-    }, [router.query]);
+        get_read_write_privileges().then(response => {
+            setAuthorized(response.read_privs)
+            setIsRegisterHidden(!response.write_privs)
+        }).catch(error => log.error(error))
+    });
 
 
     if (authorized && getCookie('isAuthenticated')) {
@@ -85,7 +79,7 @@ function Search() {
                                             }
                                             bodyContent={
                                                 <Results filters={filters} titleField={filters}
-                                                    view={TableResults} resultView={TableRowDetail}
+                                                         view={TableResults} resultView={TableRowDetail}
                                                 />
                                             }
                                             bodyHeader={
@@ -105,8 +99,7 @@ function Search() {
                 </SearchProvider>
             </div>
         )
-    }
-    else {
+    } else {
         return (
             <Unauthorized/>
         )
