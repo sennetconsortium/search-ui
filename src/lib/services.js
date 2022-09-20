@@ -42,7 +42,7 @@ export async function get_read_write_privileges() {
     const response = await fetch(url, request_options)
     if (!response.ok) {
         const message = `An error has occurred: ${response.status}`;
-        throw new Error(message);
+        throw message;
     }
     let json = response.json()
     return await json

@@ -18,8 +18,6 @@ export default function Home() {
         if (router.query['info']) {
             setCookie("groups_token", JSON.parse(router.query['info']).groups_token)
             setCookie("info", router.query['info'])
-            localStorage.setItem("info", router.query['info']);
-            localStorage.setItem("isAuthenticated", true);
             log.debug(router.query);
             get_read_write_privileges().then(read_write_privileges => {
                 if (read_write_privileges.read_privs === true) {
@@ -41,7 +39,7 @@ export default function Home() {
         return (<Unauthorized/>)
     } else {
         return (
-            <div className="container login-container">
+            <div className="login-container">
                 <Head>
                     <title>{APP_TITLE}</title>
                     <link rel="icon" href="/favicon.ico"/>
