@@ -41,7 +41,7 @@ function EditSample() {
     // only executed on init rendering, see the []
     useEffect(() => {
         get_read_write_privileges().then(response => {
-            setAuthorized(response.read_privs)
+            setAuthorized(response.write_privs)
         }).catch(error => log.error(error))
 
         // declare the async data fetching function
