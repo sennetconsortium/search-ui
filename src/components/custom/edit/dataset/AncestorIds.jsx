@@ -85,7 +85,7 @@ export default class AncestorIds extends React.Component {
                 }
 
                 <InputGroup className="mb-3" id="direct_ancestor_uuid_button">
-                    <Button variant="primary" onClick={this.showModal}>
+                    <Button variant="outline-primary rounded-0 mt-1" onClick={this.showModal}>
                         Add another ancestor <PlusLg/>
                     </Button>
                 </InputGroup>
@@ -145,7 +145,7 @@ export default class AncestorIds extends React.Component {
                         </SearchProvider>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.hideModal}>
+                        <Button variant="outline-secondary rounded-0" onClick={this.hideModal}>
                             Close
                         </Button>
                     </Modal.Footer>

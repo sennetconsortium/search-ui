@@ -150,9 +150,9 @@ function ViewSource() {
                                         {data.source_type}
                                     </div>
                                     <div>
-                                        {hasWritePrivilege && <Button href={`/edit/source?uuid=${data.uuid}`}
-                                                                      variant="primary">Edit</Button>}{' '}
-                                        <Button href={`/api/json/source?uuid=${data.uuid}`} variant="primary">
+                                        {hasWritePrivilege && <Button className="ms-3" href={`/edit/source?uuid=${data.uuid}`}
+                                                                      variant="outline-primary rounded-0">Edit</Button>}{' '}
+                                        <Button className="ms-3" href={`/api/json/source?uuid=${data.uuid}`} variant="outline-primary rounded-0">
                                             <FiletypeJson/>
                                         </Button>
                                     </div>

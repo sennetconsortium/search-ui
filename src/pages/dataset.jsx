@@ -182,14 +182,14 @@ function ViewDataset() {
                                     </div>
                                     <div className="entity_subtitle link_with_icon">
                                         <CircleFill
-                                            className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} |
+                                            className={`me-1 text-${getStatusColor(data.status)}`}/> <div className={'m-2'}>{data.status}</div> |
                                         {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
 
                                         {hasWritePrivilege &&
-                                            <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
-                                                    variant="primary">Edit</Button>}{' '}
-                                        <Button className="ms-1" href={`/api/json/dataset?uuid=${data.uuid}`}
-                                                variant="primary"><FiletypeJson/></Button>
+                                            <Button className="ms-3" href={`/edit/dataset?uuid=${data.uuid}`}
+                                                    variant="outline-primary rounded-0">Edit</Button>}{' '}
+                                        <Button className="ms-3" href={`/api/json/dataset?uuid=${data.uuid}`}
+                                                variant="outline-primary rounded-0"><FiletypeJson/></Button>
                                     </div>
                                 </div>
                             </div>

@@ -290,7 +290,7 @@ function EditSource() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                    <Button variant="primary" type="submit" disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" type="submit" disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>
@@ -313,11 +313,11 @@ function EditSource() {
                     <Modal.Body><p>{modalBody}</p></Modal.Body>
                     <Modal.Footer>
                         {showHideModal &&
-                            <Button variant="secondary" onClick={handleClose}>
+                            <Button variant="outline-secondary rounded-0" onClick={handleClose}>
                                 Close
                             </Button>
                         }
-                        <Button variant="primary" onClick={handleHome}>
+                        <Button variant="outline-primary rounded-0" onClick={handleHome}>
                             Home page
                         </Button>
                     </Modal.Footer>

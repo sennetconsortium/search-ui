@@ -2,7 +2,7 @@ import React from 'react';
 import SearchAPIConnector from "../search-ui/packages/search-api-connector";
 import {getCookie} from 'cookies-next';
 
-export const APP_TITLE = "SenNet: Data Sharing Portal"
+export const APP_TITLE = "SenNet - Data Sharing Portal"
 
 // Set this to be the time in milliseconds
 export const IDLE_TIMEOUT = 1000 * 60 * 60

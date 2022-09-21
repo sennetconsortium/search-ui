@@ -24,6 +24,7 @@ import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_read_write_privileges} from "../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
+import AppFooter from "../components/custom/layout/AppFooter";
 
 
 function Search() {
@@ -41,7 +42,7 @@ function Search() {
 
     if (authorized && getCookie('isAuthenticated')) {
         return (
-            <div>
+            <>
                 <Head>
                     <title>{APP_TITLE}</title>
                     <link rel="icon" href="/favicon.ico"/>
@@ -96,8 +97,9 @@ function Search() {
                             );
                         }}
                     </WithSearch>
+                    <AppFooter/>
                 </SearchProvider>
-            </div>
+            </>
         )
     } else {
         return (
