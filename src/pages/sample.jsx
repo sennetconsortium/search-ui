@@ -25,6 +25,7 @@ function ViewSample() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
+    const [isRegisterHidden, setIsRegisterHidden] = useState(false)
     const [authorized, setAuthorized] = useState(false)
 
     // only executed on init rendering, see the []
@@ -33,6 +34,7 @@ function ViewSample() {
         const fetchData = async (uuid) => {
             get_read_write_privileges().then(response => {
                 setAuthorized(response.read_privs)
+                setIsRegisterHidden(!response.write_privs)
             }).catch(error => log.error(error))
 
             log.debug('sample: getting data...', uuid)
@@ -81,7 +83,7 @@ function ViewSample() {
     if (authorized && getCookie('isAuthenticated')) {
         return (
             <div>
-                <AppNavbar/>
+                <AppNavbar hidden={isRegisterHidden}/>
 
                 {error &&
                     <div className="alert alert-warning" role="alert">{errorMessage}</div>
