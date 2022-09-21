@@ -179,7 +179,7 @@ function EditSample() {
 
     if (authorized && getCookie('isAuthenticated')) {
         return (
-            <div>
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -380,7 +380,7 @@ function EditSample() {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-            </div>
+            </>
         )
     } else {
         return (

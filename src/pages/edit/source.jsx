@@ -156,7 +156,7 @@ function EditSource() {
 
     if (authorized && getCookie('isAuthenticated')) {
         return (
-            <div>
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -322,7 +322,7 @@ function EditSource() {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-            </div>
+            </>
         )
     } else {
         return (

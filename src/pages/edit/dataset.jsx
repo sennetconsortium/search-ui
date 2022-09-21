@@ -206,7 +206,7 @@ function EditDataset() {
 
     if (authorized && getCookie('isAuthenticated')) {
         return (
-            <div>
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -394,7 +394,7 @@ function EditDataset() {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-            </div>
+            </>
         )
     } else {
         return (
