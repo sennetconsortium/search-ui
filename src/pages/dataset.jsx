@@ -14,11 +14,7 @@ import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {
-    get_read_write_privileges,
-    get_write_privilege_for_group_uuid,
-    write_privilege_for_group_uuid
-} from "../lib/services";
+import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 
@@ -29,28 +25,16 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const [authorized, setAuthorized] = useState(true)
-
-    const handleQueryChange = (event) => {
-        log.debug("CHANGE")
-        log.debug(event)
-    }
-
-    get_read_write_privileges().then(response => {
-        setAuthorized(response.read_privs)
-    }).catch(error => log.error(error))
-
-    useEffect(() => {
-        window.addEventListener('hashchange', handleQueryChange);
-        return () => {
-            window.removeEventListener('hashchange', handleQueryChange);
-        }
-    },);
+    const [authorized, setAuthorized] = useState(false)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
+            get_read_write_privileges().then(response => {
+                setAuthorized(response.read_privs)
+            }).catch(error => log.error(error))
+
             log.debug('dataset: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
@@ -83,13 +67,6 @@ function ViewDataset() {
             setData(null);
         }
     }, [router]);
-
-    // effect runs when user state is updated
-    useEffect(() => {
-        // reset form with user data
-        log.debug("dataset: RESET data...")
-        //reset(data);
-    }, [data]);
 
     const fetchAncestor = async (ancestorId) => {
         let ancestor = await fetchEntity(ancestorId);

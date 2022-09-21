@@ -28,7 +28,7 @@ import Unauthorized from "../components/custom/layout/Unauthorized";
 
 function Search() {
     const router = useRouter();
-    const [authorized, setAuthorized] = useState(true);
+    const [authorized, setAuthorized] = useState(false);
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
 
     useEffect(() => {

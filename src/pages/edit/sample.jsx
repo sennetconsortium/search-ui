@@ -27,30 +27,25 @@ function EditSample() {
     const [sourceId, setSourceId] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
-    const [query, setQuery] = useState(router.query)
     const [values, setValues] = useState({});
     const [showModal, setShowModal] = useState(false)
     const [showHideModal, setShowHideModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
-    const [authorized, setAuthorized] = useState(true)
+    const [authorized, setAuthorized] = useState(false)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
 
-    get_read_write_privileges().then(response => {
-        setAuthorized(response.read_privs)
-    }).catch(error => log.error(error))
-
     // only executed on init rendering, see the []
     useEffect(() => {
-
-        log.debug('ROUTER CHANGED: useEffect: query:', router.query.uuid)
-        setQuery(router.query)
-
         // declare the async data fetching function
         const fetchData = async (uuid) => {
+            get_read_write_privileges().then(response => {
+                setAuthorized(response.read_privs)
+            }).catch(error => log.error(error))
+
             log.debug('editSample: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
@@ -100,13 +95,6 @@ function EditSample() {
             setSourceId(null)
         }
     }, [router]);
-
-    // effect runs when user state is updated
-    useEffect(() => {
-        // reset form with user data
-        log.debug("editSample: RESET data...")
-        //reset(data);
-    }, [data]);
 
     // callback provided to components to update the main list of form values
     const onChange = (e, fieldId, value) => {
