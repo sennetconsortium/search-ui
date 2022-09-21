@@ -6,25 +6,27 @@ import styles from '../appNavbar.module.css'
 import logo from './sennet-logo.png'
 import Image from 'next/image'
 
-export default class AppNavbar extends React.Component {
-    render() {
-        return (
-            <Navbar variant={'dark'} className={`py-4 sticky-top ${styles.navbar_custom}`}>
-                <Container fluid={true}>
-                    <Row className={'ms-5'}>
-                        <Navbar.Brand href="/search" className={'d-flex align-items-center'}>
-                            <Image
-                                src={logo}
-                                width="50"
-                                height="50"
-                                alt="SenNet logo"
-                            />
-                            <div className={'ms-2 fs-2'}>{APP_TITLE}</div>
-                        </Navbar.Brand>
-                    </Row>
-                    <Nav className="justify-content-end me-5">
+const AppNavbar = ({hidden, signoutHidden}) => {
+    return (
+        <Navbar variant={'dark'} expand="lg" className={`py-4 sticky-top ${styles.navbar_custom}`}>
+            <Container fluid={true}>
+                <Row className={'ms-5'}>
+                    <Navbar.Brand href="/search" className={'d-flex align-items-center'}>
+                        <Image
+                            src={logo}
+                            width="50"
+                            height="50"
+                            alt="SenNet logo"
+                        />
+                        <div className={'ms-2 fs-2'}>{APP_TITLE}</div>
+                    </Navbar.Brand>
+                </Row>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse className="justify-content-end me-5">
+                    <Nav>
                         <NavDropdown
-                            hidden={this.props.hidden}
+                            variant={'primary'}
+                            hidden={hidden}
                             title="Register"
                             id="basic-nav-dropdown">
                             <NavDropdown.Item
@@ -35,12 +37,14 @@ export default class AppNavbar extends React.Component {
                                 href="/edit/dataset?uuid=create">Dataset</NavDropdown.Item>
                         </NavDropdown>
                         <Nav.Link
-                            hidden={this.props.signoutHidden}
+                            hidden={signoutHidden}
                             href={getIngestEndPoint() + 'logout'}
                             onClick={() => setCookie('isAuthenticated', false)}>Sign-out</Nav.Link>
                     </Nav>
-                </Container>
-            </Navbar>
-        )
-    }
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
+    )
 }
+
+export default AppNavbar
