@@ -25,28 +25,23 @@ function EditSource() {
     const [source, setSource] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
-    const [query, setQuery] = useState(router.query)
     const [values, setValues] = useState({});
     const [showModal, setShowModal] = useState(false)
     const [showHideModal, setShowHideModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
-    const [authorized, setAuthorized] = useState(true)
+    const [authorized, setAuthorized] = useState(false)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
 
-    get_read_write_privileges().then(response => {
-        setAuthorized(response.read_privs)
-    }).catch(error => log.error(error))
-
     // only executed on init rendering, see the []
     useEffect(() => {
-
-        log.debug('ROUTER CHANGED: useEffect: query:', router.query.uuid)
-        setQuery(router.query)
-
+        get_read_write_privileges().then(response => {
+            setAuthorized(response.write_privs)
+        }).catch(error => log.error(error))
+        
         // declare the async data fetching function
         const fetchData = async (uuid) => {
             log.debug('editSource: getting data...', uuid)
@@ -91,13 +86,6 @@ function EditSource() {
         }
     }, [router]);
 
-    // effect runs when user state is updated
-    useEffect(() => {
-        // reset form with user data
-        log.debug("editSource: RESET data...")
-        //reset(data);
-    }, [data]);
-
     // callback provided to components to update the main list of form values
     const onChange = (e, fieldId, value) => {
         // log.debug('onChange', fieldId, value)
@@ -107,7 +95,6 @@ function EditSource() {
             return currentValues;
         });
     };
-
 
     const handleSubmit = async (event) => {
         setDisableSubmit(true);
@@ -150,7 +137,6 @@ function EditSource() {
                 }
             })
         }
-
 
         setValidated(true);
     };

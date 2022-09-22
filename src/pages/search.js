@@ -29,7 +29,7 @@ import AppFooter from "../components/custom/layout/AppFooter";
 
 function Search() {
     const router = useRouter();
-    const [authorized, setAuthorized] = useState(true);
+    const [authorized, setAuthorized] = useState(false);
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
 
     useEffect(() => {
