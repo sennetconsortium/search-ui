@@ -81,7 +81,15 @@ function ViewSample() {
         }
     }
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (!data) {
+        return (
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
                 <AppNavbar hidden={isRegisterHidden}/>
@@ -148,8 +156,9 @@ function ViewSample() {
                                         {/*TODO: add back?   {data.origin_sample.mapped_organ} */}
                                     </div>
                                     <div>
-                                        {hasWritePrivilege && <Button className="ms-3" href={`/edit/sample?uuid=${data.uuid}`}
-                                                                      variant="outline-primary rounded-0">Edit</Button>}{' '}
+                                        {hasWritePrivilege &&
+                                            <Button className="ms-3" href={`/edit/sample?uuid=${data.uuid}`}
+                                                    variant="outline-primary rounded-0">Edit</Button>}{' '}
                                         <Button className="ms-3" href={`/api/json/sample?uuid=${data.uuid}`}
                                                 variant="outline-primary rounded-0"><FiletypeJson/></Button>
                                     </div>
@@ -205,13 +214,6 @@ function ViewSample() {
 
                 }
                 <AppFooter/>
-                {!data &&
-                    <div className="text-center p-3">
-                        <span>Loading, please wait...</span>
-                        <br></br>
-                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                    </div>
-                }
             </>
         )
     } else {

@@ -31,7 +31,7 @@ function EditSource() {
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
-    const [authorized, setAuthorized] = useState(false)
+    const [authorized, setAuthorized] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -41,7 +41,7 @@ function EditSource() {
         get_read_write_privileges().then(response => {
             setAuthorized(response.write_privs)
         }).catch(error => log.error(error))
-        
+
         // declare the async data fetching function
         const fetchData = async (uuid) => {
             log.debug('editSource: getting data...', uuid)
@@ -141,7 +141,15 @@ function EditSource() {
         setValidated(true);
     };
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (authorized === null) {
+        return (
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
                 <AppNavbar/>
@@ -286,13 +294,6 @@ function EditSource() {
                     </div>
                 }
                 <AppFooter/>
-                {!data &&
-                    <div className="text-center p-3">
-                        <span>Loading, please wait...</span>
-                        <br></br>
-                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                    </div>
-                }
 
                 <Modal show={showModal}>
                     <Modal.Header>

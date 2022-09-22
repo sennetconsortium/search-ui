@@ -81,7 +81,15 @@ function ViewDataset() {
         }
     }
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (!data) {
+        return (
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
                 <AppNavbar hidden={isRegisterHidden}/>
@@ -162,7 +170,9 @@ function ViewDataset() {
                                     </div>
                                     <div className="entity_subtitle link_with_icon">
                                         <CircleFill
-                                            className={`me-1 text-${getStatusColor(data.status)}`}/> <div className={'m-2'}>{data.status}</div> |
+                                            className={`me-1 text-${getStatusColor(data.status)}`}/>
+                                        <div className={'m-2'}>{data.status}</div>
+                                        |
                                         {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
 
                                         {hasWritePrivilege &&
@@ -220,13 +230,6 @@ function ViewDataset() {
 
                 }
                 <AppFooter/>
-                {!data &&
-                    <div className="text-center p-3">
-                        <span>Loading, please wait...</span>
-                        <br></br>
-                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                    </div>
-                }
             </>
         )
     } else {

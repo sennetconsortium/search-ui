@@ -32,7 +32,7 @@ function EditDataset() {
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
-    const [authorized, setAuthorized] = useState(false)
+    const [authorized, setAuthorized] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
 
     const handleClose = () => setShowModal(false);
@@ -193,7 +193,15 @@ function EditDataset() {
         setContainsHumanGeneticSequences(false)
     }
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (authorized === null) {
+        return (
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
                 <AppNavbar/>
@@ -360,13 +368,6 @@ function EditDataset() {
                     </div>
                 }
                 <AppFooter/>
-                {!data &&
-                    <div className="text-center p-3">
-                        <span>Loading, please wait...</span>
-                        <br></br>
-                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                    </div>
-                }
 
                 <Modal show={showModal}>
                     <Modal.Header>

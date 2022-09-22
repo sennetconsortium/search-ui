@@ -29,7 +29,7 @@ import AppFooter from "../components/custom/layout/AppFooter";
 
 function Search() {
     const router = useRouter();
-    const [authorized, setAuthorized] = useState(false);
+    const [authorized, setAuthorized] = useState(null);
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
 
     useEffect(() => {
@@ -40,7 +40,15 @@ function Search() {
     });
 
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (authorized === null) {
+        return (
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
                 <Head>

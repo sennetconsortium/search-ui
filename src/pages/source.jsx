@@ -67,7 +67,15 @@ function ViewSource() {
         }
     }, [router]);
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (!data) {
+        return (
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
                 <AppNavbar hidden={isRegisterHidden}/>
@@ -134,9 +142,11 @@ function ViewSource() {
                                         {data.source_type}
                                     </div>
                                     <div>
-                                        {hasWritePrivilege && <Button className="ms-3" href={`/edit/source?uuid=${data.uuid}`}
-                                                                      variant="outline-primary rounded-0">Edit</Button>}{' '}
-                                        <Button className="ms-3" href={`/api/json/source?uuid=${data.uuid}`} variant="outline-primary rounded-0">
+                                        {hasWritePrivilege &&
+                                            <Button className="ms-3" href={`/edit/source?uuid=${data.uuid}`}
+                                                    variant="outline-primary rounded-0">Edit</Button>}{' '}
+                                        <Button className="ms-3" href={`/api/json/source?uuid=${data.uuid}`}
+                                                variant="outline-primary rounded-0">
                                             <FiletypeJson/>
                                         </Button>
                                     </div>
@@ -185,13 +195,6 @@ function ViewSource() {
 
                 }
                 <AppFooter/>
-                {!data &&
-                    <div className="text-center p-3">
-                        <span>Loading, please wait...</span>
-                        <br></br>
-                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                    </div>
-                }
             </>
         )
     } else {
