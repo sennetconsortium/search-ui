@@ -11,12 +11,12 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, update_create_entity} from "../../lib/services";
+import {get_read_write_privileges, get_user_write_groups, update_create_entity} from "../../lib/services";
 import SourceType from "../../components/custom/edit/source/SourceType";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import {getCookie} from "cookies-next";
-import GroupSelectDropdown from "../../components/custom/edit/GroupSelectDropdown";
 import AppFooter from "../../components/custom/layout/AppFooter";
+import GroupSelect from "../../components/custom/edit/GroupSelect";
 
 function EditSource() {
     const router = useRouter()
@@ -33,6 +33,8 @@ function EditSource() {
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
     const [authorized, setAuthorized] = useState(null)
+    const [userWriteGroups, setUserWriteGroups] = useState([])
+    const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -42,6 +44,15 @@ function EditSource() {
         get_read_write_privileges().then(response => {
             setAuthorized(response.write_privs)
         }).catch(error => log.error(error))
+
+        get_user_write_groups()
+            .then(response => {
+                if (response.user_write_groups.length == 1) {
+                    setSelectedUserWriteGroupUuid(response.user_write_groups[0].uuid)
+                }
+                setUserWriteGroups(response.user_write_groups)
+            })
+            .catch(e => log.error(e))
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
@@ -60,7 +71,7 @@ function EditSource() {
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
-                    // TODO: Need to set group_uuid
+                    'group_uuid': data.group_uuid,
                     'lab_source_id': data.lab_source_id,
                     'protocol_url': data.protocol_url,
                     'description': data.description,
@@ -165,7 +176,6 @@ function EditSource() {
                                 <Container className="px-0" fluid={true}>
                                     <Row md={12}>
                                         <Col><h4>Source Information</h4></Col>
-                                        <Col className={'justify-content-end d-flex'}><GroupSelectDropdown groups={[{uuid: 1, name: 'CODCC'}, {uuid:2, name: 'Pitt'}]}/></Col>
                                     </Row>
                                     {editMode == 'edit' &&
                                         <>
@@ -191,6 +201,14 @@ function EditSource() {
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                    {/*Group select*/}
+                                    <GroupSelect
+                                        isHidden={userWriteGroups.length === 1 || editMode === 'edit'}
+                                        data={data}
+                                        groups={userWriteGroups}
+                                        onGroupSelectChange={onChange}
+                                        entity_type={'source'}/>
+
                                     {/*Lab's Source Non-PHI ID*/}
                                     <Form.Group className="mb-3" controlId="lab_source_id">
                                         <Form.Label>Lab's Source Non-PHI ID or Name<span className="required">* </span>
