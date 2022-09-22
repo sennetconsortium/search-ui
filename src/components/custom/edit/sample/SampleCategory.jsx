@@ -110,7 +110,7 @@ export default class SampleCategory extends React.Component {
                             this.handleOrganChange(e, this.props.onChange);
                             this.props.onChange(e, e.target.id, e.target.value)
                         }}
-                                     defaultValue={this.props.data.organ}>>
+                                     defaultValue={this.props.data.organ}>
                             <option value="">----</option>
                             {Object.entries(ORGAN_TYPES).map(op => {
                                 return (
