@@ -1,11 +1,10 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Dropdown} from 'react-bootstrap'
 
-const GroupSelectDropdown = ({isHidden, groups}) => {
-    const [group, setGroup] = useState('')
+const GroupSelectDropdown = ({isHidden, groups, onSelectGroup}) => {
     return (
         <Dropdown
-            onSelect={(e) => setGroup(e)}
+            onSelect={(e)=>onSelectGroup(e)}
             hidden={isHidden}>
             <Dropdown.Toggle
                 variant="outline-success rounded-0"
@@ -18,8 +17,8 @@ const GroupSelectDropdown = ({isHidden, groups}) => {
                         (group) => {
                             return <Dropdown.Item
                                 key={group.uuid}
-                                eventKey={group.name}>
-                                {group.name}
+                                eventKey={group.uuid}>
+                                {group.displayname}
                             </Dropdown.Item>
                         })
                 }

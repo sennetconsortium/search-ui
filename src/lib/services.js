@@ -68,6 +68,23 @@ export async function get_write_privilege_for_group_uuid(group_uuid) {
     return await json
 }
 
+export async function get_user_write_groups() {
+    log.debug('FETCHING USER WRITE GROUPS')
+
+    const url = getIngestEndPoint() + 'privs/' + 'user-write-groups'
+    const request_options = {
+        method: 'GET',
+        headers: get_headers()
+    }
+    const response = await fetch(url, request_options)
+    if (!response.ok) {
+        const message = `An error has occurred: ${response.status}`;
+        throw new Error(message);
+    }
+    let json = response.json()
+    return await json
+}
+
 async function call_service(raw, url, method) {
     var headers = new Headers();
     headers.append("Content-Type", "application/json");
