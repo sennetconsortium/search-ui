@@ -113,13 +113,29 @@ export const config = {
             lab_dataset_id: {type: "value"},
             created_by_user_displayname: {type: "value"},
             created_by_user_email: {type: "value"},
-            dataset_info: {type: "value"}
+            dataset_info: {type: "value"},
+            source_type: {type: "value"},
+            status: {type: "value"}
             // "mapped_metadata.race": {type: "value"},
             // "mapped_metadata.sex": {type: "value"},
-        }
+        },
+        source_fields: [
+            "sennet_id",
+            "entity_type",
+            "uuid",
+            "created_by_user_displayname",
+            "created_by_user_email",
+            "lab_tissue_sample_id",
+            "sample_category",
+            "group_name",
+            "source_type",
+            "last_modified_timestamp",
+            "data_types",
+            "status"
+        ]
     },
     initialState: {
-        resultsPerPage: 10
+        resultsPerPage: 20
     },
     trackUrlState: false,
     apiConnector: connector,
