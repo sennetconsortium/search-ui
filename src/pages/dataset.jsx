@@ -21,6 +21,7 @@ import {
 } from "../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
+import AppFooter from "../components/custom/layout/AppFooter";
 
 function ViewDataset() {
     const router = useRouter()
@@ -103,7 +104,7 @@ function ViewDataset() {
 
     if (authorized && getCookie('isAuthenticated')) {
         return (
-            <div>
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -182,14 +183,14 @@ function ViewDataset() {
                                     </div>
                                     <div className="entity_subtitle link_with_icon">
                                         <CircleFill
-                                            className={`me-1 text-${getStatusColor(data.status)}`}/> {data.status} |
+                                            className={`me-1 text-${getStatusColor(data.status)}`}/> <div className={'m-2'}>{data.status}</div> |
                                         {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
 
                                         {hasWritePrivilege &&
-                                            <Button className="ms-1" href={`/edit/dataset?uuid=${data.uuid}`}
-                                                    variant="primary">Edit</Button>}{' '}
-                                        <Button className="ms-1" href={`/api/json/dataset?uuid=${data.uuid}`}
-                                                variant="primary"><FiletypeJson/></Button>
+                                            <Button className="ms-3" href={`/edit/dataset?uuid=${data.uuid}`}
+                                                    variant="outline-primary rounded-0">Edit</Button>}{' '}
+                                        <Button className="ms-3" href={`/api/json/dataset?uuid=${data.uuid}`}
+                                                variant="outline-primary rounded-0"><FiletypeJson/></Button>
                                     </div>
                                 </div>
                             </div>
@@ -239,7 +240,7 @@ function ViewDataset() {
                     />
 
                 }
-
+                <AppFooter/>
                 {!data &&
                     <div className="text-center p-3">
                         <span>Loading, please wait...</span>
@@ -247,7 +248,7 @@ function ViewDataset() {
                         <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
                     </div>
                 }
-            </div>
+            </>
         )
     } else {
         return (

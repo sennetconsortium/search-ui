@@ -15,6 +15,7 @@ import {get_read_write_privileges, update_create_entity} from "../../lib/service
 import SourceType from "../../components/custom/edit/source/SourceType";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import {getCookie} from "cookies-next";
+import AppFooter from "../../components/custom/layout/AppFooter";
 
 function EditSource() {
     const router = useRouter()
@@ -156,7 +157,7 @@ function EditSource() {
 
     if (authorized && getCookie('isAuthenticated')) {
         return (
-            <div>
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -290,7 +291,7 @@ function EditSource() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                    <Button variant="primary" type="submit" disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" type="submit" disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>
@@ -298,6 +299,7 @@ function EditSource() {
                         />
                     </div>
                 }
+                <AppFooter/>
                 {!data &&
                     <div className="text-center p-3">
                         <span>Loading, please wait...</span>
@@ -313,16 +315,16 @@ function EditSource() {
                     <Modal.Body><p>{modalBody}</p></Modal.Body>
                     <Modal.Footer>
                         {showHideModal &&
-                            <Button variant="secondary" onClick={handleClose}>
+                            <Button variant="outline-secondary rounded-0" onClick={handleClose}>
                                 Close
                             </Button>
                         }
-                        <Button variant="primary" onClick={handleHome}>
+                        <Button variant="outline-primary rounded-0" onClick={handleHome}>
                             Home page
                         </Button>
                     </Modal.Footer>
                 </Modal>
-            </div>
+            </>
         )
     } else {
         return (

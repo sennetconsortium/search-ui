@@ -17,6 +17,7 @@ import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {get_read_write_privileges, update_create_entity} from "../../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
+import AppFooter from "../../components/custom/layout/AppFooter";
 
 function EditSample() {
     const router = useRouter()
@@ -179,7 +180,7 @@ function EditSample() {
 
     if (authorized && getCookie('isAuthenticated')) {
         return (
-            <div>
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -348,7 +349,7 @@ function EditSample() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                    <Button variant="primary" type="submit" disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" type="submit" disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>
@@ -356,6 +357,7 @@ function EditSample() {
                         />
                     </div>
                 }
+                <AppFooter/>
                 {!data &&
                     <div className="text-center p-3">
                         <span>Loading, please wait...</span>
@@ -380,7 +382,7 @@ function EditSample() {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-            </div>
+            </>
         )
     } else {
         return (
