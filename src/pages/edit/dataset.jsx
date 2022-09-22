@@ -164,7 +164,7 @@ function EditDataset() {
                 log.debug("Form is valid")
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
-                // values['group_uuid'] = selectedUserWriteGroupUuid
+                values['group_uuid'] = selectedUserWriteGroupUuid
 
                 // Remove empty strings
                 let json = cleanJson(values);
