@@ -15,7 +15,7 @@ import {get_read_write_privileges, update_create_entity} from "../../lib/service
 import SourceType from "../../components/custom/edit/source/SourceType";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import {getCookie} from "cookies-next";
-import AppDropdown from "../../components/AppDropdown";
+import GroupSelectDropdown from "../../components/custom/edit/GroupSelectDropdown";
 import AppFooter from "../../components/custom/layout/AppFooter";
 
 function EditSource() {
@@ -165,7 +165,7 @@ function EditSource() {
                                 <Container className="px-0" fluid={true}>
                                     <Row md={12}>
                                         <Col><h4>Source Information</h4></Col>
-                                        <Col className={'justify-content-end d-flex'}><AppDropdown groups={[{uuid: 1, name: 'CODCC'}, {uuid:2, name: 'Pitt'}]}/></Col>
+                                        <Col className={'justify-content-end d-flex'}><GroupSelectDropdown groups={[{uuid: 1, name: 'CODCC'}, {uuid:2, name: 'Pitt'}]}/></Col>
                                     </Row>
                                     {editMode == 'edit' &&
                                         <>
