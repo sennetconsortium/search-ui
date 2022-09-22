@@ -17,6 +17,7 @@ import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import Protocols from "../components/custom/entities/sample/Protocols";
+import AppFooter from "../components/custom/layout/AppFooter";
 
 function ViewSample() {
     const router = useRouter()
@@ -80,9 +81,17 @@ function ViewSample() {
         }
     }
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (!data) {
         return (
-            <div>
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <>
                 <AppNavbar hidden={isRegisterHidden}/>
 
                 {error &&
@@ -147,10 +156,11 @@ function ViewSample() {
                                         {/*TODO: add back?   {data.origin_sample.mapped_organ} */}
                                     </div>
                                     <div>
-                                        {hasWritePrivilege && <Button href={`/edit/sample?uuid=${data.uuid}`}
-                                                                      variant="primary">Edit</Button>}{' '}
-                                        <Button href={`/api/json/sample?uuid=${data.uuid}`}
-                                                variant="primary"><FiletypeJson/></Button>
+                                        {hasWritePrivilege &&
+                                            <Button className="ms-3" href={`/edit/sample?uuid=${data.uuid}`}
+                                                    variant="outline-primary rounded-0">Edit</Button>}{' '}
+                                        <Button className="ms-3" href={`/api/json/sample?uuid=${data.uuid}`}
+                                                variant="outline-primary rounded-0"><FiletypeJson/></Button>
                                     </div>
                                 </div>
 
@@ -203,15 +213,8 @@ function ViewSample() {
                     />
 
                 }
-
-                {!data &&
-                    <div className="text-center p-3">
-                        <span>Loading, please wait...</span>
-                        <br></br>
-                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                    </div>
-                }
-            </div>
+                <AppFooter/>
+            </>
         )
     } else {
         return (

@@ -16,6 +16,7 @@ import DataTypes from "../../components/custom/edit/dataset/DataTypes";
 import AncestorIds from "../../components/custom/edit/dataset/AncestorIds";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
+import AppFooter from "../../components/custom/layout/AppFooter";
 
 function EditDataset() {
     const router = useRouter()
@@ -31,7 +32,7 @@ function EditDataset() {
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
-    const [authorized, setAuthorized] = useState(false)
+    const [authorized, setAuthorized] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
 
     const handleClose = () => setShowModal(false);
@@ -192,9 +193,17 @@ function EditDataset() {
         setContainsHumanGeneticSequences(false)
     }
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (authorized === null) {
         return (
-            <div>
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -350,7 +359,7 @@ function EditDataset() {
                                         <DataTypes values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    <Button variant="primary" type="submit" disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" type="submit" disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>
@@ -358,13 +367,7 @@ function EditDataset() {
                         />
                     </div>
                 }
-                {!data &&
-                    <div className="text-center p-3">
-                        <span>Loading, please wait...</span>
-                        <br></br>
-                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                    </div>
-                }
+                <AppFooter/>
 
                 <Modal show={showModal}>
                     <Modal.Header>
@@ -373,16 +376,16 @@ function EditDataset() {
                     <Modal.Body><p>{modalBody}</p></Modal.Body>
                     <Modal.Footer>
                         {showHideModal &&
-                            <Button variant="secondary" onClick={handleClose}>
+                            <Button variant="outline-secondary rounded-0" onClick={handleClose}>
                                 Close
                             </Button>
                         }
-                        <Button variant="primary" onClick={handleHome}>
+                        <Button variant="outline-primary rounded-0" onClick={handleHome}>
                             Home page
                         </Button>
                     </Modal.Footer>
                 </Modal>
-            </div>
+            </>
         )
     } else {
         return (

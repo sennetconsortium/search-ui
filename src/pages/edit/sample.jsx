@@ -17,6 +17,7 @@ import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {get_read_write_privileges, update_create_entity} from "../../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
+import AppFooter from "../../components/custom/layout/AppFooter";
 
 function EditSample() {
     const router = useRouter()
@@ -33,7 +34,7 @@ function EditSample() {
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
-    const [authorized, setAuthorized] = useState(false)
+    const [authorized, setAuthorized] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -165,9 +166,17 @@ function EditSample() {
         setValidated(true);
     };
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (authorized === null) {
         return (
-            <div>
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -336,7 +345,7 @@ function EditSample() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                    <Button variant="primary" type="submit" disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" type="submit" disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>
@@ -344,13 +353,7 @@ function EditSample() {
                         />
                     </div>
                 }
-                {!data &&
-                    <div className="text-center p-3">
-                        <span>Loading, please wait...</span>
-                        <br></br>
-                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                    </div>
-                }
+                <AppFooter/>
 
                 <Modal show={showModal}>
                     <Modal.Header>
@@ -368,7 +371,7 @@ function EditSample() {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-            </div>
+            </>
         )
     } else {
         return (

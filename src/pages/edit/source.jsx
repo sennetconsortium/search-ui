@@ -15,6 +15,7 @@ import {get_read_write_privileges, update_create_entity} from "../../lib/service
 import SourceType from "../../components/custom/edit/source/SourceType";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import {getCookie} from "cookies-next";
+import AppFooter from "../../components/custom/layout/AppFooter";
 
 function EditSource() {
     const router = useRouter()
@@ -30,7 +31,7 @@ function EditSource() {
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
-    const [authorized, setAuthorized] = useState(false)
+    const [authorized, setAuthorized] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -40,7 +41,7 @@ function EditSource() {
         get_read_write_privileges().then(response => {
             setAuthorized(response.write_privs)
         }).catch(error => log.error(error))
-        
+
         // declare the async data fetching function
         const fetchData = async (uuid) => {
             log.debug('editSource: getting data...', uuid)
@@ -140,9 +141,17 @@ function EditSource() {
         setValidated(true);
     };
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (authorized === null) {
         return (
-            <div>
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -276,7 +285,7 @@ function EditSource() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                    <Button variant="primary" type="submit" disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" type="submit" disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>
@@ -284,13 +293,7 @@ function EditSource() {
                         />
                     </div>
                 }
-                {!data &&
-                    <div className="text-center p-3">
-                        <span>Loading, please wait...</span>
-                        <br></br>
-                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                    </div>
-                }
+                <AppFooter/>
 
                 <Modal show={showModal}>
                     <Modal.Header>
@@ -299,16 +302,16 @@ function EditSource() {
                     <Modal.Body><p>{modalBody}</p></Modal.Body>
                     <Modal.Footer>
                         {showHideModal &&
-                            <Button variant="secondary" onClick={handleClose}>
+                            <Button variant="outline-secondary rounded-0" onClick={handleClose}>
                                 Close
                             </Button>
                         }
-                        <Button variant="primary" onClick={handleHome}>
+                        <Button variant="outline-primary rounded-0" onClick={handleHome}>
                             Home page
                         </Button>
                     </Modal.Footer>
                 </Modal>
-            </div>
+            </>
         )
     } else {
         return (

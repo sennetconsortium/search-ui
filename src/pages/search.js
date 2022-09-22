@@ -24,11 +24,12 @@ import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_read_write_privileges} from "../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
+import AppFooter from "../components/custom/layout/AppFooter";
 
 
 function Search() {
     const router = useRouter();
-    const [authorized, setAuthorized] = useState(false);
+    const [authorized, setAuthorized] = useState(null);
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
 
     useEffect(() => {
@@ -39,9 +40,17 @@ function Search() {
     });
 
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (authorized === null) {
         return (
-            <div>
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <>
                 <Head>
                     <title>{APP_TITLE}</title>
                     <link rel="icon" href="/favicon.ico"/>
@@ -96,8 +105,9 @@ function Search() {
                             );
                         }}
                     </WithSearch>
+                    <AppFooter/>
                 </SearchProvider>
-            </div>
+            </>
         )
     } else {
         return (

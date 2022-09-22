@@ -17,6 +17,7 @@ import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import Protocols from "../components/custom/entities/sample/Protocols";
+import AppFooter from "../components/custom/layout/AppFooter";
 
 function ViewSource() {
     const router = useRouter()
@@ -66,9 +67,17 @@ function ViewSource() {
         }
     }, [router]);
 
-    if (authorized && getCookie('isAuthenticated')) {
+    if (!data) {
         return (
-            <div>
+            <div className="text-center p-3">
+                <span>Loading, please wait...</span>
+                <br></br>
+                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
+            </div>
+        )
+    } else if (authorized && getCookie('isAuthenticated')) {
+        return (
+            <>
                 <AppNavbar hidden={isRegisterHidden}/>
 
                 {error &&
@@ -133,9 +142,11 @@ function ViewSource() {
                                         {data.source_type}
                                     </div>
                                     <div>
-                                        {hasWritePrivilege && <Button href={`/edit/source?uuid=${data.uuid}`}
-                                                                      variant="primary">Edit</Button>}{' '}
-                                        <Button href={`/api/json/source?uuid=${data.uuid}`} variant="primary">
+                                        {hasWritePrivilege &&
+                                            <Button className="ms-3" href={`/edit/source?uuid=${data.uuid}`}
+                                                    variant="outline-primary rounded-0">Edit</Button>}{' '}
+                                        <Button className="ms-3" href={`/api/json/source?uuid=${data.uuid}`}
+                                                variant="outline-primary rounded-0">
                                             <FiletypeJson/>
                                         </Button>
                                     </div>
@@ -183,15 +194,8 @@ function ViewSource() {
                     />
 
                 }
-
-                {!data &&
-                    <div className="text-center p-3">
-                        <span>Loading, please wait...</span>
-                        <br></br>
-                        <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-                    </div>
-                }
-            </div>
+                <AppFooter/>
+            </>
         )
     } else {
         return (
