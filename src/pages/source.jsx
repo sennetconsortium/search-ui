@@ -17,6 +17,7 @@ import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import Protocols from "../components/custom/entities/sample/Protocols";
+import AppFooter from "../components/custom/layout/AppFooter";
 
 function ViewSource() {
     const router = useRouter()
@@ -85,7 +86,7 @@ function ViewSource() {
 
     if (authorized && getCookie('isAuthenticated')) {
         return (
-            <div>
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -200,7 +201,7 @@ function ViewSource() {
                     />
 
                 }
-
+                <AppFooter/>
                 {!data &&
                     <div className="text-center p-3">
                         <span>Loading, please wait...</span>
@@ -208,7 +209,7 @@ function ViewSource() {
                         <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
                     </div>
                 }
-            </div>
+            </>
         )
     } else {
         return (

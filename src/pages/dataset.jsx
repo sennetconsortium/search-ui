@@ -21,6 +21,7 @@ import {
 } from "../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
+import AppFooter from "../components/custom/layout/AppFooter";
 
 function ViewDataset() {
     const router = useRouter()
@@ -103,7 +104,7 @@ function ViewDataset() {
 
     if (authorized && getCookie('isAuthenticated')) {
         return (
-            <div>
+            <>
                 <AppNavbar/>
 
                 {error &&
@@ -239,7 +240,7 @@ function ViewDataset() {
                     />
 
                 }
-
+                <AppFooter/>
                 {!data &&
                     <div className="text-center p-3">
                         <span>Loading, please wait...</span>
@@ -247,7 +248,7 @@ function ViewDataset() {
                         <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
                     </div>
                 }
-            </div>
+            </>
         )
     } else {
         return (

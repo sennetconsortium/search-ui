@@ -16,6 +16,7 @@ import DataTypes from "../../components/custom/edit/dataset/DataTypes";
 import AncestorIds from "../../components/custom/edit/dataset/AncestorIds";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
+import AppFooter from "../../components/custom/layout/AppFooter";
 
 function EditDataset() {
     const router = useRouter()
@@ -370,6 +371,7 @@ function EditDataset() {
                         />
                     </div>
                 }
+                <AppFooter/>
                 {!data &&
                     <div className="text-center p-3">
                         <span>Loading, please wait...</span>

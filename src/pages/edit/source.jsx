@@ -15,6 +15,7 @@ import {get_read_write_privileges, update_create_entity} from "../../lib/service
 import SourceType from "../../components/custom/edit/source/SourceType";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import {getCookie} from "cookies-next";
+import AppFooter from "../../components/custom/layout/AppFooter";
 
 function EditSource() {
     const router = useRouter()
@@ -298,6 +299,7 @@ function EditSource() {
                         />
                     </div>
                 }
+                <AppFooter/>
                 {!data &&
                     <div className="text-center p-3">
                         <span>Loading, please wait...</span>

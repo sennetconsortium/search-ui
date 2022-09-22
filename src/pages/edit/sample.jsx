@@ -17,6 +17,7 @@ import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {get_read_write_privileges, update_create_entity} from "../../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
+import AppFooter from "../../components/custom/layout/AppFooter";
 
 function EditSample() {
     const router = useRouter()
@@ -356,6 +357,7 @@ function EditSample() {
                         />
                     </div>
                 }
+                <AppFooter/>
                 {!data &&
                     <div className="text-center p-3">
                         <span>Loading, please wait...</span>
