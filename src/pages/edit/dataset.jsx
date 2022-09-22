@@ -17,7 +17,7 @@ import AncestorIds from "../../components/custom/edit/dataset/AncestorIds";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
-import GroupSelectDropdown from "../../components/custom/edit/GroupSelectDropdown";
+import GroupSelect from "../../components/custom/edit/GroupSelect";
 
 function EditDataset() {
     const router = useRouter()
@@ -47,17 +47,14 @@ function EditDataset() {
             setAuthorized(response.write_privs)
         }).catch(error => log.error(error))
 
-        useEffect(() => {
-            get_user_write_groups()
-                .then(response => {
-                    log.info(response)
-                    if (response.user_write_groups.length == 1) {
-                        setSelectedUserWriteGroupUuid(response.user_write_groups[0].uuid)
-                    }
-                    setUserWriteGroups(response.user_write_groups)
-                })
-                .catch(e => log.error(e))
-        }, [])
+        get_user_write_groups()
+            .then(response => {
+                if (response.user_write_groups.length == 1) {
+                    setSelectedUserWriteGroupUuid(response.user_write_groups[0].uuid)
+                }
+                setUserWriteGroups(response.user_write_groups)
+            })
+            .catch(e => log.error(e))
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
@@ -76,7 +73,7 @@ function EditDataset() {
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
-                    // TODO: Need to set group_uuid
+                    'group_uuid': data.group_uuid,
                     'lab_dataset_id': data.lab_dataset_id,
                     'data_types': [data.data_types[0]],
                     'description': data.description,
@@ -164,7 +161,6 @@ function EditDataset() {
                 log.debug("Form is valid")
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
-                values['group_uuid'] = selectedUserWriteGroupUuid
 
                 // Remove empty strings
                 let json = cleanJson(values);
@@ -232,12 +228,6 @@ function EditDataset() {
                                 <Container className="px-0" fluid={true}>
                                     <Row md={12}>
                                         <Col><h4>Dataset Information</h4></Col>
-                                        <Col className={'justify-content-end d-flex'}>
-                                            <GroupSelectDropdown
-                                                isHidden={userWriteGroups.length === 1}
-                                                groups={userWriteGroups}
-                                                onSelectGroup={(group) => setSelectedUserWriteGroupUuid(group)}/>
-                                        </Col>
                                     </Row>
                                     {editMode === 'edit' &&
                                         <>
@@ -263,6 +253,14 @@ function EditDataset() {
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                    {/*Group select*/}
+                                    <GroupSelect
+                                        isHidden={userWriteGroups.length === 1 || editMode === 'edit'}
+                                        data={data}
+                                        groups={userWriteGroups}
+                                        onGroupSelectChange={onChange}
+                                        entity_type={'dataset'}/>
+
                                     {/*Source ID*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&

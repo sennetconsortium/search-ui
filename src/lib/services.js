@@ -82,6 +82,7 @@ export async function get_user_write_groups() {
         throw new Error(message);
     }
     let json = response.json()
+    log.debug(json)
     return await json
 }
 
