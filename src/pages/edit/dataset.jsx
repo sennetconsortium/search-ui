@@ -11,7 +11,7 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, update_create_dataset} from "../../lib/services";
+import {get_read_write_privileges, get_user_write_groups, update_create_dataset} from "../../lib/services";
 import DataTypes from "../../components/custom/edit/dataset/DataTypes";
 import AncestorIds from "../../components/custom/edit/dataset/AncestorIds";
 import {getCookie} from "cookies-next";
@@ -35,6 +35,8 @@ function EditDataset() {
     const [disableSubmit, setDisableSubmit] = useState(false)
     const [authorized, setAuthorized] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
+    const [userWriteGroups, setUserWriteGroups] = useState([])
+    const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -45,6 +47,17 @@ function EditDataset() {
             setAuthorized(response.write_privs)
         }).catch(error => log.error(error))
 
+        useEffect(() => {
+            get_user_write_groups()
+                .then(response => {
+                    log.info(response)
+                    if (response.user_write_groups.length == 1) {
+                        setSelectedUserWriteGroupUuid(response.user_write_groups[0].uuid)
+                    }
+                    setUserWriteGroups(response.user_write_groups)
+                })
+                .catch(e => log.error(e))
+        }, [])
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
@@ -150,8 +163,10 @@ function EditDataset() {
 
                 log.debug("Form is valid")
 
-                // Remove empty strings
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
+                // values['group_uuid'] = selectedUserWriteGroupUuid
+
+                // Remove empty strings
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
@@ -217,7 +232,12 @@ function EditDataset() {
                                 <Container className="px-0" fluid={true}>
                                     <Row md={12}>
                                         <Col><h4>Dataset Information</h4></Col>
-                                        <Col className={'justify-content-end d-flex'}><GroupSelectDropdown groups={[{uuid: 1, name: 'CODCC'}, {uuid:2, name: 'Pitt'}]}/></Col>
+                                        <Col className={'justify-content-end d-flex'}>
+                                            <GroupSelectDropdown
+                                                isHidden={userWriteGroups.length === 1}
+                                                groups={userWriteGroups}
+                                                onSelectGroup={(group) => setSelectedUserWriteGroupUuid(group)}/>
+                                        </Col>
                                     </Row>
                                     {editMode === 'edit' &&
                                         <>
