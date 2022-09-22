@@ -98,7 +98,6 @@ const TableResults = ({children, filters}) => {
                                                     <th>SenNet ID</th>
                                                     <th>Group</th>
                                                     <th>Data Types</th>
-                                                    <th>Organ</th>
                                                     <th>Status</th>
                                                     <th>Last Modified</th>
                                                 </tr>
@@ -201,12 +200,6 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                             <td>
                                                 {result.data_types ? (
                                                     <>{result.data_types.raw}</>
-                                                ) : null
-                                                }
-                                            </td>
-                                            <td>
-                                                {result.origin_sample && result.origin_sample.raw.mapped_organ ? (
-                                                    <>{result.origin_sample.raw.mapped_organ}</>
                                                 ) : null
                                                 }
                                             </td>
