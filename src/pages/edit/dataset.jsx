@@ -25,28 +25,24 @@ function EditDataset() {
     const [sources, setSources] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
-    const [query, setQuery] = useState(router.query)
     const [values, setValues] = useState({});
     const [showModal, setShowModal] = useState(false)
     const [showHideModal, setShowHideModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
-    const [authorized, setAuthorized] = useState(true)
+    const [authorized, setAuthorized] = useState(false)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
 
-    get_read_write_privileges().then(response => {
-        setAuthorized(response.read_privs)
-    }).catch(error => log.error(error))
-
     // only executed on init rendering, see the []
     useEffect(() => {
+        get_read_write_privileges().then(response => {
+            setAuthorized(response.write_privs)
+        }).catch(error => log.error(error))
 
-        log.debug('ROUTER CHANGED: useEffect: query:', router.query.uuid)
-        setQuery(router.query)
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
@@ -100,16 +96,8 @@ function EditDataset() {
         }
     }, [router]);
 
-    // effect runs when user state is updated
-    useEffect(() => {
-        // reset form with user data
-        log.debug("editDataset: RESET data...")
-        //reset(data);
-    }, [data]);
-
     // callback provided to components to update the main list of form values
     const onChange = (e, fieldId, value) => {
-
         // use a callback to find the field in the value list and update it
         setValues((currentValues) => {
             currentValues[fieldId] = value;

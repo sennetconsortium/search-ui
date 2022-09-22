@@ -25,28 +25,18 @@ function ViewSample() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const [authorized, setAuthorized] = useState(true)
-
-    const handleQueryChange = (event) => {
-        log.debug("CHANGE")
-        log.debug(event)
-    }
-
-    get_read_write_privileges().then(response => {
-        setAuthorized(response.read_privs)
-    }).catch(error => log.error(error))
-
-    useEffect(() => {
-        window.addEventListener('hashchange', handleQueryChange);
-        return () => {
-            window.removeEventListener('hashchange', handleQueryChange);
-        }
-    },);
+    const [isRegisterHidden, setIsRegisterHidden] = useState(false)
+    const [authorized, setAuthorized] = useState(false)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
+            get_read_write_privileges().then(response => {
+                setAuthorized(response.read_privs)
+                setIsRegisterHidden(!response.write_privs)
+            }).catch(error => log.error(error))
+
             log.debug('sample: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
@@ -80,13 +70,6 @@ function ViewSample() {
         }
     }, [router]);
 
-    // effect runs when user state is updated
-    useEffect(() => {
-        // reset form with user data
-        log.debug("sample: RESET data...")
-        //reset(data);
-    }, [data]);
-
     const fetchSource = async (sourceId) => {
         let source = await fetchEntity(sourceId);
         if (source.hasOwnProperty("error")) {
@@ -100,7 +83,7 @@ function ViewSample() {
     if (authorized && getCookie('isAuthenticated')) {
         return (
             <div>
-                <AppNavbar/>
+                <AppNavbar hidden={isRegisterHidden}/>
 
                 {error &&
                     <div className="alert alert-warning" role="alert">{errorMessage}</div>

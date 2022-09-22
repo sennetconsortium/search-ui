@@ -13,7 +13,6 @@ export default class Protocols extends React.Component {
 
     async componentDidMount() {
         await fetchProtocols(this.props.protocol_url).then((data) => {
-            console.log(data)
             this.setState({protocol_data: data})
         });
     }
@@ -26,22 +25,22 @@ export default class Protocols extends React.Component {
                 </div>
 
                 <div className="card-body">
-                    {this.state.protocol_data != null &&
-                        <Table borderless>
+                    <Table borderless>
+                        {this.state.protocol_data != null &&
                             <thead>
                             <tr>
                                 <th>{this.state.protocol_data.title}</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td><a href={this.props.protocol_url}
-                                       className="link_with_icon"><span
-                                    className="me-1">{this.props.protocol_url}</span> <BoxArrowUpRight/></a></td>
-                            </tr>
-                            </tbody>
-                        </Table>
-                    }
+                        }
+                        <tbody>
+                        <tr>
+                            <td><a href={this.props.protocol_url}
+                                   className="link_with_icon"><span
+                                className="me-1">{this.props.protocol_url}</span> <BoxArrowUpRight/></a></td>
+                        </tr>
+                        </tbody>
+                    </Table>
                 </div>
             </li>
         )

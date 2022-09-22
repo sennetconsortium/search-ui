@@ -21,7 +21,8 @@ export default class AppNavbar extends React.Component {
                             <NavDropdown.Item
                                 href="/edit/dataset?uuid=create">Dataset</NavDropdown.Item>
                         </NavDropdown>
-                        <Nav.Link href={getIngestEndPoint() + 'logout'} onClick={()=>setCookie('isAuthenticated', false)}>Sign-out</Nav.Link>
+                        <Nav.Link href={getIngestEndPoint() + 'logout'}
+                                  onClick={() => setCookie('isAuthenticated', false)}>Sign-out</Nav.Link>
                     </Nav>
                 </Container>
             </Navbar>
