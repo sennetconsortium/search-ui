@@ -50,7 +50,7 @@ function EditSample() {
 
         get_user_write_groups()
             .then(response => {
-                if (response.user_write_groups.length == 1) {
+                if (response.user_write_groups.length === 1) {
                     setSelectedUserWriteGroupUuid(response.user_write_groups[0].uuid)
                 }
                 setUserWriteGroups(response.user_write_groups)
@@ -75,7 +75,6 @@ function EditSample() {
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
                     'sample_category': data.sample_category,
-                    'group_uuid': data.group_uuid,
                     'organ': data.organ,
                     'organ_other': data.organ_other,
                     'protocol_url': data.protocol_url,
@@ -144,7 +143,7 @@ function EditSample() {
             event.preventDefault();
             log.debug("Form is valid")
 
-            if (values['group_uuid'] == null) {
+            if (values['group_uuid'] === null && editMode === 'create') {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
