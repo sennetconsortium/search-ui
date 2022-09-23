@@ -4,10 +4,10 @@ import {Form} from 'react-bootstrap';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 
-const GroupSelect = ({isHidden, groups, onGroupSelectChange, entity_type}) => {
+const GroupSelect = ({groups, onGroupSelectChange, entity_type}) => {
     return (
         <>
-            <Form.Group className="mb-3" controlId="group_uuid" hidden={isHidden}>
+            <Form.Group className="mb-3" controlId="group_uuid">
                 <Form.Label>Group<span
                     className="required">* </span>
                     <OverlayTrigger

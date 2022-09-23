@@ -120,6 +120,10 @@ function EditSource() {
             event.preventDefault();
             log.debug("Form is valid")
 
+            if (values['group_uuid'] == null) {
+                values['group_uuid'] = selectedUserWriteGroupUuid
+            }
+
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
@@ -202,12 +206,14 @@ function EditSource() {
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
                                     {/*Group select*/}
-                                    <GroupSelect
-                                        isHidden={userWriteGroups.length === 1 || editMode === 'edit'}
-                                        data={data}
-                                        groups={userWriteGroups}
-                                        onGroupSelectChange={onChange}
-                                        entity_type={'source'}/>
+                                    {
+                                        !(userWriteGroups.length === 1 || editMode === 'edit') &&
+                                        <GroupSelect
+                                            data={data}
+                                            groups={userWriteGroups}
+                                            onGroupSelectChange={onChange}
+                                            entity_type={'dataset'}/>
+                                    }
 
                                     {/*Lab's Source Non-PHI ID*/}
                                     <Form.Group className="mb-3" controlId="lab_source_id">
