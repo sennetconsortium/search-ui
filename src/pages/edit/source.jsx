@@ -33,16 +33,7 @@ function EditSource() {
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
     const [authorized, setAuthorized] = useState(null)
-    const [userWriteGroups, setUserWriteGroups] = useState([{
-        "data_provider": true,
-        "displayname": "Massachusetts General Hospital TDA",
-        "generateuuid": true,
-        "group_type": "regular",
-        "name": "sennet tda mass",
-        "shortname": "TDA - Mass Gen",
-        "tmc_prefix": "MASSGEN",
-        "uuid": "39a276b3-ee73-11ec-87fd-31892bd489e1"
-    }])
+    const [userWriteGroups, setUserWriteGroups] = useState([])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
 
     const handleClose = () => setShowModal(false);
