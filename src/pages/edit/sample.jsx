@@ -204,7 +204,7 @@ function EditSample() {
                             bodyHeader={
                                 <Container className="px-0" fluid={true}>
                                     <Row md={12}>
-                                        <Col><h4>Sample Information</h4></Col>
+                                        <h4>Sample Information</h4>
                                     </Row>
                                     {editMode === 'edit' &&
                                         <>
