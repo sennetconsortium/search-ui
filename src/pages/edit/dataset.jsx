@@ -11,12 +11,13 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, update_create_dataset} from "../../lib/services";
+import {get_read_write_privileges, update_create_dataset, get_user_write_groups} from "../../lib/services";
 import DataTypes from "../../components/custom/edit/dataset/DataTypes";
 import AncestorIds from "../../components/custom/edit/dataset/AncestorIds";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
+import GroupSelect from "../../components/custom/edit/GroupSelect";
 
 function EditDataset() {
     const router = useRouter()
@@ -34,6 +35,8 @@ function EditDataset() {
     const [disableSubmit, setDisableSubmit] = useState(false)
     const [authorized, setAuthorized] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
+    const [userWriteGroups, setUserWriteGroups] = useState([])
+    const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -44,6 +47,14 @@ function EditDataset() {
             setAuthorized(response.write_privs)
         }).catch(error => log.error(error))
 
+        get_user_write_groups()
+            .then(response => {
+                if (response.user_write_groups.length == 1) {
+                    setSelectedUserWriteGroupUuid(response.user_write_groups[0].uuid)
+                }
+                setUserWriteGroups(response.user_write_groups)
+            })
+            .catch(e => log.error(e))
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
@@ -62,7 +73,7 @@ function EditDataset() {
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
-                    // TODO: Need to set group_uuid
+                    'group_uuid': data.group_uuid,
                     'lab_dataset_id': data.lab_dataset_id,
                     'data_types': [data.data_types[0]],
                     'description': data.description,
@@ -149,8 +160,11 @@ function EditDataset() {
 
                 log.debug("Form is valid")
 
-                // Remove empty strings
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
+                if (values['group_uuid'] == null) {
+                    values['group_uuid'] = selectedUserWriteGroupUuid
+                }
+                // Remove empty strings
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
@@ -241,6 +255,16 @@ function EditDataset() {
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                    {/*Group select*/}
+                                    {
+                                        !(userWriteGroups.length === 1 || editMode === 'edit') &&
+                                        <GroupSelect
+                                            data={data}
+                                            groups={userWriteGroups}
+                                            onGroupSelectChange={onChange}
+                                            entity_type={'dataset'}/>
+                                    }
+
                                     {/*Source ID*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&

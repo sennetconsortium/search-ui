@@ -14,10 +14,11 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, update_create_entity} from "../../lib/services";
+import {get_read_write_privileges, get_user_write_groups, update_create_entity} from "../../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
+import GroupSelect from "../../components/custom/edit/GroupSelect";
 
 function EditSample() {
     const router = useRouter()
@@ -35,6 +36,8 @@ function EditSample() {
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
     const [authorized, setAuthorized] = useState(null)
+    const [userWriteGroups, setUserWriteGroups] = useState([])
+    const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -44,6 +47,15 @@ function EditSample() {
         get_read_write_privileges().then(response => {
             setAuthorized(response.write_privs)
         }).catch(error => log.error(error))
+
+        get_user_write_groups()
+            .then(response => {
+                if (response.user_write_groups.length == 1) {
+                    setSelectedUserWriteGroupUuid(response.user_write_groups[0].uuid)
+                }
+                setUserWriteGroups(response.user_write_groups)
+            })
+            .catch(e => log.error(e))
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
@@ -63,7 +75,7 @@ function EditSample() {
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
                     'sample_category': data.sample_category,
-                    // TODO: Need to set group_uuid
+                    'group_uuid': data.group_uuid,
                     'organ': data.organ,
                     'organ_other': data.organ_other,
                     'protocol_url': data.protocol_url,
@@ -131,6 +143,10 @@ function EditSample() {
         } else {
             event.preventDefault();
             log.debug("Form is valid")
+
+            if (values['group_uuid'] == null) {
+                values['group_uuid'] = selectedUserWriteGroupUuid
+            }
 
             // Remove empty strings
             let json = cleanJson(values);
@@ -214,6 +230,16 @@ function EditSample() {
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                    {/*Group select*/}
+                                    {
+                                        !(userWriteGroups.length === 1 || editMode === 'edit') &&
+                                        <GroupSelect
+                                            data={data}
+                                            groups={userWriteGroups}
+                                            onGroupSelectChange={onChange}
+                                            entity_type={'sample'}/>
+                                    }
+
                                     {/*Ancestor ID*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
@@ -362,11 +388,11 @@ function EditSample() {
                     <Modal.Body><p>{modalBody}</p></Modal.Body>
                     <Modal.Footer>
                         {showHideModal &&
-                            <Button variant="secondary" onClick={handleClose}>
+                            <Button variant="outline-secondary rounded-0" onClick={handleClose}>
                                 Close
                             </Button>
                         }
-                        <Button variant="primary" onClick={handleHome}>
+                        <Button variant="outline-primary rounded-0" onClick={handleHome}>
                             Home page
                         </Button>
                     </Modal.Footer>
