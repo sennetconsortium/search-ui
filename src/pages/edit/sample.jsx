@@ -237,7 +237,7 @@ function EditSample() {
                                             data={data}
                                             groups={userWriteGroups}
                                             onGroupSelectChange={onChange}
-                                            entity_type={'dataset'}/>
+                                            entity_type={'sample'}/>
                                     }
 
                                     {/*Ancestor ID*/}

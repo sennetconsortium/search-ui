@@ -212,7 +212,7 @@ function EditSource() {
                                             data={data}
                                             groups={userWriteGroups}
                                             onGroupSelectChange={onChange}
-                                            entity_type={'dataset'}/>
+                                            entity_type={'source'}/>
                                     }
 
                                     {/*Lab's Source Non-PHI ID*/}
