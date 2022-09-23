@@ -144,6 +144,10 @@ function EditSample() {
             event.preventDefault();
             log.debug("Form is valid")
 
+            if (values['group_uuid'] == null) {
+                values['group_uuid'] = selectedUserWriteGroupUuid
+            }
+
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
@@ -227,12 +231,15 @@ function EditSample() {
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
                                     {/*Group select*/}
-                                    <GroupSelect
-                                        isHidden={userWriteGroups.length === 1 || editMode === 'edit'}
-                                        data={data}
-                                        groups={userWriteGroups}
-                                        onGroupSelectChange={onChange}
-                                        entity_type={'sample'}/>
+                                    {
+                                        !(userWriteGroups.length === 1 || editMode === 'edit') &&
+                                        <GroupSelect
+                                            data={data}
+                                            groups={userWriteGroups}
+                                            onGroupSelectChange={onChange}
+                                            entity_type={'dataset'}/>
+                                    }
+
                                     {/*Ancestor ID*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&

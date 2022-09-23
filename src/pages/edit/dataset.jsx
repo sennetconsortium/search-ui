@@ -11,7 +11,7 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, get_user_write_groups, update_create_dataset} from "../../lib/services";
+import {get_read_write_privileges, update_create_dataset, get_user_write_groups} from "../../lib/services";
 import DataTypes from "../../components/custom/edit/dataset/DataTypes";
 import AncestorIds from "../../components/custom/edit/dataset/AncestorIds";
 import {getCookie} from "cookies-next";
@@ -161,7 +161,9 @@ function EditDataset() {
                 log.debug("Form is valid")
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
-
+                if (values['group_uuid'] == null) {
+                    values['group_uuid'] = selectedUserWriteGroupUuid
+                }
                 // Remove empty strings
                 let json = cleanJson(values);
                 let uuid = data.uuid
@@ -254,12 +256,14 @@ function EditDataset() {
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
                                     {/*Group select*/}
-                                    <GroupSelect
-                                        isHidden={userWriteGroups.length === 1 || editMode === 'edit'}
-                                        data={data}
-                                        groups={userWriteGroups}
-                                        onGroupSelectChange={onChange}
-                                        entity_type={'dataset'}/>
+                                    {
+                                        !(userWriteGroups.length === 1 || editMode === 'edit') &&
+                                        <GroupSelect
+                                            data={data}
+                                            groups={userWriteGroups}
+                                            onGroupSelectChange={onChange}
+                                            entity_type={'dataset'}/>
+                                    }
 
                                     {/*Source ID*/}
                                     {/*editMode is only set when page is ready to load */}
