@@ -33,7 +33,16 @@ function EditSource() {
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
     const [authorized, setAuthorized] = useState(null)
-    const [userWriteGroups, setUserWriteGroups] = useState([])
+    const [userWriteGroups, setUserWriteGroups] = useState([{
+        "data_provider": true,
+        "displayname": "Massachusetts General Hospital TDA",
+        "generateuuid": true,
+        "group_type": "regular",
+        "name": "sennet tda mass",
+        "shortname": "TDA - Mass Gen",
+        "tmc_prefix": "MASSGEN",
+        "uuid": "39a276b3-ee73-11ec-87fd-31892bd489e1"
+    }])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
 
     const handleClose = () => setShowModal(false);
@@ -47,7 +56,7 @@ function EditSource() {
 
         get_user_write_groups()
             .then(response => {
-                if (response.user_write_groups.length == 1) {
+                if (response.user_write_groups.length === 1) {
                     setSelectedUserWriteGroupUuid(response.user_write_groups[0].uuid)
                 }
                 setUserWriteGroups(response.user_write_groups)
@@ -71,7 +80,6 @@ function EditSource() {
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
-                    'group_uuid': data.group_uuid,
                     'lab_source_id': data.lab_source_id,
                     'protocol_url': data.protocol_url,
                     'description': data.description,
@@ -90,7 +98,6 @@ function EditSource() {
                 fetchData(router.query.uuid)
                     // make sure to catch any error
                     .catch(console.error);
-                ;
             }
         } else {
             setData(null);
@@ -120,7 +127,7 @@ function EditSource() {
             event.preventDefault();
             log.debug("Form is valid")
 
-            if (values['group_uuid'] == null) {
+            if (values['group_uuid'] === null && editMode === 'create') {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 

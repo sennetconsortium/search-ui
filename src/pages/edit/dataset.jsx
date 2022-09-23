@@ -49,7 +49,7 @@ function EditDataset() {
 
         get_user_write_groups()
             .then(response => {
-                if (response.user_write_groups.length == 1) {
+                if (response.user_write_groups.length === 1) {
                     setSelectedUserWriteGroupUuid(response.user_write_groups[0].uuid)
                 }
                 setUserWriteGroups(response.user_write_groups)
@@ -73,7 +73,6 @@ function EditDataset() {
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
-                    'group_uuid': data.group_uuid,
                     'lab_dataset_id': data.lab_dataset_id,
                     'data_types': [data.data_types[0]],
                     'description': data.description,
@@ -161,7 +160,7 @@ function EditDataset() {
                 log.debug("Form is valid")
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
-                if (values['group_uuid'] == null) {
+                if (values['group_uuid'] === null && editMode === 'create') {
                     values['group_uuid'] = selectedUserWriteGroupUuid
                 }
                 // Remove empty strings
