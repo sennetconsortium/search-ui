@@ -17,6 +17,7 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import {getCookie} from "cookies-next";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
+import Header from "../../components/custom/layout/Header";
 
 function EditSource() {
     const router = useRouter()
@@ -76,14 +77,14 @@ function EditSource() {
                     'description': data.description,
                     'source_type': data.source_type
                 })
-                setEditMode("edit")
+                setEditMode("Edit")
             }
         }
 
         if (router.query.hasOwnProperty("uuid")) {
             if (router.query.uuid === 'create') {
                 setData(true)
-                setEditMode("create")
+                setEditMode("Create")
             } else {
                 // call the function
                 fetchData(router.query.uuid)
@@ -118,7 +119,7 @@ function EditSource() {
             event.preventDefault();
             log.debug("Form is valid")
 
-            if (values['group_uuid'] === null && editMode === 'create') {
+            if (values['group_uuid'] === null && editMode === 'Create') {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
@@ -131,7 +132,7 @@ function EditSource() {
                 setDisableSubmit(false);
 
                 if ('uuid' in response) {
-                    if (editMode === 'edit') {
+                    if (editMode === 'Edit') {
                         setModalTitle("Source Updated")
                         setModalBody("Your Source was updated:\n" +
                             "Source type: " + response.source_type + "\n" +
@@ -166,6 +167,10 @@ function EditSource() {
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
+                {editMode &&
+                    <Header title={`${editMode} Source | SenNet`}></Header>
+                }
+
                 <AppNavbar/>
 
                 {error &&
@@ -179,7 +184,7 @@ function EditSource() {
                                     <Row md={12}>
                                         <h4>Source Information</h4>
                                     </Row>
-                                    {editMode == 'edit' &&
+                                    {editMode == 'Edit' &&
                                         <>
                                             <Row>
                                                 <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
@@ -205,7 +210,7 @@ function EditSource() {
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
                                     {/*Group select*/}
                                     {
-                                        !(userWriteGroups.length === 1 || editMode === 'edit') &&
+                                        !(userWriteGroups.length === 1 || editMode === 'Edit') &&
                                         <GroupSelect
                                             data={data}
                                             groups={userWriteGroups}

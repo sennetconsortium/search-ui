@@ -42,11 +42,7 @@ export default function Home() {
     } else {
         return (
             <div>
-                <Head>
-                    <title>{APP_TITLE}</title>
-                    <link rel="icon" href="/favicon.ico"/>
-                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                </Head>
+
                 <AppNavbar
                     hidden={true}
                     signoutHidden={true}
