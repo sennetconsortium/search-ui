@@ -20,6 +20,7 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
+import RuiIntegration from "../../components/RuiIntegration";
 
 function EditSample() {
     const router = useRouter()
@@ -39,6 +40,9 @@ function EditSample() {
     const [authorized, setAuthorized] = useState(null)
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
+    const [tissueBlockSpatialData, setTissueBlockSpatialData] = useState('')
+    const [showRui, setShowRui] = useState(false)
+    const [organType, setOrganType] = useState('')
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -182,6 +186,8 @@ function EditSample() {
         setValidated(true);
     };
 
+    const showRegisterLocationButton = organType !== '' && values['organ'] !== 'other'
+
     if (authorized === null) {
         return (
             <div className="text-center p-3">
@@ -202,6 +208,17 @@ function EditSample() {
                 {error &&
                     <div className="alert alert-warning" role="alert">{errorMessage}</div>
                 }
+                {showRui &&
+                    <RuiIntegration
+                        organ={organType}
+                        sex={'male'}
+                        user={'Samuel Sedivy'}
+                        blockStartLocation={tissueBlockSpatialData}
+                        handleJsonRUI={(data) => setTissueBlockSpatialData(data)}
+                        setShowRui={(b) => setShowRui(b)}
+                    />
+                }
+
                 {data && !error &&
                     <div className="no_sidebar">
                         <Layout
@@ -258,7 +275,15 @@ function EditSample() {
                                     {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}
                                     {/*/!*Tissue Sample Type*!/*/}
                                     {((editMode === 'Edit' && source) || (editMode === 'Create')) &&
-                                        <SampleCategory data={data} source={source} onChange={onChange}/>
+                                        <SampleCategory
+                                            data={data}
+                                            source={source}
+                                            onChange={onChange}
+                                            setShowRui={(b) => setShowRui(b)}
+                                            tissueBlockSpatialData={tissueBlockSpatialData}
+                                            setOrganType={setOrganType}
+                                            showRegisterLocationButton={showRegisterLocationButton}
+                                        />
                                     }
 
                                     {/*/!*Preparation Protocol*!/*/}
