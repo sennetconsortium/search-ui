@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import Head from 'next/head'
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button} from 'react-bootstrap';
@@ -18,6 +19,8 @@ import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
+import {APP_TITLE} from "../config/config";
+import Header from "../components/custom/layout/Header";
 
 function ViewDataset() {
     const router = useRouter()
@@ -92,6 +95,8 @@ function ViewDataset() {
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
+                <Header title={`${data.sennet_id} | Dataset | SenNet`}></Header>
+
                 <AppNavbar hidden={isRegisterHidden}/>
 
                 {error &&

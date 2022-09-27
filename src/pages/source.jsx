@@ -18,6 +18,7 @@ import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import Protocols from "../components/custom/entities/sample/Protocols";
 import AppFooter from "../components/custom/layout/AppFooter";
+import Header from "../components/custom/layout/Header";
 
 function ViewSource() {
     const router = useRouter()
@@ -78,6 +79,8 @@ function ViewSource() {
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
+                <Header title={`${data.sennet_id} | Source | SenNet`}></Header>
+
                 <AppNavbar hidden={isRegisterHidden}/>
 
                 {error &&

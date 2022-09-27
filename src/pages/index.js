@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import {useRouter} from 'next/router';
 import React, {useEffect, useState} from 'react';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
@@ -11,6 +10,7 @@ import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import AppFooter from "../components/custom/layout/AppFooter";
 import {Row, Col, Container} from 'react-bootstrap'
+import Header from "../components/custom/layout/Header";
 
 export default function Home() {
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
@@ -42,11 +42,8 @@ export default function Home() {
     } else {
         return (
             <div>
-                <Head>
-                    <title>{APP_TITLE}</title>
-                    <link rel="icon" href="/favicon.ico"/>
-                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                </Head>
+                <Header title={APP_TITLE}/>
+
                 <AppNavbar
                     hidden={true}
                     signoutHidden={true}

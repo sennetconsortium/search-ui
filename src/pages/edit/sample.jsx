@@ -19,6 +19,7 @@ import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
+import Header from "../../components/custom/layout/Header";
 
 function EditSample() {
     const router = useRouter()
@@ -82,7 +83,7 @@ function EditSample() {
                     'description': data.description,
                     'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
                 })
-                setEditMode("edit")
+                setEditMode("Edit")
 
                 // TODO: Need to change this is descendant for sennet
                 if (data.hasOwnProperty("immediate_ancestors")) {
@@ -94,7 +95,7 @@ function EditSample() {
         if (router.query.hasOwnProperty("uuid")) {
             if (router.query.uuid === 'create') {
                 setData(true)
-                setEditMode("create")
+                setEditMode("Create")
             } else {
                 // call the function
                 fetchData(router.query.uuid)
@@ -143,7 +144,7 @@ function EditSample() {
             event.preventDefault();
             log.debug("Form is valid")
 
-            if (values['group_uuid'] === null && editMode === 'create') {
+            if (values['group_uuid'] === null && editMode === 'Create') {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
@@ -156,7 +157,7 @@ function EditSample() {
                 setDisableSubmit(false);
 
                 if ('uuid' in response) {
-                    if (editMode === 'edit') {
+                    if (editMode === 'Edit') {
                         setModalTitle("Sample Updated")
                         setModalBody("Your Sample was updated:\n" +
                             "Sample category: " + response.sample_category + "\n" +
@@ -192,6 +193,10 @@ function EditSample() {
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
+                {editMode &&
+                    <Header title={`${editMode} Sample | SenNet`}></Header>
+                }
+
                 <AppNavbar/>
 
                 {error &&
@@ -205,7 +210,7 @@ function EditSample() {
                                     <Row md={12}>
                                         <h4>Sample Information</h4>
                                     </Row>
-                                    {editMode === 'edit' &&
+                                    {editMode === 'Edit' &&
                                         <>
                                             <Row>
                                                 <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
@@ -231,7 +236,7 @@ function EditSample() {
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
                                     {/*Group select*/}
                                     {
-                                        !(userWriteGroups.length === 1 || editMode === 'edit') &&
+                                        !(userWriteGroups.length === 1 || editMode === 'Edit') &&
                                         <GroupSelect
                                             data={data}
                                             groups={userWriteGroups}
@@ -252,7 +257,7 @@ function EditSample() {
 
                                     {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}
                                     {/*/!*Tissue Sample Type*!/*/}
-                                    {((editMode === 'edit' && source) || (editMode === 'create')) &&
+                                    {((editMode === 'Edit' && source) || (editMode === 'Create')) &&
                                         <SampleCategory data={data} source={source} onChange={onChange}/>
                                     }
 

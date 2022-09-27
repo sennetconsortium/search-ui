@@ -11,13 +11,14 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, update_create_dataset, get_user_write_groups} from "../../lib/services";
+import {get_read_write_privileges, get_user_write_groups, update_create_dataset} from "../../lib/services";
 import DataTypes from "../../components/custom/edit/dataset/DataTypes";
 import AncestorIds from "../../components/custom/edit/dataset/AncestorIds";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
+import Header from "../../components/custom/layout/Header";
 
 function EditDataset() {
     const router = useRouter()
@@ -80,7 +81,7 @@ function EditDataset() {
                     'direct_ancestor_uuids': [data.immediate_ancestors[0].uuid],
                     'contains_human_genetic_sequences': data.contains_human_genetic_sequences
                 })
-                setEditMode("edit")
+                setEditMode("Edit")
 
                 // TODO: Need to change this is descendant for sennet
                 if (data.hasOwnProperty("immediate_ancestors")) {
@@ -94,7 +95,7 @@ function EditDataset() {
         if (router.query.hasOwnProperty("uuid")) {
             if (router.query.uuid === 'create') {
                 setData(true)
-                setEditMode("create")
+                setEditMode("Create")
             } else {
                 // call the function
                 fetchData(router.query.uuid)
@@ -160,7 +161,7 @@ function EditDataset() {
                 log.debug("Form is valid")
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
-                if (values['group_uuid'] === null && editMode === 'create') {
+                if (values['group_uuid'] === null && editMode === 'Create') {
                     values['group_uuid'] = selectedUserWriteGroupUuid
                 }
                 // Remove empty strings
@@ -172,7 +173,7 @@ function EditDataset() {
                     setDisableSubmit(false);
 
                     if ('uuid' in response) {
-                        if (editMode === 'edit') {
+                        if (editMode === 'Edit') {
                             setModalTitle("Dataset Updated")
                             setModalBody("Your Dataset was updated:\n" +
                                 "Data type: " + response.data_types[0] + "\n" +
@@ -217,6 +218,10 @@ function EditDataset() {
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
+                {editMode &&
+                    <Header title={`${editMode} Dataset | SenNet`}></Header>
+                }
+
                 <AppNavbar/>
 
                 {error &&
@@ -230,7 +235,7 @@ function EditDataset() {
                                     <Row md={12}>
                                         <h4>Dataset Information</h4>
                                     </Row>
-                                    {editMode === 'edit' &&
+                                    {editMode === 'Edit' &&
                                         <>
                                             <Row>
                                                 <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
@@ -256,7 +261,7 @@ function EditDataset() {
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
                                     {/*Group select*/}
                                     {
-                                        !(userWriteGroups.length === 1 || editMode === 'edit') &&
+                                        !(userWriteGroups.length === 1 || editMode === 'Edit') &&
                                         <GroupSelect
                                             data={data}
                                             groups={userWriteGroups}
@@ -362,7 +367,7 @@ function EditDataset() {
                                                 label="No"
                                                 name="contains_human_genetic_sequences"
                                                 value={false}
-                                                defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'edit') ? true : false}
+                                                defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'Edit') ? true : false}
                                                 onChange={handleContainsHumanGeneticSequencesNo}
                                             />
                                             <Form.Check

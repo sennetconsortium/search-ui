@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router'
-import Head from 'next/head'
 import {
     ErrorBoundary,
     Paging,
@@ -25,6 +24,7 @@ import {get_read_write_privileges} from "../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
+import Header from "../components/custom/layout/Header";
 
 
 function Search() {
@@ -51,10 +51,7 @@ function Search() {
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
             <>
-                <Head>
-                    <title>{APP_TITLE}</title>
-                    <link rel="icon" href="/favicon.ico"/>
-                </Head>
+                <Header title={APP_TITLE}/>
 
                 <SearchProvider config={config}>
                     <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
