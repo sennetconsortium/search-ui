@@ -8,7 +8,7 @@ import Image from 'next/image'
 
 const AppNavbar = ({hidden, signoutHidden}) => {
     return (
-        <Navbar variant={'dark'} expand="lg" className={`py-4 sticky-top ${styles.navbar_custom}`}>
+        <Navbar variant={'dark'} expand="lg" className={`sticky-top ${styles.navbar_custom}`}>
             <Container fluid={true}>
                 <Row className={'ms-5'}>
                     <Navbar.Brand href="/search" className={'d-flex align-items-center'}>

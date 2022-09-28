@@ -104,6 +104,8 @@ function ViewDataset() {
                 }
                 {data && !error &&
                     <Layout
+                        header={<div></div>}
+
                         sideContent={
                             <div>
                                 <div className="sui-facet">
