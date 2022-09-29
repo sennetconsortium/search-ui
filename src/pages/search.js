@@ -12,7 +12,6 @@ import {
     WithSearch
 } from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
-import ClearSearchBox from '../search-ui/components/core/ClearSearchBox';
 import Facets from "../search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../components/custom/TableResults";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
@@ -76,6 +75,7 @@ function Search() {
                                                                            onChange={(e) => onChange(e.currentTarget.value)}
                                                                            className="form-control form-control-lg rounded-0"
                                                                            placeholder="Search"
+                                                                           autoFocus={true}
                                                                     ></input>
                                                                     <button
                                                                         className="btn btn-outline-primary rounded-0"

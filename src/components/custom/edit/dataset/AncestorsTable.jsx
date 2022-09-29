@@ -33,7 +33,7 @@ export default class AncestorsTable extends React.Component {
                             <td>{source?.display_subtype}</td>
                             <td>{source.group_name}</td>
                             <td><Badge pill bg={getStatusColor(source?.status)}>{source?.status}</Badge></td>
-                            <td><TrashFill color="red" onClick={() => this.deleteSource(this, source.uuid)}/></td>
+                            <td><TrashFill role="button" color="red" onClick={() => this.deleteSource(this, source.uuid)}/></td>
 
                         </tr>
                     )

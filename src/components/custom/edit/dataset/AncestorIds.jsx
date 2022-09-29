@@ -18,10 +18,10 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {PlusLg, QuestionCircleFill} from "react-bootstrap-icons";
 import {config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../../config/config";
-import ClearSearchBox from "search-ui/components/core/ClearSearchBox";
 import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
 import AncestorsTable from "./AncestorsTable";
+import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 
 export default class AncestorIds extends React.Component {
     constructor(props) {
@@ -104,13 +104,32 @@ export default class AncestorIds extends React.Component {
                                     return (
                                         <Layout
                                             header={
-                                                <div>
-                                                    <SearchBox/>
-                                                    <ClearSearchBox/>
+                                                <div className="search-box-header">
+                                                    <SearchBox
+                                                        view={({onChange, value, onSubmit}) => (
+                                                            <form onSubmit={onSubmit}>
+
+                                                                <div className="input-group">
+                                                                    <input type="text"
+                                                                           value={value}
+                                                                           onChange={(e) => onChange(e.currentTarget.value)}
+                                                                           className="form-control form-control-lg rounded-0"
+                                                                           placeholder="Search"
+                                                                    ></input>
+                                                                    <button
+                                                                        className="btn btn-outline-primary rounded-0"
+                                                                        type="button">Search
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        )}
+                                                    />
                                                 </div>
                                             }
                                             sideContent={
                                                 <>
+                                                    <CustomClearSearchBox/>
+
                                                     {wasSearched && (
                                                         <Sorting
                                                             label={"Sort by"}
