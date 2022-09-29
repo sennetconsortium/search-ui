@@ -12,6 +12,10 @@
     border-bottom: 0 !important;
 }
 
+html {
+  scroll-padding-top: 80px;
+}
+
 .search-box-header {
     padding: 32px 24px;
     border-bottom: 1px solid #eeeeee;

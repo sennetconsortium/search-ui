@@ -122,7 +122,7 @@ function ViewDataset() {
                                             {data.immediate_ancestors &&
                                                 <li className="sui-single-option-facet__item"><a
                                                     className="sui-single-option-facet__link"
-                                                    href="#SourceInformationBox">Ancestor</a>
+                                                    href="#Ancestor">Ancestor</a>
                                                 </li>
                                             }
                                             {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&

@@ -5,8 +5,8 @@ import {EnvelopeFill} from "react-bootstrap-icons";
 export default class Attribution extends React.Component {
     render() {
         return (
-            <li className="sui-result">
-                <div className="sui-result__header" id="Attribution">
+            <li className="sui-result" id="Attribution">
+                <div className="sui-result__header">
                     <span className="sui-result__title">Attribution</span>
                 </div>
                 <div className="card-body">

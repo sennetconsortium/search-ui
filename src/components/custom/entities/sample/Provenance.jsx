@@ -7,8 +7,8 @@ export default class Provenance extends React.Component {
         let sources_count = 0;
         let sample_count = 0;
         return (
-            <li className="sui-result">
-                <div className="sui-result__header" id="Provenance">
+            <li className="sui-result" id="Provenance">
+                <div className="sui-result__header">
                     <span className="sui-result__title">Provenance</span>
                 </div>
                 <div className="card-body">
@@ -32,7 +32,7 @@ export default class Provenance extends React.Component {
                                                 )
                                             }
                                         })}
-                                         {this.props.data.entity_type === 'Source' &&
+                                        {this.props.data.entity_type === 'Source' &&
                                             <ProvenanceItem ancestor_uuid={this.props.data.uuid}
                                                             data={this.props.data}
                                                             entity_count={sample_count} bg="light"/>
