@@ -148,7 +148,7 @@ export default class AncestorId extends React.Component {
                         </SearchProvider>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.hideModal}>
+                        <Button variant="outline-secondary rounded-0" onClick={this.hideModal}>
                             Close
                         </Button>
                     </Modal.Footer>
