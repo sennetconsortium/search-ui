@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import Head from 'next/head'
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button} from 'react-bootstrap';
@@ -19,13 +18,12 @@ import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../
 import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
-import {APP_TITLE} from "../config/config";
 import Header from "../components/custom/layout/Header";
 
 function ViewDataset() {
     const router = useRouter()
     const [data, setData] = useState(null)
-    const [ancestor, setAncestor] = useState(null)
+    const [ancestors, setAncestors] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -55,7 +53,7 @@ function ViewDataset() {
                 // set state with the result
                 setData(data);
                 if (data.hasOwnProperty("immediate_ancestors")) {
-                    await fetchAncestor(data.immediate_ancestors[0].uuid);
+                    await fetchAncestors(data.immediate_ancestors);
                 }
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
@@ -74,14 +72,18 @@ function ViewDataset() {
         }
     }, [router]);
 
-    const fetchAncestor = async (ancestorId) => {
-        let ancestor = await fetchEntity(ancestorId);
-        if (ancestor.hasOwnProperty("error")) {
-            setError(true)
-            setErrorMessage(source["error"])
-        } else {
-            setAncestor(ancestor);
+    const fetchAncestors = async (ancestor_uuids) => {
+        let new_ancestors = []
+        for (const ancestor_uuid of ancestor_uuids) {
+            let ancestor = await fetchEntity(ancestor_uuid.uuid);
+            if (ancestor.hasOwnProperty("error")) {
+                setError(true)
+                setErrorMessage(ancestor["error"])
+            } else {
+                new_ancestors.push(ancestor)
+            }
         }
+        setAncestors(new_ancestors)
     }
 
     if (!data) {
@@ -117,7 +119,7 @@ function ViewDataset() {
                                             {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li> */}
-                                            {data.ancestors &&
+                                            {data.immediate_ancestors &&
                                                 <li className="sui-single-option-facet__item"><a
                                                     className="sui-single-option-facet__link"
                                                     href="#SourceInformationBox">Ancestor</a>
@@ -132,10 +134,14 @@ function ViewDataset() {
                                             {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Files">Files</a>
                                         </li> */}
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link"
-                                                href="#Contributors">Contributors</a>
-                                            </li>
+
+                                            {!!(data.contributors && Object.keys(data.contributors).length) &&
+                                                <li className="sui-single-option-facet__item"><a
+                                                    className="sui-single-option-facet__link"
+                                                    href="#Contributors">Contributors</a>
+                                                </li>
+                                            }
+
                                             <li className="sui-single-option-facet__item"><a
                                                 className="sui-single-option-facet__link"
                                                 href="#Attribution">Attribution</a>
@@ -206,8 +212,8 @@ function ViewDataset() {
                                 } */}
 
                                     {/*Source Information Box*/}
-                                    {ancestor &&
-                                        <AncestorInformationBox ancestor={ancestor}/>
+                                    {ancestors &&
+                                        <AncestorInformationBox ancestor={ancestors}/>
                                     }
 
 

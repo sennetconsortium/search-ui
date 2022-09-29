@@ -25,7 +25,7 @@ function EditDataset() {
     const [validated, setValidated] = useState(false);
     const [editMode, setEditMode] = useState(null)
     const [data, setData] = useState(null)
-    const [sources, setSources] = useState(null)
+    const [ancestors, setAncestors] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [values, setValues] = useState({});
@@ -71,6 +71,15 @@ function EditDataset() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data);
+
+                let immediate_ancestors = []
+                if (data.hasOwnProperty("immediate_ancestors")) {
+                    for (const ancestor of data.immediate_ancestors) {
+                        immediate_ancestors.push(ancestor.uuid)
+                    }
+                    await fetchAncestors(immediate_ancestors)
+                }
+
                 // Set state with default values that will be PUT to Entity API to update
                 // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
@@ -78,17 +87,10 @@ function EditDataset() {
                     'data_types': [data.data_types[0]],
                     'description': data.description,
                     'dataset_info': data.dataset_info,
-                    'direct_ancestor_uuids': [data.immediate_ancestors[0].uuid],
+                    'direct_ancestor_uuids': immediate_ancestors,
                     'contains_human_genetic_sequences': data.contains_human_genetic_sequences
                 })
                 setEditMode("Edit")
-
-                // TODO: Need to change this is descendant for sennet
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    for (const ancestor of data.immediate_ancestors) {
-                        await fetchSources(ancestor.uuid);
-                    }
-                }
             }
         }
 
@@ -104,7 +106,7 @@ function EditDataset() {
             }
         } else {
             setData(null);
-            setSources(null)
+            setAncestors(null)
         }
     }, [router]);
 
@@ -112,33 +114,37 @@ function EditDataset() {
     const onChange = (e, fieldId, value) => {
         // use a callback to find the field in the value list and update it
         setValues((currentValues) => {
+            // log.info(currentValues)
             currentValues[fieldId] = value;
             return currentValues;
         });
+
     };
 
-    const fetchSources = async (source_uuid) => {
-        let source = await fetchEntity(source_uuid);
-        if (source.hasOwnProperty("error")) {
-            setError(true)
-            setErrorMessage(source["error"])
-        } else {
-            if (sources) {
-                const old_sources = [...sources];
-                old_sources.push(source);
-                setSources(old_sources);
+    async function fetchAncestors(ancestor_uuids) {
+        let new_ancestors = []
+        if (ancestors) {
+            new_ancestors = [...ancestors];
+        }
+
+        for (const ancestor_uuid of ancestor_uuids) {
+            let ancestor = await fetchEntity(ancestor_uuid);
+            if (ancestor.hasOwnProperty("error")) {
+                setError(true)
+                setErrorMessage(ancestor["error"])
             } else {
-                setSources([source])
+                new_ancestors.push(ancestor)
             }
         }
+        setAncestors(new_ancestors)
     }
 
-    const deleteSource = (source_uuid) => {
-        const old_sources = [...sources];
-        log.debug(old_sources)
-        let updated_sources = old_sources.filter(e => e.uuid !== source_uuid);
-        setSources(updated_sources);
-        log.debug(updated_sources);
+    const deleteAncestor = (ancestor_uuid) => {
+        const old_ancestors = [...ancestors];
+        log.debug(old_ancestors)
+        let updated_ancestors = old_ancestors.filter(e => e.uuid !== ancestor_uuid);
+        setAncestors(updated_ancestors);
+        log.debug(updated_ancestors);
     }
 
 
@@ -269,11 +275,11 @@ function EditDataset() {
                                             entity_type={'dataset'}/>
                                     }
 
-                                    {/*Source ID*/}
+                                    {/*Ancestor IDs*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
-                                        <AncestorIds values={values} sources={sources} onChange={onChange}
-                                                     fetchSources={fetchSources} deleteSource={deleteSource}/>
+                                        <AncestorIds values={values} ancestors={ancestors} onChange={onChange}
+                                                     fetchAncestors={fetchAncestors} deleteAncestor={deleteAncestor}/>
                                     }
 
                                     {/*/!*Lab Name or ID*!/*/}
