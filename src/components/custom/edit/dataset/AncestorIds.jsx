@@ -38,15 +38,15 @@ export default class AncestorIds extends React.Component {
         this.setState({showHideModal: false})
     }
 
-    // Handles when updates are made to `Source ID` when the search feature is used
-    changeSource = async (e, sourceId) => {
+    // Handles when updates are made to `Ancestor ID` when the search feature is used
+    changeAncestor = async (e, ancestorId) => {
         let old_uuids = [];
         if (this.props.values.direct_ancestor_uuids !== undefined) {
             old_uuids = [...this.props.values.direct_ancestor_uuids]
         }
-        old_uuids.push(sourceId);
+        old_uuids.push(ancestorId);
         this.props.onChange(e, 'direct_ancestor_uuids', old_uuids);
-        this.props.fetchSources(sourceId);
+        this.props.fetchAncestors([ancestorId]);
         this.hideModal();
     }
 
@@ -79,9 +79,9 @@ export default class AncestorIds extends React.Component {
                 </Form.Group>
 
                 {/*Ancestor Information Box*/}
-                {this.props.sources &&
+                {this.props.ancestors &&
                     <AncestorsTable values={this.props.values} onChange={this.props.onChange}
-                                    sources={this.props.sources} deleteSource={this.props.deleteSource}/>
+                                    ancestors={this.props.ancestors} deleteAncestor={this.props.deleteAncestor}/>
                 }
 
                 <InputGroup className="mb-3" id="direct_ancestor_uuid_button">
@@ -146,7 +146,7 @@ export default class AncestorIds extends React.Component {
                                                 <Results view={TableResults} filters={filters}
                                                          titleField={filters}
                                                          resultView={TableRowDetail}
-                                                         urlField={this.changeSource}
+                                                         urlField={this.changeAncestor}
                                                 />
                                             }
                                             bodyHeader={

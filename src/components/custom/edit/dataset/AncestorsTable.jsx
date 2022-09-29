@@ -5,12 +5,12 @@ import Badge from 'react-bootstrap/Badge';
 import {TrashFill} from "react-bootstrap-icons";
 
 export default class AncestorsTable extends React.Component {
-    deleteSource = async (e, sourceId) => {
+    deleteAncestor = async (e, ancestorId) => {
         const old_uuids = [...this.props.values.direct_ancestor_uuids]
-        let updated_uuids = old_uuids.filter(e => e !== sourceId)
+        let updated_uuids = old_uuids.filter(e => e !== ancestorId)
         console.log(updated_uuids)
         this.props.onChange(e, 'direct_ancestor_uuids', updated_uuids);
-        this.props.deleteSource(sourceId);
+        this.props.deleteAncestor(ancestorId);
     }
 
     render() {
@@ -26,14 +26,14 @@ export default class AncestorsTable extends React.Component {
                 </tr>
                 </thead>
                 <tbody>
-                {this.props.sources.map((source, index) => {
+                {this.props.ancestors.map((ancestor, index) => {
                     return (
                         <tr key={index}>
-                            <td>{source.sennet_id}</td>
-                            <td>{source?.display_subtype}</td>
-                            <td>{source.group_name}</td>
-                            <td><Badge pill bg={getStatusColor(source?.status)}>{source?.status}</Badge></td>
-                            <td><TrashFill role="button" color="red" onClick={() => this.deleteSource(this, source.uuid)}/></td>
+                            <td>{ancestor.sennet_id}</td>
+                            <td>{ancestor?.display_subtype}</td>
+                            <td>{ancestor.group_name}</td>
+                            <td><Badge pill bg={getStatusColor(ancestor?.status)}>{ancestor?.status}</Badge></td>
+                            <td><TrashFill role="button" color="red" onClick={() => this.deleteAncestor(this, ancestor.uuid)}/></td>
 
                         </tr>
                     )
