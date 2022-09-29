@@ -6,8 +6,8 @@ import styles from "../../style.module.css";
 export default class DerivedDataset extends React.Component {
     render() {
         return (
-            <li className="sui-result">
-                <div className="sui-result__header" id="Derived-Datasets">
+            <li className="sui-result" id="Derived-Datasets">
+                <div className="sui-result__header">
                     <span
                         className="sui-result__title">{this.props.includeSample ? "Derived" : "Derived Datasets"}</span>
                     <div>

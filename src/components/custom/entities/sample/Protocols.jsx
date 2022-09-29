@@ -20,7 +20,7 @@ export default class Protocols extends React.Component {
     render() {
         return (
             <li className="sui-result" id="Protocols">
-                <div className="sui-result__header" id="SourceInformationBox">
+                <div className="sui-result__header">
                     <span className="sui-result__title">Protocols</span>
                 </div>
 

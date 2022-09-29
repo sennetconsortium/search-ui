@@ -8,8 +8,8 @@ export default class AncestorInformationBox extends React.Component {
         console.log(this.props.ancestor)
         if (this.props.ancestor instanceof Array) {
             return (
-                <li className="sui-result">
-                    <div className="sui-result__header" id="SourceInformationBox">
+                <li className="sui-result" id="Ancestor">
+                    <div className="sui-result__header">
                         <span className="sui-result__title">Ancestors</span>
                     </div>
 
@@ -60,8 +60,8 @@ export default class AncestorInformationBox extends React.Component {
             )
         } else {
             return (
-                <li className="sui-result">
-                    <div className="sui-result__header" id="SourceInformationBox">
+                <li className="sui-result" id="Ancestor">
+                    <div className="sui-result__header">
                         <span className="sui-result__title">Ancestor</span>
                     </div>
 

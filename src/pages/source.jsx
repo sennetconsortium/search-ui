@@ -113,12 +113,6 @@ function ViewSource() {
                                             {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li> */}
-                                            {data.ancestors &&
-                                                <li className="sui-single-option-facet__item"><a
-                                                    className="sui-single-option-facet__link"
-                                                    href="#SourceInformationBox">Ancestor</a>
-                                                </li>
-                                            }
                                             {data.protocol_url &&
                                                 <li className="sui-single-option-facet__item"><a
                                                     className="sui-single-option-facet__link"

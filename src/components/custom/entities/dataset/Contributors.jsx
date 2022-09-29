@@ -7,8 +7,8 @@ import {BoxArrowUpRight} from 'react-bootstrap-icons';
 export default class Contributors extends React.Component {
     render() {
         return (
-            <li className="sui-result">
-                <div className="sui-result__header" id="Contributors">
+            <li className="sui-result" id="Contributors">
+                <div className="sui-result__header">
                     <span className="sui-result__title">Contributors</span>
                 </div>
                 <div className="card-body">

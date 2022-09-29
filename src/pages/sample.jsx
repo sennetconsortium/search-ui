@@ -125,7 +125,7 @@ function ViewSample() {
                                             {data.ancestors &&
                                                 <li className="sui-single-option-facet__item"><a
                                                     className="sui-single-option-facet__link"
-                                                    href="#SourceInformationBox">Ancestor</a>
+                                                    href="#Ancestor">Ancestor</a>
                                                 </li>
                                             }
                                             {data.protocol_url &&

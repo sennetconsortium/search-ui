@@ -4,8 +4,8 @@ import {Table} from 'react-bootstrap';
 export default class Tissue extends React.Component {
     render() {
         return (
-            <li className="sui-result">
-                <div className="sui-result__header" id="Tissue">
+            <li className="sui-result" id="Tissue">
+                <div className="sui-result__header">
                     <span className="sui-result__title">Tissue</span>
                 </div>
                 <div className="card-body">
