@@ -3,21 +3,21 @@ import log from "loglevel";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
-export async function update_create_entity(uuid, body, action = "edit", entity_type = null, router) {
+export async function update_create_entity(uuid, body, action = "Edit", entity_type = null, router) {
     let raw = JSON.stringify(body)
-    let url = getEntityEndPoint() + "entities/" + (action === 'create' ? entity_type : uuid)
-    let method = (action === 'create' ? "POST" : "PUT")
+    let url = getEntityEndPoint() + "entities/" + (action === 'Create' ? entity_type : uuid)
+    let method = (action === 'Create' ? "POST" : "PUT")
 
     return call_service(raw, url, method)
 }
 
-export async function update_create_dataset(uuid, body, action = "edit", router) {
-    if (action === 'edit') {
+export async function update_create_dataset(uuid, body, action = "Edit", router) {
+    if (action === 'Edit') {
         return update_create_entity(uuid, body, action, router);
     } else {
         let raw = JSON.stringify(body)
-        let url = getIngestEndPoint() + "datasets" + (action === 'create' ? '' : "/" + uuid + "/submit")
-        let method = (action === 'create' ? "POST" : "PUT")
+        let url = getIngestEndPoint() + "datasets" + (action === 'Create' ? '' : "/" + uuid + "/submit")
+        let method = (action === 'Create' ? "POST" : "PUT")
         log.debug(url)
 
         return call_service(raw, url, method)
