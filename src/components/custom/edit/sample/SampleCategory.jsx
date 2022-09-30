@@ -10,7 +10,9 @@ export default class SampleCategory extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            organ_group_hide: 'none', organ_other_hide: 'none', setShowRuiLocationModal: false,
+            organ_group_hide: 'none',
+            organ_other_hide: 'none',
+            setShowRuiLocationModal: false,
         };
 
         // Show organ input group if sample category is 'organ'
@@ -77,7 +79,8 @@ export default class SampleCategory extends React.Component {
                                     <Popover.Body>
                                         The category this sample belongs to.
                                     </Popover.Body>
-                                </Popover>}
+                                </Popover>
+                            }
                         >
                             <QuestionCircleFill/>
                         </OverlayTrigger>
@@ -94,7 +97,8 @@ export default class SampleCategory extends React.Component {
                             return (
                                 <option key={op[0]} value={op[0]}>
                                     {op[1]}
-                                </option>);
+                                </option>
+                            );
                         })}
                     </Form.Select>
                 </Form.Group>
@@ -115,7 +119,8 @@ export default class SampleCategory extends React.Component {
                                 return (
                                     <option key={op[0]} value={op[0]}>
                                         {op[1]}
-                                    </option>);
+                                    </option>
+                                );
                             })}
                         </Form.Select>
                     </Col>
