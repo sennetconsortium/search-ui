@@ -96,6 +96,22 @@ export function checkFilterEntityType(filters) {
     return hasEntityType;
 }
 
+export function checkMultipleFilterEntityType(filters) {
+    let hasMultipleEntityType = false;
+    try {
+        filters.map((filter, index) => {
+            if (filter.field === 'entity_type') {
+                if(filter.values.length > 1)
+                    hasMultipleEntityType =  true;
+            }
+        });
+    } catch (e) {
+        return hasMultipleEntityType;
+    }
+
+    return hasMultipleEntityType;
+}
+
 export function cleanJson(json) {
     Object.entries(json).forEach(([key, val]) =>
         (val && typeof val === 'object') && cleanJson(val) ||
