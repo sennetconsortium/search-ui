@@ -1,11 +1,11 @@
 import React from 'react';
 import styles from './style.module.css'
 import {Table} from 'react-bootstrap';
-import {checkFilterEntityType, getStatusColor} from "./js/functions";
+import {checkFilterEntityType, checkMultipleFilterEntityType, getStatusColor} from "./js/functions";
 import Badge from 'react-bootstrap/Badge';
 
 
-const DefaultTableResults = ({children}) => {
+const DefaultTableResults = ({children, hasMultipleEntityTypes=true}) => {
     return (
         <div key="results_table" className={styles.search_table_wrapper}>
             <Table responsive hover>
@@ -13,6 +13,9 @@ const DefaultTableResults = ({children}) => {
                 <tr>
                     <th>Created By</th>
                     <th>SenNet ID</th>
+                    {hasMultipleEntityTypes &&
+                        <th>Entity Type</th>
+                    }
                     <th>Lab ID</th>
                     <th>Category</th>
                     <th>Group</th>
@@ -27,12 +30,15 @@ const DefaultTableResults = ({children}) => {
     )
 }
 
-const DefaultTableRowDetails = ({result, urlField, hotlink}) => {
+const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTypes=true}) => {
     return (
         <tr key="results_detail"
             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
             <td>{result.created_by_user_displayname.raw}</td>
             <td>{result.sennet_id.raw}</td>
+            {hasMultipleEntityTypes &&
+                <td>{result.entity_type.raw}</td>
+            }
             <td>
                 {result.lab_tissue_sample_id ? (
                     <>{result.lab_tissue_sample_id.raw}</>
@@ -57,6 +63,8 @@ const DefaultTableRowDetails = ({result, urlField, hotlink}) => {
 }
 
 const TableResults = ({children, filters}) => {
+    let hasMultipleEntityTypes = checkMultipleFilterEntityType(filters);
+
     return (
         <>
             {filters.length > 0 ? (<>
@@ -73,6 +81,9 @@ const TableResults = ({children, filters}) => {
                                                 <thead>
                                                 <tr>
                                                     <th>SenNet ID</th>
+                                                    {hasMultipleEntityTypes &&
+                                                        <th>Entity Type</th>
+                                                    }
                                                     <th>Group</th>
                                                     <th>Type</th>
                                                     {/*<th>Age</th>*/}
@@ -96,6 +107,9 @@ const TableResults = ({children, filters}) => {
                                                 <thead>
                                                 <tr>
                                                     <th>SenNet ID</th>
+                                                    {hasMultipleEntityTypes &&
+                                                        <th>Entity Type</th>
+                                                    }
                                                     <th>Group</th>
                                                     <th>Data Types</th>
                                                     <th>Status</th>
@@ -109,7 +123,7 @@ const TableResults = ({children, filters}) => {
                                         </div>
                                     )
                                 } else {
-                                    return (DefaultTableResults({children}))
+                                    return (DefaultTableResults({children, hasMultipleEntityTypes}))
                                 }
                             }
                         })}
@@ -126,7 +140,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
     // We will override `urlField` to utilize onClick functionality (this will allow a user to select a source in the edit Sample page.
     // We will override `titleField` to pass the filters selected by the user to this
     var hotlink = "/" + result.entity_type.raw.toLowerCase() + "?uuid=" + result.uuid.raw
-    // console.log(result)
+    let hasMultipleEntityTypes = checkMultipleFilterEntityType(titleField);
     return (
         <>
             {titleField.length > 0 ? (<>
@@ -141,6 +155,9 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                         <tr key={index}
                                             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
                                             <td>{result.sennet_id.raw}</td>
+                                            {hasMultipleEntityTypes &&
+                                                <td>{result.entity_type.raw}</td>
+                                            }
                                             <td>
                                                 {result.group_name ? (
                                                     <>{result.group_name.raw}</>
@@ -191,6 +208,9 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                         <tr key={index}
                                             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
                                             <td>{result.sennet_id.raw}</td>
+                                            {hasMultipleEntityTypes &&
+                                                <td>{result.entity_type.raw}</td>
+                                            }
                                             <td>
                                                 {result.group_name ? (
                                                     <>{result.group_name.raw}</>
@@ -220,7 +240,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                         </tr>
                                     )
                                 } else {
-                                    return (DefaultTableRowDetails({result, urlField, hotlink}))
+                                    return (DefaultTableRowDetails({result, urlField, hotlink, hasMultipleEntityTypes}))
                                 }
                             }
                         })}
