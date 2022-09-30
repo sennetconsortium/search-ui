@@ -64,18 +64,20 @@ export default class SampleCategory extends React.Component {
     }
 
     render() {
-        return (//Sample Category
+        return (
+            //Sample Category
             <>
                 <Form.Group className="mb-3" controlId="sample_category">
                     <Form.Label>Sample Category <span
                         className="required">* </span>
                         <OverlayTrigger
                             placement="top"
-                            overlay={<Popover>
-                                <Popover.Body>
-                                    The category this sample belongs to.
-                                </Popover.Body>
-                            </Popover>}
+                            overlay={
+                                <Popover>
+                                    <Popover.Body>
+                                        The category this sample belongs to.
+                                    </Popover.Body>
+                                </Popover>}
                         >
                             <QuestionCircleFill/>
                         </OverlayTrigger>
@@ -89,10 +91,10 @@ export default class SampleCategory extends React.Component {
                                  defaultValue={this.props.data.sample_category}>
                         <option value="">----</option>
                         {Object.entries(SAMPLE_CATEGORY).map(op => {
-                            return (<option key={op[0]} value={op[0]}>
-                                {op[1]}
-                            </option>);
-
+                            return (
+                                <option key={op[0]} value={op[0]}>
+                                    {op[1]}
+                                </option>);
                         })}
                     </Form.Select>
                 </Form.Group>
@@ -110,10 +112,10 @@ export default class SampleCategory extends React.Component {
                                      defaultValue={this.props.data.organ}>
                             <option value="">----</option>
                             {Object.entries(ORGAN_TYPES).map(op => {
-                                return (<option key={op[0]} value={op[0]}>
-                                    {op[1]}
-                                </option>);
-
+                                return (
+                                    <option key={op[0]} value={op[0]}>
+                                        {op[1]}
+                                    </option>);
                             })}
                         </Form.Select>
                     </Col>
@@ -147,31 +149,35 @@ export default class SampleCategory extends React.Component {
                             this.props.tissueBlockSpatialData &&
                             <>
                                 <span>{' '}</span>
-                                <Check2Circle
-                                    color={'green'}
-                                />
+                                <Check2Circle color={'green'}/>
                             </>
                         }
 
                     </Form.Label>}
                 <div>
-                    {this.props.showRegisterLocationButton &&
+                    {
+                        this.props.showRegisterLocationButton &&
                         <Button variant={'outline-primary'} className={'rounded-0 mb-2'}
                                 onClick={() => this.props.setShowRui(true)}>
                             Register location
-                        </Button>}
-                    {this.props.tissueBlockSpatialData && <>
-                        <Button variant={'outline-success'} className={'rounded-0 mb-2 ms-2'}
-                                onClick={() => this.setState({showRuiLocationModal: true})}>
-                            View location data
                         </Button>
-                        <RUIModal
-                            tissueBlockSpatialData={this.props.tissueBlockSpatialData}
-                            show={this.state.showRuiLocationModal}
-                            hide={() => this.setState({showRuiLocationModal: false})}
-                        />
-                    </>}
+                    }
+                    {
+                        this.props.tissueBlockSpatialData &&
+                        <>
+                            <Button variant={'outline-success'} className={'rounded-0 mb-2 ms-2'}
+                                    onClick={() => this.setState({showRuiLocationModal: true})}>
+                                View location data
+                            </Button>
+                            <RUIModal
+                                tissueBlockSpatialData={this.props.tissueBlockSpatialData}
+                                show={this.state.showRuiLocationModal}
+                                hide={() => this.setState({showRuiLocationModal: false})}
+                            />
+                        </>
+                    }
                 </div>
-            </>)
+            </>
+        )
     }
 }
