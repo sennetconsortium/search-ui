@@ -98,8 +98,8 @@ export default class SampleCategory extends React.Component {
                                 <option key={op[0]} value={op[0]}>
                                     {op[1]}
                                 </option>
-                                
                             );
+
                         })}
                     </Form.Select>
                 </Form.Group>
@@ -121,8 +121,8 @@ export default class SampleCategory extends React.Component {
                                     <option key={op[0]} value={op[0]}>
                                         {op[1]}
                                     </option>
-
                                 );
+
                             })}
                         </Form.Select>
                     </Col>
