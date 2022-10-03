@@ -8,7 +8,7 @@ class RUIIntegration extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            hide: false, width: 1820, height: 1012
+            width: 1820, height: 1012
         }
         this.ruiRef = React.createRef()
     }
@@ -95,25 +95,21 @@ class RUIIntegration extends Component {
 
     render() {
         return (<>
-            <Script async src={'https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/wc.js'}/>
+            <Script src={'https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/wc.js'}/>
             <div className='webgl-content rui mat-typography'>
                 {
-                    this.state.hide
-                        ? null
-                        : (
-                            <div id='unityContainer'
-                                 style={{
-                                     width: this.state.width,
-                                     height: this.state.height,
-                                     marginLeft: this.state.margin_left,
-                                 }}>
-                                <ccf-rui
-                                    ref={this.ruiRef}
-                                    base-href="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
-                                    theme={'sennet'}
-                                />
-                            </div>
-                        )
+                    <div id='unityContainer'
+                         style={{
+                             width: this.state.width,
+                             height: this.state.height,
+                             marginLeft: this.state.margin_left,
+                         }}>
+                        <ccf-rui
+                            ref={this.ruiRef}
+                            base-href="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
+                            theme={'sennet'}
+                        />
+                    </div>
                 }
             </div>
         </>)
