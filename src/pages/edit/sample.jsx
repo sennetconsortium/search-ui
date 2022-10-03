@@ -153,7 +153,7 @@ function EditSample() {
             }
 
             if (tissueBlockSpatialData !== '') {
-                values['rui_location'] = tissueBlockSpatialData
+                values['rui_location'] = JSON.parse(tissueBlockSpatialData)
             }
 
             // Remove empty strings
