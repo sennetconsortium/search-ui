@@ -152,6 +152,10 @@ function EditSample() {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
+            if (tissueBlockSpatialData !== '') {
+                values['rui_location'] = tissueBlockSpatialData
+            }
+
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
