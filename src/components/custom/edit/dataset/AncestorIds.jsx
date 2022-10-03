@@ -107,21 +107,22 @@ export default class AncestorIds extends React.Component {
                                                 <div className="search-box-header">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
-                                                            <form onSubmit={onSubmit}>
-
-                                                                <div className="input-group">
-                                                                    <input type="text"
-                                                                           value={value}
-                                                                           onChange={(e) => onChange(e.currentTarget.value)}
-                                                                           className="form-control form-control-lg rounded-0"
-                                                                           placeholder="Search"
-                                                                    ></input>
-                                                                    <button
-                                                                        className="btn btn-outline-primary rounded-0"
-                                                                        type="button">Search
-                                                                    </button>
-                                                                </div>
-                                                            </form>
+                                                            <Form onSubmit={onSubmit}>
+                                                                <Form.Group controlId="search">
+                                                                    <InputGroup>
+                                                                        <Form.Control
+                                                                            value={value}
+                                                                            onChange={(e) => onChange(e.currentTarget.value)}
+                                                                            className="form-control form-control-lg rounded-0"
+                                                                            placeholder="Search"
+                                                                            autoFocus={true}
+                                                                        />
+                                                                        <Button variant="outline-primary"
+                                                                                className={"rounded-0"}
+                                                                                onClick={onSubmit}>Search</Button>
+                                                                    </InputGroup>
+                                                                </Form.Group>
+                                                            </Form>
                                                         )}
                                                     />
                                                 </div>
