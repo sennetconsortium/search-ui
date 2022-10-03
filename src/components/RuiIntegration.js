@@ -110,6 +110,7 @@ class RUIIntegration extends Component {
                                 <ccf-rui
                                     ref={this.ruiRef}
                                     base-href="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
+                                    theme={'sennet'}
                                 />
                             </div>
                         )
