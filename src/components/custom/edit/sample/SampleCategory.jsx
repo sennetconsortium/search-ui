@@ -65,6 +65,12 @@ export default class SampleCategory extends React.Component {
         onChange(e, "organ_other", "")
     }
 
+    handleRegisterLocationClick() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        this.props.setShowRui(true)
+    }
+
     render() {
         return (
             //Sample Category
@@ -165,7 +171,7 @@ export default class SampleCategory extends React.Component {
                     {
                         this.props.showRegisterLocationButton &&
                         <Button variant={'outline-primary'} className={'rounded-0 mb-2'}
-                                onClick={() => this.props.setShowRui(true)}>
+                                onClick={this.handleRegisterLocationClick.bind(this)}>
                             Register location
                         </Button>
                     }
