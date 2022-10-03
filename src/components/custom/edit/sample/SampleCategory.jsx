@@ -174,7 +174,7 @@ export default class SampleCategory extends React.Component {
                         <>
                             <Button variant={'outline-success'} className={'rounded-0 mb-2 ms-2'}
                                     onClick={() => this.setState({showRuiLocationModal: true})}>
-                                View location data
+                                View location
                             </Button>
                             <RUIModal
                                 tissueBlockSpatialData={this.props.tissueBlockSpatialData}
