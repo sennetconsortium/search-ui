@@ -49,9 +49,9 @@ function EditSample() {
 
     // only executed on init rendering, see the []
     useEffect(() => {
-        get_read_write_privileges().then(response => {
-            setAuthorized(response.write_privs)
-        }).catch(error => log.error(error))
+        get_read_write_privileges()
+            .then(response => setAuthorized(response.write_privs))
+            .catch(log.error)
 
         get_user_write_groups()
             .then(response => {
@@ -60,7 +60,7 @@ function EditSample() {
                 }
                 setUserWriteGroups(response.user_write_groups)
             })
-            .catch(e => log.error(e))
+            .catch(log.error)
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
@@ -218,8 +218,8 @@ function EditSample() {
                         sex={'male'}
                         user={'Samuel Sedivy'}
                         blockStartLocation={tissueBlockSpatialData}
-                        handleJsonRUI={(data) => setTissueBlockSpatialData(data)}
-                        setShowRui={(b) => setShowRui(b)}
+                        handleJsonRUI={setTissueBlockSpatialData}
+                        setShowRui={setShowRui}
                     />
                 }
 
@@ -283,7 +283,7 @@ function EditSample() {
                                             data={data}
                                             source={source}
                                             onChange={onChange}
-                                            setShowRui={(b) => setShowRui(b)}
+                                            setShowRui={setShowRui}
                                             tissueBlockSpatialData={tissueBlockSpatialData}
                                             setOrganType={setOrganType}
                                             showRegisterLocationButton={showRegisterLocationButton}
