@@ -1,7 +1,7 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap';
 import {APP_TITLE, getIngestEndPoint} from "../../../config/config";
 import React from "react";
-import {setCookie} from "cookies-next";
+import {deleteCookie, setCookie} from "cookies-next";
 import styles from '../appNavbar.module.css'
 import logo from './sennet-logo.png'
 import Image from 'next/image'
@@ -41,7 +41,11 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                             className={'justify-content-end'}
                             hidden={signoutHidden}
                             href={getIngestEndPoint() + 'logout'}
-                            onClick={() => setCookie('isAuthenticated', false)}>Sign-out</Nav.Link>
+                            onClick={() => {
+                                setCookie('isAuthenticated', false);
+                                deleteCookie('groups_token');
+                                deleteCookie('info');
+                            }}>Sign-out</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
