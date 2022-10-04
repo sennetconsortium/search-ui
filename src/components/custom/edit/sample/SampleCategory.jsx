@@ -1,10 +1,9 @@
 import React from 'react';
-import {Button, Col, Form, Row} from 'react-bootstrap';
+import {Col, Form, Row} from 'react-bootstrap';
 import {ORGAN_TYPES, SAMPLE_CATEGORY} from "../../../../config/constants";
-import {Check2Circle, QuestionCircleFill} from "react-bootstrap-icons";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import RUIModal from "../../../RUIModal";
 
 export default class SampleCategory extends React.Component {
     constructor(props) {
@@ -12,7 +11,6 @@ export default class SampleCategory extends React.Component {
         this.state = {
             organ_group_hide: 'none',
             organ_other_hide: 'none',
-            setShowRuiLocationModal: false,
         };
 
         // Show organ input group if sample category is 'organ'
@@ -36,12 +34,10 @@ export default class SampleCategory extends React.Component {
     handleOrganChange = (e, onChange) => {
         // If organ type is 'Other' then display organ_other group
         if (e.target.value === 'other') {
-            this.props.setOrganType('')
             this.setState({organ_other_hide: ''})
             document.getElementById("organ_other").setAttribute("required", "")
 
         } else {
-            this.props.setOrganType(e.target.value)
             this.resetOrganTypeOther(e, onChange);
         }
     }
@@ -63,12 +59,6 @@ export default class SampleCategory extends React.Component {
         // Empty the value of the fields and trigger onChange
         document.getElementById("organ_other").value = "";
         onChange(e, "organ_other", "")
-    }
-
-    handleRegisterLocationClick() {
-        document.body.scrollTop = 0; // For Safari
-        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-        this.props.setShowRui(true)
     }
 
     render() {
@@ -139,57 +129,10 @@ export default class SampleCategory extends React.Component {
                                       defaultValue={this.props.data.organ_other}
                                       onChange={e => {
                                           this.props.onChange(e, e.target.id, e.target.value)
-                                          this.props.setOrganType(e.target.value)
                                       }}
                                       placeholder="Please specify"/>
                     </Col>
                 </Form.Group>
-                {/*  RUI Tissue Block Registration  */}
-                {(this.props.showRegisterLocationButton || this.props.tissueBlockSpatialData) &&
-                    <Form.Label column sm="2">Sample location<span>{' '}</span>
-                        <OverlayTrigger
-                            placement="top"
-                            overlay={
-                                <Popover>
-                                    <Popover.Body>
-                                        Provide location information of the tissue sample.
-                                    </Popover.Body>
-                                </Popover>}
-                        >
-                            <QuestionCircleFill/>
-                        </OverlayTrigger>
-                        {
-                            this.props.tissueBlockSpatialData &&
-                            <>
-                                <span>{' '}</span>
-                                <Check2Circle color={'green'}/>
-                            </>
-                        }
-
-                    </Form.Label>}
-                <div>
-                    {
-                        this.props.showRegisterLocationButton &&
-                        <Button variant={'outline-primary'} className={'rounded-0 mb-2'}
-                                onClick={this.handleRegisterLocationClick.bind(this)}>
-                            Register location
-                        </Button>
-                    }
-                    {
-                        this.props.tissueBlockSpatialData &&
-                        <>
-                            <Button variant={'outline-success'} className={'rounded-0 mb-2 ms-2'}
-                                    onClick={() => this.setState({showRuiLocationModal: true})}>
-                                View location
-                            </Button>
-                            <RUIModal
-                                tissueBlockSpatialData={this.props.tissueBlockSpatialData}
-                                show={this.state.showRuiLocationModal}
-                                hide={() => this.setState({showRuiLocationModal: false})}
-                            />
-                        </>
-                    }
-                </div>
             </>
         )
     }

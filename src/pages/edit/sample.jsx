@@ -21,6 +21,7 @@ import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
 import RuiIntegration from "../../components/RuiIntegration";
+import RUIButton from "../../components/RUIButton";
 
 function EditSample() {
     const router = useRouter()
@@ -31,7 +32,7 @@ function EditSample() {
     const [sourceId, setSourceId] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
-    const [values, setValues] = useState({});
+    const [values, setValues] = useState(null);
     const [showModal, setShowModal] = useState(false)
     const [showHideModal, setShowHideModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
@@ -42,7 +43,7 @@ function EditSample() {
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
     const [tissueBlockSpatialData, setTissueBlockSpatialData] = useState('')
     const [showRui, setShowRui] = useState(false)
-    const [organType, setOrganType] = useState('')
+    const [showRuiButton, setShowRuiButton] = useState(false)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -93,6 +94,10 @@ function EditSample() {
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     await fetchSource(data.immediate_ancestors[0].uuid);
                 }
+                if (data['rui_location'] !== null) {
+                    setTissueBlockSpatialData(data['rui_location'])
+                    setShowRuiButton(true)
+                }
             }
         }
 
@@ -117,9 +122,14 @@ function EditSample() {
     const onChange = (e, fieldId, value) => {
         // log.debug('onChange', fieldId, value)
         // use a callback to find the field in the value list and update it
-        setValues((currentValues) => {
-            currentValues[fieldId] = value;
-            return currentValues;
+        setValues((previousValues) => {
+            if (previousValues !== null) {
+                return {...previousValues, [fieldId]: value}
+            } else {
+                return {
+                    [fieldId]: value
+                }
+            }
         });
     };
 
@@ -133,7 +143,6 @@ function EditSample() {
             setSourceId(source.sennet_id)
         }
     }
-
 
     const handleSubmit = async (event) => {
         setDisableSubmit(true);
@@ -190,7 +199,11 @@ function EditSample() {
         setValidated(true);
     };
 
-    const showRegisterLocationButton = organType !== '' && values['organ'] !== 'other'
+    if (values !== null && values.hasOwnProperty('organ')) {
+        if (!showRuiButton) {
+            setShowRuiButton(true)
+        }
+    }
 
     if (authorized === null) {
         return (
@@ -214,7 +227,7 @@ function EditSample() {
                 }
                 {showRui &&
                     <RuiIntegration
-                        organ={organType}
+                        organ={values['organ']}
                         sex={'male'}
                         user={'Samuel Sedivy'}
                         blockStartLocation={tissueBlockSpatialData}
@@ -279,15 +292,18 @@ function EditSample() {
                                     {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}
                                     {/*/!*Tissue Sample Type*!/*/}
                                     {((editMode === 'Edit' && source) || (editMode === 'Create')) &&
-                                        <SampleCategory
-                                            data={data}
-                                            source={source}
-                                            onChange={onChange}
-                                            setShowRui={setShowRui}
-                                            tissueBlockSpatialData={tissueBlockSpatialData}
-                                            setOrganType={setOrganType}
-                                            showRegisterLocationButton={showRegisterLocationButton}
-                                        />
+                                        <>
+                                            <SampleCategory
+                                                data={data}
+                                                source={source}
+                                                onChange={onChange}
+                                            />
+                                            <RUIButton
+                                                showRegisterLocationButton={showRuiButton}
+                                                ruiLocation={tissueBlockSpatialData}
+                                                setShowRui={setShowRui}
+                                            />
+                                        </>
                                     }
 
                                     {/*/!*Preparation Protocol*!/*/}
