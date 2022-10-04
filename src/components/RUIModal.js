@@ -8,6 +8,12 @@ const RUIModal = ({hide, show, tissueBlockSpatialData}) => {
             .then(log.info)
             .catch(log.error)
     }
+    let ruiLocation
+    if (typeof tissueBlockSpatialData === 'string' || tissueBlockSpatialData instanceof String) {
+        ruiLocation = tissueBlockSpatialData
+    } else {
+        ruiLocation = JSON.stringify(tissueBlockSpatialData, null, 2)
+    }
     return (
         <Modal
             show={show}
@@ -20,7 +26,7 @@ const RUIModal = ({hide, show, tissueBlockSpatialData}) => {
             </Modal.Header>
             <Modal.Body>
                 <pre>
-                    {tissueBlockSpatialData}
+                    {ruiLocation}
                 </pre>
             </Modal.Body>
             <Modal.Footer>

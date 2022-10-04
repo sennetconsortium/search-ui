@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {ORGAN_TYPES} from "../config/constants";
 import Script from 'next/script'
+import {parseJson} from "../lib/services";
 
 
 class RUIIntegration extends Component {
@@ -61,7 +62,7 @@ class RUIIntegration extends Component {
         const organ_side = organ_info[1]?.replace(/\(|\)/g, "").toLowerCase()
         const sex = this.props.sex
         const user_name = this.props.user || ""
-        const location = this.props.blockStartLocation === "" ? null : JSON.parse(this.props.blockStartLocation)
+        const location = parseJson(this.props.blockStartLocation)
         const self = this
 
         const rui = this.ruiRef.current;
