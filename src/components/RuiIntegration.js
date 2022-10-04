@@ -85,6 +85,7 @@ class RUIIntegration extends Component {
             return [];
         }
         rui.cancelRegistration = function () {
+            rui.register(self.props.blockStartLocation)
             self.props.setShowRui(false)
         }
         if (location && // Don't re-set the registration if it's the same as before
