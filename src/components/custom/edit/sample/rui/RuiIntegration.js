@@ -1,7 +1,7 @@
 import React, {Component} from "react";
-import {ORGAN_TYPES} from "../config/constants";
+import {ORGAN_TYPES} from "../../../../../config/constants";
 import Script from 'next/script'
-import {parseJson} from "../lib/services";
+import {parseJson} from "../../../../../lib/services";
 
 
 class RUIIntegration extends Component {
@@ -9,7 +9,7 @@ class RUIIntegration extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            width: 1820, height: 1012
+            width: 1905, height: 1012
         }
         this.ruiRef = React.createRef()
     }
@@ -21,9 +21,9 @@ class RUIIntegration extends Component {
         if (window.innerWidth < 1100) {
             this.setState({width: 1000, height: 647})
         } else {
-            const update_width = Math.min(window.innerWidth - 50, 2000)
-            const update_height = Math.round(window.innerHeight - 50, 2000)
-            this.setState({width: update_width, height: update_height, margin_left: 20})
+            const update_width = Math.min(window.innerWidth - 15, 2000)
+            const update_height = Math.round(window.innerHeight - 15, 2000)
+            this.setState({width: update_width, height: update_height})
         }
     }
 
@@ -77,21 +77,13 @@ class RUIIntegration extends Component {
         }
         rui.register = function (tissueBlockSpatialData) {
             console.log(tissueBlockSpatialData)
-            self.props.handleJsonRUI(tissueBlockSpatialData)
+            self.props.setRuiLocation(tissueBlockSpatialData)
             self.props.setShowRui(false)
-        }
-        rui.fetchPreviousRegistrations = function () {
-            // IEC TODO: Fetch previous registrations for this user/organization to the same organ
-            return [];
         }
         rui.cancelRegistration = function () {
-            rui.register(self.props.blockStartLocation)
             self.props.setShowRui(false)
         }
-        if (location && // Don't re-set the registration if it's the same as before
-            (!rui.editRegistration || location['@id'] !== rui.editRegistration['@id'])) {
-            rui.editRegistration = location
-        }
+        rui.editRegistration = location
         rui.useDownload = false
     }
 
