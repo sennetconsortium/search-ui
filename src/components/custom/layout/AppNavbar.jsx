@@ -26,7 +26,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                             active={true}
                             variant={'primary'}
                             hidden={hidden}
-                            title="Register an Entity"
+                            title="Create an Entity"
                             id="basic-nav-dropdown">
                             <NavDropdown.Item
                                 href="/edit/source?uuid=create">Source</NavDropdown.Item>
