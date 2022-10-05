@@ -25,6 +25,8 @@ import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
 import CustomClearSearchBox from "../components/custom/layout/CustomClearSearchBox";
+import LoadingSpinner from "../components/LoadingSpinner";
+
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -35,20 +37,21 @@ function Search() {
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
 
     useEffect(() => {
-        get_read_write_privileges().then(response => {
-            setAuthorized(response.read_privs)
-            setIsRegisterHidden(!response.write_privs)
-        }).catch(error => log.error(error))
+        get_read_write_privileges()
+            .then(response => {
+                setAuthorized(response.read_privs)
+                setIsRegisterHidden(!response.write_privs)
+            })
+            .catch(error => log.error(error))
     });
 
 
     if (authorized === null) {
         return (
-            <div className="text-center p-3">
-                <span>Loading, please wait...</span>
-                <br></br>
-                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-            </div>
+            <>
+                <AppNavbar/>
+                <LoadingSpinner/>
+            </>
         )
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
