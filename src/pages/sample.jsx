@@ -11,7 +11,7 @@ import DerivedDataset from "../components/custom/entities/sample/DerivedDataset"
 import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
+import {displayBodyHeader, fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../lib/services";
 import {getCookie} from "cookies-next";
@@ -155,8 +155,12 @@ function ViewSample() {
                                 <h3>{data.sennet_id}</h3>
                                 <div className="d-flex justify-content-between mb-2">
                                     <div className="entity_subtitle link_with_icon">
-                                        {data.sample_category}
-                                        {/*TODO: add back?   {data.origin_sample.mapped_organ} */}
+                                        {data.sample_category === 'organ' ? (
+                                            displayBodyHeader(data.organ)
+                                        ) : (
+                                            displayBodyHeader(data.sample_category)
+                                        )}
+
                                     </div>
                                     <div>
                                         {hasWritePrivilege &&

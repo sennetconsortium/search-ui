@@ -57,6 +57,10 @@ export function tableDataToTSV(tableData) {
         .join("\n")
 }
 
+export function displayBodyHeader(header) {
+    return (header.charAt(0).toUpperCase() + header.slice(1)).replaceAll('_', ' ');
+}
+
 export function getStatusColor(status) {
     if (status) {
         status = status.toUpperCase();
@@ -101,8 +105,8 @@ export function checkMultipleFilterEntityType(filters) {
     try {
         filters.map((filter, index) => {
             if (filter.field === 'entity_type') {
-                if(filter.values.length > 1)
-                    hasMultipleEntityType =  true;
+                if (filter.values.length > 1)
+                    hasMultipleEntityType = true;
             }
         });
     } catch (e) {
