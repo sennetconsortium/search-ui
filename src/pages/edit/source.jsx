@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button, Col, Container, Form, Row} from 'react-bootstrap';
-import Modal from 'react-bootstrap/Modal';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -18,6 +17,8 @@ import {getCookie} from "cookies-next";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import CreateCompleteModal from "../../components/CreateCompleteModal";
 
 function EditSource() {
     const router = useRouter()
@@ -36,6 +37,7 @@ function EditSource() {
     const [authorized, setAuthorized] = useState(null)
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
+    const [isLoading, setIsLoading] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -108,12 +110,14 @@ function EditSource() {
     };
 
     const handleSubmit = async (event) => {
+        setIsLoading(true)
         setDisableSubmit(true);
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
             log.debug("Form is invalid")
+            setIsLoading(false)
             setDisableSubmit(false);
         } else {
             event.preventDefault();
@@ -127,42 +131,45 @@ function EditSource() {
             let json = cleanJson(values);
             let uuid = data.uuid
 
-            await update_create_entity(uuid, json, editMode, "Source", router).then((response) => {
-                setShowModal(true)
-                setDisableSubmit(false);
+            await update_create_entity(uuid, json, editMode, "Source", router)
+                .then((response) => {
+                    setIsLoading(false)
+                    setShowModal(true)
+                    setDisableSubmit(false);
 
-                if ('uuid' in response) {
-                    if (editMode === 'Edit') {
-                        setModalTitle("Source Updated")
-                        setModalBody("Your Source was updated:\n" +
-                            "Source type: " + response.source_type + "\n" +
-                            "Group Name: " + response.group_name + "\n" +
-                            "SenNet ID: " + response.sennet_id)
+                    if ('uuid' in response) {
+                        if (editMode === 'Edit') {
+                            setModalTitle("Source Updated")
+                            setModalBody("Your Source was updated:\n" +
+                                "Source type: " + response.source_type + "\n" +
+                                "Group Name: " + response.group_name + "\n" +
+                                "SenNet ID: " + response.sennet_id)
+                        } else {
+                            setModalTitle("Source Created")
+                            setModalBody("Your Source was created:\n" +
+                                "Source type: " + response.source_type + "\n" +
+                                "Group Name: " + response.group_name + "\n" +
+                                "SenNet ID: " + response.sennet_id)
+                        }
                     } else {
-                        setModalTitle("Source Created")
-                        setModalBody("Your Source was created:\n" +
-                            "Source type: " + response.source_type + "\n" +
-                            "Group Name: " + response.group_name + "\n" +
-                            "SenNet ID: " + response.sennet_id)
+                        setModalTitle("Error Creating Source")
+                        setModalBody(response.statusText)
+                        setShowHideModal(true);
                     }
-                } else {
-                    setModalTitle("Error Creating Source")
-                    setModalBody(response.statusText)
-                    setShowHideModal(true);
-                }
-            })
+                })
         }
 
         setValidated(true);
     };
 
-    if (authorized === null) {
+    const showLoadingSpinner = authorized === null || data === null
+
+    if (showLoadingSpinner || isLoading) {
         return (
-            <div className="text-center p-3">
-                <span>Loading, please wait...</span>
-                <br></br>
-                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-            </div>
+            <>
+                <AppNavbar/>
+                <LoadingSpinner/>
+            </>
         )
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
@@ -176,7 +183,7 @@ function EditSource() {
                 {error &&
                     <div className="alert alert-warning" role="alert">{errorMessage}</div>
                 }
-                {data && !error &&
+                {data && !error && !showModal &&
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
@@ -322,24 +329,17 @@ function EditSource() {
                         />
                     </div>
                 }
-                <AppFooter/>
 
-                <Modal show={showModal}>
-                    <Modal.Header>
-                        <Modal.Title>{modalTitle}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body><p>{modalBody}</p></Modal.Body>
-                    <Modal.Footer>
-                        {showHideModal &&
-                            <Button variant="outline-secondary rounded-0" onClick={handleClose}>
-                                Close
-                            </Button>
-                        }
-                        <Button variant="outline-primary rounded-0" onClick={handleHome}>
-                            Home page
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
+                {!showModal && <AppFooter/>}
+
+                <CreateCompleteModal
+                    showModal={showModal}
+                    modalTitle={modalTitle}
+                    modalBody={modalBody}
+                    handleClose={handleClose}
+                    handleHome={handleHome}
+                    showCloseButton={showHideModal}
+                />
             </>
         )
     } else {

@@ -19,6 +19,7 @@ import Unauthorized from "../components/custom/layout/Unauthorized";
 import Protocols from "../components/custom/entities/sample/Protocols";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function ViewSample() {
     const router = useRouter()
@@ -28,7 +29,7 @@ function ViewSample() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
-    const [authorized, setAuthorized] = useState(false)
+    const [authorized, setAuthorized] = useState(null)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -82,13 +83,15 @@ function ViewSample() {
         }
     }
 
-    if (!data) {
+    const showLoadingSpinner = authorized === null || data === null
+
+    if (showLoadingSpinner) {
         return (
-            <div className="text-center p-3">
-                <span>Loading, please wait...</span>
-                <br></br>
-                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-            </div>
+            <>
+                <AppNavbar/>
+                <LoadingSpinner/>
+                <AppFooter/>
+            </>
         )
     } else if (authorized && getCookie('isAuthenticated')) {
         return (

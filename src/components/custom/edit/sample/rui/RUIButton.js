@@ -16,7 +16,8 @@ const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
     return (
         <>
             {/*  RUI Tissue Block Registration  */}
-            {(showRegisterLocationButton || ruiLocation) &&
+            {
+                (showRegisterLocationButton || ruiLocation) &&
                 <Form.Label column sm="2">Sample location<span>{' '}</span>
                     <OverlayTrigger
                         placement="top"
@@ -37,7 +38,8 @@ const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
                         </>
                     }
 
-                </Form.Label>}
+                </Form.Label>
+            }
             <div>
                 {
                     showRegisterLocationButton &&
