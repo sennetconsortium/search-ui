@@ -85,6 +85,7 @@ class RUIIntegration extends Component {
         }
         rui.editRegistration = location
         rui.useDownload = false
+        rui.skipUnsavedChangesConfirmation = true
     }
 
     render() {
@@ -96,7 +97,6 @@ class RUIIntegration extends Component {
                          style={{
                              width: this.state.width,
                              height: this.state.height,
-                             marginLeft: this.state.margin_left,
                          }}>
                         <ccf-rui
                             ref={this.ruiRef}
