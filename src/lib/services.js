@@ -104,3 +104,14 @@ async function call_service(raw, url, method) {
             return error;
         });
 }
+
+export function parseJson(json) {
+    if (typeof json === 'string' || json instanceof String) {
+        if (json === '') {
+            return null
+        }
+        return JSON.parse(json)
+    } else {
+        return json
+    }
+}
