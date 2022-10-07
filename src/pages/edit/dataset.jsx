@@ -153,7 +153,7 @@ function EditDataset() {
         setIsLoading(true)
         setDisableSubmit(true);
 
-        const form = event.currentTarget;
+        const form = event.currentTarget.parentElement;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
@@ -271,7 +271,7 @@ function EditDataset() {
                                 </Container>
                             }
                             bodyContent={
-                                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                <Form noValidate validated={validated}>
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || editMode === 'Edit') &&
@@ -400,7 +400,7 @@ function EditDataset() {
                                         <DataTypes values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    <Button variant="outline-primary rounded-0" type="submit" disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>

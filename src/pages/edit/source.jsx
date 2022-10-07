@@ -112,7 +112,7 @@ function EditSource() {
     const handleSubmit = async (event) => {
         setIsLoading(true)
         setDisableSubmit(true);
-        const form = event.currentTarget;
+        const form = event.currentTarget.parentElement;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
@@ -321,7 +321,7 @@ function EditSource() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                    <Button variant="outline-primary rounded-0" type="submit" disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>

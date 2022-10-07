@@ -10,7 +10,7 @@ import Description from "../components/custom/entities/sample/Description";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestHeaders} from "../components/custom/js/functions";
+import {displayBodyHeader, getRequestHeaders} from "../components/custom/js/functions";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../lib/services";
@@ -139,7 +139,7 @@ function ViewSource() {
 
                                 <div className="d-flex justify-content-between mb-2">
                                     <div className="entity_subtitle link_with_icon">
-                                        {data.source_type}
+                                        {displayBodyHeader(data.source_type)}
                                     </div>
                                     <div>
                                         {hasWritePrivilege &&

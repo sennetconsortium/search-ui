@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {ORGAN_TYPES} from "../../../../../config/constants";
 import Script from 'next/script'
 import {parseJson} from "../../../../../lib/services";
+import Head from 'next/head'
 
 
 class RUIIntegration extends Component {
@@ -85,10 +86,21 @@ class RUIIntegration extends Component {
         }
         rui.editRegistration = location
         rui.useDownload = false
+        rui.skipUnsavedChangesConfirmation = true
     }
 
     render() {
         return (<>
+            <Head>
+                {/* RUI styles */}
+                <link rel="stylesheet" href={"https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/styles.css"}/>
+                {/* RUI fonts */}
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap"
+                      rel="stylesheet"/>
+                {/* RUI Icons */}
+                <link rel="stylesheet"
+                      href={"https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Sharp|Material+Icons+Outlined"}/>
+            </Head>
             <Script src={'https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/wc.js'}/>
             <div className='webgl-content rui mat-typography'>
                 {
@@ -96,7 +108,6 @@ class RUIIntegration extends Component {
                          style={{
                              width: this.state.width,
                              height: this.state.height,
-                             marginLeft: this.state.margin_left,
                          }}>
                         <ccf-rui
                             ref={this.ruiRef}

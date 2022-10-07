@@ -320,6 +320,7 @@ export const exclude_dataset_config = {
             keyword: "entity_type.keyword",
             value: "Dataset"
         }],
+        disjunctiveFacets: ["group_name", "created_by_user_displayname"],
         conditionalFacets: {
             // Only show 'sample_category' facet if 'Sample' is selected from the entity type facet
             'sample_category': ({filters}) => {

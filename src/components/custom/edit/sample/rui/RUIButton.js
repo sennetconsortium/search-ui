@@ -54,7 +54,7 @@ const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
                     <>
                         <Button variant={'outline-success'} className={'rounded-0 mb-2 ms-2'}
                                 onClick={() => setShowRuiLocationModal(true)}>
-                            View location
+                            View JSON
                         </Button>
                         <RUIModal
                             tissueBlockSpatialData={ruiLocation}

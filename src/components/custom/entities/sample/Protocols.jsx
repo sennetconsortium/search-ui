@@ -1,5 +1,5 @@
 import React from 'react';
-import {fetchProtocols} from "../../js/functions";
+import {fetchProtocols, getClickableLink} from "../../js/functions";
 import {Table} from 'react-bootstrap';
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 
@@ -35,7 +35,7 @@ export default class Protocols extends React.Component {
                         }
                         <tbody>
                         <tr>
-                            <td><a href={this.props.protocol_url}
+                            <td><a href={getClickableLink(this.props.protocol_url)}
                                    className="link_with_icon"><span
                                 className="me-1">{this.props.protocol_url}</span> <BoxArrowUpRight/></a></td>
                         </tr>

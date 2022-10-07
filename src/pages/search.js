@@ -25,7 +25,11 @@ import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
 import CustomClearSearchBox from "../components/custom/layout/CustomClearSearchBox";
+import LoadingSpinner from "../components/LoadingSpinner";
 
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 function Search() {
     const router = useRouter();
@@ -33,20 +37,21 @@ function Search() {
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
 
     useEffect(() => {
-        get_read_write_privileges().then(response => {
-            setAuthorized(response.read_privs)
-            setIsRegisterHidden(!response.write_privs)
-        }).catch(error => log.error(error))
+        get_read_write_privileges()
+            .then(response => {
+                setAuthorized(response.read_privs)
+                setIsRegisterHidden(!response.write_privs)
+            })
+            .catch(error => log.error(error))
     });
 
 
     if (authorized === null) {
         return (
-            <div className="text-center p-3">
-                <span>Loading, please wait...</span>
-                <br></br>
-                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-            </div>
+            <>
+                <AppNavbar/>
+                <LoadingSpinner/>
+            </>
         )
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
@@ -67,22 +72,22 @@ function Search() {
                                                 <div className="search-box-header">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
-                                                            <form onSubmit={onSubmit}>
-
-                                                                <div className="input-group">
-                                                                    <input type="text"
-                                                                           value={value}
-                                                                           onChange={(e) => onChange(e.currentTarget.value)}
-                                                                           className="form-control form-control-lg rounded-0"
-                                                                           placeholder="Search"
-                                                                           autoFocus={true}
-                                                                    ></input>
-                                                                    <button
-                                                                        className="btn btn-outline-primary rounded-0"
-                                                                        type="button">Search
-                                                                    </button>
-                                                                </div>
-                                                            </form>
+                                                            <Form onSubmit={onSubmit}>
+                                                                <Form.Group controlId="search">
+                                                                    <InputGroup>
+                                                                        <Form.Control
+                                                                            value={value}
+                                                                            onChange={(e) => onChange(e.currentTarget.value)}
+                                                                            className="form-control form-control-lg rounded-0"
+                                                                            placeholder="Search"
+                                                                            autoFocus={true}
+                                                                        />
+                                                                        <Button variant="outline-primary"
+                                                                                className={"rounded-0"}
+                                                                                onClick={onSubmit}>Search</Button>
+                                                                    </InputGroup>
+                                                                </Form.Group>
+                                                            </Form>
                                                         )}
                                                     />
                                                 </div>
