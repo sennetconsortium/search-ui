@@ -32,6 +32,25 @@ function get_headers() {
     return headers;
 }
 
+export async function fetchGlobusFilepath(sennet_id) {
+    const headers = new Headers();
+    headers.append("Authorization", "Bearer " + getAuth())
+    const url = getEntityEndPoint() + "entities/" + sennet_id + "/globus-url"
+    const request_options = {
+        method: 'GET',
+        headers: headers
+    }
+    const response = await fetch(url, request_options)
+    const filepath = await response.text();
+    if (response.status != 200) {
+        log.error(filepath)
+        return null;
+    } else {
+        return filepath;
+    }
+
+}
+
 export async function get_read_write_privileges() {
     log.info('GET READ WRITE PRIVILEGES')
     const url = getIngestEndPoint() + 'privs'
