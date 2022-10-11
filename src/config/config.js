@@ -64,10 +64,10 @@ export const config = {
                 filterType: "any",
                 isFilterable: false
             },
-            "origin_sample.mapped_organ": {
+            'origin_sample.organ': {
                 label: "Organ",
                 type: "value",
-                field: "origin_sample.mapped_organ.keyword",
+                field: "origin_sample.organ.keyword",
                 filterType: "any",
                 isFilterable: false
             },
@@ -95,7 +95,7 @@ export const config = {
             },
 
             // Only show 'origin_sample' facet if 'Sample' or 'Dataset' is selected from the entity type facet
-            'origin_sample.mapped_organ': ({filters}) => {
+            'origin_sample.organ': ({filters}) => {
                 return filters.some(filter => filter.field === 'entity_type' && (filter.values.includes('Sample')
                     || filter.values.includes("Dataset")));
             },
@@ -131,7 +131,8 @@ export const config = {
             "source_type",
             "last_modified_timestamp",
             "data_types",
-            "status"
+            "status",
+            "origin_sample"
         ]
     },
     initialState: {
