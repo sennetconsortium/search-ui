@@ -25,7 +25,7 @@ export default class Tissue extends React.Component {
                                 {/*Have to do this due to how react processes embedded objects*/}
                                 {this.props.data.origin_sample &&
                                     <span>
-                                        {this.props.data.origin_sample.mapped_organ}
+                                        {this.props.data.origin_sample.organ}
                                     </span>
                                 }
                             </td>
