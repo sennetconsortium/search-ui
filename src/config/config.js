@@ -96,8 +96,7 @@ export const config = {
 
             // Only show 'origin_sample' facet if 'Sample' or 'Dataset' is selected from the entity type facet
             'origin_sample.organ': ({filters}) => {
-                return filters.some(filter => filter.field === 'entity_type' && (filter.values.includes('Sample')
-                    || filter.values.includes("Dataset")));
+                return filters.some(filter => filter.field === 'entity_type' && filter.values.includes("Dataset") || (filter.field.includes('sample_category') && filter.values.includes('organ')));
             },
         },
         search_fields: {
