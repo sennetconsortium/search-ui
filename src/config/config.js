@@ -82,7 +82,7 @@ export const config = {
                 label: "Registered By",
                 type: "value",
                 field: "created_by_user_displayname.keyword",
-                filterType: "anty",
+                filterType: "any",
                 isFilterable: false
             }
 
@@ -96,8 +96,7 @@ export const config = {
 
             // Only show 'origin_sample' facet if 'Sample' or 'Dataset' is selected from the entity type facet
             'origin_sample.organ': ({filters}) => {
-                return filters.some(filter => filter.field === 'entity_type' && (filter.values.includes('Sample')
-                    || filter.values.includes("Dataset")));
+                return filters.some(filter => filter.field === 'entity_type' && filter.values.includes("Dataset") || (filter.field === 'sample_category' && filter.values.includes('organ')));
             },
         },
         search_fields: {
@@ -131,7 +130,8 @@ export const config = {
             "source_type",
             "last_modified_timestamp",
             "data_types",
-            "status"
+            "status",
+            "origin_sample"
         ]
     },
     initialState: {
