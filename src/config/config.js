@@ -82,7 +82,7 @@ export const config = {
                 label: "Registered By",
                 type: "value",
                 field: "created_by_user_displayname.keyword",
-                filterType: "anty",
+                filterType: "any",
                 isFilterable: false
             }
 
