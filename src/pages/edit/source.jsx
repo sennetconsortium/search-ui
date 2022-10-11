@@ -70,7 +70,6 @@ function EditSource() {
             } else {
                 setData(data);
                 // Set state with default values that will be PUT to Entity API to update
-                // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
                     'lab_source_id': data.lab_source_id,
                     'protocol_url': data.protocol_url,
