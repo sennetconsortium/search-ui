@@ -230,9 +230,6 @@ function ViewDataset() {
                                         <Metadata data={data.metadata.metadata} filename={data.sennet_id}/>
                                     }
 
-                                    {/*Files*/}
-                                    {/*TODO: Need to create files section*/}
-
                                     {/*Contributors*/}
                                     {!!(data.contributors && Object.keys(data.contributors).length) &&
                                         <Contributors data={data.contributors}/>

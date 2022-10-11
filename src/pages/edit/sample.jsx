@@ -73,7 +73,6 @@ function EditSample() {
             } else {
                 setData(data);
                 // Set state with default values that will be PUT to Entity API to update
-                // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
                     'sample_category': data.sample_category,
                     'organ': data.organ,
@@ -85,7 +84,6 @@ function EditSample() {
                 })
                 setEditMode("Edit")
 
-                // TODO: Need to change this is descendant for sennet
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     await fetchSource(data.immediate_ancestors[0].uuid);
                 }
@@ -255,7 +253,6 @@ function EditSample() {
                                         <AncestorInformationBox ancestor={source}/>
                                     }
 
-                                    {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}
                                     {/*/!*Tissue Sample Type*!/*/}
                                     {((editMode === 'Edit' && source) || (editMode === 'Create')) &&
                                         <SampleCategory data={data} source={source} onChange={onChange}/>

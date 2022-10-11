@@ -81,7 +81,6 @@ function EditDataset() {
                 }
 
                 // Set state with default values that will be PUT to Entity API to update
-                // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
                     'lab_dataset_id': data.lab_dataset_id,
                     'data_types': [data.data_types[0]],
