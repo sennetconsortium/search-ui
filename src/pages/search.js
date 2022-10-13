@@ -100,7 +100,7 @@ function Search() {
                                                         />
                                                     )}
 
-                                                    <Facets fields={config.searchQuery}/>
+                                                    <Facets fields={config.searchQuery} filters={filters}/>
 
                                                 </>
 
