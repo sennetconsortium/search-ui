@@ -74,9 +74,6 @@ export default class AncestorInformationBox extends React.Component {
                             <thead>
                             <tr>
                                 <th>Ancestor Type</th>
-                                {this.props.ancestor.mapped_organ &&
-                                    <th>Organ Type</th>
-                                }
                                 {this.props.ancestor.lab_source_id &&
                                     <th>Lab ID</th>
                                 }
@@ -86,6 +83,9 @@ export default class AncestorInformationBox extends React.Component {
                                 {this.props.ancestor.sample_category &&
                                     <th>Sample Category</th>
                                 }
+                                {this.props.ancestor.organ &&
+                                    <th>Organ Type</th>
+                                }
                                 {this.props.ancestor.group_name &&
                                     <th>Group Name</th>
                                 }
@@ -94,9 +94,6 @@ export default class AncestorInformationBox extends React.Component {
                             <tbody>
                             <tr>
                                 <td>{this.props.ancestor.entity_type}</td>
-                                {this.props.ancestor.mapped_organ &&
-                                    <td>{this.props.ancestor.mapped_organ}</td>
-                                }
                                 {this.props.ancestor.lab_source_id &&
                                     <td>{this.props.ancestor.lab_source_id}</td>
                                 }
@@ -105,6 +102,9 @@ export default class AncestorInformationBox extends React.Component {
                                 }
                                 {this.props.ancestor.sample_category &&
                                     <td>{this.props.ancestor.sample_category}</td>
+                                }
+                                {this.props.ancestor.organ &&
+                                    <td>{this.props.ancestor.organ}</td>
                                 }
                                 {this.props.ancestor.group_name &&
                                     <td>{this.props.ancestor.group_name}</td>

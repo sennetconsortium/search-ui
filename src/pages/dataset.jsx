@@ -19,6 +19,7 @@ import {getCookie} from "cookies-next";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
+import Files from "../components/custom/entities/dataset/Files";
 
 function ViewDataset() {
     const router = useRouter()
@@ -116,6 +117,10 @@ function ViewDataset() {
                                                 className="sui-single-option-facet__link"
                                                 href="#Summary">Summary</a>
                                             </li>
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link"
+                                                href="#Files">Files</a>
+                                            </li>
                                             {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li> */}
@@ -164,9 +169,9 @@ function ViewDataset() {
                                             {data.data_types[0]}
                                         </span>
                                         }
-                                        {data.origin_sample && Object.keys(data.origin_sample).length > 0 &&
+                                        {data.origin_sample && Object.keys(data.origin_sample).length > 0 && data.origin_sample.organ &&
                                             <span className="ms-1 me-1">
-                                            | {data.origin_sample.mapped_organ}
+                                            | {data.origin_sample.organ}
                                         </span>
                                         }
                                         {data.doi_url &&
@@ -206,6 +211,9 @@ function ViewDataset() {
                                                  secondaryDate={data.last_modified_timestamp}
                                                  data={data}/>
 
+                                    {/*Files*/}
+                                    <Files sennet_id={data.sennet_id}/>
+
                                     {/*Provenance*/}
                                     {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
@@ -221,9 +229,6 @@ function ViewDataset() {
                                     {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
                                         <Metadata data={data.metadata.metadata} filename={data.sennet_id}/>
                                     }
-
-                                    {/*Files*/}
-                                    {/*TODO: Need to create files section*/}
 
                                     {/*Contributors*/}
                                     {!!(data.contributors && Object.keys(data.contributors).length) &&

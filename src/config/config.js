@@ -64,7 +64,7 @@ export const config = {
                 filterType: "any",
                 isFilterable: false
             },
-            'origin_sample.organ': {
+            "origin_sample.organ": {
                 label: "Organ",
                 type: "value",
                 field: "origin_sample.organ.keyword",
@@ -96,7 +96,8 @@ export const config = {
 
             // Only show 'origin_sample' facet if 'Sample' or 'Dataset' is selected from the entity type facet
             'origin_sample.organ': ({filters}) => {
-                return filters.some(filter => filter.field === 'entity_type' && filter.values.includes("Dataset") || (filter.field === 'sample_category' && filter.values.includes('organ')));
+                return filters.some(filter => filter.field === 'entity_type' && (filter.values.includes('Sample')
+                    || filter.values.includes("Dataset")));
             },
         },
         search_fields: {
@@ -214,7 +215,7 @@ export const SORT_OPTIONS = [
     //     name: "Organ",
     //     value: [
     //         {
-    //             field: "origin_sample.mapped_organ.keyword",
+    //             field: "origin_sample.organ.keyword",
     //             direction: "asc"
     //         }
     //     ]
@@ -293,10 +294,10 @@ export const exclude_dataset_config = {
                 filterType: "any",
                 isFilterable: false
             },
-            "origin_sample.mapped_organ": {
+            "origin_sample.organ": {
                 label: "Organ",
                 type: "value",
-                field: "origin_sample.mapped_organ.keyword",
+                field: "origin_sample.organ.keyword",
                 filterType: "any",
                 isFilterable: false
             },
@@ -328,7 +329,7 @@ export const exclude_dataset_config = {
             },
 
             // Only show 'origin_sample' facet if 'Sample' or 'Dataset' is selected from the entity type facet
-            'origin_sample.mapped_organ': ({filters}) => {
+            'origin_sample.organ': ({filters}) => {
                 return filters.some(filter => filter.field === 'entity_type' && (filter.values.includes('Sample')
                     || filter.values.includes("Dataset")));
             },

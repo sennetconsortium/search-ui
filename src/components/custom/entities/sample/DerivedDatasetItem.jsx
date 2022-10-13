@@ -45,7 +45,7 @@ export default class DerivedDatasetItem extends React.Component {
                             } else if (this.props.data_type === 'Sample') {
                                 return (
                                     <>
-                                        <td>{this.state.descendant_data.origin_sample.mapped_organ}</td>
+                                        <td>{this.state.descendant_data.origin_sample.organ}</td>
                                         <td>{this.state.descendant_data.sample_category}</td>
                                     </>
                                 )

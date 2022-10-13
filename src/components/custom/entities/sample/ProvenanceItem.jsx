@@ -63,7 +63,7 @@ export default class ProvenanceItem extends React.Component {
                                             } else if (this.state.ancestor_data.entity_type === 'Sample') {
                                                 return (
                                                     <>
-                                                        {this.state.ancestor_data.origin_sample.mapped_organ}
+                                                        {this.state.ancestor_data.origin_sample.organ}
                                                         <br></br>
                                                         {this.state.ancestor_data.mapped_specimen_type}
                                                     </>
@@ -71,7 +71,7 @@ export default class ProvenanceItem extends React.Component {
                                             } else if (this.state.ancestor_data.entity_type === 'Dataset') {
                                                 return (
                                                     <>
-                                                        {this.state.ancestor_data.origin_sample.mapped_organ}
+                                                        {this.state.ancestor_data.origin_sample.organ}
                                                         <br></br>
                                                         {this.state.ancestor_data.data_types[0]}
 
