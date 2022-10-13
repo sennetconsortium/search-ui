@@ -43,7 +43,7 @@ const AppNavbar = ({ hidden, signoutHidden }) => {
                 <Navbar.Collapse>
                     <Nav className={'me-auto'}>
                         <NavDropdown
-                            active={true}
+                            active={false}
                             variant={'primary'}
                             hidden={hidden}
                             title={_t("Create an Entity")}
@@ -55,6 +55,17 @@ const AppNavbar = ({ hidden, signoutHidden }) => {
                                 </NavDropdown.Item>
                             ))}
                             
+                        </NavDropdown>
+                        <NavDropdown
+                            active={false}
+                            variant={'primary'}
+                            hidden={hidden}
+                            title="Bulk create entities"
+                            id="basic-nav-dropdown">
+                            <NavDropdown.Item
+                                href="/edit/bulk?entity_type=source">Sources</NavDropdown.Item>
+                            <NavDropdown.Item
+                                href="/edit/bulk?entity_type=sample">Samples</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                     <Nav>
