@@ -82,7 +82,7 @@ export const config = {
                 label: "Registered By",
                 type: "value",
                 field: "created_by_user_displayname.keyword",
-                filterType: "anty",
+                filterType: "any",
                 isFilterable: false
             }
 
@@ -131,7 +131,8 @@ export const config = {
             "source_type",
             "last_modified_timestamp",
             "data_types",
-            "status"
+            "status",
+            "origin_sample"
         ]
     },
     initialState: {
