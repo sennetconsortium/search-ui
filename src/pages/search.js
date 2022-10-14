@@ -28,7 +28,7 @@ import CustomClearSearchBox from "../components/custom/layout/CustomClearSearchB
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import ux from "../components/custom/js/ux/ux";
+import addons from "../components/custom/js/addons/addons";
 
 function Search() {
     const router = useRouter();
@@ -39,7 +39,7 @@ function Search() {
         get_read_write_privileges().then(response => {
             setAuthorized(response.read_privs)
             setIsRegisterHidden(!response.write_privs)
-            ux('init')
+            addons('init')
         }).catch(error => log.error(error))
     });
 

@@ -1,6 +1,12 @@
 import GoogleTagManager from './GoogleTagManager'
 
-function ux(source) {
+/**
+ * JS functionality which enhance site functionality, not necessarily part of the core.
+ * @param {String} source
+ * @returns
+ */
+function addons(source) {
+    console.log('Addons ...')
     if (window[source] !== undefined) {
         return
     }
@@ -24,4 +30,4 @@ function ux(source) {
     }, 1000)
 }
 
-export default ux
+export default addons

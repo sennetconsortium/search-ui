@@ -1,5 +1,5 @@
 import $ from 'jquery'
-class Applux {
+class Addon {
     constructor(el, app) {
         this.el = $(el)
         this.app = app
@@ -30,4 +30,4 @@ class Applux {
     }
 }
 
-export default Applux
+export default Addon

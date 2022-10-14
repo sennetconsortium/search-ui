@@ -1,7 +1,7 @@
-import Applux from './Applux'
+import Addon from './Addon'
 import $ from 'jquery'
 
-class GoogleTagManager extends Applux {
+class GoogleTagManager extends Addon {
     constructor(el, app) {
         super(el, app)
         this.extractEvent()
