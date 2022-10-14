@@ -68,10 +68,10 @@ function Search() {
 
                                         <Layout
                                             header={
-                                                <div className="search-box-header">
+                                                <div className="search-box-header js-gtm--search">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
-                                                            <Form onSubmit={onSubmit} className="js-gtm--search">
+                                                            <Form onSubmit={onSubmit} >
                                                                 <Form.Group controlId="search">
                                                                     <InputGroup>
                                                                         <Form.Control
