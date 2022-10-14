@@ -53,7 +53,7 @@ class GoogleTagManager extends Addon {
 
     facets() {
         const _t = this
-        this.group = $(this.el).find('.sui-facet__title').text()
+        this.group = this.el.find('.sui-facet__title').text()
         this.el.on(
             'click',
             '.sui-multi-checkbox-facet__option-input-wrapper',
