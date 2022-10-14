@@ -10,12 +10,11 @@ class GoogleTagManager extends Addon {
 
     extractEvent() {
         if (this.el == null || !this.el.length) return
-        const _t = this
-        this.el[0].classList.forEach((val) => {
-            if (val.indexOf(_t.app) !== -1) {
-                _t.event = val.split('--')[1]
+        this.el[0].classList.forEach(((val) => {
+            if (val.indexOf(this.app) !== -1) {
+                this.event = val.split('--')[1]
             }
-        })
+        }).bind(this))
         this.log(`Google Tag manager ... ${this.event}`)
     }
 
@@ -41,14 +40,13 @@ class GoogleTagManager extends Addon {
     }
 
     search() {
-        const _t = this
-        this.el.on('click', 'button', (e) => {
-            _t.handleSearch(e)
-        })
+        this.el.on('click', 'button', ((e) => {
+            this.handleSearch(e)
+        }).bind(this))
 
-        this.el.on('keydown', 'button, input', (e) => {
-            if (_t.isEnter(e)) _t.handleSearch(e)
-        })
+        this.el.on('keydown', 'button, input', ((e) => {
+            if (this.isEnter(e)) this.handleSearch(e)
+        }).bind(this))
     }
 
     handleFacets(e) {
@@ -57,14 +55,13 @@ class GoogleTagManager extends Addon {
     }
 
     facets() {
-        const _t = this
         this.group = this.el.parent().find('.sui-facet__title').text()
         this.el.on(
             'click',
             '.sui-multi-checkbox-facet__option-input-wrapper',
-            (e) => {
-                _t.handleFacets(e)
-            }
+            ((e) => {
+                this.handleFacets(e)
+            }).bind(this)
         )
     }
 
@@ -79,10 +76,9 @@ class GoogleTagManager extends Addon {
     }
 
     results() {
-        const _t = this
-        this.el.on('click', 'tbody tr', (e) => {
-            _t.handleResults(e)
-        })
+        this.el.on('click', 'tbody tr', ((e) => {
+            this.handleResults(e)
+        }).bind(this))
     }
 
     handleLinks(e) {
@@ -91,10 +87,9 @@ class GoogleTagManager extends Addon {
     }
 
     links() {
-        const _t = this
-        $('a').on('click', (e) => {
-            _t.handleLinks(e)
-        })
+        $('a').on('click', ((e) => {
+            this.handleLinks(e)
+        }).bind(this))
     }
 
     gtm(args) {
