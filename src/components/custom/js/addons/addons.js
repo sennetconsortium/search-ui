@@ -1,3 +1,4 @@
+import Addon from './Addon'
 import GoogleTagManager from './GoogleTagManager'
 
 /**
@@ -6,7 +7,7 @@ import GoogleTagManager from './GoogleTagManager'
  * @returns
  */
 function addons(source) {
-    console.log('Addons ...')
+    Addon.log('Addons started ...', 'log', 'red')
     if (window[source] !== undefined) {
         return
     }
@@ -27,6 +28,9 @@ function addons(source) {
                 new apps[key](el, key)
             })
         }
+
+        // Default: Capture all link clicks. 
+        new GoogleTagManager(null, 'links')
     }, 1000)
 }
 
