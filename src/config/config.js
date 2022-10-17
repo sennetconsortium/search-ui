@@ -1,6 +1,7 @@
 import React from 'react';
 import SearchAPIConnector from "../search-ui/packages/search-api-connector";
 import {getCookie} from 'cookies-next';
+import _ from 'lodash';
 
 export const APP_TITLE = "SenNet - Data Sharing Portal"
 
@@ -82,7 +83,7 @@ export const config = {
                 label: "Registered By",
                 type: "value",
                 field: "created_by_user_displayname.keyword",
-                filterType: "anty",
+                filterType: "any",
                 isFilterable: false
             }
 
@@ -131,7 +132,8 @@ export const config = {
             "source_type",
             "last_modified_timestamp",
             "data_types",
-            "status"
+            "status",
+            "origin_sample"
         ]
     },
     initialState: {
@@ -275,88 +277,11 @@ export const SORT_OPTIONS = [
     // }
 ];
 
-export const exclude_dataset_config = {
-    alwaysSearchOnInitialLoad: true,
-    searchQuery: {
-        facets: {
-            entity_type: {
-                label: "Entity Type",
-                type: "value",
-                field: "entity_type.keyword",
-                filterType: "any",
-                isFilterable: false
-            },
-            sample_category: {
-                label: "Sample Category",
-                type: "value",
-                field: "sample_category.keyword",
-                filterType: "any",
-                isFilterable: false
-            },
-            "origin_sample.organ": {
-                label: "Organ",
-                type: "value",
-                field: "origin_sample.organ.keyword",
-                filterType: "any",
-                isFilterable: false
-            },
-            group_name: {
-                label: "Group Name",
-                type: "value",
-                field: "group_name.keyword",
-                filterType: "any",
-                isFilterable: false
-            },
-            created_by_user_displayname: {
-                label: "Registered By",
-                type: "value",
-                field: "created_by_user_displayname.keyword",
-                filterType: "anty",
-                isFilterable: false
-            }
+//Config options to exclude datasets from results
+export let exclude_dataset_config = _.cloneDeep(config);
+exclude_dataset_config['searchQuery']['excludeFilters'] = [{
+    keyword: "entity_type.keyword",
+    value: "Dataset"
+}];
+exclude_dataset_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
-        },
-        excludeFilters: [{
-            keyword: "entity_type.keyword",
-            value: "Dataset"
-        }],
-        disjunctiveFacets: ["group_name", "created_by_user_displayname"],
-        conditionalFacets: {
-            // Only show 'sample_category' facet if 'Sample' is selected from the entity type facet
-            'sample_category': ({filters}) => {
-                return filters.some(filter => filter.field === 'entity_type' && filter.values.includes('Sample'));
-            },
-
-            // Only show 'origin_sample' facet if 'Sample' or 'Dataset' is selected from the entity type facet
-            'origin_sample.organ': ({filters}) => {
-                return filters.some(filter => filter.field === 'entity_type' && (filter.values.includes('Sample')
-                    || filter.values.includes("Dataset")));
-            },
-        },
-        search_fields: {
-            description: {type: "value"},
-            group_name: {type: "value"},
-            sennet_id: {type: "value"},
-            display_doi: {type: "value"},
-            lab_source_id: {type: "value"},
-            display_subtype: {type: "value"},
-            lab_name: {type: "value"},
-            lab_tissue_sample_id: {type: "value"},
-            sample_category: {type: "value"},
-            lab_dataset_id: {type: "value"},
-            created_by_user_displayname: {type: "value"},
-            created_by_user_email: {type: "value"},
-            dataset_info: {type: "value"}
-        }
-    },
-    initialState: {
-        resultsPerPage: 10
-    },
-    trackUrlState: false,
-    apiConnector: connector,
-    hasA11yNotifications: true,
-    a11yNotificationMessages: {
-        searchResults: ({start, end, totalResults, searchTerm}) =>
-            `Searching for "${searchTerm}". Showing ${start} to ${end} results out of ${totalResults}.`
-    },
-};
