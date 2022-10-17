@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button} from 'react-bootstrap';
@@ -13,12 +13,12 @@ import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {displayBodyHeader, fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../lib/services";
-import {getCookie} from "cookies-next";
-import Unauthorized from "../components/custom/layout/Unauthorized";
+import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Protocols from "../components/custom/entities/sample/Protocols";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
+import Spinner from "../components/custom/Spinner";
+import AppContext from "../context/AppContext";
 
 function ViewSample() {
     const router = useRouter()
@@ -27,17 +27,14 @@ function ViewSample() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const [isRegisterHidden, setIsRegisterHidden] = useState(false)
-    const [authorized, setAuthorized] = useState(false)
+
+    const {isRegisterHidden, isLoggedIn} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-            get_read_write_privileges().then(response => {
-                setAuthorized(response.read_privs)
-                setIsRegisterHidden(!response.write_privs)
-            }).catch(error => log.error(error))
+            
 
             log.debug('sample: getting data...', uuid)
             // get the data from the api
@@ -84,18 +81,14 @@ function ViewSample() {
 
     if (!data) {
         return (
-            <div className="text-center p-3">
-                <span>Loading, please wait...</span>
-                <br></br>
-                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-            </div>
+            <Spinner />
         )
-    } else if (authorized && getCookie('isAuthenticated')) {
+    } else {
         return (
             <>
                 <Header title={`${data.sennet_id} | Sample | SenNet`}></Header>
 
-                <AppNavbar hidden={isRegisterHidden}/>
+                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()} />
 
                 {error &&
                     <div className="alert alert-warning" role="alert">{errorMessage}</div>
@@ -223,11 +216,7 @@ function ViewSample() {
                 <AppFooter/>
             </>
         )
-    } else {
-        return (
-            <Unauthorized/>
-        )
-    }
+    } 
 }
 
 
