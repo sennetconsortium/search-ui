@@ -14,6 +14,7 @@ import {displayBodyHeader, getRequestHeaders} from "../components/custom/js/func
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
+import Unauthorized from "../components/custom/layout/Unauthorized";
 import Protocols from "../components/custom/entities/sample/Protocols";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
@@ -26,7 +27,7 @@ function ViewSource() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isLoggedIn} = useContext(AppContext);
+    const {isRegisterHidden, isLoggedIn, isLoading} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -65,7 +66,7 @@ function ViewSource() {
 
     if (!data) {
         return (
-            <Spinner />
+            isLoading() ? <Spinner /> : <Unauthorized />
         )
     } else {
         return (

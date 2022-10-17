@@ -15,6 +15,7 @@ import log from "loglevel";
 import {fetchEntity, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
+import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
 import Files from "../components/custom/entities/dataset/Files";
@@ -29,7 +30,7 @@ function ViewDataset() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
     
-    const {isRegisterHidden, isLoggedIn} = useContext(AppContext)
+    const {isRegisterHidden, isLoggedIn, isLoading} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -86,7 +87,7 @@ function ViewDataset() {
 
     if (!data) {
         return (
-            <Spinner />
+            isLoading() ? <Spinner /> : <Unauthorized />
         )
     } else {
         return (
