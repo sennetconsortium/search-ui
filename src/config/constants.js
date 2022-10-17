@@ -50,3 +50,8 @@ export const DATA_TYPES = {
     "Visium": "Visium",
     "Other": "Other"
 };
+
+export const APP_ROUTES = {
+    "home": "/",
+    "search": "/search"
+};
