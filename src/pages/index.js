@@ -1,20 +1,17 @@
-import {useRouter} from 'next/router';
-import React, {useEffect, useState} from 'react';
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import {APP_TITLE, getIngestLogin, getRootURL} from "../config/config"
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import '@elastic/react-search-ui-views/lib/styles/styles.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import log from "loglevel";
-import {get_read_write_privileges} from "../lib/services";
-import {setCookie} from 'cookies-next';
-import Unauthorized from "../components/custom/layout/Unauthorized";
-import AppNavbar from "../components/custom/layout/AppNavbar";
-import AppFooter from "../components/custom/layout/AppFooter";
-import {Row, Col, Container} from 'react-bootstrap'
-import Header from "../components/custom/layout/Header";
+import log from 'loglevel';
+import { setCookie } from 'cookies-next';
+import { getRootURL } from '../config/config';
+import { APP_ROUTES } from '../config/constants';
+import { get_read_write_privileges } from '../lib/services';
+import Unauthorized from '../components/custom/layout/Unauthorized';
+import Login from '../components/custom/Login';
 
 export default function Home() {
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
-    const login_url = getIngestLogin();
     const router = useRouter();
 
     useEffect(() => {
@@ -26,7 +23,7 @@ export default function Home() {
                 if (read_write_privileges.read_privs === true) {
                     setCookie('isAuthenticated', true)
                     // Redirect to home page without query string
-                    window.location.replace(getRootURL() + "/search");
+                    window.location.replace(getRootURL() + APP_ROUTES.search);
                 } else {
                     router.replace('/', undefined, {shallow: true});
                     setIsLoginPermitted(false)
@@ -38,45 +35,8 @@ export default function Home() {
     }, [router.isReady]);
 
     if (!isLoginPermitted) {
-        return (<Unauthorized/>)
+        return <Unauthorized />
     } else {
-        return (
-            <div>
-                <Header title={APP_TITLE}/>
-
-                <AppNavbar
-                    hidden={true}
-                    signoutHidden={true}
-                />
-                <Container>
-                    <Row>
-                        <Col></Col>
-                        <Col xs={6}>
-                            <div className={`card alert alert-info mt-4`}>
-                                <div className="card-body">
-                                    <h3 className="card-title">{APP_TITLE}</h3>
-                                    <div className="card-text">User authentication is required to search the dataset catalog. Please
-                                        click the button below and you will be redirected to a Globus page to select your
-                                        institution.
-                                        After selecting your institution, you will be redirected to your institutional login page to
-                                        enter your credentials.
-                                    </div>
-                                    <hr/>
-                                    <div className={'d-flex justify-content-center'}>
-                                        <a className="btn btn-outline-success rounded-0 btn-lg" href={login_url}>
-                                            Log in with your institution credentials
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </Col>
-                        <Col></Col>
-                    </Row>
-                </Container>
-                <AppFooter
-                    isFixedBottom={true}
-                />
-            </div>
-        )
+        return <Login />
     }
 }
