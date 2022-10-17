@@ -1,4 +1,3 @@
-import React from 'react';
 import SearchAPIConnector from "../search-ui/packages/search-api-connector";
 import {getCookie} from 'cookies-next';
 import _ from 'lodash';
