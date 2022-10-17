@@ -5,6 +5,7 @@ import {useRouter} from 'next/router';
 import {useIdleTimer} from 'react-idle-timer'
 import {deleteCookie, setCookie} from "cookies-next";
 import {getIngestEndPoint, IDLE_TIMEOUT} from "../config/config";
+import { AppProvider } from '../context/AppContext'
 
 function MyApp({Component, pageProps}) {
     const router = useRouter()
@@ -22,9 +23,13 @@ function MyApp({Component, pageProps}) {
 
     // log.enableAll()
     log.setLevel("debug")
-    return (<ErrorBoundary>
-        <Component {...pageProps} />
-    </ErrorBoundary>)
+    return (
+        <ErrorBoundary>
+            <AppProvider>
+                <Component {...pageProps} />
+            </AppProvider>
+        </ErrorBoundary>
+    )
 }
 
 export default MyApp
