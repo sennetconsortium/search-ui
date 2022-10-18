@@ -1,20 +1,19 @@
-import React, {useEffect, useContext} from 'react'
+import React, { useEffect, useContext } from 'react'
 import { APP_TITLE, getIngestLogin } from '../../config/config'
 import { Row, Col, Container } from 'react-bootstrap'
 import AppNavbar from './layout/AppNavbar'
 import AppFooter from './layout/AppFooter'
 import Header from './layout/Header'
-import { getRootURL } from '../../config/config'
-import { APP_ROUTES } from '../../config/constants'
 import AppContext from '../../context/AppContext'
+import { goToSearch } from './js/functions'
 
 function Login() {
-    const login_url = getIngestLogin()
-    const {isLoggedIn} = useContext(AppContext);
+    const loginUrl = getIngestLogin()
+    const { _t, isLoggedIn } = useContext(AppContext)
 
     useEffect(() => {
         if (isLoggedIn()) {
-            window.location.replace(getRootURL() + APP_ROUTES.search);
+            goToSearch()
         }
     })
 
@@ -44,9 +43,9 @@ function Login() {
                                 >
                                     <a
                                         className="btn btn-outline-success rounded-0 btn-lg"
-                                        href={login_url}
+                                        href={loginUrl}
                                     >
-                                        Log in with your institution credentials
+                                        {_t('Log in with your institution credentials')}
                                     </a>
                                 </div>
                             </div>

@@ -28,7 +28,7 @@ import AppContext from "../context/AppContext";
 
 function Search() {
    
-    const {isRegisterHidden, isLoggedIn, isAuthorizing} = useContext(AppContext);
+    const {_t, isRegisterHidden, isAuthorizing} = useContext(AppContext);
 
     if (isAuthorizing()) {
         return  <Spinner />
@@ -42,7 +42,7 @@ function Search() {
                     {({wasSearched, filters}) => {
                         return (
                             <div>
-                                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()} />
+                                <AppNavbar hidden={isRegisterHidden} />
 
                                 <ErrorBoundary>
 
@@ -63,7 +63,7 @@ function Search() {
                                                                     />
                                                                     <Button variant="outline-primary"
                                                                             className={"rounded-0"}
-                                                                            onClick={onSubmit}>Search</Button>
+                                                                            onClick={onSubmit}>{_t('Search')}</Button>
                                                                 </InputGroup>
                                                             </Form.Group>
                                                         </Form>

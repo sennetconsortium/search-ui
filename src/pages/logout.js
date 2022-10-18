@@ -1,16 +1,17 @@
 import { useEffect, useContext } from 'react'
 import Spinner from '../components/custom/Spinner'
 import AppContext from '../context/AppContext'
-import { getIngestEndPoint, getRootURL } from '../config/config'
-import { APP_ROUTES } from '../config/constants'
+import { gotToLogin } from '../components/custom/js/functions'
+import { getLogoutURL } from '../config/config'
 
 function logout() {
     const { logout } = useContext(AppContext)
-    useEffect(async () => {
-        await fetch(getIngestEndPoint() + APP_ROUTES.logout.slice(1))
+    useEffect(() => {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', getLogoutURL(), true)
         logout()
-        window.location.replace(getRootURL() + APP_ROUTES.login)
-    }, [])
+        gotToLogin()
+    })
     return <Spinner text="Logging you out, please wait... " />
 }
 

@@ -1,13 +1,20 @@
 import { createContext, useEffect, useState } from 'react'
-import { getCookie } from 'cookies-next'
+import { useRouter } from 'next/router'
+import { goToSearch } from '../components/custom/js/functions'
+import { getCookie, deleteCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import { get_read_write_privileges } from '../lib/services'
+import { APP_ROUTES } from '../config/constants'
 
 const AppContext = createContext()
 
 export const AppProvider = ({ children }) => {
+    const [isBusy, setIsBusy] = useState(false)
+    const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const [authorized, setAuthorized] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
+    const router = useRouter()
+    const authKey = 'isAuthenticated'
 
     useEffect(() => {
         get_read_write_privileges()
@@ -19,15 +26,45 @@ export const AppProvider = ({ children }) => {
     })
 
     const hasAuthenticationCookie = () => {
-        return getCookie('isAuthenticated')
+        return getCookie(authKey)
     }
 
     const isLoggedIn = () => {
         return authorized && hasAuthenticationCookie()
     }
 
-    const isLoading = () => {
-        return authorized === null
+    const isAuthorizing = () => {
+        return authorized === null  
+    }
+
+    const login = () => {
+        get_read_write_privileges()
+            .then((read_write_privileges) => {
+                if (read_write_privileges.read_privs === true) {
+                    setCookie(authKey, true)
+                    // Redirect to home page without query string
+                    router.replace(APP_ROUTES.search)
+                } else {
+                    router.replace('/', undefined, { shallow: true })
+                    setIsLoginPermitted(false)
+                }
+                setIsBusy(false)
+            })
+            .catch((error) => {
+                setIsBusy(false)
+                log.error(error)
+            })
+    }
+
+    const logout = () => {
+        setCookie(authKey, false)
+        deleteCookie('groups_token')
+        deleteCookie('info')
+    }
+
+    // TODO: change to handle locale
+    const _t = (msg) => {
+        return msg
     }
 
     return (
@@ -35,9 +72,15 @@ export const AppProvider = ({ children }) => {
             value={{
                 authorized,
                 isRegisterHidden,
+                isLoginPermitted,
+                isBusy,
                 hasAuthenticationCookie,
+                setIsBusy,
                 isLoggedIn,
-                isLoading
+                isAuthorizing,
+                logout,
+                login,
+                _t,
             }}
         >
             {children}
