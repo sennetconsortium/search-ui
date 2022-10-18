@@ -58,7 +58,7 @@ export function tableDataToTSV(tableData) {
 }
 
 export function displayBodyHeader(header) {
-    return (header.charAt(0).toUpperCase() + header.slice(1)).replaceAll('_', ' ');
+    return (header ? (header.charAt(0).toUpperCase() + header.slice(1)) : '').replaceAll('_', ' ');
 }
 
 export function getStatusColor(status) {
