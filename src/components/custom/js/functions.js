@@ -1,4 +1,5 @@
-import {getAuth} from "../../../config/config";
+import { getAuth, getRootURL } from "../../../config/config";
+import { APP_ROUTES } from "../../../config/constants";
 import log from "loglevel";
 
 export function getRequestHeaders() {
@@ -126,4 +127,16 @@ export function cleanJson(json) {
 
 export function getClickableLink(link) {
     return link.startsWith("http://") || link.startsWith("https://") ? link : "http://" + link;
+}
+
+export function goIntent(route) {
+    window.location.replace(getRootURL() + APP_ROUTES[route])
+}
+
+export function goToSearch() {
+    goIntent('search')
+}
+
+export function gotToLogin() {
+    goIntent('login')
 }
