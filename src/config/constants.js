@@ -53,5 +53,7 @@ export const DATA_TYPES = {
 
 export const APP_ROUTES = {
     "home": "/",
-    "search": "/search"
+    "search": "/search",
+    "login": "/login",
+    "logout": "/logout"
 };
