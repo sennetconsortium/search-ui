@@ -28,9 +28,9 @@ import AppContext from "../context/AppContext";
 
 function Search() {
    
-    const {isRegisterHidden, isLoggedIn, isLoading} = useContext(AppContext);
+    const {isRegisterHidden, isLoggedIn, isAuthorizing} = useContext(AppContext);
 
-    if (isLoading()) {
+    if (isAuthorizing()) {
         return  <Spinner />
     } else {
         return (

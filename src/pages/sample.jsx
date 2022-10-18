@@ -29,7 +29,7 @@ function ViewSample() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isLoggedIn, isLoading} = useContext(AppContext)
+    const {isRegisterHidden, isLoggedIn, isAuthorizing} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -82,7 +82,7 @@ function ViewSample() {
 
     if (!data) {
         return (
-            isLoading() ? <Spinner /> : <Unauthorized />
+            isAuthorizing() ? <Spinner /> : <Unauthorized />
         )
     } else {
         return (
