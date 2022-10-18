@@ -1,5 +1,6 @@
 import SearchAPIConnector from "../search-ui/packages/search-api-connector";
 import {getCookie} from 'cookies-next';
+import {APP_ROUTES} from './constants'
 import _ from 'lodash';
 
 export const APP_TITLE = "SenNet - Data Sharing Portal"
@@ -31,13 +32,16 @@ export function getIngestEndPoint() {
     return process.env.NEXT_PUBLIC_INGEST_API_ENDPOINT
 }
 
-
 export function getIngestLogin() {
     return process.env.NEXT_PUBLIC_INGEST_LOGIN
 }
 
 export function getRootURL() {
     return process.env.NEXT_PUBLIC_APP_ROOT_URL
+}
+
+export function getLogoutURL() {
+    return getIngestEndPoint() + APP_ROUTES.logout.slice(1)
 }
 
 export const connector = new SearchAPIConnector({
