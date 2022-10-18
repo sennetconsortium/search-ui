@@ -22,7 +22,11 @@ export default function Home() {
             log.debug(router.query)
             login()
         } else {
-            goToSearch()
+            // TODO: There is a conflict with the redirects after login from ingest-api this needs looking into... 
+            if (router.asPath.indexOf('info') === -1) {
+                goToSearch()
+            }
+                
         }
     }, [router.isReady])
 

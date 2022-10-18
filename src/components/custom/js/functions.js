@@ -129,8 +129,8 @@ export function getClickableLink(link) {
     return link.startsWith("http://") || link.startsWith("https://") ? link : "http://" + link;
 }
 
-export function goIntent(route) {
-    window.location.replace(getRootURL() + APP_ROUTES[route])
+export function goIntent(route, fn = 'assign') {
+    window.location[fn](getRootURL() + APP_ROUTES[route])
 }
 
 export function goToSearch() {

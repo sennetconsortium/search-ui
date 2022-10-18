@@ -4,7 +4,6 @@ import { goToSearch } from '../components/custom/js/functions'
 import { getCookie, deleteCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import { get_read_write_privileges } from '../lib/services'
-import { APP_ROUTES } from '../config/constants'
 
 const AppContext = createContext()
 
@@ -42,8 +41,9 @@ export const AppProvider = ({ children }) => {
             .then((read_write_privileges) => {
                 if (read_write_privileges.read_privs === true) {
                     setCookie(authKey, true)
+                    console.log('Author', hasAuthenticationCookie())
                     // Redirect to home page without query string
-                    router.replace(APP_ROUTES.search)
+                    goToSearch()
                 } else {
                     router.replace('/', undefined, { shallow: true })
                     setIsLoginPermitted(false)
