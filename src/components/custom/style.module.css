@@ -6,6 +6,7 @@
 .search_table_wrapper {
     max-height: 800px;
     overflow: auto;
+    font-size: 14px;
 }
 
 .table_wrapper {

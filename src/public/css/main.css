@@ -69,3 +69,7 @@ p {
         font-size: 1.25rem !important;
     }
 }
+
+.results-header {
+    white-space: nowrap;
+}

@@ -12,7 +12,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
-import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
+import {cleanJson, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {get_read_write_privileges, get_user_write_groups, update_create_entity} from "../../lib/services";
 import {getCookie} from "cookies-next";
@@ -277,7 +277,7 @@ function EditSample() {
                                             </OverlayTrigger>
                                         </Form.Label>
                                         <Form.Control type="text" required
-                                                      pattern={"(^(http(s)?:\/\/)?dx.doi.org\/10\.17504\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10\.17504\/protocols\.io\..+)"}
+                                                      pattern={getDOIPattern()}
                                                       placeholder="protocols.io DOI"
                                                       defaultValue={data.protocol_url}
                                                       onChange={e => onChange(e, e.target.id, e.target.value)}/>

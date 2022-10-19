@@ -27,90 +27,92 @@ import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 
 function Search() {
-   
     const {_t, isRegisterHidden, isAuthorizing} = useContext(AppContext);
 
     if (isAuthorizing()) {
         return  <Spinner />
-    } else {
+    }else {
         return (
             <>
-            <Header title={APP_TITLE}/>
+                <Header title={APP_TITLE}/>
 
-            <SearchProvider config={config}>
-                <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
-                    {({wasSearched, filters}) => {
-                        return (
-                            <div>
-                                <AppNavbar hidden={isRegisterHidden} />
+                <SearchProvider config={config}>
+                    <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
+                        {({wasSearched, filters}) => {
+                            return (
+                                <div>
+                                    <AppNavbar hidden={isRegisterHidden}/>
 
-                                <ErrorBoundary>
+                                    <ErrorBoundary>
 
-                                    <Layout
-                                        header={
-                                            <div className="search-box-header">
-                                                <SearchBox
-                                                    view={({onChange, value, onSubmit}) => (
-                                                        <Form onSubmit={onSubmit}>
-                                                            <Form.Group controlId="search">
-                                                                <InputGroup>
-                                                                    <Form.Control
-                                                                        value={value}
-                                                                        onChange={(e) => onChange(e.currentTarget.value)}
-                                                                        className="form-control form-control-lg rounded-0"
-                                                                        placeholder="Search"
-                                                                        autoFocus={true}
-                                                                    />
-                                                                    <Button variant="outline-primary"
-                                                                            className={"rounded-0"}
-                                                                            onClick={onSubmit}>{_t('Search')}</Button>
-                                                                </InputGroup>
-                                                            </Form.Group>
-                                                        </Form>
-                                                    )}
-                                                />
-                                            </div>
-                                        }
-                                        sideContent={
-                                            <>
-                                                <CustomClearSearchBox/>
-
-                                                {wasSearched && (
-                                                    <Sorting
-                                                        label={"Sort by"}
-                                                        sortOptions={SORT_OPTIONS}
+                                        <Layout
+                                            header={
+                                                <div className="search-box-header js-gtm--search">
+                                                    <SearchBox
+                                                        view={({onChange, value, onSubmit}) => (
+                                                            <Form onSubmit={onSubmit} >
+                                                                <Form.Group controlId="search">
+                                                                    <InputGroup>
+                                                                        <Form.Control
+                                                                            value={value}
+                                                                            onChange={(e) => onChange(e.currentTarget.value)}
+                                                                            className="form-control form-control-lg rounded-0"
+                                                                            placeholder="Search"
+                                                                            autoFocus={true}
+                                                                        />
+                                                                        <Button variant="outline-primary"
+                                                                                className={"rounded-0"}
+                                                                                onClick={onSubmit}>{_t('Search')}</Button>
+                                                                    </InputGroup>
+                                                                </Form.Group>
+                                                            </Form>
+                                                        )}
                                                     />
-                                                )}
+                                                </div>
+                                            }
+                                            sideContent={
+                                                <>
+                                                    <CustomClearSearchBox/>
 
-                                                <Facets fields={config.searchQuery} filters={filters}/>
+                                                    {wasSearched && (
+                                                        <Sorting
+                                                            label={"Sort by"}
+                                                            sortOptions={SORT_OPTIONS}
+                                                        />
+                                                    )}
 
-                                            </>
+                                                    <Facets fields={config.searchQuery} filters={filters}/>
 
-                                        }
-                                        bodyContent={
-                                            <Results filters={filters} titleField={filters}
-                                                     view={TableResults} resultView={TableRowDetail}
-                                            />
-                                        }
-                                        bodyHeader={
-                                            <React.Fragment>
-                                                {wasSearched && <PagingInfo/>}
-                                                {<Paging/>}
-                                                {wasSearched && <ResultsPerPage options={RESULTS_PER_PAGE}/>}
-                                            </React.Fragment>
-                                        }
-                                        bodyFooter={<Paging/>}
-                                    />
-                                </ErrorBoundary>
-                            </div>
-                        );
-                    }}
-                </WithSearch>
-                <AppFooter/>
-            </SearchProvider>
-        </>
-    )
-    }
+                                                </>
+
+                                            }
+                                            bodyContent={
+                                                <div className="js-gtm--results">
+                                                    <Results filters={filters} titleField={filters}
+                                                         view={TableResults} resultView={TableRowDetail}
+                                                />
+                                                </div>
+                                                
+                                            }
+                                            bodyHeader={
+                                                <React.Fragment>
+                                                    {wasSearched && <PagingInfo/>}
+                                                    {<Paging/>}
+                                                    {wasSearched && <ResultsPerPage options={RESULTS_PER_PAGE}/>}
+                                                </React.Fragment>
+                                            }
+                                            bodyFooter={<Paging/>}
+                                        />
+                                    </ErrorBoundary>
+                                </div>
+                            );
+                        }}
+                    </WithSearch>
+                    <AppFooter/>
+                </SearchProvider>
+            </>
+        )
+    } 
 }
 
 export default Search
