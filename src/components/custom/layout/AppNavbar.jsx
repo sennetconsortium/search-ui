@@ -37,7 +37,7 @@ const AppNavbar = ({ hidden, signoutHidden }) => {
                         height="42"
                         alt={_t("SenNet logo")}
                     />
-                    <div className={'ms-2 fs-5'}>{APP_TITLE}</div>
+                    <div className={'ms-2 fs-3'}>{APP_TITLE}</div>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse>

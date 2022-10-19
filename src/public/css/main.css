@@ -59,3 +59,13 @@ html {
 p {
     white-space: pre;
 }
+
+.dropdown-menu {
+    text-transform: capitalize;
+}
+
+@media screen and (max-width: 600px) {
+    .navbar .fs-3 {
+        font-size: 1.25rem !important;
+    }
+}
