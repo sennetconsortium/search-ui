@@ -152,6 +152,10 @@ export const config = {
     },
     initialState: {
         resultsPerPage: 20,
+        sortList: [{
+            field: "last_modified_timestamp",
+            direction: "desc"
+        }]
     },
     trackUrlState: false,
     apiConnector: connector,
@@ -247,7 +251,7 @@ export const SORT_OPTIONS = [
         value: [
             {
                 field: 'last_modified_timestamp',
-                direction: 'asc',
+                direction: 'desc',
             },
         ],
     },

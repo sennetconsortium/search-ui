@@ -313,7 +313,8 @@ function EditSource() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit}
+                                            disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>
