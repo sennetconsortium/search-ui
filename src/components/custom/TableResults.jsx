@@ -5,11 +5,11 @@ import {checkFilterEntityType, checkMultipleFilterEntityType, getStatusColor} fr
 import Badge from 'react-bootstrap/Badge';
 
 
-const DefaultTableResults = ({children, hasMultipleEntityTypes=true}) => {
+const DefaultTableResults = ({children, hasMultipleEntityTypes = true}) => {
     return (
         <div key="results_table" className={styles.search_table_wrapper}>
             <Table responsive hover>
-                <thead>
+                <thead className="results-header">
                 <tr>
                     <th>Created By</th>
                     <th>SenNet ID</th>
@@ -30,7 +30,7 @@ const DefaultTableResults = ({children, hasMultipleEntityTypes=true}) => {
     )
 }
 
-const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTypes=true}) => {
+const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTypes = true}) => {
     return (
         <tr key="results_detail"
             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
@@ -78,7 +78,7 @@ const TableResults = ({children, filters}) => {
                                         // Table view for Source
                                         <div key={`source_${index}`} className={styles.search_table_wrapper}>
                                             <Table responsive hover>
-                                                <thead>
+                                                <thead className="results-header">
                                                 <tr>
                                                     <th>SenNet ID</th>
                                                     {hasMultipleEntityTypes &&
@@ -104,7 +104,7 @@ const TableResults = ({children, filters}) => {
                                         // Table view for Dataset
                                         <div key={`dataset_${index}`} className={styles.search_table_wrapper}>
                                             <Table responsive hover>
-                                                <thead>
+                                                <thead className="results-header">
                                                 <tr>
                                                     <th>SenNet ID</th>
                                                     {hasMultipleEntityTypes &&
