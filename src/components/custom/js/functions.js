@@ -64,6 +64,10 @@ export function displayBodyHeader(header) {
         return ""
 }
 
+export function getDOIPattern() {
+    return "(^(http(s)?:\/\/)?dx.doi.org\/10.\\d{4,9}\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10.\\d{4,9}\/protocols\.io\..+)"
+}
+
 export function getStatusColor(status) {
     if (status) {
         status = status.toUpperCase();
