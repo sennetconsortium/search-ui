@@ -155,12 +155,7 @@ function ViewSample() {
                                 <h3>{data.sennet_id}</h3>
                                 <div className="d-flex justify-content-between mb-2">
                                     <div className="entity_subtitle link_with_icon">
-                                        {data.sample_category === 'organ' ? (
-                                            displayBodyHeader(data.organ)
-                                        ) : (
-                                            displayBodyHeader(data.sample_category)
-                                        )}
-
+                                        {displayBodyHeader(data.display_subtype)}
                                     </div>
                                     <div>
                                         {hasWritePrivilege &&
