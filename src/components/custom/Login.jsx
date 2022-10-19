@@ -20,11 +20,11 @@ function Login() {
     return (
         <div>
             <Header title={APP_TITLE} />
-            <AppNavbar hidden={true} signoutHidden={true} />
+            <AppNavbar hidden={true} />
             <Container>
                 <Row>
                     <Col></Col>
-                    <Col xs={6}>
+                    <Col xs={10} lg={6}>
                         <div className={`card alert alert-info mt-4`}>
                             <div className="card-body">
                                 <h3 className="card-title">{APP_TITLE}</h3>
