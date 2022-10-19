@@ -19,7 +19,6 @@ const DefaultTableResults = ({children, hasMultipleEntityTypes = true}) => {
                     <th>Lab ID</th>
                     <th>Category</th>
                     <th>Group</th>
-                    <th>Created By</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -34,7 +33,10 @@ const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTyp
     return (
         <tr key="results_detail"
             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
-            <td>{result.created_by_user_displayname.raw}</td>
+            <td>
+                {result.created_by_user_displayname.raw}<br></br>
+                {result.created_by_user_email.raw}
+            </td>
             <td>{result.sennet_id.raw}</td>
             {hasMultipleEntityTypes &&
                 <td>{result.entity_type.raw}</td>
@@ -57,7 +59,6 @@ const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTyp
                 ) : null
                 }
             </td>
-            <td>{result.created_by_user_email.raw}</td>
         </tr>
     )
 }
