@@ -27,7 +27,7 @@ function ViewSource() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isLoggedIn, isAuthorizing} = useContext(AppContext);
+    const {isRegisterHidden, isLoggedIn, isUnauthorized} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -66,7 +66,7 @@ function ViewSource() {
 
     if (!data) {
         return (
-            isAuthorizing() ? <Spinner /> : <Unauthorized />
+            isUnauthorized() ? <Unauthorized /> : <Spinner />
         )
     } else {
         return (
