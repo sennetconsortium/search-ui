@@ -32,6 +32,10 @@ export const AppProvider = ({ children }) => {
         return authorized && hasAuthenticationCookie()
     }
 
+    const isUnauthorized = () => {
+        return authorized === false  
+    }
+
     const isAuthorizing = () => {
         return authorized === null  
     }
@@ -78,6 +82,7 @@ export const AppProvider = ({ children }) => {
                 setIsBusy,
                 isLoggedIn,
                 isAuthorizing,
+                isUnauthorized,
                 logout,
                 login,
                 _t,
