@@ -61,4 +61,4 @@ export const APP_ROUTES = {
     "logout": "/logout"
 };
 
-export const ENTITIES = ['source','sample', 'dataset']
+export const ENTITIES = ['source', 'sample', 'dataset']
