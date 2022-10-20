@@ -1,5 +1,6 @@
 import Addon from './Addon'
 import GoogleTagManager from './GoogleTagManager'
+import AppModal from './AppModal'
 
 /**
  * JS functionality which enhance site functionality, not necessarily part of the core.
@@ -14,6 +15,7 @@ function addons(source) {
     window[source] = true
     let apps = {
         gtm: GoogleTagManager,
+        modal: AppModal
     }
 
     setTimeout(() => {
