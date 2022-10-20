@@ -1,6 +1,7 @@
-import React from 'react'
-import SearchAPIConnector from '../search-ui/packages/search-api-connector'
-import { getCookie } from 'cookies-next'
+import SearchAPIConnector from "../search-ui/packages/search-api-connector";
+import { getCookie } from 'cookies-next';
+import { APP_ROUTES } from './constants'
+
 import _ from 'lodash';
 
 export const APP_TITLE = 'SenNet - Data Sharing Portal'
@@ -38,6 +39,10 @@ export function getIngestLogin() {
 
 export function getRootURL() {
     return process.env.NEXT_PUBLIC_APP_ROOT_URL
+}
+
+export function getLogoutURL() {
+    return getIngestEndPoint() + APP_ROUTES.logout.slice(1)
 }
 
 export function getGoogleTagManagerId() {
@@ -152,10 +157,6 @@ export const config = {
     },
     initialState: {
         resultsPerPage: 20,
-        sortList: [{
-            field: "last_modified_timestamp",
-            direction: "desc"
-        }]
     },
     trackUrlState: false,
     apiConnector: connector,
@@ -251,7 +252,7 @@ export const SORT_OPTIONS = [
         value: [
             {
                 field: 'last_modified_timestamp',
-                direction: 'desc',
+                direction: 'asc',
             },
         ],
     },
