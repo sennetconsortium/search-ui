@@ -12,21 +12,19 @@ export default function Home() {
     const { setIsBusy, login, isLoginPermitted } = useContext(AppContext)
 
     useEffect(() => {
-        if (router.query['info']) {
-            setIsBusy(true)
-            setCookie(
-                'groups_token',
-                JSON.parse(router.query['info']).groups_token
-            )
-            setCookie('info', router.query['info'])
-            log.debug(router.query)
-            login()
-        } else {
-            // TODO: There is a conflict with the redirects after login from ingest-api this needs looking into... 
-            if (router.asPath.indexOf('info') === -1) {
+        if (router.isReady) {
+            if (router.query['info']) {
+                setIsBusy(true)
+                setCookie(
+                    'groups_token',
+                    JSON.parse(router.query['info']).groups_token
+                )
+                setCookie('info', router.query['info'])
+                log.debug(router.query)
+                login()
+            } else {
                 goToSearch()
             }
-                
         }
     }, [router.isReady])
 
