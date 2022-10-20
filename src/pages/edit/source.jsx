@@ -18,6 +18,7 @@ import {getCookie} from "cookies-next";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
+import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 function EditSource() {
     const router = useRouter()
@@ -182,6 +183,9 @@ function EditSource() {
                                 <Container className="px-0" fluid={true}>
                                     <Row md={12}>
                                         <h4>Source Information</h4>
+                                    </Row>
+                                    <Row>
+                                        <HipaaModal/>
                                     </Row>
                                     {editMode == 'Edit' &&
                                         <>

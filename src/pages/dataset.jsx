@@ -12,7 +12,7 @@ import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {fetchEntity, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
+import {fetchEntity, getOrganTypeFullName, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -165,7 +165,7 @@ function ViewDataset() {
                                         }
                                         {data.origin_sample && Object.keys(data.origin_sample).length > 0 && data.origin_sample.organ &&
                                             <span className="ms-1 me-1">
-                                            | {data.origin_sample.organ}
+                                            | {getOrganTypeFullName(data.origin_sample.organ)}
                                         </span>
                                         }
                                         {data.doi_url &&
