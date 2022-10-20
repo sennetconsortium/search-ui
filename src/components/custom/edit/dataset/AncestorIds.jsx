@@ -85,7 +85,7 @@ export default class AncestorIds extends React.Component {
                 }
 
                 <InputGroup className="mb-3" id="direct_ancestor_uuid_button">
-                    <Button variant="outline-primary rounded-0 mt-1" onClick={this.showModal}>
+                    <Button variant="outline-primary rounded-0 mt-1" onClick={this.showModal} aria-controls='js-modal'>
                         Add another ancestor <PlusLg/>
                     </Button>
                 </InputGroup>
