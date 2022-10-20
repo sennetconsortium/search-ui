@@ -35,6 +35,7 @@ export const EntityProvider = ({ children }) => {
 
     // only executed on init rendering, see the []
     useEffect(() => {
+        console.log(authorized)
         get_read_write_privileges()
             .then((response) => {
                 setAuthorized(response.write_privs)
