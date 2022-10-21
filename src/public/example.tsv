@@ -1,4 +1,0 @@
-lab_id  source_type selection_protocol  description
-Good Lab ID Test    human   11.1111/protocols.io.test   Good Test Row short protocols
-Good Lab ID Test    mouse   https://dx.doi.org/22.2222/protocols.io.test    Good Test Row long protocols
-Good Lab Test No Description    human organoid  https://dx.doi.org/44.4444/protocols.io.test
