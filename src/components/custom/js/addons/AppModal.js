@@ -10,7 +10,7 @@ class AppModal extends Addon {
     events() {
         
         $(window).on('keydown', ((e) => {
-            console.log(e.code)
+            Addon.log(e.code)
             if (this.isEsc(e)) {
                 $('.modal-footer .btn').click()
             }
