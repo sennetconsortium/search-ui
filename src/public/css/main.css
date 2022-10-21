@@ -73,3 +73,7 @@ p {
 .results-header {
     white-space: nowrap;
 }
+
+.hipaa-alert {
+    font-size: 18px !important;
+}

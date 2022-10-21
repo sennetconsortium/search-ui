@@ -20,6 +20,7 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
+import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 function EditSample() {
     const router = useRouter()
@@ -207,6 +208,9 @@ function EditSample() {
                                 <Container className="px-0" fluid={true}>
                                     <Row md={12}>
                                         <h4>Sample Information</h4>
+                                    </Row>
+                                    <Row>
+                                        <HipaaModal/>
                                     </Row>
                                     {editMode === 'Edit' &&
                                         <>

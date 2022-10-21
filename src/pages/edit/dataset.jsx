@@ -19,6 +19,7 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
+import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 function EditDataset() {
     const router = useRouter()
@@ -240,6 +241,9 @@ function EditDataset() {
                                     <Row md={12}>
                                         <h4>Dataset Information</h4>
                                     </Row>
+                                    <Row>
+                                        <HipaaModal/>
+                                    </Row>
                                     {editMode === 'Edit' &&
                                         <>
                                             <Row>
@@ -392,7 +396,8 @@ function EditDataset() {
                                         <DataTypes values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit}
+                                            disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>
