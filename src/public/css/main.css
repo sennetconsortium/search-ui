@@ -64,3 +64,17 @@ p {
 .carousel-item {
   margin-right: 0 !important;
 }
+
+.dropdown-menu {
+    text-transform: capitalize;
+}
+
+@media screen and (max-width: 600px) {
+    .navbar .fs-3 {
+        font-size: 1.25rem !important;
+    }
+}
+
+.results-header {
+    white-space: nowrap;
+}

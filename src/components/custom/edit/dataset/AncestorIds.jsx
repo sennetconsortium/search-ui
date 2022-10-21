@@ -138,7 +138,7 @@ export default class AncestorIds extends React.Component {
                                                         />
                                                     )}
 
-                                                    <Facets fields={config.searchQuery}/>
+                                                    <Facets fields={config.searchQuery} filters={filters}/>
 
                                                 </>
 

@@ -11,7 +11,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
-import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
+import {cleanJson, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {get_read_write_privileges, get_user_write_groups, parseJson, update_create_entity} from "../../lib/services";
 import {getCookie} from "cookies-next";
@@ -21,8 +21,8 @@ import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
 import RuiIntegration from "../../components/custom/edit/sample/rui/RuiIntegration";
 import RUIButton from "../../components/custom/edit/sample/rui/RUIButton";
-import LoadingSpinner from "../../components/LoadingSpinner";
 import CreateCompleteModal from "../../components/CreateCompleteModal";
+import Spinner from "../../components/custom/Spinner";
 
 function EditSample() {
     const router = useRouter()
@@ -80,7 +80,6 @@ function EditSample() {
             } else {
                 setData(data);
                 // Set state with default values that will be PUT to Entity API to update
-                // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
                     'sample_category': data.sample_category,
                     'organ': data.organ,
@@ -92,7 +91,6 @@ function EditSample() {
                 })
                 setEditMode("Edit")
 
-                // TODO: Need to change this is descendant for sennet
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     await fetchSource(data.immediate_ancestors[0].uuid);
                 }
@@ -221,7 +219,7 @@ function EditSample() {
         return (
             <>
                 <AppNavbar/>
-                <LoadingSpinner/>
+                <Spinner/>
             </>
         )
     } else if (authorized && getCookie('isAuthenticated')) {
@@ -300,7 +298,6 @@ function EditSample() {
                                         <AncestorInformationBox ancestor={source}/>
                                     }
 
-                                    {/*TODO: Need to rename this component to "SampleCategory" and update the form values set by it*/}
                                     {/*/!*Tissue Sample Type*!/*/}
                                     {((editMode === 'Edit' && source) || (editMode === 'Create')) &&
                                         <>
@@ -336,7 +333,7 @@ function EditSample() {
                                             </OverlayTrigger>
                                         </Form.Label>
                                         <Form.Control type="text" required
-                                                      pattern={"(^(http(s)?:\/\/)?dx.doi.org\/10\.17504\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10\.17504\/protocols\.io\..+)"}
+                                                      pattern={getDOIPattern()}
                                                       placeholder="protocols.io DOI"
                                                       defaultValue={data.protocol_url}
                                                       onChange={e => onChange(e, e.target.id, e.target.value)}/>
@@ -431,7 +428,8 @@ function EditSample() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit}
+                                            disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button} from 'react-bootstrap';
@@ -7,19 +7,18 @@ import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
-// import Provenance from "../components/custom/entities/sample/Provenance";
 import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {displayBodyHeader, fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../lib/services";
-import {getCookie} from "cookies-next";
+import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import Protocols from "../components/custom/entities/sample/Protocols";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
-import LoadingSpinner from "../components/LoadingSpinner";
+import Spinner from "../components/custom/Spinner";
+import AppContext from "../context/AppContext";
 
 function ViewSample() {
     const router = useRouter()
@@ -28,17 +27,14 @@ function ViewSample() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const [isRegisterHidden, setIsRegisterHidden] = useState(false)
-    const [authorized, setAuthorized] = useState(null)
+
+    const {isRegisterHidden, isLoggedIn, isUnauthorized} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-            get_read_write_privileges().then(response => {
-                setAuthorized(response.read_privs)
-                setIsRegisterHidden(!response.write_privs)
-            }).catch(error => log.error(error))
+
 
             log.debug('sample: getting data...', uuid)
             // get the data from the api
@@ -83,22 +79,16 @@ function ViewSample() {
         }
     }
 
-    const showLoadingSpinner = authorized === null || data === null
-
-    if (showLoadingSpinner) {
+    if (!data) {
         return (
-            <>
-                <AppNavbar/>
-                <LoadingSpinner/>
-                <AppFooter/>
-            </>
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
-    } else if (authorized && getCookie('isAuthenticated')) {
+    } else {
         return (
             <>
                 <Header title={`${data.sennet_id} | Sample | SenNet`}></Header>
 
-                <AppNavbar hidden={isRegisterHidden}/>
+                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
                     <div className="alert alert-warning" role="alert">{errorMessage}</div>
@@ -158,12 +148,7 @@ function ViewSample() {
                                 <h3>{data.sennet_id}</h3>
                                 <div className="d-flex justify-content-between mb-2">
                                     <div className="entity_subtitle link_with_icon">
-                                        {data.sample_category === 'organ' ? (
-                                            displayBodyHeader(data.organ)
-                                        ) : (
-                                            displayBodyHeader(data.sample_category)
-                                        )}
-
+                                        {displayBodyHeader(data.display_subtype)}
                                     </div>
                                     <div>
                                         {hasWritePrivilege &&
@@ -225,10 +210,6 @@ function ViewSample() {
                 }
                 <AppFooter/>
             </>
-        )
-    } else {
-        return (
-            <Unauthorized/>
         )
     }
 }

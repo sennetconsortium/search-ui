@@ -61,7 +61,7 @@ export default class DataTypes extends React.Component {
                             overlay={
                                 <Popover>
                                     <Popover.Body>
-                                        {/*   TODO: Need to add data types tool tip */}
+                                        Data type
                                     </Popover.Body>
                                 </Popover>
                             }

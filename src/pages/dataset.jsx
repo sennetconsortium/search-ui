@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button} from 'react-bootstrap';
@@ -6,7 +6,6 @@ import {BoxArrowUpRight, CircleFill, FiletypeJson} from 'react-bootstrap-icons';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
-// import Provenance from "../components/custom/entities/sample/Provenance";
 import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
@@ -14,12 +13,13 @@ import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, get_write_privilege_for_group_uuid} from "../lib/services";
-import {getCookie} from "cookies-next";
+import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
-import LoadingSpinner from "../components/LoadingSpinner";
+import Files from "../components/custom/entities/dataset/Files";
+import Spinner from "../components/custom/Spinner";
+import AppContext from "../context/AppContext";
 
 function ViewDataset() {
     const router = useRouter()
@@ -28,17 +28,14 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const [isRegisterHidden, setIsRegisterHidden] = useState(false)
-    const [authorized, setAuthorized] = useState(null)
+
+    const {isRegisterHidden, isLoggedIn, isUnauthorized} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-            get_read_write_privileges().then(response => {
-                setAuthorized(response.read_privs)
-                setIsRegisterHidden(!response.write_privs)
-            }).catch(error => log.error(error))
+
 
             log.debug('dataset: getting data...', uuid)
             // get the data from the api
@@ -87,22 +84,16 @@ function ViewDataset() {
         setAncestors(new_ancestors)
     }
 
-    const showLoadingSpinner = authorized === null || data === null
-
-    if (showLoadingSpinner) {
+    if (!data) {
         return (
-            <>
-                <AppNavbar/>
-                <LoadingSpinner/>
-                <AppFooter/>
-            </>
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
-    } else if (authorized && getCookie('isAuthenticated')) {
+    } else {
         return (
             <>
                 <Header title={`${data.sennet_id} | Dataset | SenNet`}></Header>
 
-                <AppNavbar hidden={isRegisterHidden}/>
+                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
                     <div className="alert alert-warning" role="alert">{errorMessage}</div>
@@ -118,6 +109,10 @@ function ViewDataset() {
                                             <li className="sui-single-option-facet__item"><a
                                                 className="sui-single-option-facet__link"
                                                 href="#Summary">Summary</a>
+                                            </li>
+                                            <li className="sui-single-option-facet__item"><a
+                                                className="sui-single-option-facet__link"
+                                                href="#Files">Files</a>
                                             </li>
                                             {/* <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
@@ -167,9 +162,9 @@ function ViewDataset() {
                                             {data.data_types[0]}
                                         </span>
                                         }
-                                        {data.origin_sample && Object.keys(data.origin_sample).length > 0 &&
+                                        {data.origin_sample && Object.keys(data.origin_sample).length > 0 && data.origin_sample.organ &&
                                             <span className="ms-1 me-1">
-                                            | {data.origin_sample.mapped_organ}
+                                            | {data.origin_sample.organ}
                                         </span>
                                         }
                                         {data.doi_url &&
@@ -209,6 +204,9 @@ function ViewDataset() {
                                                  secondaryDate={data.last_modified_timestamp}
                                                  data={data}/>
 
+                                    {/*Files*/}
+                                    <Files sennet_id={data.sennet_id}/>
+
                                     {/*Provenance*/}
                                     {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
                                     <Provenance data={data}/>
@@ -224,9 +222,6 @@ function ViewDataset() {
                                     {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
                                         <Metadata data={data.metadata.metadata} filename={data.sennet_id}/>
                                     }
-
-                                    {/*Files*/}
-                                    {/*TODO: Need to create files section*/}
 
                                     {/*Contributors*/}
                                     {!!(data.contributors && Object.keys(data.contributors).length) &&
@@ -245,10 +240,6 @@ function ViewDataset() {
                 }
                 <AppFooter/>
             </>
-        )
-    } else {
-        return (
-            <Unauthorized/>
         )
     }
 }

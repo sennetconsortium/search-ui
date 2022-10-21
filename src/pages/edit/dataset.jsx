@@ -18,8 +18,8 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
-import LoadingSpinner from "../../components/LoadingSpinner";
 import CreateCompleteModal from "../../components/CreateCompleteModal";
+import Spinner from "../../components/custom/Spinner";
 
 function EditDataset() {
     const router = useRouter()
@@ -83,7 +83,6 @@ function EditDataset() {
                 }
 
                 // Set state with default values that will be PUT to Entity API to update
-                // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
                     'lab_dataset_id': data.lab_dataset_id,
                     'data_types': [data.data_types[0]],
@@ -225,7 +224,7 @@ function EditDataset() {
         return (
             <>
                 <AppNavbar/>
-                <LoadingSpinner/>
+                <Spinner/>
             </>
         )
     } else if (authorized && getCookie('isAuthenticated')) {
@@ -400,7 +399,8 @@ function EditDataset() {
                                         <DataTypes values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit}
+                                            disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>

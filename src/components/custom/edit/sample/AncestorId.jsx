@@ -121,7 +121,7 @@ export default class AncestorId extends React.Component {
                                                         />
                                                     )}
 
-                                                    <Facets fields={exclude_dataset_config.searchQuery}/>
+                                                    <Facets fields={exclude_dataset_config.searchQuery} filters={filters}/>
 
                                                 </>
 

@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from "react";
-import {useRouter} from 'next/router'
+import React, {useContext} from "react";
 import {
     ErrorBoundary,
     Paging,
@@ -17,43 +16,22 @@ import {TableResults, TableRowDetail} from "../components/custom/TableResults";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
-import log from "loglevel";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_read_write_privileges} from "../lib/services";
-import {getCookie} from "cookies-next";
-import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
 import CustomClearSearchBox from "../components/custom/layout/CustomClearSearchBox";
-import LoadingSpinner from "../components/LoadingSpinner";
-
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Spinner from "../components/custom/Spinner";
+import AppContext from "../context/AppContext";
 
 function Search() {
-    const router = useRouter();
-    const [authorized, setAuthorized] = useState(null);
-    const [isRegisterHidden, setIsRegisterHidden] = useState(false)
+    const {_t, isRegisterHidden, isAuthorizing} = useContext(AppContext);
 
-    useEffect(() => {
-        get_read_write_privileges()
-            .then(response => {
-                setAuthorized(response.read_privs)
-                setIsRegisterHidden(!response.write_privs)
-            })
-            .catch(error => log.error(error))
-    });
-
-
-    if (authorized === null) {
-        return (
-            <>
-                <AppNavbar/>
-                <LoadingSpinner/>
-            </>
-        )
-    } else if (authorized && getCookie('isAuthenticated')) {
+    if (isAuthorizing()) {
+        return  <Spinner />
+    }else {
         return (
             <>
                 <Header title={APP_TITLE}/>
@@ -69,10 +47,10 @@ function Search() {
 
                                         <Layout
                                             header={
-                                                <div className="search-box-header">
+                                                <div className="search-box-header js-gtm--search">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
-                                                            <Form onSubmit={onSubmit}>
+                                                            <Form onSubmit={onSubmit} >
                                                                 <Form.Group controlId="search">
                                                                     <InputGroup>
                                                                         <Form.Control
@@ -84,7 +62,7 @@ function Search() {
                                                                         />
                                                                         <Button variant="outline-primary"
                                                                                 className={"rounded-0"}
-                                                                                onClick={onSubmit}>Search</Button>
+                                                                                onClick={onSubmit}>{_t('Search')}</Button>
                                                                     </InputGroup>
                                                                 </Form.Group>
                                                             </Form>
@@ -103,15 +81,18 @@ function Search() {
                                                         />
                                                     )}
 
-                                                    <Facets fields={config.searchQuery}/>
+                                                    <Facets fields={config.searchQuery} filters={filters}/>
 
                                                 </>
 
                                             }
                                             bodyContent={
-                                                <Results filters={filters} titleField={filters}
+                                                <div className="js-gtm--results">
+                                                    <Results filters={filters} titleField={filters}
                                                          view={TableResults} resultView={TableRowDetail}
                                                 />
+                                                </div>
+
                                             }
                                             bodyHeader={
                                                 <React.Fragment>
@@ -130,10 +111,6 @@ function Search() {
                     <AppFooter/>
                 </SearchProvider>
             </>
-        )
-    } else {
-        return (
-            <Unauthorized/>
         )
     }
 }

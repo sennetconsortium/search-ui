@@ -1,4 +1,5 @@
-import {getAuth} from "../../../config/config";
+import { getAuth, getRootURL } from "../../../config/config";
+import { APP_ROUTES } from "../../../config/constants";
 import log from "loglevel";
 
 export function getRequestHeaders() {
@@ -58,7 +59,14 @@ export function tableDataToTSV(tableData) {
 }
 
 export function displayBodyHeader(header) {
-    return (header.charAt(0).toUpperCase() + header.slice(1)).replaceAll('_', ' ');
+    if(header != undefined)
+        return (header.charAt(0).toUpperCase() + header.slice(1)).replaceAll('_', ' ');
+    else
+        return ""
+}
+
+export function getDOIPattern() {
+    return "(^(http(s)?:\/\/)?dx.doi.org\/10.\\d{4,9}\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10.\\d{4,9}\/protocols\.io\..+)"
 }
 
 export function getStatusColor(status) {
@@ -126,4 +134,16 @@ export function cleanJson(json) {
 
 export function getClickableLink(link) {
     return link.startsWith("http://") || link.startsWith("https://") ? link : "http://" + link;
+}
+
+export function goIntent(route, fn = 'assign') {
+    window.location[fn](getRootURL() + APP_ROUTES[route])
+}
+
+export function goToSearch() {
+    goIntent('search')
+}
+
+export function gotToLogin() {
+    goIntent('login')
 }

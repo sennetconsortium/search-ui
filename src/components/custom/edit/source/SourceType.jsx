@@ -18,7 +18,7 @@ export default class SourceType extends React.Component {
                             overlay={
                                 <Popover>
                                     <Popover.Body>
-                                        {/*   TODO: Need to add source type tool tip */}
+                                        Source type
                                     </Popover.Body>
                                 </Popover>
                             }

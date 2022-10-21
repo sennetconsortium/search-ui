@@ -8,7 +8,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
-import {cleanJson, getRequestHeaders} from "../../components/custom/js/functions";
+import {cleanJson, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {get_read_write_privileges, get_user_write_groups, update_create_entity} from "../../lib/services";
 import SourceType from "../../components/custom/edit/source/SourceType";
@@ -17,8 +17,8 @@ import {getCookie} from "cookies-next";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
-import LoadingSpinner from "../../components/LoadingSpinner";
 import CreateCompleteModal from "../../components/CreateCompleteModal";
+import Spinner from "../../components/custom/Spinner";
 
 function EditSource() {
     const router = useRouter()
@@ -72,7 +72,6 @@ function EditSource() {
             } else {
                 setData(data);
                 // Set state with default values that will be PUT to Entity API to update
-                // TODO: Is there a way to do with while setting "defaultValue" for the form fields?
                 setValues({
                     'lab_source_id': data.lab_source_id,
                     'protocol_url': data.protocol_url,
@@ -168,7 +167,7 @@ function EditSource() {
         return (
             <>
                 <AppNavbar/>
-                <LoadingSpinner/>
+                <Spinner/>
             </>
         )
     } else if (authorized && getCookie('isAuthenticated')) {
@@ -270,7 +269,7 @@ function EditSource() {
                                             </OverlayTrigger>
                                         </Form.Label>
                                         <Form.Control type="text" required
-                                                      pattern={"(^(http(s)?:\/\/)?dx.doi.org\/10\.17504\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10\.17504\/protocols\.io\..+)"}
+                                                      pattern={getDOIPattern()}
                                                       placeholder="protocols.io DOI"
                                                       defaultValue={data.protocol_url}
                                                       onChange={e => onChange(e, e.target.id, e.target.value)}/>
@@ -321,7 +320,8 @@ function EditSource() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit}
+                                            disabled={disableSubmit}>
                                         Submit
                                     </Button>
                                 </Form>
