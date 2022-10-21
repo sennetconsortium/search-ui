@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import {
     get_read_write_privileges,
@@ -7,9 +7,11 @@ import {
 import log from 'loglevel'
 import { APP_ROUTES } from '../config/constants'
 import AppModal from '../components/custom/AppModal'
+import AppContext from './AppContext'
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
+    const {_t } = useContext(AppContext)
     const router = useRouter()
     const [authorized, setAuthorized] = useState(null)
     const [validated, setValidated] = useState(false)
@@ -68,24 +70,18 @@ export const EntityProvider = ({ children }) => {
         })
     }
 
-    const setModalDetails = ({entity, type, response}) => {
+    const setModalDetails = ({entity, type, typeHeader, response}) => {
         setShowModal(true)
         setDisableSubmit(false);
 
         if ('uuid' in response) {
-            if (isEditMode()) {
-                setModalTitle(`${entity} Updated`)
-                setModalBody(`Your ${entity} was updated:\n` +
-                    "Data type: " + type + "\n" +
-                    "Group Name: " + response.group_name + "\n" +
-                    "SenNet ID: " + response.sennet_id)
-            } else {
-                setModalTitle(`${entity} Created`)
-                setModalBody(`Your ${entity} was created:\n` +
-                    "Data type: " + type + "\n" +
-                    "Group Name: " + response.group_name + "\n" +
-                    "SenNet ID: " + response.sennet_id)
-            }
+            const verb = isEditMode() ? 'Updated' : 'Created'
+            setModalTitle(`${entity} ${verb}`)
+            setModalBody(`${_t(`Your ${entity} was ${verb.toLocaleLowerCase()}`)}:\n` +
+                `${_t(typeHeader)}: ` + type + "\n" +
+                `${_t('Group Name')}: ` + response.group_name + "\n" +
+                `${_('SenNet ID')}: ` + response.sennet_id)
+            
         } else {
             setModalTitle(`Error Creating ${entity}`)
             setModalBody(response.statusText)
