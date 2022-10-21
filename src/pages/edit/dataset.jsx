@@ -20,6 +20,7 @@ import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
 import CreateCompleteModal from "../../components/CreateCompleteModal";
 import Spinner from "../../components/custom/Spinner";
+import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 function EditDataset() {
     const router = useRouter()
@@ -246,6 +247,9 @@ function EditDataset() {
                                 <Container className="px-0" fluid={true}>
                                     <Row md={12}>
                                         <h4>Dataset Information</h4>
+                                    </Row>
+                                    <Row>
+                                        <HipaaModal/>
                                     </Row>
                                     {editMode === 'Edit' &&
                                         <>

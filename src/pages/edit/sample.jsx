@@ -23,6 +23,7 @@ import RuiIntegration from "../../components/custom/edit/sample/rui/RuiIntegrati
 import RUIButton from "../../components/custom/edit/sample/rui/RUIButton";
 import CreateCompleteModal from "../../components/CreateCompleteModal";
 import Spinner from "../../components/custom/Spinner";
+import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 function EditSample() {
     const router = useRouter()
@@ -252,6 +253,9 @@ function EditSample() {
                                 <Container className="px-0" fluid={true}>
                                     <Row md={12}>
                                         <h4>Sample Information</h4>
+                                    </Row>
+                                    <Row>
+                                        <HipaaModal/>
                                     </Row>
                                     {editMode === 'Edit' &&
                                         <>
