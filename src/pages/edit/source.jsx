@@ -4,9 +4,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
-import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
@@ -22,7 +19,8 @@ import { EntityProvider } from '../../context/EntityContext'
 import EntityContext from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
 import { ENTITIES } from "../../config/constants"
-import EntityViewHeader from '../../components/custom/layout/EntityViewHeader'
+import EntityHeader from '../../components/custom/layout/entity/Header'
+import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 
 function EditSource() {
     const { isUnauthorized, getModal, setModalDetails,
@@ -105,7 +103,7 @@ function EditSource() {
             let uuid = data.uuid
 
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
-                setModalDetails({entity: ENTITIES.source, type: response.source_type, response})
+                setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
             })
         }
 
@@ -132,7 +130,7 @@ function EditSource() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityViewHeader entity={ENTITIES.source} isEditMode={isEditMode()} data={data} />
+                                <EntityHeader entity={ENTITIES.source} isEditMode={isEditMode()} data={data} />
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -147,73 +145,23 @@ function EditSource() {
                                     }
 
                                     {/*Lab's Source Non-PHI ID*/}
-                                    <Form.Group className="mb-3" controlId="lab_source_id">
-                                        <Form.Label>{_t("Lab's Source Non-PHI ID or Name")}<span className="required">* </span>
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            {_t('An identifier used by the lab to identify the source.')}
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <QuestionCircleFill/>
-                                            </OverlayTrigger>
-                                        </Form.Label>
-                                        <Form.Control type="text" required
-                                                      placeholder={_t("An non-PHI ID or deidentified name used by the lab when referring to the source.")}
-                                                      defaultValue={data.lab_source_id}
-                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                    </Form.Group>
+                                    <EntityFormGroup label="Lab's Source Non-PHI ID or Name" placeholder='An non-PHI ID or deidentified name used by the lab when referring to the source.'
+                                        controlId='lab_source_id' value={data.lab_source_id} isRequired={true}
+                                        onChange={onChange} text='An identifier used by the lab to identify the source.' />
 
                                     {/*Source Type*/}
                                     <SourceType data={data} onChange={onChange}/>
 
-
                                     {/*Case Selection Protocol*/}
-                                    <Form.Group className="mb-3" controlId="protocol_url">
-                                        <Form.Label>{_t('Case Selection Protocol')} <span className="required">* </span>
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            {_t('The protocol used when choosing and acquiring the source. This can be supplied as a DOI from https://www.protocols.io/.')}
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <QuestionCircleFill/>
-                                            </OverlayTrigger>
-                                        </Form.Label>
-                                        <Form.Control type="text" required
-                                                      pattern={getDOIPattern()}
-                                                      placeholder="protocols.io DOI"
-                                                      defaultValue={data.protocol_url}
-                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                    </Form.Group>
+                                    <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI'
+                                        controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
+                                        onChange={onChange} text='The protocol used when choosing and acquiring the source. This can be supplied as a DOI from https://www.protocols.io/.' />
 
                                     {/*/!*Description*!/*/}
-                                    <Form.Group className="mb-3" controlId="description">
-                                        <Form.Label>{_t('Description')}<span> </span>
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            {_t('Free text field to enter a description of the source.')}
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <QuestionCircleFill/>
-                                            </OverlayTrigger>
-                                        </Form.Label>
-                                        <Form.Control as="textarea" rows={4} defaultValue={data.description}
-                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                    </Form.Group>
+                                    <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description} 
+                                        onChange={onChange} text='Free text field to enter a description of the source.' />
+
+                                   
 
                                     {/*/!*Metadata*!/*/}
                                     {/* <Form.Group controlId="metadata-file" className="mb-3">
