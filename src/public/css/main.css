@@ -59,3 +59,8 @@ html {
 p {
     white-space: pre;
 }
+
+/*Required CSS to make the icons in the RUI tool inside the carousel space out properly*/
+.carousel-item {
+  margin-right: 0 !important;
+}
