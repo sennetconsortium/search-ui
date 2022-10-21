@@ -166,10 +166,7 @@ function EditSource() {
 
     if (showLoadingSpinner || isLoading) {
         return (
-            <>
-                <AppNavbar/>
-                <Spinner/>
-            </>
+            <Spinner/>
         )
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
