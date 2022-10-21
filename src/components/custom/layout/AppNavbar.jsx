@@ -49,7 +49,7 @@ const AppNavbar = ({ hidden, signoutHidden }) => {
                             title={_t("Create an Entity")}
                             id="basic-nav-dropdown"
                         >
-                            {ENTITIES.map((entity) => (
+                            {Object.keys(ENTITIES).map((entity) => (
                                 <NavDropdown.Item key={entity} href={`/edit/${entity}?uuid=create`}>
                                     {_t(entity)}
                                 </NavDropdown.Item>
