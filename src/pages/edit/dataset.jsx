@@ -154,7 +154,7 @@ export default function EditDataset() {
 
                 await update_create_dataset(uuid, json, editMode, router).then((response) => {
                     setModalDetails({entity: ENTITIES.dataset, type: response.data_types[0], typeHeader: _t('Data Type'), response})
-                })
+                }).catch((e) => log.error(e))
             }
         }
 

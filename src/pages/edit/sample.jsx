@@ -133,7 +133,7 @@ function EditSample() {
                 setModalDetails({entity: ENTITIES.sample, type: response.sample_category, 
                     typeHeader: _t('Sample Category'), response})
                 
-            })
+            }).catch((e) => log.error(e))
         }
 
         setValidated(true);

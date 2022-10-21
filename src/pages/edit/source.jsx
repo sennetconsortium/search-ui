@@ -104,7 +104,7 @@ function EditSource() {
 
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
                 setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
-            })
+            }).catch((e) => log.error(e))
         }
 
         setValidated(true);
