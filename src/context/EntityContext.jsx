@@ -6,6 +6,7 @@ import {
 } from '../lib/services'
 import log from 'loglevel'
 import { APP_ROUTES } from '../config/constants'
+import AppModal from '../components/custom/AppModal'
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
@@ -30,12 +31,16 @@ export const EntityProvider = ({ children }) => {
         return authorized === false
     }
 
+    const isEditMode = () => {
+        return editMode === 'Edit'
+    }
+
     const handleClose = () => setShowModal(false)
     const handleHome = () => router.push(APP_ROUTES.search)
 
     // only executed on init rendering, see the []
     useEffect(() => {
-        console.log(authorized)
+        
         get_read_write_privileges()
             .then((response) => {
                 setAuthorized(response.write_privs)
@@ -63,10 +68,42 @@ export const EntityProvider = ({ children }) => {
         })
     }
 
+    const setModalDetails = ({entity, type, response}) => {
+        setShowModal(true)
+        setDisableSubmit(false);
+
+        if ('uuid' in response) {
+            if (isEditMode()) {
+                setModalTitle(`${entity} Updated`)
+                setModalBody(`Your ${entity} was updated:\n` +
+                    "Data type: " + type + "\n" +
+                    "Group Name: " + response.group_name + "\n" +
+                    "SenNet ID: " + response.sennet_id)
+            } else {
+                setModalTitle(`${entity} Created`)
+                setModalBody(`Your ${entity} was created:\n` +
+                    "Data type: " + type + "\n" +
+                    "Group Name: " + response.group_name + "\n" +
+                    "SenNet ID: " + response.sennet_id)
+            }
+        } else {
+            setModalTitle(`Error Creating ${entity}`)
+            setModalBody(response.statusText)
+            setShowHideModal(true);
+        }
+    }
+
+    const getModal = () => {
+        return <AppModal showHideModal={showHideModal} showModal={showModal} modalBody={modalBody}
+                modalTitle={modalTitle} handleClose={handleClose} handleHome={handleHome} />
+    }
+
     return (
         <EntityContext.Provider
             value={{
                 isUnauthorized, 
+                getModal, setModalDetails,
+                isEditMode,
                 data, setData,
                 error, setError,
                 values, setValues,
