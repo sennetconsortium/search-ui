@@ -2,7 +2,7 @@
 import {useEffect, useState, useContext} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
-import {Button, Col, Container, Form, Row} from 'react-bootstrap'
+import {Button, Form } from 'react-bootstrap'
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
@@ -23,22 +23,19 @@ import AppContext from '../../context/AppContext'
 import { EntityProvider } from '../../context/EntityContext'
 import EntityContext from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import AppModal from "../../components/custom/AppModal"
+import { ENTITIES } from '../../config/constants'
+import EntityViewHeader from '../../components/custom/layout/EntityViewHeader'
 
 export default function EditDataset() {
-    const { isUnauthorized, 
+    const { isUnauthorized, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
         errorMessage, setErrorMessage,
-        showHideModal, setShowHideModal, 
         validated, setValidated,
-        handleClose, handleHome, 
-        showModal, setShowModal,
-        modalBody, setModalBody,
-        modalTitle, setModalTitle,
-        userWriteGroups, setUserWriteGroups, onChange, editMode, setEditMode,
-        selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid,
+        userWriteGroups, onChange, 
+        editMode, setEditMode, isEditMode,
+        selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit } = useContext(EntityContext)
     const { _t } = useContext(AppContext)
 
@@ -155,28 +152,7 @@ export default function EditDataset() {
                 let uuid = data.uuid
 
                 await update_create_dataset(uuid, json, editMode, router).then((response) => {
-                    setShowModal(true)
-                    setDisableSubmit(false);
-
-                    if ('uuid' in response) {
-                        if (editMode === 'Edit') {
-                            setModalTitle("Dataset Updated")
-                            setModalBody("Your Dataset was updated:\n" +
-                                "Data type: " + response.data_types[0] + "\n" +
-                                "Group Name: " + response.group_name + "\n" +
-                                "SenNet ID: " + response.sennet_id)
-                        } else {
-                            setModalTitle("Dataset Created")
-                            setModalBody("Your Dataset was created:\n" +
-                                "Data type: " + response.data_types[0] + "\n" +
-                                "Group Name: " + response.group_name + "\n" +
-                                "SenNet ID: " + response.sennet_id)
-                        }
-                    } else {
-                        setModalTitle("Error Creating Dataset")
-                        setModalBody(response.statusText)
-                        setShowHideModal(true);
-                    }
+                    setModalDetails({entity: ENTITIES.dataset, type: response.data_types[0], response})
                 })
             }
         }
@@ -212,38 +188,14 @@ export default function EditDataset() {
                 {data && !error &&
                     <div className="no_sidebar">
                         <Layout
-                            bodyHeader={
-                                <Container className="px-0" fluid={true}>
-                                    <Row md={12}>
-                                        <h4>{_t('Dataset Information')}</h4>
-                                    </Row>
-                                    {editMode === 'Edit' &&
-                                        <>
-                                            <Row>
-                                                <Col md={6}><h5>{_t('SenNet ID')}: {data.sennet_id}</h5></Col>
-                                                <Col md={6}><h5>{_t('Group')}: {data.group_name}</h5></Col>
-                                            </Row>
-                                            <Row>
-                                                <Col md={6}><h5>{_t('Entered By')}: {data.created_by_user_email}</h5></Col>
-                                                <Col md={6}><h5>{_t('Entry Date')}: {new Intl.DateTimeFormat('en-US', {
-                                                    year: 'numeric',
-                                                    month: '2-digit',
-                                                    day: '2-digit',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                    second: '2-digit'
-                                                }).format(data.created_timestamp)}</h5></Col>
-                                            </Row>
-                                        </>
-                                    }
-
-                                </Container>
+                            bodyHeader = {
+                                <EntityViewHeader entity={ENTITIES.dataset} isEditMode={isEditMode()} data={data} /> 
                             }
                             bodyContent={
                                 <Form noValidate validated={validated}>
                                     {/*Group select*/}
                                     {
-                                        !(userWriteGroups.length === 1 || editMode === 'Edit') &&
+                                        !(userWriteGroups.length === 1 || isEditMode()) &&
                                         <GroupSelect
                                             data={data}
                                             groups={userWriteGroups}
@@ -288,8 +240,7 @@ export default function EditDataset() {
                                                 overlay={
                                                     <Popover>
                                                         <Popover.Body>
-                                                            Add information here which can be used to find this data
-                                                            including lab specific (non-PHI) identifiers.
+                                                            {_t('Add information here which can be used to find this data including lab specific (non-PHI) identifiers.')}
                                                         </Popover.Body>
                                                     </Popover>
                                                 }
@@ -310,8 +261,7 @@ export default function EditDataset() {
                                                 overlay={
                                                     <Popover>
                                                         <Popover.Body>
-                                                            Add information here which can be used to find this data
-                                                            including lab specific (non-PHI) identifiers.
+                                                            {_t('Add information here which can be used to find this data including lab specific (non-PHI) identifiers.')}
                                                         </Popover.Body>
                                                     </Popover>
                                                 }
@@ -332,7 +282,7 @@ export default function EditDataset() {
                                                     overlay={
                                                         <Popover>
                                                             <Popover.Body>
-                                                                Does this data contain any human genetic sequences?
+                                                                {_t('Does this data contain any human genetic sequences?')}
                                                             </Popover.Body>
                                                         </Popover>
                                                     }
@@ -340,8 +290,7 @@ export default function EditDataset() {
                                                     <QuestionCircleFill/>
                                                 </OverlayTrigger>
                                             </Form.Label>
-                                            <div className="mb-2 text-muted">Does this data contain any human genetic
-                                                sequences?
+                                            <div className="mb-2 text-muted">{_t('Does this data contain any human genetic sequences?')}
                                             </div>
                                             <Form.Check
                                                 required
@@ -349,7 +298,7 @@ export default function EditDataset() {
                                                 label="No"
                                                 name="contains_human_genetic_sequences"
                                                 value={false}
-                                                defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'Edit') ? true : false}
+                                                defaultChecked={(data.contains_human_genetic_sequences === false && isEditMode()) ? true : false}
                                                 onChange={handleContainsHumanGeneticSequencesNo}
                                             />
                                             <Form.Check
@@ -379,8 +328,7 @@ export default function EditDataset() {
                 }
                 <AppFooter/>
 
-                <AppModal showHideModal={showHideModal} showModal={showModal} modalBody={modalBody}
-                modalTitle={modalTitle} handleClose={handleClose} handleHome={handleHome} />
+                {getModal()}
             </>
         )
     }
