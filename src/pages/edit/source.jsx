@@ -153,7 +153,13 @@ function EditSource() {
                         }
                     } else {
                         setModalTitle("Error Creating Source")
-                        setModalBody(response.statusText)
+                        let responseText = ""
+                        if ("error" in response) {
+                            responseText = response.error
+                        } else if ("statusText" in response) {
+                            responseText = response.statusText
+                        }
+                        setModalBody(responseText)
                         setShowHideModal(true);
                     }
                 })
