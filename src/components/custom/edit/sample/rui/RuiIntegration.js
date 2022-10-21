@@ -71,10 +71,10 @@ class RUIIntegration extends Component {
             firstName: user_name.split(" ")[0], lastName: user_name.split(" ")[1]
         }
         rui.organ = {
-            ontologyId: organ,
-            name: organ,
+            ontologyId: organ_info[0].trim(),
+            name: organ_info[0].trim(),
             sex: sex || "female",
-            side: 'left'
+            side: organ_side
         }
         rui.register = function (tissueBlockSpatialData) {
             console.log(tissueBlockSpatialData)
