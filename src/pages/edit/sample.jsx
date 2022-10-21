@@ -136,7 +136,6 @@ function EditSample() {
             })
         }
 
-
         setValidated(true);
     };
 
@@ -207,50 +206,6 @@ function EditSample() {
                                     <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description} 
                                         onChange={onChange} text='A free text description of the specimen.' />
                                     
-
-                                    {/*/!*Metadata*!/*/}
-                                    {/* <Form.Group controlId="metadata-file" className="mb-3">
-                                    <Form.Label>Add a Metadata file</Form.Label>
-                                    <Form.Control type="file"/>
-                                </Form.Group> */}
-
-                                    {/*/!*Image*!/*/}
-                                    {/* <Form.Group controlId="slide-image-file" className="mb-3">
-                                    <Form.Label>Add a Slide Image file <span> </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        Upload deidentified images only.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control type="file"/>
-                                </Form.Group> */}
-
-                                    {/*/!*Thumbnail*!/*/}
-                                    {/* <Form.Group controlId="thumbnail-file" className="mb-3">
-                                    <Form.Label>Add a Thumbnail file <span> </span>
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        Upload deidentified images only.
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }
-                                        >
-                                            <QuestionCircleFill/>
-                                        </OverlayTrigger>
-                                    </Form.Label>
-                                    <Form.Control type="file"/>
-                                </Form.Group> */}
 
                                     <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
                                         {_t('Submit')}
