@@ -24,7 +24,8 @@ import { EntityProvider } from '../../context/EntityContext'
 import EntityContext from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
 import { ENTITIES } from '../../config/constants'
-import EntityViewHeader from '../../components/custom/layout/EntityViewHeader'
+import EntityHeader from '../../components/custom/layout/entity/Header'
+import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 
 export default function EditDataset() {
     const { isUnauthorized, getModal, setModalDetails,
@@ -152,7 +153,7 @@ export default function EditDataset() {
                 let uuid = data.uuid
 
                 await update_create_dataset(uuid, json, editMode, router).then((response) => {
-                    setModalDetails({entity: ENTITIES.dataset, type: response.data_types[0], response})
+                    setModalDetails({entity: ENTITIES.dataset, type: response.data_types[0], typeHeader: _t('Data Type'), response})
                 })
             }
         }
@@ -189,7 +190,7 @@ export default function EditDataset() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader = {
-                                <EntityViewHeader entity={ENTITIES.dataset} isEditMode={isEditMode()} data={data} /> 
+                                <EntityHeader entity={ENTITIES.dataset} isEditMode={isEditMode()} data={data} /> 
                             }
                             bodyContent={
                                 <Form noValidate validated={validated}>
@@ -211,67 +212,17 @@ export default function EditDataset() {
                                     }
 
                                     {/*/!*Lab Name or ID*!/*/}
-                                    <Form.Group className="mb-3" controlId="lab_dataset_id">
-                                        <Form.Label>{_t('Lab Name or ID')}<span> </span>
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                        {_t('Lab Name or ID')}
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <QuestionCircleFill/>
-                                            </OverlayTrigger>
-                                        </Form.Label>
-                                        <Form.Control type="text" placeholder={_t('Lab Name or ID')}
-                                                      defaultValue={data.lab_dataset_id}
-                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                    </Form.Group>
-
-
+                                    <EntityFormGroup label='Lab Name or ID' placeholder='Lab Name or ID' controlId='lab_dataset_id' value={data.lab_dataset_id} 
+                                        onChange={onChange} text='Lab Name or ID' />
+                                    
                                     {/*/!*Description*!/*/}
-                                    <Form.Group className="mb-3" controlId="description">
-                                        <Form.Label>{_t('Description')}<span> </span>
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            {_t('Add information here which can be used to find this data including lab specific (non-PHI) identifiers.')}
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <QuestionCircleFill/>
-                                            </OverlayTrigger>
-                                        </Form.Label>
-                                        <Form.Control as="textarea" rows={4} defaultValue={data.description}
-                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                    </Form.Group>
-
+                                    <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description} 
+                                        onChange={onChange} text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.' />
 
                                     {/*/!*Additional Information*!/*/}
-                                    <Form.Group className="mb-3" controlId="dataset_info">
-                                        <Form.Label>{_t('Additional Information')}<span> </span>
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            {_t('Add information here which can be used to find this data including lab specific (non-PHI) identifiers.')}
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <QuestionCircleFill/>
-                                            </OverlayTrigger>
-                                        </Form.Label>
-                                        <Form.Control as="textarea" rows={4} defaultValue={data.dataset_info}
-                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                    </Form.Group>
+                                    <EntityFormGroup label='Additional Information' type='textarea' controlId='dataset_info' value={data.dataset_info} 
+                                        onChange={onChange} text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.' />
+                                    
 
                                     {/*/!*Human Gene Sequences*!/*/}
                                     {editMode &&
