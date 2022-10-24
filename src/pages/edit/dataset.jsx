@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button, Col, Container, Form, Row} from 'react-bootstrap';
-import Modal from 'react-bootstrap/Modal';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -19,6 +18,8 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
+import CreateCompleteModal from "../../components/CreateCompleteModal";
+import Spinner from "../../components/custom/Spinner";
 import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 function EditDataset() {
@@ -39,6 +40,7 @@ function EditDataset() {
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
+    const [isLoading, setIsLoading] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
@@ -147,7 +149,6 @@ function EditDataset() {
         log.debug(updated_ancestors);
     }
 
-
     const handleSubmit = async (event) => {
         setDisableSubmit(true);
 
@@ -174,30 +175,37 @@ function EditDataset() {
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
-                await update_create_dataset(uuid, json, editMode, router).then((response) => {
-                    setShowModal(true)
-                    setDisableSubmit(false);
+                await update_create_dataset(uuid, json, editMode, router)
+                    .then((response) => {
+                        setShowModal(true)
+                        setDisableSubmit(false);
 
-                    if ('uuid' in response) {
-                        if (editMode === 'Edit') {
-                            setModalTitle("Dataset Updated")
-                            setModalBody("Your Dataset was updated:\n" +
-                                "Data type: " + response.data_types[0] + "\n" +
-                                "Group Name: " + response.group_name + "\n" +
-                                "SenNet ID: " + response.sennet_id)
+                        if ('uuid' in response) {
+                            if (editMode === 'Edit') {
+                                setModalTitle("Dataset Updated")
+                                setModalBody("Your Dataset was updated:\n" +
+                                    "Data type: " + response.data_types[0] + "\n" +
+                                    "Group Name: " + response.group_name + "\n" +
+                                    "SenNet ID: " + response.sennet_id)
+                            } else {
+                                setModalTitle("Dataset Created")
+                                setModalBody("Your Dataset was created:\n" +
+                                    "Data type: " + response.data_types[0] + "\n" +
+                                    "Group Name: " + response.group_name + "\n" +
+                                    "SenNet ID: " + response.sennet_id)
+                            }
                         } else {
-                            setModalTitle("Dataset Created")
-                            setModalBody("Your Dataset was created:\n" +
-                                "Data type: " + response.data_types[0] + "\n" +
-                                "Group Name: " + response.group_name + "\n" +
-                                "SenNet ID: " + response.sennet_id)
+                            setModalTitle("Error Creating Dataset")
+                            let responseText = ""
+                            if ("error" in response) {
+                                responseText = response.error
+                            } else if ("statusText" in response) {
+                                responseText = response.statusText
+                            }
+                            setModalBody(responseText)
+                            setShowHideModal(true);
                         }
-                    } else {
-                        setModalTitle("Error Creating Dataset")
-                        setModalBody(response.statusText)
-                        setShowHideModal(true);
-                    }
-                })
+                    })
             }
         }
 
@@ -213,13 +221,11 @@ function EditDataset() {
         setContainsHumanGeneticSequences(false)
     }
 
-    if (authorized === null) {
+    const showLoadingSpinner = authorized === null || data === null
+
+    if (showLoadingSpinner || isLoading) {
         return (
-            <div className="text-center p-3">
-                <span>Loading, please wait...</span>
-                <br></br>
-                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-            </div>
+            <Spinner/>
         )
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
@@ -400,29 +406,21 @@ function EditDataset() {
                                             disabled={disableSubmit}>
                                         Submit
                                     </Button>
+
+                                    <CreateCompleteModal
+                                        showModal={showModal}
+                                        modalTitle={modalTitle}
+                                        modalBody={modalBody}
+                                        handleClose={handleClose}
+                                        handleHome={handleHome}
+                                        showCloseButton={showHideModal}
+                                    />
                                 </Form>
                             }
                         />
                     </div>
                 }
-                <AppFooter/>
-
-                <Modal show={showModal}>
-                    <Modal.Header>
-                        <Modal.Title>{modalTitle}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body><p>{modalBody}</p></Modal.Body>
-                    <Modal.Footer>
-                        {showHideModal &&
-                            <Button variant="outline-secondary rounded-0" onClick={handleClose}>
-                                Close
-                            </Button>
-                        }
-                        <Button variant="outline-primary rounded-0" onClick={handleHome}>
-                            Home page
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
+                {!showModal && <AppFooter/>}
             </>
         )
     } else {

@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button, Col, Container, Form, Row} from 'react-bootstrap';
-import Modal from 'react-bootstrap/Modal';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import AncestorId from "../../components/custom/edit/sample/AncestorId";
@@ -14,12 +13,16 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import log from "loglevel";
 import {cleanJson, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, get_user_write_groups, update_create_entity} from "../../lib/services";
+import {get_read_write_privileges, get_user_write_groups, parseJson, update_create_entity} from "../../lib/services";
 import {getCookie} from "cookies-next";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
+import RuiIntegration from "../../components/custom/edit/sample/rui/RuiIntegration";
+import RUIButton from "../../components/custom/edit/sample/rui/RUIButton";
+import CreateCompleteModal from "../../components/CreateCompleteModal";
+import Spinner from "../../components/custom/Spinner";
 import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 function EditSample() {
@@ -31,7 +34,7 @@ function EditSample() {
     const [sourceId, setSourceId] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
-    const [values, setValues] = useState({});
+    const [values, setValues] = useState(null);
     const [showModal, setShowModal] = useState(false)
     const [showHideModal, setShowHideModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
@@ -40,15 +43,19 @@ function EditSample() {
     const [authorized, setAuthorized] = useState(null)
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
+    const [ruiLocation, setRuiLocation] = useState('')
+    const [showRui, setShowRui] = useState(false)
+    const [showRuiButton, setShowRuiButton] = useState(false)
+    const [isLoading, setIsLoading] = useState(null)
 
     const handleClose = () => setShowModal(false);
     const handleHome = () => router.push('/search');
 
     // only executed on init rendering, see the []
     useEffect(() => {
-        get_read_write_privileges().then(response => {
-            setAuthorized(response.write_privs)
-        }).catch(error => log.error(error))
+        get_read_write_privileges()
+            .then(response => setAuthorized(response.write_privs))
+            .catch(log.error)
 
         get_user_write_groups()
             .then(response => {
@@ -57,7 +64,7 @@ function EditSample() {
                 }
                 setUserWriteGroups(response.user_write_groups)
             })
-            .catch(e => log.error(e))
+            .catch(log.error)
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
@@ -88,6 +95,10 @@ function EditSample() {
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     await fetchSource(data.immediate_ancestors[0].uuid);
                 }
+                if (data['rui_location'] !== null) {
+                    setRuiLocation(data['rui_location'])
+                    setShowRuiButton(true)
+                }
             }
         }
 
@@ -112,9 +123,14 @@ function EditSample() {
     const onChange = (e, fieldId, value) => {
         // log.debug('onChange', fieldId, value)
         // use a callback to find the field in the value list and update it
-        setValues((currentValues) => {
-            currentValues[fieldId] = value;
-            return currentValues;
+        setValues((previousValues) => {
+            if (previousValues !== null) {
+                return {...previousValues, [fieldId]: value}
+            } else {
+                return {
+                    [fieldId]: value
+                }
+            }
         });
     };
 
@@ -128,7 +144,6 @@ function EditSample() {
             setSourceId(source.sennet_id)
         }
     }
-
 
     const handleSubmit = async (event) => {
         setDisableSubmit(true);
@@ -147,47 +162,66 @@ function EditSample() {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
+            if (ruiLocation !== '') {
+                values['rui_location'] = parseJson(ruiLocation)
+            }
+
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
 
-            await update_create_entity(uuid, json, editMode, "Sample", router).then((response) => {
-                setShowModal(true)
-                setDisableSubmit(false);
+            await update_create_entity(uuid, json, editMode, "Sample", router)
+                .then((response) => {
+                    setShowModal(true)
+                    setDisableSubmit(false);
 
-                if ('uuid' in response) {
-                    if (editMode === 'Edit') {
-                        setModalTitle("Sample Updated")
-                        setModalBody("Your Sample was updated:\n" +
-                            "Sample category: " + response.sample_category + "\n" +
-                            "Group Name: " + response.group_name + "\n" +
-                            "SenNet ID: " + response.sennet_id)
+                    if ('uuid' in response) {
+                        if (editMode === 'Edit') {
+                            setModalTitle("Sample Updated")
+                            setModalBody("Your Sample was updated:\n" +
+                                "Sample category: " + response.sample_category + "\n" +
+                                "Group Name: " + response.group_name + "\n" +
+                                "SenNet ID: " + response.sennet_id)
+                        } else {
+                            setModalTitle("Sample Created")
+                            setModalBody("Your Sample was created:\n" +
+                                "Sample category: " + response.sample_category + "\n" +
+                                "Group Name: " + response.group_name + "\n" +
+                                "SenNet ID: " + response.sennet_id)
+                        }
                     } else {
-                        setModalTitle("Sample Created")
-                        setModalBody("Your Sample was created:\n" +
-                            "Sample category: " + response.sample_category + "\n" +
-                            "Group Name: " + response.group_name + "\n" +
-                            "SenNet ID: " + response.sennet_id)
+                        setModalTitle("Error Creating Sample")
+                        let responseText = ""
+                        if ("error" in response) {
+                            responseText = response.error
+                        } else if ("statusText" in response) {
+                            responseText = response.statusText
+                        }
+                        setModalBody(responseText)
+                        setShowHideModal(true);
                     }
-                } else {
-                    setModalTitle("Error Creating Sample")
-                    setModalBody(response.statusText)
-                    setShowHideModal(true);
-                }
-            })
+                })
         }
-
 
         setValidated(true);
     };
 
-    if (authorized === null) {
+    if (values !== null && values['sample_category'] === 'organ' &&
+        (values.hasOwnProperty('organ') && values['organ'] !== '' && values['organ'] !== 'other')) {
+        if (!showRuiButton) {
+            setShowRuiButton(true)
+        }
+    } else {
+        if (showRuiButton) {
+            setShowRuiButton(false)
+        }
+    }
+
+    const showLoadingSpinner = authorized === null || data === null
+
+    if (showLoadingSpinner || isLoading) {
         return (
-            <div className="text-center p-3">
-                <span>Loading, please wait...</span>
-                <br></br>
-                <span className="spinner-border spinner-border-lg align-center alert alert-info"></span>
-            </div>
+            <Spinner/>
         )
     } else if (authorized && getCookie('isAuthenticated')) {
         return (
@@ -201,6 +235,17 @@ function EditSample() {
                 {error &&
                     <div className="alert alert-warning" role="alert">{errorMessage}</div>
                 }
+                {showRui &&
+                    <RuiIntegration
+                        organ={values['organ']}
+                        sex={'male'}
+                        user={'Samuel Sedivy'}
+                        blockStartLocation={ruiLocation}
+                        setRuiLocation={setRuiLocation}
+                        setShowRui={setShowRui}
+                    />
+                }
+
                 {data && !error &&
                     <div className="no_sidebar">
                         <Layout
@@ -235,6 +280,7 @@ function EditSample() {
                                 </Container>
                             }
                             bodyContent={
+
                                 <Form noValidate validated={validated}>
                                     {/*Group select*/}
                                     {
@@ -259,7 +305,18 @@ function EditSample() {
 
                                     {/*/!*Tissue Sample Type*!/*/}
                                     {((editMode === 'Edit' && source) || (editMode === 'Create')) &&
-                                        <SampleCategory data={data} source={source} onChange={onChange}/>
+                                        <>
+                                            <SampleCategory
+                                                data={data}
+                                                source={source}
+                                                onChange={onChange}
+                                            />
+                                            <RUIButton
+                                                showRegisterLocationButton={showRuiButton}
+                                                ruiLocation={ruiLocation}
+                                                setShowRui={setShowRui}
+                                            />
+                                        </>
                                     }
 
                                     {/*/!*Preparation Protocol*!/*/}
@@ -270,7 +327,8 @@ function EditSample() {
                                                 overlay={
                                                     <Popover>
                                                         <Popover.Body>
-                                                            The protocol used when procuring or preparing the tissue.
+                                                            The protocol used when procuring or preparing the
+                                                            tissue.
                                                             This must be provided as a protocols.io DOI URL see
                                                             https://www.protocols.io/
                                                         </Popover.Body>
@@ -295,9 +353,11 @@ function EditSample() {
                                                 overlay={
                                                     <Popover>
                                                         <Popover.Body>
-                                                            An identifier used by the lab to identify the specimen, this
+                                                            An identifier used by the lab to identify the specimen,
+                                                            this
                                                             can
-                                                            be an identifier from the system used to track the specimen
+                                                            be an identifier from the system used to track the
+                                                            specimen
                                                             in
                                                             the lab. This field will be entered by the user.
                                                         </Popover.Body>
@@ -376,32 +436,24 @@ function EditSample() {
                                     <Form.Control type="file"/>
                                 </Form.Group> */}
 
-                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit}
+                                            disabled={disableSubmit}>
                                         Submit
                                     </Button>
+                                    <CreateCompleteModal
+                                        showModal={showModal}
+                                        modalTitle={modalTitle}
+                                        modalBody={modalBody}
+                                        handleClose={handleClose}
+                                        handleHome={handleHome}
+                                        showCloseButton={showHideModal}
+                                    />
                                 </Form>
                             }
                         />
                     </div>
                 }
-                <AppFooter/>
-
-                <Modal show={showModal}>
-                    <Modal.Header>
-                        <Modal.Title>{modalTitle}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body><p>{modalBody}</p></Modal.Body>
-                    <Modal.Footer>
-                        {showHideModal &&
-                            <Button variant="outline-secondary rounded-0" onClick={handleClose}>
-                                Close
-                            </Button>
-                        }
-                        <Button variant="outline-primary rounded-0" onClick={handleHome}>
-                            Home page
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
+                {!showModal && <AppFooter/>}
             </>
         )
     } else {
