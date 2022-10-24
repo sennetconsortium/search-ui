@@ -6,7 +6,7 @@ import {
 } from '../lib/services'
 import log from 'loglevel'
 import { APP_ROUTES } from '../config/constants'
-import AppModal from '../components/custom/AppModal'
+import CreateCompleteModal from '../components/CreateCompleteModal'
 import AppContext from './AppContext'
 const EntityContext = createContext()
 
@@ -84,14 +84,26 @@ export const EntityProvider = ({ children }) => {
             
         } else {
             setModalTitle(`Error Creating ${entity}`)
-            setModalBody(response.statusText)
+            let responseText = ""
+            if ("error" in response) {
+                responseText = response.error
+            } else if ("statusText" in response) {
+                responseText = response.statusText
+            }
+            setModalBody(responseText)
             setShowHideModal(true);
         }
     }
 
     const getModal = () => {
-        return <AppModal showHideModal={showHideModal} showModal={showModal} modalBody={modalBody}
-                modalTitle={modalTitle} handleClose={handleClose} handleHome={handleHome} />
+        return <CreateCompleteModal
+        showModal={showModal}
+        modalTitle={modalTitle}
+        modalBody={modalBody}
+        handleClose={handleClose}
+        handleHome={handleHome}
+        showCloseButton={showHideModal}
+    />
     }
 
     return (

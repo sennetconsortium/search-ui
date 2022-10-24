@@ -13,7 +13,6 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
-import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 import AppContext from '../../context/AppContext'
 import { EntityProvider } from '../../context/EntityContext'
@@ -24,6 +23,7 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
 
+
 function EditSource() {
     const { isUnauthorized, getModal, setModalDetails,
         data, setData,
@@ -33,6 +33,7 @@ function EditSource() {
         validated, setValidated,
         userWriteGroups, onChange, 
         editMode, setEditMode,isEditMode,
+        showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit } = useContext(EntityContext)
     const { _t } = useContext(AppContext)
@@ -104,13 +105,16 @@ function EditSource() {
             let json = cleanJson(values);
             let uuid = data.uuid
 
+
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
                 setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
             }).catch((e) => log.error(e))
+
         }
 
         setValidated(true);
     };
+
 
     if ((!data || isUnauthorized()) && !error) {
         return (
@@ -167,14 +171,15 @@ function EditSource() {
                                             disabled={disableSubmit}>
                                         {_t('Submit')}
                                     </Button>
+
+                                    {getModal()}
                                 </Form>
                             }
                         />
                     </div>
                 }
-                <AppFooter/>
+                {!showModal && <AppFooter/>}
 
-                {getModal()}
             </>
         )
     } 

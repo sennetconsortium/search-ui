@@ -92,7 +92,7 @@ function Search() {
                                                          view={TableResults} resultView={TableRowDetail}
                                                 />
                                                 </div>
-                                                
+
                                             }
                                             bodyHeader={
                                                 <React.Fragment>
@@ -112,7 +112,7 @@ function Search() {
                 </SearchProvider>
             </>
         )
-    } 
+    }
 }
 
 export default Search

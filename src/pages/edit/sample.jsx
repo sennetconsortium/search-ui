@@ -10,12 +10,13 @@ import AncestorInformationBox from "../../components/custom/edit/sample/Ancestor
 import log from "loglevel";
 import {cleanJson, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_entity} from "../../lib/services";
+import {update_create_entity, parseJson} from "../../lib/services";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
-import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
+import RuiIntegration from "../../components/custom/edit/sample/rui/RuiIntegration";
+import RUIButton from "../../components/custom/edit/sample/rui/RUIButton";
 
 import AppContext from '../../context/AppContext'
 import { EntityProvider } from '../../context/EntityContext'
@@ -35,8 +36,9 @@ function EditSample() {
         values, setValues,
         errorMessage, setErrorMessage,
         validated, setValidated,
-        userWriteGroups, onChange, 
+        userWriteGroups, 
         editMode, setEditMode, isEditMode,
+        showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit } = useContext(EntityContext)
     const { _t } = useContext(AppContext)
@@ -45,11 +47,14 @@ function EditSample() {
     
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
+    const [ruiLocation, setRuiLocation] = useState('')
+    const [showRui, setShowRui] = useState(false)
+    const [showRuiButton, setShowRuiButton] = useState(false)
+    const [isLoading, setIsLoading] = useState(null)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         
-
         // declare the async data fetching function
         const fetchData = async (uuid) => {
             log.debug('editSample: getting data...', uuid)
@@ -79,6 +84,10 @@ function EditSample() {
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     await fetchSource(data.immediate_ancestors[0].uuid);
                 }
+                if (data['rui_location'] !== null) {
+                    setRuiLocation(data['rui_location'])
+                    setShowRuiButton(true)
+                }
             }
         }
 
@@ -98,6 +107,22 @@ function EditSample() {
             setSourceId(null)
         }
     }, [router]);
+
+
+    // callback provided to components to update the main list of form values
+    const onChange = (e, fieldId, value) => {
+        // log.debug('onChange', fieldId, value)
+        // use a callback to find the field in the value list and update it
+        setValues((previousValues) => {
+            if (previousValues !== null) {
+                return {...previousValues, [fieldId]: value}
+            } else {
+                return {
+                    [fieldId]: value
+                }
+            }
+        });
+    };
 
     const fetchSource = async (sourceId) => {
         let source = await fetchEntity(sourceId);
@@ -127,9 +152,14 @@ function EditSample() {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
+            if (ruiLocation !== '') {
+                values['rui_location'] = parseJson(ruiLocation)
+            }
+
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
+
 
             await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
                 setModalDetails({entity: ENTITIES.sample, type: response.sample_category, 
@@ -140,6 +170,18 @@ function EditSample() {
 
         setValidated(true);
     };
+
+
+    if (values !== null && values['sample_category'] === 'organ' &&
+        (values.hasOwnProperty('organ') && values['organ'] !== '' && values['organ'] !== 'other')) {
+        if (!showRuiButton) {
+            setShowRuiButton(true)
+        }
+    } else {
+        if (showRuiButton) {
+            setShowRuiButton(false)
+        }
+    }
 
     if ((!data || isUnauthorized()) && !error) {
         return (
@@ -157,6 +199,17 @@ function EditSample() {
                 {error &&
                     <Alert message={errorMessage} />
                 }
+                {showRui &&
+                    <RuiIntegration
+                        organ={values['organ']}
+                        sex={'male'}
+                        user={'Samuel Sedivy'}
+                        blockStartLocation={ruiLocation}
+                        setRuiLocation={setRuiLocation}
+                        setShowRui={setShowRui}
+                    />
+                }
+
                 {data && !error &&
                     <div className="no_sidebar">
                         <Layout
@@ -165,6 +218,7 @@ function EditSample() {
                                
                             }
                             bodyContent={
+
                                 <Form noValidate validated={validated}>
                                     {/*Group select*/}
                                     {
@@ -188,8 +242,16 @@ function EditSample() {
                                     }
 
                                     {/*/!*Tissue Sample Type*!/*/}
+
                                     {((isEditMode() && source) || (editMode === 'Create')) &&
+                                        <>
                                         <SampleCategory data={data} source={source} onChange={onChange}/>
+                                        <RUIButton
+                                                showRegisterLocationButton={showRuiButton}
+                                                ruiLocation={ruiLocation}
+                                                setShowRui={setShowRui}
+                                            />
+                                        </>
                                     }
 
                                     {/*/!*Preparation Protocol*!/*/}
@@ -203,6 +265,7 @@ function EditSample() {
                                         onChange={onChange} text='An identifier used by the lab to identify the specimen, this
                                         can be an identifier from the system used to track the specimen in the lab. This field will be entered by the user.' />
 
+
                                     
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description} 
@@ -211,15 +274,16 @@ function EditSample() {
 
                                     <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
                                         {_t('Submit')}
+
                                     </Button>
+                                    {getModal()}
                                 </Form>
                             }
                         />
                     </div>
                 }
-                <AppFooter/>
 
-                {getModal()}
+                {!showModal && <AppFooter/>}
             </>
         )
     } 

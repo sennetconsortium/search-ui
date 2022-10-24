@@ -17,7 +17,6 @@ import Unauthorized from '../../components/custom/layout/Unauthorized'
 import AppFooter from '../../components/custom/layout/AppFooter'
 import GroupSelect from '../../components/custom/edit/GroupSelect'
 import Header from '../../components/custom/layout/Header'
-import HipaaModal from '../../components/custom/edit/sample/HipaaModal'
 
 import AppContext from '../../context/AppContext'
 import { EntityProvider } from '../../context/EntityContext'
@@ -37,15 +36,16 @@ export default function EditDataset() {
         validated, setValidated,
         userWriteGroups, onChange, 
         editMode, setEditMode, isEditMode,
+        showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit } = useContext(EntityContext)
     const { _t } = useContext(AppContext)
 
+
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
-    
-    
+
     // only executed on init rendering, see the []
     useEffect(() => {
         
@@ -171,6 +171,7 @@ export default function EditDataset() {
         setContainsHumanGeneticSequences(false)
     }
 
+
     if ((!data || isUnauthorized()) && !error) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
@@ -274,14 +275,14 @@ export default function EditDataset() {
                                         {_t('Submit')}
 
                                     </Button>
+
+                                    {getModal()}
                                 </Form>
                             }
                         />
                     </div>
                 }
-                <AppFooter/>
-
-                {getModal()}
+                {!showModal && <AppFooter/>}
             </>
         )
     }

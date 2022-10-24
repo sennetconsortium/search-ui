@@ -23,9 +23,9 @@ export default class HipaaModal extends React.Component {
         return (
             <>
                 <Alert variant='danger'>
-                    <span class="hipaa-alert">
-                        <ShieldShaded/> - Do not provide any Protected Health Information. This includes the <a
-                        href="javascript:void(0)" onClick={this.showModal}>18 identifiers specified by HIPAA</a>
+                    <span className="hipaa-alert">
+                        <ShieldShaded/> - Do not provide any Protected Health Information. This includes the <span
+                        className="link" onClick={this.showModal}>18 identifiers specified by HIPAA</span>
                     </span>
                 </Alert>
                 <Modal size="xl" show={this.state.showModal}>

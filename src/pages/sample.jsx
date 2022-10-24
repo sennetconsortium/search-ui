@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button} from 'react-bootstrap';
@@ -7,7 +7,6 @@ import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
-// import Provenance from "../components/custom/entities/sample/Provenance";
 import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
@@ -36,7 +35,7 @@ function ViewSample() {
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-            
+
 
             log.debug('sample: getting data...', uuid)
             // get the data from the api
@@ -83,14 +82,14 @@ function ViewSample() {
 
     if (!data && !error) {
         return (
-            isUnauthorized() ? <Unauthorized /> : <Spinner />
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
         return (
             <>
                 {data && <Header title={`${data.sennet_id} | Sample | SenNet`}></Header> }
 
-                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()} />
+                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
                     <Alert message={errorMessage} />
@@ -213,7 +212,7 @@ function ViewSample() {
                 <AppFooter/>
             </>
         )
-    } 
+    }
 }
 
 
