@@ -1,7 +1,7 @@
 import React from "react";
 import {getRootURL} from "../../../config/config";
 import {Col, Container, Row} from 'react-bootstrap'
-
+import { APP_ROUTES } from "../../../config/constants";
 
 const Unauthorized = () => {
     return (
@@ -14,7 +14,7 @@ const Unauthorized = () => {
                             Access denied
                         </p>
                         <p>
-                            Check your permissions and log in <a href={getRootURL()}>here</a>
+                            Check your permissions and log in <a href={APP_ROUTES.login}>here</a>
                         </p>
                     </div>
                 </Col>

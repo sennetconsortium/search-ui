@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button} from 'react-bootstrap';
@@ -6,7 +6,6 @@ import {FiletypeJson} from 'react-bootstrap-icons';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
-// import Provenance from "../components/custom/entities/sample/Provenance";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
@@ -20,6 +19,7 @@ import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
+import Alert from "../components/custom/Alert";
 
 function ViewSource() {
     const router = useRouter()
@@ -27,13 +27,13 @@ function ViewSource() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isLoggedIn, isUnauthorized} = useContext(AppContext);
+    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-            
+
             log.debug('source: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
@@ -64,19 +64,19 @@ function ViewSource() {
         }
     }, [router]);
 
-    if (!data) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
-            isUnauthorized() ? <Unauthorized /> : <Spinner />
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
         return (
             <>
-                <Header title={`${data.sennet_id} | Source | SenNet`}></Header>
+                {data && <Header title={`${data.sennet_id} | Source | SenNet`}></Header>}
 
-                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()} />
+                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
-                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                    <Alert message={errorMessage} />
                 }
                 {data && !error &&
                     <Layout
@@ -186,7 +186,7 @@ function ViewSource() {
                 <AppFooter/>
             </>
         )
-    } 
+    }
 
 }
 

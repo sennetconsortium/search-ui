@@ -10,7 +10,7 @@ export default class SampleCategory extends React.Component {
         super(props);
         this.state = {
             organ_group_hide: 'none',
-            organ_other_hide: 'none'
+            organ_other_hide: 'none',
         };
 
         // Show organ input group if sample category is 'organ'

@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Button} from 'react-bootstrap';
@@ -6,7 +6,6 @@ import {BoxArrowUpRight, CircleFill, FiletypeJson} from 'react-bootstrap-icons';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
-// import Provenance from "../components/custom/entities/sample/Provenance";
 import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
@@ -21,6 +20,7 @@ import Header from "../components/custom/layout/Header";
 import Files from "../components/custom/entities/dataset/Files";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
+import Alert from "../components/custom/Alert";
 
 function ViewDataset() {
     const router = useRouter()
@@ -28,15 +28,16 @@ function ViewDataset() {
     const [ancestors, setAncestors] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
+    const [statusCode, setStatusCode] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    
-    const {isRegisterHidden, isLoggedIn, isUnauthorized} = useContext(AppContext)
+
+    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-            
+
 
             log.debug('dataset: getting data...', uuid)
             // get the data from the api
@@ -48,6 +49,7 @@ function ViewDataset() {
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
+                setStatusCode(response.statusCode)
             } else {
                 // set state with the result
                 setData(data);
@@ -85,19 +87,19 @@ function ViewDataset() {
         setAncestors(new_ancestors)
     }
 
-    if (!data) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
-            isUnauthorized() ? <Unauthorized /> : <Spinner />
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
         return (
             <>
-                <Header title={`${data.sennet_id} | Dataset | SenNet`}></Header>
+                {data && <Header title={`${data.sennet_id} | Dataset | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
-                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                    <Alert message={errorMessage} />
                 }
                 {data && !error &&
                     <Layout
@@ -242,7 +244,7 @@ function ViewDataset() {
                 <AppFooter/>
             </>
         )
-    } 
+    }
 }
 
 
