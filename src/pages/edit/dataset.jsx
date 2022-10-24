@@ -170,7 +170,7 @@ export default function EditDataset() {
         setContainsHumanGeneticSequences(false)
     }
 
-    if (!data) {
+    if (!data || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
         )

@@ -140,7 +140,7 @@ function EditSample() {
         setValidated(true);
     };
 
-    if (!data) {
+    if (!data || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
         )
