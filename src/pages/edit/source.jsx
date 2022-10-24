@@ -25,7 +25,7 @@ import Alert from "../../components/custom/Alert";
 
 
 function EditSource() {
-    const { isUnauthorized, getModal, setModalDetails,
+    const { isUnauthorized, isAuthorizing, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -116,7 +116,7 @@ function EditSource() {
     };
 
 
-    if ((!data || isUnauthorized()) && !error) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
         )

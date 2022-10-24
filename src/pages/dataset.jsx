@@ -28,9 +28,10 @@ function ViewDataset() {
     const [ancestors, setAncestors] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
+    const [statusCode, setStatusCode] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isLoggedIn, isUnauthorized} = useContext(AppContext)
+    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -48,6 +49,7 @@ function ViewDataset() {
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
+                setStatusCode(response.statusCode)
             } else {
                 // set state with the result
                 setData(data);
@@ -85,7 +87,7 @@ function ViewDataset() {
         setAncestors(new_ancestors)
     }
 
-    if (!data && !error) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )

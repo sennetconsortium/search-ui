@@ -28,7 +28,7 @@ import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
 
 export default function EditDataset() {
-    const { isUnauthorized, getModal, setModalDetails,
+    const { isUnauthorized, isAuthorizing, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -172,11 +172,12 @@ export default function EditDataset() {
     }
 
 
-    if ((!data || isUnauthorized()) && !error) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
         )
     } else {
+       
         return (
             <>
                 {editMode &&

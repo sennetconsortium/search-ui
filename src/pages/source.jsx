@@ -27,7 +27,7 @@ function ViewSource() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isLoggedIn, isUnauthorized} = useContext(AppContext);
+    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -64,7 +64,7 @@ function ViewSource() {
         }
     }, [router]);
 
-    if (!data && !error) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )

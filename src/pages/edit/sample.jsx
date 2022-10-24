@@ -30,7 +30,7 @@ import Alert from "../../components/custom/Alert";
 
 
 function EditSample() {
-    const { isUnauthorized, getModal, setModalDetails,
+    const { isUnauthorized, isAuthorizing, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -183,7 +183,7 @@ function EditSample() {
         }
     }
 
-    if ((!data || isUnauthorized()) && !error) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
         )

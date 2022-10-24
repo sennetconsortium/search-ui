@@ -33,6 +33,10 @@ export const EntityProvider = ({ children }) => {
         return authorized === false
     }
 
+    const isAuthorizing = () => {
+        return authorized === null
+    }
+
     const isEditMode = () => {
         return editMode === 'Edit'
     }
@@ -109,7 +113,7 @@ export const EntityProvider = ({ children }) => {
     return (
         <EntityContext.Provider
             value={{
-                isUnauthorized, 
+                isUnauthorized, isAuthorizing,
                 getModal, setModalDetails,
                 isEditMode,
                 data, setData,

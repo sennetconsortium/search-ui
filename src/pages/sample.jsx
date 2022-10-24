@@ -80,7 +80,7 @@ function ViewSample() {
         }
     }
 
-    if (!data && !error) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
