@@ -15,6 +15,7 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
+import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 import AppContext from '../../context/AppContext'
 import { EntityProvider } from '../../context/EntityContext'

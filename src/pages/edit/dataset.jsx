@@ -1,4 +1,3 @@
-
 import {useEffect, useState, useContext} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -18,6 +17,7 @@ import Unauthorized from '../../components/custom/layout/Unauthorized'
 import AppFooter from '../../components/custom/layout/AppFooter'
 import GroupSelect from '../../components/custom/edit/GroupSelect'
 import Header from '../../components/custom/layout/Header'
+import HipaaModal from '../../components/custom/edit/sample/HipaaModal'
 
 import AppContext from '../../context/AppContext'
 import { EntityProvider } from '../../context/EntityContext'
@@ -271,6 +271,7 @@ export default function EditDataset() {
 
                                     <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
                                         {_t('Submit')}
+
                                     </Button>
                                 </Form>
                             }

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './style.module.css'
 import {Table} from 'react-bootstrap';
-import {checkFilterEntityType, checkMultipleFilterEntityType, getStatusColor} from "./js/functions";
+import {checkFilterEntityType, checkMultipleFilterEntityType, displayBodyHeader, getStatusColor} from "./js/functions";
 import Badge from 'react-bootstrap/Badge';
 
 
@@ -34,8 +34,7 @@ const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTyp
         <tr key="results_detail"
             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
             <td>
-                {result.created_by_user_displayname.raw}<br></br>
-                {result.created_by_user_email.raw}
+                {result.created_by_user_displayname.raw}
             </td>
             <td>{result.sennet_id.raw}</td>
             {hasMultipleEntityTypes &&
@@ -49,7 +48,7 @@ const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTyp
             </td>
             <td>
                 {result.sample_category ? (
-                    <>{result.sample_category.raw}</>
+                    <>{displayBodyHeader(result.sample_category.raw)}</>
                 ) : null
                 }
             </td>
@@ -167,7 +166,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                             </td>
                                             <td>
                                                 {result.source_type ? (
-                                                    <>{result.source_type.raw}</>
+                                                    <>{displayBodyHeader(result.source_type.raw)}</>
                                                 ) : null
                                                 }
                                             </td>
