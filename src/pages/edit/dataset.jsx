@@ -1,65 +1,54 @@
-import React, {useEffect, useState} from "react";
-import {useRouter} from 'next/router';
-import 'bootstrap/dist/css/bootstrap.css';
-import {Button, Col, Container, Form, Row} from 'react-bootstrap';
-import {Layout} from "@elastic/react-search-ui-views";
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
-import {QuestionCircleFill} from "react-bootstrap-icons";
-import log from "loglevel";
-import {cleanJson, fetchEntity, getRequestHeaders} from "../../components/custom/js/functions";
-import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {get_read_write_privileges, get_user_write_groups, update_create_dataset} from "../../lib/services";
-import DataTypes from "../../components/custom/edit/dataset/DataTypes";
-import AncestorIds from "../../components/custom/edit/dataset/AncestorIds";
-import {getCookie} from "cookies-next";
-import Unauthorized from "../../components/custom/layout/Unauthorized";
-import AppFooter from "../../components/custom/layout/AppFooter";
-import GroupSelect from "../../components/custom/edit/GroupSelect";
-import Header from "../../components/custom/layout/Header";
-import CreateCompleteModal from "../../components/CreateCompleteModal";
-import Spinner from "../../components/custom/Spinner";
-import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
+import {useEffect, useState, useContext} from 'react'
+import {useRouter} from 'next/router'
+import 'bootstrap/dist/css/bootstrap.css'
+import {Button, Form } from 'react-bootstrap'
+import {Layout} from '@elastic/react-search-ui-views'
+import '@elastic/react-search-ui-views/lib/styles/styles.css'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
+import Popover from 'react-bootstrap/Popover'
+import {QuestionCircleFill} from 'react-bootstrap-icons'
+import log from 'loglevel'
+import { update_create_dataset} from '../../lib/services'
+import {cleanJson, fetchEntity, getRequestHeaders} from '../../components/custom/js/functions'
+import AppNavbar from '../../components/custom/layout/AppNavbar'
+import DataTypes from '../../components/custom/edit/dataset/DataTypes'
+import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
+import Unauthorized from '../../components/custom/layout/Unauthorized'
+import AppFooter from '../../components/custom/layout/AppFooter'
+import GroupSelect from '../../components/custom/edit/GroupSelect'
+import Header from '../../components/custom/layout/Header'
 
-function EditDataset() {
+import AppContext from '../../context/AppContext'
+import { EntityProvider } from '../../context/EntityContext'
+import EntityContext from '../../context/EntityContext'
+import Spinner from '../../components/custom/Spinner'
+import { ENTITIES } from '../../config/constants'
+import EntityHeader from '../../components/custom/layout/entity/Header'
+import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
+import Alert from '../../components/custom/Alert'
+
+export default function EditDataset() {
+    const { isUnauthorized, isAuthorizing, getModal, setModalDetails,
+        data, setData,
+        error, setError,
+        values, setValues,
+        errorMessage, setErrorMessage,
+        validated, setValidated,
+        userWriteGroups, onChange, 
+        editMode, setEditMode, isEditMode,
+        showModal,
+        selectedUserWriteGroupUuid,
+        disableSubmit, setDisableSubmit } = useContext(EntityContext)
+    const { _t } = useContext(AppContext)
+
+
     const router = useRouter()
-    const [validated, setValidated] = useState(false);
-    const [editMode, setEditMode] = useState(null)
-    const [data, setData] = useState(null)
     const [ancestors, setAncestors] = useState(null)
-    const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState(null)
-    const [values, setValues] = useState({});
-    const [showModal, setShowModal] = useState(false)
-    const [showHideModal, setShowHideModal] = useState(false)
-    const [modalBody, setModalBody] = useState(null)
-    const [modalTitle, setModalTitle] = useState(null)
-    const [disableSubmit, setDisableSubmit] = useState(false)
-    const [authorized, setAuthorized] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
-    const [userWriteGroups, setUserWriteGroups] = useState([])
-    const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] = useState(null)
-    const [isLoading, setIsLoading] = useState(null)
-
-    const handleClose = () => setShowModal(false);
-    const handleHome = () => router.push('/search');
 
     // only executed on init rendering, see the []
     useEffect(() => {
-        get_read_write_privileges().then(response => {
-            setAuthorized(response.write_privs)
-        }).catch(error => log.error(error))
-
-        get_user_write_groups()
-            .then(response => {
-                if (response.user_write_groups.length === 1) {
-                    setSelectedUserWriteGroupUuid(response.user_write_groups[0].uuid)
-                }
-                setUserWriteGroups(response.user_write_groups)
-            })
-            .catch(e => log.error(e))
-
+        
         // declare the async data fetching function
         const fetchData = async (uuid) => {
             log.debug('editDataset: getting data...', uuid)
@@ -111,17 +100,6 @@ function EditDataset() {
             setAncestors(null)
         }
     }, [router]);
-
-    // callback provided to components to update the main list of form values
-    const onChange = (e, fieldId, value) => {
-        // use a callback to find the field in the value list and update it
-        setValues((currentValues) => {
-            // log.info(currentValues)
-            currentValues[fieldId] = value;
-            return currentValues;
-        });
-
-    };
 
     async function fetchAncestors(ancestor_uuids) {
         let new_ancestors = []
@@ -175,37 +153,9 @@ function EditDataset() {
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
-                await update_create_dataset(uuid, json, editMode, router)
-                    .then((response) => {
-                        setShowModal(true)
-                        setDisableSubmit(false);
-
-                        if ('uuid' in response) {
-                            if (editMode === 'Edit') {
-                                setModalTitle("Dataset Updated")
-                                setModalBody("Your Dataset was updated:\n" +
-                                    "Data type: " + response.data_types[0] + "\n" +
-                                    "Group Name: " + response.group_name + "\n" +
-                                    "SenNet ID: " + response.sennet_id)
-                            } else {
-                                setModalTitle("Dataset Created")
-                                setModalBody("Your Dataset was created:\n" +
-                                    "Data type: " + response.data_types[0] + "\n" +
-                                    "Group Name: " + response.group_name + "\n" +
-                                    "SenNet ID: " + response.sennet_id)
-                            }
-                        } else {
-                            setModalTitle("Error Creating Dataset")
-                            let responseText = ""
-                            if ("error" in response) {
-                                responseText = response.error
-                            } else if ("statusText" in response) {
-                                responseText = response.statusText
-                            }
-                            setModalBody(responseText)
-                            setShowHideModal(true);
-                        }
-                    })
+                await update_create_dataset(uuid, json, editMode, router).then((response) => {
+                    setModalDetails({entity: ENTITIES.dataset, type: (response.data_types ? response.data_types[0] : null), typeHeader: _t('Data Type'), response})
+                }).catch((e) => log.error(e))
             }
         }
 
@@ -221,13 +171,13 @@ function EditDataset() {
         setContainsHumanGeneticSequences(false)
     }
 
-    const showLoadingSpinner = authorized === null || data === null
 
-    if (showLoadingSpinner || isLoading) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
-            <Spinner/>
+            isUnauthorized() ? <Unauthorized /> : <Spinner />
         )
-    } else if (authorized && getCookie('isAuthenticated')) {
+    } else {
+       
         return (
             <>
                 {editMode &&
@@ -237,46 +187,19 @@ function EditDataset() {
                 <AppNavbar/>
 
                 {error &&
-                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                    <Alert message={errorMessage} />
                 }
                 {data && !error &&
                     <div className="no_sidebar">
                         <Layout
-                            bodyHeader={
-                                <Container className="px-0" fluid={true}>
-                                    <Row md={12}>
-                                        <h4>Dataset Information</h4>
-                                    </Row>
-                                    <Row>
-                                        <HipaaModal/>
-                                    </Row>
-                                    {editMode === 'Edit' &&
-                                        <>
-                                            <Row>
-                                                <Col md={6}><h5>SenNet ID: {data.sennet_id}</h5></Col>
-                                                <Col md={6}><h5>Group: {data.group_name}</h5></Col>
-                                            </Row>
-                                            <Row>
-                                                <Col md={6}><h5>Entered By: {data.created_by_user_email}</h5></Col>
-                                                <Col md={6}><h5>Entry Date: {new Intl.DateTimeFormat('en-US', {
-                                                    year: 'numeric',
-                                                    month: '2-digit',
-                                                    day: '2-digit',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                    second: '2-digit'
-                                                }).format(data.created_timestamp)}</h5></Col>
-                                            </Row>
-                                        </>
-                                    }
-
-                                </Container>
+                            bodyHeader = {
+                                <EntityHeader entity={ENTITIES.dataset} isEditMode={isEditMode()} data={data} /> 
                             }
                             bodyContent={
                                 <Form noValidate validated={validated}>
                                     {/*Group select*/}
                                     {
-                                        !(userWriteGroups.length === 1 || editMode === 'Edit') &&
+                                        !(userWriteGroups.length === 1 || isEditMode()) &&
                                         <GroupSelect
                                             data={data}
                                             groups={userWriteGroups}
@@ -292,80 +215,28 @@ function EditDataset() {
                                     }
 
                                     {/*/!*Lab Name or ID*!/*/}
-                                    <Form.Group className="mb-3" controlId="lab_dataset_id">
-                                        <Form.Label>Lab Name or ID<span> </span>
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            Lab Name or ID
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <QuestionCircleFill/>
-                                            </OverlayTrigger>
-                                        </Form.Label>
-                                        <Form.Control type="text" placeholder="Lab Name or ID"
-                                                      defaultValue={data.lab_dataset_id}
-                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                    </Form.Group>
-
-
+                                    <EntityFormGroup label='Lab Name or ID' placeholder='Lab Name or ID' controlId='lab_dataset_id' value={data.lab_dataset_id} 
+                                        onChange={onChange} text='Lab Name or ID' />
+                                    
                                     {/*/!*Description*!/*/}
-                                    <Form.Group className="mb-3" controlId="description">
-                                        <Form.Label>Description<span> </span>
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            Add information here which can be used to find this data
-                                                            including lab specific (non-PHI) identifiers.
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <QuestionCircleFill/>
-                                            </OverlayTrigger>
-                                        </Form.Label>
-                                        <Form.Control as="textarea" rows={4} defaultValue={data.description}
-                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                    </Form.Group>
-
+                                    <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description} 
+                                        onChange={onChange} text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.' />
 
                                     {/*/!*Additional Information*!/*/}
-                                    <Form.Group className="mb-3" controlId="dataset_info">
-                                        <Form.Label>Additional Information<span> </span>
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            Add information here which can be used to find this data
-                                                            including lab specific (non-PHI) identifiers.
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }
-                                            >
-                                                <QuestionCircleFill/>
-                                            </OverlayTrigger>
-                                        </Form.Label>
-                                        <Form.Control as="textarea" rows={4} defaultValue={data.dataset_info}
-                                                      onChange={e => onChange(e, e.target.id, e.target.value)}/>
-                                    </Form.Group>
+                                    <EntityFormGroup label='Additional Information' type='textarea' controlId='dataset_info' value={data.dataset_info} 
+                                        onChange={onChange} text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.' />
+                                    
 
                                     {/*/!*Human Gene Sequences*!/*/}
                                     {editMode &&
                                         <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
-                                            <Form.Label>Human Gene Sequences <span className="required">* </span>
+                                            <Form.Label>{_t('Human Gene Sequences')} <span className="required">* </span>
                                                 <OverlayTrigger
                                                     placement="top"
                                                     overlay={
                                                         <Popover>
                                                             <Popover.Body>
-                                                                Does this data contain any human genetic sequences?
+                                                                {_t('Does this data contain any human genetic sequences?')}
                                                             </Popover.Body>
                                                         </Popover>
                                                     }
@@ -373,8 +244,7 @@ function EditDataset() {
                                                     <QuestionCircleFill/>
                                                 </OverlayTrigger>
                                             </Form.Label>
-                                            <div className="mb-2 text-muted">Does this data contain any human genetic
-                                                sequences?
+                                            <div className="mb-2 text-muted">{_t('Does this data contain any human genetic sequences?')}
                                             </div>
                                             <Form.Check
                                                 required
@@ -382,7 +252,7 @@ function EditDataset() {
                                                 label="No"
                                                 name="contains_human_genetic_sequences"
                                                 value={false}
-                                                defaultChecked={(data.contains_human_genetic_sequences === false && editMode === 'Edit') ? true : false}
+                                                defaultChecked={(data.contains_human_genetic_sequences === false && isEditMode()) ? true : false}
                                                 onChange={handleContainsHumanGeneticSequencesNo}
                                             />
                                             <Form.Check
@@ -402,19 +272,12 @@ function EditDataset() {
                                         <DataTypes values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit}
-                                            disabled={disableSubmit}>
-                                        Submit
+                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
+                                        {_t('Submit')}
+
                                     </Button>
 
-                                    <CreateCompleteModal
-                                        showModal={showModal}
-                                        modalTitle={modalTitle}
-                                        modalBody={modalBody}
-                                        handleClose={handleClose}
-                                        handleHome={handleHome}
-                                        showCloseButton={showHideModal}
-                                    />
+                                    {getModal()}
                                 </Form>
                             }
                         />
@@ -423,12 +286,12 @@ function EditDataset() {
                 {!showModal && <AppFooter/>}
             </>
         )
-    } else {
-        return (
-            <Unauthorized/>
-        )
     }
 }
 
+EditDataset.withWrapper = function(page) {
+    return <EntityProvider>{page}</EntityProvider>
+}
 
-export default EditDataset
+
+

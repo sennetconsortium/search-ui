@@ -19,6 +19,7 @@ import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
+import Alert from "../components/custom/Alert";
 
 function ViewSource() {
     const router = useRouter()
@@ -26,7 +27,7 @@ function ViewSource() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isLoggedIn, isUnauthorized} = useContext(AppContext);
+    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -63,19 +64,19 @@ function ViewSource() {
         }
     }, [router]);
 
-    if (!data) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
         return (
             <>
-                <Header title={`${data.sennet_id} | Source | SenNet`}></Header>
+                {data && <Header title={`${data.sennet_id} | Source | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
-                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                    <Alert message={errorMessage} />
                 }
                 {data && !error &&
                     <Layout
