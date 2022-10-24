@@ -26,6 +26,7 @@ import Spinner from '../../components/custom/Spinner'
 import { ENTITIES } from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
+import Alert from '../../components/custom/Alert'
 
 export default function EditDataset() {
     const { isUnauthorized, getModal, setModalDetails,
@@ -170,7 +171,7 @@ export default function EditDataset() {
         setContainsHumanGeneticSequences(false)
     }
 
-    if (!data || isUnauthorized()) {
+    if ((!data || isUnauthorized()) && !error) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
         )
@@ -184,7 +185,7 @@ export default function EditDataset() {
                 <AppNavbar/>
 
                 {error &&
-                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                    <Alert message={errorMessage} />
                 }
                 {data && !error &&
                     <div className="no_sidebar">

@@ -22,6 +22,7 @@ import Spinner from '../../components/custom/Spinner'
 import { ENTITIES } from "../../config/constants"
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
+import Alert from "../../components/custom/Alert";
 
 function EditSource() {
     const { isUnauthorized, getModal, setModalDetails,
@@ -111,7 +112,7 @@ function EditSource() {
         setValidated(true);
     };
 
-    if (!data || isUnauthorized()) {
+    if ((!data || isUnauthorized()) && !error) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
         )
@@ -125,7 +126,7 @@ function EditSource() {
                 <AppNavbar/>
 
                 {error &&
-                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                    <Alert message={errorMessage} />
                 }
                 {data && !error &&
                     <div className="no_sidebar">
