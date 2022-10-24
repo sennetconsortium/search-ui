@@ -150,7 +150,6 @@ function EditDataset() {
     }
 
     const handleSubmit = async (event) => {
-        setIsLoading(true)
         setDisableSubmit(true);
 
         const form = event.currentTarget.parentElement;
@@ -158,13 +157,11 @@ function EditDataset() {
             event.preventDefault();
             event.stopPropagation();
             log.debug("Form is invalid")
-            setIsLoading(false)
             setDisableSubmit(false);
         } else {
             event.preventDefault();
             if (values['direct_ancestor_uuids'] === undefined || values['direct_ancestor_uuids'].length === 0) {
                 event.stopPropagation();
-                setIsLoading(false)
                 setDisableSubmit(false);
             } else {
 
@@ -180,7 +177,6 @@ function EditDataset() {
 
                 await update_create_dataset(uuid, json, editMode, router)
                     .then((response) => {
-                        setIsLoading(false)
                         setShowModal(true)
                         setDisableSubmit(false);
 
@@ -201,7 +197,7 @@ function EditDataset() {
                         } else {
                             setModalTitle("Error Creating Dataset")
                             let responseText = ""
-                            if("error" in response) {
+                            if ("error" in response) {
                                 responseText = response.error
                             } else if ("statusText" in response) {
                                 responseText = response.statusText
@@ -243,7 +239,7 @@ function EditDataset() {
                 {error &&
                     <div className="alert alert-warning" role="alert">{errorMessage}</div>
                 }
-                {data && !error && !showModal &&
+                {data && !error &&
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
@@ -410,22 +406,21 @@ function EditDataset() {
                                             disabled={disableSubmit}>
                                         Submit
                                     </Button>
+
+                                    <CreateCompleteModal
+                                        showModal={showModal}
+                                        modalTitle={modalTitle}
+                                        modalBody={modalBody}
+                                        handleClose={handleClose}
+                                        handleHome={handleHome}
+                                        showCloseButton={showHideModal}
+                                    />
                                 </Form>
                             }
                         />
                     </div>
                 }
-
                 {!showModal && <AppFooter/>}
-
-                <CreateCompleteModal
-                    showModal={showModal}
-                    modalTitle={modalTitle}
-                    modalBody={modalBody}
-                    handleClose={handleClose}
-                    handleHome={handleHome}
-                    showCloseButton={showHideModal}
-                />
             </>
         )
     } else {

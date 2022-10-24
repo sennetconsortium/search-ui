@@ -146,7 +146,6 @@ function EditSample() {
     }
 
     const handleSubmit = async (event) => {
-        setIsLoading(true)
         setDisableSubmit(true);
 
         const form = event.currentTarget.parentElement;
@@ -154,7 +153,6 @@ function EditSample() {
             event.preventDefault();
             event.stopPropagation();
             log.debug("Form is invalid")
-            setIsLoading(false)
             setDisableSubmit(false);
         } else {
             event.preventDefault();
@@ -174,7 +172,6 @@ function EditSample() {
 
             await update_create_entity(uuid, json, editMode, "Sample", router)
                 .then((response) => {
-                    setIsLoading(false)
                     setShowModal(true)
                     setDisableSubmit(false);
 
@@ -249,7 +246,7 @@ function EditSample() {
                     />
                 }
 
-                {data && !error && !showModal &&
+                {data && !error &&
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
@@ -283,6 +280,7 @@ function EditSample() {
                                 </Container>
                             }
                             bodyContent={
+
                                 <Form noValidate validated={validated}>
                                     {/*Group select*/}
                                     {
@@ -329,7 +327,8 @@ function EditSample() {
                                                 overlay={
                                                     <Popover>
                                                         <Popover.Body>
-                                                            The protocol used when procuring or preparing the tissue.
+                                                            The protocol used when procuring or preparing the
+                                                            tissue.
                                                             This must be provided as a protocols.io DOI URL see
                                                             https://www.protocols.io/
                                                         </Popover.Body>
@@ -354,9 +353,11 @@ function EditSample() {
                                                 overlay={
                                                     <Popover>
                                                         <Popover.Body>
-                                                            An identifier used by the lab to identify the specimen, this
+                                                            An identifier used by the lab to identify the specimen,
+                                                            this
                                                             can
-                                                            be an identifier from the system used to track the specimen
+                                                            be an identifier from the system used to track the
+                                                            specimen
                                                             in
                                                             the lab. This field will be entered by the user.
                                                         </Popover.Body>
@@ -439,22 +440,20 @@ function EditSample() {
                                             disabled={disableSubmit}>
                                         Submit
                                     </Button>
+                                    <CreateCompleteModal
+                                        showModal={showModal}
+                                        modalTitle={modalTitle}
+                                        modalBody={modalBody}
+                                        handleClose={handleClose}
+                                        handleHome={handleHome}
+                                        showCloseButton={showHideModal}
+                                    />
                                 </Form>
                             }
                         />
                     </div>
                 }
-
                 {!showModal && <AppFooter/>}
-
-                <CreateCompleteModal
-                    showModal={showModal}
-                    modalTitle={modalTitle}
-                    modalBody={modalBody}
-                    handleClose={handleClose}
-                    handleHome={handleHome}
-                    showCloseButton={showHideModal}
-                />
             </>
         )
     } else {

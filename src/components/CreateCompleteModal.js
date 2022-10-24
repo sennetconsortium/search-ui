@@ -13,7 +13,7 @@ const CreateCompleteModal = ({showModal, modalTitle, modalBody, handleClose, han
             <Modal.Footer>
                 {showCloseButton &&
                     <Button variant="outline-secondary rounded-0" onClick={handleClose}>
-                        Close
+                        Edit form
                     </Button>
                 }
                 <Button variant="outline-primary rounded-0" onClick={handleHome}>

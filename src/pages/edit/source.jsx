@@ -110,14 +110,12 @@ function EditSource() {
     };
 
     const handleSubmit = async (event) => {
-        setIsLoading(true)
         setDisableSubmit(true);
         const form = event.currentTarget.parentElement;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
             log.debug("Form is invalid")
-            setIsLoading(false)
             setDisableSubmit(false);
         } else {
             event.preventDefault();
@@ -133,7 +131,6 @@ function EditSource() {
 
             await update_create_entity(uuid, json, editMode, "Source", router)
                 .then((response) => {
-                    setIsLoading(false)
                     setShowModal(true)
                     setDisableSubmit(false);
 
@@ -186,7 +183,7 @@ function EditSource() {
                 {error &&
                     <div className="alert alert-warning" role="alert">{errorMessage}</div>
                 }
-                {data && !error && !showModal &&
+                {data && !error &&
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
@@ -331,22 +328,21 @@ function EditSource() {
                                             disabled={disableSubmit}>
                                         Submit
                                     </Button>
+
+                                    <CreateCompleteModal
+                                        showModal={showModal}
+                                        modalTitle={modalTitle}
+                                        modalBody={modalBody}
+                                        handleClose={handleClose}
+                                        handleHome={handleHome}
+                                        showCloseButton={showHideModal}
+                                    />
                                 </Form>
                             }
                         />
                     </div>
                 }
-
                 {!showModal && <AppFooter/>}
-
-                <CreateCompleteModal
-                    showModal={showModal}
-                    modalTitle={modalTitle}
-                    modalBody={modalBody}
-                    handleClose={handleClose}
-                    handleHome={handleHome}
-                    showCloseButton={showHideModal}
-                />
             </>
         )
     } else {
