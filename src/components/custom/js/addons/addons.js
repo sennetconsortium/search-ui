@@ -21,14 +21,12 @@ function addons(source, args) {
     }
 
     setTimeout(() => {
-        for (let key in apps) {
+        for (let app in apps) {
             document
-                .querySelectorAll(`[class*='js-${key}--'], [data-js-${key}]`)
+                .querySelectorAll(`[class*='js-${app}--'], [data-js-${app}]`)
                 .forEach((el) => {
-                    new apps[key](el, {key, data: args.data })
-                })
-
-            
+                    new apps[app](el, {app, data: args.data })
+            })
         }
 
         // Default: Capture all link clicks. 
