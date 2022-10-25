@@ -7,41 +7,189 @@ class Facets extends Addon {
         this.log('Addon > Facets')
         this.facets = this.data.facets
         this.sel = {
-            triggers: '.sui-multi-checkbox-facet__option-input-wrapper, .sui-facet-view-more',
+            wrapper: '.sui-multi-checkbox-facet__option-input-wrapper',
+            more: '.sui-facet-view-more',
             title: '.sui-facet__title',
             label: '.sui-multi-checkbox-facet label',
-            ioText: '.sui-multi-checkbox-facet__input-text'
+            ioText: '.sui-multi-checkbox-facet__input-text',
+            clearFilters: '.clear-filter-button'
         }
         this.groups = ['Organ']
+        this.storageKeys = {
+            filters: 'filters',
+            more: 'moreFilters'
+        }
+        this.timeout = 400
+        this.applied = {}
+        this.setUpMore()
         this.events()
+        this.applyFilters()
     }
 
-    events() {
-        this.el.on('click', this.sel.triggers, ((e) => {
-            setTimeout((() => {
-                this.el.find(this.sel.title).each(((index, el) => {
-                    const $el = $(el)
-                    const txt = $el.text()
-                   
-                    if (this.groups.indexOf(txt) !== -1) {
-                        this.updateFacets($el.parent().find(this.sel.label))
-                    }
-                    
-                }).bind(this))
-
-            }).bind(this), 0)
+    /**
+     * Adds some ids to the more buttons
+     */
+    setUpMore() {
+        $(this.sel.more).each(((index, el) =>{
             
+            if (!$(el).attr('id')) {
+                let mod = $(el).parent().parent().find(this.sel.title).text().replace(/\s/g, '-')
+                $(el).attr('id', `js-facets--more${mod}`)
+            }
         }).bind(this))
     }
 
-    updateFacets($parent) {
+    /**
+     * Get value in storage
+     * @param {string} key 
+     * @returns array
+     */
+    getStorage(key) {
+        let filters = localStorage.getItem(key)
+        return filters ? filters.split(',') : []
+    }
+
+    /**
+     * Get ids of all filters clicked
+     * @returns array
+     */
+    getFilters() {
+        return this.getStorage(this.storageKeys.filters)
+    }
+
+    /**
+     * Get ids of all more buttons clicked
+     * @returns array
+     */
+    getMoreIds() {
+        return this.getStorage(this.storageKeys.more)
+    }
+
+    /**
+     * Saves clicks on filter
+     * @param {*} e 
+     */
+    saveFilter(e) {
+        const filter = this.currentTarget(e).find('input').attr('id')
+        let filters = this.getFilters()
+        const pos = filters.indexOf(filter)
+        if (pos === -1) {
+            if (filter.length) {
+                filters.push(filter)
+            }
+        } else {
+            filters.splice(pos, 1)
+        }
+        
+        localStorage.setItem(this.storageKeys.filters, filters.join(','))
+    }
+
+    /**
+     * Saves clicks on More buttons
+     * @param {*} e 
+     */
+    saveMore(e) {
+        let ids = this.getMoreIds()
+        const id = this.currentTarget(e).attr('id')
+        if (ids.indexOf(id) === -1) {
+            ids.push(id)
+        }
+        localStorage.setItem(this.storageKeys.more, ids.join(','))
+    } 
+
+    /**
+     * Auto select last selected filters stored
+     * @param {boolean} applyMore 
+     * @returns 
+     */
+    applyFilters( applyMore = true) {
+        if (!this.getFilters().length) return
+        const filters = this.getFilters()
+        const ids = this.getMoreIds()
+
+        // First open open more of elements stored
+        if (applyMore) {
+            ids.forEach(((id, index)=> {
+                $(`[id="${id}"]`).trigger('click', {applying: true})
+            }).bind(this))
+        }
+        
+        // Then apply the filters clicked
+        let st0 = setTimeout((() => {
+            
+            filters.forEach(((id, index)=> {
+                let $el = $(`[id="${id}"]`)
+                if (!this.applied[id]) {
+                    $el.parent().trigger('click', {applying: true})
+                }
+                
+                if ($el.length) {
+                    this.applied[id] = true
+                }
+            }).bind(this))
+            
+        }).bind(this), this.timeout)
+        
+    }
+
+    events() {
+        $('body').on('click', this.sel.clearFilters, ((e) => {
+            delete localStorage[this.storageKeys.filters]
+            delete localStorage[this.storageKeys.more]
+        }).bind(this))
+
+        this.el.on('click', this.sel.wrapper, ((e, data) => {
+            let st1 = setTimeout((() => {
+                this.setUpMore()
+                if (data && data.applying) {
+                    this.applyFilters( false )
+                }
+            }), this.timeout)
+            if (data ? !data.applying : true) {
+                this.saveFilter(e)
+            }
+        }).bind(this))
+
+        this.el.on('click', `${this.sel.wrapper},${this.sel.more}`, ((e) => {
+            this.formatFilters(e)
+        }).bind(this))
+
+        this.el.on('click', this.sel.more, ((e, data) => {
+            this.saveMore(e)
+            if (data && data.applying) {
+                this.applyFilters( false )
+            }
+        }).bind(this))
+    }
+
+    /**
+     * Find elements to be formatted
+     * @param {*} e 
+     */
+    formatFilters(e) {
+
+        //Get some delay by triggering the web api
+        let st = setTimeout((() => {
+            this.el.find(this.sel.title).each(((index, el) => {
+                const $el = $(el)
+                const txt = $el.text()
+               
+                if (this.groups.indexOf(txt) !== -1) {
+                    this.updateFilters($el.parent().find(this.sel.label))
+                }
+                
+            }).bind(this))
+
+        }).bind(this), 0) 
+    }
+
+    updateFilters($parent) {
         $parent.find(this.sel.ioText).each(((index, el) => {
             const $el = $(el)
             const key = $el.text()
             let text = this.facets[key] || key
             $el.text(text)
-        }).bind(this))
-        
+        }).bind(this)) 
     }
 }
 
