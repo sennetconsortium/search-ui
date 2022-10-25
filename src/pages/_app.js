@@ -31,10 +31,12 @@ function MyApp({ Component, pageProps }) {
 
     // log.enableAll()
     log.setLevel("debug")
+
+    const withWrapper = Component.withWrapper || ((page) => page)
     return (
         <ErrorBoundary>
             <AppProvider>
-                <Component {...pageProps} />
+                {withWrapper(<Component {...pageProps} />)}
             </AppProvider>
         </ErrorBoundary>
     )

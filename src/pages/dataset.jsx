@@ -20,6 +20,7 @@ import Header from "../components/custom/layout/Header";
 import Files from "../components/custom/entities/dataset/Files";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
+import Alert from "../components/custom/Alert";
 
 function ViewDataset() {
     const router = useRouter()
@@ -27,9 +28,10 @@ function ViewDataset() {
     const [ancestors, setAncestors] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
+    const [statusCode, setStatusCode] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isLoggedIn, isUnauthorized} = useContext(AppContext)
+    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -47,6 +49,7 @@ function ViewDataset() {
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
+                setStatusCode(response.statusCode)
             } else {
                 // set state with the result
                 setData(data);
@@ -84,19 +87,19 @@ function ViewDataset() {
         setAncestors(new_ancestors)
     }
 
-    if (!data) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
         return (
             <>
-                <Header title={`${data.sennet_id} | Dataset | SenNet`}></Header>
+                {data && <Header title={`${data.sennet_id} | Dataset | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
-                    <div className="alert alert-warning" role="alert">{errorMessage}</div>
+                    <Alert message={errorMessage} />
                 }
                 {data && !error &&
                     <Layout

@@ -5,6 +5,7 @@ class Addon {
         this.app = app
         this.keycodes = {
             enter: 'Enter',
+            esc: 'Escape'
         }
     }
 
@@ -27,6 +28,10 @@ class Addon {
      */
     isEnter(e) {
         return e.code === this.keycodes.enter
+    }
+
+    isEsc(e) {
+        return e.code === this.keycodes.esc
     }
 
     static log(msg, fn = 'log', color = '#bada55') {
