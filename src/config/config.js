@@ -16,7 +16,7 @@ export function getAuth() {
     return ''
 }
 
-const nonSupportedRuiOrgans = ['AO', 'BD', 'BS', 'MU']
+const nonSupportedRuiOrgans = ['AO', 'BD', 'BS', 'MU', 'Other']
 
 export function isOrganRuiSupported(organ) {
     return !nonSupportedRuiOrgans.includes(organ)
