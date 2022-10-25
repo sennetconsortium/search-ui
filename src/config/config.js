@@ -16,6 +16,12 @@ export function getAuth() {
     return ''
 }
 
+const nonSupportedRuiOrgans = ['AO', 'BD', 'BS', 'MU']
+
+export function isOrganRuiSupported(organ) {
+    return !nonSupportedRuiOrgans.includes(organ)
+}
+
 export function getUserName() {
     return JSON.parse(getCookie('info')).name
 }

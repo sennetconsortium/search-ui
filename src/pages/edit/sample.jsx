@@ -24,7 +24,7 @@ import RUIButton from "../../components/custom/edit/sample/rui/RUIButton";
 import CreateCompleteModal from "../../components/CreateCompleteModal";
 import Spinner from "../../components/custom/Spinner";
 import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
-import {getUserName} from "../../config/config";
+import {getUserName, isOrganRuiSupported} from "../../config/config";
 
 function EditSample() {
     const router = useRouter()
@@ -208,14 +208,13 @@ function EditSample() {
     };
 
     if (values !== null && values['sample_category'] === 'organ' &&
-        (values.hasOwnProperty('organ') && values['organ'] !== '' && values['organ'] !== 'other')) {
+        (values.hasOwnProperty('organ') && values['organ'] !== '' && values['organ'] !== 'other') &&
+        isOrganRuiSupported(values['organ'])) {
         if (!showRuiButton) {
             setShowRuiButton(true)
         }
-    } else {
-        if (showRuiButton) {
-            setShowRuiButton(false)
-        }
+    } else if (showRuiButton) {
+        setShowRuiButton(false)
     }
 
     const showLoadingSpinner = authorized === null || data === null
