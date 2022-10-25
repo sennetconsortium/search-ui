@@ -1,6 +1,6 @@
 import SearchAPIConnector from "../search-ui/packages/search-api-connector";
-import { getCookie } from 'cookies-next';
-import { APP_ROUTES } from './constants'
+import {getCookie} from 'cookies-next';
+import {APP_ROUTES} from './constants'
 
 import _ from 'lodash';
 
@@ -14,6 +14,10 @@ export function getAuth() {
         return getCookie('groups_token')
     }
     return ''
+}
+
+export function getUserName() {
+    return JSON.parse(getCookie('info')).name
 }
 
 export function getIndex() {
@@ -102,7 +106,7 @@ export const config = {
         ],
         conditionalFacets: {
             // Only show 'sample_category' facet if 'Sample' is selected from the entity type facet
-            sample_category: ({ filters }) => {
+            sample_category: ({filters}) => {
                 return filters.some(
                     (filter) =>
                         filter.field === 'entity_type' &&
@@ -111,7 +115,7 @@ export const config = {
             },
 
             // Only show 'origin_sample' facet if 'Sample' or 'Dataset' is selected from the entity type facet
-            'origin_sample.organ': ({ filters }) => {
+            'origin_sample.organ': ({filters}) => {
                 return filters.some(
                     (filter) =>
                         filter.field === 'entity_type' &&
@@ -121,21 +125,21 @@ export const config = {
             },
         },
         search_fields: {
-            description: { type: 'value' },
-            group_name: { type: 'value' },
-            sennet_id: { type: 'value' },
-            display_doi: { type: 'value' },
-            lab_source_id: { type: 'value' },
-            display_subtype: { type: 'value' },
-            lab_name: { type: 'value' },
-            lab_tissue_sample_id: { type: 'value' },
-            sample_category: { type: 'value' },
-            lab_dataset_id: { type: 'value' },
-            created_by_user_displayname: { type: 'value' },
-            created_by_user_email: { type: 'value' },
-            dataset_info: { type: 'value' },
-            source_type: { type: 'value' },
-            status: { type: 'value' },
+            description: {type: 'value'},
+            group_name: {type: 'value'},
+            sennet_id: {type: 'value'},
+            display_doi: {type: 'value'},
+            lab_source_id: {type: 'value'},
+            display_subtype: {type: 'value'},
+            lab_name: {type: 'value'},
+            lab_tissue_sample_id: {type: 'value'},
+            sample_category: {type: 'value'},
+            lab_dataset_id: {type: 'value'},
+            created_by_user_displayname: {type: 'value'},
+            created_by_user_email: {type: 'value'},
+            dataset_info: {type: 'value'},
+            source_type: {type: 'value'},
+            status: {type: 'value'},
             // "mapped_metadata.race": {type: "value"},
             // "mapped_metadata.sex": {type: "value"},
         },
@@ -166,7 +170,7 @@ export const config = {
     apiConnector: connector,
     hasA11yNotifications: true,
     a11yNotificationMessages: {
-        searchResults: ({ start, end, totalResults, searchTerm }) =>
+        searchResults: ({start, end, totalResults, searchTerm}) =>
             `Searching for "${searchTerm}". Showing ${start} to ${end} results out of ${totalResults}.`,
     },
 }

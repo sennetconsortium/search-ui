@@ -24,6 +24,7 @@ import RUIButton from "../../components/custom/edit/sample/rui/RUIButton";
 import CreateCompleteModal from "../../components/CreateCompleteModal";
 import Spinner from "../../components/custom/Spinner";
 import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
+import {getUserName} from "../../config/config";
 
 function EditSample() {
     const router = useRouter()
@@ -239,7 +240,7 @@ function EditSample() {
                     <RuiIntegration
                         organ={values['organ']}
                         sex={'male'}
-                        user={'Samuel Sedivy'}
+                        user={getUserName()}
                         blockStartLocation={ruiLocation}
                         setRuiLocation={setRuiLocation}
                         setShowRui={setShowRui}
