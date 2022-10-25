@@ -6,7 +6,7 @@ import {
 } from '../lib/services'
 import log from 'loglevel'
 import { APP_ROUTES } from '../config/constants'
-import CreateCompleteModal from '../components/CreateCompleteModal'
+import AppModal from '../components/AppModal'
 import AppContext from './AppContext'
 const EntityContext = createContext()
 
@@ -100,14 +100,14 @@ export const EntityProvider = ({ children }) => {
     }
 
     const getModal = () => {
-        return <CreateCompleteModal
-        showModal={showModal}
-        modalTitle={modalTitle}
-        modalBody={modalBody}
-        handleClose={handleClose}
-        handleHome={handleHome}
-        showCloseButton={showHideModal}
-    />
+        return <AppModal
+            showModal={showModal}
+            modalTitle={modalTitle}
+            modalBody={modalBody}
+            handleClose={handleClose}
+            handleHome={handleHome}
+            showCloseButton={showHideModal}
+        />
     }
 
     return (
