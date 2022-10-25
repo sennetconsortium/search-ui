@@ -26,6 +26,7 @@ import { ENTITIES } from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
+import {getUserName, isOrganRuiSupported} from "../../config/config";
 
 
 
@@ -36,7 +37,7 @@ function EditSample() {
         values, setValues,
         errorMessage, setErrorMessage,
         validated, setValidated,
-        userWriteGroups, 
+        userWriteGroups,
         editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
@@ -44,7 +45,7 @@ function EditSample() {
     const { _t } = useContext(AppContext)
 
     const router = useRouter()
-    
+
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
     const [ruiLocation, setRuiLocation] = useState('')
@@ -54,7 +55,7 @@ function EditSample() {
 
     // only executed on init rendering, see the []
     useEffect(() => {
-        
+
         // declare the async data fetching function
         const fetchData = async (uuid) => {
             log.debug('editSample: getting data...', uuid)
@@ -162,9 +163,9 @@ function EditSample() {
 
 
             await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
-                setModalDetails({entity: ENTITIES.sample, type: response.sample_category, 
+                setModalDetails({entity: ENTITIES.sample, type: response.sample_category,
                     typeHeader: _t('Sample Category'), response})
-                
+
             }).catch((e) => log.error(e))
         }
 
@@ -173,14 +174,13 @@ function EditSample() {
 
 
     if (values !== null && values['sample_category'] === 'organ' &&
-        (values.hasOwnProperty('organ') && values['organ'] !== '' && values['organ'] !== 'other')) {
+        (values.hasOwnProperty('organ') && values['organ'] !== '' && values['organ'] !== 'other') &&
+        isOrganRuiSupported(values['organ'])) {
         if (!showRuiButton) {
             setShowRuiButton(true)
         }
-    } else {
-        if (showRuiButton) {
-            setShowRuiButton(false)
-        }
+    } else if (showRuiButton) {
+        setShowRuiButton(false)
     }
 
     if (isAuthorizing() || isUnauthorized()) {
@@ -203,7 +203,7 @@ function EditSample() {
                     <RuiIntegration
                         organ={values['organ']}
                         sex={'male'}
-                        user={'Samuel Sedivy'}
+                        user={getUserName()}
                         blockStartLocation={ruiLocation}
                         setRuiLocation={setRuiLocation}
                         setShowRui={setShowRui}
@@ -214,8 +214,8 @@ function EditSample() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={ENTITIES.sample} isEditMode={isEditMode()} data={data} /> 
-                               
+                                <EntityHeader entity={ENTITIES.sample} isEditMode={isEditMode()} data={data} />
+
                             }
                             bodyContent={
 
@@ -260,17 +260,17 @@ function EditSample() {
                                         onChange={onChange} text='The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see https://www.protocols.io/' />
 
                                     {/*/!*Lab Sample ID*!/*/}
-                                    <EntityFormGroup label='Lab Sample ID' placeholder='Lab specific alpha-numeric ID' controlId='lab_tissue_sample_id' 
-                                        value={data.lab_tissue_sample_id} 
+                                    <EntityFormGroup label='Lab Sample ID' placeholder='Lab specific alpha-numeric ID' controlId='lab_tissue_sample_id'
+                                        value={data.lab_tissue_sample_id}
                                         onChange={onChange} text='An identifier used by the lab to identify the specimen, this
                                         can be an identifier from the system used to track the specimen in the lab. This field will be entered by the user.' />
 
 
-                                    
+
                                     {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description} 
+                                    <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description}
                                         onChange={onChange} text='A free text description of the specimen.' />
-                                    
+
 
                                     <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
                                         {_t('Submit')}
@@ -286,7 +286,7 @@ function EditSample() {
                 {!showModal && <AppFooter/>}
             </>
         )
-    } 
+    }
 }
 
 EditSample.withWrapper = function(page) {
