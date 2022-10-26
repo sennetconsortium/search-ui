@@ -2,8 +2,8 @@ import Addon from './Addon'
 import $ from 'jquery'
 
 class GoogleTagManager extends Addon {
-    constructor(el, args) {
-        super(el, args)
+    constructor(el, app) {
+        super(el, app)
         this.extractEvent()
         this.modules()
     }

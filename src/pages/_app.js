@@ -9,14 +9,13 @@ import { getIngestEndPoint, IDLE_TIMEOUT } from '../config/config'
 import useGoogleTagManager from '../hooks/useGoogleTagManager'
 import addons from "../components/custom/js/addons/addons"
 import { AppProvider } from '../context/AppContext'
-import { ORGAN_TYPES } from '../config/constants'
 
 function MyApp({ Component, pageProps }) {
     const router = useRouter()
     useGoogleTagManager()
 
     useEffect(() =>{
-        addons('init', {data: {facets: ORGAN_TYPES}})
+        addons('init')
     }, [])
 
     const onIdle = () => {
