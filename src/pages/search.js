@@ -71,7 +71,7 @@ function Search() {
                                                 </div>
                                             }
                                             sideContent={
-                                                <>
+                                                <div data-js-facets>
                                                     <CustomClearSearchBox/>
 
                                                     {wasSearched && (
@@ -83,7 +83,7 @@ function Search() {
 
                                                     <Facets fields={config.searchQuery} filters={filters}/>
 
-                                                </>
+                                                </div>
 
                                             }
                                             bodyContent={

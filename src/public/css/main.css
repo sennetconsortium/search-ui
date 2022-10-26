@@ -12,6 +12,10 @@
     border-bottom: 0 !important;
 }
 
+.sui-multi-checkbox-facet__input-text {
+    text-transform: capitalize;
+}
+
 html {
     scroll-padding-top: 80px;
 }
