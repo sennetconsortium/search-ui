@@ -25,6 +25,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
+import TableSorting from "../components/custom/TableSorting";
 
 function Search() {
     const {_t, isRegisterHidden, isAuthorizing} = useContext(AppContext);
@@ -76,7 +77,8 @@ function Search() {
 
                                                     {wasSearched && (
                                                         <Sorting
-                                                            label={"Sort by"}
+                                                            view={TableSorting}
+                                                            label={_t('Sort by')}
                                                             sortOptions={SORT_OPTIONS}
                                                         />
                                                     )}
