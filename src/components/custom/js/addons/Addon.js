@@ -1,8 +1,9 @@
 import $ from 'jquery'
 class Addon {
-    constructor(el, app) {
+    constructor(el, args) {
         this.el = $(el)
-        this.app = app
+        this.app = args.app
+        this.data = args.data
         this.keycodes = {
             enter: 'Enter',
             esc: 'Escape'
