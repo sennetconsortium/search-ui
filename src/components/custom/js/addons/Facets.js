@@ -16,14 +16,36 @@ class Facets extends Addon {
         }
         this.groups = ['Organ']
         this.storageKeys = {
-            filters: 'filters',
-            more: 'moreFilters'
+            filters: 'addon:facets:filters',
+            more: 'addon:facets:more',
+            date: 'addon:facets:date'
         }
         this.timeout = 400
         this.applied = {}
         this.setUpMore()
         this.events()
         this.applyFilters()
+    }
+
+    /**
+     * Checks if the filters have expired.
+     * @returns {boolean}
+     */
+    hasExpired() {
+        let date = localStorage[this.storageKeys.date];
+        date = date ? new Date(date) : null
+        if (!date) return false
+        const oneHour = 60 * 60 * 1000
+        if ((new(Date) - date) > oneHour) {
+            this.deleteFilters()
+            return true;
+        }
+        return false
+    }
+
+    deleteFilters() {
+        delete localStorage[this.storageKeys.filters]
+        delete localStorage[this.storageKeys.more]
     }
 
     /**
@@ -42,7 +64,7 @@ class Facets extends Addon {
     /**
      * Get value in storage
      * @param {string} key 
-     * @returns array
+     * @returns {array}
      */
     getStorage(key) {
         let filters = localStorage.getItem(key)
@@ -51,7 +73,7 @@ class Facets extends Addon {
 
     /**
      * Get ids of all filters clicked
-     * @returns array
+     * @returns {array}
      */
     getFilters() {
         return this.getStorage(this.storageKeys.filters)
@@ -59,7 +81,7 @@ class Facets extends Addon {
 
     /**
      * Get ids of all more buttons clicked
-     * @returns array
+     * @returns {array}
      */
     getMoreIds() {
         return this.getStorage(this.storageKeys.more)
@@ -67,7 +89,7 @@ class Facets extends Addon {
 
     /**
      * Saves clicks on filter
-     * @param {*} e 
+     * @param {Event} e 
      */
     saveFilter(e) {
         const filter = this.currentTarget(e).find('input').attr('id')
@@ -80,13 +102,13 @@ class Facets extends Addon {
         } else {
             filters.splice(pos, 1)
         }
-        
+        localStorage.setItem(this.storageKeys.date, (new Date()).toISOString())
         localStorage.setItem(this.storageKeys.filters, filters.join(','))
     }
 
     /**
      * Saves clicks on More buttons
-     * @param {*} e 
+     * @param {Event} e 
      */
     saveMore(e) {
         let ids = this.getMoreIds()
@@ -103,7 +125,7 @@ class Facets extends Addon {
      * @returns 
      */
     applyFilters( applyMore = true) {
-        if (!this.getFilters().length) return
+        if (!this.getFilters().length || this.hasExpired()) return
         const filters = this.getFilters()
         const ids = this.getMoreIds()
 
@@ -134,8 +156,7 @@ class Facets extends Addon {
 
     events() {
         $('body').on('click', this.sel.clearFilters, ((e) => {
-            delete localStorage[this.storageKeys.filters]
-            delete localStorage[this.storageKeys.more]
+            this.deleteFilters()
         }).bind(this))
 
         this.el.on('click', this.sel.wrapper, ((e, data) => {
@@ -164,7 +185,7 @@ class Facets extends Addon {
 
     /**
      * Find elements to be formatted
-     * @param {*} e 
+     * @param {Event} e 
      */
     formatFilters(e) {
 
@@ -183,6 +204,10 @@ class Facets extends Addon {
         }).bind(this), 0) 
     }
 
+    /**
+     * Updates formatting of filters.
+     * @param {Element} $parent 
+     */
     updateFilters($parent) {
         $parent.find(this.sel.ioText).each(((index, el) => {
             const $el = $(el)
