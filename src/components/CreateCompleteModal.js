@@ -1,7 +1,7 @@
-import { useContext } from 'react';
+import React from 'react';
 import {Button, Modal} from 'react-bootstrap'
 
-const AppModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, showCloseButton}) => {
+const CreateCompleteModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, showCloseButton}) => {
     return (
         <Modal show={showModal}
                backdrop="static"
@@ -24,4 +24,4 @@ const AppModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, sh
     );
 };
 
-export default AppModal;
+export default CreateCompleteModal;
