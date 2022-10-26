@@ -10,6 +10,8 @@ class Facets extends Addon {
             wrapper: '.sui-multi-checkbox-facet__option-input-wrapper',
             more: '.sui-facet-view-more',
             title: '.sui-facet__title',
+            select: '.sui-select__control',
+            checkbox: '.sui-multi-checkbox-facet__checkbox',
             label: '.sui-multi-checkbox-facet label',
             ioText: '.sui-multi-checkbox-facet__input-text',
             clearFilters: '.clear-filter-button'
@@ -155,8 +157,15 @@ class Facets extends Addon {
     }
 
     events() {
-        $('body').on('click', this.sel.clearFilters, ((e) => {
+        this.el.on('click', this.sel.clearFilters, ((e) => {
             this.deleteFilters()
+        }).bind(this))
+
+        this.el.on('keydown', `${this.sel.checkbox},${this.sel.title},${this.sel.select}`, ((e) => {
+            if (this.isEnter(e)) {
+                this.currentTarget(e).trigger('click')
+                this.currentTarget(e).focus()
+            }
         }).bind(this))
 
         this.el.on('click', this.sel.wrapper, ((e, data) => {
@@ -216,6 +225,7 @@ class Facets extends Addon {
             $el.text(text)
         }).bind(this)) 
     }
+
 }
 
 export default Facets
