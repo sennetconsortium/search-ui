@@ -27,7 +27,6 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
 import {getUserName, isOrganRuiSupported} from "../../config/config";
-import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 
 
@@ -221,8 +220,6 @@ function EditSample() {
                             bodyContent={
 
                                 <Form noValidate validated={validated}>
-                                    <HipaaModal/>
-
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || isEditMode()) &&

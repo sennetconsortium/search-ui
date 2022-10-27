@@ -1,6 +1,7 @@
 import { useContext } from 'react'
 import {Col, Container, Row} from 'react-bootstrap'
 import AppContext from '../../../../context/AppContext'
+import HipaaModal from "../../edit/sample/HipaaModal";
 
 function EntityHeader({entity, data, isEditMode}) {
   const {_t } = useContext(AppContext)
@@ -28,6 +29,8 @@ function EntityHeader({entity, data, isEditMode}) {
                 </Row>
             </>
         }
+
+        <HipaaModal/>
 
     </Container>
   )
