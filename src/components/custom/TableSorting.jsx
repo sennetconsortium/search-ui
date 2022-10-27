@@ -19,24 +19,28 @@ function TableSorting({ onChange, options, label, value}) {
         localStorage.setItem(key, e.value)
     }
     return (
-        <div className='sui-select'>
-            <Select
-                onChange={(e) => handleChange(e)}
-                defaultValue={getSelected()}
-                label={label}
-                options={options}
-                theme={(theme) => ({
-                    ...theme,
-                    borderRadius: 0,
-                    colors: {
-                        ...theme.colors,
-                        text: '#6c757d',
-                        primary25: '#e9ecef',
-                        primary: '#0d6efd',
-                    },
-                })}
-            />
+        <div className='sui-sorting'>
+            <div className="sui-sorting__label">{label}</div>
+            <div className='sui-select'>
+                <Select
+                    onChange={(e) => handleChange(e)}
+                    defaultValue={getSelected()}
+                    label={label}
+                    options={options}
+                    theme={(theme) => ({
+                        ...theme,
+                        borderRadius: 0,
+                        colors: {
+                            ...theme.colors,
+                            text: '#6c757d',
+                            primary25: '#e9ecef',
+                            primary: '#0d6efd',
+                        },
+                    })}
+                />
+            </div>
         </div>
+
 
     )
 }

@@ -131,7 +131,7 @@ class Facets extends Addon {
         const filters = this.getFilters()
         const ids = this.getMoreIds()
 
-        // First open open more of elements stored
+        // First open more of elements stored
         if (applyMore) {
             ids.forEach(((id, index)=> {
                 $(`[id="${id}"]`).trigger('click', {applying: true})
@@ -161,11 +161,11 @@ class Facets extends Addon {
             this.deleteFilters()
         }).bind(this))
 
-        this.el.on('keydown', `${this.sel.checkbox},${this.sel.title},${this.sel.select}`, ((e) => {
-            if (this.isEnter(e)) {
-                this.currentTarget(e).trigger('click')
-                this.currentTarget(e).focus()
-            }
+        this.onKeydownEnter(`${this.sel.title},${this.sel.select}`)
+
+        this.onKeydownEnter( `${this.sel.checkbox}`, ((e) => {
+            this.currentTarget(e).parent().trigger('click')
+            this.currentTarget(e).focus()
         }).bind(this))
 
         this.el.on('click', this.sel.wrapper, ((e, data) => {
