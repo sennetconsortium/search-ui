@@ -28,7 +28,7 @@ export default class HipaaModal extends React.Component {
                         className="link" onClick={this.showModal}>18 identifiers specified by HIPAA</span>
                     </span>
                 </Alert>
-                <Modal size="xl" show={this.state.showModal}>
+                <Modal size="xl" show={this.state.showModal} keyboard={false}>
                     <Modal.Body>
                         <ol>
                             <li>Names.</li>
@@ -76,11 +76,9 @@ export default class HipaaModal extends React.Component {
                         </ol>
                     </Modal.Body>
                     <Modal.Footer>
-                        {this.state.showModal &&
-                            <Button variant="outline-secondary rounded-0" onClick={this.hideModal}>
-                                Close
-                            </Button>
-                        }
+                        <Button variant="outline-secondary rounded-0" onClick={this.hideModal}>
+                            Close
+                        </Button>
                     </Modal.Footer>
                 </Modal>
             </>
