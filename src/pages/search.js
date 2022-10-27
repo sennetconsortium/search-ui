@@ -76,7 +76,7 @@ function Search() {
 
                                                     {wasSearched && (
                                                         <Sorting
-                                                            label={"Sort by"}
+                                                            label={_t('Sort by')}
                                                             sortOptions={SORT_OPTIONS}
                                                         />
                                                     )}
