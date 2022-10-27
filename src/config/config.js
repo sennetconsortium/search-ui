@@ -172,7 +172,7 @@ export const config = {
             direction: "desc"
         }]
     },
-    trackUrlState: false,
+    trackUrlState: true,
     apiConnector: connector,
     hasA11yNotifications: true,
     a11yNotificationMessages: {
@@ -309,7 +309,10 @@ export const SORT_OPTIONS = [
 ]
 
 //Config options to exclude datasets from results
-export let exclude_dataset_config = _.cloneDeep(config);
+export let ancestor_config = _.cloneDeep(config)
+ancestor_config['trackUrlState'] = false;
+
+export let exclude_dataset_config = _.cloneDeep(ancestor_config);
 exclude_dataset_config['searchQuery']['excludeFilters'] = [{
     keyword: "entity_type.keyword",
     value: "Dataset"

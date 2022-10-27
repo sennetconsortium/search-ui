@@ -165,11 +165,11 @@ function ViewDataset() {
                                             {data.data_types[0]}
                                         </span>
                                         }
-                                        {data.origin_sample && Object.keys(data.origin_sample).length > 0 && data.origin_sample.organ &&
-                                            <span className="ms-1 me-1">
-                                            | {getOrganTypeFullName(data.origin_sample.organ)}
-                                        </span>
-                                        }
+                                        {/*{data.origin_sample && Object.keys(data.origin_sample).length > 0 && data.origin_sample.organ &&*/}
+                                        {/*    <span className="ms-1 me-1">*/}
+                                        {/*    | {getOrganTypeFullName(data.origin_sample.organ)}*/}
+                                        {/*</span>*/}
+                                        {/*}*/}
                                         {data.doi_url &&
                                             <>
                                                 |
