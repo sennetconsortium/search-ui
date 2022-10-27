@@ -7,7 +7,6 @@ function TableSorting({ onChange, options, label, value}) {
     const getSelected = () => {
         let result =  options[0]
         let storage = localStorage.getItem(key)
-        console.log(options)
         if (storage) {
             result = options.filter(item => item.value === storage)
         }
