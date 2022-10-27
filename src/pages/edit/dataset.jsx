@@ -26,7 +26,6 @@ import { ENTITIES } from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
-import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 export default function EditDataset() {
     const { isUnauthorized, isAuthorizing, getModal, setModalDetails,
@@ -198,8 +197,6 @@ export default function EditDataset() {
                             }
                             bodyContent={
                                 <Form noValidate validated={validated}>
-                                    <HipaaModal/>
-
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || isEditMode()) &&

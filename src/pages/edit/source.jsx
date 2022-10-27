@@ -22,7 +22,6 @@ import { ENTITIES } from "../../config/constants"
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
-import HipaaModal from "../../components/custom/edit/sample/HipaaModal";
 
 
 function EditSource() {
@@ -141,8 +140,6 @@ function EditSource() {
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                                    <HipaaModal/>
-
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || isEditMode()) &&
