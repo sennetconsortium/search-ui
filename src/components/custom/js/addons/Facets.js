@@ -26,7 +26,8 @@ class Facets extends Addon {
         this.applied = {}
         this.setUpMore()
         this.events()
-        this.applyFilters()
+        this.shouldApplyFilters = false
+        //this.applyFilters()
     }
 
     /**
@@ -127,7 +128,7 @@ class Facets extends Addon {
      * @returns 
      */
     applyFilters( applyMore = true) {
-        if (!this.getFilters().length || this.hasExpired()) return
+        if (!this.shouldApplyFilters || !this.getFilters().length || this.hasExpired()) return
         const filters = this.getFilters()
         const ids = this.getMoreIds()
 
