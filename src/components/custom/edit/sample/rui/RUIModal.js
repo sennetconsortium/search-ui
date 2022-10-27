@@ -4,7 +4,7 @@ import log from 'loglevel'
 
 const RUIModal = ({hide, show, tissueBlockSpatialData}) => {
     const copy = () => {
-        navigator.clipboard.writeText(tissueBlockSpatialData)
+        navigator.clipboard.writeText(ruiLocation)
             .then(log.info)
             .catch(log.error)
     }
