@@ -13,7 +13,7 @@
 }
 
 html {
-  scroll-padding-top: 80px;
+    scroll-padding-top: 80px;
 }
 
 .search-box-header {
@@ -60,6 +60,31 @@ p {
     white-space: pre;
 }
 
+/*Required CSS to make the icons in the RUI tool inside the carousel space out properly*/
+.carousel-item {
+    margin-right: 0 !important;
+}
+
+.dropdown-menu {
+    text-transform: capitalize;
+}
+
+@media screen and (max-width: 600px) {
+    .navbar .fs-3 {
+        font-size: 1.25rem !important;
+    }
+}
+
 .results-header {
     white-space: nowrap;
+}
+
+.hipaa-alert {
+    font-size: 18px !important;
+}
+
+.link {
+    cursor: pointer;
+    color: var(--bs-link-color);
+    text-decoration: underline;
 }

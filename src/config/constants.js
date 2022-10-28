@@ -22,13 +22,13 @@ export const ORGAN_TYPES = {
     "BS": "Breast",
     "LI": "Large Intestine",
     "LV": "Liver",
-    "LL": "Left Lung",
-    "RL": "Right Lung",
-    "LK": "Left Kidney",
-    "RK": "Right Kidney",
+    "LL": "Lung (Left)",
+    "RL": "Lung (Right)",
+    "LK": "Kidney (Left)",
+    "RK": "Kidney (Right)",
     "MU": "Muscle",
-    "LO": "Left Ovary",
-    "RO": "Right Ovary",
+    "LO": "Ovary (Left)",
+    "RO": "Ovary (Right)",
     "SK": "Skin",
     "OT": "Other"
 };
@@ -53,3 +53,12 @@ export const DATA_TYPES = {
     "Visium": "Visium",
     "Other": "Other"
 };
+
+export const APP_ROUTES = {
+    "home": "/",
+    "search": "/search",
+    "login": "/login",
+    "logout": "/logout"
+};
+
+export const ENTITIES = {'source': 'Source', 'sample': 'Sample', 'dataset': 'Dataset'}
