@@ -25,13 +25,21 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
+import Custom401 from "./401";
 
 function Search() {
-    const {_t, isRegisterHidden, isAuthorizing} = useContext(AppContext);
+    const {_t, isRegisterHidden, isAuthorizing, isUnauthorized, hasAuthenticationCookie} = useContext(AppContext);
 
     if (isAuthorizing()) {
         return  <Spinner />
-    }else {
+    } else if(isUnauthorized() && hasAuthenticationCookie()){
+        // This is a scenario in which the GLOBUS token is expired but the token still exists in the user's cookies
+        return (
+            <>
+                <Custom401/>
+            </>
+        )
+    } else {
         return (
             <>
                 <Header title={APP_TITLE}/>
