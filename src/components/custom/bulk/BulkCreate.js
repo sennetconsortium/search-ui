@@ -13,11 +13,10 @@ import Box from "@mui/material/Box";
 import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
 import {getAuth} from "../../../config/config";
-import LoadingSpinner from "../../LoadingSpinner";
+import Spinner from "../Spinner";
 import AppFooter from "../layout/AppFooter";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
-import log from 'loglevel'
 
 
 export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, bulkUrl, userWriteGroups}) {
@@ -223,7 +222,6 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
         if (!fileObj) {
             return
         }
-        log.info('fileObj is', fileObj)
         setFile(fileObj)
         event.target.value = null
         setIsNextButtonDisabled(false)
@@ -274,7 +272,7 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
                             })
                         }
                     </Stepper>
-                    {isLoading && <LoadingSpinner/>}
+                    {isLoading && <Spinner/>}
                     {
                         errorMessage && Object.entries(errorMessage.data)
                             .map((value, key) => (
