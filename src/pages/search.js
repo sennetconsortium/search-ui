@@ -71,19 +71,19 @@ function Search() {
                                                 </div>
                                             }
                                             sideContent={
-                                                <>
+                                                <div data-js-facets>
                                                     <CustomClearSearchBox/>
 
                                                     {wasSearched && (
                                                         <Sorting
-                                                            label={"Sort by"}
+                                                            label={_t('Sort by')}
                                                             sortOptions={SORT_OPTIONS}
                                                         />
                                                     )}
 
                                                     <Facets fields={config.searchQuery} filters={filters}/>
 
-                                                </>
+                                                </div>
 
                                             }
                                             bodyContent={

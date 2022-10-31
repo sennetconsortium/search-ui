@@ -1,18 +1,31 @@
 import $ from 'jquery'
 class Addon {
-    constructor(el, app) {
+    constructor(el, args) {
         this.el = $(el)
-        this.app = app
+        this.app = args.app
+        this.data = args.data
         this.keycodes = {
             enter: 'Enter',
             esc: 'Escape'
         }
     }
 
+    handleKeydown(e, trigger) {
+        this.currentTarget(e).trigger(trigger)
+        this.currentTarget(e).focus()
+    }
+
+    onKeydownEnter(sel, cb, trigger = 'click') {
+        this.el.on('keydown', `${sel}`, ((e) => {
+            if (this.isEnter(e)) {
+                cb ? cb(e) : this.handleKeydown(e, trigger)
+            }
+        }).bind(this))
+    }
+
     currentTarget(e) {
         return $(e.currentTarget)
     }
-
     /**
      * Prevents bubbling of javascript event to parent
      * @param {*} e Javascript event

@@ -2,8 +2,8 @@ import Addon from './Addon'
 import $ from 'jquery'
 
 class AppModal extends Addon {
-    constructor(el, app) {
-        super(el, app)
+    constructor(el, args) {
+        super(el, args)
         this.events()
     }
 
