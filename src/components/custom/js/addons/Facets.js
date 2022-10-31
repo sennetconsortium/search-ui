@@ -16,6 +16,7 @@ class Facets extends Addon {
             ioText: '.sui-multi-checkbox-facet__input-text'
         }
         this.groups = ['Organ']
+        this.formatFilters()
         this.events()
     }
 
@@ -29,34 +30,33 @@ class Facets extends Addon {
         }).bind(this))
 
         this.el.on('click', `${this.sel.wrapper},${this.sel.more}`, ((e) => {
-            this.formatFilters(e)
+            this.formatFilters()
         }).bind(this))
     }
 
     /**
      * Find elements to be formatted
-     * @param {Event} e 
      */
-    formatFilters(e) {
+    formatFilters() {
 
         //Get some delay by triggering the web api
         let st = setTimeout((() => {
             this.el.find(this.sel.title).each(((index, el) => {
                 const $el = $(el)
                 const txt = $el.text()
-               
+
                 if (this.groups.indexOf(txt) !== -1) {
                     this.updateFilters($el.parent().find(this.sel.label))
                 }
-                
+
             }).bind(this))
 
-        }).bind(this), 0) 
+        }).bind(this), 250)
     }
 
     /**
      * Updates formatting of filters.
-     * @param {Element} $parent 
+     * @param {Element} $parent
      */
     updateFilters($parent) {
         $parent.find(this.sel.ioText).each(((index, el) => {
@@ -64,7 +64,7 @@ class Facets extends Addon {
             const key = $el.text()
             let text = this.facets[key] || key
             $el.text(text)
-        }).bind(this)) 
+        }).bind(this))
     }
 
 }
