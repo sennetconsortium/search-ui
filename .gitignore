@@ -44,6 +44,3 @@ yarn-error.log*
 .vscode/
 .vscode/bookmarks.json
 sennet.code-workspace
-
-#submodule
-src/search-ui
