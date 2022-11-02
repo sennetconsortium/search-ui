@@ -21,16 +21,17 @@ function addons(source, args) {
     }
 
     setTimeout(() => {
+
         for (let app in apps) {
             document
                 .querySelectorAll(`[class*='js-${app}--'], [data-js-${app}]`)
                 .forEach((el) => {
-                    new apps[app](el, {app, data: args.data })
+                    new apps[app](el, {app, ...args })
             })
         }
 
         // Default: Capture all link clicks. 
-        new GoogleTagManager(null, 'links')
+        new GoogleTagManager(null, {app: 'links', ...args})
     }, 1000)
 }
 
