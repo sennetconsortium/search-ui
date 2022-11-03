@@ -103,11 +103,11 @@ class GoogleTagManager extends Addon {
         const className = $el.attr('class')
         this.event = 'cta'
         let action
-        if (className.includes('json')){
-            action = 'json'
-        }
-        if (className.includes('submit')) {
-            action = 'submit'
+        const actions = ['json', 'submit', 'login']
+        for (let i = 0; i < actions.length; i++) {
+            if (className.includes(actions[i])){
+                action = actions[i]
+            }
         }
         if (action) {
             let data = { }
@@ -133,7 +133,9 @@ class GoogleTagManager extends Addon {
     }
 
     getUuid() {
-        return this.router.asPath.split('uuid=')[1].split('&')[0] // Fully fetch the uuid, split(&)[0] in case more params follow
+        const uuid = this.router.asPath.split('uuid=')
+        // Fully fetch the uuid, split(&)[0] in case more params follow
+        return uuid.length && uuid.length > 1 ? this.router.asPath.split('uuid=')[1].split('&')[0] : null
     }
 
     entityPage(data, send = true) {
@@ -165,12 +167,20 @@ class GoogleTagManager extends Addon {
         }
         return data
     }
-
+    getPerson(bto = false) {
+        const id = this.user.email
+        let result
+        if (id) {
+            result = bto ? btoa(id.replace('@', '*')) : `${id.split('@')[0]}***`
+        }
+        return result
+    }
     gtm(args) {
         let data = {
             event: this.event,
             path: this.getPath(),
-            user_id: this.user.email,
+            person: this.getPerson(),
+            user_id: this.getPerson(true),
             globus_id: this.user.globus_id,
             session: (this.user.email !== undefined), ...args
         }
