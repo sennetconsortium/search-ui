@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useIdleTimer } from 'react-idle-timer'
 import { deleteCookie, setCookie } from 'cookies-next'
-import { getIngestEndPoint, IDLE_TIMEOUT } from '../config/config'
+import {getIngestEndPoint, getLogLevel, IDLE_TIMEOUT} from '../config/config'
 import useGoogleTagManager from '../hooks/useGoogleTagManager'
 import addons from "../components/custom/js/addons/addons"
 import { AppProvider } from '../context/AppContext'
@@ -30,8 +30,7 @@ function MyApp({ Component, pageProps }) {
 
     const idleTimer = useIdleTimer({ timeout: IDLE_TIMEOUT, onIdle })
 
-    // log.enableAll()
-    log.setLevel("debug")
+    log.setLevel(getLogLevel())
 
     const withWrapper = Component.withWrapper || ((page) => page)
     return (
