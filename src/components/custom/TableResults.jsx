@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import styles from './style.module.css'
 import {Table} from 'react-bootstrap';
 import {checkFilterEntityType, checkMultipleFilterEntityType, displayBodyHeader, getStatusColor} from "./js/functions";
 import Badge from 'react-bootstrap/Badge';
+import AppContext from "../../context/AppContext";
 
-
-const DefaultTableResults = ({hasMultipleEntityTypes = true}) => {
+const DefaultTableResults = ({isLoggedIn, hasMultipleEntityTypes = true}) => {
     return (
         <tr>
             <th>Created By</th>
@@ -13,13 +13,15 @@ const DefaultTableResults = ({hasMultipleEntityTypes = true}) => {
             {hasMultipleEntityTypes &&
                 <th>Entity Type</th>
             }
-            <th>Lab ID</th>
+            {isLoggedIn &&
+                <th>Lab ID</th>
+            }
             <th>Group</th>
         </tr>
     )
 }
 
-const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTypes = true}) => {
+const DefaultTableRowDetails = ({isLoggedIn, result, urlField, hotlink, hasMultipleEntityTypes = true}) => {
     return (
         <tr key="results_detail"
             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
@@ -30,14 +32,16 @@ const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTyp
             {hasMultipleEntityTypes &&
                 <td>{result.entity_type.raw}</td>
             }
-            <td>
-                {
-                    result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
-                        : result.lab_source_id ? <>{result.lab_source_id.raw}</>
-                            : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
-                                : null
-                }
-            </td>
+            {isLoggedIn &&
+                <td>
+                    {
+                        result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
+                            : result.lab_source_id ? <>{result.lab_source_id.raw}</>
+                                : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
+                                    : null
+                    }
+                </td>
+            }
             <td>
                 {result.group_name ? (
                     <>{result.group_name.raw}</>
@@ -49,6 +53,8 @@ const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTyp
 }
 
 const TableResults = ({children, filters}) => {
+    const {isLoggedIn} = useContext(AppContext)
+
     let hasMultipleEntityTypes = checkMultipleFilterEntityType(filters);
 
     return (
@@ -59,7 +65,7 @@ const TableResults = ({children, filters}) => {
 
                     {filters.length > 0 ? (<>
                             {checkFilterEntityType(filters) === false ? (
-                                DefaultTableResults
+                                DefaultTableResults({isLoggedIn})
                             ) : (<>
                                 {filters.map((filter, index) => {
                                     if (filter.field === 'entity_type') {
@@ -71,7 +77,9 @@ const TableResults = ({children, filters}) => {
                                                     {hasMultipleEntityTypes &&
                                                         <th>Entity Type</th>
                                                     }
-                                                    <th>Lab ID</th>
+                                                    {isLoggedIn &&
+                                                        <th>Lab ID</th>
+                                                    }
                                                     <th>Category</th>
                                                     <th>Group</th>
                                                 </tr>
@@ -86,7 +94,9 @@ const TableResults = ({children, filters}) => {
                                                     {hasMultipleEntityTypes &&
                                                         <th>Entity Type</th>
                                                     }
-                                                    <th>Lab ID</th>
+                                                    {isLoggedIn &&
+                                                        <th>Lab ID</th>
+                                                    }
                                                     <th>Type</th>
                                                     <th>Group</th>
                                                 </tr>
@@ -97,23 +107,25 @@ const TableResults = ({children, filters}) => {
                                                 <tr key={index}>
                                                     <th>Created By</th>
                                                     <th>SenNet ID</th>
-                                                    <th>Lab ID</th>
                                                     {hasMultipleEntityTypes &&
                                                         <th>Entity Type</th>
                                                     }
-                                                    <th>Group</th>
+                                                    {isLoggedIn &&
+                                                        <th>Lab ID</th>
+                                                    }
                                                     <th>Data Types</th>
                                                     <th>Status</th>
+                                                    <th>Group</th>
                                                 </tr>
                                             )
                                         } else {
-                                            return (DefaultTableResults({hasMultipleEntityTypes}))
+                                            return (DefaultTableResults({isLoggedIn, hasMultipleEntityTypes}))
                                         }
                                     }
                                 })}
                             </>)}
                         </>
-                    ) : (DefaultTableResults({children}))}
+                    ) : (DefaultTableResults({isLoggedIn}))}
                     </thead>
                     <tbody>
                     {children}
@@ -126,6 +138,8 @@ const TableResults = ({children, filters}) => {
 
 
 const TableRowDetail = ({result, urlField, titleField}) => {
+    const {isLoggedIn} = useContext(AppContext)
+
     // The resultView property for the Results component only allows for specific properties to be set: https://docs.elastic.co/search-ui/api/react/components/results
     // We will override `urlField` to utilize onClick functionality (this will allow a user to select a source in the edit Sample page.
     // We will override `titleField` to pass the filters selected by the user to this
@@ -135,7 +149,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
         <>
             {titleField.length > 0 ? (<>
                     {checkFilterEntityType(titleField) === false ? (
-                        DefaultTableRowDetails({result, urlField, hotlink})
+                        DefaultTableRowDetails({isLoggedIn, result, urlField, hotlink})
                     ) : (<>
                         {titleField.map((filter, index) => {
                             // Table results for Source
@@ -151,14 +165,16 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                             {hasMultipleEntityTypes &&
                                                 <td>{result.entity_type.raw}</td>
                                             }
-                                            <td>
-                                                {
-                                                    result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
-                                                        : result.lab_source_id ? <>{result.lab_source_id.raw}</>
-                                                            : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
-                                                                : null
-                                                }
-                                            </td>
+                                            {isLoggedIn &&
+                                                <td>
+                                                    {
+                                                        result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
+                                                            : result.lab_source_id ? <>{result.lab_source_id.raw}</>
+                                                                : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
+                                                                    : null
+                                                    }
+                                                </td>
+                                            }
                                             <td>
                                                 {result.sample_category ? (
                                                     <>{displayBodyHeader(result.sample_category.raw)}</>
@@ -182,16 +198,18 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                                 {result.created_by_user_displayname.raw}
                                             </td>
                                             <td>{result.sennet_id.raw}</td>
-                                            <td>
-                                                {
-                                                    result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
-                                                        : result.lab_source_id ? <>{result.lab_source_id.raw}</>
-                                                            : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
-                                                                : null
-                                                }
-                                            </td>
                                             {hasMultipleEntityTypes &&
                                                 <td>{result.entity_type.raw}</td>
+                                            }
+                                           {isLoggedIn &&
+                                                <td>
+                                                    {
+                                                        result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
+                                                            : result.lab_source_id ? <>{result.lab_source_id.raw}</>
+                                                                : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
+                                                                    : null
+                                                    }
+                                                </td>
                                             }
                                             <td>
                                                 {result.source_type ? (
@@ -217,23 +235,19 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                                 {result.created_by_user_displayname.raw}
                                             </td>
                                             <td>{result.sennet_id.raw}</td>
-                                            <td>
-                                                {
-                                                    result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
-                                                        : result.lab_source_id ? <>{result.lab_source_id.raw}</>
-                                                            : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
-                                                                : null
-                                                }
-                                            </td>
                                             {hasMultipleEntityTypes &&
                                                 <td>{result.entity_type.raw}</td>
                                             }
-                                            <td>
-                                                {result.group_name ? (
-                                                    <>{result.group_name.raw}</>
-                                                ) : null
-                                                }
-                                            </td>
+                                            {isLoggedIn &&
+                                                <td>
+                                                    {
+                                                        result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
+                                                            : result.lab_source_id ? <>{result.lab_source_id.raw}</>
+                                                                : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
+                                                                    : null
+                                                    }
+                                                </td>
+                                            }
                                             <td>
                                                 {result.data_types ? (
                                                     <>{result.data_types.raw}</>
@@ -247,16 +261,28 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                                 ) : null
                                                 }
                                             </td>
+                                            <td>
+                                                {result.group_name ? (
+                                                    <>{result.group_name.raw}</>
+                                                ) : null
+                                                }
+                                            </td>
                                         </tr>
                                     )
                                 } else {
-                                    return (DefaultTableRowDetails({result, urlField, hotlink, hasMultipleEntityTypes}))
+                                    return (DefaultTableRowDetails({
+                                        isLoggedIn,
+                                        result,
+                                        urlField,
+                                        hotlink,
+                                        hasMultipleEntityTypes
+                                    }))
                                 }
                             }
                         })}
                     </>)}
                 </>
-            ) : (DefaultTableRowDetails({result, urlField, hotlink}))}
+            ) : (DefaultTableRowDetails({isLoggedIn, result, urlField, hotlink}))}
         </>
     );
 };
