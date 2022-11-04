@@ -76,7 +76,7 @@ function ViewSource() {
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
-                    <Alert message={errorMessage} />
+                    <Alert message={errorMessage}/>
                 }
                 {data && !error &&
                     <Layout
@@ -129,6 +129,13 @@ function ViewSource() {
                                 <div className="d-flex justify-content-between mb-2">
                                     <div className="entity_subtitle link_with_icon">
                                         {displayBodyHeader(data.source_type)}
+
+                                        {data.lab_source_id &&
+                                            <>
+                                                <span className="mx-2">|</span>
+                                                {data.lab_source_id}
+                                            </>
+                                        }
                                     </div>
                                     <div>
                                         {hasWritePrivilege &&

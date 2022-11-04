@@ -87,12 +87,12 @@ function ViewSample() {
     } else {
         return (
             <>
-                {data && <Header title={`${data.sennet_id} | Sample | SenNet`}></Header> }
+                {data && <Header title={`${data.sennet_id} | Sample | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
-                    <Alert message={errorMessage} />
+                    <Alert message={errorMessage}/>
                 }
                 {data && !error &&
                     <Layout
@@ -150,6 +150,13 @@ function ViewSample() {
                                 <div className="d-flex justify-content-between mb-2">
                                     <div className="entity_subtitle link_with_icon">
                                         {displayBodyHeader(data.display_subtype)}
+
+                                        {data.lab_tissue_sample_id &&
+                                            <>
+                                                <span className="mx-2">|</span>
+                                                {data.lab_tissue_sample_id}
+                                            </>
+                                        }
                                     </div>
                                     <div>
                                         {hasWritePrivilege &&
