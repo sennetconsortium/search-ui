@@ -9,6 +9,10 @@ export const APP_TITLE = 'SenNet - Data Sharing Portal'
 // Set this to be the time in milliseconds
 export const IDLE_TIMEOUT = 1000 * 60 * 60
 
+export function getLogLevel() {
+    return process.env.NEXT_PUBLIC_LOG_LEVEL;
+}
+
 export function getAuth() {
     if (typeof window !== 'undefined') {
         return getCookie('groups_token')
@@ -156,6 +160,8 @@ export const config = {
             'created_by_user_displayname',
             'created_by_user_email',
             'lab_tissue_sample_id',
+            'lab_source_id',
+            'lab_dataset_id',
             'sample_category',
             'group_name',
             'source_type',

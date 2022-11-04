@@ -25,7 +25,7 @@ EntityViewHeaderButtons.propTypes = {
     hasWritePrivilege: PropTypes.bool.isRequired
 }
 
-function EntityViewHeader({entity, data, hasWritePrivilege}) {
+function EntityViewHeader({entity, data, hasWritePrivilege, idKey}) {
     const {_t } = useContext(AppContext)
     return (
         <div style={{width: '100%'}}>
@@ -34,6 +34,12 @@ function EntityViewHeader({entity, data, hasWritePrivilege}) {
             <div className="d-flex justify-content-between mb-2">
                 <div className="entity_subtitle link_with_icon">
                     {displayBodyHeader(data.display_subtype)}
+                    {data[idKey] &&
+                        <>
+                            <span className="mx-2">|</span>
+                            {data[idKey]}
+                        </>
+                    }
                 </div>
                 <EntityViewHeaderButtons data={data} entity={entity} hasWritePrivilege={hasWritePrivilege} />
             </div>

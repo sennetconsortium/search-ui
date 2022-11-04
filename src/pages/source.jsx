@@ -76,7 +76,7 @@ function ViewSource() {
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
-                    <Alert message={errorMessage} />
+                    <Alert message={errorMessage}/>
                 }
                 {data && !error &&
                     <Layout
@@ -122,7 +122,7 @@ function ViewSource() {
                         }
 
                         bodyHeader={
-                            <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[0]} hasWritePrivilege={hasWritePrivilege} />
+                            <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[0]} hasWritePrivilege={hasWritePrivilege} idKey='lab_source_id' />
                         }
 
                         bodyContent={

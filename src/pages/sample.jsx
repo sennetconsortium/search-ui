@@ -87,12 +87,12 @@ function ViewSample() {
     } else {
         return (
             <>
-                {data && <Header title={`${data.sennet_id} | Sample | SenNet`}></Header> }
+                {data && <Header title={`${data.sennet_id} | Sample | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
 
                 {error &&
-                    <Alert message={errorMessage} />
+                    <Alert message={errorMessage}/>
                 }
                 {data && !error &&
                     <Layout
@@ -144,7 +144,7 @@ function ViewSample() {
                         }
 
                         bodyHeader={
-                            <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]} hasWritePrivilege={hasWritePrivilege} />
+                            <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]} hasWritePrivilege={hasWritePrivilege} idKey='lab_tissue_sample_id' />
                         }
 
                         bodyContent={
