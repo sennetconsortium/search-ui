@@ -5,27 +5,17 @@ import {checkFilterEntityType, checkMultipleFilterEntityType, displayBodyHeader,
 import Badge from 'react-bootstrap/Badge';
 
 
-const DefaultTableResults = ({children, hasMultipleEntityTypes = true}) => {
+const DefaultTableResults = ({hasMultipleEntityTypes = true}) => {
     return (
-        <div key="results_table" className={styles.search_table_wrapper}>
-            <Table responsive hover>
-                <thead className="results-header">
-                <tr>
-                    <th>Created By</th>
-                    <th>SenNet ID</th>
-                    {hasMultipleEntityTypes &&
-                        <th>Entity Type</th>
-                    }
-                    <th>Lab ID</th>
-                    <th>Category</th>
-                    <th>Group</th>
-                </tr>
-                </thead>
-                <tbody>
-                {children}
-                </tbody>
-            </Table>
-        </div>
+        <tr>
+            <th>Created By</th>
+            <th>SenNet ID</th>
+            {hasMultipleEntityTypes &&
+                <th>Entity Type</th>
+            }
+            <th>Lab ID</th>
+            <th>Group</th>
+        </tr>
     )
 }
 
@@ -41,15 +31,11 @@ const DefaultTableRowDetails = ({result, urlField, hotlink, hasMultipleEntityTyp
                 <td>{result.entity_type.raw}</td>
             }
             <td>
-                {result.lab_tissue_sample_id ? (
-                    <>{result.lab_tissue_sample_id.raw}</>
-                ) : null
-                }
-            </td>
-            <td>
-                {result.sample_category ? (
-                    <>{displayBodyHeader(result.sample_category.raw)}</>
-                ) : null
+                {
+                    result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
+                        : result.lab_source_id ? <>{result.lab_source_id.raw}</>
+                            : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
+                                : null
                 }
             </td>
             <td>
@@ -67,69 +53,73 @@ const TableResults = ({children, filters}) => {
 
     return (
         <>
-            {filters.length > 0 ? (<>
-                    {checkFilterEntityType(filters) === false ? (
-                        DefaultTableResults({children})
-                    ) : (<>
-                        {filters.map((filter, index) => {
-                            if (filter.field === 'entity_type') {
-                                if (filter.values.length === 1 && filter.values[0] === 'Source') {
-                                    return (
-                                        // Table view for Source
-                                        <div key={`source_${index}`} className={styles.search_table_wrapper}>
-                                            <Table responsive hover>
-                                                <thead className="results-header">
-                                                <tr>
+            <div className={styles.search_table_wrapper}>
+                <Table responsive hover>
+                    <thead className="results-header">
+
+                    {filters.length > 0 ? (<>
+                            {checkFilterEntityType(filters) === false ? (
+                                DefaultTableResults
+                            ) : (<>
+                                {filters.map((filter, index) => {
+                                    if (filter.field === 'entity_type') {
+                                        if (filter.values.length === 1 && filter.values[0] === 'Sample') {
+                                            return (
+                                                <tr key={index}>
+                                                    <th>Created By</th>
                                                     <th>SenNet ID</th>
                                                     {hasMultipleEntityTypes &&
                                                         <th>Entity Type</th>
                                                     }
+                                                    <th>Lab ID</th>
+                                                    <th>Category</th>
                                                     <th>Group</th>
-                                                    <th>Type</th>
-                                                    {/*<th>Age</th>*/}
-                                                    {/*<th>BMI</th>*/}
-                                                    {/*<th>Sex</th>*/}
-                                                    {/*<th>Race</th>*/}
-                                                    <th>Last Modified</th>
                                                 </tr>
-                                                </thead>
-                                                <tbody>
-                                                {children}
-                                                </tbody>
-                                            </Table>
-                                        </div>
-                                    )
-                                } else if (filter.values.length === 1 && filter.values[0] === 'Dataset') {
-                                    return (
-                                        // Table view for Dataset
-                                        <div key={`dataset_${index}`} className={styles.search_table_wrapper}>
-                                            <Table responsive hover>
-                                                <thead className="results-header">
-                                                <tr>
+                                            )
+                                        }
+                                        if (filter.values.length === 1 && filter.values[0] === 'Source') {
+                                            return (
+                                                // Table view for Source
+                                                <tr key={index}>
+                                                    <th>Created By</th>
                                                     <th>SenNet ID</th>
+                                                    {hasMultipleEntityTypes &&
+                                                        <th>Entity Type</th>
+                                                    }
+                                                    <th>Lab ID</th>
+                                                    <th>Type</th>
+                                                    <th>Group</th>
+                                                </tr>
+                                            )
+                                        } else if (filter.values.length === 1 && filter.values[0] === 'Dataset') {
+                                            return (
+                                                // Table view for Dataset
+                                                <tr key={index}>
+                                                    <th>Created By</th>
+                                                    <th>SenNet ID</th>
+                                                    <th>Lab ID</th>
                                                     {hasMultipleEntityTypes &&
                                                         <th>Entity Type</th>
                                                     }
                                                     <th>Group</th>
                                                     <th>Data Types</th>
                                                     <th>Status</th>
-                                                    <th>Last Modified</th>
                                                 </tr>
-                                                </thead>
-                                                <tbody>
-                                                {children}
-                                                </tbody>
-                                            </Table>
-                                        </div>
-                                    )
-                                } else {
-                                    return (DefaultTableResults({children, hasMultipleEntityTypes}))
-                                }
-                            }
-                        })}
-                    </>)}
-                </>
-            ) : (DefaultTableResults({children}))}
+                                            )
+                                        } else {
+                                            return (DefaultTableResults({hasMultipleEntityTypes}))
+                                        }
+                                    }
+                                })}
+                            </>)}
+                        </>
+                    ) : (DefaultTableResults({children}))}
+                    </thead>
+                    <tbody>
+                    {children}
+                    </tbody>
+                </Table>
+            </div>
         </>
     );
 };
@@ -150,56 +140,72 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                         {titleField.map((filter, index) => {
                             // Table results for Source
                             if (filter.field === 'entity_type') {
-                                if (filter.values.length === 1 && filter.values[0] === 'Source') {
+                                if (filter.values.length === 1 && filter.values[0] === 'Sample') {
                                     return (
                                         <tr key={index}
                                             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
+                                            <td>
+                                                {result.created_by_user_displayname.raw}
+                                            </td>
                                             <td>{result.sennet_id.raw}</td>
                                             {hasMultipleEntityTypes &&
                                                 <td>{result.entity_type.raw}</td>
                                             }
+                                            <td>
+                                                {
+                                                    result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
+                                                        : result.lab_source_id ? <>{result.lab_source_id.raw}</>
+                                                            : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
+                                                                : null
+                                                }
+                                            </td>
+                                            <td>
+                                                {result.sample_category ? (
+                                                    <>{displayBodyHeader(result.sample_category.raw)}</>
+                                                ) : null
+                                                }
+                                            </td>
                                             <td>
                                                 {result.group_name ? (
                                                     <>{result.group_name.raw}</>
                                                 ) : null
                                                 }
                                             </td>
+                                        </tr>
+                                    )
+                                }
+                                if (filter.values.length === 1 && filter.values[0] === 'Source') {
+                                    return (
+                                        <tr key={index}
+                                            onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
+                                            <td>
+                                                {result.created_by_user_displayname.raw}
+                                            </td>
+                                            <td>{result.sennet_id.raw}</td>
+                                            <td>
+                                                {
+                                                    result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
+                                                        : result.lab_source_id ? <>{result.lab_source_id.raw}</>
+                                                            : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
+                                                                : null
+                                                }
+                                            </td>
+                                            {hasMultipleEntityTypes &&
+                                                <td>{result.entity_type.raw}</td>
+                                            }
                                             <td>
                                                 {result.source_type ? (
                                                     <>{displayBodyHeader(result.source_type.raw)}</>
                                                 ) : null
                                                 }
                                             </td>
-                                            {/*<td>*/}
-                                            {/*    {result.mapped_metadata && result.mapped_metadata.raw.age_value ? (*/}
-                                            {/*        <>{result.mapped_metadata.raw.age_value[0]}</>*/}
-                                            {/*    ) : null*/}
-                                            {/*    }*/}
-                                            {/*</td>*/}
-                                            {/*<td>*/}
-                                            {/*    {result.mapped_metadata && result.mapped_metadata.raw.body_mass_index_value ? (*/}
-                                            {/*        <>{result.mapped_metadata.raw.body_mass_index_value[0]}</>*/}
-                                            {/*    ) : null*/}
-                                            {/*    }*/}
-                                            {/*</td>*/}
-                                            {/*<td>*/}
-                                            {/*    {result.mapped_metadata && result.mapped_metadata.raw.sex ? (*/}
-                                            {/*        <>{result.mapped_metadata.raw.sex[0]}</>*/}
-                                            {/*    ) : null*/}
-                                            {/*    }*/}
-                                            {/*</td>*/}
-                                            {/*<td>*/}
-                                            {/*    {result.mapped_metadata && result.mapped_metadata.raw.race ? (*/}
-                                            {/*        <>{result.mapped_metadata.raw.race[0]}</>*/}
-                                            {/*    ) : null*/}
-                                            {/*    }*/}
-                                            {/*</td>*/}
 
-                                            <td>{new Intl.DateTimeFormat('en-US', {
-                                                year: 'numeric',
-                                                month: '2-digit',
-                                                day: '2-digit'
-                                            }).format(result.last_modified_timestamp.raw)}</td>
+                                            <td>
+                                                {result.group_name ? (
+                                                    <>{result.group_name.raw}</>
+                                                ) : null
+                                                }
+                                            </td>
                                         </tr>
                                     )
                                 } else if (filter.values.length === 1 && filter.values[0] === 'Dataset') {
@@ -207,7 +213,18 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                     return (
                                         <tr key={index}
                                             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
+                                            <td>
+                                                {result.created_by_user_displayname.raw}
+                                            </td>
                                             <td>{result.sennet_id.raw}</td>
+                                            <td>
+                                                {
+                                                    result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
+                                                        : result.lab_source_id ? <>{result.lab_source_id.raw}</>
+                                                            : result.lab_dataset_id ? <>{result.lab_dataset_id.raw}</>
+                                                                : null
+                                                }
+                                            </td>
                                             {hasMultipleEntityTypes &&
                                                 <td>{result.entity_type.raw}</td>
                                             }
@@ -230,13 +247,6 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                                 ) : null
                                                 }
                                             </td>
-
-
-                                            <td>{new Intl.DateTimeFormat('en-US', {
-                                                year: 'numeric',
-                                                month: '2-digit',
-                                                day: '2-digit'
-                                            }).format(result.last_modified_timestamp.raw)}</td>
                                         </tr>
                                     )
                                 } else {

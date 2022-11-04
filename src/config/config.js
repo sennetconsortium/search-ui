@@ -156,6 +156,8 @@ export const config = {
             'created_by_user_displayname',
             'created_by_user_email',
             'lab_tissue_sample_id',
+            'lab_source_id',
+            'lab_dataset_id',
             'sample_category',
             'group_name',
             'source_type',
