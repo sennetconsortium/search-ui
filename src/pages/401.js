@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Header from "../components/custom/layout/Header";
 import React from "react";
 
-export default function Custom500() {
+export default function Custom401() {
     return (
         <>
             <Header title="Unauthorized | SenNet"></Header>
