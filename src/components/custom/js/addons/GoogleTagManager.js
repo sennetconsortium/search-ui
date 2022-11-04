@@ -89,7 +89,7 @@ class GoogleTagManager extends Addon {
     handleLinks(e) {
         this.event = 'links'
         const $el = this.currentTarget(e)
-        this.gtm({link: $el.text() || $el.attr('aria-label')})
+        this.gtm({link: $el.text() || $el.attr('aria-label') || $el.attr('alt')})
     }
 
     links() {
