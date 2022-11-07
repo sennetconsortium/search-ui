@@ -161,15 +161,17 @@ function ViewDataset() {
                                 <div className="d-flex justify-content-between mb-2">
                                     <div className="entity_subtitle link_with_icon">
                                         {data.data_types &&
-                                            <span>
-                                            {data.data_types[0]}
-                                        </span>
+                                            <>
+                                                {data.data_types[0]}
+                                            </>
                                         }
-                                        {/*{data.origin_sample && Object.keys(data.origin_sample).length > 0 && data.origin_sample.organ &&*/}
-                                        {/*    <span className="ms-1 me-1">*/}
-                                        {/*    | {getOrganTypeFullName(data.origin_sample.organ)}*/}
-                                        {/*</span>*/}
-                                        {/*}*/}
+                                        {data.lab_dataset_id &&
+                                            <>
+                                                <span className="mx-2">|</span>
+                                                {data.lab_dataset_id}
+                                            </>
+                                        }
+
                                         {data.doi_url &&
                                             <>
                                                 |
