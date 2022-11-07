@@ -24,23 +24,26 @@ export default function EditBulk() {
     if (authenticated) {
         let entity_title = ''
         let exampleFileName = ''
-        let bulkUploadUrl = ''
-        let bulkUrl = ''
+        let bulkUploadUrl = getIngestEndPoint()
+        let bulkUrl = getIngestEndPoint()
         switch (entity_type_query) {
             case 'source':
                 entity_title = 'Sources'
                 exampleFileName = 'example_source.tsv'
-                bulkUploadUrl = getIngestEndPoint() + 'sources/bulk-upload'
-                bulkUrl = getIngestEndPoint() + 'sources/bulk'
+                bulkUploadUrl += 'sources/bulk-upload'
+                bulkUrl += 'sources/bulk'
                 break
             case 'sample':
                 entity_title = 'Samples'
                 exampleFileName = 'example_sample.tsv'
-                bulkUploadUrl = getIngestEndPoint() + 'samples/bulk-upload'
-                bulkUrl = getIngestEndPoint() + 'samples/bulk'
+                bulkUploadUrl += 'samples/bulk-upload'
+                bulkUrl += 'samples/bulk'
                 break
             case 'dataset':
                 entity_title = 'Datasets'
+                exampleFileName = 'example_dataset.tsv'
+                bulkUploadUrl += 'datasets/bulk-upload'
+                bulkUploadUrl += 'datasets/bulk'
                 break
             default:
                 return (<Unauthorized/>)
