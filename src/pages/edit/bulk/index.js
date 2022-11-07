@@ -43,7 +43,7 @@ export default function EditBulk() {
                 entity_title = 'Datasets'
                 exampleFileName = 'example_dataset.tsv'
                 bulkUploadUrl += 'datasets/bulk-upload'
-                bulkUploadUrl += 'datasets/bulk'
+                bulkUrl += 'datasets/bulk'
                 break
             default:
                 return (<Unauthorized/>)
