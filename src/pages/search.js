@@ -27,11 +27,23 @@ import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 
 function Search() {
-    const {_t, isRegisterHidden, isAuthorizing} = useContext(AppContext);
+    const {
+        _t,
+        logout,
+        isRegisterHidden,
+        isAuthorizing,
+        isUnauthorized,
+        hasAuthenticationCookie
+    } = useContext(AppContext);
 
     if (isAuthorizing()) {
-        return  <Spinner />
-    }else {
+        return <Spinner/>
+    } else {
+        if (isUnauthorized() && hasAuthenticationCookie()) {
+            // This is a scenario in which the GLOBUS token is expired but the token still exists in the user's cookies
+            logout()
+            window.location.reload()
+        }
         return (
             <>
                 <Header title={APP_TITLE}/>
@@ -50,7 +62,7 @@ function Search() {
                                                 <div className="search-box-header js-gtm--search">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
-                                                            <Form onSubmit={onSubmit} >
+                                                            <Form onSubmit={onSubmit}>
                                                                 <Form.Group controlId="search">
                                                                     <InputGroup>
                                                                         <Form.Control
@@ -89,8 +101,8 @@ function Search() {
                                             bodyContent={
                                                 <div className="js-gtm--results">
                                                     <Results filters={filters} titleField={filters}
-                                                         view={TableResults} resultView={TableRowDetail}
-                                                />
+                                                             view={TableResults} resultView={TableRowDetail}
+                                                    />
                                                 </div>
 
                                             }
