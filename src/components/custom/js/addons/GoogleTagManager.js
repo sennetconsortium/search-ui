@@ -30,6 +30,8 @@ class GoogleTagManager extends Addon {
                 this.results()
                 break
             default:
+                this.page()
+                this.cta()
                 this.links()
         }
     }
@@ -81,9 +83,13 @@ class GoogleTagManager extends Addon {
         }).bind(this))
     }
 
+    getPath() {
+        return this.router.asPath.length > 70 ? this.router.pathname : this.router.asPath
+    }
     handleLinks(e) {
         this.event = 'links'
-        this.gtm({link: this.currentTarget(e).text()})
+        const $el = this.currentTarget(e)
+        this.gtm({link: $el.text() || $el.attr('aria-label') || $el.attr('alt')})
     }
 
     links() {
@@ -92,9 +98,93 @@ class GoogleTagManager extends Addon {
         }).bind(this))
     }
 
+    handleCta(e) {
+        const $el = this.currentTarget(e)
+        const className = $el.attr('class')
+        this.event = 'cta'
+        let action
+        const actions = ['json', 'submit', 'login']
+        for (let i = 0; i < actions.length; i++) {
+            if (className.includes(actions[i])){
+                action = actions[i]
+            }
+        }
+        if (action) {
+            let data = { }
+            data = this.entityPage(data, false)
+            let action2 = data.action || null
+            data = { ...data, action: (action2 ? `${action}.${action2}`: action), uuid: this.getUuid() }
+            this.gtm(data)
+        }
+
+    }
+
+    cta() {
+        $('[role="button"], .btn, button').on('click', ((e) => {
+            this.handleCta(e)
+        }).bind(this))
+    }
+
+    page() {
+        this.event = 'page'
+        let data = {data: 'view'}
+        Addon.log('GTM, Page event ...', 'log', 'pink')
+        this.entityPage(data)
+    }
+
+    getUuid() {
+        const uuid = this.router.asPath.split('uuid=')
+        // Fully fetch the uuid, split(&)[0] in case more params follow
+        return uuid.length && uuid.length > 1 ? this.router.asPath.split('uuid=')[1].split('&')[0] : null
+    }
+
+    entityPage(data, send = true) {
+
+        const entities = Object.keys(this.entities)
+
+        let pos = -1
+        for (let i = 0; i < entities.length; i++) {
+            if (this.router.route.includes(entities[i])) pos = i
+        }
+
+        if ( pos !== -1) {
+            data.entity = this.entities[entities[pos]]
+            const actions = ['create', 'edit']
+            for (let action of actions) {
+                if (this.router.route.indexOf(action) !== -1) {
+                    data.action = action
+                }
+            }
+            data.uuid = this.getUuid()
+
+            if (send) {
+                this.gtm(data) // push Page view
+                this.event = 'entity'
+                this.gtm(data) // push Entity Page view
+            }
+        } else {
+            if (send) this.gtm(data) // push Page view
+        }
+        return data
+    }
+    getPerson(bto = false) {
+        const id = this.user.email
+        let result
+        if (id) {
+            result = bto ? btoa(id.replace('@', '*')) : `${id.split('@')[0]}***`
+        }
+        return result
+    }
     gtm(args) {
-        const data = { event: this.event, ...args }
-        //console.log(data)
+        let data = {
+            event: this.event,
+            path: this.getPath(),
+            person: this.getPerson(),
+            user_id: this.getPerson(true),
+            globus_id: this.user.globus_id,
+            session: (this.user.email !== undefined), ...args
+        }
+        if (Addon.isLocal()) console.log(data)
         dataLayer.push(data)
     }
 }

@@ -15,7 +15,7 @@ const AppNavbar = ({ hidden, signoutHidden }) => {
         let url = APP_ROUTES.login
         if (isLoggedIn()) {
             logout()
-            url = getLogoutURL()
+            url = APP_ROUTES.logout //getLogoutURL()
         }
         window.location.replace(url)
     }
