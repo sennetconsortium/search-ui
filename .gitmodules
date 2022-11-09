@@ -2,7 +2,3 @@
 	path = src/search-ui
 	url = https://github.com/dbmi-pitt/search-ui
 	branch = main
-[submodule "src/provenance-ui"]
-	path = src/provenance-ui
-	url = https://github.com/sennetconsortium/provenance-ui.git
-	branch = main

@@ -20,6 +20,7 @@ import Header from "../components/custom/layout/Header";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from "../components/custom/Alert";
+import Provenance from "../components/custom/entities/Provenance";
 
 function ViewSample() {
     const router = useRouter()
@@ -186,9 +187,9 @@ function ViewSample() {
 
 
                                     {/*Provenance*/}
-                                    {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
-                                    <Provenance data={  }/>
-                                } */}
+                                    {data &&
+                                    <Provenance rawData={data}/>
+                                    }
 
                                     {/*Source Information Box*/}
                                     {source &&
