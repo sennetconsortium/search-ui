@@ -44,3 +44,5 @@ yarn-error.log*
 .vscode/
 .vscode/bookmarks.json
 sennet.code-workspace
+src/package.local.json
+src/.prettierrc
