@@ -47,6 +47,7 @@ function ViewSample() {
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
+                setData(false)
             } else {
                 // set state with the result
                 setData(data);
@@ -80,9 +81,9 @@ function ViewSample() {
         }
     }
 
-    if (isAuthorizing() || isUnauthorized()) {
+    if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
+            data == null ? <Spinner/> : <Unauthorized/>
         )
     } else {
         return (
