@@ -1,14 +1,14 @@
-import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
-import { APP_TITLE, getLogoutURL } from '../../../config/config'
-import { APP_ROUTES, ENTITIES } from '../../../config/constants'
-import { useContext } from 'react'
+import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
+import {APP_TITLE, getLogoutURL} from '../../../config/config'
+import {APP_ROUTES, ENTITIES} from '../../../config/constants'
+import {useContext} from 'react'
 import styles from '../appNavbar.module.css'
 import logo from './sennet-logo.png'
 import Image from 'next/image'
 import AppContext from '../../../context/AppContext'
 
-const AppNavbar = ({ hidden, signoutHidden }) => {
-    const { _t, isLoggedIn, logout } = useContext(AppContext)
+const AppNavbar = ({hidden, signoutHidden}) => {
+    const {_t, isLoggedIn, logout} = useContext(AppContext)
 
     const handleSession = (e) => {
         e.preventDefault()
@@ -39,7 +39,7 @@ const AppNavbar = ({ hidden, signoutHidden }) => {
                     />
                     <div className={'ms-2 fs-3'}>{APP_TITLE}</div>
                 </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse>
                     <Nav className={'me-auto'}>
                         <NavDropdown
@@ -54,7 +54,7 @@ const AppNavbar = ({ hidden, signoutHidden }) => {
                                     {_t(entity)}
                                 </NavDropdown.Item>
                             ))}
-                            
+
                         </NavDropdown>
                         <NavDropdown
                             active={false}
@@ -66,6 +66,8 @@ const AppNavbar = ({ hidden, signoutHidden }) => {
                                 href="/edit/bulk?entity_type=source">Sources</NavDropdown.Item>
                             <NavDropdown.Item
                                 href="/edit/bulk?entity_type=sample">Samples</NavDropdown.Item>
+                            <NavDropdown.Item
+                                href="/edit/bulk?entity_type=dataset">Datasets</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                     <Nav>
@@ -73,7 +75,7 @@ const AppNavbar = ({ hidden, signoutHidden }) => {
                             className={'justify-content-end'}
                             hidden={signoutHidden}
                             href='#'
-                            onClick={(e) => handleSession(e) }
+                            onClick={(e) => handleSession(e)}
                         >
                             {isLoggedIn() ? _t('Sign-out') : _t('Sign-in')}
                         </Nav.Link>
