@@ -10,6 +10,7 @@ import {DataGraph, NeoGraph, DataConverter, ProvenanceUI, Legend} from 'provenan
 import 'provenance-ui/dist/ProvenanceUI.css'
 import Spinner from '../Spinner'
 import {getAuth} from "../../../config/config";
+import AppModal from "../../AppModal";
 
 const Provenance = memo(({ nodeData }) => {
     const [data, setData] = useState(nodeData)
@@ -134,6 +135,10 @@ const Provenance = memo(({ nodeData }) => {
                 {!loading && <ProvenanceUI ops={options} data={neo4j}/>}
                 {!loading && <Legend colorMap={graphOptions.colorMap} />}
                 {loading && <Spinner/>}
+                <AppModal showModal={true} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
+                    {!loading && <Legend colorMap={graphOptions.colorMap} />}
+                    {!loading && <ProvenanceUI ops={options} data={neo4j}/>}
+                </AppModal>
             </div>
         </li>
     )

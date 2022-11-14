@@ -104,3 +104,7 @@ p {
     border: none;
     margin-top: 0;
 }
+
+.modal-full .modal-dialog {
+    max-width: 100%;
+}

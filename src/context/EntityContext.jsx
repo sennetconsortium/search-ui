@@ -107,6 +107,7 @@ export const EntityProvider = ({ children }) => {
             handleClose={handleClose}
             handleHome={handleHome}
             showCloseButton={showHideModal}
+            closeButtonLabel={'Edit form'}
         />
     }
 
