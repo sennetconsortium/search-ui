@@ -6,7 +6,7 @@ import React, {
     memo
 } from 'react'
 import log from 'loglevel'
-import {DataGraph, NeoGraph, Graph, DataConverter, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
+import {DataGraph, NeoGraph, DataConverter, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
 import 'provenance-ui/dist/ProvenanceUI.css'
 import Spinner from '../Spinner'
 import {getAuth} from "../../../config/config";
@@ -130,7 +130,9 @@ const Provenance = memo(({ nodeData }) => {
             </div>
 
             <div className='card-body'>
+
                 {!loading && <ProvenanceUI ops={options} data={neo4j}/>}
+                {!loading && <Legend colorMap={graphOptions.colorMap} />}
                 {loading && <Spinner/>}
             </div>
         </li>
