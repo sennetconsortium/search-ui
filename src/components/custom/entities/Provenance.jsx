@@ -6,52 +6,124 @@ import React, {
     memo
 } from 'react'
 import log from 'loglevel'
-import { Graph, DataConverter, ProvenanceUI } from 'provenance-ui/dist/index'
+import {DataGraph, NeoGraph, Graph, DataConverter, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
 import 'provenance-ui/dist/ProvenanceUI.css'
 import Spinner from '../Spinner'
+import {getRequestHeaders} from "../js/functions";
+import {getAuth, getEntityEndPoint, getIngestEndPoint} from "../../../config/config";
 
-const Provenance = memo(({ rawData }) => {
-    const [data, setData] = useState(rawData)
-    const [loaded, setLoaded] = useState(false)
+const Provenance = memo(({ nodeData }) => {
+    const [data, setData] = useState(nodeData)
+    const [options, setOptions] = useState({})
+    const [loading, setLoading] = useState(true)
     const [neo4j, setNeo4jData] = useState(null)
     const [highlight, setHighlight] = useState([])
+
+    const graphOptions = {
+        idNavigate: {
+            prop: "uuid",
+            url: "/{classType}?uuid="
+        },
+        colorMap: {
+            "Dataset": "#8ecb93",
+            "Activity": "#f16766",
+            "Sample": "#ebb5c8",
+            "Source": "#ffc255"
+        }
+    }
 
     const dataMap = {
         root: {
             entity_type: 'labels',
             uuid: 'id',
-            created_by_user_displayname: 'text'
+            created_by_user_displayname: 'text',
         },
-        properties: ['uuid', 'sennet_id'],
-        typeProperties: {
+        highlight: {
+            labels: 'entity_type',
+            prop: 'sennet_id'
+        },
+        actor: {
+            dataProp: 'created_by_user_displayname',
+            visualProp: 'researcher'
+        },
+        props: ['uuid', 'sennet_id'],
+        typeProps: {
             Source: ['source_type'],
             Sample: ['sample_category'],
-            Activity: ['created_timestamp', 'created_by_user_displayname']
+            Activity: ['created_timestamp']
         },
         callbacks: {
-            created_timestamp: 'formatDate'
+            created_timestamp: 'formatDate',
+            created_by_user_displayname: 'lastNameFirstInitial'
         }
     }
 
     useEffect(() => {
-        log.debug('Beginning Provenance UI...')
-        let graph = new Graph()
-        graph.dfs(data)
-        log.debug('Graph nodes', graph.getResult())
-        let converter = new DataConverter(graph.getResult(), dataMap)
-        converter.reformatNodes()
-        converter.reformatRelationships()
-        const h = [converter.getRootAsHighlight('sennet_id')]
-        setHighlight(h)
-        const neo = converter.getNeo4jFormat({
-            columns: ['user', 'entity'],
-            nodes: converter.getNodes(),
-            relationships: converter.getRelationships()
-        })
-        setNeo4jData(neo)
-        setLoaded(true)
-        log.debug('Neo4J formatted', neo)
-        log.debug('Ended Provenance UI.')
+        const graphOps = {token: getAuth(), url: '/api/find?uuid=', keys: {neighbors: 'direct_ancestors'}}
+        const rawData = data.descendants ? (!data.descendants.length ? data : data.descendants) : data
+
+        log.debug('Result from fetch', data)
+        log.debug('Raw data', rawData)
+
+        const getNeighbors = (node) => {
+            let neighbors = node[graphOps.keys.neighbors]
+            if (!neighbors) {
+                neighbors = node['direct_ancestor'] ? [node['direct_ancestor']] : []
+            }
+            return neighbors
+        }
+
+        const onDataAcquired = (dataGraph) => {
+            log.debug('DataGraph', dataGraph.list)
+
+            // Traverse graph data and create graph properties
+            const neoGraph = new NeoGraph({...graphOps, getNeighbors, list: dataGraph.list})
+            neoGraph.dfs(rawData)
+            log.debug('NeoGraph', neoGraph.getResult())
+
+            // Convert the data into a format usable by the graph visual, i.e. neo4j format
+            const converter = new DataConverter(neoGraph.getResult(), dataMap)
+            converter.reformatNodes()
+            converter.reformatRelationships()
+
+            const neoData = converter.getNeo4jFormat({
+                columns: ['user', 'entity'],
+                nodes: converter.getNodes(),
+                relationships: converter.getRelationships()
+            })
+
+            log.debug('NeoData for graph visual ...', neoData)
+
+            // const highlight = [{
+            //     class: data.entity_type,
+            //     property: 'sennet_id',
+            //     value: data.sennet_id
+            // }]
+            const neighbors = getNeighbors(data)
+            let highlight = [{
+                class: data[dataMap.highlight.labels],
+                property: dataMap.highlight.prop,
+                value: data[dataMap.highlight.prop]
+            }]
+            for (let n of neighbors) {
+                highlight.push({
+                    class: n[dataMap.highlight.labels],
+                    property: dataMap.highlight.prop,
+                    isSecondary: true,
+                    value: n[dataMap.highlight.prop]
+                })
+            }
+
+            const ops = {...graphOps, highlight}
+            setOptions(ops)
+            log.debug('Options', ops)
+            setNeo4jData(neoData)
+            setLoading(false)
+        }
+
+        // Traverse the data and fetch all neighbors for each node.
+        const dataGraph = new DataGraph({...graphOps, getNeighbors, onDataAcquired})
+        dataGraph.dfsWithPromise(rawData)
     }, [data])
 
     return (
@@ -64,8 +136,8 @@ const Provenance = memo(({ rawData }) => {
 
             <div className='card-body'>
                 {/*{loaded && <ProvenanceUI  />}*/}
-                {loaded && <ProvenanceUI ops={{ highlight, noStyles: true }} data={neo4j}/>}
-                {!loaded && <Spinner />}
+                {!loading && <ProvenanceUI ops={{highlight, noStyles: true}} data={neo4j}/>}
+                {loading && <Spinner/>}
             </div>
         </li>
     )

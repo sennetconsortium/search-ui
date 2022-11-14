@@ -188,7 +188,7 @@ function ViewSample() {
 
                                     {/*Provenance*/}
                                     {data &&
-                                    <Provenance rawData={data}/>
+                                    <Provenance nodeData={data}/>
                                     }
 
                                     {/*Source Information Box*/}

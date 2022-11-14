@@ -97,3 +97,9 @@ p {
     color: var(--bs-link-color);
     text-decoration: underline;
 }
+
+.card-body .c-provenance .neo4jd3__graph {
+    min-height: 300px;
+    background-color: transparent;
+    border: none;
+}
