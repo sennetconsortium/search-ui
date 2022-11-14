@@ -1,27 +1,24 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext} from 'react';
 import BulkCreate from "../../../components/custom/bulk/BulkCreate";
 import AppNavbar from "../../../components/custom/layout/AppNavbar";
-import {getCookie} from "cookies-next";
 import Unauthorized from "../../../components/custom/layout/Unauthorized";
 import {useRouter} from 'next/router'
 import {getIngestEndPoint} from "../../../config/config";
-import {get_user_write_groups} from "../../../lib/services";
-import log from 'loglevel'
+import EntityContext, {EntityProvider} from "../../../context/EntityContext";
+import Spinner from "../../../components/custom/Spinner";
 
 export default function EditBulk() {
-    const [userWriteGroups, setUserWriteGroups] = useState(null)
-    const authenticated = getCookie('isAuthenticated')
+    const {isUnauthorized, isAuthorizing, userWriteGroups} = useContext(EntityContext)
+
     const router = useRouter()
     const entity_type_query = router.query['entity_type']
     let result
 
-    useEffect(() => {
-        get_user_write_groups()
-            .then(r => setUserWriteGroups(r.user_write_groups))
-            .catch(log.error)
-    }, [])
-
-    if (authenticated) {
+    if (isAuthorizing() || isUnauthorized()) {
+        return (
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
+        )
+    } else {
         let entity_title = ''
         let exampleFileName = ''
         let bulkUploadUrl = getIngestEndPoint()
@@ -59,11 +56,13 @@ export default function EditBulk() {
                 userWriteGroups={userWriteGroups}
             />
         </>
-    } else {
-        result = <Unauthorized/>
     }
 
 
     return (result)
+}
+
+EditBulk.withWrapper = function(page) {
+    return <EntityProvider>{page}</EntityProvider>
 }
 
