@@ -114,9 +114,9 @@ function ViewSample() {
                                                     Datasets</a>
                                                 </li>
                                             }
-                                            {/* <li className="sui-single-option-facet__item"><a
+                                            {<li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                        </li> */}
+                                        </li>}
                                             {data.ancestors &&
                                                 <li className="sui-single-option-facet__item"><a
                                                     className="sui-single-option-facet__link"

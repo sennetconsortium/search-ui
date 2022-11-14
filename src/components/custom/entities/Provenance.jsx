@@ -9,8 +9,7 @@ import log from 'loglevel'
 import {DataGraph, NeoGraph, Graph, DataConverter, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
 import 'provenance-ui/dist/ProvenanceUI.css'
 import Spinner from '../Spinner'
-import {getRequestHeaders} from "../js/functions";
-import {getAuth, getEntityEndPoint, getIngestEndPoint} from "../../../config/config";
+import {getAuth} from "../../../config/config";
 
 const Provenance = memo(({ nodeData }) => {
     const [data, setData] = useState(nodeData)
@@ -29,7 +28,8 @@ const Provenance = memo(({ nodeData }) => {
             "Activity": "#f16766",
             "Sample": "#ebb5c8",
             "Source": "#ffc255"
-        }
+        },
+        noStyles: true
     }
 
     const dataMap = {
@@ -94,11 +94,6 @@ const Provenance = memo(({ nodeData }) => {
 
             log.debug('NeoData for graph visual ...', neoData)
 
-            // const highlight = [{
-            //     class: data.entity_type,
-            //     property: 'sennet_id',
-            //     value: data.sennet_id
-            // }]
             const neighbors = getNeighbors(data)
             let highlight = [{
                 class: data[dataMap.highlight.labels],
@@ -114,7 +109,7 @@ const Provenance = memo(({ nodeData }) => {
                 })
             }
 
-            const ops = {...graphOps, highlight}
+            const ops = {...graphOptions, highlight}
             setOptions(ops)
             log.debug('Options', ops)
             setNeo4jData(neoData)
@@ -135,8 +130,7 @@ const Provenance = memo(({ nodeData }) => {
             </div>
 
             <div className='card-body'>
-                {/*{loaded && <ProvenanceUI  />}*/}
-                {!loading && <ProvenanceUI ops={{highlight, noStyles: true}} data={neo4j}/>}
+                {!loading && <ProvenanceUI ops={options} data={neo4j}/>}
                 {loading && <Spinner/>}
             </div>
         </li>
