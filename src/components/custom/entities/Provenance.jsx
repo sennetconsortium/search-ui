@@ -23,7 +23,8 @@ function Provenance({ nodeData }) {
     const graphOptions = {
         idNavigate: {
             prop: "uuid",
-            url: "/{classType}?uuid="
+            url: "/{classType}?uuid=",
+            exclude: ['Activity']
         },
         colorMap: {
             "Dataset": "#8ecb93",
