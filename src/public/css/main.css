@@ -84,6 +84,12 @@ p {
     }
 }
 
+@media screen and (max-width: 480px) {
+    .navbar .fs-3 {
+        font-size: 1.1rem !important;
+    }
+}
+
 .results-header {
     white-space: nowrap;
 }
@@ -135,4 +141,15 @@ p {
 
 .btn--fullView:hover {
     transform: scale(1.2);
+}
+
+
+@media screen and (max-height: 700px) {
+    .navbar + .container {
+        min-height: calc(100vh - 277px)
+    }
+
+    footer {
+        position: inherit !important;
+    }
 }
