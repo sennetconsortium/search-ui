@@ -131,15 +131,13 @@ function Provenance({ nodeData }) {
         setShowModal(!showModal)
     }
 
-
-
     return (
         <div className='sui-result provenance--portal-ui' id='Provenance'>
             <div className='sui-result__header'>
                 <span className='sui-result__title'>
                     Provenance
                 </span>
-                <button className='btn pull-right' onClick={handleModal} arial-label='Full view' title='Full view'>
+                <button className='btn pull-right btn--fullView' onClick={handleModal} arial-label='Full view' title='Full view'>
                     <ArrowsAngleExpand />
                 </button>
             </div>

@@ -115,9 +115,24 @@ p {
     border: none;
     margin-top: 0;
 }
+
+.neo4jd3__graph .is-visited:not(.is-primary) .ring {
+    stroke: #6ac6ff !important;
+    opacity: .5;
+}
+
 .modal-full .c-provenance .neo4jd3__graph {
     min-height: 500px;
 }
+
 .modal-full .modal-dialog {
     max-width: 100%;
+}
+
+.btn--fullView {
+    transition: all .2s ease;
+}
+
+.btn--fullView:hover {
+    transform: scale(1.2);
 }
