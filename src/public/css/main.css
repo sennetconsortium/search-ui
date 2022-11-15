@@ -97,14 +97,27 @@ p {
     color: var(--bs-link-color);
     text-decoration: underline;
 }
+.card-body .c-provenance {
+    position: relative;
+}
 
-.card-body .c-provenance .neo4jd3__graph {
+.provenance--portal-ui .pull-right:hover svg {
+    fill: var(--bs-link-color);
+}
+
+.provenance--portal-ui .neo4jd3__info{
+    z-index: 1;
+}
+
+.card-body .c-provenance .neo4jd3__graph, .modal-full .c-provenance .neo4jd3__graph {
     min-height: 300px;
     background-color: transparent;
     border: none;
     margin-top: 0;
 }
-
+.modal-full .c-provenance .neo4jd3__graph {
+    min-height: 500px;
+}
 .modal-full .modal-dialog {
     max-width: 100%;
 }

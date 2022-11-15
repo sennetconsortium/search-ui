@@ -2,8 +2,7 @@ import React, {
     useContext,
     useEffect,
     useState,
-    useCallback,
-    memo
+    useRef
 } from 'react'
 import log from 'loglevel'
 import {DataGraph, NeoGraph, DataConverter, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
@@ -11,13 +10,15 @@ import 'provenance-ui/dist/ProvenanceUI.css'
 import Spinner from '../Spinner'
 import {getAuth} from "../../../config/config";
 import AppModal from "../../AppModal";
+import { ArrowsAngleExpand } from "react-bootstrap-icons";
 
-const Provenance = memo(({ nodeData }) => {
+function Provenance({ nodeData }) {
     const [data, setData] = useState(nodeData)
     const [options, setOptions] = useState({})
     const [loading, setLoading] = useState(true)
     const [neo4j, setNeo4jData] = useState(null)
-    const [highlight, setHighlight] = useState([])
+    const [showModal, setShowModal] = useState(false)
+    const initialized = useRef(false)
 
     const graphOptions = {
         idNavigate: {
@@ -30,7 +31,8 @@ const Provenance = memo(({ nodeData }) => {
             "Sample": "#ebb5c8",
             "Source": "#ffc255"
         },
-        noStyles: true
+        noStyles: true,
+        selectorId: 'neo4j--page'
     }
 
     const dataMap = {
@@ -60,6 +62,8 @@ const Provenance = memo(({ nodeData }) => {
     }
 
     useEffect(() => {
+        if (initialized.current) return
+        initialized.current = true
         const graphOps = {token: getAuth(), url: '/api/find?uuid=', keys: {neighbors: 'direct_ancestors'}}
         const rawData = data.descendants ? (!data.descendants.length ? data : data.descendants) : data
 
@@ -83,7 +87,7 @@ const Provenance = memo(({ nodeData }) => {
             log.debug('NeoGraph', neoGraph.getResult())
 
             // Convert the data into a format usable by the graph visual, i.e. neo4j format
-            const converter = new DataConverter(neoGraph.getResult(), dataMap)
+            const converter = new DataConverter(neoGraph.getResult(), dataMap, dataGraph.list)
             converter.reformatNodes()
             converter.reformatRelationships()
 
@@ -122,26 +126,35 @@ const Provenance = memo(({ nodeData }) => {
         dataGraph.dfsWithPromise(rawData)
     }, [data])
 
+    const handleModal = (e) => {
+        setShowModal(!showModal)
+    }
+
+
+
     return (
-        <li className='sui-result' id='Provenance'>
+        <div className='sui-result provenance--portal-ui' id='Provenance'>
             <div className='sui-result__header'>
                 <span className='sui-result__title'>
                     Provenance
                 </span>
+                <button className='btn pull-right' onClick={handleModal} arial-label='Full view' title='Full view'>
+                    <ArrowsAngleExpand />
+                </button>
             </div>
 
             <div className='card-body'>
 
-                {!loading && <ProvenanceUI ops={options} data={neo4j}/>}
+                {!loading && <ProvenanceUI options={options} data={neo4j}/>}
                 {!loading && <Legend colorMap={graphOptions.colorMap} />}
                 {loading && <Spinner/>}
-                <AppModal showModal={true} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
+                <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
+                    {!loading && <ProvenanceUI options={{...options, selectorId: 'neo4j--modal'}} data={neo4j} />}
                     {!loading && <Legend colorMap={graphOptions.colorMap} />}
-                    {!loading && <ProvenanceUI ops={options} data={neo4j}/>}
                 </AppModal>
             </div>
-        </li>
+        </div>
     )
-})
+}
 
 export default Provenance
