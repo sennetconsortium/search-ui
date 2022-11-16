@@ -2,8 +2,7 @@ export const SOURCE_TYPE = {
     "Human": "Human",
     "Human organoid": "Human organoid",
     "Mouse": "Mouse",
-    "Mouse organoid": "Mouse organoid",
-    "Unknown": "Unknown"
+    "Mouse organoid": "Mouse organoid"
 }
 
 export const SAMPLE_CATEGORY = {
