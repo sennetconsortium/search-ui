@@ -329,73 +329,23 @@ exclude_dataset_config['searchQuery']['excludeFilters'] = [{
 }];
 exclude_dataset_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
-export let dataset_ancestor_query = {
-    "query": {
-        "bool": {
-            "must": {
-                "match_all": {}
-            },
-            "must_not": [
-                {
-                    "term": {
-                        "entity_type.keyword": "Dataset"
-                    }
-                },
-                {
-                    "terms": {
-                        "sample_category.keyword": ["bodily Fluid", "organ", "organ Piece", "other"]
-                    }
-                }
-            ]
-        }
-    },
-    "from": 0,
-    "size": 20,
-    "track_total_hits": true,
-    "_source": {
-        "includes": [
-            "sennet_id",
-            "entity_type",
-            "uuid",
-            "created_by_user_displayname",
-            "created_by_user_email",
-            "lab_tissue_sample_id",
-            "lab_source_id",
-            "lab_dataset_id",
-            "sample_category",
-            "group_name",
-            "source_type",
-            "last_modified_timestamp",
-            "data_types",
-            "status",
-            "origin_sample"
-        ]
-    },
-    "sort": [
-        {
-            "last_modified_timestamp": {
-                "order": "desc",
-                "unmapped_type": "long"
-            }
-        }
-    ],
-    "aggs": {
-        "entity_type": {
-            "terms": {
-                "field": "entity_type.keyword"
-            }
-        },
-        "group_name": {
-            "terms": {
-                "field": "group_name.keyword",
-                "min_doc_count": 0
-            }
-        },
-        "created_by_user_displayname": {
-            "terms": {
-                "field": "created_by_user_displayname.keyword",
-                "min_doc_count": 0
-            }
-        }
-    }
-}
+export let dataset_ancestor_query = _.cloneDeep(exclude_dataset_config)
+dataset_ancestor_query['searchQuery']['excludeFilters'] = [{
+    keyword: "sample_category.keyword",
+    value: "bodily Fluid"
+}, {
+    keyword: "sample_category.keyword",
+    value: "organ"
+}, {
+    keyword: "sample_category.keyword",
+    value: "organ Piece"
+}, {
+    keyword: "sample_category.keyword",
+    value: "other"
+}, {
+    keyword: "entity_type.keyword",
+    value: "Dataset"
+}, {
+    keyword: "entity_type.keyword",
+    value: "Source"
+}]
