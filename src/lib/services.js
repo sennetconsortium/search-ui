@@ -1,4 +1,4 @@
-import {getAuth, getEntityEndPoint, getIngestEndPoint} from "../config/config";
+import {getAuth, getEntityEndPoint, getIngestEndPoint, getUUIDEndpoint} from "../config/config";
 import log from "loglevel";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
@@ -49,6 +49,27 @@ export async function fetchGlobusFilepath(sennet_id) {
         return filepath;
     }
 
+}
+
+// This function requires the bearer token passed to it as the middleware can't access "getAuth()"
+export async function fetch_entity_type(uuid, bearer_token) {
+    const headers = new Headers();
+    headers.append("Authorization", "Bearer " + bearer_token)
+    const url = getUUIDEndpoint() + "uuid/" + uuid
+    const request_options = {
+        method: 'GET',
+        headers: headers
+    }
+    const response = await fetch(url, request_options)
+    if (response.status === 200) {
+        const entity = await response.json();
+        return (entity["type"]).toLowerCase();
+
+    } else if (response.status === 400) {
+        return "404";
+    } else {
+        return ""
+    }
 }
 
 export async function get_read_write_privileges() {
