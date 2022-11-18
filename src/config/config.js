@@ -329,8 +329,8 @@ exclude_dataset_config['searchQuery']['excludeFilters'] = [{
 }];
 exclude_dataset_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
-export let dataset_ancestor_query = _.cloneDeep(exclude_dataset_config)
-dataset_ancestor_query['searchQuery']['excludeFilters'] = [{
+export let dataset_ancestor_config = _.cloneDeep(exclude_dataset_config)
+dataset_ancestor_config['searchQuery']['excludeFilters'] = [{
     keyword: "sample_category.keyword",
     value: "bodily Fluid"
 }, {
