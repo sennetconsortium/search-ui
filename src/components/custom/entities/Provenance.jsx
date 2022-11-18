@@ -5,12 +5,13 @@ import React, {
     useRef
 } from 'react'
 import log from 'loglevel'
-import {DataGraph, NeoGraph, DataConverter, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
+import {DataConverterNeo4J, GraphGeneric, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
 import 'provenance-ui/dist/ProvenanceUI.css'
 import Spinner from '../Spinner'
-import {getAuth} from "../../../config/config";
+import {getAuth, getEntityEndPoint} from "../../../config/config";
 import AppModal from "../../AppModal";
 import { ArrowsAngleExpand } from "react-bootstrap-icons";
+import $ from 'jquery'
 
 function Provenance({ nodeData }) {
     const [data, setData] = useState(nodeData)
@@ -22,9 +23,11 @@ function Provenance({ nodeData }) {
 
     const graphOptions = {
         idNavigate: {
-            prop: "uuid",
+            props: ["sennet:uuid", "sennet:protocol_url"],
             url: "/{classType}?uuid=",
-            exclude: ['Activity']
+            exclude: {
+                'Activity': ["sennet:uuid"]
+            }
         },
         colorMap: {
             "Dataset": "#8ecb93",
@@ -37,39 +40,53 @@ function Provenance({ nodeData }) {
     }
 
     const dataMap = {
+        delimiters: {
+            node: '/'
+        },
+        keys: {
+            type: 'sennet:entity_type',
+            startNode: 'prov:entity',
+            endNode: 'prov:activity'
+        },
+        labels: {
+            edge: { used: 'USED', wasGeneratedBy: 'WAS_GENERATED_BY' }
+        },
         root: {
-            entity_type: 'labels',
-            uuid: 'id',
-            created_by_user_displayname: 'text',
+            'prov:type': 'category',
+            'sennet:entity_type': 'labels',
+            'sennet:uuid': 'id',
+            'sennet:created_by_user_displayname': 'text',
         },
         highlight: {
             labels: 'entity_type',
-            prop: 'sennet_id'
+            dataProp: 'sennet_id',
+            visualProp: 'sennet:sennet_id'
         },
         actor: {
-            dataProp: 'created_by_user_displayname',
-            visualProp: 'researcher'
+            dataProp: 'sennet:created_by_user_displayname',
+            visualProp: 'agent'
         },
-        props: ['uuid', 'sennet_id'],
+        props: ['sennet:uuid', 'sennet:sennet_id'],
         typeProps: {
-            Source: ['source_type'],
-            Sample: ['sample_category'],
-            Activity: ['created_timestamp']
+            Source: ['sennet:source_type'],
+            Sample: ['sennet:sample_category'],
+            Activity: ['sennet:created_timestamp', 'sennet:protocol_url']
         },
         callbacks: {
-            created_timestamp: 'formatDate',
-            created_by_user_displayname: 'lastNameFirstInitial'
+            'sennet:created_timestamp': 'formatDate',
+            'sennet:created_by_user_displayname': 'lastNameFirstInitial'
         }
     }
 
     useEffect(() => {
         if (initialized.current) return
         initialized.current = true
-        const graphOps = {token: getAuth(), url: '/api/find?uuid=', keys: {neighbors: 'direct_ancestors'}}
-        const rawData = data.descendants ? (!data.descendants.length ? data : data.descendants) : data
+        const token = getAuth();
+        const url = getEntityEndPoint() + 'entities/{id}/provenance?return_descendants=true'
+        const itemId = data.uuid;
+        const graphOps = {token, url, keys: {neighbors: 'direct_ancestors'}}
 
         log.debug('Result from fetch', data)
-        log.debug('Raw data', rawData)
 
         const getNeighbors = (node) => {
             let neighbors = node[graphOps.keys.neighbors]
@@ -79,18 +96,19 @@ function Provenance({ nodeData }) {
             return neighbors
         }
 
-        const onDataAcquired = (dataGraph) => {
-            log.debug('DataGraph', dataGraph.list)
+        const handleResult = async (result) => {
+            log.debug(`Result from fetch`, result)
+            let keys = ['activity', 'entity', 'used', 'wasGeneratedBy']
+            for (let key of keys) {
+                $.extend(result[key], result.descendants[key])
+            }
 
-            // Traverse graph data and create graph properties
-            const neoGraph = new NeoGraph({...graphOps, getNeighbors, list: dataGraph.list})
-            neoGraph.dfs(rawData)
-            log.debug('NeoGraph', neoGraph.getResult())
-
-            // Convert the data into a format usable by the graph visual, i.e. neo4j format
-            const converter = new DataConverter(neoGraph.getResult(), dataMap, dataGraph.list)
+            const converter = new DataConverterNeo4J(result, dataMap)
+            converter.flatten()
             converter.reformatNodes()
             converter.reformatRelationships()
+            log.debug(`Nodes ...`, converter.getNodes())
+            log.debug(`Relationships ...`, converter.getRelationships())
 
             const neoData = converter.getNeo4jFormat({
                 columns: ['user', 'entity'],
@@ -98,33 +116,35 @@ function Provenance({ nodeData }) {
                 relationships: converter.getRelationships()
             })
 
-            log.debug('NeoData for graph visual ...', neoData)
+            log.debug(`NeoData for graph visual ...`, neoData)
 
             const neighbors = getNeighbors(data)
             let highlight = [{
                 class: data[dataMap.highlight.labels],
-                property: dataMap.highlight.prop,
-                value: data[dataMap.highlight.prop]
+                property: dataMap.highlight.visualProp,
+                value: data[dataMap.highlight.dataProp]
             }]
             for (let n of neighbors) {
                 highlight.push({
                     class: n[dataMap.highlight.labels],
-                    property: dataMap.highlight.prop,
+                    property: dataMap.highlight.visualProp,
                     isSecondary: true,
-                    value: n[dataMap.highlight.prop]
+                    value: n[dataMap.highlight.dataProp]
                 })
             }
 
             const ops = {...graphOptions, highlight}
-            setOptions(ops)
+
             log.debug('Options', ops)
+            setOptions(ops)
             setNeo4jData(neoData)
             setLoading(false)
         }
 
-        // Traverse the data and fetch all neighbors for each node.
-        const dataGraph = new DataGraph({...graphOps, getNeighbors, onDataAcquired})
-        dataGraph.dfsWithPromise(rawData)
+        if (token.length && url.length && itemId.length) {
+            const graph = new GraphGeneric(graphOps)
+            graph.service({ callback: handleResult, url: url.replace('{id}', itemId) })
+        }
     }, [data])
 
     const handleModal = (e) => {
