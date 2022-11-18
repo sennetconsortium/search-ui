@@ -24,7 +24,7 @@ function Provenance({ nodeData }) {
     const graphOptions = {
         idNavigate: {
             props: ["sennet:uuid", "sennet:protocol_url"],
-            url: "/{classType}?uuid=",
+            url: "/{classType}?uuid={id}",
             exclude: {
                 'Activity': ["sennet:uuid"]
             }
@@ -34,6 +34,9 @@ function Provenance({ nodeData }) {
             "Activity": "#f16766",
             "Sample": "#ebb5c8",
             "Source": "#ffc255"
+        },
+        simulation: {
+            charge: -300
         },
         noStyles: true,
         selectorId: 'neo4j--page'
@@ -98,12 +101,18 @@ function Provenance({ nodeData }) {
 
         const handleResult = async (result) => {
             log.debug(`Result from fetch`, result)
-            let keys = ['activity', 'entity', 'used', 'wasGeneratedBy']
+            let keys = ['used', 'wasGeneratedBy']
             for (let key of keys) {
-                $.extend(result[key], result.descendants[key])
+                for (let _prop in result.descendants[key]) {
+                    result[key] = result[key] || {}
+                    // Must update key to avoid key collisions with original result.used and result.wasGeneratedBy
+                    result[key][`des${_prop}`] = result.descendants[key][_prop]
+                }
             }
+            $.extend(result.activity, result.descendants.activity)
+            $.extend(result.entity, result.descendants.entity)
 
-            const converter = new DataConverterNeo4J(result, dataMap)
+            const converter = new DataConverterNeo4J(result, dataMap, {setTextForNoneActivity: false})
             converter.flatten()
             converter.reformatNodes()
             converter.reformatRelationships()
