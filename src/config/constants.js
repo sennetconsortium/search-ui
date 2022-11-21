@@ -15,7 +15,7 @@ export const SAMPLE_CATEGORY = {
 }
 
 export const ORGAN_TYPES = {
-    "AO": "Adipose",
+    "AD": "Adipose",
     "BD": "Blood",
     "BR": "Brain",
     "BS": "Breast",
