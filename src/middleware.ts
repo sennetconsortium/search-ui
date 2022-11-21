@@ -35,15 +35,10 @@ export const config = {
         '/((?:source|sample|dataset).*)',
         '/edit/((?:source|sample|dataset).*)'
     ],
-    // TODO: Need to write a glob that better catches lodash
     // Need to make exceptions for lodash
     // https://nextjs.org/docs/messages/edge-dynamic-code-evaluation
     unstable_allowDynamic: [
-        '/node_modules/lodash.hasin/**',
-        '/node_modules/lodash.has/**',
-        '/node_modules/lodash.omit/**',
-        '/node_modules/lodash/**',
-        '/node_modules/lodash.isempty/**',
+        '/node_modules/lodash*/**',
         '/node_modules/babel-runtime/**'
     ]
 }
