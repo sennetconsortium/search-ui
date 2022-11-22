@@ -96,7 +96,7 @@ function ViewDataset() {
             <>
                 {data && <Header title={`${data.sennet_id} | Dataset | SenNet`}></Header>}
 
-                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
+                <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
                 {error &&
                     <Alert message={errorMessage} />

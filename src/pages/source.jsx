@@ -74,7 +74,7 @@ function ViewSource() {
             <>
                 {data && <Header title={`${data.sennet_id} | Source | SenNet`}></Header>}
 
-                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
+                <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
                 {error &&
                     <Alert message={errorMessage}/>

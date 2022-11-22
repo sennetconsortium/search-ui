@@ -90,7 +90,7 @@ function ViewSample() {
             <>
                 {data && <Header title={`${data.sennet_id} | Sample | SenNet`}></Header>}
 
-                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
+                <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
                 {error &&
                     <Alert message={errorMessage}/>
