@@ -1,4 +1,4 @@
-import {useEffect, useState, useContext} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
 import {Button, Form} from 'react-bootstrap'
@@ -19,16 +19,16 @@ import GroupSelect from '../../components/custom/edit/GroupSelect'
 import Header from '../../components/custom/layout/Header'
 
 import AppContext from '../../context/AppContext'
-import {EntityProvider} from '../../context/EntityContext'
-import EntityContext from '../../context/EntityContext'
+import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
 import {ENTITIES} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
 import path from "path";
+import {getEntityEndPoint} from "../../config/config";
 
-export default function EditDataset() {
+export default function EditDataset({provenance_constraints}) {
     const {
         isUnauthorized, isAuthorizing, getModal, setModalDetails,
         data, setData,
@@ -44,7 +44,7 @@ export default function EditDataset() {
     } = useContext(EntityContext)
     const {_t} = useContext(AppContext)
 
-
+    console.log(JSON.stringify(provenance_constraints, null, 2))
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
@@ -310,13 +310,9 @@ EditDataset.withWrapper = function (page) {
 }
 
 export async function getServerSideProps() {
-    let inputFile = path.join(process.cwd(), '../entity_constraints.yml'), outputFile = 'out.json',
-        yaml = require('js-yaml'),
-        fs = require('fs'),
-        constraints = yaml.load(fs.readFileSync(inputFile, {encoding: 'utf-8'}));
-    let constraints_json = {props: constraints}
-    console.log(JSON.stringify(constraints_json, null, 2))
-    return constraints_json
+    const response = await fetch(getEntityEndPoint() + 'constraints')
+    const provenance_constraints = await response.json()
+    return {props: {provenance_constraints}}
 }
 
 

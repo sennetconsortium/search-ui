@@ -332,19 +332,16 @@ exclude_dataset_config['searchQuery']['disjunctiveFacets'] = ["group_name", "cre
 export let dataset_ancestor_config = _.cloneDeep(exclude_dataset_config)
 dataset_ancestor_config['searchQuery']['excludeFilters'] = [{
     keyword: "sample_category.keyword",
-    value: "bodily Fluid"
+    value: "bodily fluid"
 }, {
     keyword: "sample_category.keyword",
     value: "organ"
 }, {
     keyword: "sample_category.keyword",
-    value: "organ Piece"
+    value: "organ piece"
 }, {
     keyword: "sample_category.keyword",
     value: "other"
-}, {
-    keyword: "entity_type.keyword",
-    value: "Dataset"
 }, {
     keyword: "entity_type.keyword",
     value: "Source"
