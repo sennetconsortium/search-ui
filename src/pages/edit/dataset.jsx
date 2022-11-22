@@ -25,8 +25,8 @@ import {ENTITIES} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
-import path from "path";
 import {getEntityEndPoint} from "../../config/config";
+import {ProvenanceConstraints} from '../../lib/provenanceConstraints'
 
 export default function EditDataset({provenance_constraints}) {
     const {
@@ -44,7 +44,20 @@ export default function EditDataset({provenance_constraints}) {
     } = useContext(EntityContext)
     const {_t} = useContext(AppContext)
 
-    console.log(JSON.stringify(provenance_constraints, null, 2))
+    let pc = new ProvenanceConstraints(provenance_constraints)
+    // console.log(JSON.stringify(pc.getValidDescendants({entity_type: 'source'}), null, 2))
+    console.log(JSON.stringify(pc.getValidDescendants({
+            entity_type: 'sample',
+            field_values: [
+                {
+                    field_value: {
+                        name: 'sample_category',
+                        values: ['organ']
+                    }
+                }
+            ]
+        }
+    ), null, 2))
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
