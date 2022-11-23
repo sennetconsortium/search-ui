@@ -44,20 +44,7 @@ export default function EditDataset({provenance_constraints}) {
     } = useContext(EntityContext)
     const {_t} = useContext(AppContext)
 
-    let pc = new ProvenanceConstraints(provenance_constraints)
-    // console.log(JSON.stringify(pc.getValidDescendants({entity_type: 'source'}), null, 2))
-    console.log(JSON.stringify(pc.getValidDescendants({
-            entity_type: 'sample',
-            field_values: [
-                {
-                    field_value: {
-                        name: 'sample_category',
-                        values: ['organ']
-                    }
-                }
-            ]
-        }
-    ), null, 2))
+    const provenanceConstraints = new ProvenanceConstraints(provenance_constraints)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
