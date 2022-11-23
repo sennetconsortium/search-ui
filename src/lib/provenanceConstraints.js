@@ -12,11 +12,11 @@ export class ProvenanceConstraints {
                 if (!Object.hasOwn(entityConstraintAncestor, 'field_values')) {
                     return entityConstraint.descendant
                 } else {
-                    for (const ancestorConstraintFieldValue of entityConstraintAncestor.field_values) {
+                    for (const ancestorConstraintField of entityConstraintAncestor.field_values) {
                         for (const userChosenAncestorFieldValue of userChosenAncestor.field_values) {
-                            if (ancestorConstraintFieldValue.field_value.name.toLowerCase() === userChosenAncestorFieldValue.field_value.name) {
+                            if (ancestorConstraintField.field_value.name.toLowerCase() === userChosenAncestorFieldValue.field_value.name) {
                                 for (const userChosenAncestorValue of userChosenAncestorFieldValue.field_value.values) {
-                                    if (ancestorConstraintFieldValue.field_value.values.includes(userChosenAncestorValue)) {
+                                    if (ancestorConstraintField.field_value.values.includes(userChosenAncestorValue)) {
                                         return entityConstraint.descendant
                                     }
                                 }
