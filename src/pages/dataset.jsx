@@ -28,7 +28,6 @@ function ViewDataset() {
     const [ancestors, setAncestors] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
-    const [statusCode, setStatusCode] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
@@ -49,7 +48,7 @@ function ViewDataset() {
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
-                setStatusCode(response.statusCode)
+                setData(false)
             } else {
                 // set state with the result
                 setData(data);
@@ -87,16 +86,16 @@ function ViewDataset() {
         setAncestors(new_ancestors)
     }
 
-    if (isAuthorizing() || isUnauthorized()) {
+    if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
+            data == null ? <Spinner/> : <Unauthorized/>
         )
     } else {
         return (
             <>
                 {data && <Header title={`${data.sennet_id} | Dataset | SenNet`}></Header>}
 
-                <AppNavbar hidden={isRegisterHidden} signoutHidden={!isLoggedIn()}/>
+                <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
                 {error &&
                     <Alert message={errorMessage} />
