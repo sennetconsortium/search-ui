@@ -29,7 +29,9 @@ export default async function handler(req, res) {
             let queryBody = simple_query_builder("uuid", uuid)
             log.info('QUERY', JSON.stringify(queryBody))
             var myHeaders = new Headers();
-            myHeaders.append("Authorization", req.headers.authorization);
+            if(req.headers.authorization !== undefined) {
+                myHeaders.append("Authorization", req.headers.authorization);
+            }
             myHeaders.append("Content-Type", "application/json");
             var requestOptions = {
                 method: 'POST',

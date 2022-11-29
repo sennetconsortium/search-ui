@@ -57,7 +57,7 @@ html {
     padding: 0 24px !important;
 }
 
-.error-heading {
+.text-center {
     text-align: center;
 }
 
@@ -84,12 +84,6 @@ p {
     }
 }
 
-@media screen and (max-width: 480px) {
-    .navbar .fs-3 {
-        font-size: 1.1rem !important;
-    }
-}
-
 .results-header {
     white-space: nowrap;
 }
@@ -103,6 +97,7 @@ p {
     color: var(--bs-link-color);
     text-decoration: underline;
 }
+
 .card-body .c-provenance {
     position: relative;
 }
@@ -144,6 +139,12 @@ p {
 }
 
 
+@media screen and (max-width: 480px) {
+    .navbar .fs-3 {
+        font-size: 1.1rem !important;
+    }
+}
+
 @media screen and (max-height: 700px) {
     .navbar + .container {
         min-height: calc(100vh - 277px)
@@ -153,3 +154,4 @@ p {
         position: inherit !important;
     }
 }
+

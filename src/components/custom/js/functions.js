@@ -1,10 +1,13 @@
-import { getAuth, getRootURL } from "../../../config/config";
+import {getAuth, getRootURL} from "../../../config/config";
 import {APP_ROUTES, ORGAN_TYPES} from "../../../config/constants";
 import log from "loglevel";
 
 export function getRequestHeaders() {
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer " + getAuth());
+    log.info(getAuth())
+    if (getAuth() !== undefined) {
+        myHeaders.append("Authorization", "Bearer " + getAuth());
+    }
     myHeaders.append("Content-Type", "application/json");
     return {
         method: 'GET',
@@ -59,7 +62,7 @@ export function tableDataToTSV(tableData) {
 }
 
 export function displayBodyHeader(header) {
-    if(header !== undefined)
+    if (header !== undefined)
         return (header.charAt(0).toUpperCase() + header.slice(1)).replaceAll('_', ' ');
     else
         return ""
