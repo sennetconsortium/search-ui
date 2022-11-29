@@ -25,10 +25,8 @@ import {ENTITIES} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
-import {getEntityEndPoint} from "../../config/config";
-import {ProvenanceConstraints} from '../../lib/provenanceConstraints'
 
-export default function EditDataset({provenance_constraints}) {
+export default function EditDataset() {
     const {
         isUnauthorized, isAuthorizing, getModal, setModalDetails,
         data, setData,
@@ -43,8 +41,6 @@ export default function EditDataset({provenance_constraints}) {
         disableSubmit, setDisableSubmit
     } = useContext(EntityContext)
     const {_t} = useContext(AppContext)
-
-    const provenanceConstraints = new ProvenanceConstraints(provenance_constraints)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
@@ -179,7 +175,6 @@ export default function EditDataset({provenance_constraints}) {
         setContainsHumanGeneticSequences(false)
     }
 
-
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
@@ -308,12 +303,3 @@ export default function EditDataset({provenance_constraints}) {
 EditDataset.withWrapper = function (page) {
     return <EntityProvider>{page}</EntityProvider>
 }
-
-export async function getServerSideProps() {
-    const response = await fetch(getEntityEndPoint() + 'constraints')
-    const provenance_constraints = await response.json()
-    return {props: {provenance_constraints}}
-}
-
-
-
