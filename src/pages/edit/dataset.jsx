@@ -9,7 +9,7 @@ import Popover from 'react-bootstrap/Popover'
 import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
 import {update_create_dataset} from '../../lib/services'
-import {cleanJson, fetchEntity, getRequestHeaders} from '../../components/custom/js/functions'
+import {cleanJson, fetchEntity, getHeaders, getRequestHeaders} from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
 import DataTypes from '../../components/custom/edit/dataset/DataTypes'
 import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
@@ -21,10 +21,11 @@ import Header from '../../components/custom/layout/Header'
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import {ENTITIES} from '../../config/constants'
+import {DATA_TYPES, ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
+import {getEntityEndPoint} from "../../config/config";
 
 export default function EditDataset() {
     const {
@@ -44,6 +45,44 @@ export default function EditDataset() {
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
+    const [dataTypes, setDataTypes] = useState(null)
+
+    useEffect(async () => {
+        setDataTypes(null)
+        if (ancestors !== null && ancestors.length !== 0) {
+            const ancestor1 = ancestors[0];
+            const entityType = ancestor1.entity_type.toLowerCase()
+            let body = {entity_type: entityType}
+            if (entityType === 'sample') {
+                const sample_category = ancestor1.sample_category.toLowerCase()
+                body['sample_category'] = sample_category
+                if (sample_category === 'organ') {
+                    body['value'] = ancestor1.organ
+                }
+            }
+            const requestOptions = {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(body)
+            }
+            const response = await fetch(getEntityEndPoint() + 'constraints', requestOptions)
+            if (response.ok) {
+                const provenance_constraints = await response.json()
+                provenance_constraints.forEach(constraint => {
+                    if (constraint.entity_type.toLowerCase() === 'dataset') {
+                        if (!Object.hasOwn(constraint, 'data_type')) {
+                            setDataTypes(DATA_TYPES)
+                        } else {
+                            const filter = Object.entries(DATA_TYPES).filter(data_type => constraint.data_type.includes(data_type[0]));
+                            let data_types = {}
+                            filter.forEach(entry => data_types[entry[0]] = entry[1])
+                            setDataTypes(data_types)
+                        }
+                    }
+                })
+            }
+        }
+    }, [ancestors])
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -279,7 +318,8 @@ export default function EditDataset() {
 
                                     {/*/!*Data Types*!/*/}
                                     {editMode &&
-                                        <DataTypes values={values} data={data} onChange={onChange}/>
+                                        <DataTypes data_types={dataTypes === null ? DATA_TYPES : dataTypes}
+                                                   values={values} data={data} onChange={onChange}/>
                                     }
 
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}

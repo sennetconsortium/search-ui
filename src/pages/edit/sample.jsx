@@ -68,7 +68,7 @@ function EditSample() {
                 const sample_category = source.sample_category.toLowerCase()
                 body['sample_category'] = sample_category
                 if (sample_category === 'organ') {
-                    body['value'] = source.display_subtype
+                    body['value'] = source.organ
                 }
             }
             const requestOptions = {
@@ -81,7 +81,10 @@ function EditSample() {
                 const provenance_constraints = await response.json()
                 provenance_constraints.forEach(constraint => {
                     if (constraint.entity_type.toLowerCase() === 'sample') {
-                        setSampleCategories(constraint.sample_category)
+                        const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => constraint.sample_category.includes(sample_category[0]));
+                        let sample_categories = {}
+                        filter.forEach(entry => sample_categories[entry[0]] = entry[1])
+                        setSampleCategories(sample_categories)
                     }
                 })
             }
