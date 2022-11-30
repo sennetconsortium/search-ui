@@ -10,7 +10,7 @@ import AncestorInformationBox from "../../components/custom/edit/sample/Ancestor
 import log from "loglevel";
 import {cleanJson, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_entity, parseJson} from "../../lib/services";
+import {update_create_entity, parseJson, get_ancestor_organs} from "../../lib/services";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
@@ -52,62 +52,74 @@ function EditSample() {
     const [showRui, setShowRui] = useState(false)
     const [showRuiButton, setShowRuiButton] = useState(false)
     const [isLoading, setIsLoading] = useState(null)
+    const [ancestorOrgan, setAncestorOrgan] = useState([])
 
     // only executed on init rendering, see the []
     useEffect(() => {
+        if (router.isReady) {
 
-        // declare the async data fetching function
-        const fetchData = async (uuid) => {
-            log.debug('editSample: getting data...', uuid)
-            // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            // declare the async data fetching function
+            const fetchData = async (uuid) => {
+                log.debug('editSample: getting data...', uuid)
+                // get the data from the api
+                const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
+                // convert the data to json
+                const data = await response.json();
 
-            log.debug('editSample: Got data', data)
-            if (data.hasOwnProperty("error")) {
-                setError(true)
-                setErrorMessage(data["error"])
-            } else {
-                setData(data);
-                // Set state with default values that will be PUT to Entity API to update
-                setValues({
-                    'sample_category': data.sample_category,
-                    'organ': data.organ,
-                    'organ_other': data.organ_other,
-                    'protocol_url': data.protocol_url,
-                    'lab_tissue_sample_id': data.lab_tissue_sample_id,
-                    'description': data.description,
-                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
-                })
-                setEditMode("Edit")
+                log.debug('editSample: Got data', data)
+                if (data.hasOwnProperty("error")) {
+                    setError(true)
+                    setErrorMessage(data["error"])
+                } else {
+                    setData(data);
+                    // Set state with default values that will be PUT to Entity API to update
+                    setValues({
+                        'sample_category': data.sample_category,
+                        'organ': data.organ,
+                        'organ_other': data.organ_other,
+                        'protocol_url': data.protocol_url,
+                        'lab_tissue_sample_id': data.lab_tissue_sample_id,
+                        'description': data.description,
+                        'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
+                    })
+                    setEditMode("Edit")
 
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    await fetchSource(data.immediate_ancestors[0].uuid);
-                }
-                if (data['rui_location'] !== null) {
-                    setRuiLocation(data['rui_location'])
-                    setShowRuiButton(true)
+                    if (data.hasOwnProperty("immediate_ancestors")) {
+                        await fetchSource(data.immediate_ancestors[0].uuid);
+                    }
+
+                    let ancestor_organ = await get_ancestor_organs(data.uuid)
+                    setAncestorOrgan(ancestor_organ)
+
+                    if (data['rui_location'] !== undefined) {
+                        setRuiLocation(data['rui_location'])
+                        setShowRuiButton(true)
+                    }
                 }
             }
-        }
 
-        if (router.query.hasOwnProperty("uuid")) {
-            if (router.query.uuid === 'create') {
-                setData(true)
-                setEditMode("Create")
+            if (router.query.hasOwnProperty("uuid")) {
+                if (router.query.uuid === 'create') {
+                    setData(true)
+                    setEditMode("Create")
+                } else {
+                    // call the function
+                    fetchData(router.query.uuid)
+                        // make sure to catch any error
+                        .catch(console.error);
+                }
             } else {
-                // call the function
-                fetchData(router.query.uuid)
-                    // make sure to catch any error
-                    .catch(console.error);
+                setData(null);
+                setSource(null)
+                setSourceId(null)
             }
-        } else {
-            setData(null);
-            setSource(null)
-            setSourceId(null)
         }
-    }, [router]);
+    }, [router.isReady])
+
+    // On changes made to ancestorOrgan run checkRui function
+    useEffect(() => {
+        checkRui();
+    }, [ancestorOrgan, values]);
 
 
     // callback provided to components to update the main list of form values
@@ -133,6 +145,31 @@ function EditSample() {
         } else {
             setSource(source);
             setSourceId(source.sennet_id)
+
+            // Manually set ancestor organs when ancestor is updated via modal
+            let ancestor_organ = []
+            if(source.hasOwnProperty("organ")){
+                ancestor_organ.push(source['organ'])
+            }
+            setAncestorOrgan(ancestor_organ)
+        }
+    }
+
+    const checkRui = () => {
+        // Define logic to show RUI tool
+        // An ancestor must be a Sample with Sample Category: "Organ" and Organ Type that exists in isOrganRuiSupported
+        // This Sample must a Sample Category: "Block"
+        log.debug(ancestorOrgan)
+        if (ancestorOrgan.length > 0) {
+            if (values !== null && values['sample_category'] === 'block' && isOrganRuiSupported(ancestorOrgan)) {
+                if (!showRuiButton) {
+                    setShowRuiButton(true)
+                }
+            } else {
+                setShowRuiButton(false)
+            }
+        } else {
+            setShowRuiButton(false)
         }
     }
 
@@ -173,16 +210,6 @@ function EditSample() {
     };
 
 
-    if (values !== null && values['sample_category'] === 'organ' &&
-        (values.hasOwnProperty('organ') && values['organ'] !== '' && values['organ'] !== 'other') &&
-        isOrganRuiSupported(values['organ'])) {
-        if (!showRuiButton) {
-            setShowRuiButton(true)
-        }
-    } else if (showRuiButton) {
-        setShowRuiButton(false)
-    }
-
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
@@ -201,7 +228,7 @@ function EditSample() {
                 }
                 {showRui &&
                     <RuiIntegration
-                        organ={values['organ']}
+                        organ={ancestorOrgan}
                         sex={'male'}
                         user={getUserName()}
                         blockStartLocation={ruiLocation}

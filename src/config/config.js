@@ -20,10 +20,15 @@ export function getAuth() {
     return ''
 }
 
-const nonSupportedRuiOrgans = ['AO', 'BD', 'BS', 'MU', 'OT']
+export const nonSupportedRuiOrgans = ['AO', 'BD', 'BS', 'MU', 'OT']
 
-export function isOrganRuiSupported(organ) {
-    return !nonSupportedRuiOrgans.includes(organ)
+export function isOrganRuiSupported(organs) {
+    if(organs.length > 0) {
+        const supported_organ = (organ) => !nonSupportedRuiOrgans.includes(organ);
+
+        return organs.some(supported_organ)
+    }
+    return false
 }
 
 export function getUserName() {

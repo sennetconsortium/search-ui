@@ -93,7 +93,7 @@ export async function get_read_write_privileges() {
 export const write_privilege_for_group_uuid = (group_uuid) => get_write_privilege_for_group_uuid(group_uuid)
 
 export async function get_write_privilege_for_group_uuid(group_uuid) {
-    log.info('GET WRITE PRIVILEGE FOR GROUP UUID')
+    log.debug('GET WRITE PRIVILEGE FOR GROUP UUID')
     const url = getIngestEndPoint() + 'privs/' + group_uuid + '/has-write'
     const request_options = {
         method: 'GET',
@@ -154,4 +154,24 @@ export function parseJson(json) {
     } else {
         return json
     }
+}
+
+export async function get_ancestor_organs(uuid) {
+    log.debug('FETCHING ANCESTOR ORGANS')
+
+    const url = getEntityEndPoint() + "entities/" + uuid + "/ancestor-organs"
+    const request_options = {
+        method: 'GET',
+        headers: get_headers()
+    }
+    let organs = []
+    const response = await fetch(url, request_options)
+    if (!response.ok) {
+        return organs
+    }
+    let json = await response.json()
+    json.forEach(entity => {
+        organs.push(entity["organ"])
+    });
+    return organs
 }
