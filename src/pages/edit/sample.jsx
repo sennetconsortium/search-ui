@@ -8,7 +8,13 @@ import AncestorId from "../../components/custom/edit/sample/AncestorId";
 import SampleCategory from "../../components/custom/edit/sample/SampleCategory";
 import AncestorInformationBox from "../../components/custom/edit/sample/AncestorInformationBox";
 import log from "loglevel";
-import {cleanJson, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
+import {
+    cleanJson,
+    fetchEntity,
+    getDOIPattern,
+    getHeaders,
+    getRequestHeaders
+} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {update_create_entity, parseJson} from "../../lib/services";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
@@ -19,19 +25,19 @@ import RuiIntegration from "../../components/custom/edit/sample/rui/RuiIntegrati
 import RUIButton from "../../components/custom/edit/sample/rui/RUIButton";
 
 import AppContext from '../../context/AppContext'
-import { EntityProvider } from '../../context/EntityContext'
+import {EntityProvider} from '../../context/EntityContext'
 import EntityContext from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import { ENTITIES } from '../../config/constants'
+import {ENTITIES, ORGAN_TYPES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
-import {getUserName, isOrganRuiSupported} from "../../config/config";
-
+import {getEntityEndPoint, getUserName, isOrganRuiSupported} from "../../config/config";
 
 
 function EditSample() {
-    const { isUnauthorized, isAuthorizing, getModal, setModalDetails,
+    const {
+        isUnauthorized, isAuthorizing, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -41,17 +47,49 @@ function EditSample() {
         editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
-        disableSubmit, setDisableSubmit } = useContext(EntityContext)
-    const { _t } = useContext(AppContext)
-
+        disableSubmit, setDisableSubmit
+    } = useContext(EntityContext)
+    const {_t} = useContext(AppContext)
     const router = useRouter()
-
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
     const [ruiLocation, setRuiLocation] = useState('')
     const [showRui, setShowRui] = useState(false)
     const [showRuiButton, setShowRuiButton] = useState(false)
     const [isLoading, setIsLoading] = useState(null)
+    const [sampleCategories, setSampleCategories] = useState(null)
+
+    useEffect(async () => {
+        setSampleCategories(null)
+        if (source !== null) {
+            const entityType = source.entity_type.toLowerCase()
+            let body = {entity_type: entityType}
+            if (entityType === 'sample') {
+                const sample_category = source.sample_category.toLowerCase()
+                body['sample_category'] = sample_category
+                if (sample_category === 'organ') {
+                    body['value'] = source.organ
+                }
+            }
+            const requestOptions = {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(body)
+            }
+            const response = await fetch(getEntityEndPoint() + 'constraints', requestOptions)
+            if (response.ok) {
+                const provenance_constraints = await response.json()
+                provenance_constraints.forEach(constraint => {
+                    if (constraint.entity_type.toLowerCase() === 'sample') {
+                        const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => constraint.sample_category.includes(sample_category[0]));
+                        let sample_categories = {}
+                        filter.forEach(entry => sample_categories[entry[0]] = entry[1])
+                        setSampleCategories(sample_categories)
+                    }
+                })
+            }
+        }
+    }, [source])
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -109,7 +147,6 @@ function EditSample() {
         }
     }, [router]);
 
-
     // callback provided to components to update the main list of form values
     const onChange = (e, fieldId, value) => {
         // log.debug('onChange', fieldId, value)
@@ -163,8 +200,10 @@ function EditSample() {
 
 
             await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
-                setModalDetails({entity: ENTITIES.sample, type: response.sample_category,
-                    typeHeader: _t('Sample Category'), response})
+                setModalDetails({
+                    entity: ENTITIES.sample, type: response.sample_category,
+                    typeHeader: _t('Sample Category'), response
+                })
 
             }).catch((e) => log.error(e))
         }
@@ -185,9 +224,9 @@ function EditSample() {
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
-            isUnauthorized() ? <Unauthorized /> : <Spinner />
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
-    } else  {
+    } else {
         return (
             <>
                 {editMode &&
@@ -197,7 +236,7 @@ function EditSample() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert message={errorMessage} />
+                    <Alert message={errorMessage}/>
                 }
                 {showRui &&
                     <RuiIntegration
@@ -214,7 +253,7 @@ function EditSample() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={ENTITIES.sample} isEditMode={isEditMode()} data={data} />
+                                <EntityHeader entity={ENTITIES.sample} isEditMode={isEditMode()} data={data}/>
 
                             }
                             bodyContent={
@@ -245,8 +284,11 @@ function EditSample() {
 
                                     {((isEditMode() && source) || (editMode === 'Create')) &&
                                         <>
-                                        <SampleCategory data={data} source={source} onChange={onChange}/>
-                                        <RUIButton
+                                            <SampleCategory
+                                                sample_categories={sampleCategories === null ? SAMPLE_CATEGORY : sampleCategories}
+                                                data={data}
+                                                source={source} onChange={onChange}/>
+                                            <RUIButton
                                                 showRegisterLocationButton={showRuiButton}
                                                 ruiLocation={ruiLocation}
                                                 setShowRui={setShowRui}
@@ -256,23 +298,28 @@ function EditSample() {
 
                                     {/*/!*Preparation Protocol*!/*/}
                                     <EntityFormGroup label="Preparation Protocol" placeholder='protocols.io DOI'
-                                        controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
-                                        onChange={onChange} text='The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see https://www.protocols.io/' />
+                                                     controlId='protocol_url' value={data.protocol_url}
+                                                     isRequired={true} pattern={getDOIPattern()}
+                                                     onChange={onChange}
+                                                     text='The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see https://www.protocols.io/'/>
 
                                     {/*/!*Lab Sample ID*!/*/}
-                                    <EntityFormGroup label='Lab Sample ID' placeholder='Lab specific alpha-numeric ID' controlId='lab_tissue_sample_id'
-                                        value={data.lab_tissue_sample_id}
-                                        onChange={onChange} text='An identifier used by the lab to identify the specimen, this
-                                        can be an identifier from the system used to track the specimen in the lab. This field will be entered by the user.' />
-
+                                    <EntityFormGroup label='Lab Sample ID' placeholder='Lab specific alpha-numeric ID'
+                                                     controlId='lab_tissue_sample_id'
+                                                     value={data.lab_tissue_sample_id}
+                                                     onChange={onChange} text='An identifier used by the lab to identify the specimen, this
+                                        can be an identifier from the system used to track the specimen in the lab. This field will be entered by the user.'/>
 
 
                                     {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description}
-                                        onChange={onChange} text='A free text description of the specimen.' />
+                                    <EntityFormGroup label='Description' type='textarea' controlId='description'
+                                                     value={data.description}
+                                                     onChange={onChange}
+                                                     text='A free text description of the specimen.'/>
 
 
-                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit} disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
+                                            disabled={disableSubmit}>
                                         {_t('Submit')}
 
                                     </Button>
@@ -289,7 +336,7 @@ function EditSample() {
     }
 }
 
-EditSample.withWrapper = function(page) {
+EditSample.withWrapper = function (page) {
     return <EntityProvider>{page}</EntityProvider>
 }
 

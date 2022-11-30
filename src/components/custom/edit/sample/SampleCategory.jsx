@@ -89,10 +89,10 @@ export default class SampleCategory extends React.Component {
                                  }}
                                  defaultValue={this.props.data.sample_category}>
                         <option value="">----</option>
-                        {Object.entries(SAMPLE_CATEGORY).map(op => {
+                        {Object.entries(this.props.sample_categories).map(sample_category => {
                             return (
-                                <option key={op[0]} value={op[0]}>
-                                    {op[1]}
+                                <option key={sample_category[0]} value={sample_category[0]}>
+                                    {sample_category[1]}
                                 </option>
                             );
 
