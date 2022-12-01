@@ -4,7 +4,6 @@ import log from "loglevel";
 
 export function getHeaders() {
     const myHeaders = new Headers();
-    log.info(getAuth())
     if (getAuth() !== undefined) {
         myHeaders.append("Authorization", "Bearer " + getAuth());
     }
@@ -34,7 +33,6 @@ export async function fetchEntity(ancestorId) {
 
 export async function fetchProtocols(protocolUrl) {
     const regex = new RegExp('[^\.]+$', 'g');
-    console.log(protocolUrl)
     const protocolId = regex.exec(protocolUrl)[0]
     const response = await fetch("https://www.protocols.io/api/v3/protocols/" + protocolId);
 
@@ -116,7 +114,6 @@ export function checkFilterEntityType(filters) {
         }
     });
 
-    console.log(hasEntityType)
     return hasEntityType;
 }
 
