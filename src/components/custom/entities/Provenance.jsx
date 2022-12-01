@@ -38,8 +38,8 @@ function Provenance({ nodeData }) {
         simulation: {
             charge: -300
         },
-        displayEdgeLabels: false,
-        minHeight: 300,
+        displayEdgeLabels: true,
+        minHeight: 400,
         noStyles: true,
         selectorId: 'neo4j--page'
     }
@@ -132,8 +132,8 @@ function Provenance({ nodeData }) {
         setShowModal(!showModal)
     }
 
-    const toggleData = (hideActivity) => {
-        const ui = window.ProvenanceTreeD3
+    const toggleData = (hideActivity, selectorId) => {
+        const ui = window.ProvenanceTreeD3[selectorId]
         ui.toggleData({filter: hideActivity ? 'Activity' : '', parentKey: hideActivity ? DataConverterNeo4J.KEY_P_ENTITY : DataConverterNeo4J.KEY_P_ACT})
     }
 
@@ -152,12 +152,12 @@ function Provenance({ nodeData }) {
 
                 {!loading && <ProvenanceUI options={options} data={treeData}/>}
                 {!loading && <Legend colorMap={graphOptions.colorMap} />}
-                { !loading && data && <Toggle data={data} context={ toggleData } /> }
+                { !loading && data && <Toggle data={data} context={ toggleData } selectorId={options.selectorId} /> }
                 {loading && <Spinner/>}
                 <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
                     {!loading && <ProvenanceUI options={{...options, selectorId: 'neo4j--modal'}} data={treeData} />}
                     {!loading && <Legend colorMap={graphOptions.colorMap} />}
-                    { !loading && data && <Toggle data={data} context={ toggleData } /> }
+                    { !loading && data && <Toggle data={data} context={ toggleData } selectorId='neo4j--modal' /> }
                 </AppModal>
             </div>
         </div>
