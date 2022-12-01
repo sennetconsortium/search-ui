@@ -12,9 +12,9 @@
     "core-js": "^3.26.0",
     "jquery": "^3.6.1",
     "lodash": "^4.17.21",
-    "next": "12.3.x",
+    "next": "^13.0.3",
     "nextjs-cors": "^2.1.2",
-    "provenance-ui": "github:sennetconsortium/provenance-ui#main",
+    "provenance-ui": "github:sennetconsortium/provenance-ui#libpitt/treelayout",
     "react-bootstrap-icons": "^1.8.4",
     "react-idle-timer": "^5.4.2",
     "search-ui": "file:search-ui"

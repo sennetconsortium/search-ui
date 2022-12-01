@@ -5,7 +5,7 @@ import React, {
     useRef
 } from 'react'
 import log from 'loglevel'
-import {DataConverterNeo4J, GraphGeneric, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
+import {DataConverterNeo4J, GraphGeneric, ProvenanceUI, Legend, Toggle} from 'provenance-ui/dist/index'
 import 'provenance-ui/dist/ProvenanceUI.css'
 import Spinner from '../Spinner'
 import {getAuth, getEntityEndPoint} from "../../../config/config";
@@ -17,7 +17,7 @@ function Provenance({ nodeData }) {
     const [data, setData] = useState(nodeData)
     const [options, setOptions] = useState({})
     const [loading, setLoading] = useState(true)
-    const [neo4j, setNeo4jData] = useState(null)
+    const [treeData, setTreeData] = useState(null)
     const [showModal, setShowModal] = useState(false)
     const initialized = useRef(false)
 
@@ -102,51 +102,34 @@ function Provenance({ nodeData }) {
         const handleResult = async (result) => {
             log.debug(`Result from fetch`, result)
             let keys = ['used', 'wasGeneratedBy']
+            let hasDescendants = false
             for (let key of keys) {
-                for (let _prop in result.descendants[key]) {
-                    result[key] = result[key] || {}
-                    // Must update key to avoid key collisions with original result.used and result.wasGeneratedBy
-                    result[key][`des${_prop}`] = result.descendants[key][_prop]
+                if (result.descendants) {
+                    for (let _prop in result.descendants[key]) {
+                        result[key] = result[key] || {}
+                        hasDescendants = true
+                        // Must update key to avoid key collisions with original result.used and result.wasGeneratedBy
+                        result[key][`des${_prop}`] = result.descendants[key][_prop]
+                    }
                 }
+
             }
-            $.extend(result.activity, result.descendants.activity)
-            $.extend(result.entity, result.descendants.entity)
-
-            const converter = new DataConverterNeo4J(result, dataMap, {setTextForNoneActivity: false})
-            converter.flatten()
-            converter.reformatNodes()
-            converter.reformatRelationships()
-            log.debug(`Nodes ...`, converter.getNodes())
-            log.debug(`Relationships ...`, converter.getRelationships())
-
-            const neoData = converter.getNeo4jFormat({
-                columns: ['user', 'entity'],
-                nodes: converter.getNodes(),
-                relationships: converter.getRelationships()
-            })
-
-            log.debug(`NeoData for graph visual ...`, neoData)
-
-            const neighbors = getNeighbors(data)
-            let highlight = [{
-                class: data[dataMap.highlight.labels],
-                property: dataMap.highlight.visualProp,
-                value: data[dataMap.highlight.dataProp]
-            }]
-            for (let n of neighbors) {
-                highlight.push({
-                    class: n[dataMap.highlight.labels],
-                    property: dataMap.highlight.visualProp,
-                    isSecondary: true,
-                    value: n[dataMap.highlight.dataProp]
-                })
+            if (result.descendants) {
+                $.extend(result.activity, result.descendants.activity)
+                $.extend(result.entity, result.descendants.entity)
+                log.debug(`Result width appended descendants...`, result)
             }
 
-            const ops = {...graphOptions, highlight}
+            const converter = new DataConverterNeo4J(result, dataMap)
+            converter.hierarchy(itemId, hasDescendants)
+            log.debug('Converter details...', converter)
+
+            const ops = {...graphOptions, highlight: [{id: itemId}]}
+
 
             log.debug('Options', ops)
             setOptions(ops)
-            setNeo4jData(neoData)
+            setTreeData({stratify: converter.result})
             setLoading(false)
         }
 
@@ -158,6 +141,11 @@ function Provenance({ nodeData }) {
 
     const handleModal = (e) => {
         setShowModal(!showModal)
+    }
+
+    const toggleData = (hideActivity) => {
+        const ui = window.ProvenanceTreeD3
+        ui.toggleData({filter: hideActivity ? 'Activity' : '', parentKey: hideActivity ? DataConverterNeo4J.KEY_P_ENTITY : DataConverterNeo4J.KEY_P_ACT})
     }
 
     return (
@@ -173,12 +161,14 @@ function Provenance({ nodeData }) {
 
             <div className='card-body'>
 
-                {!loading && <ProvenanceUI options={options} data={neo4j}/>}
+                {!loading && <ProvenanceUI options={options} data={treeData}/>}
                 {!loading && <Legend colorMap={graphOptions.colorMap} />}
+                { !loading && data && <Toggle data={data} context={ toggleData } /> }
                 {loading && <Spinner/>}
                 <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
-                    {!loading && <ProvenanceUI options={{...options, selectorId: 'neo4j--modal'}} data={neo4j} />}
+                    {!loading && <ProvenanceUI options={{...options, selectorId: 'neo4j--modal'}} data={treeData} />}
                     {!loading && <Legend colorMap={graphOptions.colorMap} />}
+                    { !loading && data && <Toggle data={data} context={ toggleData } /> }
                 </AppModal>
             </div>
         </div>
