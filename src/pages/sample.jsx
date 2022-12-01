@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
-import {Button} from 'react-bootstrap';
-import {FiletypeJson} from 'react-bootstrap-icons';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
@@ -20,6 +18,8 @@ import Header from "../components/custom/layout/Header";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from "../components/custom/Alert";
+import {ENTITIES} from "../config/constants";
+import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 
 function ViewSample() {
     const router = useRouter()
@@ -145,30 +145,7 @@ function ViewSample() {
                         }
 
                         bodyHeader={
-                            <div style={{width: '100%'}}>
-                                <h4>Sample</h4>
-                                <h3>{data.sennet_id}</h3>
-                                <div className="d-flex justify-content-between mb-2">
-                                    <div className="entity_subtitle link_with_icon">
-                                        {displayBodyHeader(data.display_subtype)}
-
-                                        {data.lab_tissue_sample_id &&
-                                            <>
-                                                <span className="mx-2">|</span>
-                                                {data.lab_tissue_sample_id}
-                                            </>
-                                        }
-                                    </div>
-                                    <div>
-                                        {hasWritePrivilege &&
-                                            <Button className="ms-3" href={`/edit/sample?uuid=${data.uuid}`}
-                                                    variant="outline-primary rounded-0">Edit</Button>}{' '}
-                                        <Button className="ms-3" href={`/api/json/sample?uuid=${data.uuid}`}
-                                                variant="outline-primary rounded-0"><FiletypeJson/></Button>
-                                    </div>
-                                </div>
-
-                            </div>
+                            <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]} hasWritePrivilege={hasWritePrivilege} idKey='lab_tissue_sample_id' />
                         }
 
                         bodyContent={

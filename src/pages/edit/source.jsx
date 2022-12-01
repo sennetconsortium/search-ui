@@ -167,7 +167,7 @@ function EditSource() {
                                     <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description} 
                                         onChange={onChange} text='Free text field to enter a description of the source.' />
 
-                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit}
+                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}
                                     </Button>

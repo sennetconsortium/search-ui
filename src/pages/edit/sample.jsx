@@ -297,7 +297,7 @@ function EditSample() {
                                         onChange={onChange} text='A free text description of the specimen.' />
 
 
-                                    <Button variant="outline-primary rounded-0" onClick={handleSubmit} disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit} disabled={disableSubmit}>
                                         {_t('Submit')}
 
                                     </Button>
