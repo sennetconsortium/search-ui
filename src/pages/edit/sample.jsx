@@ -56,65 +56,63 @@ function EditSample() {
 
     // only executed on init rendering, see the []
     useEffect(() => {
-        if (router.isReady) {
+        // declare the async data fetching function
+        const fetchData = async (uuid) => {
+            log.debug('editSample: getting data...', uuid)
+            // get the data from the api
+            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
+            // convert the data to json
+            const data = await response.json();
 
-            // declare the async data fetching function
-            const fetchData = async (uuid) => {
-                log.debug('editSample: getting data...', uuid)
-                // get the data from the api
-                const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-                // convert the data to json
-                const data = await response.json();
-
-                log.debug('editSample: Got data', data)
-                if (data.hasOwnProperty("error")) {
-                    setError(true)
-                    setErrorMessage(data["error"])
-                } else {
-                    setData(data);
-                    // Set state with default values that will be PUT to Entity API to update
-                    setValues({
-                        'sample_category': data.sample_category,
-                        'organ': data.organ,
-                        'organ_other': data.organ_other,
-                        'protocol_url': data.protocol_url,
-                        'lab_tissue_sample_id': data.lab_tissue_sample_id,
-                        'description': data.description,
-                        'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
-                    })
-                    setEditMode("Edit")
-
-                    if (data.hasOwnProperty("immediate_ancestors")) {
-                        await fetchSource(data.immediate_ancestors[0].uuid);
-                    }
-
-                    let ancestor_organ = await get_ancestor_organs(data.uuid)
-                    setAncestorOrgan(ancestor_organ)
-
-                    if (data['rui_location'] !== undefined) {
-                        setRuiLocation(data['rui_location'])
-                        setShowRuiButton(true)
-                    }
-                }
-            }
-
-            if (router.query.hasOwnProperty("uuid")) {
-                if (router.query.uuid === 'create') {
-                    setData(true)
-                    setEditMode("Create")
-                } else {
-                    // call the function
-                    fetchData(router.query.uuid)
-                        // make sure to catch any error
-                        .catch(console.error);
-                }
+            log.debug('editSample: Got data', data)
+            if (data.hasOwnProperty("error")) {
+                setError(true)
+                setErrorMessage(data["error"])
             } else {
-                setData(null);
-                setSource(null)
-                setSourceId(null)
+                setData(data);
+                // Set state with default values that will be PUT to Entity API to update
+                setValues({
+                    'sample_category': data.sample_category,
+                    'organ': data.organ,
+                    'organ_other': data.organ_other,
+                    'protocol_url': data.protocol_url,
+                    'lab_tissue_sample_id': data.lab_tissue_sample_id,
+                    'description': data.description,
+                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
+                })
+                setEditMode("Edit")
+
+                if (data.hasOwnProperty("immediate_ancestors")) {
+                    await fetchSource(data.immediate_ancestors[0].uuid);
+                }
+
+                let ancestor_organ = await get_ancestor_organs(data.uuid)
+                setAncestorOrgan(ancestor_organ)
+
+                if (data['rui_location'] !== undefined) {
+                    setRuiLocation(data['rui_location'])
+                    setShowRuiButton(true)
+                }
             }
         }
-    }, [router.isReady])
+
+        if (router.query.hasOwnProperty("uuid")) {
+            if (router.query.uuid === 'create') {
+                setData(true)
+                setEditMode("Create")
+            } else {
+                // call the function
+                fetchData(router.query.uuid)
+                    // make sure to catch any error
+                    .catch(console.error);
+            }
+        } else {
+            setData(null);
+            setSource(null)
+            setSourceId(null)
+        }
+
+    }, [router])
 
     // On changes made to ancestorOrgan run checkRui function
     useEffect(() => {
