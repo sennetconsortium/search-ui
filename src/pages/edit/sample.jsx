@@ -59,36 +59,39 @@ function EditSample() {
     const [isLoading, setIsLoading] = useState(null)
     const [sampleCategories, setSampleCategories] = useState(null)
 
-    useEffect(async () => {
-        setSampleCategories(null)
-        if (source !== null) {
-            const entityType = source.entity_type.toLowerCase()
-            let body = {entity_type: entityType}
-            if (entityType === 'sample') {
-                const sample_category = source.sample_category.toLowerCase()
-                body['sample_category'] = sample_category
-                if (sample_category === 'organ') {
-                    body['value'] = source.organ
+    useEffect(() => {
+        const fetchSampleCategories = async () => {
+            setSampleCategories(null)
+            if (source !== null) {
+                const entityType = source.entity_type.toLowerCase()
+                let body = {entity_type: entityType}
+                if (entityType === 'sample') {
+                    const sample_category = source.sample_category.toLowerCase()
+                    body['sample_category'] = sample_category
+                    if (sample_category === 'organ') {
+                        body['value'] = source.organ
+                    }
+                }
+                const requestOptions = {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify(body)
+                }
+                const response = await fetch(getEntityEndPoint() + 'constraints', requestOptions)
+                if (response.ok) {
+                    const provenance_constraints = await response.json()
+                    provenance_constraints.forEach(constraint => {
+                        if (constraint.entity_type.toLowerCase() === 'sample') {
+                            const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => constraint.sample_category.includes(sample_category[0]));
+                            let sample_categories = {}
+                            filter.forEach(entry => sample_categories[entry[0]] = entry[1])
+                            setSampleCategories(sample_categories)
+                        }
+                    })
                 }
             }
-            const requestOptions = {
-                method: 'POST',
-                headers: getHeaders(),
-                body: JSON.stringify(body)
-            }
-            const response = await fetch(getEntityEndPoint() + 'constraints', requestOptions)
-            if (response.ok) {
-                const provenance_constraints = await response.json()
-                provenance_constraints.forEach(constraint => {
-                    if (constraint.entity_type.toLowerCase() === 'sample') {
-                        const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => constraint.sample_category.includes(sample_category[0]));
-                        let sample_categories = {}
-                        filter.forEach(entry => sample_categories[entry[0]] = entry[1])
-                        setSampleCategories(sample_categories)
-                    }
-                })
-            }
         }
+        fetchSampleCategories()
     }, [source])
 
     // only executed on init rendering, see the []
