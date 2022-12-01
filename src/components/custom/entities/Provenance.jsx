@@ -38,7 +38,7 @@ function Provenance({ nodeData }) {
         simulation: {
             charge: -300
         },
-        displayEdgeLabels: true,
+        displayEdgeLabels: false,
         minHeight: 300,
         noStyles: true,
         selectorId: 'neo4j--page'
@@ -49,7 +49,6 @@ function Provenance({ nodeData }) {
             node: '/'
         },
         keys: {
-            type: 'sennet:entity_type',
             startNode: 'prov:entity',
             endNode: 'prov:activity'
         },
@@ -57,29 +56,17 @@ function Provenance({ nodeData }) {
             edge: { used: 'USED', wasGeneratedBy: 'WAS_GENERATED_BY' }
         },
         root: {
-            'prov:type': 'category',
-            'sennet:entity_type': 'labels',
             'sennet:uuid': 'id',
-            'sennet:created_by_user_displayname': 'text',
-        },
-        highlight: {
-            labels: 'entity_type',
-            dataProp: 'sennet_id',
-            visualProp: 'sennet:sennet_id'
-        },
-        actor: {
-            dataProp: 'sennet:created_by_user_displayname',
-            visualProp: 'agent'
         },
         props: ['sennet:uuid', 'sennet:sennet_id'],
         typeProps: {
             Source: ['sennet:source_type'],
             Sample: ['sennet:sample_category'],
-            Activity: ['sennet:created_timestamp', 'sennet:protocol_url']
+            Activity: ['sennet:created_timestamp', 'sennet:protocol_url', 'sennet:created_by_user_displayname']
         },
         callbacks: {
             'sennet:created_timestamp': 'formatDate',
-            'sennet:created_by_user_displayname': 'lastNameFirstInitial'
+            //'sennet:created_by_user_displayname': 'lastNameFirstInitial'
         }
     }
 
