@@ -2,12 +2,17 @@ import {getAuth, getRootURL} from "../../../config/config";
 import {APP_ROUTES, ORGAN_TYPES} from "../../../config/constants";
 import log from "loglevel";
 
-export function getRequestHeaders() {
-    var myHeaders = new Headers();
+export function getHeaders() {
+    const myHeaders = new Headers();
     if (getAuth() !== undefined) {
         myHeaders.append("Authorization", "Bearer " + getAuth());
     }
     myHeaders.append("Content-Type", "application/json");
+    return myHeaders;
+}
+
+export function getRequestHeaders() {
+    const myHeaders = getHeaders();
     return {
         method: 'GET',
         headers: myHeaders

@@ -1,15 +1,15 @@
-import {useEffect, useState, useContext} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
-import {Button, Form } from 'react-bootstrap'
+import {Button, Form} from 'react-bootstrap'
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Popover from 'react-bootstrap/Popover'
 import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
-import { update_create_dataset} from '../../lib/services'
-import {cleanJson, fetchEntity, getRequestHeaders} from '../../components/custom/js/functions'
+import {update_create_dataset} from '../../lib/services'
+import {cleanJson, fetchEntity, getHeaders, getRequestHeaders} from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
 import DataTypes from '../../components/custom/edit/dataset/DataTypes'
 import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
@@ -19,36 +19,77 @@ import GroupSelect from '../../components/custom/edit/GroupSelect'
 import Header from '../../components/custom/layout/Header'
 
 import AppContext from '../../context/AppContext'
-import { EntityProvider } from '../../context/EntityContext'
-import EntityContext from '../../context/EntityContext'
+import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import { ENTITIES } from '../../config/constants'
+import {DATA_TYPES, ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
+import {getEntityEndPoint} from "../../config/config";
 
 export default function EditDataset() {
-    const { isUnauthorized, isAuthorizing, getModal, setModalDetails,
+    const {
+        isUnauthorized, isAuthorizing, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
         errorMessage, setErrorMessage,
         validated, setValidated,
-        userWriteGroups, onChange, 
+        userWriteGroups, onChange,
         editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
-        disableSubmit, setDisableSubmit } = useContext(EntityContext)
-    const { _t } = useContext(AppContext)
-
-
+        disableSubmit, setDisableSubmit
+    } = useContext(EntityContext)
+    const {_t} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
+    const [dataTypes, setDataTypes] = useState(null)
+
+    useEffect(() => {
+        const fetchDataTypes = async () => {
+            setDataTypes(null)
+            if (ancestors !== null && ancestors.length !== 0) {
+                const ancestor1 = ancestors[0];
+                const entityType = ancestor1.entity_type.toLowerCase()
+                let body = {entity_type: entityType}
+                if (entityType === 'sample') {
+                    const sample_category = ancestor1.sample_category.toLowerCase()
+                    body['sample_category'] = sample_category
+                    if (sample_category === 'organ') {
+                        body['value'] = ancestor1.organ
+                    }
+                }
+                const requestOptions = {
+                    method: 'POST',
+                    headers: getHeaders(),
+                    body: JSON.stringify(body)
+                }
+                const response = await fetch(getEntityEndPoint() + 'constraints', requestOptions)
+                if (response.ok) {
+                    const provenance_constraints = await response.json()
+                    provenance_constraints.forEach(constraint => {
+                        if (constraint.entity_type.toLowerCase() === 'dataset') {
+                            if (!Object.hasOwn(constraint, 'data_type')) {
+                                setDataTypes(DATA_TYPES)
+                            } else {
+                                const filter = Object.entries(DATA_TYPES).filter(data_type => constraint.data_type.includes(data_type[0]));
+                                let data_types = {}
+                                filter.forEach(entry => data_types[entry[0]] = entry[1])
+                                setDataTypes(data_types)
+                            }
+                        }
+                    })
+                }
+            }
+        }
+        fetchDataTypes()
+    }, [ancestors])
 
     // only executed on init rendering, see the []
     useEffect(() => {
-        
+
         // declare the async data fetching function
         const fetchData = async (uuid) => {
             log.debug('editDataset: getting data...', uuid)
@@ -154,7 +195,12 @@ export default function EditDataset() {
                 let uuid = data.uuid
 
                 await update_create_dataset(uuid, json, editMode, router).then((response) => {
-                    setModalDetails({entity: ENTITIES.dataset, type: (response.data_types ? response.data_types[0] : null), typeHeader: _t('Data Type'), response})
+                    setModalDetails({
+                        entity: ENTITIES.dataset,
+                        type: (response.data_types ? response.data_types[0] : null),
+                        typeHeader: _t('Data Type'),
+                        response
+                    })
                 }).catch((e) => log.error(e))
             }
         }
@@ -171,13 +217,12 @@ export default function EditDataset() {
         setContainsHumanGeneticSequences(false)
     }
 
-
     if (isAuthorizing() || isUnauthorized()) {
         return (
-            isUnauthorized() ? <Unauthorized /> : <Spinner />
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
-       
+
         return (
             <>
                 {editMode &&
@@ -187,13 +232,13 @@ export default function EditDataset() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert message={errorMessage} />
+                    <Alert message={errorMessage}/>
                 }
                 {data && !error &&
                     <div className="no_sidebar">
                         <Layout
-                            bodyHeader = {
-                                <EntityHeader entity={ENTITIES.dataset} isEditMode={isEditMode()} data={data} /> 
+                            bodyHeader={
+                                <EntityHeader entity={ENTITIES.dataset} isEditMode={isEditMode()} data={data}/>
                             }
                             bodyContent={
                                 <Form noValidate validated={validated}>
@@ -215,22 +260,28 @@ export default function EditDataset() {
                                     }
 
                                     {/*/!*Lab Name or ID*!/*/}
-                                    <EntityFormGroup label='Lab Name or ID' placeholder='Lab Name or ID' controlId='lab_dataset_id' value={data.lab_dataset_id} 
-                                        onChange={onChange} text='Lab Name or ID' />
-                                    
+                                    <EntityFormGroup label='Lab Name or ID' placeholder='Lab Name or ID'
+                                                     controlId='lab_dataset_id' value={data.lab_dataset_id}
+                                                     onChange={onChange} text='Lab Name or ID'/>
+
                                     {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description} 
-                                        onChange={onChange} text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.' />
+                                    <EntityFormGroup label='Description' type='textarea' controlId='description'
+                                                     value={data.description}
+                                                     onChange={onChange}
+                                                     text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.'/>
 
                                     {/*/!*Additional Information*!/*/}
-                                    <EntityFormGroup label='Additional Information' type='textarea' controlId='dataset_info' value={data.dataset_info} 
-                                        onChange={onChange} text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.' />
-                                    
+                                    <EntityFormGroup label='Additional Information' type='textarea'
+                                                     controlId='dataset_info' value={data.dataset_info}
+                                                     onChange={onChange}
+                                                     text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.'/>
+
 
                                     {/*/!*Human Gene Sequences*!/*/}
                                     {editMode &&
                                         <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
-                                            <Form.Label>{_t('Human Gene Sequences')} <span className="required">* </span>
+                                            <Form.Label>{_t('Human Gene Sequences')} <span
+                                                className="required">* </span>
                                                 <OverlayTrigger
                                                     placement="top"
                                                     overlay={
@@ -244,7 +295,8 @@ export default function EditDataset() {
                                                     <QuestionCircleFill/>
                                                 </OverlayTrigger>
                                             </Form.Label>
-                                            <div className="mb-2 text-muted">{_t('Does this data contain any human genetic sequences?')}
+                                            <div
+                                                className="mb-2 text-muted">{_t('Does this data contain any human genetic sequences?')}
                                             </div>
                                             <Form.Check
                                                 required
@@ -269,10 +321,12 @@ export default function EditDataset() {
 
                                     {/*/!*Data Types*!/*/}
                                     {editMode &&
-                                        <DataTypes values={values} data={data} onChange={onChange}/>
+                                        <DataTypes data_types={dataTypes === null ? DATA_TYPES : dataTypes}
+                                                   values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit} disabled={disableSubmit}>
+                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
+                                            disabled={disableSubmit}>
                                         {_t('Submit')}
 
                                     </Button>
@@ -289,9 +343,6 @@ export default function EditDataset() {
     }
 }
 
-EditDataset.withWrapper = function(page) {
+EditDataset.withWrapper = function (page) {
     return <EntityProvider>{page}</EntityProvider>
 }
-
-
-
