@@ -38,6 +38,8 @@ function Provenance({ nodeData }) {
         simulation: {
             charge: -300
         },
+        displayEdgeLabels: true,
+        minHeight: 300,
         noStyles: true,
         selectorId: 'neo4j--page'
     }
