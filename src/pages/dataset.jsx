@@ -117,7 +117,7 @@ function ViewDataset() {
                                                 className="sui-single-option-facet__link"
                                                 href="#Files">Files</a>
                                             </li>
-                                            {<li className="sui-single-option-facet__item"><a
+                                            {isLoggedIn() && <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                             </li> }
                                             {data.immediate_ancestors &&
@@ -213,7 +213,7 @@ function ViewDataset() {
                                     <Files sennet_id={data.sennet_id}/>
 
                                     {/*Provenance*/}
-                                    {data &&
+                                    {data && isLoggedIn() &&
                                         <Provenance nodeData={data}/>
                                     }
 

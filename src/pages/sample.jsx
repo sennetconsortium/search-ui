@@ -115,7 +115,7 @@ function ViewSample() {
                                                     Datasets</a>
                                                 </li>
                                             }
-                                            {<li className="sui-single-option-facet__item"><a
+                                            {isLoggedIn() && <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li>}
                                             {data.ancestors &&
@@ -188,7 +188,7 @@ function ViewSample() {
 
 
                                     {/*Provenance*/}
-                                    {data &&
+                                    {data && isLoggedIn() &&
                                     <Provenance nodeData={data}/>
                                     }
 

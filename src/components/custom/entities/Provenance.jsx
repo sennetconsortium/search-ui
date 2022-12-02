@@ -56,7 +56,7 @@ function Provenance({ nodeData }) {
             edge: { used: 'USED', wasGeneratedBy: 'WAS_GENERATED_BY' }
         },
         root: {
-            'sennet:uuid': 'id',
+            id: 'sennet:uuid'
         },
         props: ['sennet:uuid', 'sennet:sennet_id'],
         typeProps: {
@@ -110,11 +110,10 @@ function Provenance({ nodeData }) {
             }
 
             const converter = new DataConverterNeo4J(result, dataMap)
-            converter.hierarchy(itemId, hasDescendants)
+            converter.buildAdjacencyList(itemId, hasDescendants)
             log.debug('Converter details...', converter)
 
             const ops = {...graphOptions, highlight: [{id: itemId}]}
-
 
             log.debug('Options', ops)
             setOptions(ops)
@@ -137,6 +136,28 @@ function Provenance({ nodeData }) {
         ui.toggleData({filter: hideActivity ? 'Activity' : '', parentKey: hideActivity ? DataConverterNeo4J.KEY_P_ENTITY : DataConverterNeo4J.KEY_P_ACT})
     }
 
+    const toggleEdgeLabels = (hideActivity, selectorId) => {
+        const ui = window.ProvenanceTreeD3[selectorId]
+        ui.toggleEdgeLabels()
+    }
+
+    const actionMap = {
+        Activity: {
+            callback: toggleData,
+            selectorId: options.selectorId,
+            className: 'c-toggle--eye',
+            ariaLabel: 'Toggle Activity Nodes'
+        },
+        Edge: {
+            callback: toggleEdgeLabels,
+            selectorId: options.selectorId,
+            className: 'c-toggle--eye',
+            ariaLabel: 'Toggle Edge Labels'
+        }
+    }
+
+    const modalId = 'neo4j--modal'
+
     return (
         <div className='sui-result provenance--portal-ui' id='Provenance'>
             <div className='sui-result__header'>
@@ -151,13 +172,14 @@ function Provenance({ nodeData }) {
             <div className='card-body'>
 
                 {!loading && <ProvenanceUI options={options} data={treeData}/>}
-                {!loading && <Legend colorMap={graphOptions.colorMap} />}
-                { !loading && data && <Toggle data={data} context={ toggleData } selectorId={options.selectorId} /> }
+                {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} actionMap={actionMap} />}
                 {loading && <Spinner/>}
                 <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
-                    {!loading && <ProvenanceUI options={{...options, selectorId: 'neo4j--modal'}} data={treeData} />}
-                    {!loading && <Legend colorMap={graphOptions.colorMap} />}
-                    { !loading && data && <Toggle data={data} context={ toggleData } selectorId='neo4j--modal' /> }
+                    {!loading && <ProvenanceUI options={{...options, selectorId: modalId }} data={treeData} />}
+                    {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} actionMap={{...actionMap,
+                        Edge: {...actionMap.Edge, selectorId: modalId },
+                        Activity: {...actionMap.Activity, selectorId: modalId },
+                    }} />}
                 </AppModal>
             </div>
         </div>
