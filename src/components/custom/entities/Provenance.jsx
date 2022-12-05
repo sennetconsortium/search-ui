@@ -21,6 +21,9 @@ function Provenance({ nodeData }) {
     const [showModal, setShowModal] = useState(false)
     const initialized = useRef(false)
 
+    const onCenterX = (ops) => {
+        return $(`#${ops.options.selectorId}`).width() / 1.6
+    }
     const graphOptions = {
         idNavigate: {
             props: ["sennet:uuid", "sennet:protocol_url"],
@@ -41,7 +44,10 @@ function Provenance({ nodeData }) {
         displayEdgeLabels: true,
         minHeight: 400,
         noStyles: true,
-        selectorId: 'neo4j--page'
+        selectorId: 'neo4j--page',
+        callbacks: {
+            onCenterX
+        }
     }
 
     const dataMap = {
