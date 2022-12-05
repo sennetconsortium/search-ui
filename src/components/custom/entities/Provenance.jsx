@@ -144,13 +144,11 @@ function Provenance({ nodeData }) {
     const actionMap = {
         Activity: {
             callback: toggleData,
-            selectorId: options.selectorId,
             className: 'c-toggle--eye',
             ariaLabel: 'Toggle Activity Nodes'
         },
         Edge: {
             callback: toggleEdgeLabels,
-            selectorId: options.selectorId,
             className: 'c-toggle--eye',
             ariaLabel: 'Toggle Edge Labels'
         }
@@ -172,14 +170,11 @@ function Provenance({ nodeData }) {
             <div className='card-body'>
 
                 {!loading && <ProvenanceUI options={options} data={treeData}/>}
-                {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} actionMap={actionMap} />}
+                {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} actionMap={actionMap} selectorId={options.selectorId}/>}
                 {loading && <Spinner/>}
                 <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
                     {!loading && <ProvenanceUI options={{...options, selectorId: modalId }} data={treeData} />}
-                    {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} actionMap={{...actionMap,
-                        Edge: {...actionMap.Edge, selectorId: modalId },
-                        Activity: {...actionMap.Activity, selectorId: modalId },
-                    }} />}
+                    {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} actionMap={actionMap} selectorId={modalId} />}
                 </AppModal>
             </div>
         </div>

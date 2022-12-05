@@ -114,9 +114,9 @@ p {
     height: inherit;
 }
 
-.neo4jd3__graph .is-visited:not(.is-primary) .ring {
+.node.is-visited:not(.is-primary) .glow {
     stroke: #6ac6ff !important;
-    opacity: .5;
+    opacity: .3;
 }
 
 .modal-full .c-provenance {
