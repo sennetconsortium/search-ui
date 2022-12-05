@@ -131,12 +131,12 @@ function Provenance({ nodeData }) {
         setShowModal(!showModal)
     }
 
-    const toggleData = (hideActivity, selectorId) => {
+    const toggleData = (e, hideActivity, selectorId) => {
         const ui = window.ProvenanceTreeD3[selectorId]
         ui.toggleData({filter: hideActivity ? 'Activity' : '', parentKey: hideActivity ? DataConverterNeo4J.KEY_P_ENTITY : DataConverterNeo4J.KEY_P_ACT})
     }
 
-    const toggleEdgeLabels = (hideActivity, selectorId) => {
+    const toggleEdgeLabels = (e, hideActivity, selectorId) => {
         const ui = window.ProvenanceTreeD3[selectorId]
         ui.toggleEdgeLabels()
     }
