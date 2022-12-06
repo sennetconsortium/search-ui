@@ -3,9 +3,8 @@ import {getIndex, getSearchEndPoint} from "../../config/config";
 import log from "loglevel";
 
 // a mock service to return some data
-export default async function handler(req, res) {
+export default function handler(req, res) {
     var error_messages = [{error: "Only support GET/POST"}, {error: "UUID Not found, please check for the correct id"}]
-
 
     log.info("FIND API...")
 

@@ -40,9 +40,6 @@ function Provenance({ nodeData }) {
             "Sample": "#ebb5c8",
             "Source": "#ffc255"
         },
-        simulation: {
-            charge: -300
-        },
         displayEdgeLabels: true,
         minHeight: 400,
         noStyles: true,
