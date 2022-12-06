@@ -81,17 +81,9 @@ function Provenance({ nodeData }) {
         const token = getAuth();
         const url = getEntityEndPoint() + 'entities/{id}/provenance?return_descendants=true'
         const itemId = data.uuid;
-        const graphOps = {token, url, keys: {neighbors: 'direct_ancestors'}}
+        const graphOps = {token, url}
 
         log.debug('Result from fetch', data)
-
-        const getNeighbors = (node) => {
-            let neighbors = node[graphOps.keys.neighbors]
-            if (!neighbors) {
-                neighbors = node['direct_ancestor'] ? [node['direct_ancestor']] : []
-            }
-            return neighbors
-        }
 
         const handleResult = async (result) => {
             log.debug(`Result from fetch`, result)
