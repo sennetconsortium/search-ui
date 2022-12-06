@@ -25,7 +25,7 @@ function Provenance({ nodeData }) {
 
     const onCenterX = (ops) => {
         const w = canvas(ops).width()
-        return  w / 2
+        return  ops.data.nodes.length > 7 ? w / 2 : w / 2.3
     }
 
     const onSvgSizing = (ops) => {
