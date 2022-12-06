@@ -4,6 +4,7 @@ import { goToSearch } from '../components/custom/js/functions'
 import { getCookie, deleteCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import { get_read_write_privileges } from '../lib/services'
+import {deleteCookies} from "../lib/auth";
 
 const AppContext = createContext()
 
@@ -45,7 +46,10 @@ export const AppProvider = ({ children }) => {
             .then((read_write_privileges) => {
                 if (read_write_privileges.read_privs === true) {
                     setCookie(authKey, true)
-                    console.log('Author', hasAuthenticationCookie())
+                    if (router.query.info) {
+                        const {email, globus_id} = JSON.parse(router.query.info)
+                        setCookie('user', {email, globus_id})
+                    }
                     // Redirect to home page without query string
                     goToSearch()
                 } else {
@@ -61,9 +65,7 @@ export const AppProvider = ({ children }) => {
     }
 
     const logout = () => {
-        setCookie(authKey, false)
-        deleteCookie('groups_token')
-        deleteCookie('info')
+        deleteCookies()
     }
 
     // TODO: change to handle locale

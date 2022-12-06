@@ -1,0 +1,4 @@
+lab_id	ancestor_id	description	human_gene_sequences	data_types
+test lab id	914e77e8b40b452b77d6d8dc12dc1bed	single data type	true	CODEX
+second test lab id	914e77e8b40b452b77d6d8dc12dc1bed, 8d6e2d28570f2fde4dd0afb58df951c0	2 good data types	false	AF, CODEX2
+	914e77e8b40b452b77d6d8dc12dc1bed		False	AF, CODEX

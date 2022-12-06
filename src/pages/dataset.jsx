@@ -1,8 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import 'bootstrap/dist/css/bootstrap.css';
-import {Button} from 'react-bootstrap';
-import {BoxArrowUpRight, CircleFill, FiletypeJson} from 'react-bootstrap-icons';
+import {BoxArrowUpRight, CircleFill} from 'react-bootstrap-icons';
 import {Layout} from "@elastic/react-search-ui-views";
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
@@ -22,6 +21,9 @@ import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from "../components/custom/Alert";
 import Provenance from "../components/custom/entities/Provenance";
+import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
+import {ENTITIES} from "../config/constants";
+
 
 function ViewDataset() {
     const router = useRouter()
@@ -189,11 +191,7 @@ function ViewDataset() {
                                         |
                                         {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
 
-                                        {hasWritePrivilege &&
-                                            <Button className="ms-3" href={`/edit/dataset?uuid=${data.uuid}`}
-                                                    variant="outline-primary rounded-0">Edit</Button>}{' '}
-                                        <Button className="ms-3" href={`/api/json/dataset?uuid=${data.uuid}`}
-                                                variant="outline-primary rounded-0"><FiletypeJson/></Button>
+                                        <EntityViewHeaderButtons data={data} entity={Object.keys(ENTITIES)[2]} hasWritePrivilege={hasWritePrivilege} />
                                     </div>
                                 </div>
                             </div>
