@@ -102,6 +102,14 @@ p {
     position: relative;
 }
 
+.card-body .c-provenance {
+    text-align: center;
+}
+
+.card-body .c-provenance .c-provenance__info {
+    text-align: left;
+}
+
 .provenance--portal-ui .pull-right:hover svg {
     fill: var(--bs-link-color);
 }
