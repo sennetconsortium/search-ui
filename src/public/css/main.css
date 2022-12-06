@@ -98,6 +98,48 @@ p {
     text-decoration: underline;
 }
 
+.card-body .c-provenance {
+    position: relative;
+}
+
+.provenance--portal-ui .pull-right:hover svg {
+    fill: var(--bs-link-color);
+}
+
+.c-legend__item--Root {
+    display: none;
+}
+
+.provenance--portal-ui .neo4jd3__info{
+    z-index: 1;
+}
+
+.card-body .c-provenance, .modal-full .c-provenance {
+    height: inherit;
+}
+
+.node.is-visited:not(.is-primary) .glow {
+    stroke: #6ac6ff !important;
+    opacity: .3;
+}
+
+.modal-full .c-provenance {
+    min-height: 500px;
+}
+
+.modal-full .modal-dialog {
+    max-width: 100%;
+}
+
+.btn--fullView {
+    transition: all .2s ease;
+}
+
+.btn--fullView:hover {
+    transform: scale(1.2);
+}
+
+
 @media screen and (max-width: 480px) {
     .navbar .fs-3 {
         font-size: 1.1rem !important;

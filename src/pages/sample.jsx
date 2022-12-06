@@ -18,8 +18,10 @@ import Header from "../components/custom/layout/Header";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from "../components/custom/Alert";
+import Provenance from "../components/custom/entities/Provenance";
 import {ENTITIES} from "../config/constants";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
+
 
 function ViewSample() {
     const router = useRouter()
@@ -114,9 +116,9 @@ function ViewSample() {
                                                     Datasets</a>
                                                 </li>
                                             }
-                                            {/* <li className="sui-single-option-facet__item"><a
+                                            {isLoggedIn() && <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                        </li> */}
+                                        </li>}
                                             {data.ancestors &&
                                                 <li className="sui-single-option-facet__item"><a
                                                     className="sui-single-option-facet__link"
@@ -164,9 +166,9 @@ function ViewSample() {
 
 
                                     {/*Provenance*/}
-                                    {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
-                                    <Provenance data={  }/>
-                                } */}
+                                    {data && isLoggedIn() &&
+                                    <Provenance nodeData={data}/>
+                                    }
 
                                     {/*Source Information Box*/}
                                     {source &&

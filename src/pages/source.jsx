@@ -18,6 +18,7 @@ import Header from "../components/custom/layout/Header";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from "../components/custom/Alert";
+import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {ENTITIES} from "../config/constants";
 
@@ -103,9 +104,9 @@ function ViewSource() {
                                                     href="#Derived-Datasets">Derived</a>
                                                 </li>
                                             }
-                                            {/* <li className="sui-single-option-facet__item"><a
+                                            {isLoggedIn() && <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                        </li> */}
+                                        </li>}
                                             {data.protocol_url &&
                                                 <li className="sui-single-option-facet__item"><a
                                                     className="sui-single-option-facet__link"
@@ -146,9 +147,9 @@ function ViewSource() {
                                     }
 
                                     {/*Provenance*/}
-                                    {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
-                                    <Provenance data={data}/>
-                                } */}
+                                    {data &&  isLoggedIn() &&
+                                        <Provenance nodeData={data}/>
+                                    }
 
                                     {/*Protocols*/}
                                     {data.protocol_url &&
