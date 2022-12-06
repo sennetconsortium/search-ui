@@ -130,7 +130,7 @@ function Provenance({ nodeData }) {
             setLoading(false)
         }
 
-        if (token.length && url.length && itemId.length) {
+        if (url.length && itemId.length) {
             const graph = new GraphGeneric(graphOps)
             graph.service({ callback: handleResult, url: url.replace('{id}', itemId) })
         }
