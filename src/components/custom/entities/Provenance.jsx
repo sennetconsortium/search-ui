@@ -21,9 +21,19 @@ function Provenance({ nodeData }) {
     const [showModal, setShowModal] = useState(false)
     const initialized = useRef(false)
 
+    const canvas = (ops) => $(`#${ops.options.selectorId}`)
+
     const onCenterX = (ops) => {
-        const w = $(`#${ops.options.selectorId}`).width()
-        return w / 1.58
+        const w = canvas(ops).width()
+        return  ops.data.nodes.length > 7 ? w / 2 : w / 2.3
+    }
+
+    const onSvgSizing = (ops) => {
+        let { margin } = ops.args
+        const sz = {}
+        sz.width = canvas(ops).width() - margin.right - margin.left
+        sz.height = 400 - margin.top - margin.bottom
+        return sz
     }
 
     const graphOptions = {
@@ -41,11 +51,12 @@ function Provenance({ nodeData }) {
             "Source": "#ffc255"
         },
         displayEdgeLabels: true,
-        minHeight: 400,
+        minHeight: 200,
         noStyles: true,
         selectorId: 'neo4j--page',
         callbacks: {
-            onCenterX
+            onCenterX,
+            onSvgSizing
         }
     }
 
@@ -98,8 +109,9 @@ function Provenance({ nodeData }) {
                         result[key][`des${_prop}`] = result.descendants[key][_prop]
                     }
                 }
-
             }
+
+
             if (result.descendants) {
                 $.extend(result.activity, result.descendants.activity)
                 $.extend(result.entity, result.descendants.entity)
