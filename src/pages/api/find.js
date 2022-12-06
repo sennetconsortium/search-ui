@@ -1,20 +1,11 @@
 import {simple_query_builder} from "search-ui/lib/search-tools";
 import {getIndex, getSearchEndPoint} from "../../config/config";
 import log from "loglevel";
-import NextCors from 'nextjs-cors'
 
 // a mock service to return some data
 export default async function handler(req, res) {
     var error_messages = [{error: "Only support GET/POST"}, {error: "UUID Not found, please check for the correct id"}]
 
-    // if (process.env.NODE_ENV === 'development') {
-    //     await NextCors(req, res, {
-    //         // Options
-    //         methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-    //         origin: '*',
-    //         optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-    //     });
-    // }
 
     log.info("FIND API...")
 
