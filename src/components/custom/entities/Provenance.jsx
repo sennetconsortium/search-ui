@@ -22,8 +22,10 @@ function Provenance({ nodeData }) {
     const initialized = useRef(false)
 
     const onCenterX = (ops) => {
-        return $(`#${ops.options.selectorId}`).width() / 1.6
+        const w = $(`#${ops.options.selectorId}`).width()
+        return w / 1.58
     }
+
     const graphOptions = {
         idNavigate: {
             props: ["sennet:uuid", "sennet:protocol_url"],
