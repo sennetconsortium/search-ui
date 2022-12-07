@@ -30,7 +30,7 @@ function Provenance({ nodeData }) {
 
     const getTreeWidth = (ops) => {
         const list = {}
-        let max = 3
+        let max = 1
         for (let n of ops.data.stratify) {
             let id = n.activityAsParent
             list[id] = ++list[id] || 1
@@ -44,7 +44,8 @@ function Provenance({ nodeData }) {
         let { margin } = ops.args
         const sz = {}
         sz.width = canvas(ops).width() - margin.right - margin.left
-        sz.height = ops.options.minHeight * getTreeWidth(ops) - margin.top - margin.bottom
+        const treeWidth = getTreeWidth(ops)
+        sz.height = ops.options.minHeight * (treeWidth < 2 ? 3 : Math.max(treeWidth, 5) ) - margin.top - margin.bottom
         return sz
     }
 
