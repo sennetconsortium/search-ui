@@ -25,14 +25,26 @@ function Provenance({ nodeData }) {
 
     const onCenterX = (ops) => {
         const w = canvas(ops).width()
-        return  ops.data.nodes.length > 7 ? w / 2 : w / 2.3
+        return  w / 2.4
+    }
+
+    const getTreeWidth = (ops) => {
+        const list = {}
+        let max = 3
+        for (let n of ops.data.stratify) {
+            let id = n.activityAsParent
+            list[id] = ++list[id] || 1
+            max = Math.max(list[id], max)
+        }
+        log.debug('Tree width', max)
+        return max
     }
 
     const onSvgSizing = (ops) => {
         let { margin } = ops.args
         const sz = {}
         sz.width = canvas(ops).width() - margin.right - margin.left
-        sz.height = 400 - margin.top - margin.bottom
+        sz.height = ops.options.minHeight * getTreeWidth(ops) - margin.top - margin.bottom
         return sz
     }
 
@@ -51,7 +63,7 @@ function Provenance({ nodeData }) {
             "Source": "#ffc255"
         },
         displayEdgeLabels: true,
-        minHeight: 200,
+        minHeight: 100,
         noStyles: true,
         selectorId: 'neo4j--page',
         callbacks: {
@@ -182,7 +194,7 @@ function Provenance({ nodeData }) {
                 {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} actionMap={actionMap} selectorId={options.selectorId}/>}
                 {loading && <Spinner/>}
                 <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
-                    {!loading && <ProvenanceUI options={{...options, selectorId: modalId }} data={treeData} />}
+                    {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 105 }} data={treeData} />}
                     {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} actionMap={actionMap} selectorId={modalId} />}
                 </AppModal>
             </div>
