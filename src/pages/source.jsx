@@ -104,7 +104,7 @@ function ViewSource() {
                                                     href="#Derived-Datasets">Derived</a>
                                                 </li>
                                             }
-                                            {isLoggedIn() && <li className="sui-single-option-facet__item"><a
+                                            { <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
                                         </li>}
                                             {data.protocol_url &&
@@ -147,7 +147,7 @@ function ViewSource() {
                                     }
 
                                     {/*Provenance*/}
-                                    {data &&  isLoggedIn() &&
+                                    {data &&
                                         <Provenance nodeData={data}/>
                                     }
 
