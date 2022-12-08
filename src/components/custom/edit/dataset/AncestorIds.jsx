@@ -143,7 +143,8 @@ export default class AncestorIds extends React.Component {
                                                         />
                                                     )}
 
-                                                    <Facets fields={ancestor_config.searchQuery} filters={filters}/>
+                                                    <Facets fields={valid_dataset_ancestor_config.searchQuery}
+                                                            filters={filters}/>
 
                                                 </>
 

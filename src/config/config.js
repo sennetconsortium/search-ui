@@ -336,6 +336,7 @@ valid_dataset_ancestor_config['searchQuery']['includeFilters'] = [{
     keyword: "entity_type.keyword",
     value: "Dataset"
 }]
+valid_dataset_ancestor_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
 export let exclude_dataset_config = _.cloneDeep(ancestor_config);
 exclude_dataset_config['searchQuery']['excludeFilters'] = [{
