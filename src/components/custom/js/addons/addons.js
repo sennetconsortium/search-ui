@@ -5,15 +5,18 @@ import Facets from './Facets'
 
 /**
  * JS functionality which enhance site functionality, not necessarily part of the core.
- * @param {String} source
+ * @param {string} source
+ * @param {object} args
  * @returns
  */
 function addons(source, args) {
-    Addon.log('Addons started ...', 'log', 'red')
-    if (window[source] !== undefined) {
+    Addon.log('Addons started ...', 'log',  'red')
+    window.addons = window.addons || {}
+    if (window.addons[source] !== undefined) {
         return
     }
-    window[source] = true
+    window.addons[source] = args
+
     let apps = {
         gtm: GoogleTagManager,
         modal: AppModal, 
@@ -21,16 +24,20 @@ function addons(source, args) {
     }
 
     setTimeout(() => {
-        for (let app in apps) {
-            document
-                .querySelectorAll(`[class*='js-${app}--'], [data-js-${app}]`)
-                .forEach((el) => {
-                    new apps[app](el, {app, data: args.data })
-            })
-        }
+        try {
+            for (let app in apps) {
+                document
+                    .querySelectorAll(`[class*='js-${app}--'], [data-js-${app}]`)
+                    .forEach((el) => {
+                        new apps[app](el, {app, data: args.data || window.addons.init.data })
+                    })
+            }
 
-        // Default: Capture all link clicks. 
-        new GoogleTagManager(null, 'links')
+            // Default: Capture all link clicks.
+            new GoogleTagManager(null, 'links')
+        } catch (e) {
+            console.error(e)
+        }
     }, 1000)
 }
 
