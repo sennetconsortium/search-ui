@@ -17,7 +17,12 @@ import Modal from 'react-bootstrap/Modal';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {PlusLg, QuestionCircleFill} from "react-bootstrap-icons";
-import {ancestor_config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../../config/config";
+import {
+    ancestor_config,
+    RESULTS_PER_PAGE,
+    SORT_OPTIONS,
+    valid_dataset_ancestor_config
+} from "../../../../config/config";
 import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
 import AncestorsTable from "./AncestorsTable";
@@ -104,7 +109,7 @@ export default class AncestorIds extends React.Component {
                     keyboard={false}
                 >
                     <Modal.Body>
-                        <SearchProvider config={ancestor_config}>
+                        <SearchProvider config={valid_dataset_ancestor_config}>
                             <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
                                 {({wasSearched, filters}) => {
                                     return (
@@ -144,7 +149,8 @@ export default class AncestorIds extends React.Component {
                                                         />
                                                     )}
 
-                                                    <Facets fields={ancestor_config.searchQuery} filters={filters}/>
+                                                    <Facets fields={valid_dataset_ancestor_config.searchQuery}
+                                                            filters={filters}/>
 
                                                 </div>
 
