@@ -322,6 +322,21 @@ export const SORT_OPTIONS = [
 export let ancestor_config = _.cloneDeep(config)
 ancestor_config['trackUrlState'] = false;
 
+export let valid_dataset_ancestor_config = _.cloneDeep(ancestor_config)
+valid_dataset_ancestor_config['searchQuery']['includeFilters'] = [{
+    keyword: "sample_category.keyword",
+    value: "section"
+}, {
+    keyword: "sample_category.keyword",
+    value: "suspension"
+}, {
+    keyword: "sample_category.keyword",
+    value: "block"
+}, {
+    keyword: "entity_type.keyword",
+    value: "Dataset"
+}]
+
 export let exclude_dataset_config = _.cloneDeep(ancestor_config);
 exclude_dataset_config['searchQuery']['excludeFilters'] = [{
     keyword: "entity_type.keyword",
