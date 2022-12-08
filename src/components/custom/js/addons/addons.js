@@ -9,7 +9,7 @@ import Facets from './Facets'
  * @param {object} args
  * @returns
  */
-function addons(source, args) {
+function addons(source, args= null) {
     Addon.log('Addons started ...', 'log',  'red')
     window.addons = window.addons || {}
     if (window.addons[source] !== undefined) {
@@ -24,21 +24,23 @@ function addons(source, args) {
     }
 
     setTimeout(() => {
+        args = args || window.addons.init
         try {
             for (let app in apps) {
                 document
                     .querySelectorAll(`[class*='js-${app}--'], [data-js-${app}]`)
                     .forEach((el) => {
-                        new apps[app](el, {app, ...args || ...window.addons.init })
+                        new apps[app](el, {app, ...args })
                     })
             }
 
             // Default: Capture all link clicks.
-            new GoogleTagManager(null, 'links', ...args || ...window.addons.init })
+            new GoogleTagManager(null, {app: 'links', ...args })
         } catch (e) {
             console.error(e)
         }
     }, 1000)
+
 }
 
 export default addons
