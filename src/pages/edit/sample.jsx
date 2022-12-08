@@ -16,7 +16,7 @@ import {
     getRequestHeaders
 } from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_entity, parseJson} from "../../lib/services";
+import {update_create_entity, parseJson, get_ancestor_organs} from "../../lib/services";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
@@ -57,6 +57,7 @@ function EditSample() {
     const [showRui, setShowRui] = useState(false)
     const [showRuiButton, setShowRuiButton] = useState(false)
     const [isLoading, setIsLoading] = useState(null)
+    const [ancestorOrgan, setAncestorOrgan] = useState([])
     const [sampleCategories, setSampleCategories] = useState(null)
 
     useEffect(() => {
@@ -126,7 +127,11 @@ function EditSample() {
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     await fetchSource(data.immediate_ancestors[0].uuid);
                 }
-                if (data['rui_location'] !== null) {
+
+                let ancestor_organ = await get_ancestor_organs(data.uuid)
+                setAncestorOrgan(ancestor_organ)
+
+                if (data['rui_location'] !== undefined) {
                     setRuiLocation(data['rui_location'])
                     setShowRuiButton(true)
                 }
@@ -149,6 +154,11 @@ function EditSample() {
             setSourceId(null)
         }
     }, [router]);
+
+    // On changes made to ancestorOrgan run checkRui function
+    useEffect(() => {
+        checkRui();
+    }, [ancestorOrgan, values]);
 
     // callback provided to components to update the main list of form values
     const onChange = (e, fieldId, value) => {
@@ -173,6 +183,31 @@ function EditSample() {
         } else {
             setSource(source);
             setSourceId(source.sennet_id)
+
+            // Manually set ancestor organs when ancestor is updated via modal
+            let ancestor_organ = []
+            if(source.hasOwnProperty("organ")){
+                ancestor_organ.push(source['organ'])
+            }
+            setAncestorOrgan(ancestor_organ)
+        }
+    }
+
+    const checkRui = () => {
+        // Define logic to show RUI tool
+        // An ancestor must be a Sample with Sample Category: "Organ" and Organ Type that exists in isOrganRuiSupported
+        // This Sample must a Sample Category: "Block"
+        log.debug(ancestorOrgan)
+        if (ancestorOrgan.length > 0) {
+            if (values !== null && values['sample_category'] === 'block' && isOrganRuiSupported(ancestorOrgan)) {
+                if (!showRuiButton) {
+                    setShowRuiButton(true)
+                }
+            } else {
+                setShowRuiButton(false)
+            }
+        } else {
+            setShowRuiButton(false)
         }
     }
 
@@ -215,16 +250,6 @@ function EditSample() {
     };
 
 
-    if (values !== null && values['sample_category'] === 'organ' &&
-        (values.hasOwnProperty('organ') && values['organ'] !== '' && values['organ'] !== 'other') &&
-        isOrganRuiSupported(values['organ'])) {
-        if (!showRuiButton) {
-            setShowRuiButton(true)
-        }
-    } else if (showRuiButton) {
-        setShowRuiButton(false)
-    }
-
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
@@ -243,7 +268,7 @@ function EditSample() {
                 }
                 {showRui &&
                     <RuiIntegration
-                        organ={values['organ']}
+                        organ={ancestorOrgan}
                         sex={'male'}
                         user={getUserName()}
                         blockStartLocation={ruiLocation}

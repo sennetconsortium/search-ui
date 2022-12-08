@@ -20,8 +20,10 @@ import Files from "../components/custom/entities/dataset/Files";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from "../components/custom/Alert";
+import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
 import {ENTITIES} from "../config/constants";
+
 
 function ViewDataset() {
     const router = useRouter()
@@ -117,9 +119,9 @@ function ViewDataset() {
                                                 className="sui-single-option-facet__link"
                                                 href="#Files">Files</a>
                                             </li>
-                                            {/* <li className="sui-single-option-facet__item"><a
+                                            {isLoggedIn() && <li className="sui-single-option-facet__item"><a
                                             className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                        </li> */}
+                                            </li> }
                                             {data.immediate_ancestors &&
                                                 <li className="sui-single-option-facet__item"><a
                                                     className="sui-single-option-facet__link"
@@ -209,9 +211,9 @@ function ViewDataset() {
                                     <Files sennet_id={data.sennet_id}/>
 
                                     {/*Provenance*/}
-                                    {/* {!!(data.ancestor_counts && Object.keys(data.ancestor_counts).length) &&
-                                    <Provenance data={data}/>
-                                } */}
+                                    {data && isLoggedIn() &&
+                                        <Provenance nodeData={data}/>
+                                    }
 
                                     {/*Source Information Box*/}
                                     {ancestors &&

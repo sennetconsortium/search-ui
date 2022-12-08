@@ -27,6 +27,8 @@ import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
 import AncestorsTable from "./AncestorsTable";
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
+import addons from "../../js/addons/addons";
+import {ORGAN_TYPES} from "../../../../config/constants";
 
 export default class AncestorIds extends React.Component {
     constructor(props) {
@@ -38,9 +40,13 @@ export default class AncestorIds extends React.Component {
 
     showModal = () => {
         this.setState({showHideModal: true})
+        // Enable addons for facets
+        addons('dataset', {data: {facets: ORGAN_TYPES}})
     }
     hideModal = () => {
         this.setState({showHideModal: false})
+        // Reset addons for facets
+        window['dataset'] = undefined
     }
 
     // Handles when updates are made to `Ancestor ID` when the search feature is used
@@ -109,7 +115,7 @@ export default class AncestorIds extends React.Component {
                                     return (
                                         <Layout
                                             header={
-                                                <div className="search-box-header">
+                                                <div className="search-box-header js-gtm--search">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
                                                             <Form onSubmit={onSubmit}>
@@ -133,7 +139,7 @@ export default class AncestorIds extends React.Component {
                                                 </div>
                                             }
                                             sideContent={
-                                                <>
+                                                <div data-js-facets>
                                                     <CustomClearSearchBox/>
 
                                                     {wasSearched && (
@@ -146,15 +152,17 @@ export default class AncestorIds extends React.Component {
                                                     <Facets fields={valid_dataset_ancestor_config.searchQuery}
                                                             filters={filters}/>
 
-                                                </>
+                                                </div>
 
                                             }
                                             bodyContent={
-                                                <Results view={TableResults} filters={filters}
-                                                         titleField={filters}
-                                                         resultView={TableRowDetail}
-                                                         urlField={this.changeAncestor}
-                                                />
+                                                <div className="js-gtm--results">
+                                                    <Results view={TableResults} filters={filters}
+                                                             titleField={filters}
+                                                             resultView={TableRowDetail}
+                                                             urlField={this.changeAncestor}
+                                                    />
+                                                </div>
                                             }
                                             bodyHeader={
                                                 <React.Fragment>

@@ -104,7 +104,7 @@ export default class AncestorInformationBox extends React.Component {
                                     <td>{this.props.ancestor.sample_category}</td>
                                 }
                                 {this.props.ancestor.organ &&
-                                    <td>{this.props.ancestor.organ}</td>
+                                    <td>{this.props.ancestor.display_subtype}</td>
                                 }
                                 {this.props.ancestor.group_name &&
                                     <td>{this.props.ancestor.group_name}</td>

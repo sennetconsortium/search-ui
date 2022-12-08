@@ -20,6 +20,7 @@ src/node_modules
 src/portalt-ui/.pnp
 src/portal-ui/.pnp.js
 src/package-lock.json
+package-lock.json
 
 # testing
 src/react-app/coverage
@@ -44,3 +45,5 @@ yarn-error.log*
 .vscode/
 .vscode/bookmarks.json
 sennet.code-workspace
+src/package.local.json
+src/.prettierrc
