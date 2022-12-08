@@ -41,12 +41,12 @@ export default class AncestorIds extends React.Component {
     showModal = () => {
         this.setState({showHideModal: true})
         // Enable addons for facets
-        addons('dataset', {data: {facets: ORGAN_TYPES}})
+        addons('dataset')
     }
     hideModal = () => {
         this.setState({showHideModal: false})
         // Reset addons for facets
-        window['dataset'] = undefined
+        delete window.addons['dataset']
     }
 
     // Handles when updates are made to `Ancestor ID` when the search feature is used
