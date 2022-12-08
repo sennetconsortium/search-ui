@@ -22,7 +22,6 @@ import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
-import {ORGAN_TYPES} from "../../../../config/constants";
 
 export default class AncestorId extends React.Component {
     constructor(props) {
@@ -35,12 +34,12 @@ export default class AncestorId extends React.Component {
     showModal = () => {
         this.setState({showHideModal: true})
         // Enable addons for facets
-        addons('sample', {data: {facets: ORGAN_TYPES}})
+        addons('sample')
     }
     hideModal = () => {
         this.setState({showHideModal: false})
         // Reset addons for facets
-        window['sample'] = undefined
+        delete window.addons['sample']
     }
 
     // Handles when updates are made to `Source ID` when the search feature is used
