@@ -29,12 +29,12 @@ function addons(source, args) {
                 document
                     .querySelectorAll(`[class*='js-${app}--'], [data-js-${app}]`)
                     .forEach((el) => {
-                        new apps[app](el, {app, data: args.data || window.addons.init.data })
+                        new apps[app](el, {app, ...args || ...window.addons.init })
                     })
             }
 
             // Default: Capture all link clicks.
-            new GoogleTagManager(null, 'links')
+            new GoogleTagManager(null, 'links', ...args || ...window.addons.init })
         } catch (e) {
             console.error(e)
         }

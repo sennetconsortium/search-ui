@@ -6,7 +6,6 @@ import log from "loglevel";
 export default function handler(req, res) {
     var error_messages = [{error: "Only support GET/POST"}, {error: "UUID Not found, please check for the correct id"}]
 
-
     log.info("FIND API...")
 
     // only allow POST

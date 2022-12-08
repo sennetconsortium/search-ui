@@ -1,9 +1,21 @@
 import $ from 'jquery'
 class Addon {
+    route;
+
     constructor(el, args) {
         this.el = $(el)
         this.app = args.app
         this.data = args.data
+        this.user = {}
+        this.router = args.router
+        this.entities = args.entities
+        if (args.data && args.data.user) {
+            this.user = JSON.parse(args.data.user)
+        }
+        if (Addon.isLocal()) {
+            Addon.log('Addons args:', 'log', 'aqua')
+            console.log(args)
+        }
         this.keycodes = {
             enter: 'Enter',
             esc: 'Escape'
@@ -47,8 +59,12 @@ class Addon {
         return e.code === this.keycodes.esc
     }
 
+    static isLocal() {
+        return (location.host.indexOf('localhost') !== -1)
+    }
+
     static log(msg, fn = 'log', color = '#bada55') {
-        if (location.host.indexOf('localhost') !== -1) {
+        if (Addon.isLocal()) {
             console[fn](`%c ${msg}`, `background: #222; color: ${color}`)
         }
     }
