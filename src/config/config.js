@@ -96,10 +96,10 @@ export const config = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            'origin_sample.organ': {
+            organ: {
                 label: 'Organ',
                 type: 'value',
-                field: 'origin_sample.organ.keyword',
+                field: 'organ.keyword',
                 filterType: 'any',
                 isFilterable: false,
             },
@@ -133,8 +133,8 @@ export const config = {
                 )
             },
 
-            // Only show 'origin_sample' facet if 'Sample' or 'Dataset' is selected from the entity type facet
-            'origin_sample.organ': ({filters}) => {
+            // Only show 'organ' facet if 'Sample' or 'Dataset' is selected from the entity type facet
+            organ: ({filters}) => {
                 return filters.some(
                     (filter) =>
                         filter.field === 'entity_type' &&
@@ -177,7 +177,7 @@ export const config = {
             'last_modified_timestamp',
             'data_types',
             'status',
-            'origin_sample'
+            'organ'
         ],
     },
     initialState: {
@@ -258,15 +258,6 @@ export const SORT_OPTIONS = [
             },
         ],
     },
-    // {
-    //     name: "Organ",
-    //     value: [
-    //         {
-    //             field: "origin_sample.organ.keyword",
-    //             direction: "asc"
-    //         }
-    //     ]
-    // },
     {
         name: 'Status',
         value: [
