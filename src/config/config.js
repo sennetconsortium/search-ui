@@ -20,10 +20,15 @@ export function getAuth() {
     return ''
 }
 
-const nonSupportedRuiOrgans = ['AO', 'BD', 'BS', 'MU', 'OT']
+export const nonSupportedRuiOrgans = ['AO', 'BD', 'BS', 'MU', 'OT']
 
-export function isOrganRuiSupported(organ) {
-    return !nonSupportedRuiOrgans.includes(organ)
+export function isOrganRuiSupported(organs) {
+    if(organs.length > 0) {
+        const supported_organ = (organ) => !nonSupportedRuiOrgans.includes(organ);
+
+        return organs.some(supported_organ)
+    }
+    return false
 }
 
 export function getUserName() {
@@ -321,6 +326,22 @@ export const SORT_OPTIONS = [
 //Config options to exclude datasets from results
 export let ancestor_config = _.cloneDeep(config)
 ancestor_config['trackUrlState'] = false;
+
+export let valid_dataset_ancestor_config = _.cloneDeep(ancestor_config)
+valid_dataset_ancestor_config['searchQuery']['includeFilters'] = [{
+    keyword: "sample_category.keyword",
+    value: "section"
+}, {
+    keyword: "sample_category.keyword",
+    value: "suspension"
+}, {
+    keyword: "sample_category.keyword",
+    value: "block"
+}, {
+    keyword: "entity_type.keyword",
+    value: "Dataset"
+}]
+valid_dataset_ancestor_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
 export let exclude_dataset_config = _.cloneDeep(ancestor_config);
 exclude_dataset_config['searchQuery']['excludeFilters'] = [{

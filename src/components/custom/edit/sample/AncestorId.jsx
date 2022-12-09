@@ -21,6 +21,8 @@ import {exclude_dataset_config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../.
 import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
+import addons from "../../js/addons/addons";
+import {ORGAN_TYPES} from "../../../../config/constants";
 
 export default class AncestorId extends React.Component {
     constructor(props) {
@@ -32,9 +34,13 @@ export default class AncestorId extends React.Component {
 
     showModal = () => {
         this.setState({showHideModal: true})
+        // Enable addons for facets
+        addons('sample', {data: {facets: ORGAN_TYPES}})
     }
     hideModal = () => {
         this.setState({showHideModal: false})
+        // Reset addons for facets
+        window['sample'] = undefined
     }
 
     // Handles when updates are made to `Source ID` when the search feature is used
@@ -87,7 +93,7 @@ export default class AncestorId extends React.Component {
                                     return (
                                         <Layout
                                             header={
-                                                <div className="search-box-header">
+                                                <div className="search-box-header js-gtm--search">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
                                                             <Form onSubmit={onSubmit}>
@@ -111,7 +117,7 @@ export default class AncestorId extends React.Component {
                                                 </div>
                                             }
                                             sideContent={
-                                                <>
+                                                <div data-js-facets>
                                                     <CustomClearSearchBox/>
 
                                                     {wasSearched && (
@@ -121,17 +127,20 @@ export default class AncestorId extends React.Component {
                                                         />
                                                     )}
 
-                                                    <Facets fields={exclude_dataset_config.searchQuery} filters={filters}/>
+                                                    <Facets fields={exclude_dataset_config.searchQuery}
+                                                            filters={filters}/>
 
-                                                </>
+                                                </div>
 
                                             }
                                             bodyContent={
-                                                <Results view={TableResults} filters={filters}
-                                                         titleField={filters}
-                                                         resultView={TableRowDetail}
-                                                         urlField={this.changeSource}
-                                                />
+                                                <div className="js-gtm--results">
+                                                    <Results view={TableResults} filters={filters}
+                                                             titleField={filters}
+                                                             resultView={TableRowDetail}
+                                                             urlField={this.changeSource}
+                                                    />
+                                                </div>
                                             }
                                             bodyHeader={
                                                 <React.Fragment>
