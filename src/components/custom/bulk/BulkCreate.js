@@ -30,6 +30,7 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
     const [errorMessage, setErrorMessage] = useState(null)
     const [validationSuccess, setValidationSuccess] = useState(null)
     const [bulkSuccess, setBulkSuccess] = useState(null)
+    const [bulkResponse, setBulkResponse] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
     const [steps, setSteps] = useState(['Attach Your File', 'Review Validation', 'Complete'])
     const [selectedGroup, setSelectedGroup] = useState(null)
@@ -152,6 +153,7 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
             setErrorMessage(data)
         } else {
             setBulkSuccess(true)
+            setBulkResponse(data)
             setIsNextButtonDisabled(false)
         }
         setIsLoading(false)
@@ -234,7 +236,7 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
     function isStepFailed(index) {
         return error !== null && error[index] !== null && error[index] === true
     }
-
+    
     return (
         <div>
             <Container sx={{mt: 5}}>
@@ -288,6 +290,13 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
                     {(activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4) && !errorMessage && bulkSuccess &&
                         <Alert severity="success" sx={{m: 2}}>
                             Upload successful
+                            <ul>
+                                {
+                                    Object.values(bulkResponse.data).map((each) => {
+                                        return <li>{each.sennet_id}</li>
+                                    })
+                                }
+                            </ul>
                         </Alert>}
                     {
                         activeStep === 2 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
