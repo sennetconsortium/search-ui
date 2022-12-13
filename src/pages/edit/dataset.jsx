@@ -85,7 +85,7 @@ export default function EditDataset() {
                     headers: getHeaders(),
                     body: JSON.stringify(body)
                 }
-                const response = await fetch(getEntityEndPoint() + 'constraints', requestOptions)
+                const response = await fetch(getEntityEndPoint() + 'constraints?' + new URLSearchParams({relationship_direction: 'descendants'}), requestOptions)
                 if (response.ok) {
                     const provenance_constraints = await response.json()
                     provenance_constraints.forEach(constraint => {
