@@ -236,8 +236,6 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
     function isStepFailed(index) {
         return error !== null && error[index] !== null && error[index] === true
     }
-
-    let id_list = []
     return (
         <div>
             <Container sx={{mt: 5}}>
