@@ -251,7 +251,7 @@ export default function BulkCreate({
         let body = `Your ${entityType} were created:\n`
         if (entityType.toLowerCase() === 'sources') {
             body += `Source types: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each =>
-                each.source_type.charAt(0).toUpperCase() + each.source_type.slice(1) + '\n'
+                '\t' + each.source_type.charAt(0).toUpperCase() + each.source_type.slice(1) + '\n'
             )))}`
         } else if (entityType.toLowerCase() === 'samples') {
             body += `Sample categories: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each => {
@@ -259,7 +259,7 @@ export default function BulkCreate({
                     if (each.sample_category === 'organ') {
                         organ_type = each.organ
                     }
-                    let result = each.sample_category.charAt(0).toUpperCase() + each.sample_category.slice(1)
+                    let result = '\t' + each.sample_category.charAt(0).toUpperCase() + each.sample_category.slice(1)
                     if (organ_type !== null) {
                         result += ` (${organ_type})` + '\n'
                     } else {
@@ -270,10 +270,10 @@ export default function BulkCreate({
             )))}`
         } else if (entityType.toLowerCase() === 'datasets') {
             body += `Data types: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each =>
-                each.data_types[0].charAt(0).toUpperCase() + each.data_types[0].slice(1) + '\n'
+                '\t' + each.data_types[0].charAt(0).toUpperCase() + each.data_types[0].slice(1) + '\n'
             )))}`
         }
-        body += 'Group Name: ' + bulkResponse.data[1].group_name + '\n' + 'SenNet IDs: \n' + Object.values(bulkResponse.data).map(each => each.sennet_id + '\n')
+        body += 'Group Name: ' + bulkResponse.data[1].group_name + '\n' + 'SenNet IDs: \n' + Object.values(bulkResponse.data).map(each => '\t' + each.sennet_id + '\n')
         return body.replace(/,/g, '')
     }
 
