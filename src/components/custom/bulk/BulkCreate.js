@@ -255,11 +255,17 @@ export default function BulkCreate({
             )))}`
         } else if (entityType.toLowerCase() === 'samples') {
             body += `Sample categories: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each => {
-                    let organ_type
+                    let organ_type = null
                     if (each.sample_category === 'organ') {
                         organ_type = each.organ
                     }
-                    return each.sample_category.charAt(0).toUpperCase() + each.sample_category.slice(1) + ` ${organ_type !== null ? `(${organ_type})` : null}` + '\n'
+                    let result = each.sample_category.charAt(0).toUpperCase() + each.sample_category.slice(1)
+                    if (organ_type !== null) {
+                        result += ` (${organ_type})` + '\n'
+                    } else {
+                        result += '\n'
+                    }
+                    return result
                 }
             )))}`
         } else if (entityType.toLowerCase() === 'datasets') {
