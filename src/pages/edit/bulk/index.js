@@ -12,7 +12,6 @@ export default function EditBulk() {
         isUnauthorized,
         isAuthorizing,
         userWriteGroups,
-        handleClose,
         handleHome
     } = useContext(EntityContext)
 
@@ -60,7 +59,6 @@ export default function EditBulk() {
                 bulkUploadUrl={bulkUploadUrl}
                 bulkUrl={bulkUrl}
                 userWriteGroups={userWriteGroups}
-                handleClose={handleClose}
                 handleHome={handleHome}
             />
         </>

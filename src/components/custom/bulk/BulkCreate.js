@@ -27,7 +27,6 @@ export default function BulkCreate({
                                        bulkUrl,
                                        userWriteGroups,
                                        handleHome,
-                                       handleClose
                                    }) {
     const buttonVariant = "btn btn-outline-primary rounded-0"
     const inputFileRef = useRef(null)
