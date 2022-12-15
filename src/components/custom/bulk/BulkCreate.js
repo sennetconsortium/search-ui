@@ -248,7 +248,32 @@ export default function BulkCreate({
     }
 
     function getModalBody() {
-        let body = 'Group Name : ' + bulkResponse.data[1].group_name + '\n' + 'SenNet IDs : \n' + Object.values(bulkResponse.data).map(each => each.sennet_id + '\n')
+        let body = `Your ${entityType} were created:\n`
+        if (entityType.toLowerCase() === 'sources') {
+            body += `Source types: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each =>
+                '\t' + each.source_type.charAt(0).toUpperCase() + each.source_type.slice(1) + '\n'
+            )))}`
+        } else if (entityType.toLowerCase() === 'samples') {
+            body += `Sample categories: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each => {
+                    let organ_type = null
+                    if (each.sample_category === 'organ') {
+                        organ_type = each.organ
+                    }
+                    let result = '\t' + each.sample_category.charAt(0).toUpperCase() + each.sample_category.slice(1)
+                    if (organ_type !== null) {
+                        result += ` (${organ_type})` + '\n'
+                    } else {
+                        result += '\n'
+                    }
+                    return result
+                }
+            )))}`
+        } else if (entityType.toLowerCase() === 'datasets') {
+            body += `Data types: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each =>
+                '\t' + each.data_types[0].charAt(0).toUpperCase() + each.data_types[0].slice(1) + '\n'
+            )))}`
+        }
+        body += 'Group Name: ' + bulkResponse.data[1].group_name + '\n' + 'SenNet IDs: \n' + Object.values(bulkResponse.data).map(each => '\t' + each.sennet_id + '\n')
         return body.replace(/,/g, '')
     }
 
@@ -305,7 +330,7 @@ export default function BulkCreate({
                     {
                         (activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4) && !errorMessage && bulkSuccess &&
                         <AppModal
-                            modalTitle={'Successfully uploaded ' + entityType}
+                            modalTitle={entityType + ' created'}
                             modalBody={getModalBody()}
                             showModal={showModal}
                             handleHome={handleHome}
