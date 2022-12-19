@@ -8,6 +8,7 @@ import log from 'loglevel'
 import { APP_ROUTES } from '../config/constants'
 import AppModal from '../components/AppModal'
 import AppContext from './AppContext'
+import {simple_query_builder} from "search-ui/lib/search-tools";
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
@@ -21,13 +22,15 @@ export const EntityProvider = ({ children }) => {
     const [errorMessage, setErrorMessage] = useState(null)
     const [values, setValues] = useState({})
     const [showModal, setShowModal] = useState(false)
-    const [showCloseButton, setShowCloseButton] = useState(false)
+    const [showCloseButton, setShowCloseButton] = useState(true)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] =
         useState(null)
+
+    const [response, setResponse] = useState()
 
     const isUnauthorized = () => {
         return authorized === false
@@ -39,6 +42,11 @@ export const EntityProvider = ({ children }) => {
 
     const isEditMode = () => {
         return editMode === 'Edit'
+    }
+
+    const goToEntity = () => {
+        router.push(`/edit/${response.entity_type.toLowerCase()}?uuid=${response.uuid}`)
+        setShowModal(false)
     }
 
     const handleClose = () => setShowModal(false)
@@ -78,10 +86,6 @@ export const EntityProvider = ({ children }) => {
         setShowModal(true)
         setDisableSubmit(false)
 
-        if (isEditMode()) {
-            setShowCloseButton(true)
-        }
-
         if ('uuid' in response) {
             const verb = isEditMode() ? 'Updated' : 'Created'
             setModalTitle(`${entity} ${verb}`)
@@ -89,7 +93,7 @@ export const EntityProvider = ({ children }) => {
                 `${_t(typeHeader)}: ` + type + "\n" +
                 `${_t('Group Name')}: ` + response.group_name + "\n" +
                 `${_('SenNet ID')}: ` + response.sennet_id)
-            
+            setResponse(response)
         } else {
             setModalTitle(`Error Creating ${entity}`)
             let responseText = ""
@@ -99,7 +103,7 @@ export const EntityProvider = ({ children }) => {
                 responseText = response.statusText
             }
             setModalBody(responseText)
-            setShowCloseButton(true)
+
         }
     }
 
@@ -108,7 +112,7 @@ export const EntityProvider = ({ children }) => {
             showModal={showModal}
             modalTitle={modalTitle}
             modalBody={modalBody}
-            handleClose={handleClose}
+            handleClose={isEditMode() ? handleClose : goToEntity}
             handleHome={handleHome}
             showCloseButton={showCloseButton}
             closeButtonLabel={'Edit form'}
