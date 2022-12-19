@@ -21,11 +21,11 @@ import Header from '../../components/custom/layout/Header'
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import {DATA_TYPES, ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
+import {DATA_TYPES, ENTITIES} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
-import {getEntityEndPoint} from "../../config/config";
+import {getEntityEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 
 export default function EditDataset() {
     const {
@@ -48,6 +48,25 @@ export default function EditDataset() {
     const [dataTypes, setDataTypes] = useState(null)
 
     useEffect(() => {
+        async function fetchAncestorConstraints() {
+            const body = {
+                entity_type: 'dataset'
+            }
+            const requestOptions = {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(body)
+            }
+            const response = await fetch(getEntityEndPoint() + 'constraints?' + new URLSearchParams({relationship_direction: 'ancestors'}), requestOptions)
+            if (response.ok) {
+                valid_dataset_ancestor_config['searchQuery']['includeFilters'] = await response.json()
+            }
+        }
+
+        fetchAncestorConstraints()
+    }, [])
+
+    useEffect(() => {
         const fetchDataTypes = async () => {
             setDataTypes(null)
             if (ancestors !== null && ancestors.length !== 0) {
@@ -66,7 +85,7 @@ export default function EditDataset() {
                     headers: getHeaders(),
                     body: JSON.stringify(body)
                 }
-                const response = await fetch(getEntityEndPoint() + 'constraints', requestOptions)
+                const response = await fetch(getEntityEndPoint() + 'constraints?' + new URLSearchParams({relationship_direction: 'descendants'}), requestOptions)
                 if (response.ok) {
                     const provenance_constraints = await response.json()
                     provenance_constraints.forEach(constraint => {
