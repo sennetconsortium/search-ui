@@ -78,7 +78,7 @@ function EditSample() {
                     headers: getHeaders(),
                     body: JSON.stringify(body)
                 }
-                const response = await fetch(getEntityEndPoint() + 'constraints', requestOptions)
+                const response = await fetch(getEntityEndPoint() + 'constraints?' + new URLSearchParams({relationship_direction: 'descendants'}), requestOptions)
                 if (response.ok) {
                     const provenance_constraints = await response.json()
                     provenance_constraints.forEach(constraint => {
@@ -186,7 +186,7 @@ function EditSample() {
 
             // Manually set ancestor organs when ancestor is updated via modal
             let ancestor_organ = []
-            if(source.hasOwnProperty("organ")){
+            if (source.hasOwnProperty("organ")) {
                 ancestor_organ.push(source['organ'])
             }
             setAncestorOrgan(ancestor_organ)

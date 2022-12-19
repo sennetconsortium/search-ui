@@ -8,7 +8,12 @@ import EntityContext, {EntityProvider} from "../../../context/EntityContext";
 import Spinner from "../../../components/custom/Spinner";
 
 export default function EditBulk() {
-    const {isUnauthorized, isAuthorizing, userWriteGroups} = useContext(EntityContext)
+    const {
+        isUnauthorized,
+        isAuthorizing,
+        userWriteGroups,
+        handleHome
+    } = useContext(EntityContext)
 
     const router = useRouter()
     const entity_type_query = router.query['entity_type']
@@ -54,6 +59,7 @@ export default function EditBulk() {
                 bulkUploadUrl={bulkUploadUrl}
                 bulkUrl={bulkUrl}
                 userWriteGroups={userWriteGroups}
+                handleHome={handleHome}
             />
         </>
     }
@@ -62,7 +68,7 @@ export default function EditBulk() {
     return (result)
 }
 
-EditBulk.withWrapper = function(page) {
+EditBulk.withWrapper = function (page) {
     return <EntityProvider>{page}</EntityProvider>
 }
 
