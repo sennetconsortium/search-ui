@@ -17,9 +17,17 @@ import Spinner from "../Spinner";
 import AppFooter from "../layout/AppFooter";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
+import AppModal from "../../AppModal";
 
 
-export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, bulkUrl, userWriteGroups}) {
+export default function BulkCreate({
+                                       entityType,
+                                       exampleFileName,
+                                       bulkUploadUrl,
+                                       bulkUrl,
+                                       userWriteGroups,
+                                       handleHome,
+                                   }) {
     const buttonVariant = "btn btn-outline-primary rounded-0"
     const inputFileRef = useRef(null)
     const [activeStep, setActiveStep] = useState(0)
@@ -30,9 +38,11 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
     const [errorMessage, setErrorMessage] = useState(null)
     const [validationSuccess, setValidationSuccess] = useState(null)
     const [bulkSuccess, setBulkSuccess] = useState(null)
+    const [bulkResponse, setBulkResponse] = useState(null)
     const [isLoading, setIsLoading] = useState(null)
     const [steps, setSteps] = useState(['Attach Your File', 'Review Validation', 'Complete'])
     const [selectedGroup, setSelectedGroup] = useState(null)
+    const [showModal, setShowModal] = useState(true)
 
     const ColorlibConnector = styled(StepConnector)(({theme}) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -152,6 +162,7 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
             setErrorMessage(data)
         } else {
             setBulkSuccess(true)
+            setBulkResponse(data)
             setIsNextButtonDisabled(false)
         }
         setIsLoading(false)
@@ -215,6 +226,7 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
         setBulkSuccess(null)
         setIsNextButtonDisabled(true)
         setSelectedGroup(null)
+        setShowModal(true)
     }
 
     function handleFileChange(event) {
@@ -233,6 +245,36 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
 
     function isStepFailed(index) {
         return error !== null && error[index] !== null && error[index] === true
+    }
+
+    function getModalBody() {
+        let body = `Your ${entityType} were created:\n`
+        if (entityType.toLowerCase() === 'sources') {
+            body += `Source types: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each =>
+                '\t' + each.source_type.charAt(0).toUpperCase() + each.source_type.slice(1) + '\n'
+            )))}`
+        } else if (entityType.toLowerCase() === 'samples') {
+            body += `Sample categories: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each => {
+                    let organ_type = null
+                    if (each.sample_category === 'organ') {
+                        organ_type = each.organ
+                    }
+                    let result = '\t' + each.sample_category.charAt(0).toUpperCase() + each.sample_category.slice(1)
+                    if (organ_type !== null) {
+                        result += ` (${organ_type})` + '\n'
+                    } else {
+                        result += '\n'
+                    }
+                    return result
+                }
+            )))}`
+        } else if (entityType.toLowerCase() === 'datasets') {
+            body += `Data types: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each =>
+                '\t' + each.data_types[0].charAt(0).toUpperCase() + each.data_types[0].slice(1) + '\n'
+            )))}`
+        }
+        body += 'Group Name: ' + bulkResponse.data[1].group_name + '\n' + 'SenNet IDs: \n' + Object.values(bulkResponse.data).map(each => '\t' + each.sennet_id + '\n')
+        return body.replace(/,/g, '')
     }
 
     return (
@@ -285,10 +327,17 @@ export default function BulkCreate({entityType, exampleFileName, bulkUploadUrl, 
                         <Alert severity="success" sx={{m: 2}}>
                             Validation successful please continue onto the next step
                         </Alert>}
-                    {(activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4) && !errorMessage && bulkSuccess &&
-                        <Alert severity="success" sx={{m: 2}}>
-                            Upload successful
-                        </Alert>}
+                    {
+                        (activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4) && !errorMessage && bulkSuccess &&
+                        <AppModal
+                            modalTitle={entityType + ' created'}
+                            modalBody={getModalBody()}
+                            showModal={showModal}
+                            handleHome={handleHome}
+                            handleClose={() => setShowModal(false)}
+                            showCloseButton={true}
+                        />
+                    }
                     {
                         activeStep === 2 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
                         <Grid container className={'text-center mt-5'}>
