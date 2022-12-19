@@ -21,7 +21,7 @@ export const EntityProvider = ({ children }) => {
     const [errorMessage, setErrorMessage] = useState(null)
     const [values, setValues] = useState({})
     const [showModal, setShowModal] = useState(false)
-    const [showHideModal, setShowHideModal] = useState(false)
+    const [showCloseButton, setShowCloseButton] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [disableSubmit, setDisableSubmit] = useState(false)
@@ -76,7 +76,11 @@ export const EntityProvider = ({ children }) => {
 
     const setModalDetails = ({entity, type, typeHeader, response}) => {
         setShowModal(true)
-        setDisableSubmit(false);
+        setDisableSubmit(false)
+
+        if (isEditMode()) {
+            setShowCloseButton(true)
+        }
 
         if ('uuid' in response) {
             const verb = isEditMode() ? 'Updated' : 'Created'
@@ -95,7 +99,7 @@ export const EntityProvider = ({ children }) => {
                 responseText = response.statusText
             }
             setModalBody(responseText)
-            setShowHideModal(true);
+            setShowCloseButton(true)
         }
     }
 
@@ -106,7 +110,7 @@ export const EntityProvider = ({ children }) => {
             modalBody={modalBody}
             handleClose={handleClose}
             handleHome={handleHome}
-            showCloseButton={showHideModal}
+            showCloseButton={showCloseButton}
             closeButtonLabel={'Edit form'}
         />
     }
@@ -121,7 +125,6 @@ export const EntityProvider = ({ children }) => {
                 error, setError,
                 values, setValues,
                 errorMessage, setErrorMessage,
-                showHideModal, setShowHideModal, 
                 validated, setValidated,
                 handleClose, handleHome, 
                 showModal, setShowModal,
