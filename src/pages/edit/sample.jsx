@@ -56,7 +56,6 @@ function EditSample() {
     const [ruiLocation, setRuiLocation] = useState('')
     const [showRui, setShowRui] = useState(false)
     const [showRuiButton, setShowRuiButton] = useState(false)
-    const [isLoading, setIsLoading] = useState(null)
     const [ancestorOrgan, setAncestorOrgan] = useState([])
     const [sampleCategories, setSampleCategories] = useState(null)
 
