@@ -52,7 +52,7 @@ function Provenance({ nodeData }) {
     const graphOptions = {
         idNavigate: {
             props: ["sennet:uuid", "sennet:protocol_url"],
-            url: "/{classType}?uuid={id}",
+            url: "/{subType}?uuid={id}",
             exclude: {
                 'Activity': ["sennet:uuid"]
             }
@@ -74,18 +74,14 @@ function Provenance({ nodeData }) {
     }
 
     const dataMap = {
-        delimiters: {
-            node: '/'
-        },
-        keys: {
-            startNode: 'prov:entity',
-            endNode: 'prov:activity'
-        },
+        delimiter: '/',
         labels: {
             edge: { used: 'USED', wasGeneratedBy: 'WAS_GENERATED_BY' }
         },
         root: {
-            id: 'sennet:uuid'
+            id: 'sennet:uuid',
+            type: 'prov:type',
+            subType: 'sennet:entity_type'
         },
         props: ['sennet:uuid', 'sennet:sennet_id'],
         typeProps: {
@@ -94,8 +90,7 @@ function Provenance({ nodeData }) {
             Activity: ['sennet:created_timestamp', 'sennet:protocol_url', 'sennet:created_by_user_displayname']
         },
         callbacks: {
-            'sennet:created_timestamp': 'formatDate',
-            //'sennet:created_by_user_displayname': 'lastNameFirstInitial'
+            'sennet:created_timestamp': 'formatDate'
         }
     }
 
@@ -112,12 +107,10 @@ function Provenance({ nodeData }) {
         const handleResult = async (result) => {
             log.debug(`Result from fetch`, result)
             let keys = ['used', 'wasGeneratedBy']
-            let hasDescendants = false
             for (let key of keys) {
                 if (result.descendants) {
                     for (let _prop in result.descendants[key]) {
                         result[key] = result[key] || {}
-                        hasDescendants = true
                         // Must update key to avoid key collisions with original result.used and result.wasGeneratedBy
                         result[key][`des${_prop}`] = result.descendants[key][_prop]
                     }
@@ -132,7 +125,7 @@ function Provenance({ nodeData }) {
             }
 
             const converter = new DataConverterNeo4J(result, dataMap)
-            converter.buildAdjacencyList(itemId, hasDescendants)
+            converter.buildAdjacencyList(itemId)
             log.debug('Converter details...', converter)
 
             const ops = {...graphOptions, highlight: [{id: itemId}]}
