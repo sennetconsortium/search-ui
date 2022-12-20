@@ -189,9 +189,19 @@ function EditSample() {
         setValues(values)
         set_organ_group_hide('none')
         set_organ_other_hide('none')
-        document.getElementById("sample_category").value = ""
-        document.getElementById("organ").value = ""
-        document.getElementById("organ_other").value = ""
+
+        const sample_category = document.getElementById('sample_category')
+        const organ = document.getElementById("organ")
+        const organ_other = document.getElementById("organ_other")
+        if (sample_category !== null) {
+            sample_category.value = ''
+        }
+        if (organ !== null) {
+            organ.value = ''
+        }
+        if (organ_other !== null) {
+            organ_other.value = ''
+        }
     }
 
     const fetchSource = async (sourceId) => {
