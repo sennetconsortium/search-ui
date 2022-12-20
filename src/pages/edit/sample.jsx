@@ -177,6 +177,9 @@ function EditSample() {
     };
 
     const resetSampleCategory = () => {
+        if (editMode !== 'Create') {
+            return
+        }
         if (Object.hasOwn(values, 'sample_category')) {
             delete values['sample_category']
         }
