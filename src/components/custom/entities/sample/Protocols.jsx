@@ -33,12 +33,40 @@ export default class Protocols extends React.Component {
                             </tr>
                             </thead>
                         }
+                        
                         <tbody>
                         <tr>
-                            <td><a href={getClickableLink(this.props.protocol_url)}
+                            <td>
+                                <span className={"title"}>DOI</span><br></br>
+                                <a href={getClickableLink(this.props.protocol_url)}
                                    className="link_with_icon"><span
-                                className="me-1">{this.props.protocol_url}</span> <BoxArrowUpRight/></a></td>
+                                    className="me-1">{this.props.protocol_url}</span> <BoxArrowUpRight/></a>
+                            </td>
                         </tr>
+
+                        {this.state.protocol_data != null &&
+                            <>
+                                <tr>
+                                    <span className={"title"}>Authors</span><br></br>
+                                    <span>
+                                        {this.state.protocol_data.authors.map((author, index, array) => {
+                                            return (
+                                                <>
+                                                    {author.name}
+                                                    {index !== array.length - 1 ? <>, </> : <></>}
+                                                </>
+                                            );
+                                        })}
+                                    </span>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span className={"title"}>Abstract</span><br></br>
+                                        <span>{JSON.parse(this.state.protocol_data.description).blocks[0].text}</span>
+                                    </td>
+                                </tr>
+                            </>
+                        }
                         </tbody>
                     </Table>
                 </div>
