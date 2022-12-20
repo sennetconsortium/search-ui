@@ -87,7 +87,7 @@ function SampleCategory({
                                  handleSampleCategoryChange(e, onChange);
                                  onChange(e, e.target.id, e.target.value)
                              }}
-                             defaultValue={data.sample_category !== undefined ? data.sample_category : ''}>
+                             defaultValue={data.sample_category}>
                     <option value="">----</option>
                     {Object.entries(sample_categories).map(sample_category => {
                         return (
