@@ -57,6 +57,8 @@ function EditSample() {
     const [showRuiButton, setShowRuiButton] = useState(false)
     const [ancestorOrgan, setAncestorOrgan] = useState([])
     const [sampleCategories, setSampleCategories] = useState(null)
+    const [organ_group_hide, set_organ_group_hide] = useState('none')
+    const [organ_other_hide, set_organ_other_hide] = useState('none')
 
     useEffect(() => {
         const fetchSampleCategories = async () => {
@@ -91,6 +93,7 @@ function EditSample() {
             }
         }
         fetchSampleCategories()
+        resetSampleCategory()
     }, [source])
 
     // only executed on init rendering, see the []
@@ -172,6 +175,24 @@ function EditSample() {
             }
         });
     };
+
+    const resetSampleCategory = () => {
+        if (Object.hasOwn(values, 'sample_category')) {
+            delete values['sample_category']
+        }
+        if (Object.hasOwn(values, 'organ')) {
+            delete values['organ']
+        }
+        if (Object.hasOwn(values, 'organ_other')) {
+            delete values['organ_other']
+        }
+        setValues(values)
+        set_organ_group_hide('none')
+        set_organ_other_hide('none')
+        document.getElementById("sample_category").value = ""
+        document.getElementById("organ").value = ""
+        document.getElementById("organ_other").value = ""
+    }
 
     const fetchSource = async (sourceId) => {
         let source = await fetchEntity(sourceId);
@@ -311,9 +332,14 @@ function EditSample() {
                                     {((isEditMode() && source) || (editMode === 'Create')) &&
                                         <>
                                             <SampleCategory
+                                                organ_group_hide={organ_group_hide}
+                                                set_organ_group_hide={set_organ_group_hide}
+                                                organ_other_hide={organ_other_hide}
+                                                set_organ_other_hide={set_organ_other_hide}
                                                 sample_categories={sampleCategories === null ? SAMPLE_CATEGORY : sampleCategories}
-                                                data={data}
-                                                source={source} onChange={onChange}/>
+                                                data={values}
+                                                source={source}
+                                                onChange={onChange}/>
                                             <RUIButton
                                                 showRegisterLocationButton={showRuiButton}
                                                 ruiLocation={ruiLocation}
