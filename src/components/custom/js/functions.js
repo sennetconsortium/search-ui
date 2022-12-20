@@ -34,13 +34,14 @@ export async function fetchEntity(ancestorId) {
 export async function fetchProtocols(protocolUrl) {
     const regex = new RegExp('[^\.]+$', 'g');
     const protocolId = regex.exec(protocolUrl)[0]
-    const response = await fetch("https://www.protocols.io/api/v3/protocols/" + protocolId);
+    const response = await fetch("https://www.protocols.io/api/v4/protocols/" + protocolId);
 
     if (!response.ok) {
         return null
     }
     const protocol = await response.json();
-    return protocol.protocol;
+    log.info(protocol.payload.description)
+    return protocol.payload;
 }
 
 export function createDownloadUrl(fileStr, fileType) {
