@@ -99,7 +99,7 @@ function Search() {
 
                                             }
                                             bodyContent={
-                                                <div className="js-gtm--results">
+                                                <div className="js-gtm--results" data-js-ada='tr'>
                                                     <Results filters={filters} titleField={filters}
                                                              view={TableResults} resultView={TableRowDetail}
                                                     />

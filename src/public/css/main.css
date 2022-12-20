@@ -167,3 +167,7 @@ p {
 #unityContainer {
     padding-bottom: 60px
 }
+
+.table-responsive td:hover {
+    cursor: pointer;
+}
