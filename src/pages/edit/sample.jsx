@@ -28,7 +28,7 @@ import AppContext from '../../context/AppContext'
 import {EntityProvider} from '../../context/EntityContext'
 import EntityContext from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import {ENTITIES, ORGAN_TYPES, SAMPLE_CATEGORY} from '../../config/constants'
+import {ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
