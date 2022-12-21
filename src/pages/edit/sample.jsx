@@ -93,7 +93,6 @@ function EditSample() {
             }
         }
         fetchSampleCategories()
-        resetSampleCategory()
     }, [source])
 
     // only executed on init rendering, see the []
@@ -113,6 +112,12 @@ function EditSample() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data);
+
+                // Show organ input group if sample category is 'organ'
+                if (data.sample_category === 'organ') {
+                    set_organ_group_hide('')
+                }
+
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
                     'sample_category': data.sample_category,
@@ -174,12 +179,14 @@ function EditSample() {
                 }
             }
         });
+
+        if (fieldId === 'direct_ancestor_uuid') {
+            resetSampleCategory()
+        }
     };
 
     const resetSampleCategory = () => {
-        if (editMode !== 'Create') {
-            return
-        }
+
         if (Object.hasOwn(values, 'sample_category')) {
             delete values['sample_category']
         }

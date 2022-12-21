@@ -15,11 +15,6 @@ function SampleCategory({
                             sample_categories
                         }) {
 
-    // Show organ input group if sample category is 'organ'
-    if (data.sample_category === 'organ') {
-        set_organ_group_hide('')
-    }
-
     const handleSampleCategoryChange = (e, onChange) => {
         // If sample category is 'Organ' then display the organ type input group
         if (e.target.value === 'organ') {
