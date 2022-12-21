@@ -156,7 +156,7 @@ export default class AncestorIds extends React.Component {
 
                                             }
                                             bodyContent={
-                                                <div className="js-gtm--results">
+                                                <div className="js-gtm--results" data-js-ada='tr'>
                                                     <Results view={TableResults} filters={filters}
                                                              titleField={filters}
                                                              resultView={TableRowDetail}

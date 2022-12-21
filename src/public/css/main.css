@@ -168,7 +168,12 @@ p {
     padding-bottom: 60px
 }
 
+.table-responsive td:hover {
+    cursor: pointer;
+}
+
 .title {
     font-weight: bold;
     color: #808080;
 }
+
