@@ -181,22 +181,21 @@ function EditSample() {
         });
 
         if (fieldId === 'direct_ancestor_uuid') {
-            resetSampleCategory()
+            resetSampleCategory(e)
         }
     };
 
-    const resetSampleCategory = () => {
+    const resetSampleCategory = (e) => {
 
         if (Object.hasOwn(values, 'sample_category')) {
-            delete values['sample_category']
+            onChange(e, "sample_category", "")
         }
         if (Object.hasOwn(values, 'organ')) {
-            delete values['organ']
+            onChange(e, "organ", "")
         }
         if (Object.hasOwn(values, 'organ_other')) {
-            delete values['organ_other']
+            onChange(e, "organ_other", "")
         }
-        setValues(values)
         set_organ_group_hide('none')
         set_organ_other_hide('none')
 
