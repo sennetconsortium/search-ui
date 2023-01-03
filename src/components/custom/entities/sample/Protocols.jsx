@@ -33,13 +33,13 @@ export default class Protocols extends React.Component {
                             </tr>
                             </thead>
                         }
-                        
+
                         <tbody>
                         <tr>
                             <td>
                                 <span className={"title"}>DOI</span><br></br>
                                 <a href={getClickableLink(this.props.protocol_url)}
-                                   className="link_with_icon"><span
+                                   className="link_with_icon" target="_blank"><span
                                     className="me-1">{this.props.protocol_url}</span> <BoxArrowUpRight/></a>
                             </td>
                         </tr>
