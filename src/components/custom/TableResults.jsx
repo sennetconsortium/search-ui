@@ -23,7 +23,7 @@ const DefaultTableResults = ({isLoggedIn, hasMultipleEntityTypes = true}) => {
 
 const DefaultTableRowDetails = ({isLoggedIn, result, urlField, hotlink, hasMultipleEntityTypes = true}) => {
     return (
-        <tr key="results_detail"
+        <tr tabIndex={0} className={`js-tr--${result.entity_type.raw}`} aria-label={`Open detail view of ${result.sennet_id.raw}`} key="results_detail"
             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
             <td>
                 {result.created_by_user_displayname.raw}
@@ -156,7 +156,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                             if (filter.field === 'entity_type') {
                                 if (filter.values.length === 1 && filter.values[0] === 'Sample') {
                                     return (
-                                        <tr key={index}
+                                        <tr key={index} tabIndex={0} aria-label={`Open detail view of ${result.sennet_id.raw}`}
                                             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
                                             <td>
                                                 {result.created_by_user_displayname.raw}
@@ -192,7 +192,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                 }
                                 if (filter.values.length === 1 && filter.values[0] === 'Source') {
                                     return (
-                                        <tr key={index}
+                                        <tr key={index} tabIndex={0}  aria-label={`Open detail view of ${result.sennet_id.raw}`}
                                             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
                                             <td>
                                                 {result.created_by_user_displayname.raw}
@@ -229,7 +229,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                 } else if (filter.values.length === 1 && filter.values[0] === 'Dataset') {
                                     // Table results for Dataset
                                     return (
-                                        <tr key={index}
+                                        <tr key={index} tabIndex={0}  aria-label={`Open detail view of ${result.sennet_id.raw}`}
                                             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
                                             <td>
                                                 {result.created_by_user_displayname.raw}
