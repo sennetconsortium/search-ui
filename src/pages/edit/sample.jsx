@@ -23,12 +23,11 @@ import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
 import RuiIntegration from "../../components/custom/edit/sample/rui/RuiIntegration";
 import RUIButton from "../../components/custom/edit/sample/rui/RUIButton";
-
 import AppContext from '../../context/AppContext'
 import {EntityProvider} from '../../context/EntityContext'
 import EntityContext from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import {ENTITIES, ORGAN_TYPES, SAMPLE_CATEGORY} from '../../config/constants'
+import {ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
@@ -56,9 +55,10 @@ function EditSample() {
     const [ruiLocation, setRuiLocation] = useState('')
     const [showRui, setShowRui] = useState(false)
     const [showRuiButton, setShowRuiButton] = useState(false)
-    const [isLoading, setIsLoading] = useState(null)
     const [ancestorOrgan, setAncestorOrgan] = useState([])
     const [sampleCategories, setSampleCategories] = useState(null)
+    const [organ_group_hide, set_organ_group_hide] = useState('none')
+    const [organ_other_hide, set_organ_other_hide] = useState('none')
 
     useEffect(() => {
         const fetchSampleCategories = async () => {
@@ -112,6 +112,12 @@ function EditSample() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data);
+
+                // Show organ input group if sample category is 'organ'
+                if (data.sample_category === 'organ') {
+                    set_organ_group_hide('')
+                }
+
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
                     'sample_category': data.sample_category,
@@ -173,7 +179,39 @@ function EditSample() {
                 }
             }
         });
+
+        if (fieldId === 'direct_ancestor_uuid') {
+            resetSampleCategory(e)
+        }
     };
+
+    const resetSampleCategory = (e) => {
+
+        if (Object.hasOwn(values, 'sample_category')) {
+            onChange(e, "sample_category", "")
+        }
+        if (Object.hasOwn(values, 'organ')) {
+            onChange(e, "organ", "")
+        }
+        if (Object.hasOwn(values, 'organ_other')) {
+            onChange(e, "organ_other", "")
+        }
+        set_organ_group_hide('none')
+        set_organ_other_hide('none')
+
+        const sample_category = document.getElementById('sample_category')
+        const organ = document.getElementById("organ")
+        const organ_other = document.getElementById("organ_other")
+        if (sample_category !== null) {
+            sample_category.value = ''
+        }
+        if (organ !== null) {
+            organ.value = ''
+        }
+        if (organ_other !== null) {
+            organ_other.value = ''
+        }
+    }
 
     const fetchSource = async (sourceId) => {
         let source = await fetchEntity(sourceId);
@@ -313,9 +351,14 @@ function EditSample() {
                                     {((isEditMode() && source) || (editMode === 'Create')) &&
                                         <>
                                             <SampleCategory
+                                                organ_group_hide={organ_group_hide}
+                                                set_organ_group_hide={set_organ_group_hide}
+                                                organ_other_hide={organ_other_hide}
+                                                set_organ_other_hide={set_organ_other_hide}
                                                 sample_categories={sampleCategories === null ? SAMPLE_CATEGORY : sampleCategories}
-                                                data={data}
-                                                source={source} onChange={onChange}/>
+                                                data={values}
+                                                source={source}
+                                                onChange={onChange}/>
                                             <RUIButton
                                                 showRegisterLocationButton={showRuiButton}
                                                 ruiLocation={ruiLocation}

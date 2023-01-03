@@ -66,7 +66,7 @@ html {
 }
 
 p {
-    white-space: pre;
+    white-space: pre-line;
 }
 
 /*Required CSS to make the icons in the RUI tool inside the carousel space out properly*/
