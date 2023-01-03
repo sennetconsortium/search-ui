@@ -26,6 +26,11 @@ services:
       - "../log:/usr/src/app/log"
     networks:
       - sennet_docker_network
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: us-east-1
+        awslogs-group: /aws/ec2/sennet-dev/portal-ui/next-server
 
 networks:
   # This is the network created by gateway to enable communicaton between multiple docker-compose projects

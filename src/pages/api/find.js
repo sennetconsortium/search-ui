@@ -1,12 +1,10 @@
 import {simple_query_builder} from "search-ui/lib/search-tools";
 import {getIndex, getSearchEndPoint} from "../../config/config";
-import log from "loglevel";
 
 // a mock service to return some data
-export default function handler(req, res) {
+export default async function handler(req, res) {
     var error_messages = [{error: "Only support GET/POST"}, {error: "UUID Not found, please check for the correct id"}]
-
-    log.info("FIND API...")
+    console.log("FIND API...")
 
     // only allow POST
     if (req.method === "GET" || req.method === "POST") {
@@ -17,7 +15,8 @@ export default function handler(req, res) {
         if (uuid) {
             // need to convert into a ES ready query
             let queryBody = simple_query_builder("uuid", uuid)
-            log.info('QUERY', JSON.stringify(queryBody))
+            console.log('QUERY')
+            console.dir(queryBody, {depth: null})
             var myHeaders = new Headers();
             if(req.headers.authorization !== undefined) {
                 myHeaders.append("Authorization", req.headers.authorization);
@@ -31,13 +30,14 @@ export default function handler(req, res) {
             };
             // request("POST", "search", queryBody, getAuth(), getSearchEndPoint()).then(json =>
             //       //adaptResponse(json, this.indexName)
-            //       log.info(json)
+            //       console.log(json)
             //       //res.status(200).json(json)
             //     )
-            fetch(getSearchEndPoint() + getIndex() + "/search", requestOptions)
+            await fetch(getSearchEndPoint() + getIndex() + "/search", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    log.info(result)
+                    console.log('SEARCH API RESPONSE BODY')
+                    console.dir(result, {depth: null})
 
                     if (result.hasOwnProperty("error")) {
                         res.status(401).json(result)
@@ -52,7 +52,7 @@ export default function handler(req, res) {
                     }
                 })
                 .catch(error => {
-                    log.info(error)
+                    console.log(error)
                     res.status(500).json(error)
                 });
         } else {
