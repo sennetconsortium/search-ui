@@ -32,15 +32,17 @@ export async function fetchEntity(ancestorId) {
 }
 
 export async function fetchProtocols(protocolUrl) {
-    const regex = new RegExp('[^\.]+$', 'g');
-    const protocolId = regex.exec(protocolUrl)[0]
-    const response = await fetch("https://www.protocols.io/api/v3/protocols/" + protocolId);
+    // Remove http(s) and www from URL so only dx.doi.org/<ID> remains
+    let protocolId = protocolUrl.replace('http(s)?(:)?(\\/\\/)?|(\\/\\/)?(www\\.)?', '')
+    protocolId = protocolId.replace('dx.doi.org/', '')
+    const response = await fetch("https://www.protocols.io/api/v4/protocols/" + protocolId);
 
     if (!response.ok) {
         return null
     }
     const protocol = await response.json();
-    return protocol.protocol;
+    log.info(protocol.payload.description)
+    return protocol.payload;
 }
 
 export function createDownloadUrl(fileStr, fileType) {
@@ -142,7 +144,7 @@ export function cleanJson(json) {
 }
 
 export function getClickableLink(link) {
-    return link.startsWith("http://") || link.startsWith("https://") ? link : "http://" + link;
+    return link.startsWith("http://") || link.startsWith("https://") ? link : "https://" + link;
 }
 
 export function goIntent(route, fn = 'assign') {
