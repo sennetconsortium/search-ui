@@ -16,7 +16,7 @@ export default async function handler(req, res) {
             // need to convert into a ES ready query
             let queryBody = simple_query_builder("uuid", uuid)
             console.log('QUERY')
-            console.dir(queryBody, {depth: null})
+            console.log(JSON.stringify(queryBody, null, 2))
             var myHeaders = new Headers();
             if(req.headers.authorization !== undefined) {
                 myHeaders.append("Authorization", req.headers.authorization);
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
                 .then(response => response.json())
                 .then(result => {
                     console.log('SEARCH API RESPONSE BODY')
-                    console.dir(result, {depth: null})
+                    console.log(JSON.stringify(result, null, 2))
 
                     if (result.hasOwnProperty("error")) {
                         res.status(401).json(result)
