@@ -33,7 +33,8 @@ export async function fetchEntity(ancestorId) {
 
 export async function fetchProtocols(protocolUrl) {
     // Remove http(s) and www from URL so only dx.doi.org/<ID> remains
-    let protocolId = protocolUrl.replace('http(s)?(:)?(\\/\\/)?|(\\/\\/)?(www\\.)?', '')
+    let protocolId = protocolUrl.replace(/http(s)?(:)?(\/\/)?|(\/\/)?(www\.)?/, '')
+    log.info(protocolId)
     protocolId = protocolId.replace('dx.doi.org/', '')
     const response = await fetch("https://www.protocols.io/api/v4/protocols/" + protocolId);
 
