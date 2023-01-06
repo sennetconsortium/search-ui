@@ -49,6 +49,9 @@ WORKDIR /usr/src/app/src
 RUN npm install && \
     npm run build
 
+# Resolves a permission error when trying to create .next cache directories
+RUN chmod +x /usr/src/app/src/.next
+
 # The EXPOSE instruction informs Docker that the container listens on the specified network ports at runtime. 
 # Here 3000 is for the next.js server, 8080 for nginx
 EXPOSE 3000 8080
