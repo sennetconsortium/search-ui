@@ -30,9 +30,9 @@ services:
       driver: awslogs
       options:
         awslogs-region: us-east-1
-        awslogs-group: /aws/ec2/sennet-dev/portal-ui/next-server
+        awslogs-group: ${PORTAL_UI_CLOUDWATCH_LOG_GROUP:?err}
 
 networks:
-  # This is the network created by gateway to enable communicaton between multiple docker-compose projects
+  # This is the network created by gateway to enable communication between multiple docker-compose projects
   sennet_docker_network:
     external: true
