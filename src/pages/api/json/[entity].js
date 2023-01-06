@@ -1,8 +1,9 @@
 import {getRootURL} from "../../../config/config";
-import log from "loglevel";
 import {getCookie, hasCookie} from "cookies-next";
+import {formatMessageForCloudwatch} from "../find";
 
 export default async function handler(req, res) {
+    console.log('JSON API STARTING...')
     const uuid = req.query.uuid
     let auth = req.headers.authorization
     let myHeaders = new Headers();
@@ -17,11 +18,11 @@ export default async function handler(req, res) {
         method: 'GET',
         headers: myHeaders
     }
-    log.info('sample: getting data...', uuid)
+    console.log('sample: getting data...', uuid)
     await fetch(getRootURL() + "api/find?uuid=" + uuid, requestOptions)
         .then(response => response.json())
         .then(result => {
-            log.debug(result)
+            console.log('RESPONSE FROM FIND API...', formatMessageForCloudwatch(result))
 
             if (result.hasOwnProperty("error")) {
                 res.status(401).json(result)
@@ -29,7 +30,7 @@ export default async function handler(req, res) {
                 res.status(200).json(result)
             }
         }).catch(error => {
-            log.error(error)
+            console.log('ERROR IN JSON API...', formatMessageForCloudwatch(error))
             res.status(500).json(error)
         });
 }
