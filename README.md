@@ -50,6 +50,7 @@ There are a few configurable environment variables to keep in mind:
 
 - `HOST_UID`: the user id on the host machine to be mapped to the container. Default to 1000 if not set or null.
 - `HOST_GID`: the user's group id on the host machine to be mapped to the container. Default to 1000 if not set or null.
+- `PORTAL_UI_CLOUDWATCH_LOG_GROUP='/aws/ec2/sennet-dev/portal-ui/next-server'`: The Cloudwatch log group that saves the nodejs/next-js server logs
 
 ```
 cd docker
@@ -63,4 +64,7 @@ cd docker
 docker pull hubmap/portal-ui:1.0.0 (replace with the actual released version number)
 ./docker-deployment.sh [start|stop|down]
 ```
+Environment vars
+- `PORTAL_UI_CLOUDWATCH_LOG_GROUP='/aws/ec2/sennet-prod/portal-ui/next-server'`: The Cloudwatch log group that saves the nodejs/next-js server logs
+
 
