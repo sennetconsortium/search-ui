@@ -3,6 +3,7 @@ import GoogleTagManager from './GoogleTagManager'
 import AppModal from './AppModal'
 import Facets from './Facets'
 import Ada from './Ada'
+import Tooltip from './Tooltip'
 
 /**
  * JS functionality which enhance site functionality, not necessarily part of the core.
@@ -22,7 +23,8 @@ function addons(source, args= null) {
         gtm: GoogleTagManager,
         modal: AppModal, 
         facets: Facets,
-        ada: Ada
+        ada: Ada,
+        tooltip: Tooltip
     }
 
     setTimeout(() => {

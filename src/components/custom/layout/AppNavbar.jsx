@@ -47,7 +47,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                             variant={'primary'}
                             hidden={hidden}
                             title={_t("Create an Entity")}
-                            id="basic-nav-dropdown"
+                            id="nav-dropdown"
                         >
                             {Object.keys(ENTITIES).map((entity) => (
                                 <NavDropdown.Item key={entity} href={`/edit/${entity}?uuid=create`}>
@@ -61,7 +61,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                             variant={'primary'}
                             hidden={hidden}
                             title="Bulk create entities"
-                            id="basic-nav-dropdown">
+                            id="nav-dropdown--bulkCreate">
                             <NavDropdown.Item
                                 href="/edit/bulk?entity_type=source">Sources</NavDropdown.Item>
                             <NavDropdown.Item
