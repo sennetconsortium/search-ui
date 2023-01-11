@@ -7,7 +7,7 @@ class Tooltip extends Addon {
         super(el, args)
         this.log('Tooltip')
         this.ops = this.el.data('js-tooltip')
-
+        this.timeouts
         if (this.ops) {
             this.events()
         } else {
@@ -24,7 +24,8 @@ class Tooltip extends Addon {
         if (text) {
             this.text = text
             this.show()
-            setTimeout(()=>{
+            clearTimeout(this.timeouts)
+            this.timeouts = setTimeout(()=>{
                 $('.js-popover').remove()
             }, 3000)
         }
@@ -34,7 +35,9 @@ class Tooltip extends Addon {
         this.el.on('click', this.ops.trigger, ((e)=>{
             this.e = e
             const _t = this
-            setTimeout(() =>{
+            clearTimeout(this.timeouts)
+            this.timeouts = setTimeout(() => {
+                $('.js-popover').remove()
                 _t.handleToolTip(e)
             }, 200)
         }).bind(this))
