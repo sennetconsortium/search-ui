@@ -1,6 +1,5 @@
-import Addon, {_addon} from './Addon'
+import Addon from './Addon'
 import $ from 'jquery'
-import Popover from 'react-bootstrap/Popover'
 
 class Tooltip extends Addon {
     constructor(el, args) {
