@@ -29,6 +29,7 @@ import AncestorsTable from "./AncestorsTable";
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import {ORGAN_TYPES} from "../../../../config/constants";
+import $ from 'jquery'
 
 export default class AncestorIds extends React.Component {
     constructor(props) {
@@ -52,6 +53,7 @@ export default class AncestorIds extends React.Component {
     // Handles when updates are made to `Ancestor ID` when the search feature is used
     changeAncestor = async (e, ancestorId) => {
         let old_uuids = [];
+        const $modalTable = $('.modal-content .table')
         if (this.props.values.direct_ancestor_uuids !== undefined) {
             old_uuids = [...this.props.values.direct_ancestor_uuids]
         }
@@ -60,6 +62,9 @@ export default class AncestorIds extends React.Component {
             this.props.onChange(e, 'direct_ancestor_uuids', old_uuids);
             this.props.fetchAncestors([ancestorId]);
             this.hideModal();
+            $modalTable.removeAttr('data-tooltipText')
+        } else {
+            $modalTable.attr('data-tooltipText', 'That ancestor has already been selected.')
         }
     }
 
@@ -158,7 +163,7 @@ export default class AncestorIds extends React.Component {
 
                                             }
                                             bodyContent={
-                                                <div className="js-gtm--results" data-js-ada='tr'>
+                                                <div className="js-gtm--results" data-js-ada='tr' data-js-tooltip='{"trigger":"tr", "diffY": -50, "data":".modal-content .table", "class": "is-error"}'>
                                                     <Results view={TableResults} filters={filters}
                                                              titleField={filters}
                                                              resultView={TableRowDetail}
