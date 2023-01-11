@@ -55,10 +55,12 @@ export default class AncestorIds extends React.Component {
         if (this.props.values.direct_ancestor_uuids !== undefined) {
             old_uuids = [...this.props.values.direct_ancestor_uuids]
         }
-        old_uuids.push(ancestorId);
-        this.props.onChange(e, 'direct_ancestor_uuids', old_uuids);
-        this.props.fetchAncestors([ancestorId]);
-        this.hideModal();
+        if (old_uuids.indexOf(ancestorId) === -1) {
+            old_uuids.push(ancestorId);
+            this.props.onChange(e, 'direct_ancestor_uuids', old_uuids);
+            this.props.fetchAncestors([ancestorId]);
+            this.hideModal();
+        }
     }
 
     render() {
