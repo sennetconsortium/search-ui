@@ -104,11 +104,14 @@ class GoogleTagManager extends Addon {
         this.event = 'cta'
         let action
         const actions = ['json', 'submit', 'login']
-        for (let i = 0; i < actions.length; i++) {
-            if (className.includes(actions[i])){
-                action = actions[i]
+        if (className) {
+            for (let i = 0; i < actions.length; i++) {
+                if (className.includes(actions[i])){
+                    action = actions[i]
+                }
             }
         }
+
         if (action) {
             let data = { }
             data = this.entityPage(data, false)

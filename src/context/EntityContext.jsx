@@ -25,6 +25,7 @@ export const EntityProvider = ({ children }) => {
     const [showCloseButton, setShowCloseButton] = useState(true)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
+    const [hasSubmissionError, setHasSubmissionError] = useState(false)
     const [disableSubmit, setDisableSubmit] = useState(false)
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] =
@@ -45,7 +46,9 @@ export const EntityProvider = ({ children }) => {
     }
 
     const goToEntity = () => {
-        router.push(`/edit/${response.entity_type.toLowerCase()}?uuid=${response.uuid}`)
+        if (!hasSubmissionError) {
+            router.push(`/edit/${response.entity_type.toLowerCase()}?uuid=${response.uuid}`)
+        }
         setShowModal(false)
     }
 
@@ -88,6 +91,7 @@ export const EntityProvider = ({ children }) => {
 
         if ('uuid' in response) {
             const verb = isEditMode() ? 'Updated' : 'Created'
+            setHasSubmissionError(false)
             setModalTitle(`${entity} ${verb}`)
             setModalBody(`${_t(`Your ${entity} was ${verb.toLocaleLowerCase()}`)}:\n` +
                 `${_t(typeHeader)}: ` + type + "\n" +
@@ -95,6 +99,7 @@ export const EntityProvider = ({ children }) => {
                 `${_('SenNet ID')}: ` + response.sennet_id)
             setResponse(response)
         } else {
+            setHasSubmissionError(true)
             setModalTitle(`Error Creating ${entity}`)
             let responseText = ""
             if ("error" in response) {
