@@ -317,12 +317,16 @@ export default function EditDataset() {
                                             <div
                                                 className="mb-2 text-muted">{_t('Does this data contain any human genetic sequences?')}
                                             </div>
+                                            <div hidden={isEditMode() ? true : false}
+                                                className="mb-2 text-muted">{_t('This can not be altered after entity has been created.')}
+                                            </div>
                                             <Form.Check
                                                 required
                                                 type="radio"
                                                 label="No"
                                                 name="contains_human_genetic_sequences"
                                                 value={false}
+                                                disabled={isEditMode() ? true : false}
                                                 defaultChecked={(data.contains_human_genetic_sequences === false && isEditMode()) ? true : false}
                                                 onChange={handleContainsHumanGeneticSequencesNo}
                                             />
@@ -332,6 +336,7 @@ export default function EditDataset() {
                                                 label="Yes"
                                                 name="contains_human_genetic_sequences"
                                                 value={true}
+                                                disabled={isEditMode() ? true : false}
                                                 defaultChecked={data.contains_human_genetic_sequences ? true : false}
                                                 onChange={handleContainsHumanGeneticSequencesYes}
                                             />
