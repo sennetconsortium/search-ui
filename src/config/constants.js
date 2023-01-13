@@ -9,9 +9,7 @@ export const SAMPLE_CATEGORY = {
     "block": "Block",
     "section": "Section",
     "suspension": "Suspension",
-    "bodily fluid": "Bodily Fluid",
-    "organ": "Organ",
-    "organ piece": "Organ Piece"
+    "organ": "Organ"
 }
 
 export const ORGAN_TYPES = {
