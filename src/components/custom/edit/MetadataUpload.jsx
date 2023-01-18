@@ -18,7 +18,7 @@ function MetadataUpload({children}) {
         console.log(file)
         setFileName(file.name)
         formData.append('metadata', file)
-        fetch(getIngestEndPoint() + '/validation', { method: 'POST', body: formData })
+        fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData })
     }
 
     return (
