@@ -191,3 +191,13 @@ p {
     border-right-color: #f8d7da;
 }
 
+.c-metadataUpload .c-metadataUpload__fileInfo {
+    font-size: 10px;
+    line-height: 50px;
+    margin-left: 10px;
+}
+
+.btn--fileUpload input[type=file] {
+    opacity: 0;
+    width: 20px;
+}

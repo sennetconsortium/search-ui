@@ -32,6 +32,7 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
 import {getEntityEndPoint, getUserName, isOrganRuiSupported} from "../../config/config";
+import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 
 
 function EditSample() {
@@ -340,6 +341,8 @@ function EditSample() {
                                     {editMode &&
                                         <AncestorId source={source} onChange={onChange} fetchSource={fetchSource}/>
                                     }
+
+                                    <MetadataUpload />
 
                                     {/*Source Information Box*/}
                                     {source &&
