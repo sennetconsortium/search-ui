@@ -15,18 +15,21 @@ function MetadataUpload({children}) {
 
 
     const handleUpload = async (e) => {
-        const file = e.currentTarget.files[0]
+        const upload = e.currentTarget.files[0]
         let formData = new FormData()
-        setFile(file.name)
-        setFileStatus(file.name)
-        formData.append('metadata', file)
+        setFile(upload.name)
+        setFileStatus(upload.name)
+        formData.append('metadata', upload)
         try {
             const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData })
             const details = await response.json()
             if (details.code !== 200) {
                 setError(details.description)
                 setFileStatus(details.name)
+                setSuccess(false)
             } else {
+                setError(false)
+                setFileStatus(upload.name)
                 setSuccess(true)
             }
         } catch(e) {
