@@ -1,24 +1,55 @@
 import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
-import {Upload} from "react-bootstrap-icons";
+import { Upload, CheckCircleFill, XCircleFill, Download} from "react-bootstrap-icons";
 import InputGroup from 'react-bootstrap/InputGroup';
-import Button from 'react-bootstrap/Button';
 import {getIngestEndPoint} from "../../../config/config";
 
 
 function MetadataUpload({children}) {
     useEffect(() => {
     }, [])
-    const [fileName, setFileName] = useState('')
+    const [file, setFile] = useState('')
+    const [fileStatus, setFileStatus] = useState('')
+    const [error, setError] = useState(null)
+    const [success, setSuccess] = useState(false)
 
-    const handleUpload = (e) => {
 
+    const handleUpload = async (e) => {
         const file = e.currentTarget.files[0]
         let formData = new FormData()
-        console.log(file)
-        setFileName(file.name)
+        setFile(file.name)
+        setFileStatus(file.name)
         formData.append('metadata', file)
-        fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData })
+        try {
+            const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData })
+            const details = await response.json()
+            if (details.code !== 200) {
+                setError(details.description)
+                setFileStatus(details.name)
+            } else {
+                setSuccess(true)
+            }
+        } catch(e) {
+            console.error(e)
+        }
+    }
+
+    const downloadDetails = (e) => {
+        try {
+            if (!error) return
+            const a = document.createElement('a')
+            const obj = JSON.parse(error)
+            const url = window.URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)],
+                {type: "application/json"}))
+            a.href = url
+            a.download = `${file}-upload-results.json`
+            document.body.append(a)
+            a.click()
+            a.remove()
+            window.URL.revokeObjectURL(url)
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     return (
@@ -30,7 +61,11 @@ function MetadataUpload({children}) {
                     <input onChange={handleUpload} type='file' id='entity_metadata' name='entity_metadata' />
                     <Upload />
                 </label>
-                <span className='c-metadataUpload__fileInfo js-fileInfo'>{fileName}</span>
+                <span className={`c-metadataUpload__fileInfo js-fileInfo ${error ? 'has-error' : ''}`}>
+                    {error && <XCircleFill color='#842029' />}
+                    {success && <CheckCircleFill color='#0d6efd' />}
+                    <small onClick={downloadDetails} title={`${error ? 'Download error report' : ''}`}>{fileStatus} {error && <Download />}</small>
+                </span>
             </InputGroup>
         </div>
     )
