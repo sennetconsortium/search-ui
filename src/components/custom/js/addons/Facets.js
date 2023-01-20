@@ -21,6 +21,9 @@ class Facets extends Addon {
     }
 
     events() {
+        $(document).on('DOMSubtreeModified', ((e) => {
+            this.formatFilters(0)
+        }).bind(this))
 
         this.onKeydownEnter(`${this.sel.title},${this.sel.select}`)
 
@@ -28,16 +31,12 @@ class Facets extends Addon {
             this.currentTarget(e).parent().trigger('click')
             this.currentTarget(e).focus()
         }).bind(this))
-
-        this.el.on('click', `${this.sel.wrapper},${this.sel.more}`, ((e) => {
-            this.formatFilters()
-        }).bind(this))
     }
 
     /**
      * Find elements to be formatted
      */
-    formatFilters() {
+    formatFilters(time = 150) {
 
         //Get some delay by triggering the web api
         let st = setTimeout((() => {
@@ -51,7 +50,7 @@ class Facets extends Addon {
 
             }).bind(this))
 
-        }).bind(this), 250)
+        }).bind(this), time)
     }
 
     /**
