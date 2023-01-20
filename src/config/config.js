@@ -89,10 +89,20 @@ export const config = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            // Used for when "Dataset" is selected to show related organs
             "origin_sample.organ": {
                 label: 'Organ',
                 type: 'value',
                 field: 'origin_sample.organ.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            // Used for when "Sample" is selected to show organs
+            "organ": {
+                label: 'Organ',
+                type: 'value',
+                field: 'organ.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -139,7 +149,25 @@ export const config = {
             },
         },
         disjunctiveFacets: [],
-        conditionalFacets: {},
+        conditionalFacets: {
+            // Only show 'origin_sample.organ' facet if 'Dataset' is selected from the entity type facet
+            "origin_sample.organ": ({filters}) => {
+                return filters.some(
+                    (filter) =>
+                        filter.field === 'entity_type' &&
+                        filter.values.includes('Dataset')
+                )
+            },
+
+            // Only show 'organ' facet if 'Sample' is selected from the entity type facet
+            "organ": ({filters}) => {
+                return filters.some(
+                    (filter) =>
+                        filter.field === 'entity_type' &&
+                        filter.values.includes('Sample')
+                )
+            },
+        },
         search_fields: {
             description: {type: 'value'},
             group_name: {type: 'value'},
@@ -174,7 +202,8 @@ export const config = {
             'last_modified_timestamp',
             'data_types',
             'status',
-            'origin_sample.organ'
+            'origin_sample.organ',
+            "organ"
         ],
     },
     initialState: {
@@ -209,15 +238,6 @@ export const SORT_OPTIONS = [
                 direction: 'desc',
             },
         ],
-    },
-    {
-        name: 'Organ',
-        value: [
-            {
-                field: 'origin_sample.organ',
-                direction: 'desc',
-            }
-        ]
     },
     {
         name: 'SenNet ID',
