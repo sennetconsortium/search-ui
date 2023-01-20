@@ -75,7 +75,10 @@ export function displayBodyHeader(header) {
 }
 
 export function getOrganTypeFullName(organ) {
-    return ORGAN_TYPES[organ]
+    if (organ in ORGAN_TYPES)
+        return ORGAN_TYPES[organ]
+    else
+        return organ
 }
 
 export function getDOIPattern() {

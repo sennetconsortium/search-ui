@@ -147,7 +147,7 @@ function ViewSample() {
                         }
 
                         bodyHeader={
-                            <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]} hasWritePrivilege={hasWritePrivilege} idKey='lab_tissue_sample_id' />
+                            <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]} hasWritePrivilege={hasWritePrivilege} idKey='sample_category' />
                         }
 
                         bodyContent={

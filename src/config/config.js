@@ -89,24 +89,43 @@ export const config = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            "origin_sample.organ": {
+                label: 'Organ',
+                type: 'value',
+                field: 'origin_sample.organ.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            source_type: {
+                label: 'Source Type',
+                type: 'value',
+                field: 'source_type.keyword',
+                filterType: 'any',
+                isExpanded: false,
+                isFilterable: false,
+            },
             sample_category: {
                 label: 'Sample Category',
                 type: 'value',
                 field: 'sample_category.keyword',
+                isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            organ: {
-                label: 'Organ',
+            data_type: {
+                label: 'Data Type',
                 type: 'value',
-                field: 'organ.keyword',
+                field: 'data_types.keyword',
+                isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
             group_name: {
-                label: 'Group Name',
+                label: 'Data Provider Group',
                 type: 'value',
                 field: 'group_name.keyword',
+                isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
@@ -114,35 +133,13 @@ export const config = {
                 label: 'Registered By',
                 type: 'value',
                 field: 'created_by_user_displayname.keyword',
+                isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
         },
-        disjunctiveFacets: [
-            'entity_type',
-            'group_name',
-            'created_by_user_displayname',
-        ],
-        conditionalFacets: {
-            // Only show 'sample_category' facet if 'Sample' is selected from the entity type facet
-            sample_category: ({filters}) => {
-                return filters.some(
-                    (filter) =>
-                        filter.field === 'entity_type' &&
-                        filter.values.includes('Sample')
-                )
-            },
-
-            // Only show 'organ' facet if 'Sample' or 'Dataset' is selected from the entity type facet
-            organ: ({filters}) => {
-                return filters.some(
-                    (filter) =>
-                        filter.field === 'entity_type' &&
-                        (filter.values.includes('Sample') ||
-                            filter.values.includes('Dataset'))
-                )
-            },
-        },
+        disjunctiveFacets: [],
+        conditionalFacets: {},
         search_fields: {
             description: {type: 'value'},
             group_name: {type: 'value'},
@@ -177,7 +174,7 @@ export const config = {
             'last_modified_timestamp',
             'data_types',
             'status',
-            'organ'
+            'origin_sample.organ'
         ],
     },
     initialState: {
@@ -205,13 +202,22 @@ export const SORT_OPTIONS = [
         value: [],
     },
     {
-        name: 'Created By',
+        name: 'Last Modified',
         value: [
             {
-                field: 'created_by_user_displayname.keyword',
-                direction: 'asc',
+                field: 'last_modified_timestamp',
+                direction: 'desc',
             },
         ],
+    },
+    {
+        name: 'Organ',
+        value: [
+            {
+                field: 'origin_sample.organ',
+                direction: 'desc',
+            }
+        ]
     },
     {
         name: 'SenNet ID',
@@ -223,10 +229,10 @@ export const SORT_OPTIONS = [
         ],
     },
     {
-        name: 'Lab ID',
+        name: 'Source Type',
         value: [
             {
-                field: 'lab_tissue_sample_id.keyword',
+                field: 'source_type.keyword',
                 direction: 'asc',
             },
         ],
@@ -241,7 +247,16 @@ export const SORT_OPTIONS = [
         ],
     },
     {
-        name: 'Group Name',
+        name: 'Data Type',
+        value: [
+            {
+                field: 'data_types.keyword',
+                direction: 'asc',
+            },
+        ],
+    },
+    {
+        name: 'Data Provider Group',
         value: [
             {
                 field: 'group_name.keyword',
@@ -250,10 +265,19 @@ export const SORT_OPTIONS = [
         ],
     },
     {
-        name: 'Data Types',
+        name: 'Created By',
         value: [
             {
-                field: 'data_types.keyword',
+                field: 'created_by_user_displayname.keyword',
+                direction: 'asc',
+            },
+        ],
+    },
+    {
+        name: 'Lab ID',
+        value: [
+            {
+                field: 'lab_tissue_sample_id.keyword',
                 direction: 'asc',
             },
         ],
@@ -264,15 +288,6 @@ export const SORT_OPTIONS = [
             {
                 field: 'status.keyword',
                 direction: 'asc',
-            },
-        ],
-    },
-    {
-        name: 'Last Modified',
-        value: [
-            {
-                field: 'last_modified_timestamp',
-                direction: 'desc',
             },
         ],
     },

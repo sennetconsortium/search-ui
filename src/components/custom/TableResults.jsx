@@ -1,14 +1,19 @@
 import React, {useContext} from 'react';
 import styles from './style.module.css'
 import {Table} from 'react-bootstrap';
-import {checkFilterEntityType, checkMultipleFilterEntityType, displayBodyHeader, getStatusColor} from "./js/functions";
+import {
+    checkFilterEntityType,
+    checkMultipleFilterEntityType,
+    displayBodyHeader,
+    getOrganTypeFullName,
+    getStatusColor
+} from "./js/functions";
 import Badge from 'react-bootstrap/Badge';
 import AppContext from "../../context/AppContext";
 
 const DefaultTableResults = ({isLoggedIn, hasMultipleEntityTypes = true}) => {
     return (
         <tr>
-            <th>Created By</th>
             <th>SenNet ID</th>
             {hasMultipleEntityTypes &&
                 <th>Entity Type</th>
@@ -23,11 +28,9 @@ const DefaultTableResults = ({isLoggedIn, hasMultipleEntityTypes = true}) => {
 
 const DefaultTableRowDetails = ({isLoggedIn, result, urlField, hotlink, hasMultipleEntityTypes = true}) => {
     return (
-        <tr tabIndex={0} className={`js-tr--${result.entity_type.raw}`} aria-label={`Open detail view of ${result.sennet_id.raw}`} key="results_detail"
+        <tr tabIndex={0} className={`js-tr--${result.entity_type.raw}`}
+            aria-label={`Open detail view of ${result.sennet_id.raw}`} key="results_detail"
             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
-            <td>
-                {result.created_by_user_displayname.raw}
-            </td>
             <td>{result.sennet_id.raw}</td>
             {hasMultipleEntityTypes &&
                 <td>{result.entity_type.raw}</td>
@@ -72,7 +75,6 @@ const TableResults = ({children, filters}) => {
                                         if (filter.values.length === 1 && filter.values[0] === 'Sample') {
                                             return (
                                                 <tr key={index}>
-                                                    <th>Created By</th>
                                                     <th>SenNet ID</th>
                                                     {hasMultipleEntityTypes &&
                                                         <th>Entity Type</th>
@@ -81,6 +83,7 @@ const TableResults = ({children, filters}) => {
                                                         <th>Lab ID</th>
                                                     }
                                                     <th>Category</th>
+                                                    <th>Organ</th>
                                                     <th>Group</th>
                                                 </tr>
                                             )
@@ -89,7 +92,6 @@ const TableResults = ({children, filters}) => {
                                             return (
                                                 // Table view for Source
                                                 <tr key={index}>
-                                                    <th>Created By</th>
                                                     <th>SenNet ID</th>
                                                     {hasMultipleEntityTypes &&
                                                         <th>Entity Type</th>
@@ -105,7 +107,6 @@ const TableResults = ({children, filters}) => {
                                             return (
                                                 // Table view for Dataset
                                                 <tr key={index}>
-                                                    <th>Created By</th>
                                                     <th>SenNet ID</th>
                                                     {hasMultipleEntityTypes &&
                                                         <th>Entity Type</th>
@@ -114,6 +115,7 @@ const TableResults = ({children, filters}) => {
                                                         <th>Lab ID</th>
                                                     }
                                                     <th>Data Types</th>
+                                                    <th>Organ</th>
                                                     <th>Status</th>
                                                     <th>Group</th>
                                                 </tr>
@@ -145,6 +147,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
     // We will override `titleField` to pass the filters selected by the user to this
     var hotlink = "/" + result.entity_type.raw.toLowerCase() + "?uuid=" + result.uuid.raw
     let hasMultipleEntityTypes = checkMultipleFilterEntityType(titleField);
+    console.log(result)
     return (
         <>
             {titleField.length > 0 ? (<>
@@ -156,11 +159,9 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                             if (filter.field === 'entity_type') {
                                 if (filter.values.length === 1 && filter.values[0] === 'Sample') {
                                     return (
-                                        <tr key={index} tabIndex={0} aria-label={`Open detail view of ${result.sennet_id.raw}`}
+                                        <tr key={index} tabIndex={0}
+                                            aria-label={`Open detail view of ${result.sennet_id.raw}`}
                                             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
-                                            <td>
-                                                {result.created_by_user_displayname.raw}
-                                            </td>
                                             <td>{result.sennet_id.raw}</td>
                                             {hasMultipleEntityTypes &&
                                                 <td>{result.entity_type.raw}</td>
@@ -182,6 +183,12 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                                 }
                                             </td>
                                             <td>
+                                                {result?.origin_sample?.raw?.organ ? (
+                                                    <>{getOrganTypeFullName(result.origin_sample.raw.organ)}</>
+                                                ) : null
+                                                }
+                                            </td>
+                                            <td>
                                                 {result.group_name ? (
                                                     <>{result.group_name.raw}</>
                                                 ) : null
@@ -192,16 +199,14 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                 }
                                 if (filter.values.length === 1 && filter.values[0] === 'Source') {
                                     return (
-                                        <tr key={index} tabIndex={0}  aria-label={`Open detail view of ${result.sennet_id.raw}`}
+                                        <tr key={index} tabIndex={0}
+                                            aria-label={`Open detail view of ${result.sennet_id.raw}`}
                                             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
-                                            <td>
-                                                {result.created_by_user_displayname.raw}
-                                            </td>
                                             <td>{result.sennet_id.raw}</td>
                                             {hasMultipleEntityTypes &&
                                                 <td>{result.entity_type.raw}</td>
                                             }
-                                           {isLoggedIn &&
+                                            {isLoggedIn &&
                                                 <td>
                                                     {
                                                         result.lab_tissue_sample_id ? <>{result.lab_tissue_sample_id.raw}</>
@@ -229,11 +234,9 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                 } else if (filter.values.length === 1 && filter.values[0] === 'Dataset') {
                                     // Table results for Dataset
                                     return (
-                                        <tr key={index} tabIndex={0}  aria-label={`Open detail view of ${result.sennet_id.raw}`}
+                                        <tr key={index} tabIndex={0}
+                                            aria-label={`Open detail view of ${result.sennet_id.raw}`}
                                             onClick={urlField != null ? () => urlField(this, result.uuid.raw) : () => window.location.href = hotlink}>
-                                            <td>
-                                                {result.created_by_user_displayname.raw}
-                                            </td>
                                             <td>{result.sennet_id.raw}</td>
                                             {hasMultipleEntityTypes &&
                                                 <td>{result.entity_type.raw}</td>
@@ -251,6 +254,12 @@ const TableRowDetail = ({result, urlField, titleField}) => {
                                             <td>
                                                 {result.data_types ? (
                                                     <>{result.data_types.raw}</>
+                                                ) : null
+                                                }
+                                            </td>
+                                            <td>
+                                                {result?.origin_sample?.raw?.organ ? (
+                                                    <>{getOrganTypeFullName(result.origin_sample.raw.organ)}</>
                                                 ) : null
                                                 }
                                             </td>
