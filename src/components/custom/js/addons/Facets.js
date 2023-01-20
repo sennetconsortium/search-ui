@@ -21,7 +21,7 @@ class Facets extends Addon {
     }
 
     events() {
-        $(document).on('DOMSubtreeModified', ((e) => {
+        this.el.on('DOMSubtreeModified', ((e) => {
             this.formatFilters(0)
         }).bind(this))
 
