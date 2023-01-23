@@ -1,4 +1,4 @@
 [submodule "src/search-ui"]
 	path = src/search-ui
 	url = https://github.com/dbmi-pitt/search-ui
-	branch = dev-integrate
+	branch = main
