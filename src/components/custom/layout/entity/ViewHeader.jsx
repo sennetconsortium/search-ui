@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import AppContext from '../../../../context/AppContext'
 import {Button} from 'react-bootstrap';
 import {FiletypeJson} from 'react-bootstrap-icons';
-import {displayBodyHeader} from "../../js/functions";
+import {displayBodyHeader, getOrganTypeFullName} from "../../js/functions";
 import {ENTITIES} from "../../../../config/constants";
 import PropTypes from 'prop-types'
 
@@ -33,7 +33,12 @@ function EntityViewHeader({entity, data, hasWritePrivilege, idKey}) {
             <h3>{data.sennet_id}</h3>
             <div className="d-flex justify-content-between mb-2">
                 <div className="entity_subtitle link_with_icon">
-                    {displayBodyHeader(data.display_subtype)}
+                    {data.origin_sample &&
+                        displayBodyHeader(getOrganTypeFullName(data.origin_sample.organ))
+                    }
+                    {data.source_type &&
+                        displayBodyHeader(data.source_type)
+                    }
                     {data[idKey] &&
                         <>
                             <span className="mx-2">|</span>

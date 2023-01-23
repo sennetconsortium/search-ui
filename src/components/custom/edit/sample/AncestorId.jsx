@@ -22,6 +22,7 @@ import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
+import SelectedFilters from "../../layout/SelectedFilters";
 
 export default class AncestorId extends React.Component {
     constructor(props) {
@@ -118,7 +119,7 @@ export default class AncestorId extends React.Component {
                                             sideContent={
                                                 <div data-js-facets>
                                                     <CustomClearSearchBox/>
-
+                                                    <SelectedFilters/>
                                                     {wasSearched && (
                                                         <Sorting
                                                             label={"Sort by"}

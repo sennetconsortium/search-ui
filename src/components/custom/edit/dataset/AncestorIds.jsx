@@ -17,19 +17,14 @@ import Modal from 'react-bootstrap/Modal';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {PlusLg, QuestionCircleFill} from "react-bootstrap-icons";
-import {
-    ancestor_config,
-    RESULTS_PER_PAGE,
-    SORT_OPTIONS,
-    valid_dataset_ancestor_config
-} from "../../../../config/config";
+import {RESULTS_PER_PAGE, SORT_OPTIONS, valid_dataset_ancestor_config} from "../../../../config/config";
 import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../../TableResults";
 import AncestorsTable from "./AncestorsTable";
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
-import {ORGAN_TYPES} from "../../../../config/constants";
 import $ from 'jquery'
+import SelectedFilters from "../../layout/SelectedFilters";
 
 export default class AncestorIds extends React.Component {
     constructor(props) {
@@ -148,7 +143,7 @@ export default class AncestorIds extends React.Component {
                                             sideContent={
                                                 <div data-js-facets>
                                                     <CustomClearSearchBox/>
-
+                                                    <SelectedFilters/>
                                                     {wasSearched && (
                                                         <Sorting
                                                             label={"Sort by"}
@@ -163,7 +158,8 @@ export default class AncestorIds extends React.Component {
 
                                             }
                                             bodyContent={
-                                                <div className="js-gtm--results" data-js-ada='tr' data-js-tooltip='{"trigger":"tr", "diffY": -50, "data":".modal-content .table", "class": "is-error"}'>
+                                                <div className="js-gtm--results" data-js-ada='tr'
+                                                     data-js-tooltip='{"trigger":"tr", "diffY": -50, "data":".modal-content .table", "class": "is-error"}'>
                                                     <Results view={TableResults} filters={filters}
                                                              titleField={filters}
                                                              resultView={TableRowDetail}

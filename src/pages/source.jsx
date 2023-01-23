@@ -124,7 +124,7 @@ function ViewSource() {
                         }
 
                         bodyHeader={
-                            <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[0]} hasWritePrivilege={hasWritePrivilege} idKey='lab_source_id' />
+                            <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[0]} hasWritePrivilege={hasWritePrivilege}  />
                         }
 
                         bodyContent={

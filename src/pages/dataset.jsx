@@ -170,7 +170,7 @@ function ViewDataset() {
                                         {data.lab_dataset_id &&
                                             <>
                                                 <span className="mx-2">|</span>
-                                                {data.lab_dataset_id}
+                                                {getOrganTypeFullName(data.origin_sample.organ)}
                                             </>
                                         }
 
