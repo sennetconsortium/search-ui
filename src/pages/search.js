@@ -25,6 +25,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
+import SelectedFilters from "../components/custom/layout/SelectedFilters";
 
 function Search() {
     const {
@@ -85,7 +86,7 @@ function Search() {
                                             sideContent={
                                                 <div data-js-facets>
                                                     <CustomClearSearchBox/>
-
+                                                    <SelectedFilters/>
                                                     {wasSearched && (
                                                         <Sorting
                                                             label={_t('Sort by')}
