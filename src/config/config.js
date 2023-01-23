@@ -151,22 +151,10 @@ export const config = {
         disjunctiveFacets: [],
         conditionalFacets: {
             // Only show 'origin_sample.organ' facet if 'Dataset' is selected from the entity type facet
-            "origin_sample.organ": ({filters}) => {
-                return filters.some(
-                    (filter) =>
-                        filter.field === 'entity_type' &&
-                        filter.values.includes('Dataset')
-                )
-            },
+            "origin_sample.organ": FilterIsSelected('entity_type', 'Dataset'),
 
             // Only show 'organ' facet if 'Sample' is selected from the entity type facet
-            "organ": ({filters}) => {
-                return filters.some(
-                    (filter) =>
-                        filter.field === 'entity_type' &&
-                        filter.values.includes('Sample')
-                )
-            },
+            "organ": FilterIsSelected('entity_type', 'Sample'),
         },
         search_fields: {
             description: {type: 'value'},
@@ -177,13 +165,16 @@ export const config = {
             display_subtype: {type: 'value'},
             lab_name: {type: 'value'},
             lab_tissue_sample_id: {type: 'value'},
+            source_type: {type: 'value'},
+            data_types: {type: 'value'},
             sample_category: {type: 'value'},
             lab_dataset_id: {type: 'value'},
             created_by_user_displayname: {type: 'value'},
             created_by_user_email: {type: 'value'},
             dataset_info: {type: 'value'},
-            source_type: {type: 'value'},
             status: {type: 'value'},
+            'ancestors.title': {type: 'value'},
+            'organ': {type: 'value'},
             // "mapped_metadata.race": {type: "value"},
             // "mapped_metadata.sex": {type: "value"},
         },
@@ -363,3 +354,12 @@ exclude_dataset_config['searchQuery']['excludeFilters'] = [{
     value: "Dataset"
 }];
 exclude_dataset_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
+
+
+function FilterIsSelected(fieldName, value) {
+    return ({filters}) => {
+        return filters.some(
+            (f) => f.field === fieldName && (!value || f.values.includes(value))
+        );
+    };
+}
