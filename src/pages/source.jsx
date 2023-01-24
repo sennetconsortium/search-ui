@@ -4,7 +4,7 @@ import Description from "../components/custom/entities/sample/Description";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestHeaders} from "../components/custom/js/functions";
+import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
@@ -24,6 +24,7 @@ function ViewSource() {
     const router = useRouter()
     const [data, setData] = useState(null)
     const [error, setError] = useState(false)
+    const [descendants, setDescendants] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext);
@@ -38,6 +39,10 @@ function ViewSource() {
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
             const data = await response.json();
+
+            if (data.hasOwnProperty("descendants")) {
+                await fetchLineage(data.descendants, setDescendants);
+            }
 
             log.debug('source: Got data', data)
             if (data.hasOwnProperty("error")) {
@@ -64,6 +69,20 @@ function ViewSource() {
         }
     }, [router]);
 
+    const fetchLineage = async (ancestors, fetch) => {
+        let new_ancestors = []
+        for (const ancestor of ancestors) {
+            let complete_ancestor = await fetchEntity(ancestor.uuid);
+            if (complete_ancestor.hasOwnProperty("error")) {
+                setError(true)
+                setErrorMessage(complete_ancestor["error"])
+            } else {
+                new_ancestors.push(complete_ancestor)
+            }
+        }
+        fetch(new_ancestors)
+    }
+
     if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
@@ -83,7 +102,8 @@ function ViewSource() {
                         <div className="container-fluid">
                             <div className="row flex-nowrap">
                                 <div className="col-auto p-0">
-                                    <div id="sidebar" className="collapse collapse-horizontal border-end sticky-top custom-sticky">
+                                    <div id="sidebar"
+                                         className="collapse collapse-horizontal border-end sticky-top custom-sticky">
                                         <div id="sidebar-nav"
                                              className="list-group border-0 rounded-0 text-sm-start vh-100">
                                             <a href="#Summary"
@@ -142,8 +162,8 @@ function ViewSource() {
                                             }
 
                                             {/*Provenance*/}
-                                            {data &&
-                                                <Provenance nodeData={data}/>
+                                            {data && descendants &&
+                                                <Provenance nodeData={data} ancestors={[]} descendants={descendants}/>
                                             }
 
                                             {/*Protocols*/}

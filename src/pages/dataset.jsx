@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import {BoxArrowUpRight, CircleFill, List} from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
-import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
+import AncestorInformationBox from "../components/custom/entities/sample/AncestorInformationBox";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getOrganTypeFullName, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
@@ -26,6 +26,7 @@ function ViewDataset() {
     const router = useRouter()
     const [data, setData] = useState(null)
     const [ancestors, setAncestors] = useState(null)
+    const [descendants, setDescendants] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -52,8 +53,11 @@ function ViewDataset() {
             } else {
                 // set state with the result
                 setData(data);
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    await fetchAncestors(data.immediate_ancestors);
+                if (data.hasOwnProperty("ancestors")) {
+                    await fetchLineage(data.ancestors, setAncestors);
+                }
+                if (data.hasOwnProperty("descendants")) {
+                    await fetchLineage(data.descendants, setDescendants);
                 }
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
@@ -72,18 +76,18 @@ function ViewDataset() {
         }
     }, [router]);
 
-    const fetchAncestors = async (ancestor_uuids) => {
+    const fetchLineage = async (ancestors, fetch) => {
         let new_ancestors = []
-        for (const ancestor_uuid of ancestor_uuids) {
-            let ancestor = await fetchEntity(ancestor_uuid.uuid);
-            if (ancestor.hasOwnProperty("error")) {
+        for (const ancestor of ancestors) {
+            let complete_ancestor = await fetchEntity(ancestor.uuid);
+            if (complete_ancestor.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(ancestor["error"])
+                setErrorMessage(complete_ancestor["error"])
             } else {
-                new_ancestors.push(ancestor)
+                new_ancestors.push(complete_ancestor)
             }
         }
-        setAncestors(new_ancestors)
+        fetch(new_ancestors)
     }
 
     if ((isAuthorizing() || isUnauthorized()) && !data) {
@@ -192,18 +196,12 @@ function ViewDataset() {
                                                          data={data}/>
 
                                             {/*Provenance*/}
-                                            {data &&
-                                                <Provenance nodeData={data}/>
+                                            {data && ancestors && descendants &&
+                                                <Provenance nodeData={data} ancestors={ancestors} descendants={descendants}/>
                                             }
 
                                             {/*Files*/}
                                             <Files sennet_id={data.sennet_id}/>
-
-
-                                            {/*Source Information Box*/}
-                                            {ancestors &&
-                                                <AncestorInformationBox ancestor={ancestors}/>
-                                            }
 
 
                                             {/*Metadata*/}

@@ -2,7 +2,6 @@ import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
-import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
@@ -24,7 +23,8 @@ import {List} from "react-bootstrap-icons";
 function ViewSample() {
     const router = useRouter()
     const [data, setData] = useState(null)
-    const [source, setSource] = useState(null)
+    const [ancestors, setAncestors] = useState(null)
+    const [descendants, setDescendants] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -51,8 +51,11 @@ function ViewSample() {
             } else {
                 // set state with the result
                 setData(data);
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    await fetchSource(data.immediate_ancestors[0].uuid);
+                if (data.hasOwnProperty("ancestors")) {
+                    await fetchLineage(data.ancestors, setAncestors);
+                }
+                if (data.hasOwnProperty("descendants")) {
+                    await fetchLineage(data.descendants, setDescendants);
                 }
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
@@ -71,14 +74,18 @@ function ViewSample() {
         }
     }, [router]);
 
-    const fetchSource = async (sourceId) => {
-        let source = await fetchEntity(sourceId);
-        if (source.hasOwnProperty("error")) {
-            setError(true)
-            setErrorMessage(source["error"])
-        } else {
-            setSource(source);
+    const fetchLineage = async (ancestors, fetch) => {
+        let new_ancestors = []
+        for (const ancestor of ancestors) {
+            let complete_ancestor = await fetchEntity(ancestor.uuid);
+            if (complete_ancestor.hasOwnProperty("error")) {
+                setError(true)
+                setErrorMessage(complete_ancestor["error"])
+            } else {
+                new_ancestors.push(complete_ancestor)
+            }
         }
+        fetch(new_ancestors)
     }
 
     if ((isAuthorizing() || isUnauthorized()) && !data) {
@@ -100,7 +107,8 @@ function ViewSample() {
                         <div className="container-fluid">
                             <div className="row flex-nowrap">
                                 <div className="col-auto p-0">
-                                    <div id="sidebar" className="collapse collapse-horizontal border-end sticky-top custom-sticky">
+                                    <div id="sidebar"
+                                         className="collapse collapse-horizontal border-end sticky-top custom-sticky">
                                         <div id="sidebar-nav"
                                              className="list-group border-0 rounded-0 text-sm-start vh-100">
                                             <a href="#Summary"
@@ -149,13 +157,8 @@ function ViewSample() {
 
 
                                             {/*Provenance*/}
-                                            {data &&
-                                                <Provenance nodeData={data}/>
-                                            }
-
-                                            {/*Source Information Box*/}
-                                            {source &&
-                                                <AncestorInformationBox ancestor={source}/>
+                                            {data && ancestors && descendants &&
+                                                <Provenance nodeData={data} ancestors={ancestors} descendants={descendants}/>
                                             }
 
                                             {/*Protocols*/}
