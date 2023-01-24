@@ -7,9 +7,51 @@
     width: 100% !important;
 }
 
+.custom-sticky {
+    top: 74px !important;
+    z-index: 1019 !important;
+}
+
+#sidebar-nav {
+    width: 160px;
+}
+
+.accordion-button:not(.collapsed) {
+  color: black;
+  background-color: white;
+  box-shadow: none;
+}
+
+.accordion-button:focus,.accordion-button:active {
+   outline: none !important;
+   box-shadow: none;
+}
+
+.accordion-body {
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.sui-result {
+    list-style: none;
+    padding: 0px 0;
+    text-decoration: none;
+    display: block;
+    border: 1px solid #f0f0f0;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 0 1px 0 rgba(0, 0, 0, .1);
+    overflow-wrap: break-word;
+    overflow: hidden;
+}
+
+.sui-result + .sui-result {
+  margin-top: 15px;
+}
+
 .sui-layout-header {
-    padding: 0 !important;
-    border-bottom: 0 !important;
+    padding: 0;
+    border-bottom: 0;
 }
 
 .sui-multi-checkbox-facet__input-text {
@@ -48,7 +90,7 @@ html {
 }
 
 .link_with_icon {
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     text-decoration: none;
 }
@@ -118,7 +160,7 @@ p {
     display: none;
 }
 
-.provenance--portal-ui .neo4jd3__info{
+.provenance--portal-ui .neo4jd3__info {
     z-index: 1;
 }
 

@@ -1,13 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
-import 'bootstrap/dist/css/bootstrap.css';
-import {BoxArrowUpRight, CircleFill} from 'react-bootstrap-icons';
-import {Layout} from "@elastic/react-search-ui-views";
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
+import {BoxArrowUpRight, CircleFill, List} from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
 import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
-import Metadata from "../components/custom/entities/sample/Metadata";
-import Contributors from "../components/custom/entities/dataset/Contributors";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getOrganTypeFullName, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
@@ -21,8 +16,10 @@ import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from "../components/custom/Alert";
 import Provenance from "../components/custom/entities/Provenance";
-import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
 import {ENTITIES} from "../config/constants";
+import Metadata from "../components/custom/entities/sample/Metadata";
+import Contributors from "../components/custom/entities/dataset/Contributors";
+import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
 
 
 function ViewDataset() {
@@ -101,145 +98,133 @@ function ViewDataset() {
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
                 {error &&
-                    <Alert message={errorMessage} />
+                    <Alert message={errorMessage}/>
                 }
                 {data && !error &&
-                    <Layout
-                        sideContent={
-                            <div>
-                                <div className="sui-facet">
-                                    <div>
-                                        <div className="sui-facet__title">Sections</div>
-                                        <ul className="sui-single-option-facet">
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link"
-                                                href="#Summary">Summary</a>
-                                            </li>
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link"
-                                                href="#Files">Files</a>
-                                            </li>
-                                            { <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                            </li> }
-                                            {data.immediate_ancestors &&
-                                                <li className="sui-single-option-facet__item"><a
-                                                    className="sui-single-option-facet__link"
-                                                    href="#Ancestor">Ancestor</a>
-                                                </li>
-                                            }
+                    <>
+                        <div className="container-fluid">
+                            <div className="row flex-nowrap">
+                                <div className="col-auto p-0">
+                                    <div id="sidebar" className="collapse collapse-horizontal border-end sticky-top custom-sticky">
+                                        <div id="sidebar-nav"
+                                             className="list-group border-0 rounded-0 text-sm-start vh-100">
+                                            <a href="#Summary"
+                                               className="list-group-item border-end-0 d-inline-block text-truncate"
+                                               data-bs-parent="#sidebar"><span>Summary</span> </a>
+                                            <a href="#Provenance"
+                                               className="list-group-item border-end-0 d-inline-block text-truncate"
+                                               data-bs-parent="#sidebar"><span>Provenance</span></a>
+                                            <a href="#Files"
+                                               className="list-group-item border-end-0 d-inline-block text-truncate"
+                                               data-bs-parent="#sidebar"><span>Files</span> </a>
+
                                             {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                                <li className="sui-single-option-facet__item"><a
-                                                    className="sui-single-option-facet__link"
-                                                    href="#Metadata">Metadata</a>
-                                                </li>
+                                                <a href="#Metadata"
+                                                   className="list-group-item border-end-0 d-inline-block text-truncate"
+                                                   data-bs-parent="#sidebar"><span>Metadata</span></a>
                                             }
-                                            {/* <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Files">Files</a>
-                                        </li> */}
 
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                                <li className="sui-single-option-facet__item"><a
-                                                    className="sui-single-option-facet__link"
-                                                    href="#Contributors">Contributors</a>
-                                                </li>
+                                                <a href="#Contributors"
+                                                   className="list-group-item border-end-0 d-inline-block text-truncate"
+                                                   data-bs-parent="#sidebar"><span>Contributors</span></a>
+                                            }
+                                            <a href="#Attribution"
+                                               className="list-group-item border-end-0 d-inline-block text-truncate"
+                                               data-bs-parent="#sidebar"><span>Attribution</span></a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <main className="col m-3">
+                                    <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
+                                       className="btn btn-outline-primary rounded-0 link_with_icon"><List/>Sections</a>
+
+                                    <div style={{width: '100%'}}>
+                                        <h4>Dataset</h4>
+                                        <h3>{data.sennet_id}</h3>
+
+                                        <div className="d-flex justify-content-between mb-2">
+                                            <div className="entity_subtitle link_with_icon">
+                                                {data.data_types &&
+                                                    <>
+                                                        {data.data_types[0]}
+                                                    </>
+                                                }
+                                                {data.lab_dataset_id &&
+                                                    <>
+                                                        <span className="mx-2">|</span>
+                                                        {getOrganTypeFullName(data.origin_sample.organ)}
+                                                    </>
+                                                }
+
+                                                {data.doi_url &&
+                                                    <>
+                                                        |
+                                                        <a href={data.doi_url} className="ms-1 link_with_icon">
+                                                            <span className="me-1">doi:{data.registered_doi}</span>
+                                                            <BoxArrowUpRight/>
+                                                        </a>
+                                                    </>
+                                                }
+                                            </div>
+                                            <div className="entity_subtitle link_with_icon">
+                                                <CircleFill
+                                                    className={`me-1 text-${getStatusColor(data.status)}`}/>
+                                                <div className={'m-2'}>{data.status}</div>
+                                                |
+                                                {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
+
+                                                <EntityViewHeaderButtons data={data} entity={Object.keys(ENTITIES)[2]}
+                                                                         hasWritePrivilege={hasWritePrivilege}/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div className="row">
+                                        <div className="col-12">
+                                            {/*Description*/}
+                                            <Description primaryDateTitle="Publication Date"
+                                                         primaryDate={data.published_timestamp}
+                                                         secondaryDateTitle="Modification Date"
+                                                         secondaryDate={data.last_modified_timestamp}
+                                                         data={data}/>
+
+                                            {/*Provenance*/}
+                                            {data &&
+                                                <Provenance nodeData={data}/>
                                             }
 
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link"
-                                                href="#Attribution">Attribution</a>
-                                            </li>
-                                        </ul>
+                                            {/*Files*/}
+                                            <Files sennet_id={data.sennet_id}/>
+
+
+                                            {/*Source Information Box*/}
+                                            {ancestors &&
+                                                <AncestorInformationBox ancestor={ancestors}/>
+                                            }
+
+
+                                            {/*Metadata*/}
+                                            {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
+                                                <Metadata data={data.metadata.metadata} filename={data.sennet_id}/>
+                                            }
+
+                                            {/*Contributors*/}
+                                            {!!(data.contributors && Object.keys(data.contributors).length) &&
+                                                <Contributors data={data.contributors}/>
+                                            }
+
+                                            {/*Attribution*/}
+                                            <Attribution data={data}/>
+
+                                        </div>
                                     </div>
-                                </div>
+                                </main>
                             </div>
-                        }
-
-                        bodyHeader={
-                            <div style={{width: '100%'}}>
-                                <h4>Dataset</h4>
-                                <h3>{data.sennet_id}</h3>
-
-                                <div className="d-flex justify-content-between mb-2">
-                                    <div className="entity_subtitle link_with_icon">
-                                        {data.data_types &&
-                                            <>
-                                                {data.data_types[0]}
-                                            </>
-                                        }
-                                        {data.lab_dataset_id &&
-                                            <>
-                                                <span className="mx-2">|</span>
-                                                {getOrganTypeFullName(data.origin_sample.organ)}
-                                            </>
-                                        }
-
-                                        {data.doi_url &&
-                                            <>
-                                                |
-                                                <a href={data.doi_url} className="ms-1 link_with_icon">
-                                                    <span className="me-1">doi:{data.registered_doi}</span>
-                                                    <BoxArrowUpRight/>
-                                                </a>
-                                            </>
-                                        }
-                                    </div>
-                                    <div className="entity_subtitle link_with_icon">
-                                        <CircleFill
-                                            className={`me-1 text-${getStatusColor(data.status)}`}/>
-                                        <div className={'m-2'}>{data.status}</div>
-                                        |
-                                        {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
-
-                                        <EntityViewHeaderButtons data={data} entity={Object.keys(ENTITIES)[2]} hasWritePrivilege={hasWritePrivilege} />
-                                    </div>
-                                </div>
-                            </div>
-                        }
-
-                        bodyContent={
-                            <div>
-                                <ul className="sui-results-container">
-                                    {/*Description*/}
-                                    <Description primaryDateTitle="Publication Date"
-                                                 primaryDate={data.published_timestamp}
-                                                 secondaryDateTitle="Modification Date"
-                                                 secondaryDate={data.last_modified_timestamp}
-                                                 data={data}/>
-
-                                    {/*Files*/}
-                                    <Files sennet_id={data.sennet_id}/>
-
-                                    {/*Provenance*/}
-                                    {data &&
-                                        <Provenance nodeData={data}/>
-                                    }
-
-                                    {/*Source Information Box*/}
-                                    {ancestors &&
-                                        <AncestorInformationBox ancestor={ancestors}/>
-                                    }
-
-
-                                    {/*Metadata*/}
-                                    {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                        <Metadata data={data.metadata.metadata} filename={data.sennet_id}/>
-                                    }
-
-                                    {/*Contributors*/}
-                                    {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                        <Contributors data={data.contributors}/>
-                                    }
-
-                                    {/*Attribution*/}
-                                    <Attribution data={data}/>
-
-                                </ul>
-                            </div>
-                        }
-
-                    />
-
+                        </div>
+                    </>
                 }
                 <AppFooter/>
             </>

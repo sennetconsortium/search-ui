@@ -13,8 +13,6 @@ import {
 import {Layout} from "@elastic/react-search-ui-views";
 import Facets from "../search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../components/custom/TableResults";
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import 'bootstrap/dist/css/bootstrap.css';
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import AppFooter from "../components/custom/layout/AppFooter";
