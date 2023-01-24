@@ -1,7 +1,7 @@
 import React from 'react';
 import {fetchProtocols, getClickableLink} from "../../js/functions";
 import {Table} from 'react-bootstrap';
-import {BoxArrowUpRight} from "react-bootstrap-icons";
+import {BoxArrowUpRight, EnvelopeFill} from "react-bootstrap-icons";
 
 export default class Protocols extends React.Component {
     constructor(props) {
@@ -19,13 +19,19 @@ export default class Protocols extends React.Component {
 
     render() {
         return (
-            <li className="sui-result" id="Protocols">
-                <div className="sui-result__header">
-                    <span className="sui-result__title">Protocols</span>
-                </div>
+            <div className="accordion accordion-flush sui-result" id="Protocols">
+                <div className="accordion-item ">
+                    <div className="accordion-header sui-result__header">
+                        <span className="sui-result__title">Protocols</span>
+                        <button className="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#protocol-collapse" aria-expanded="true"
+                                aria-controls="protocol-collapse">
 
-                <div className="card-body">
-                    <Table borderless>
+                        </button>
+                    </div>
+                    <div id="protocol-collapse" className="accordion-collapse collapse show">
+                        <div className="accordion-body">
+                            <Table borderless>
                         {this.state.protocol_data != null &&
                             <thead>
                             <tr>
@@ -69,8 +75,10 @@ export default class Protocols extends React.Component {
                         }
                         </tbody>
                     </Table>
+                        </div>
+                    </div>
                 </div>
-            </li>
+            </div>
         )
     }
 };

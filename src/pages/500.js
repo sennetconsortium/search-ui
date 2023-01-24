@@ -1,4 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.css';
 import Header from "../components/custom/layout/Header";
 import React from "react";
 
