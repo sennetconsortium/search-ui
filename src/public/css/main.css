@@ -104,31 +104,32 @@ p {
 
 .card-body .c-provenance {
     text-align: center;
+    max-height: 700px;
 }
 
 .card-body .c-provenance .c-provenance__info {
     text-align: left;
 }
 
+.c-provenance > svg {
+    opacity: 0;
+    transition: opacity ease-in 1s;
+}
+
 .provenance--portal-ui .pull-right:hover svg {
     fill: var(--bs-link-color);
+}
+
+.provenance--portal-ui .c-provenance__info .cell.link a:hover {
+    color: var(--bs-link-hover-color);
 }
 
 .c-legend__item--Root {
     display: none;
 }
 
-.provenance--portal-ui .neo4jd3__info{
-    z-index: 1;
-}
-
 .card-body .c-provenance, .modal-full .c-provenance {
     height: inherit;
-}
-
-.node.is-visited:not(.is-primary) .glow {
-    stroke: #6ac6ff !important;
-    opacity: .3;
 }
 
 .modal-full .c-provenance {

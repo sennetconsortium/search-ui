@@ -5,13 +5,14 @@ import React, {
     useRef
 } from 'react'
 import log from 'loglevel'
-import {DataConverterNeo4J, GraphGeneric, ProvenanceUI, Legend, Toggle} from 'provenance-ui/dist/index'
+import {DataConverterNeo4J, GraphGeneric, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
 import 'provenance-ui/dist/ProvenanceUI.css'
 import Spinner from '../Spinner'
 import {getAuth, getEntityEndPoint} from "../../../config/config";
 import AppModal from "../../AppModal";
 import { ArrowsAngleExpand } from "react-bootstrap-icons";
 import $ from 'jquery'
+
 
 function Provenance({ nodeData }) {
     const [data, setData] = useState(nodeData)
@@ -20,12 +21,32 @@ function Provenance({ nodeData }) {
     const [treeData, setTreeData] = useState(null)
     const [showModal, setShowModal] = useState(false)
     const initialized = useRef(false)
+    const activityHidden = useRef(true)
+    const svgTranslate = useRef({})
 
     const canvas = (ops) => $(`#${ops.options.selectorId}`)
 
     const onCenterX = (ops) => {
         const w = canvas(ops).width()
         return  w / 2.4
+    }
+
+    const onAfterBuild = (ops) => {
+        let hidden = activityHidden.current
+        
+        if (ops.data.treeWidth > 6) {
+            if (svgTranslate.current[hidden] === undefined) {
+                svgTranslate.current[hidden] = hidden ? ops.data.treeWidth * 23 : ops.data.sz.height / 2.2
+            }
+            if (svgTranslate.current[!hidden] !== undefined) {
+                ops.$el.svg.call(ops.options.zoom.translateBy, !hidden ? -50 : -300, -1 * svgTranslate.current[!hidden])
+            }
+            ops.$el.svg.transition().call(ops.options.zoom.translateBy, hidden ? 50 : 300, svgTranslate.current[hidden])
+
+        } else if (ops.data.treeWidth > 3) {
+            ops.$el.svg.transition().call(ops.options.zoom.translateBy, -7, -50)
+        }
+        canvas(ops).find('svg').css('opacity', 1)
     }
 
     const getTreeWidth = (ops) => {
@@ -37,6 +58,7 @@ function Provenance({ nodeData }) {
             max = Math.max(list[id], max)
         }
         log.debug('Tree width', max)
+        ops.data.treeWidth = max
         return max
     }
 
@@ -46,6 +68,10 @@ function Provenance({ nodeData }) {
         sz.width = canvas(ops).width() - margin.right - margin.left
         const treeWidth = getTreeWidth(ops)
         sz.height = ops.options.minHeight * (treeWidth < 2 ? 3 : Math.max(treeWidth, 5) ) - margin.top - margin.bottom
+        ops.data.sz = JSON.parse(JSON.stringify(sz))
+        if (sz.height > 500) {
+            sz.height = 500
+        }
         return sz
     }
 
@@ -63,12 +89,15 @@ function Provenance({ nodeData }) {
             "Sample": "#ebb5c8",
             "Source": "#ffc255"
         },
-        displayEdgeLabels: true,
+        visitedNodes: new Set(),
+        initParentKey: DataConverterNeo4J.KEY_P_ENTITY,
+        displayEdgeLabels: false,
         minHeight: 100,
         noStyles: true,
         selectorId: 'neo4j--page',
         callbacks: {
             onCenterX,
+            onAfterBuild,
             onSvgSizing
         }
     }
@@ -148,6 +177,8 @@ function Provenance({ nodeData }) {
 
     const toggleData = (e, hideActivity, selectorId) => {
         const ui = window.ProvenanceTreeD3[selectorId]
+        log.debug('activity', hideActivity)
+        activityHidden.current = hideActivity
         ui.toggleData({filter: hideActivity ? 'Activity' : '', parentKey: hideActivity ? DataConverterNeo4J.KEY_P_ENTITY : DataConverterNeo4J.KEY_P_ACT})
     }
 
@@ -160,12 +191,14 @@ function Provenance({ nodeData }) {
         Activity: {
             callback: toggleData,
             className: 'c-toggle--eye',
-            ariaLabel: 'Toggle Activity Nodes'
+            ariaLabel: 'Toggle Activity Nodes',
+            disabled: true
         },
         Edge: {
             callback: toggleEdgeLabels,
             className: 'c-toggle--eye',
-            ariaLabel: 'Toggle Edge Labels'
+            ariaLabel: 'Toggle Edge Labels',
+            visible: false
         }
     }
 
@@ -183,13 +216,12 @@ function Provenance({ nodeData }) {
             </div>
 
             <div className='card-body'>
-
                 {!loading && <ProvenanceUI options={options} data={treeData}/>}
-                {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} actionMap={actionMap} selectorId={options.selectorId}/>}
+                {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} className='c-legend--flex c-legend--btns' help={{title: 'Help, Provenance Graph'}} actionMap={actionMap} selectorId={options.selectorId}/>}
                 {loading && <Spinner/>}
                 <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
                     {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 105 }} data={treeData} />}
-                    {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} actionMap={actionMap} selectorId={modalId} />}
+                    {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} className='c-legend--flex c-legend--btns' help={{title: 'Help, Provenance Graph'}} actionMap={actionMap} selectorId={modalId} />}
                 </AppModal>
             </div>
         </div>
