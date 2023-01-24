@@ -4,7 +4,7 @@ import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
 import AncestorId from "../../components/custom/edit/sample/AncestorId";
 import SampleCategory from "../../components/custom/edit/sample/SampleCategory";
-import AncestorInformationBox from "../../components/custom/edit/sample/AncestorInformationBox";
+import AncestorInformationBox from "../../components/custom/entities/sample/AncestorInformationBox";
 import log from "loglevel";
 import {
     cleanJson,
