@@ -7,11 +7,10 @@ export default class Attribution extends React.Component {
         return (
             <div className="accordion accordion-flush sui-result" id="Attribution">
                 <div className="accordion-item ">
-                    <div className="accordion-header sui-result__header">
-                        <span className="sui-result__title">Attribution</span>
+                    <div className="accordion-header">
                         <button className="accordion-button" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#attribution-collapse" aria-expanded="true"
-                                aria-controls="attribution-collapse">
+                                aria-controls="attribution-collapse">Attribution
 
                         </button>
                     </div>

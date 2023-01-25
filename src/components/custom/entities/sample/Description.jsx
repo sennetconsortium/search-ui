@@ -6,11 +6,10 @@ export default class Description extends React.Component {
         return (
             <div className="accordion accordion-flush sui-result" id="Summary">
                 <div className="accordion-item ">
-                    <div className="accordion-header sui-result__header">
-                        <span className="sui-result__title">Summary</span>
+                    <div className="accordion-header">
                         <button className="accordion-button" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#summary-collapse" aria-expanded="true"
-                                aria-controls="summary-collapse">
+                                aria-controls="summary-collapse">Summary
 
                         </button>
                     </div>
