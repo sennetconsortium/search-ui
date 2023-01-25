@@ -37,13 +37,13 @@ function Provenance({nodeData}) {
     const onAfterBuild = (ops) => {
         let hidden = activityHidden.current
         // Fine tune a bit based on graph size and UI viewport area
+        const x1 = 50
+        const x2 = 300
         if (ops.data.treeWidth > 6) {
             if (svgTranslate.current[hidden] === undefined) {
                 // Set some positions to move the graph based on visibility of activity nodes
                 svgTranslate.current[hidden] = hidden ? ops.data.treeWidth * 23 : ops.data.sz.height / 2.2
             }
-            const x1 = 50
-            const x2 = 300
             if (svgTranslate.current[!hidden] !== undefined) {
                 // Move the graph back
                 ops.$el.svg.call(ops.options.zoom.translateBy, !hidden ? -x1 : -x2, -1 * svgTranslate.current[!hidden])
