@@ -21,11 +21,10 @@ export default class Protocols extends React.Component {
         return (
             <div className="accordion accordion-flush sui-result" id="Protocols">
                 <div className="accordion-item ">
-                    <div className="accordion-header sui-result__header">
-                        <span className="sui-result__title">Protocols</span>
+                    <div className="accordion-header">
                         <button className="accordion-button" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#protocol-collapse" aria-expanded="true"
-                                aria-controls="protocol-collapse">
+                                aria-controls="protocol-collapse">Protocols
 
                         </button>
                     </div>

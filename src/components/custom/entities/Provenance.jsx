@@ -199,11 +199,10 @@ function Provenance({nodeData}) {
     return (
         <div className="accordion accordion-flush sui-result" id="Provenance">
             <div className="accordion-item ">
-                <div className="accordion-header sui-result__header">
-                    <span className="sui-result__title">Provenance</span>
+                <div className="accordion-header">
                     <button className="accordion-button" type="button" data-bs-toggle="collapse"
                             data-bs-target="#provenance-collapse" aria-expanded="true"
-                            aria-controls="provenance-collapse">
+                            aria-controls="provenance-collapse">Provenance
 
                     </button>
                 </div>
