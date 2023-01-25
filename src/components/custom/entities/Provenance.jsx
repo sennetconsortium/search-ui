@@ -35,18 +35,24 @@ function Provenance({ nodeData }) {
 
     const onAfterBuild = (ops) => {
         let hidden = activityHidden.current
-        
+        // Fine tune a bit based on graph size and UI viewport area
         if (ops.data.treeWidth > 6) {
             if (svgTranslate.current[hidden] === undefined) {
+                // Set some positions to move the graph based on visibility of activity nodes
                 svgTranslate.current[hidden] = hidden ? ops.data.treeWidth * 23 : ops.data.sz.height / 2.2
             }
+            const x1 = 50
+            const x2 = 300
             if (svgTranslate.current[!hidden] !== undefined) {
-                ops.$el.svg.call(ops.options.zoom.translateBy, !hidden ? -50 : -300, -1 * svgTranslate.current[!hidden])
+                // Move the graph back
+                ops.$el.svg.call(ops.options.zoom.translateBy, !hidden ? -x1 : -x2, -1 * svgTranslate.current[!hidden])
             }
-            ops.$el.svg.transition().call(ops.options.zoom.translateBy, hidden ? 50 : 300, svgTranslate.current[hidden])
+            // Move into new position after toggle
+            ops.$el.svg.transition().call(ops.options.zoom.translateBy, hidden ? x1 : x2, svgTranslate.current[hidden])
 
         } else if (ops.data.treeWidth > 3) {
-            ops.$el.svg.transition().call(ops.options.zoom.translateBy, -7, -50)
+            // Nudge a bit for better positioning
+            ops.$el.svg.transition().call(ops.options.zoom.translateBy, -7, -x1)
         }
         canvas(ops).find('svg').css('opacity', 1)
     }
