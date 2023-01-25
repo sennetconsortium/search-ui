@@ -271,6 +271,11 @@ function Provenance({nodeData}) {
                 <code>organ</code>, <code>block</code>, <code>section</code> and <code>suspension</code> respectively.</li>`
     }
 
+    const legend = {
+        ...options.colorMap,
+        Edge: '#a5abb6',
+    }
+
     return (
         <div className="accordion accordion-flush sui-result" id="Provenance">
             <div className="accordion-item ">
@@ -294,11 +299,11 @@ function Provenance({nodeData}) {
                         >
                             <Tab eventKey="graph" title="Graph">
                                 {!loading && <ProvenanceUI options={options} data={treeData}/>}
-                                {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId}/>}
+                                {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId}/>}
                                 {loading && <Spinner/>}
                                 <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
                                     {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 105 }} data={treeData} />}
-                                    {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={modalId} />}
+                                    {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={modalId} />}
                                 </AppModal>
                             </Tab>
                             {ancestors && ancestors.length > 0 &&
