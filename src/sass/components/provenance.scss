@@ -1,0 +1,69 @@
+.card-body .c-provenance {
+    position: relative;
+}
+
+.card-body .c-provenance {
+    text-align: center;
+    max-height: 700px;
+}
+
+.card-body .c-provenance .c-provenance__info {
+    text-align: left;
+}
+
+.c-provenance > svg {
+    opacity: 0;
+    transition: opacity ease-in 1s;
+}
+
+.provenance--portal-ui .pull-right:hover svg {
+    fill: var(--bs-link-color);
+}
+
+.provenance--portal-ui .c-provenance__info .cell.link a:hover {
+    color: var(--bs-link-hover-color);
+}
+
+.c-legend__item--Root {
+    display: none;
+}
+
+.card-body .c-provenance, .modal-full .c-provenance {
+    height: inherit;
+}
+
+.modal-full .c-provenance {
+    min-height: 500px;
+}
+
+.c-help .shape  {
+
+    &.pink:after {
+        background-color: #ebb5c8;
+    }
+
+    &.shape {
+        &--diamond:after {
+            transform: rotate(45deg);
+        }
+
+        &--circle:after {
+            border-radius: 30px;
+        }
+
+        &--rect:after {
+            width: 25px;
+        }
+    }
+
+
+    &:after {
+        width: 15px;
+        height: 15px;
+        margin-left: 3px;
+        content: ' ';
+        display: inline-block;
+    }
+
+}
+

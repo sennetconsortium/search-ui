@@ -1,0 +1,13 @@
+.popover.is-error {
+  color: #842029;
+  background: #f8d7da;
+  border-color: #f5c2c7
+}
+
+.popover.is-error .popover-body {
+  color: #842029;
+}
+
+.popover.is-error .popover-arrow:after {
+  border-right-color: #f8d7da;
+}

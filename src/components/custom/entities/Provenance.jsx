@@ -242,6 +242,13 @@ function Provenance({ nodeData }) {
 
     const modalId = 'neo4j--modal'
 
+    const help = {
+        title: 'Help, Provenance Graph',
+        legend: `<li><code>Sample</code> shapes <span class="shape pink shape--diamond">diamond</span>, <span class="shape pink shape--sq">square</span>, 
+                    <span class="shape pink shape--rect">rectangle</span> and <span class="shape pink shape--circle">ellipse</span> correspond to <code>sample_category</code>  of
+                <code>organ</code>, <code>block</code>, <code>section</code> and <code>suspension</code> respectively.</li>`
+    }
+
     return (
         <div className='sui-result provenance--portal-ui' id='Provenance'>
             <div className='sui-result__header'>
@@ -255,11 +262,11 @@ function Provenance({ nodeData }) {
 
             <div className='card-body'>
                 {!loading && <ProvenanceUI options={options} data={treeData}/>}
-                {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} className='c-legend--flex c-legend--btns' help={{title: 'Help, Provenance Graph'}} actionMap={actionMap} selectorId={options.selectorId}/>}
+                {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId}/>}
                 {loading && <Spinner/>}
                 <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
                     {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 105 }} data={treeData} />}
-                    {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} className='c-legend--flex c-legend--btns' help={{title: 'Help, Provenance Graph'}} actionMap={actionMap} selectorId={modalId} />}
+                    {!loading && <Legend colorMap={{...options.colorMap, Edge: '#a5abb6'}} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={modalId} />}
                 </AppModal>
             </div>
         </div>
