@@ -12,6 +12,7 @@ import {getAuth, getEntityEndPoint} from "../../../config/config";
 import AppModal from "../../AppModal";
 import { ArrowsAngleExpand } from "react-bootstrap-icons";
 import $ from 'jquery'
+import AppContext from "../../../context/AppContext";
 
 
 function Provenance({ nodeData }) {
@@ -23,6 +24,7 @@ function Provenance({ nodeData }) {
     const initialized = useRef(false)
     const activityHidden = useRef(true)
     const svgTranslate = useRef({})
+    const { _t } = useContext(AppContext)
 
     const canvas = (ops) => $(`#${ops.options.selectorId}`)
 
@@ -89,6 +91,9 @@ function Provenance({ nodeData }) {
             Sample:  '#ebb5c8',
             Source: '#ffc255'
         },
+        propertyMap: {
+            'sennet:created_by_user_displayname': 'agent'
+        },
         imageMap: {
             "Sample|sennet:sample_category|organ": null,
             "Sample|sennet:sample_category|block": null,
@@ -97,26 +102,19 @@ function Provenance({ nodeData }) {
         imageMapActions: {
             "Sample|sennet:sample_category|organ": {
                 fn: 'append',
-                color: "#ebb5c8",
-                transparentMain: true,
-                transparentGlow: true,
                 type: 'g',
                 data: [
                     {
-                        draw: 'm14.98,29.55C10.15,24.72,5.29,19.86.44,15.01,5.29,10.16,10.15,5.3,14.99.46c4.84,4.84,9.7,9.7,14.54,14.54-4.83,4.83-9.7,9.7-14.55,14.55Z'
+                        draw: 'm16.41,32.84C10.96,27.39,5.48,21.9,0,16.43,5.48,10.95,10.96,5.46,16.43,0c5.46,5.46,10.95,10.95,16.41,16.41-5.45,5.45-10.95,10.95-16.43,16.43Z'
                     }
                 ]
             },
             "Sample|sennet:sample_category|block": {
-                color: "#ebb5c8",
-                transparentMain: true,
-                transparentGlow: true,
-                type: 'rect'
+                type: 'rect',
+                height: 28,
+                width: 28
             },
             "Sample|sennet:sample_category|section": {
-                color: "#ebb5c8",
-                transparentMain: true,
-                transparentGlow: true,
                 type: 'rect',
                 height: 25,
                 width: 50
@@ -242,7 +240,7 @@ function Provenance({ nodeData }) {
         <div className='sui-result provenance--portal-ui' id='Provenance'>
             <div className='sui-result__header'>
                 <span className='sui-result__title'>
-                    Provenance
+                    { _t('Provenance') }
                 </span>
                 <button className='btn pull-right btn--fullView' onClick={handleModal} arial-label='Full view' title='Full view'>
                     <ArrowsAngleExpand />
