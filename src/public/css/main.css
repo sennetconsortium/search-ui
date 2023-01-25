@@ -16,15 +16,21 @@
     width: 160px;
 }
 
-.accordion-button:not(.collapsed) {
-  color: black;
-  background-color: white;
-  box-shadow: none;
+#sidebar .nav-link {
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--bs-dark);
 }
 
-.accordion-button:focus,.accordion-button:active {
-   outline: none !important;
-   box-shadow: none;
+.accordion-button:not(.collapsed) {
+    color: black;
+    background-color: white;
+    box-shadow: none;
+}
+
+.accordion-button:focus, .accordion-button:active {
+    outline: none !important;
+    box-shadow: none;
 }
 
 .accordion-body {
@@ -46,7 +52,7 @@
 }
 
 .sui-result + .sui-result {
-  margin-top: 15px;
+    margin-top: 15px;
 }
 
 .sui-layout-header {

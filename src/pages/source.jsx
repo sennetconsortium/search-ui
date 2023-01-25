@@ -24,7 +24,6 @@ function ViewSource() {
     const router = useRouter()
     const [data, setData] = useState(null)
     const [error, setError] = useState(false)
-    const [descendants, setDescendants] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext);
@@ -39,10 +38,6 @@ function ViewSource() {
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
             const data = await response.json();
-
-            if (data.hasOwnProperty("descendants")) {
-                await fetchLineage(data.descendants, setDescendants);
-            }
 
             log.debug('source: Got data', data)
             if (data.hasOwnProperty("error")) {
@@ -69,20 +64,6 @@ function ViewSource() {
         }
     }, [router]);
 
-    const fetchLineage = async (ancestors, fetch) => {
-        let new_ancestors = []
-        for (const ancestor of ancestors) {
-            let complete_ancestor = await fetchEntity(ancestor.uuid);
-            if (complete_ancestor.hasOwnProperty("error")) {
-                setError(true)
-                setErrorMessage(complete_ancestor["error"])
-            } else {
-                new_ancestors.push(complete_ancestor)
-            }
-        }
-        fetch(new_ancestors)
-    }
-
     if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
@@ -102,41 +83,49 @@ function ViewSource() {
                         <div className="container-fluid">
                             <div className="row flex-nowrap">
                                 <div className="col-auto p-0">
-                                    <div id="sidebar"
-                                         className="collapse collapse-horizontal border-end sticky-top custom-sticky">
-                                        <div id="sidebar-nav"
-                                             className="list-group border-0 rounded-0 text-sm-start vh-100">
+                                    <ul id="sidebar-nav"
+                                        className="nav list-group border-0 rounded-0 text-sm-start vh-100">
+                                        <li className="nav-item">
                                             <a href="#Summary"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Summary</span> </a>
-
-                                            {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
-                                                <a href="#Metadata"
-                                                   className="list-group-item border-end-0 d-inline-block text-truncate"
-                                                   data-bs-parent="#sidebar"><span>Metadata</span></a>
-                                            }
-
-                                            {!!(data.descendant_counts && Object.keys(data.descendant_counts).length) &&
+                                               className="nav-link "
+                                               data-bs-parent="#sidebar">Summary</a>
+                                        </li>
+                                        {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
+                                            <li className="nav-item">
+                                                <a href="#Metadta"
+                                                   className="nav-link "
+                                                   data-bs-parent="#sidebar">Metadata</a>
+                                            </li>
+                                        }
+                                        {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
+                                            <li className="nav-item">
                                                 <a href="#Derived-Datasets"
-                                                   className="list-group-item border-end-0 d-inline-block text-truncate"
-                                                   data-bs-parent="#sidebar"><span>Derived</span></a>
-                                            }
+                                                   className="nav-link "
+                                                   data-bs-parent="#sidebar">Derived</a>
+                                            </li>
+                                        }
+                                        <li className="nav-item">
                                             <a href="#Provenance"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Provenance</span></a>
+                                               className="nav-link"
+                                               data-bs-parent="#sidebar">Provenance</a>
+                                        </li>
+                                        <li className="nav-item">
                                             <a href="#Protocols"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Protocols</span></a>
+                                               className="nav-link"
+                                               data-bs-parent="#sidebar">Protocols</a>
+                                        </li>
+                                        <li className="nav-item">
                                             <a href="#Attribution"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Attribution</span></a>
-                                        </div>
-                                    </div>
+                                               className="nav-link"
+                                               data-bs-parent="#sidebar">Attribution</a>
+                                        </li>
+                                    </ul>
+
                                 </div>
 
                                 <main className="col m-3">
                                     <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                       className="btn btn-outline-primary rounded-0 link_with_icon"><List/>Sections</a>
+                                       className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/>Sections</a>
 
                                     <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[0]}
                                                       hasWritePrivilege={hasWritePrivilege}/>
@@ -162,8 +151,8 @@ function ViewSource() {
                                             }
 
                                             {/*Provenance*/}
-                                            {data && descendants &&
-                                                <Provenance nodeData={data} ancestors={[]} descendants={descendants}/>
+                                            {data &&
+                                                <Provenance nodeData={data}/>
                                             }
 
                                             {/*Protocols*/}

@@ -2,7 +2,6 @@ import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import {BoxArrowUpRight, CircleFill, List} from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
-import AncestorInformationBox from "../components/custom/entities/sample/AncestorInformationBox";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {fetchEntity, getOrganTypeFullName, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
@@ -53,12 +52,6 @@ function ViewDataset() {
             } else {
                 // set state with the result
                 setData(data);
-                if (data.hasOwnProperty("ancestors")) {
-                    await fetchLineage(data.ancestors, setAncestors);
-                }
-                if (data.hasOwnProperty("descendants")) {
-                    await fetchLineage(data.descendants, setDescendants);
-                }
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
@@ -75,20 +68,6 @@ function ViewDataset() {
             setData(null);
         }
     }, [router]);
-
-    const fetchLineage = async (ancestors, fetch) => {
-        let new_ancestors = []
-        for (const ancestor of ancestors) {
-            let complete_ancestor = await fetchEntity(ancestor.uuid);
-            if (complete_ancestor.hasOwnProperty("error")) {
-                setError(true)
-                setErrorMessage(complete_ancestor["error"])
-            } else {
-                new_ancestors.push(complete_ancestor)
-            }
-        }
-        fetch(new_ancestors)
-    }
 
     if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (
@@ -109,40 +88,53 @@ function ViewDataset() {
                         <div className="container-fluid">
                             <div className="row flex-nowrap">
                                 <div className="col-auto p-0">
-                                    <div id="sidebar" className="collapse collapse-horizontal border-end sticky-top custom-sticky">
-                                        <div id="sidebar-nav"
-                                             className="list-group border-0 rounded-0 text-sm-start vh-100">
-                                            <a href="#Summary"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Summary</span> </a>
-                                            <a href="#Provenance"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Provenance</span></a>
-                                            <a href="#Files"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Files</span> </a>
+                                    <div id="sidebar"
+                                         className="collapse collapse-horizontal border-end sticky-top custom-sticky">
+                                        <ul id="sidebar-nav"
+                                            className="nav list-group border-0 rounded-0 text-sm-start vh-100">
+                                            <li className="nav-item">
+                                                <a href="#Summary"
+                                                   className="nav-link "
+                                                   data-bs-parent="#sidebar">Summary</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a href="#Provenance"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Provenance</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a href="#Files"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Files</a>
+                                            </li>
 
                                             {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                                <a href="#Metadata"
-                                                   className="list-group-item border-end-0 d-inline-block text-truncate"
-                                                   data-bs-parent="#sidebar"><span>Metadata</span></a>
+                                                <li className="nav-item">
+                                                    <a href="#Metadata"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Metadata</a>
+                                                </li>
                                             }
 
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                                <a href="#Contributors"
-                                                   className="list-group-item border-end-0 d-inline-block text-truncate"
-                                                   data-bs-parent="#sidebar"><span>Contributors</span></a>
+                                                <li className="nav-item">
+                                                    <a href="#Contributors"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Contributors</a>
+                                                </li>
                                             }
-                                            <a href="#Attribution"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Attribution</span></a>
-                                        </div>
+                                            <li className="nav-item">
+                                                <a href="#Attribution"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Attribution</a>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
 
                                 <main className="col m-3">
                                     <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                       className="btn btn-outline-primary rounded-0 link_with_icon"><List/>Sections</a>
+                                       className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/>Sections</a>
 
                                     <div style={{width: '100%'}}>
                                         <h4>Dataset</h4>
@@ -196,8 +188,8 @@ function ViewDataset() {
                                                          data={data}/>
 
                                             {/*Provenance*/}
-                                            {data && ancestors && descendants &&
-                                                <Provenance nodeData={data} ancestors={ancestors} descendants={descendants}/>
+                                            {data &&
+                                                <Provenance nodeData={data}/>
                                             }
 
                                             {/*Files*/}

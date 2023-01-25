@@ -10,11 +10,12 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
 import Lineage from "./sample/Lineage";
+import {fetchEntity} from "../js/functions";
 
-function Provenance({nodeData, ancestors, descendants}) {
+function Provenance({nodeData}) {
     const [data, setData] = useState(nodeData)
-    const [ancestor, setAncestor] = useState(ancestors)
-    const [descendant, setDescendant] = useState(descendants)
+    const [ancestors, setAncestors] = useState(null)
+    const [descendants, setDescendants] = useState(null)
     const [options, setOptions] = useState({})
     const [loading, setLoading] = useState(true)
     const [treeData, setTreeData] = useState(null)
@@ -95,6 +96,27 @@ function Provenance({nodeData, ancestors, descendants}) {
     }
 
     useEffect(() => {
+        async function fetchLineage (ancestors, fetch) {
+            let new_ancestors = []
+            for (const ancestor of ancestors) {
+                let complete_ancestor = await fetchEntity(ancestor.uuid);
+                if (complete_ancestor.hasOwnProperty("error")) {
+                    setError(true)
+                    setErrorMessage(complete_ancestor["error"])
+                } else {
+                    new_ancestors.push(complete_ancestor)
+                }
+            }
+            fetch(new_ancestors)
+        }
+
+        if (nodeData.hasOwnProperty("descendants")) {
+            fetchLineage(data.descendants, setDescendants);
+        }
+        if (nodeData.hasOwnProperty("ancestors")) {
+            fetchLineage(data.ancestors, setAncestors);
+        }
+
         if (initialized.current) return
         initialized.current = true
         const token = getAuth();
@@ -213,14 +235,14 @@ function Provenance({nodeData, ancestors, descendants}) {
                                                 selectorId={modalId}/>}
                                 </AppModal>
                             </Tab>
-                            {ancestor.length > 0 &&
+                            {ancestors && ancestors.length > 0 &&
                                 <Tab eventKey="ancestor" title="Ancestors">
-                                    <Lineage lineage={ancestor}/>
+                                    <Lineage lineage={ancestors}/>
                                 </Tab>
                             }
-                            {descendant.length > 0 &&
+                            {descendants && descendants.length > 0 &&
                                 <Tab eventKey="descendant" title="Descendants">
-                                    <Lineage lineage={descendant}/>
+                                    <Lineage lineage={descendants}/>
                                 </Tab>
                             }
 
