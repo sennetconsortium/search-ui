@@ -1,0 +1,71 @@
+.card-body {
+    .c-provenance {
+        position: relative;
+        text-align: center;
+        max-height: 700px;
+        height: inherit;
+        .c-provenance__info {
+            text-align: left;
+            a:hover {
+                color: var(--bs-nav-link-hover-color);
+            }
+        }
+    }
+}
+
+.c-provenance > svg {
+    opacity: 0;
+    transition: opacity ease-in 1s;
+}
+
+#Provenance {
+    .btn--fullView {
+        &:hover svg {
+            fill: var(--bs-link-color);
+        }
+    }
+
+    .c-provenance__info .cell.link a:hover {
+        color: var(--bs-link-hover-color);
+    }
+}
+
+.modal-full .c-provenance {
+    height: inherit;
+    min-height: 500px;
+}
+
+.c-legend__item--Root {
+    display: none;
+}
+
+.c-help .shape  {
+    &.pink:after {
+        background-color: #ebb5c8;
+    }
+
+    &.shape {
+        &--diamond:after {
+            transform: rotate(45deg);
+        }
+
+        &--circle:after {
+            border-radius: 30px;
+        }
+
+        &--rect:after {
+            width: 25px;
+        }
+    }
+
+
+    &:after {
+        width: 15px;
+        height: 15px;
+        margin-left: 3px;
+        content: ' ';
+        display: inline-block;
+    }
+
+}
+

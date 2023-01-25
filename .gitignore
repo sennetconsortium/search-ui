@@ -47,3 +47,7 @@ yarn-error.log*
 sennet.code-workspace
 src/package.local.json
 src/.prettierrc
+
+#css
+src/public/css/main.css
+src/public/css/main.css.map
