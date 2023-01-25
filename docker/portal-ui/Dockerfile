@@ -47,6 +47,7 @@ WORKDIR /usr/src/app/src
 
 # Install npm dependencies
 RUN npm install && \
+    npm run sass && \
     npm run build
 
 # Resolves a permission error when trying to create .next cache directories

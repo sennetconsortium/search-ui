@@ -1,18 +1,4 @@
-// TODO: these various styles need to break away into their respective filename
-
-.no_sidebar .sui-layout-sidebar {
-  width: 0 !important;
-  padding: 0 !important;
-}
-
-.no_sidebar .sui-layout-main {
-  width: 100% !important;
-}
-
-.custom-sticky {
-  top: 74px !important;
-  z-index: 1019 !important;
-}
+// CSS for search page results or full site
 
 @media (max-width: 800px) {
   .sui-layout-sidebar {
@@ -34,65 +20,6 @@
     border: 1px solid #3a56e4;
     border-radius: 4px;
   }
-}
-
-#sidebar-nav {
-  width: 160px;
-}
-
-#sidebar .nav-link {
-  font-weight: 500;
-  font-size: 18px;
-  color: var(--bs-dark);
-}
-
-.accordion-button:not(.collapsed) {
-  color: black;
-  background-color: white;
-  box-shadow: none;
-}
-
-.accordion-button:focus, .accordion-button:active {
-  outline: none !important;
-  box-shadow: none;
-}
-
-.accordion-button {
-  font-size: 18px;
-  font-weight: 500;
-  color: #333333;
-  text-decoration: none;
-}
-
-.accordion-body {
-  padding-bottom: 0px;
-  padding-top: 0px;
-}
-
-.sui-result {
-  list-style: none;
-  padding: 0px 0;
-  text-decoration: none;
-  display: block;
-  border: 1px solid #f0f0f0;
-  background: #fff;
-  border-radius: 4px;
-  box-shadow: 0 0 1px 0 rgba(0, 0, 0, .1);
-  overflow-wrap: break-word;
-  overflow: hidden;
-}
-
-.sui-result + .sui-result {
-  margin-top: 15px;
-}
-
-.sui-layout-header {
-  padding: 0;
-  border-bottom: 0;
-}
-
-.sui-multi-checkbox-facet__input-text {
-  text-transform: capitalize;
 }
 
 a:focus, button:focus, input:focus, select:focus, textarea:focus,
@@ -121,21 +48,6 @@ html {
   color: red;
 }
 
-.entity_subtitle {
-  font-size: 16px;
-  text-decoration: none;
-}
-
-.link_with_icon {
-  display: inline-flex !important;
-  align-items: center;
-  text-decoration: none;
-}
-
-.card-body {
-  padding: 0 24px !important;
-}
-
 .text-center {
   text-align: center;
 }
@@ -146,11 +58,6 @@ html {
 
 p {
   white-space: pre-line;
-}
-
-/*Required CSS to make the icons in the RUI tool inside the carousel space out properly*/
-.carousel-item {
-  margin-right: 0 !important;
 }
 
 .dropdown-menu {
@@ -165,10 +72,6 @@ p {
 
 .results-header {
   white-space: nowrap;
-}
-
-.hipaa-alert {
-  font-size: 18px !important;
 }
 
 .link {
@@ -204,10 +107,6 @@ p {
   footer {
     position: inherit !important;
   }
-}
-
-#unityContainer {
-  padding-bottom: 60px
 }
 
 .table-responsive td:hover {
