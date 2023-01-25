@@ -77,23 +77,57 @@ function Provenance({ nodeData }) {
 
     const graphOptions = {
         idNavigate: {
-            props: ["sennet:uuid", "sennet:protocol_url"],
-            url: "/{subType}?uuid={id}",
+            props: ['sennet:sennet_id', 'sennet:protocol_url'],
+            url: '/{subType}?uuid={id}',
             exclude: {
-                'Activity': ["sennet:uuid"]
+                'Activity': ['sennet:sennet_id']
             }
         },
         colorMap: {
-            "Dataset": "#8ecb93",
-            "Activity": "#f16766",
-            "Sample": "#ebb5c8",
-            "Source": "#ffc255"
+            Dataset: '#8ecb93',
+            Activity: '#f16766',
+            Sample:  '#ebb5c8',
+            Source: '#ffc255'
+        },
+        imageMap: {
+            "Sample|sennet:sample_category|organ": null,
+            "Sample|sennet:sample_category|block": null,
+            "Sample|sennet:sample_category|section": null,
+        },
+        imageMapActions: {
+            "Sample|sennet:sample_category|organ": {
+                fn: 'append',
+                color: "#ebb5c8",
+                transparentMain: true,
+                transparentGlow: true,
+                type: 'g',
+                data: [
+                    {
+                        draw: 'm14.98,29.55C10.15,24.72,5.29,19.86.44,15.01,5.29,10.16,10.15,5.3,14.99.46c4.84,4.84,9.7,9.7,14.54,14.54-4.83,4.83-9.7,9.7-14.55,14.55Z'
+                    }
+                ]
+            },
+            "Sample|sennet:sample_category|block": {
+                color: "#ebb5c8",
+                transparentMain: true,
+                transparentGlow: true,
+                type: 'rect'
+            },
+            "Sample|sennet:sample_category|section": {
+                color: "#ebb5c8",
+                transparentMain: true,
+                transparentGlow: true,
+                type: 'rect',
+                height: 25,
+                width: 50
+            }
         },
         visitedNodes: new Set(),
         initParentKey: DataConverterNeo4J.KEY_P_ENTITY,
         displayEdgeLabels: false,
         minHeight: 100,
         noStyles: true,
+        propertyPrefixClear: 'sennet:',
         selectorId: 'neo4j--page',
         callbacks: {
             onCenterX,
@@ -112,7 +146,7 @@ function Provenance({ nodeData }) {
             type: 'prov:type',
             subType: 'sennet:entity_type'
         },
-        props: ['sennet:uuid', 'sennet:sennet_id'],
+        props: ['sennet:sennet_id'],
         typeProps: {
             Source: ['sennet:source_type'],
             Sample: ['sennet:sample_category'],
