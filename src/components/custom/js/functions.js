@@ -42,7 +42,6 @@ export async function fetchProtocols(protocolUrl) {
         return null
     }
     const protocol = await response.json();
-    log.info(protocol.payload.description)
     return protocol.payload;
 }
 

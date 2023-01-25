@@ -284,16 +284,16 @@ export default function EditDataset() {
                                                      onChange={onChange} text='Lab Name or ID'/>
 
                                     {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='Description' type='textarea' controlId='description'
+                                    <EntityFormGroup label='DOI Abstract' type='textarea' controlId='description'
                                                      value={data.description}
                                                      onChange={onChange}
                                                      text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.'/>
 
                                     {/*/!*Additional Information*!/*/}
-                                    <EntityFormGroup label='Additional Information' type='textarea'
+                                    <EntityFormGroup label='Lab Notes' type='textarea'
                                                      controlId='dataset_info' value={data.dataset_info}
                                                      onChange={onChange}
-                                                     text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.'/>
+                                                     text='Free text field to enter a description of the dataset.'/>
 
 
                                     {/*/!*Human Gene Sequences*!/*/}
