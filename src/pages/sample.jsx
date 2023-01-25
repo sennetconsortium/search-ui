@@ -51,12 +51,7 @@ function ViewSample() {
             } else {
                 // set state with the result
                 setData(data);
-                if (data.hasOwnProperty("ancestors")) {
-                    await fetchLineage(data.ancestors, setAncestors);
-                }
-                if (data.hasOwnProperty("descendants")) {
-                    await fetchLineage(data.descendants, setDescendants);
-                }
+
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
@@ -73,20 +68,6 @@ function ViewSample() {
             setData(null);
         }
     }, [router]);
-
-    const fetchLineage = async (ancestors, fetch) => {
-        let new_ancestors = []
-        for (const ancestor of ancestors) {
-            let complete_ancestor = await fetchEntity(ancestor.uuid);
-            if (complete_ancestor.hasOwnProperty("error")) {
-                setError(true)
-                setErrorMessage(complete_ancestor["error"])
-            } else {
-                new_ancestors.push(complete_ancestor)
-            }
-        }
-        fetch(new_ancestors)
-    }
 
     if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (
@@ -109,33 +90,49 @@ function ViewSample() {
                                 <div className="col-auto p-0">
                                     <div id="sidebar"
                                          className="collapse collapse-horizontal border-end sticky-top custom-sticky">
-                                        <div id="sidebar-nav"
-                                             className="list-group border-0 rounded-0 text-sm-start vh-100">
-                                            <a href="#Summary"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Summary</span> </a>
-
-                                            {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
-                                                <a href="#Derived-Datasets"
-                                                   className="list-group-item border-end-0 d-inline-block text-truncate"
-                                                   data-bs-parent="#sidebar"><span>Derived</span></a>
+                                        <ul id="sidebar-nav"
+                                            className="nav list-group border-0 rounded-0 text-sm-start vh-100">
+                                            <li className="nav-item">
+                                                <a href="#Summary"
+                                                   className="nav-link "
+                                                   data-bs-parent="#sidebar">Summary</a>
+                                            </li>
+                                            {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
+                                                <li className="nav-item">
+                                                    <a href="#Metadata"
+                                                       className="nav-link "
+                                                       data-bs-parent="#sidebar">Metadata</a>
+                                                </li>
                                             }
-                                            <a href="#Provenance"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Provenance</span></a>
-                                            <a href="#Protocols"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Protocols</span></a>
-                                            <a href="#Attribution"
-                                               className="list-group-item border-end-0 d-inline-block text-truncate"
-                                               data-bs-parent="#sidebar"><span>Attribution</span></a>
-                                        </div>
+                                            {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
+                                                <li className="nav-item">
+                                                    <a href="#Derived-Datasets"
+                                                       className="nav-link "
+                                                       data-bs-parent="#sidebar">Derived</a>
+                                                </li>
+                                            }
+                                            <li className="nav-item">
+                                                <a href="#Provenance"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Provenance</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a href="#Protocols"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Protocols</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a href="#Attribution"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Attribution</a>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
 
                                 <main className="col m-3">
                                     <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                       className="btn btn-outline-primary rounded-0 link_with_icon"><List/>Sections</a>
+                                       className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/>Sections</a>
 
                                     <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]}
                                                       hasWritePrivilege={hasWritePrivilege} idKey='sample_category'/>
@@ -157,8 +154,8 @@ function ViewSample() {
 
 
                                             {/*Provenance*/}
-                                            {data && ancestors && descendants &&
-                                                <Provenance nodeData={data} ancestors={ancestors} descendants={descendants}/>
+                                            {data &&
+                                                <Provenance nodeData={data}/>
                                             }
 
                                             {/*Protocols*/}

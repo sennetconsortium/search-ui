@@ -1,7 +1,7 @@
 import React from 'react';
 import {fetchProtocols, getClickableLink} from "../../js/functions";
 import {Table} from 'react-bootstrap';
-import {BoxArrowUpRight, EnvelopeFill} from "react-bootstrap-icons";
+import {BoxArrowUpRight} from "react-bootstrap-icons";
 
 export default class Protocols extends React.Component {
     constructor(props) {
@@ -32,49 +32,51 @@ export default class Protocols extends React.Component {
                     <div id="protocol-collapse" className="accordion-collapse collapse show">
                         <div className="accordion-body">
                             <Table borderless>
-                        {this.state.protocol_data != null &&
-                            <thead>
-                            <tr>
-                                <th>{this.state.protocol_data.title}</th>
-                            </tr>
-                            </thead>
-                        }
+                                {this.state.protocol_data != null &&
+                                    <thead>
+                                    <tr>
+                                        <th>{this.state.protocol_data.title}</th>
+                                    </tr>
+                                    </thead>
+                                }
 
-                        <tbody>
-                        <tr>
-                            <td>
-                                <span className={"title"}>DOI</span><br></br>
-                                <a href={getClickableLink(this.props.protocol_url)}
-                                   className="link_with_icon" target="_blank"><span
-                                    className="me-1">{this.props.protocol_url}</span> <BoxArrowUpRight/></a>
-                            </td>
-                        </tr>
-
-                        {this.state.protocol_data != null &&
-                            <>
+                                <tbody>
                                 <tr>
-                                    <span className={"title"}>Authors</span><br></br>
-                                    <span>
+                                    <td>
+                                        <span className={"title"}>DOI</span><br></br>
+                                        <a href={getClickableLink(this.props.protocol_url)}
+                                           className="link_with_icon" target="_blank"><span
+                                            className="me-1">{this.props.protocol_url}</span> <BoxArrowUpRight/></a>
+                                    </td>
+                                </tr>
+
+                                {this.state.protocol_data != null &&
+                                    <>
+                                        <tr>
+                                            <td>
+                                                <span className={"title"}>Authors</span><br></br>
+                                                <span>
                                         {this.state.protocol_data.authors.map((author, index, array) => {
                                             return (
-                                                <>
+                                                <span key={index}>
                                                     {author.name}
                                                     {index !== array.length - 1 ? <>, </> : <></>}
-                                                </>
+                                                </span>
                                             );
                                         })}
                                     </span>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <span className={"title"}>Abstract</span><br></br>
-                                        <span>{JSON.parse(this.state.protocol_data.description).blocks[0].text}</span>
-                                    </td>
-                                </tr>
-                            </>
-                        }
-                        </tbody>
-                    </Table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span className={"title"}>Abstract</span><br></br>
+                                                <span>{JSON.parse(this.state.protocol_data.description).blocks[0].text}</span>
+                                            </td>
+                                        </tr>
+                                    </>
+                                }
+                                </tbody>
+                            </Table>
                         </div>
                     </div>
                 </div>
