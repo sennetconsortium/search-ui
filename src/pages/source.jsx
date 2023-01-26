@@ -4,7 +4,7 @@ import Description from "../components/custom/entities/sample/Description";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
+import {getRequestHeaders} from "../components/custom/js/functions";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
@@ -83,44 +83,46 @@ function ViewSource() {
                         <div className="container-fluid">
                             <div className="row flex-nowrap">
                                 <div className="col-auto p-0">
-                                    <ul id="sidebar-nav"
-                                        className="nav list-group border-0 rounded-0 text-sm-start vh-100">
-                                        <li className="nav-item">
-                                            <a href="#Summary"
-                                               className="nav-link "
-                                               data-bs-parent="#sidebar">Summary</a>
-                                        </li>
-                                        {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
+                                    <div id="sidebar"
+                                         className="collapse collapse-horizontal border-end sticky-top custom-sticky">
+                                        <ul id="sidebar-nav"
+                                            className="nav list-group border-0 rounded-0 text-sm-start vh-100">
                                             <li className="nav-item">
-                                                <a href="#Metadta"
+                                                <a href="#Summary"
                                                    className="nav-link "
-                                                   data-bs-parent="#sidebar">Metadata</a>
+                                                   data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                        }
-                                        {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
+                                            {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
+                                                <li className="nav-item">
+                                                    <a href="#Metadta"
+                                                       className="nav-link "
+                                                       data-bs-parent="#sidebar">Metadata</a>
+                                                </li>
+                                            }
+                                            {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
+                                                <li className="nav-item">
+                                                    <a href="#Derived-Datasets"
+                                                       className="nav-link "
+                                                       data-bs-parent="#sidebar">Derived</a>
+                                                </li>
+                                            }
                                             <li className="nav-item">
-                                                <a href="#Derived-Datasets"
-                                                   className="nav-link "
-                                                   data-bs-parent="#sidebar">Derived</a>
+                                                <a href="#Provenance"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Provenance</a>
                                             </li>
-                                        }
-                                        <li className="nav-item">
-                                            <a href="#Provenance"
-                                               className="nav-link"
-                                               data-bs-parent="#sidebar">Provenance</a>
-                                        </li>
-                                        <li className="nav-item">
-                                            <a href="#Protocols"
-                                               className="nav-link"
-                                               data-bs-parent="#sidebar">Protocols</a>
-                                        </li>
-                                        <li className="nav-item">
-                                            <a href="#Attribution"
-                                               className="nav-link"
-                                               data-bs-parent="#sidebar">Attribution</a>
-                                        </li>
-                                    </ul>
-
+                                            <li className="nav-item">
+                                                <a href="#Protocols"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Protocols</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a href="#Attribution"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Attribution</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
 
                                 <main className="col m-3">
