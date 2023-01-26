@@ -279,7 +279,8 @@ function Provenance({nodeData}) {
     const otherLegend = {
         Expand: {
             icon: 'fa-expand',
-            callback: handleModal
+            callback: handleModal,
+            title: 'Show graph in full view'
         }
     }
 

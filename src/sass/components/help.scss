@@ -1,4 +1,21 @@
 .c-help {
+
+  &__title {
+    font-size: calc(1.275rem + 0.3vw) !important;
+  }
+
+  .swal2-close {
+    font-size: 1.5em;
+    position: relative;
+    top: 10px;
+    height: 2em;
+    margin-right: 0.8em;
+    &:focus {
+      @include mx-focus;
+      box-shadow: none;
+    }
+  }
+
   .shape  {
     &.pink:after {
       background-color: #ebb5c8;
@@ -29,4 +46,5 @@
   &__btn.swal2-styled {
     padding: 0.3em;
   }
+
 }

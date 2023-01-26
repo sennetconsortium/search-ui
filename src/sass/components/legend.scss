@@ -1,7 +1,7 @@
 .c-legend {
   &__item {
     &--Root {
-      display: none;
+      display: none !important;
     }
   }
 
@@ -18,7 +18,7 @@
   .c-legend--flex {
 
     .c-legend__item--Help {
-      margin-left: 0 !important;
+      margin-left: 5px !important;
     }
 
     ul {
