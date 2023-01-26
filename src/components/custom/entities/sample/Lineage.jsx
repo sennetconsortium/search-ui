@@ -5,7 +5,7 @@ import {getOrganTypeFullName} from "../../js/functions";
 export default class Lineage extends React.Component {
     render() {
         return (
-            <div className="table-responsive">
+            <div className="table-responsive" style={{maxHeight: '250px'}}>
                 <Table borderless>
                     <thead>
                     <tr>
