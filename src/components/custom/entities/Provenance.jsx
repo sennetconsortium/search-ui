@@ -276,6 +276,13 @@ function Provenance({nodeData}) {
         Edge: '#a5abb6',
     }
 
+    const otherLegend = {
+        Expand: {
+            icon: 'fa-expand',
+            callback: handleModal
+        }
+    }
+
     return (
         <div className="accordion accordion-flush sui-result" id="Provenance">
             <div className="accordion-item ">
@@ -287,10 +294,6 @@ function Provenance({nodeData}) {
                     </button>
                 </div>
                 <div id="provenance-collapse" className="accordion-collapse collapse show">
-                    <button className='btn pull-right btn--fullView' onClick={handleModal} arial-label='Full view'
-                            title='Full view'>
-                        <ArrowsAngleExpand/>
-                    </button>
                     <div className="accordion-body">
                         <Tabs
                             defaultActiveKey="graph"
@@ -299,7 +302,7 @@ function Provenance({nodeData}) {
                         >
                             <Tab eventKey="graph" title="Graph">
                                 {!loading && <ProvenanceUI options={options} data={treeData}/>}
-                                {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId}/>}
+                                {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId} otherLegend={otherLegend} />}
                                 {loading && <Spinner/>}
                                 <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
                                     {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 105 }} data={treeData} />}

@@ -1,0 +1,70 @@
+// Search UI
+.sui-result {
+  list-style: none;
+  padding: 0px 0;
+  text-decoration: none;
+  display: block;
+  border: 1px solid #f0f0f0;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 0 1px 0 rgba(0, 0, 0, .1);
+  overflow-wrap: break-word;
+  overflow: hidden;
+}
+
+.sui-result + .sui-result {
+  margin-top: 15px;
+}
+
+.sui-layout-header {
+  padding: 0;
+  border-bottom: 0;
+}
+
+.sui-multi-checkbox-facet__input-text {
+  text-transform: capitalize;
+}
+
+@media (max-width: 800px) {
+  .sui-layout-sidebar {
+    top: 74px !important;
+  }
+
+  .sui-layout-sidebar-toggle {
+    display: block !important;
+    width: 100%;
+    margin-top: 20px;
+    padding: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-size: 14px;
+    font-weight: 700;
+    color: $col-royal-blue;
+    background-color: white;
+    border: 1px solid $col-royal-blue;
+    border-radius: 4px;
+  }
+}
+
+.search-box-header {
+  padding: 32px 24px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.no_sidebar .sui-layout-sidebar {
+  width: 0 !important;
+  padding: 0 !important;
+}
+
+.no_sidebar .sui-layout-main {
+  width: 100% !important;
+}
+
+// Facets
+.clear-filter-div {
+  padding-bottom: 32px;
+}
+
+.clear-filter-button {
+  width: 100%;
+}

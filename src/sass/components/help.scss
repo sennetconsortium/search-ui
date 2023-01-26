@@ -1,0 +1,32 @@
+.c-help {
+  .shape  {
+    &.pink:after {
+      background-color: #ebb5c8;
+    }
+
+    &.shape {
+      &--diamond:after {
+        transform: rotate(45deg);
+      }
+
+      &--circle:after {
+        border-radius: 30px;
+      }
+
+      &--rect:after {
+        width: 25px;
+      }
+    }
+    &:after {
+      width: 15px;
+      height: 15px;
+      margin-left: 3px;
+      content: ' ';
+      display: inline-block;
+    }
+  }
+
+  &__btn.swal2-styled {
+    padding: 0.3em;
+  }
+}

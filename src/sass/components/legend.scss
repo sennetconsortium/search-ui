@@ -1,0 +1,37 @@
+.c-legend {
+  &__item {
+    &--Root {
+      display: none;
+    }
+  }
+
+  ul {
+    padding-left: 0;
+  }
+
+  &--btns li {
+    padding-bottom: 2px;
+  }
+}
+
+@media screen and (max-width: 930px) {
+  .c-legend--flex {
+
+    .c-legend__item--Help {
+      margin-left: 0 !important;
+    }
+
+    ul {
+      display: inherit !important;
+      height: inherit !important;
+    }
+
+    li {
+      display: inline-block;
+      margin: 10px 5px;
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+}
