@@ -42,7 +42,7 @@ function EntityViewHeader({entity, data, hasWritePrivilege, idKey}) {
                     {data[idKey] &&
                         <>
                             <span className="mx-2">|</span>
-                            {data[idKey]}
+                            {displayBodyHeader(data[idKey])}
                         </>
                     }
                 </div>
