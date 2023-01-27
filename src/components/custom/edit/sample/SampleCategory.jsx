@@ -68,7 +68,8 @@ function SampleCategory({
                         overlay={
                             <Popover>
                                 <Popover.Body>
-                                    The category this sample belongs to.
+                                    The category this sample belongs to. <br />
+                                    <small className='popover-note text-muted mt-2'>Note: CCF Registration User Interface (CCF-RUI) tool becomes available for the <code>Block</code> sample category where the <em>Ancestor</em> source is of type <code>Human</code> or <code>Human organoid</code>.</small>
                                 </Popover.Body>
                             </Popover>
                         }

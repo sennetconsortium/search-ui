@@ -21,14 +21,30 @@ export function getAuth() {
 }
 
 export const nonSupportedRuiOrgans = ['AO', 'BD', 'BS', 'MU', 'OT']
+export const supportedRuiSources = ['Human', 'Human organoid']
 
-export function isOrganRuiSupported(organs) {
-    if (organs.length > 0) {
-        const supported_organ = (organ) => !nonSupportedRuiOrgans.includes(organ);
-
-        return organs.some(supported_organ)
+export function valuesRuiSupported(values, dict) {
+    try {
+        if (values.length > 0) {
+            const supported = (value) => dict.includes(value);
+            return values.some(supported)
+        }
+    } catch (e) {
+        console.error(e)
     }
     return false
+}
+
+export function isOrganRuiSupported(organs) {
+    return !valuesRuiSupported(organs, nonSupportedRuiOrgans)
+}
+
+export function isSampleRuiSupported(samples) {
+    return valuesRuiSupported(samples, supportedRuiSources)
+}
+
+export function isRuiSupported(organs, sources) {
+    return isOrganRuiSupported(organs) && isSampleRuiSupported(sources)
 }
 
 export function getUserName() {

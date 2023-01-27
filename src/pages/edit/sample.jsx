@@ -29,7 +29,7 @@ import {ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
-import {getEntityEndPoint, getUserName, isOrganRuiSupported} from "../../config/config";
+import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/config";
 
 
 function EditSample() {
@@ -54,6 +54,7 @@ function EditSample() {
     const [showRui, setShowRui] = useState(false)
     const [showRuiButton, setShowRuiButton] = useState(false)
     const [ancestorOrgan, setAncestorOrgan] = useState([])
+    const [ancestorSource, setAncestorSource] = useState([])
     const [sampleCategories, setSampleCategories] = useState(null)
     const [organ_group_hide, set_organ_group_hide] = useState('none')
     const [organ_other_hide, set_organ_other_hide] = useState('none')
@@ -134,6 +135,7 @@ function EditSample() {
 
                 let ancestor_organ = await get_ancestor_organs(data.uuid)
                 setAncestorOrgan(ancestor_organ)
+                setAncestorSource([getSourceType(data.source)])
 
                 if (data['rui_location'] !== undefined) {
                     setRuiLocation(data['rui_location'])
@@ -211,6 +213,14 @@ function EditSample() {
         }
     }
 
+    const getSourceType = (root) => {
+        if (root.source) {
+            return getSourceType(root.source)
+        } else {
+            return root.source_type
+        }
+    }
+
     const fetchSource = async (sourceId) => {
         let source = await fetchEntity(sourceId);
         if (source.hasOwnProperty("error")) {
@@ -226,6 +236,7 @@ function EditSample() {
                 ancestor_organ.push(source['organ'])
             }
             setAncestorOrgan(ancestor_organ)
+            setAncestorSource([getSourceType(source)])
         }
     }
 
@@ -235,7 +246,7 @@ function EditSample() {
         // This Sample must a Sample Category: "Block"
         log.debug(ancestorOrgan)
         if (ancestorOrgan.length > 0) {
-            if (values !== null && values['sample_category'] === 'block' && isOrganRuiSupported(ancestorOrgan)) {
+            if (values !== null && values['sample_category'] === 'block' && isRuiSupported(ancestorOrgan, ancestorSource)) {
                 if (!showRuiButton) {
                     setShowRuiButton(true)
                 }
