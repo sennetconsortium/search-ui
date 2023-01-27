@@ -1,6 +1,8 @@
 import React, {useContext} from 'react';
 import styles from './style.module.css'
 import {Table} from 'react-bootstrap';
+import log from 'loglevel';
+
 import {
     checkFilterEntityType,
     checkMultipleFilterEntityType,
@@ -147,7 +149,7 @@ const TableRowDetail = ({result, urlField, titleField}) => {
     // We will override `titleField` to pass the filters selected by the user to this
     var hotlink = "/" + result.entity_type.raw.toLowerCase() + "?uuid=" + result.uuid.raw
     let hasMultipleEntityTypes = checkMultipleFilterEntityType(titleField);
-    console.log(result)
+    log.debug(result)
     return (
         <>
             {titleField.length > 0 ? (<>

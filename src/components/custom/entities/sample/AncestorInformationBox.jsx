@@ -4,7 +4,7 @@ import {Table} from 'react-bootstrap';
 export default class AncestorInformationBox extends React.Component {
     render() {
         return (
-            <li className="sui-result" id="Ancestor">
+            <li className="sui-result mb-3" id="Ancestor">
                 <div className="sui-result__header">
                     <span className="sui-result__title">Ancestor</span>
                 </div>
