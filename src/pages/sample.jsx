@@ -89,9 +89,9 @@ function ViewSample() {
                             <div className="row flex-nowrap">
                                 <div className="col-auto p-0">
                                     <div id="sidebar"
-                                         className="collapse collapse-horizontal border-end sticky-top custom-sticky">
+                                         className="collapse collapse-horizontal sticky-top custom-sticky">
                                         <ul id="sidebar-nav"
-                                            className="nav list-group border-0 rounded-0 text-sm-start vh-100">
+                                            className="nav list-group rounded-0 text-sm-start">
                                             <li className="nav-item">
                                                 <a href="#Summary"
                                                    className="nav-link "
