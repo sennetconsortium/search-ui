@@ -1,10 +1,11 @@
 import {simple_query_builder} from "search-ui/lib/search-tools";
 import {getIndex, getSearchEndPoint} from "../../config/config";
+import log from "loglevel";
 
 // a mock service to return some data
 export default async function handler(req, res) {
     var error_messages = [{error: "Only support GET/POST"}, {error: "UUID Not found, please check for the correct id"}]
-    console.log("FIND API...")
+    log.debug("FIND API...")
 
     // only allow POST
     if (req.method === "GET" || req.method === "POST") {
@@ -35,7 +36,7 @@ export default async function handler(req, res) {
             await fetch(getSearchEndPoint() + getIndex() + "/search", requestOptions)
                 .then(response => response.json())
                 .then(result => {
-                    console.log('SEARCH API RESPONSE BODY', formatMessageForCloudwatch(result))
+                    log.debug('SEARCH API RESPONSE BODY', formatMessageForCloudwatch(result))
 
                     if (result.hasOwnProperty("error")) {
                         res.status(401).json(result)
