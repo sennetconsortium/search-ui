@@ -1,0 +1,46 @@
+// CSS for search page results or full site
+
+a:focus, button:focus, input:focus, select:focus, textarea:focus,
+[tabindex='0']:focus, [tabindex='1']:focus, a:active, button:active, input:active, select:active, textarea:active, [tabindex='0']:active, [tabindex='1']:active {
+  @include mx-focus;
+}
+
+html {
+  scroll-padding-top: 80px;
+}
+
+.required {
+  color: red;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.error-row {
+  height: 35em;
+}
+
+p {
+  white-space: pre-line;
+}
+
+.results-header {
+  white-space: nowrap;
+}
+
+.link {
+  cursor: pointer;
+  color: var(--bs-link-color);
+  text-decoration: underline;
+}
+
+.table-responsive td:hover {
+  cursor: pointer;
+}
+
+.title {
+  font-weight: bold;
+  color: #808080;
+}
+

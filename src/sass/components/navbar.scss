@@ -1,0 +1,25 @@
+@media screen and (max-width: 600px) {
+  .navbar .fs-3 {
+    font-size: 1.25rem !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .navbar .fs-3 {
+    font-size: 1.1rem !important;
+  }
+}
+
+@media screen and (max-height: 700px) {
+  .navbar + .container {
+    min-height: calc(100vh - 277px)
+  }
+
+  footer {
+    position: inherit !important;
+  }
+}
+
+.dropdown-menu {
+  text-transform: capitalize;
+}

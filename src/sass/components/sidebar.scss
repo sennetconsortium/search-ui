@@ -1,0 +1,14 @@
+.custom-sticky {
+  top: 74px !important;
+  z-index: 1019 !important;
+}
+
+#sidebar-nav {
+  width: 160px;
+}
+
+#sidebar .nav-link {
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--bs-dark);
+}
