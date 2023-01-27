@@ -17,15 +17,9 @@ class Ada extends Addon {
     }
 
     facets() {
-        const sui = {
-            title: '.sui-facet__title',
-            select: '.sui-select__control',
-            checkbox: '.sui-multi-checkbox-facet__checkbox',
-        }
+        this.onKeydownEnter('.sui-facet__title, .sui-select__control')
 
-        this.onKeydownEnter(`${sui.title},${sui.select}`)
-
-        this.onKeydownEnter( `${sui.checkbox}`, ((e) => {
+        this.onKeydownEnter( '.sui-multi-checkbox-facet__checkbox', ((e) => {
             this.currentTarget(e).parent().trigger('click')
             this.currentTarget(e).focus()
         }).bind(this))
