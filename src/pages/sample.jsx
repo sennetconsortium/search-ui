@@ -1,14 +1,10 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
-import 'bootstrap/dist/css/bootstrap.css';
-import {Layout} from "@elastic/react-search-ui-views";
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
-import AncestorInformationBox from "../components/custom/edit/sample/AncestorInformationBox";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {displayBodyHeader, fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
+import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -21,12 +17,14 @@ import Alert from "../components/custom/Alert";
 import Provenance from "../components/custom/entities/Provenance";
 import {ENTITIES} from "../config/constants";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
+import {List} from "react-bootstrap-icons";
 
 
 function ViewSample() {
     const router = useRouter()
     const [data, setData] = useState(null)
-    const [source, setSource] = useState(null)
+    const [ancestors, setAncestors] = useState(null)
+    const [descendants, setDescendants] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -53,9 +51,7 @@ function ViewSample() {
             } else {
                 // set state with the result
                 setData(data);
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    await fetchSource(data.immediate_ancestors[0].uuid);
-                }
+
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
@@ -73,16 +69,6 @@ function ViewSample() {
         }
     }, [router]);
 
-    const fetchSource = async (sourceId) => {
-        let source = await fetchEntity(sourceId);
-        if (source.hasOwnProperty("error")) {
-            setError(true)
-            setErrorMessage(source["error"])
-        } else {
-            setSource(source);
-        }
-    }
-
     if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
@@ -98,103 +84,99 @@ function ViewSample() {
                     <Alert message={errorMessage}/>
                 }
                 {data && !error &&
-                    <Layout
-                        sideContent={
-                            <div>
-                                <div className="sui-facet">
-                                    <div>
-                                        <div className="sui-facet__title">Sections</div>
-                                        <ul className="sui-single-option-facet">
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link"
-                                                href="#Summary">Summary</a>
+                    <>
+                        <div className="container-fluid">
+                            <div className="row flex-nowrap">
+                                <div className="col-auto p-0">
+                                    <div id="sidebar"
+                                         className="collapse collapse-horizontal border-end sticky-top custom-sticky">
+                                        <ul id="sidebar-nav"
+                                            className="nav list-group border-0 rounded-0 text-sm-start vh-100">
+                                            <li className="nav-item">
+                                                <a href="#Summary"
+                                                   className="nav-link "
+                                                   data-bs-parent="#sidebar">Summary</a>
                                             </li>
+                                            {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
+                                                <li className="nav-item">
+                                                    <a href="#Metadata"
+                                                       className="nav-link "
+                                                       data-bs-parent="#sidebar">Metadata</a>
+                                                </li>
+                                            }
                                             {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
-                                                <li className="sui-single-option-facet__item"><a
-                                                    className="sui-single-option-facet__link"
-                                                    href="#Derived-Datasets">Derived
-                                                    Datasets</a>
+                                                <li className="nav-item">
+                                                    <a href="#Derived-Datasets"
+                                                       className="nav-link "
+                                                       data-bs-parent="#sidebar">Derived</a>
                                                 </li>
                                             }
-                                            { <li className="sui-single-option-facet__item"><a
-                                            className="sui-single-option-facet__link" href="#Provenance">Provenance</a>
-                                        </li>}
-                                            {data.ancestors &&
-                                                <li className="sui-single-option-facet__item"><a
-                                                    className="sui-single-option-facet__link"
-                                                    href="#Ancestor">Ancestor</a>
-                                                </li>
-                                            }
-                                            {data.protocol_url &&
-                                                <li className="sui-single-option-facet__item"><a
-                                                    className="sui-single-option-facet__link"
-                                                    href="#Protocols">Protocols</a>
-                                                </li>
-                                            }
-                                            {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
-                                            {/*    <li className="sui-single-option-facet__item"><a*/}
-                                            {/*        className="sui-single-option-facet__link" href="#Metadata">Metadata</a>*/}
-                                            {/*    </li>*/}
-                                            {/*}*/}
-                                            <li className="sui-single-option-facet__item"><a
-                                                className="sui-single-option-facet__link"
-                                                href="#Attribution">Attribution</a>
+                                            <li className="nav-item">
+                                                <a href="#Provenance"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Provenance</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a href="#Protocols"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Protocols</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a href="#Attribution"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Attribution</a>
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
+
+                                <main className="col m-3">
+                                    <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
+                                       className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/>Sections</a>
+
+                                    <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]}
+                                                      hasWritePrivilege={hasWritePrivilege} idKey='sample_category'/>
+
+
+                                    <div className="row">
+                                        <div className="col-12">
+                                            {/*Description*/}
+                                            <Description primaryDateTitle="Creation Date"
+                                                         primaryDate={data.created_timestamp}
+                                                         secondaryDateTitle="Modification Date"
+                                                         secondaryDate={data.last_modified_timestamp}
+                                            />
+
+                                            {/*Derived Dataset*/}
+                                            {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
+                                                <DerivedDataset data={data}/>
+                                            }
+
+
+                                            {/*Provenance*/}
+                                            {data &&
+                                                <Provenance nodeData={data}/>
+                                            }
+
+                                            {/*Protocols*/}
+                                            {data.protocol_url &&
+                                                <Protocols protocol_url={data.protocol_url}/>
+                                            }
+
+                                            {/*Metadata*/}
+                                            {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
+                                            {/*    <Metadata metadataKey='source.' data={data.source.mapped_metadata}*/}
+                                            {/*              filename={data.sennet_id}/>*/}
+                                            {/*}*/}
+
+                                            {/*Attribution*/}
+                                            <Attribution data={data}/>
+                                        </div>
+                                    </div>
+                                </main>
                             </div>
-                        }
-
-                        bodyHeader={
-                            <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]} hasWritePrivilege={hasWritePrivilege} idKey='sample_category' />
-                        }
-
-                        bodyContent={
-                            <div>
-                                <ul className="sui-results-container">
-                                    {/*Description*/}
-                                    <Description primaryDateTitle="Creation Date" primaryDate={data.created_timestamp}
-                                                 secondaryDateTitle="Modification Date"
-                                                 secondaryDate={data.last_modified_timestamp}
-                                                 data={data}/>
-
-                                    {/*Derived Dataset*/}
-                                    {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
-                                        <DerivedDataset data={data}/>
-                                    }
-
-
-                                    {/*Provenance*/}
-                                    {data &&
-                                    <Provenance nodeData={data}/>
-                                    }
-
-                                    {/*Source Information Box*/}
-                                    {source &&
-                                        <AncestorInformationBox ancestor={source}/>
-                                    }
-
-                                    {/*Protocols*/}
-                                    {data.protocol_url &&
-                                        <Protocols protocol_url={data.protocol_url}/>
-                                    }
-
-                                    {/*Metadata*/}
-                                    {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
-                                    {/*    <Metadata metadataKey='source.' data={data.source.mapped_metadata}*/}
-                                    {/*              filename={data.sennet_id}/>*/}
-                                    {/*}*/}
-
-                                    {/*Attribution*/}
-                                    <Attribution data={data}/>
-
-                                </ul>
-                            </div>
-                        }
-
-                    />
-
+                        </div>
+                    </>
                 }
                 <AppFooter/>
             </>

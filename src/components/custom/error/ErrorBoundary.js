@@ -1,6 +1,5 @@
 import log from "loglevel";
 import React from "react";
-import 'bootstrap/dist/css/bootstrap.css';
 
 class ErrorBoundary extends React.Component {
     constructor(props) {

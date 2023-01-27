@@ -1,12 +1,10 @@
 import React, {useEffect, useState, useContext} from "react";
 import {useRouter} from 'next/router';
-import 'bootstrap/dist/css/bootstrap.css';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import AncestorId from "../../components/custom/edit/sample/AncestorId";
 import SampleCategory from "../../components/custom/edit/sample/SampleCategory";
-import AncestorInformationBox from "../../components/custom/edit/sample/AncestorInformationBox";
+import AncestorInformationBox from "../../components/custom/entities/sample/AncestorInformationBox";
 import log from "loglevel";
 import {
     cleanJson,
@@ -394,10 +392,10 @@ function EditSample() {
 
 
                                     {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='Description' type='textarea' controlId='description'
+                                    <EntityFormGroup label='Lab Notes' type='textarea' controlId='description'
                                                      value={data.description}
                                                      onChange={onChange}
-                                                     text='A free text description of the specimen.'/>
+                                                     text='Free text field to enter a description of the specimen'/>
 
 
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}

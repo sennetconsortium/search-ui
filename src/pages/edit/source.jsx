@@ -1,9 +1,7 @@
 import React, {useEffect, useState, useContext} from "react";
 import {useRouter} from 'next/router';
-import 'bootstrap/dist/css/bootstrap.css';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import log from "loglevel";
 import {cleanJson, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
@@ -164,7 +162,7 @@ function EditSource() {
                                         onChange={onChange} text='The protocol used when choosing and acquiring the source. This can be supplied as a DOI from https://www.protocols.io/.' />
 
                                     {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='Description' type='textarea' controlId='description' value={data.description} 
+                                    <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
                                         onChange={onChange} text='Free text field to enter a description of the source.' />
 
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
