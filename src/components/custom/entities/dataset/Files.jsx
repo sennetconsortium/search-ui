@@ -20,7 +20,7 @@ export default class Files extends React.Component {
     render() {
         if (this.state.file_url != null) {
             return (
-                <li className="sui-result" id="Files">
+                <li className="sui-result sui-result--padded" id="Files">
                     <div className="sui-result__header">
                         <span className="sui-result__title">Files</span>
                     </div>

@@ -1,0 +1,48 @@
+@import 'help';
+@import 'legend';
+
+.c-provenance {
+    position: relative;
+    text-align: center;
+    max-height: 700px;
+    height: inherit;
+    .c-provenance__info {
+        text-align: left;
+        a:hover {
+            color: var(--bs-nav-link-hover-color);
+        }
+    }
+
+    > svg {
+        opacity: 0;
+        transition: opacity ease-in 1s;
+    }
+}
+
+#Provenance {
+    .c-provenance__info .cell.link a:hover {
+        color: var(--bs-link-hover-color);
+    }
+
+    .c-legend {
+        &__item {
+            &--Expand {
+                .c-legend__label__text {
+                    margin-left: 0;
+                }
+                &:hover {
+                    .fa {
+                        transform: scale(1.2);
+                    }
+                }
+                .fa {
+                    transition: all .2s ease;
+                }
+            }
+        }
+
+        &--flex ul {
+            max-width: 850px;
+        }
+    }
+}
