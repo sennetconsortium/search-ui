@@ -9,8 +9,28 @@ class Ada extends Addon {
     constructor(el, args) {
         super(el, args)
         this._el = this.el.data(`js-${this.app}`)
-        this.events()
+        if (this[this._el]) {
+            this[this._el]()
+        } else {
+            this.events()
+        }
     }
+
+    facets() {
+        const sui = {
+            title: '.sui-facet__title',
+            select: '.sui-select__control',
+            checkbox: '.sui-multi-checkbox-facet__checkbox',
+        }
+
+        this.onKeydownEnter(`${sui.title},${sui.select}`)
+
+        this.onKeydownEnter( `${sui.checkbox}`, ((e) => {
+            this.currentTarget(e).parent().trigger('click')
+            this.currentTarget(e).focus()
+        }).bind(this))
+    }
+
 
     events() {
 

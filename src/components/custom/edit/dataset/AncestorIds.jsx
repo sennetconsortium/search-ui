@@ -141,7 +141,7 @@ export default class AncestorIds extends React.Component {
                                                 </div>
                                             }
                                             sideContent={
-                                                <div data-js-facets>
+                                                <div data-js-ada='facets'>
                                                     <CustomClearSearchBox/>
                                                     <SelectedFilters/>
                                                     {wasSearched && (
