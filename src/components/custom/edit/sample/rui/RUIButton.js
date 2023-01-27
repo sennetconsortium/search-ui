@@ -18,6 +18,7 @@ const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
             {/*  RUI Tissue Block Registration  */}
             {
                 (showRegisterLocationButton || ruiLocation) &&
+                <>
                 <Form.Label column sm="2">Sample location<span>{' '}</span>
                     <OverlayTrigger
                         placement="top"
@@ -38,7 +39,12 @@ const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
                         </>
                     }
 
+
                 </Form.Label>
+                <div className="mb-2 text-muted">
+                CCF Registration User Interface (CCF-RUI) tool is only available for <code>Human</code> and <code>Human organoid</code> <em>Ancestor</em> source types and sample category <code>Block</code>.
+                </div>
+                </>
             }
             <div>
                 {
