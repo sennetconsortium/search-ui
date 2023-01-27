@@ -1,70 +1,4 @@
 // Sections/Sidebar
-.custom-sticky {
-  top: 74px !important;
-  z-index: 1019 !important;
-}
-
-#sidebar-nav {
-  width: 160px;
-}
-
-#sidebar .nav-link {
-  font-weight: 500;
-  font-size: 18px;
-  color: var(--bs-dark);
-}
-
-// Collapsible sections
-.accordion-button:not(.collapsed) {
-  color: black;
-  background-color: white;
-  box-shadow: none;
-}
-
-.accordion-button:focus, .accordion-button:active {
-  outline: none !important;
-  box-shadow: none;
-}
-
-.accordion-button {
-  font-size: 18px;
-  font-weight: 500;
-  color: #333333;
-  text-decoration: none;
-}
-
-.accordion-body {
-  padding-bottom: 0px;
-  padding-top: 0px;
-}
-
-// Sections
-.sui-result {
-  list-style: none;
-  padding: 0px 0;
-  text-decoration: none;
-  display: block;
-  border: 1px solid #f0f0f0;
-  background: #fff;
-  border-radius: 4px;
-  box-shadow: 0 0 1px 0 rgba(0, 0, 0, .1);
-  overflow-wrap: break-word;
-  overflow: hidden;
-}
-
-.sui-result + .sui-result {
-  margin-top: 15px;
-}
-
-.sui-layout-header {
-  padding: 0;
-  border-bottom: 0;
-}
-
-.sui-multi-checkbox-facet__input-text {
-  text-transform: capitalize;
-}
-
 .entity_subtitle {
   font-size: 16px;
   text-decoration: none;
@@ -74,8 +8,4 @@
   display: inline-flex !important;
   align-items: center;
   text-decoration: none;
-}
-
-.card-body {
-  padding: 0 24px !important;
 }
