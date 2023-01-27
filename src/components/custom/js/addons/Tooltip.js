@@ -15,7 +15,6 @@ class Tooltip extends Addon {
             this.e = args.e
             this.show()
         }
-
     }
 
     handleToolTip(e) {
@@ -44,7 +43,7 @@ class Tooltip extends Addon {
 
     getPosition() {
         const rect = this.e.currentTarget.getBoundingClientRect()
-        const x = this.e.clientX //- rect.left
+        const x = this.e.clientX - rect.left / 2
         const y = this.e.clientY + (this.ops.diffY || 0)
         return  {x, y};
     }
