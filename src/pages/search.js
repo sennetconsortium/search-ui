@@ -82,7 +82,7 @@ function Search() {
                                                 </div>
                                             }
                                             sideContent={
-                                                <div data-js-facets>
+                                                <div data-js-ada='facets'>
                                                     <CustomClearSearchBox/>
                                                     <SelectedFilters/>
                                                     {wasSearched && (

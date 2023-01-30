@@ -16,7 +16,7 @@ const AppFooter = ({isFixedBottom}) => {
                     <li className="nav-item">
                         <a className="navbar-brand" href="https://sennetconsortium.org/">
                             <Image
-                                class="d-inline-block align-text-top"
+                                className="d-inline-block align-text-top"
                                 src={logo}
                                 width="35"
                                 height="35"
@@ -37,7 +37,7 @@ const AppFooter = ({isFixedBottom}) => {
                                                            className={'nav-link px-2 text-muted'}>NIH Common Fund</a>
                     <a className="navbar-brand" href="https://commonfund.nih.gov/senescence">
                         <Image
-                            class="d-inline-block align-text-top"
+                            className="d-inline-block align-text-top"
                             src={nih}
                             width="100"
                             height="50"
