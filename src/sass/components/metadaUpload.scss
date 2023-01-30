@@ -1,8 +1,8 @@
 .c-metadataUpload {
 
-  .c-metadataUpload__fileInfo {
+  &__meta {
     font-size: 16px;
-    line-height: 50px;
+    padding-top: 10px;
     margin-left: 10px !important;
 
     small {
@@ -12,7 +12,21 @@
 
     &.has-error small {
       cursor: pointer;
-      color: $col-bs-blue;
+      color: $col-err-txt;
+      &:hover {
+        color: red;
+      }
+    }
+
+    &--fwd {
+      svg {
+        fill: var(--bs-gray-600);
+      }
+      &:hover {
+        svg {
+          fill: var(--bs-gray-700);
+        }
+      }
     }
   }
 }
