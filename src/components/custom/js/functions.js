@@ -42,7 +42,6 @@ export async function fetchProtocols(protocolUrl) {
         return null
     }
     const protocol = await response.json();
-    log.info(protocol.payload.description)
     return protocol.payload;
 }
 
@@ -75,7 +74,10 @@ export function displayBodyHeader(header) {
 }
 
 export function getOrganTypeFullName(organ) {
-    return ORGAN_TYPES[organ]
+    if (organ in ORGAN_TYPES)
+        return ORGAN_TYPES[organ]
+    else
+        return organ
 }
 
 export function getDOIPattern() {

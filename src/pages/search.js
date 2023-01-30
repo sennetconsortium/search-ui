@@ -13,8 +13,6 @@ import {
 import {Layout} from "@elastic/react-search-ui-views";
 import Facets from "../search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../components/custom/TableResults";
-import "@elastic/react-search-ui-views/lib/styles/styles.css";
-import 'bootstrap/dist/css/bootstrap.css';
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import AppFooter from "../components/custom/layout/AppFooter";
@@ -25,6 +23,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
+import SelectedFilters from "../components/custom/layout/SelectedFilters";
 
 function Search() {
     const {
@@ -85,7 +84,7 @@ function Search() {
                                             sideContent={
                                                 <div data-js-facets>
                                                     <CustomClearSearchBox/>
-
+                                                    <SelectedFilters/>
                                                     {wasSearched && (
                                                         <Sorting
                                                             label={_t('Sort by')}

@@ -1,0 +1,15 @@
+.popover {
+  &.is-error {
+    color: $col-err-txt;
+    background: $col-err-bg;
+    border-color: $col-err-bdr;
+
+    .popover-body {
+      color: $col-err-txt;
+    }
+
+    .popover-arrow:after {
+      border-right-color: $col-err-bdr;
+    }
+  }
+}

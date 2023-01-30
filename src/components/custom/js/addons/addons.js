@@ -22,7 +22,7 @@ function addons(source, args= null) {
     let apps = {
         gtm: GoogleTagManager,
         modal: AppModal, 
-        facets: Facets,
+        // facets: Facets,
         ada: Ada,
         tooltip: Tooltip
     }

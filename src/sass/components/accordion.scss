@@ -1,0 +1,23 @@
+// Collapsible sections
+.accordion-button:not(.collapsed) {
+  color: black;
+  background-color: white;
+  box-shadow: none;
+}
+
+.accordion-button:focus, .accordion-button:active {
+  outline: none !important;
+  box-shadow: none;
+}
+
+.accordion-button {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333333;
+  text-decoration: none;
+}
+
+.accordion-body {
+  padding-bottom: 0px;
+  padding-top: 0px;
+}
