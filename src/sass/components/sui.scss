@@ -46,10 +46,27 @@
   }
 }
 
-.sui-result--padded {
-  padding-top: 20px;
-  padding-bottom: 20px;
+.sui-result {
+  &.has-table {
+    .accordion-header {
+      .accordion-button {
+        padding-left: 28px;
+      }
+    }
+    .sui-result__title {
+      padding-left: 0.3em;
+      padding-top: 10px;
+    }
+  }
+  &--padded {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+
 }
+
+
 
 .search-box-header {
   padding: 32px 24px;
