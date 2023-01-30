@@ -18,7 +18,8 @@ export default class SourceType extends React.Component {
                             overlay={
                                 <Popover>
                                     <Popover.Body>
-                                        Source type
+                                        Source type <br />
+                                        <small className='popover-note text-muted'>Note: CCF Registration User Interface (CCF-RUI) tool is only available for <code>Human</code> and <code>Human organoid</code> types.</small>
                                     </Popover.Body>
                                 </Popover>
                             }
