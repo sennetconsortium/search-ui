@@ -81,7 +81,7 @@ function ViewSource() {
                 {data && !error &&
                     <>
                         <div className="container-fluid">
-                            <div className="row flex-nowrap">
+                            <div className="row flex-nowrap entity_body">
                                 <div className="col-auto p-0">
                                     <div id="sidebar"
                                          className="collapse collapse-horizontal sticky-top custom-sticky">
@@ -125,9 +125,11 @@ function ViewSource() {
                                     </div>
                                 </div>
 
-                                <main className="col m-3">
-                                    <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                       className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/>Sections</a>
+                                <main className="col m-md-4">
+                                    <div className="d-none d-md-block sticky-top" id="sections-button">
+                                        <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
+                                           className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/></a>
+                                    </div>
 
                                     <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[0]}
                                                       hasWritePrivilege={hasWritePrivilege}/>

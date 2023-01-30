@@ -299,9 +299,9 @@ function Provenance({nodeData}) {
                         <Tabs
                             defaultActiveKey="graph"
                             className="mb-3"
-                            fill
+                            variant="pills"
                         >
-                            <Tab eventKey="graph" title="Graph">
+                            <Tab eventKey="graph" title="Graph" >
                                 {!loading && <ProvenanceUI options={options} data={treeData}/>}
                                 {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId} otherLegend={otherLegend} />}
                                 {loading && <Spinner/>}
