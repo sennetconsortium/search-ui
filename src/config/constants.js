@@ -56,7 +56,8 @@ export const APP_ROUTES = {
     "home": "/",
     "search": "/search",
     "login": "/login",
-    "logout": "/logout"
+    "logout": "/logout",
+    "notFound": "/404"
 };
 
 export const ENTITIES = {'source': 'Source', 'sample': 'Sample', 'dataset': 'Dataset'}
