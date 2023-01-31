@@ -63,7 +63,7 @@ function MetadataUpload({children}) {
                 confirmButton: 'c-help__btn'
             },
             width: 700,
-            title: 'Forward The Report To Curator',
+            title: 'Error Report Details',
             input: 'email',
             inputLabel: 'Input the sender\'s email address',
             inputPlaceholder: 'Enter your email address',
@@ -74,6 +74,11 @@ function MetadataUpload({children}) {
         forwarder.then((value) => {
             log.debug(value)
         })
+    }
+
+    const getErrorList = () => {
+        let result = [];
+        
     }
 
     return (
@@ -90,12 +95,9 @@ function MetadataUpload({children}) {
                     {success && <CheckCircleFill color='#0d6efd' />}
                     <small role={error ? 'button' : null} onClick={downloadDetails} title={`${error ? 'Download error report' : ''}`}>{fileStatus} {error && <Download />}</small>
                 </span>
-                {error && <span role='button' className={`c-metadataUpload__meta c-metadataUpload__meta--fwd`} onClick={forwardReport} title={'Forward the error report to curator'}>
-                    <span>
-                        <small>Forward Error Report</small> <Envelope />
-                        <span><ForwardFill /></span>
-                    </span>
-                </span>}
+                {error && <div>
+                    {getErrorList()}
+                </div>}
             </InputGroup>
         </div>
     )
