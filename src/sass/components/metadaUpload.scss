@@ -1,5 +1,11 @@
 .c-metadataUpload {
 
+  &__table {
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+  }
+
   &__meta {
     font-size: 16px;
     padding-top: 10px;

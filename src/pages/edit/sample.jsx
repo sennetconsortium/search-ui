@@ -353,8 +353,6 @@ function EditSample() {
                                         <AncestorId source={source} onChange={onChange} fetchSource={fetchSource}/>
                                     }
 
-                                    <MetadataUpload />
-
                                     {/*Source Information Box*/}
                                     {source &&
                                         <AncestorInformationBox ancestor={source}/>
@@ -402,7 +400,7 @@ function EditSample() {
                                                      onChange={onChange}
                                                      text='Free text field to enter a description of the specimen'/>
 
-
+                                    <MetadataUpload />
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}
