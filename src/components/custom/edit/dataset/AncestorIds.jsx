@@ -141,7 +141,7 @@ export default class AncestorIds extends React.Component {
                                                 </div>
                                             }
                                             sideContent={
-                                                <div data-js-facets>
+                                                <div data-js-ada='facets'>
                                                     <CustomClearSearchBox/>
                                                     <SelectedFilters/>
                                                     {wasSearched && (
@@ -159,7 +159,7 @@ export default class AncestorIds extends React.Component {
                                             }
                                             bodyContent={
                                                 <div className="js-gtm--results" data-js-ada='tr'
-                                                     data-js-tooltip='{"trigger":"tr", "diffY": -50, "data":".modal-content .table", "class": "is-error"}'>
+                                                     data-js-tooltip='{"trigger":"tr", "diffY": -80, "data":".modal-content .table", "class": "is-error"}'>
                                                     <Results view={TableResults} filters={filters}
                                                              titleField={filters}
                                                              resultView={TableRowDetail}

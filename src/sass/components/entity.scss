@@ -1,4 +1,3 @@
-// Sections/Sidebar
 .entity_subtitle {
   font-size: 16px;
   text-decoration: none;
@@ -8,4 +7,14 @@
   display: inline-flex !important;
   align-items: center;
   text-decoration: none;
+}
+
+.entity_body {
+  background: #FCFCFC;
+}
+
+@media screen and (max-width: 480px) {
+  #entity_details {
+    margin: 0 !important;
+  }
 }
