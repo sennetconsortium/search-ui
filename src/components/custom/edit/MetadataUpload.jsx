@@ -41,10 +41,10 @@ function MetadataUpload({children}) {
         ]
 
         try {
-            const details = JSON.parse(response);
+
             let errors = []
-            for (let key in details) {
-                errors.push(...details[key])
+            for (let key in response) {
+                errors.push(...response[key])
             }
 
             let hasRows;
@@ -85,12 +85,13 @@ function MetadataUpload({children}) {
     }
 
     const handleUpload = async (e) => {
-        const upload = e.currentTarget.files[0]
-        let formData = new FormData()
-        setFile(upload.name)
-        setFileStatus(upload.name)
-        formData.append('metadata', upload)
         try {
+            const upload = e.currentTarget.files[0]
+            let formData = new FormData()
+            setFile(upload.name)
+            setFileStatus(upload.name)
+            formData.append('metadata', upload)
+
             let st
             const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData })
             const details = await response.json()
@@ -128,8 +129,8 @@ function MetadataUpload({children}) {
         try {
             if (!error) return
             const a = document.createElement('a')
-            const obj = JSON.parse(error)
-            const url = window.URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)],
+
+            const url = window.URL.createObjectURL(new Blob([JSON.stringify(error, null, 2)],
                 {type: "application/json"}))
             a.href = url
             a.download = `${file}-upload-results.json`
