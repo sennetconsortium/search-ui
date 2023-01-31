@@ -4,7 +4,7 @@ import {Table} from 'react-bootstrap';
 export default class Description extends React.Component {
     render() {
         return (
-            <div className="accordion accordion-flush sui-result" id="Summary">
+            <div className="accordion accordion-flush sui-result has-table" id="Summary">
                 <div className="accordion-item ">
                     <div className="accordion-header">
                         <button className="accordion-button" type="button" data-bs-toggle="collapse"
