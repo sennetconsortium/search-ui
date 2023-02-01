@@ -1,6 +1,7 @@
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
 import '../public/css/main.css'
+import '../public/css/vitessce.css'
 import log from 'loglevel'
 import ErrorBoundary from '../components/custom/error/ErrorBoundary'
 import {useEffect} from 'react'

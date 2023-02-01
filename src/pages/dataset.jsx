@@ -19,7 +19,8 @@ import {ENTITIES} from "../config/constants";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
-
+const Vitessce = React.lazy(()=>import ('../components/custom/VitessceWrapper.js'))
+import {rna_seq} from "../SNT753.WGBZ.884-snRNA-seq-large-intestine";
 
 function ViewDataset() {
     const router = useRouter()
@@ -29,7 +30,7 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-
+    const [vit, setVit] = useState(null)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
 
     // only executed on init rendering, see the []
@@ -67,6 +68,7 @@ function ViewDataset() {
         } else {
             setData(null);
         }
+        setVit(<Vitessce config={rna_seq} theme="light" height={1000} />)
     }, [router]);
 
     if ((isAuthorizing() || isUnauthorized()) && !data) {
@@ -132,7 +134,7 @@ function ViewDataset() {
                                     </div>
                                 </div>
 
-                                <main className="col m-md-3">
+                                <main className="col m-md-3 entity_details">
                                     <div className="d-none d-md-block sticky-top" id="sections-button">
                                         <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
                                            className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/></a>
@@ -182,6 +184,7 @@ function ViewDataset() {
 
                                     <div className="row">
                                         <div className="col-12">
+                                            {data.sennet_id === 'SNT753.WGBZ.884' && vit}
                                             {/*Description*/}
                                             <Description primaryDateTitle="Publication Date"
                                                          primaryDate={data.published_timestamp}

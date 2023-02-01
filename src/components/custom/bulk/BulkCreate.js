@@ -278,129 +278,124 @@ export default function BulkCreate({
     }
 
     return (
-        <>
-            <div className="container-fluid">
-                <Container sx={{mt: 5}}>
-                    <Box sx={{
-                        backgroundColor: 'white',
-                        padding: 5,
-                        boxShadow: 3,
-                    }}>
-                        <a
-                            download
-                            className={buttonVariant}
-                            href={`/${exampleFileName}`}
-                        >
-                            <FileDownloadIcon/> {' '} EXAMPLE.TSV
-                        </a>
-                        <h1 className={'text-center'}>Upload {entityType}</h1>
-                        <div className={'p-4 text-center'}>To register multiple items at one time, upload a tsv file in
-                            the
-                            format specified by the example file.
-                        </div>
-                        <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector/>}>
-                            {
-                                steps.map((label, index) => {
-                                    const labelProps = {}
-                                    if (isStepFailed(index)) {
-                                        labelProps.optional = (
-                                            <Typography variant="caption" color="error">
-                                                Failed
-                                            </Typography>
-                                        )
-                                        labelProps.error = true
-                                    }
-                                    return (<Step key={label}>
-                                        <StepLabel
-                                            StepIconComponent={ColorlibStepIcon} {...labelProps}>{label}</StepLabel>
-                                    </Step>)
-                                })
-                            }
-                        </Stepper>
-                        {isLoading && <Spinner/>}
+        <div>
+            <Container sx={{mt: 5}}>
+                <Box sx={{
+                    backgroundColor: 'white',
+                    padding: 5,
+                    boxShadow: 3,
+                }}>
+                    <a
+                        download
+                        className={buttonVariant}
+                        href={`/${exampleFileName}`}
+                    >
+                        <FileDownloadIcon/> {' '} EXAMPLE.TSV
+                    </a>
+                    <h1 className={'text-center'}>Upload {entityType}</h1>
+                    <div className={'p-4 text-center'}>To register multiple items at one time, upload a tsv file in the
+                        format specified by the example file.
+                    </div>
+                    <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector/>}>
                         {
-                            errorMessage && Object.entries(errorMessage.data)
-                                .map((value, key) => (
-                                    <Alert severity="error" className={'m-2'} key={key}>
-                                        {value[1]}
-                                    </Alert>
-                                ))
-                        }
-                        {activeStep === 1 && !errorMessage && validationSuccess &&
-                            <Alert severity="success" sx={{m: 2}}>
-                                Validation successful please continue onto the next step
-                            </Alert>}
-                        {
-                            (activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4) && !errorMessage && bulkSuccess &&
-                            <AppModal
-                                modalTitle={entityType + ' created'}
-                                modalBody={getModalBody()}
-                                showModal={showModal}
-                                handleHome={handleHome}
-                                handleClose={() => setShowModal(false)}
-                                showCloseButton={true}
-                            />
-                        }
-                        {
-                            activeStep === 2 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
-                            <Grid container className={'text-center mt-5'}>
-                                <Grid item xs></Grid>
-                                <Grid item xs>
-                                    <GroupSelect
-                                        groups={userWriteGroups}
-                                        onGroupSelectChange={onChange}
-                                        entity_type={entityType}
-                                        plural={true}
-                                    />
-                                </Grid>
-                                <Grid item xs></Grid>
-                            </Grid>
-                        }
-                        <Grid container spacing={3} className={'text-center mt-3'}>
-                            <Grid item xs>
-                                <Button
-                                    variant={'outline-dark rounded-0'}
-                                    disabled={activeStep === 0 || activeStep === getStepsLength() - 1}
-                                    onClick={handleBack}
-                                >
-                                    Back
-                                </Button>
-                            </Grid>
-                            <Grid item xs>
-                                {
-                                    activeStep === 0 &&
-                                    <>
-                                        <input
-                                            style={{display: 'none'}}
-                                            type={'file'}
-                                            ref={inputFileRef}
-                                            onChange={handleFileChange}
-                                        />
-                                        <Button variant={'outline-success rounded-0'}
-                                                onClick={handleBrowseFilesClick}>
-                                            Browse files
-                                        </Button>{' '}
-                                        {file && file.name}
-                                    </>
+                            steps.map((label, index) => {
+                                const labelProps = {}
+                                if (isStepFailed(index)) {
+                                    labelProps.optional = (
+                                        <Typography variant="caption" color="error">
+                                            Failed
+                                        </Typography>
+                                    )
+                                    labelProps.error = true
                                 }
-                            </Grid>
+                                return (<Step key={label}>
+                                    <StepLabel StepIconComponent={ColorlibStepIcon} {...labelProps}>{label}</StepLabel>
+                                </Step>)
+                            })
+                        }
+                    </Stepper>
+                    {isLoading && <Spinner/>}
+                    {
+                        errorMessage && Object.entries(errorMessage.data)
+                            .map((value, key) => (
+                                <Alert severity="error" className={'m-2'} key={key}>
+                                    {value[1]}
+                                </Alert>
+                            ))
+                    }
+                    {activeStep === 1 && !errorMessage && validationSuccess &&
+                        <Alert severity="success" sx={{m: 2}}>
+                            Validation successful please continue onto the next step
+                        </Alert>}
+                    {
+                        (activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4) && !errorMessage && bulkSuccess &&
+                        <AppModal
+                            modalTitle={entityType + ' created'}
+                            modalBody={getModalBody()}
+                            showModal={showModal}
+                            handleHome={handleHome}
+                            handleClose={() => setShowModal(false)}
+                            showCloseButton={true}
+                        />
+                    }
+                    {
+                        activeStep === 2 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
+                        <Grid container className={'text-center mt-5'}>
+                            <Grid item xs></Grid>
                             <Grid item xs>
-                                <Button
-                                    variant={buttonVariant}
-                                    onClick={handleNext}
-                                    disabled={isNextButtonDisabled}
-                                >
-                                    {activeStep === getStepsLength() - 1 ? 'Finish' : 'Next'}
-                                </Button>
+                                <GroupSelect
+                                    groups={userWriteGroups}
+                                    onGroupSelectChange={onChange}
+                                    entity_type={entityType}
+                                    plural={true}
+                                />
                             </Grid>
+                            <Grid item xs></Grid>
                         </Grid>
-                    </Box>
-                </Container>
-
-            </div>
+                    }
+                    <Grid container spacing={3} className={'text-center mt-3'}>
+                        <Grid item xs>
+                            <Button
+                                variant={'outline-dark rounded-0'}
+                                disabled={activeStep === 0 || activeStep === getStepsLength() - 1}
+                                onClick={handleBack}
+                            >
+                                Back
+                            </Button>
+                        </Grid>
+                        <Grid item xs>
+                            {
+                                activeStep === 0 &&
+                                <>
+                                    <input
+                                        style={{display: 'none'}}
+                                        type={'file'}
+                                        ref={inputFileRef}
+                                        onChange={handleFileChange}
+                                    />
+                                    <Button variant={'outline-success rounded-0'}
+                                            onClick={handleBrowseFilesClick}>
+                                        Browse files
+                                    </Button>{' '}
+                                    {file && file.name}
+                                </>
+                            }
+                        </Grid>
+                        <Grid item xs>
+                            <Button
+                                variant={buttonVariant}
+                                onClick={handleNext}
+                                disabled={isNextButtonDisabled}
+                            >
+                                {activeStep === getStepsLength() - 1 ? 'Finish' : 'Next'}
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Container>
             <AppFooter
                 isFixedBottom={!error}
             />
-        </>
+        </div>
     );
 }

@@ -13,8 +13,8 @@
   background: #FCFCFC;
 }
 
-@media screen and (max-width: 480px) {
-  #entity_details {
-    margin: 0 !important;
+@media screen and (min-width: 768px) {
+  .entity_details {
+    margin-top: -27px !important;
   }
 }
