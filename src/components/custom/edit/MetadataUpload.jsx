@@ -44,14 +44,17 @@ function MetadataUpload({children}) {
 
             let errors = []
             for (let key in response) {
-                errors.push(...response[key])
+                if (key === 'Preflight') {
+                    errors.push(response[key])
+                } else {
+                    errors.push(...response[key])
+                }
             }
 
             let hasRows;
 
             const cleanColumn = (val) => val.replace('column "', '').replace('"', '')
             const cleanRow = (val) => val.replace('On row', '')
-
 
             for (let row of errors) {
                 let r = row.split(',')
