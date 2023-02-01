@@ -4,7 +4,7 @@ import {BoxArrowUpRight, CircleFill, List} from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {fetchEntity, getOrganTypeFullName, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
+import {getOrganTypeFullName, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -86,7 +86,7 @@ function ViewDataset() {
                 {data && !error &&
                     <>
                         <div className="container-fluid">
-                            <div className="row flex-nowrap">
+                            <div className="row flex-nowrap entity_body">
                                 <div className="col-auto p-0">
                                     <div id="sidebar"
                                          className="collapse collapse-horizontal sticky-top custom-sticky">
@@ -132,9 +132,11 @@ function ViewDataset() {
                                     </div>
                                 </div>
 
-                                <main className="col m-3">
-                                    <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                       className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/>Sections</a>
+                                <main className="col m-md-3 entity_details">
+                                    <div className="d-none d-md-block sticky-top" id="sections-button">
+                                        <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
+                                           className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/></a>
+                                    </div>
 
                                     <div style={{width: '100%'}}>
                                         <h4>Dataset</h4>
