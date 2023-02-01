@@ -47,7 +47,8 @@ function EditSample() {
         editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
-        disableSubmit, setDisableSubmit
+        disableSubmit, setDisableSubmit,
+        metadata, setMetadata
     } = useContext(EntityContext)
     const {_t} = useContext(AppContext)
     const router = useRouter()
@@ -75,6 +76,7 @@ function EditSample() {
                         body['value'] = source.organ
                     }
                 }
+
                 const requestOptions = {
                     method: 'POST',
                     headers: getHeaders(),
@@ -400,7 +402,7 @@ function EditSample() {
                                                      onChange={onChange}
                                                      text='Free text field to enter a description of the specimen'/>
 
-                                    <MetadataUpload />
+                                    <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}

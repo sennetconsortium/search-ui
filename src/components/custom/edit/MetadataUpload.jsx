@@ -7,7 +7,7 @@ import log from 'loglevel'
 import DataTable from 'react-data-table-component';
 import $ from 'jquery'
 
-function MetadataUpload({children}) {
+function MetadataUpload({ setMetadata, entity }) {
     useEffect(() => {
     }, [])
     const [file, setFile] = useState('')
@@ -43,10 +43,12 @@ function MetadataUpload({children}) {
         try {
 
             let errors = []
+            let split = false;
             for (let key in response) {
                 if (key === 'Preflight') {
                     errors.push(response[key])
                 } else {
+                    split = true;
                     errors.push(...response[key])
                 }
             }
@@ -57,7 +59,7 @@ function MetadataUpload({children}) {
             const cleanRow = (val) => val.replace('On row', '')
 
             for (let row of errors) {
-                let r = row.split(',')
+                let r = split ? row.split(',') : [row];
                 if (r.length > 1) {
                     hasRows = r.length > 2;
                     data.push({
@@ -122,6 +124,7 @@ function MetadataUpload({children}) {
                 setError(false)
                 setFileStatus(upload.name)
                 setSuccess(true)
+                setMetadata(details.metadata)
             }
         } catch(e) {
             console.error(e)
@@ -175,7 +178,8 @@ function MetadataUpload({children}) {
 MetadataUpload.defaultProps = {}
 
 MetadataUpload.propTypes = {
-    children: PropTypes.node
+    setMetadata: PropTypes.func,
+    entity: PropTypes.string.isRequired,
 }
 
 export default MetadataUpload
