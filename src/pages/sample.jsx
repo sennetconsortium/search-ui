@@ -4,7 +4,7 @@ import Description from "../components/custom/entities/sample/Description";
 import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
+import {getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -86,7 +86,7 @@ function ViewSample() {
                 {data && !error &&
                     <>
                         <div className="container-fluid">
-                            <div className="row flex-nowrap">
+                            <div className="row flex-nowrap entity_body">
                                 <div className="col-auto p-0">
                                     <div id="sidebar"
                                          className="collapse collapse-horizontal sticky-top custom-sticky">
@@ -130,9 +130,11 @@ function ViewSample() {
                                     </div>
                                 </div>
 
-                                <main className="col m-3">
-                                    <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                       className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/>Sections</a>
+                                <main className="col m-md-3 entity_details">
+                                    <div className="d-none d-md-block sticky-top" id="sections-button">
+                                        <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
+                                           className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/></a>
+                                    </div>
 
                                     <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]}
                                                       hasWritePrivilege={hasWritePrivilege} idKey='sample_category'/>

@@ -115,7 +115,7 @@ export const config = {
                 isFilterable: false,
             },
             // Used for when "Sample" is selected to show organs
-            "organ": {
+            organ: {
                 label: 'Organ',
                 type: 'value',
                 field: 'organ.keyword',
@@ -131,6 +131,15 @@ export const config = {
                 isExpanded: false,
                 isFilterable: false,
             },
+            // Used for when "Dataset/Sample" is selected to show related sources
+            "source.source_type": {
+                label: 'Source Type',
+                type: 'value',
+                field: 'source.source_type.keyword',
+                filterType: 'any',
+                isExpanded: false,
+                isFilterable: false,
+            },
             sample_category: {
                 label: 'Sample Category',
                 type: 'value',
@@ -139,7 +148,15 @@ export const config = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            data_type: {
+            "ancestors.sample_category": {
+                label: 'Sample Category',
+                type: 'value',
+                field: 'ancestors.sample_category.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            data_types: {
                 label: 'Data Type',
                 type: 'value',
                 field: 'data_types.keyword',
@@ -168,9 +185,22 @@ export const config = {
         conditionalFacets: {
             // Only show 'origin_sample.organ' facet if 'Dataset' is selected from the entity type facet
             "origin_sample.organ": FilterIsSelected('entity_type', 'Dataset'),
-
             // Only show 'organ' facet if 'Sample' is selected from the entity type facet
-            "organ": FilterIsSelected('entity_type', 'Sample'),
+            organ: FilterIsSelected('entity_type', 'Sample'),
+
+            "ancestors.sample_category": FilterIsSelected('entity_type', 'Dataset'),
+            sample_category: FilterIsSelected('entity_type', 'Sample'),
+
+            // Only show 'source.source_type' facet if 'Dataset' or 'Sample' is selected from the entity type facet
+            "source.source_type": ({filters}) => {
+                return filters.some(
+                    (filter) =>
+                        filter.field === 'entity_type' &&
+                        (filter.values.includes('Sample') || filter.values.includes('Dataset'))
+                )
+            },
+            // Only show 'source' facet if 'Source' is selected from the entity type facet
+            source_type: FilterIsSelected('entity_type', 'Source'),
         },
         search_fields: {
             description: {type: 'value'},
@@ -190,7 +220,7 @@ export const config = {
             dataset_info: {type: 'value'},
             status: {type: 'value'},
             'ancestors.title': {type: 'value'},
-            'organ': {type: 'value'},
+            organ: {type: 'value'},
             // "mapped_metadata.race": {type: "value"},
             // "mapped_metadata.sex": {type: "value"},
         },
@@ -204,13 +234,15 @@ export const config = {
             'lab_source_id',
             'lab_dataset_id',
             'sample_category',
+            'ancestors.sample_category',
             'group_name',
             'source_type',
+            'source.source_type',
             'last_modified_timestamp',
             'data_types',
             'status',
             'origin_sample.organ',
-            "organ"
+            'organ'
         ],
     },
     initialState: {
@@ -251,24 +283,6 @@ export const SORT_OPTIONS = [
         value: [
             {
                 field: 'sennet_id.keyword',
-                direction: 'asc',
-            },
-        ],
-    },
-    {
-        name: 'Source Type',
-        value: [
-            {
-                field: 'source_type.keyword',
-                direction: 'asc',
-            },
-        ],
-    },
-    {
-        name: 'Sample Category',
-        value: [
-            {
-                field: 'sample_category.keyword',
                 direction: 'asc',
             },
         ],

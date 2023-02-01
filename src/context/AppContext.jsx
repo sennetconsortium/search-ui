@@ -5,6 +5,7 @@ import { getCookie, deleteCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import { get_read_write_privileges } from '../lib/services'
 import {deleteCookies} from "../lib/auth";
+import {APP_ROUTES} from "../config/constants";
 
 const AppContext = createContext()
 
@@ -15,8 +16,14 @@ export const AppProvider = ({ children }) => {
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
     const router = useRouter()
     const authKey = 'isAuthenticated'
+    const pageKey = 'userPage'
 
     useEffect(() => {
+        // Should only include: '/', '/search', '/logout', '/login', '/404'
+        const noRedirectTo = Object.values(APP_ROUTES)
+        if (noRedirectTo.indexOf(router.pathname) === -1) {
+            localStorage.setItem(pageKey, router.asPath)
+        }
         get_read_write_privileges()
             .then((response) => {
                 setAuthorized(response.read_privs)
@@ -51,7 +58,14 @@ export const AppProvider = ({ children }) => {
                         setCookie('user', {email, globus_id})
                     }
                     // Redirect to home page without query string
-                    goToSearch()
+                    const page = localStorage.getItem(pageKey)
+                    if (page) {
+                        window.location = page;
+                    }
+                    else {
+                        goToSearch();
+                    }
+
                 } else {
                     router.replace('/', undefined, { shallow: true })
                     setIsLoginPermitted(false)
@@ -65,6 +79,7 @@ export const AppProvider = ({ children }) => {
     }
 
     const logout = () => {
+        localStorage.removeItem(pageKey)
         deleteCookies()
     }
 
