@@ -11,11 +11,6 @@ export const rna_seq = {
         {
             "files": [
                 {
-                    "requestInit": {
-                        "headers": {
-                            "Authorization": "Bearer AgO3lbjrowwBbgg5J22OzbQdX4e4ljEX83D1jv03qVbrNlqMJ6UnC2BWB05Wdv4GNnp7XVwb5Py6nMI8yp0JgCgN5g5"
-                        }
-                    },
                     "fileType": "anndata-cells.zarr",
                     "options": {
                         "factors": [
@@ -35,7 +30,11 @@ export const rna_seq = {
                             }
                         }
                     },
-                    "type": "cells",
+                    "requestInit": {
+                        "headers": {
+                            "Authorization": "Bearer Ag31n1Jw41EelKWE4rXa29rwOdjnpaJ8ePpm2QB7qPMVyXdwjDTVC3JbpDPJB6PB8BnG8og2W3dGEaTdNPJWXF7zd7d"
+                        }
+                    },
                     "url": "https://assets.dev.sennetconsortium.org/02a93db2ef7fd8acfc3f66eb70fd037a/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
                 },
                 {
@@ -46,7 +45,6 @@ export const rna_seq = {
                             "setName": "obs/leiden"
                         }
                     ],
-                    "type": "cell-sets",
                     "url": "https://assets.dev.sennetconsortium.org/02a93db2ef7fd8acfc3f66eb70fd037a/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
                 },
                 {
@@ -56,11 +54,10 @@ export const rna_seq = {
                         "matrix": "X",
                         "matrixGeneFilter": "var/marker_genes_for_heatmap"
                     },
-                    "type": "expression-matrix",
                     "url": "https://assets.dev.sennetconsortium.org/02a93db2ef7fd8acfc3f66eb70fd037a/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
                 }
             ],
-            "name": "SNT753.WGBZ.884-snRNA-seq-large-intestine",
+            "name": "SNT753.WGBZ.884",
             "uid": "A"
         }
     ],
@@ -96,7 +93,7 @@ export const rna_seq = {
             "h": 6,
             "w": 3,
             "x": 9,
-            "y": 4
+            "y": 0
         },
         {
             "component": "cellSetExpression",
@@ -104,8 +101,8 @@ export const rna_seq = {
                 "dataset": "A"
             },
             "h": 6,
-            "w": 5,
-            "x": 7,
+            "w": 6,
+            "x": 6,
             "y": 6
         },
         {
@@ -114,11 +111,11 @@ export const rna_seq = {
                 "dataset": "A"
             },
             "h": 6,
-            "w": 7,
+            "w": 6,
             "x": 0,
             "y": 6
         }
     ],
-    "name": "4a535055190943788c69d672ba1c8a71",
+    "name": "My Config",
     "version": "1.0.14"
 }
