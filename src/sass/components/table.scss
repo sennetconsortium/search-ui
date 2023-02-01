@@ -2,6 +2,10 @@
   &-responsive {
     &.has-error {
       border: solid 1px $col-err-bdr;
+      .rdt_TableCell > div {
+        white-space: inherit;
+        padding: 0.5em 0;
+      }
       code {
         font-weight: bold;
         color: $col-err-txt;
