@@ -7,6 +7,47 @@ import log from 'loglevel'
 import DataTable from 'react-data-table-component';
 import $ from 'jquery'
 
+
+export const formatErrorColumn = () => {
+    const formatError = (val) => val.replaceAll(' "', ' <code>').replaceAll('"', '</code>')
+
+    $('.rdt_TableBody [data-column-id="2"] div').each((i, el) => {
+        const txt = $(el).html()
+        $(el).html(formatError(txt))
+    })
+}
+
+export const tableColumns = [
+    {
+        name: 'Row',
+        selector: row => row.row,
+        sortable: true,
+        width: '100px',
+    },
+    {
+        name: 'Error',
+        selector: row => row.error,
+        sortable: true,
+    }
+]
+
+export const formatErrorColumnTimer = () => {
+    let st
+    // Unfortunately have to format like this with setTimeout as
+    // the 3rd party DataTable component doesn't appear allow for html in the row values.
+    clearTimeout(st)
+    st = setTimeout(()=> {
+        let st2
+        $('.rdt_TableCol').on('click', (e) => {
+            clearTimeout(st2)
+            st2 = setTimeout(()=>{
+                formatErrorColumn()
+            }, 100)
+        })
+        formatErrorColumn()
+    }, 200)
+}
+
 function MetadataUpload({ setMetadata, entity }) {
     useEffect(() => {
     }, [])
@@ -19,63 +60,13 @@ function MetadataUpload({ setMetadata, entity }) {
 
     const getErrorList = (response) => {
         let data = []
-
-        let columns = [
-            {
-                name: 'Row',
-                selector: row => row.row,
-                sortable: true,
-                width: '100px',
-            },
-            {
-                name: 'Error',
-                selector: row => row.error,
-                sortable: true,
-            }
-        ]
-
         try {
-
-            let errors = []
-            let split = false;
-            for (let key in response) {
-                if (key === 'Preflight') {
-                    errors.push(response[key])
-                } else {
-                    split = true;
-                    errors.push(...response[key])
-                }
-            }
-
-            const cleanRow = (val) => val.replace('On row', '')
-
-            for (let row of errors) {
-                let r = split ? row.split(',') : [row];
-                if (r.length > 1) {
-                    data.push({
-                        row: cleanRow(r[0]),
-                        error: r[1] + (r[2] ? ', ' + r[2] : '')
-                    })
-                } else {
-                    data.push({
-                        error: r[0]
-                    })
-                }
-            }
-
+            let pre = response['Preflight'] ? {error: response['Preflight']} : null
+            data = pre ? [pre] : Array.from(response);
         } catch (e) {
             console.error(e)
         }
-        return {data, columns};
-    }
-
-    const formatErrorColumn = () => {
-        const formatError = (val) => val.replaceAll(' "', ' <code>').replaceAll('"', '</code>')
-
-        $('.rdt_TableBody [data-column-id="2"] div').each((i, el) => {
-            const txt = $(el).html()
-            $(el).html(formatError(txt))
-        })
+        return {data, columns: tableColumns};
     }
 
     const handleUpload = async (e) => {
@@ -86,7 +77,6 @@ function MetadataUpload({ setMetadata, entity }) {
             setFileStatus(upload.name)
             formData.append('metadata', upload)
 
-            let st
             const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData })
             const details = await response.json()
             if (details.code !== 200) {
@@ -96,19 +86,7 @@ function MetadataUpload({ setMetadata, entity }) {
                 const result = getErrorList(details.description)
                 setTable(result)
 
-                // Unfortunately have to format like this with setTimeout as
-                // the 3rd party DataTable component doesn't appear allow for html in the row values.
-                clearTimeout(st)
-                st = setTimeout(()=> {
-                    let st2
-                    $('.rdt_TableCol').on('click', (e) => {
-                        clearTimeout(st2)
-                        st2 = setTimeout(()=>{
-                            formatErrorColumn()
-                        }, 100)
-                    })
-                    formatErrorColumn()
-                }, 200)
+                formatErrorColumnTimer()
             } else {
                 setError(false)
                 setFileStatus(upload.name)
