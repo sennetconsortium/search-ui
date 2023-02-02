@@ -21,6 +21,7 @@ import Contributors from "../components/custom/entities/dataset/Contributors";
 import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
 const Vitessce = React.lazy(()=>import ('../components/custom/VitessceWrapper.js'))
 import {rna_seq} from "../SNT753.WGBZ.884-snRNA-seq-large-intestine";
+import 'vitessce/dist/es/production/static/css/index.css';
 
 function ViewDataset() {
     const router = useRouter()
@@ -68,7 +69,7 @@ function ViewDataset() {
         } else {
             setData(null);
         }
-        setVit(<Vitessce config={rna_seq} theme="light" height={1000} />)
+        setVit(<Vitessce config={rna_seq} theme="dark" height={800} />)
     }, [router]);
 
     if ((isAuthorizing() || isUnauthorized()) && !data) {
