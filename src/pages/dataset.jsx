@@ -20,6 +20,8 @@ import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
 import {rna_seq} from "../SNT753.WGBZ.884-snRNA-seq-large-intestine";
+import {ArrowsFullscreen, Share, Moon, Sun, Download} from "react-bootstrap-icons";
+import Link from 'next/link'
 
 const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
 
@@ -206,6 +208,23 @@ function ViewDataset() {
                                                             <div id="vitessce-collapse"
                                                                  className="accordion-collapse collapse show">
                                                                 <div className="accordion-body" style={{height: '800px'}}>
+                                                                    
+                                                                    <div className={'row'}>
+                                                                        <div className={'col'}>
+                                                                            <span className={'fw-lighter'}>Powered by </span>
+                                                                            <Link href={'http://vitessce.io'}></Link>
+                                                                            <a target="_blank" href="http://vitessce.io/" rel="noopener noreferrer">
+                                                                                Vitessce V1.2.2
+                                                                            </a>
+                                                                        </div>
+                                                                            <div className={'col text-end'}>
+                                                                                <Download style={{cursor: 'pointer'}} className={'m-2'}/>
+                                                                                <Share style={{cursor: 'pointer'}} className={'m-2'}/>
+                                                                                <Sun style={{cursor: 'pointer'}} className={'m-2'}/>
+                                                                                <Moon style={{cursor: 'pointer'}} className={'m-2'}/>
+                                                                                <ArrowsFullscreen style={{cursor: 'pointer'}} className={'m-2'}/>
+                                                                            </div>
+                                                                        </div>
                                                                     {vit}
                                                                 </div>
                                                             </div>
