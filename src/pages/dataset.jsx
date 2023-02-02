@@ -19,9 +19,9 @@ import {ENTITIES} from "../config/constants";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
-const Vitessce = React.lazy(()=>import ('../components/custom/VitessceWrapper.js'))
 import {rna_seq} from "../SNT753.WGBZ.884-snRNA-seq-large-intestine";
-import 'vitessce/dist/es/production/static/css/index.css';
+
+const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
 
 function ViewDataset() {
     const router = useRouter()
@@ -69,7 +69,7 @@ function ViewDataset() {
         } else {
             setData(null);
         }
-        setVit(<Vitessce config={rna_seq} theme="dark" height={800} />)
+        setVit(<Vitessce config={rna_seq} theme="light" height={800}/>)
     }, [router]);
 
     if ((isAuthorizing() || isUnauthorized()) && !data) {
@@ -185,13 +185,36 @@ function ViewDataset() {
 
                                     <div className="row">
                                         <div className="col-12">
-                                            {data.sennet_id === 'SNT753.WGBZ.884' && vit}
                                             {/*Description*/}
                                             <Description primaryDateTitle="Publication Date"
                                                          primaryDate={data.published_timestamp}
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
                                                          data={data}/>
+                                            {data.sennet_id === 'SNT753.WGBZ.884' &&
+                                                <div className="accordion accordion-flush sui-result" id="Vitessce">
+                                                        <div className="accordion-item ">
+                                                            <div className="accordion-header">
+                                                                <button className="accordion-button" type="button"
+                                                                        data-bs-toggle="collapse"
+                                                                        data-bs-target="#vitessce-collapse"
+                                                                        aria-expanded="true"
+                                                                        aria-controls="vitessce-collapse">Vitessce
+
+                                                                </button>
+                                                            </div>
+                                                            <div id="vitessce-collapse"
+                                                                 className="accordion-collapse collapse show">
+                                                                <div className="accordion-body" style={{height: '800px'}}>
+                                                                    {vit}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                // <>
+                                                //     {vit}
+                                                // </>
+                                            }
 
                                             {/*Provenance*/}
                                             {data &&

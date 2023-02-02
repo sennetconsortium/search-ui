@@ -1,0 +1,49 @@
+html {
+    height: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+    margin: 0;
+}
+
+.vitessce-container {
+    height: max(100%, 100vh);
+    width: 100%;
+}
+
+.vitessce-container .card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-clip: border-box;
+  border-radius: .25rem;
+}
+
+.vitessce-container.vitessce-theme-light .bg-secondary {
+  background-color: #f1f1f1 !important;
+  color: #f1f1f1;
+}
+
+.vitessce-container.vitessce-theme-light .bg-primary {
+  background-color: #f1f1f1 !important;
+  color: #333;
+}
+
+.vitessce-container.vitessce-theme-light .card {
+  border: 1px solid rgba(241,241,241,.125);
+}
+
+.vitessce-container.vitessce-theme-light .scroll {
+  overflow-y: auto;
+}
