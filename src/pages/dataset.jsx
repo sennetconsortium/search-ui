@@ -227,7 +227,10 @@ function ViewDataset() {
                                                                         </div>
                                                                             <div className={'col text-end'}>
                                                                                 <Download style={{cursor: 'pointer'}} className={'m-2'} title="Download Jupyter notebook"/>
-                                                                                <Share style={{cursor: 'pointer'}} className={'m-2'} title="Share" onClick={()=>{}}/>
+                                                                                <Share style={{cursor: 'pointer'}} className={'m-2'} title="Share" onClick={()=>{
+                                                                                    navigator.clipboard.writeText(document.location.href)
+                                                                                    setShowCopiedToClipboard(true)
+                                                                                }}/>
                                                                                 <Sun style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('light')}} className={'m-2'} title="Light mode"/>
                                                                                 <Moon style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} title="Dark mode"/>
                                                                                 <ArrowsFullscreen style={{cursor: 'pointer'}} className={'m-2'} title="Fullscreen"/>
