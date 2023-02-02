@@ -213,16 +213,16 @@ function ViewDataset() {
                                                                         <div className={'col'}>
                                                                             <span className={'fw-lighter'}>Powered by </span>
                                                                             <Link href={'http://vitessce.io'}></Link>
-                                                                            <a target="_blank" href="http://vitessce.io/" rel="noopener noreferrer">
+                                                                            <a target="_blank" href="http://vitessce.io/" rel="noopener noreferrer" title={'Vitessce.io'}>
                                                                                 Vitessce V1.2.2
                                                                             </a>
                                                                         </div>
                                                                             <div className={'col text-end'}>
-                                                                                <Download style={{cursor: 'pointer'}} className={'m-2'}/>
-                                                                                <Share style={{cursor: 'pointer'}} className={'m-2'}/>
-                                                                                <Sun style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('light')}} className={'m-2'}/>
-                                                                                <Moon style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'}/>
-                                                                                <ArrowsFullscreen style={{cursor: 'pointer'}} className={'m-2'}/>
+                                                                                <Download style={{cursor: 'pointer'}} className={'m-2'} title="Download Jupyter notebook"/>
+                                                                                <Share style={{cursor: 'pointer'}} className={'m-2'} title="Share" onClick={()=>{}}/>
+                                                                                <Sun style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('light')}} className={'m-2'} title="Light mode"/>
+                                                                                <Moon style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} title="Dark mode"/>
+                                                                                <ArrowsFullscreen style={{cursor: 'pointer'}} className={'m-2'} title="Fullscreen"/>
                                                                             </div>
                                                                         </div>
                                                                     <Vitessce config={rna_seq} theme={vitessceTheme} height={800}/>
