@@ -28,12 +28,6 @@ function MetadataUpload({ setMetadata, entity }) {
                 width: '100px',
             },
             {
-                name: 'Column',
-                selector: row => row.column,
-                sortable: true,
-                maxWidth: '300px'
-            },
-            {
                 name: 'Error',
                 selector: row => row.error,
                 sortable: true,
@@ -53,19 +47,14 @@ function MetadataUpload({ setMetadata, entity }) {
                 }
             }
 
-            let hasRows;
-
-            const cleanColumn = (val) => val.replace('column "', '').replace('"', '')
             const cleanRow = (val) => val.replace('On row', '')
 
             for (let row of errors) {
                 let r = split ? row.split(',') : [row];
                 if (r.length > 1) {
-                    hasRows = r.length > 2;
                     data.push({
                         row: cleanRow(r[0]),
-                        column: hasRows ? cleanColumn(r[1]) : cleanColumn(r[0]),
-                        error: hasRows ? r[2] : r[1]
+                        error: r[1] + (r[2] ? ', ' + r[2] : '')
                     })
                 } else {
                     data.push({
@@ -83,7 +72,7 @@ function MetadataUpload({ setMetadata, entity }) {
     const formatErrorColumn = () => {
         const formatError = (val) => val.replaceAll(' "', ' <code>').replaceAll('"', '</code>')
 
-        $('.rdt_TableBody [data-column-id="3"] div').each((i, el) => {
+        $('.rdt_TableBody [data-column-id="2"] div').each((i, el) => {
             const txt = $(el).html()
             $(el).html(formatError(txt))
         })
