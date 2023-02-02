@@ -34,6 +34,7 @@ function ViewDataset() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
     const [vit, setVit] = useState(null)
+    const [vitessceTheme, setVitessceTheme] = useState("light")
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
 
     // only executed on init rendering, see the []
@@ -71,7 +72,6 @@ function ViewDataset() {
         } else {
             setData(null);
         }
-        setVit(<Vitessce config={rna_seq} theme="light" height={800}/>)
     }, [router]);
 
     if ((isAuthorizing() || isUnauthorized()) && !data) {
@@ -220,12 +220,12 @@ function ViewDataset() {
                                                                             <div className={'col text-end'}>
                                                                                 <Download style={{cursor: 'pointer'}} className={'m-2'}/>
                                                                                 <Share style={{cursor: 'pointer'}} className={'m-2'}/>
-                                                                                <Sun style={{cursor: 'pointer'}} className={'m-2'}/>
-                                                                                <Moon style={{cursor: 'pointer'}} className={'m-2'}/>
+                                                                                <Sun style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('light')}} className={'m-2'}/>
+                                                                                <Moon style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'}/>
                                                                                 <ArrowsFullscreen style={{cursor: 'pointer'}} className={'m-2'}/>
                                                                             </div>
                                                                         </div>
-                                                                    {vit}
+                                                                    <Vitessce config={rna_seq} theme={vitessceTheme} height={800}/>
                                                                 </div>
                                                             </div>
                                                         </div>
