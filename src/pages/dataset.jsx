@@ -226,12 +226,6 @@ function ViewDataset() {
                                                                     
                                                                     <div className={'row'}>
                                                                         <div className={'col p-2 m-2'}>
-                                                                            {showCopiedToClipboard && <div className="alert alert-success alert-dismissible fade show w-50" role="alert">
-                                                                                Shareable URL copied to clipboard.
-                                                                                <button type="button" className="btn-close" data-bs-dismiss="alert"
-                                                                                        aria-label="Close" ></button>
-                                                                            </div>}
-                                                                            
                                                                             <span className={'fw-lighter'}>Powered by </span>
                                                                             <Link href={'http://vitessce.io'}></Link>
                                                                             <a target="_blank" href="http://vitessce.io/" rel="noopener noreferrer" title={'Vitessce.io'}>
@@ -244,10 +238,13 @@ function ViewDataset() {
                                                                                     placement={'top'}
                                                                                     overlay={
                                                                                         <Tooltip id={'share-tooltip'}>
-                                                                                            Share Visualization
+                                                                                            {showCopiedToClipboard ? 'Shareable URL copied to clipboard!' : 'Share Visualization'}
                                                                                         </Tooltip>
                                                                                     }>
-                                                                                    <Share style={{cursor: 'pointer'}} color="royalblue" size={24}/>
+                                                                                    <Share style={{cursor: 'pointer'}} color="royalblue" size={24} onClick={()=>{
+                                                                                        navigator.clipboard.writeText(document.location.href)
+                                                                                        setShowCopiedToClipboard(true)
+                                                                                    }} onMouseLeave={()=>setShowCopiedToClipboard(false)}/>
                                                                                 </OverlayTrigger>
                                                                                 
                                                                                 {
