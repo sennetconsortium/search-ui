@@ -26,7 +26,7 @@ export const tableColumns = [
     },
     {
         name: 'Error',
-        selector: row => row.error,
+        selector: row => row.column ? ` "${row.column}" ` + row.error : row.error,
         sortable: true,
     }
 ]
@@ -76,6 +76,7 @@ function MetadataUpload({ setMetadata, entity }) {
             setFile(upload.name)
             setFileStatus(upload.name)
             formData.append('metadata', upload)
+            formData.append('entity', entity)
 
             const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData })
             const details = await response.json()
