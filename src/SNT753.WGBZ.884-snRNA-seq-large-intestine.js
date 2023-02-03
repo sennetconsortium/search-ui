@@ -100,7 +100,7 @@ export const rna_seq = {
             "coordinationScopes": {
                 "dataset": "A"
             },
-            "h": 6,
+            "h": 4,
             "w": 6,
             "x": 6,
             "y": 6
@@ -110,7 +110,7 @@ export const rna_seq = {
             "coordinationScopes": {
                 "dataset": "A"
             },
-            "h": 6,
+            "h": 4,
             "w": 6,
             "x": 0,
             "y": 6
