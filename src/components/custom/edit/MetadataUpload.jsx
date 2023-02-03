@@ -8,8 +8,8 @@ import DataTable from 'react-data-table-component';
 import $ from 'jquery'
 
 
-export const formatErrorColumn = () => {
-    const formatError = (val) => val.replaceAll(' "', ' <code>').replaceAll('"', '</code>')
+export const formatErrorColumn = (d = '"') => {
+    const formatError = (val) => val.replaceAll(' '+d, ' <code>').replaceAll(' "', ' <code>').replaceAll(d, '</code>').replaceAll('"', '</code>')
 
     $('.rdt_TableBody [data-column-id="2"] div').each((i, el) => {
         const txt = $(el).html()
@@ -31,7 +31,7 @@ export const tableColumns = [
     }
 ]
 
-export const formatErrorColumnTimer = () => {
+export const formatErrorColumnTimer = (d = '"') => {
     let st
     // Unfortunately have to format like this with setTimeout as
     // the 3rd party DataTable component doesn't appear allow for html in the row values.
@@ -41,10 +41,10 @@ export const formatErrorColumnTimer = () => {
         $('.rdt_TableCol').on('click', (e) => {
             clearTimeout(st2)
             st2 = setTimeout(()=>{
-                formatErrorColumn()
+                formatErrorColumn(d)
             }, 100)
         })
-        formatErrorColumn()
+        formatErrorColumn(d)
     }, 200)
 }
 
