@@ -1,6 +1,16 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
-import {BoxArrowUpRight, CircleFill, List} from 'react-bootstrap-icons';
+import {
+    ArrowsAngleExpand, ArrowsCollapse,
+    ArrowUpRightSquare,
+    ArrowUpSquare,
+    BoxArrowUpRight,
+    CircleFill, Fullscreen, FullscreenExit,
+    List,
+    MoonFill,
+    ShareFill,
+    SunFill
+} from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
@@ -36,6 +46,7 @@ function ViewDataset() {
     const [vit, setVit] = useState(null)
     const [vitessceTheme, setVitessceTheme] = useState("light")
     const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
+    const [fullscreenIcon, setFullscreenIcon] = useState(true)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
 
 
@@ -212,7 +223,7 @@ function ViewDataset() {
                                                                 <div className="accordion-body" style={{height: '800px'}}>
                                                                     
                                                                     <div className={'row'}>
-                                                                        <div className={'col'}>
+                                                                        <div className={'col p-2 m-2'}>
                                                                             {showCopiedToClipboard && <div className="alert alert-success alert-dismissible fade show w-50" role="alert">
                                                                                 Shareable URL copied to clipboard.
                                                                                 <button type="button" className="btn-close" data-bs-dismiss="alert"
@@ -225,14 +236,34 @@ function ViewDataset() {
                                                                                 Vitessce V1.2.2
                                                                             </a>
                                                                         </div>
-                                                                            <div className={'col text-end'}>
-                                                                                <Share style={{cursor: 'pointer'}} className={'m-2'} title="Share" onClick={()=>{
-                                                                                    navigator.clipboard.writeText(document.location.href)
-                                                                                    setShowCopiedToClipboard(true)
-                                                                                }}/>
-                                                                                <Sun style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('light')}} className={'m-2'} title="Light mode"/>
-                                                                                <Moon style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} title="Dark mode"/>
-                                                                                <ArrowsFullscreen style={{cursor: 'pointer'}} className={'m-2'} title="Fullscreen"/>
+                                                                            <div className={'col text-end p-2 m-2'}>
+                                                                                
+                                                                                {
+                                                                                    fullscreenIcon['share'] ? 
+                                                                                        <ShareFill style={{cursor: 'pointer'}} title="Share" color="royalblue" size={24}/> : 
+                                                                                        <Share style={{cursor: 'pointer'}} className={'m-2'} title="Share" color="royalblue" size={24} onClick={()=>{
+                                                                                            navigator.clipboard.writeText(document.location.href)
+                                                                                            setShowCopiedToClipboard(true)
+                                                                                        }}/>
+
+                                                                                }
+                                                                                {
+                                                                                    vitessceTheme === 'light' ? 
+                                                                                        <>
+                                                                                            <SunFill style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('light')}} className={'m-2'} color="royalblue" size={24} title="Light mode"/>
+                                                                                            <Moon style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} color="royalblue" size={24} title="Dark mode"/>
+                                                                                        </>
+                                                                                        :
+                                                                                        <>
+                                                                                            <Sun style={{cursor: 'pointer'}} onClick={()=>setVitessceTheme('light')} className={'m-2'} color="royalblue" size={24} title="Light mode"/>
+                                                                                            <MoonFill style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} color="royalblue" size={24} title="Dark mode"/>
+                                                                                        </>
+                                                                                    
+                                                                                }
+                                                                                {
+                                                                                    fullscreenIcon ? <Fullscreen style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>setFullscreenIcon(false)}/> :
+                                                                                        <FullscreenExit style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>setFullscreenIcon(true)}/>
+                                                                                }
                                                                             </div>
                                                                         </div>
                                                                     <Vitessce config={rna_seq} theme={vitessceTheme} height={800}/>
