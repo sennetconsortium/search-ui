@@ -30,8 +30,10 @@ import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
 import {rna_seq} from "../SNT753.WGBZ.884-snRNA-seq-large-intestine";
-import {ArrowsFullscreen, Share, Moon, Sun, Download} from "react-bootstrap-icons";
+import {Share, Moon, Sun} from "react-bootstrap-icons";
 import Link from 'next/link'
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 
 const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
 
@@ -238,31 +240,45 @@ function ViewDataset() {
                                                                         </div>
                                                                             <div className={'col text-end p-2 m-2'}>
                                                                                 
-                                                                                {
-                                                                                    fullscreenIcon['share'] ? 
-                                                                                        <ShareFill style={{cursor: 'pointer'}} title="Share" color="royalblue" size={24}/> : 
-                                                                                        <Share style={{cursor: 'pointer'}} className={'m-2'} title="Share" color="royalblue" size={24} onClick={()=>{
-                                                                                            navigator.clipboard.writeText(document.location.href)
-                                                                                            setShowCopiedToClipboard(true)
-                                                                                        }}/>
-
-                                                                                }
+                                                                                <OverlayTrigger
+                                                                                    placement={'top'}
+                                                                                    overlay={
+                                                                                        <Tooltip id={'share-tooltip'}>
+                                                                                            Share Visualization
+                                                                                        </Tooltip>
+                                                                                    }>
+                                                                                    <Share style={{cursor: 'pointer'}} color="royalblue" size={24}/>
+                                                                                </OverlayTrigger>
+                                                                                
                                                                                 {
                                                                                     vitessceTheme === 'light' ? 
                                                                                         <>
-                                                                                            <SunFill style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('light')}} className={'m-2'} color="royalblue" size={24} title="Light mode"/>
-                                                                                            <Moon style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} color="royalblue" size={24} title="Dark mode"/>
+                                                                                            <OverlayTrigger placement={'top'} overlay={<Tooltip id={'light-theme-tooltip'}>Switch to light theme</Tooltip>}>
+                                                                                                <SunFill style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('light')}} className={'m-2'} color="royalblue" size={24} title="Light mode"/>
+                                                                                            </OverlayTrigger>
+                                                                                            <OverlayTrigger placement={'top'} overlay={<Tooltip id={'dark-theme-tooltip'}>Switch to dark theme</Tooltip>}>
+                                                                                                <Moon style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} color="royalblue" size={24} title="Dark mode"/>
+                                                                                            </OverlayTrigger>
                                                                                         </>
                                                                                         :
                                                                                         <>
-                                                                                            <Sun style={{cursor: 'pointer'}} onClick={()=>setVitessceTheme('light')} className={'m-2'} color="royalblue" size={24} title="Light mode"/>
-                                                                                            <MoonFill style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} color="royalblue" size={24} title="Dark mode"/>
+                                                                                            <OverlayTrigger placement={'top'} overlay={<Tooltip>Switch to light theme</Tooltip>}>
+                                                                                                <Sun style={{cursor: 'pointer'}} onClick={()=>setVitessceTheme('light')} className={'m-2'} color="royalblue" size={24} title="Light mode"/>
+                                                                                            </OverlayTrigger>
+                                                                                            <OverlayTrigger placement={'top'} overlay={<Tooltip>Switch to dark theme</Tooltip>}>
+                                                                                                <MoonFill style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} color="royalblue" size={24} title="Dark mode"/>
+                                                                                            </OverlayTrigger>
                                                                                         </>
                                                                                     
                                                                                 }
                                                                                 {
-                                                                                    fullscreenIcon ? <Fullscreen style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>setFullscreenIcon(false)}/> :
-                                                                                        <FullscreenExit style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>setFullscreenIcon(true)}/>
+                                                                                    fullscreenIcon ? <OverlayTrigger placement={'top'} overlay={<Tooltip>Enter fullscreen</Tooltip>}>
+                                                                                            <Fullscreen style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>setFullscreenIcon(false)}/>
+                                                                                        </OverlayTrigger>
+                                                                                        :
+                                                                                        <OverlayTrigger placement={'top'} overlay={<Tooltip>Exit fullscreen</Tooltip>}>
+                                                                                            <FullscreenExit style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>setFullscreenIcon(true)}/>
+                                                                                        </OverlayTrigger>
                                                                                 }
                                                                             </div>
                                                                         </div>
