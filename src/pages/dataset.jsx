@@ -226,7 +226,6 @@ function ViewDataset() {
                                                                             </a>
                                                                         </div>
                                                                             <div className={'col text-end'}>
-                                                                                <Download style={{cursor: 'pointer'}} className={'m-2'} title="Download Jupyter notebook"/>
                                                                                 <Share style={{cursor: 'pointer'}} className={'m-2'} title="Share" onClick={()=>{
                                                                                     navigator.clipboard.writeText(document.location.href)
                                                                                     setShowCopiedToClipboard(true)
@@ -241,9 +240,6 @@ function ViewDataset() {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                // <>
-                                                //     {vit}
-                                                // </>
                                             }
 
                                             {/*Provenance*/}
