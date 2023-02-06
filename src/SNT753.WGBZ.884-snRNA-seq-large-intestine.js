@@ -70,7 +70,7 @@ export const rna_seq = {
                 "dataset": "A",
                 "embeddingType": "A"
             },
-            "h": 5,
+            "h": 6,
             "w": 6,
             "x": 0,
             "y": 0
@@ -80,7 +80,7 @@ export const rna_seq = {
             "coordinationScopes": {
                 "dataset": "A"
             },
-            "h": 5,
+            "h": 6,
             "w": 3,
             "x": 6,
             "y": 0
@@ -90,7 +90,7 @@ export const rna_seq = {
             "coordinationScopes": {
                 "dataset": "A"
             },
-            "h": 5,
+            "h": 6,
             "w": 3,
             "x": 9,
             "y": 0
@@ -100,7 +100,7 @@ export const rna_seq = {
             "coordinationScopes": {
                 "dataset": "A"
             },
-            "h": 4,
+            "h": 6,
             "w": 6,
             "x": 6,
             "y": 6
@@ -110,7 +110,7 @@ export const rna_seq = {
             "coordinationScopes": {
                 "dataset": "A"
             },
-            "h": 4,
+            "h": 6,
             "w": 6,
             "x": 0,
             "y": 6

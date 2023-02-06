@@ -236,7 +236,7 @@ function ViewDataset() {
                                                             </div>
                                                             <div id="vitessce-collapse"
                                                                  className="accordion-collapse collapse show">
-                                                                <div className="accordion-body" style={{height: '800px'}}>
+                                                                <div className="accordion-body" style={{height: '900px'}}>
                                                                     <div className={'row'}>
                                                                         <div className={'col p-2 m-2'}>
                                                                             <span className={'fw-lighter'}>Powered by </span>
