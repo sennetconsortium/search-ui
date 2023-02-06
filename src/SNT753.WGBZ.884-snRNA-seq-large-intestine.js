@@ -1,6 +1,6 @@
 import {getHeaders} from "./components/custom/js/functions";
 
-export const rna_seq = {
+export const rna_seq = (dataset_id) => ({
     "coordinationSpace": {
         "dataset": {
             "A": "A"
@@ -35,7 +35,7 @@ export const rna_seq = {
                     "requestInit": {
                         "headers": getHeaders()
                     },
-                    "url": "https://assets.dev.sennetconsortium.org/02a93db2ef7fd8acfc3f66eb70fd037a/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
+                    "url": "https://assets.dev.sennetconsortium.org/" + dataset_id + "/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
                 },
                 {
                     "fileType": "anndata-cell-sets.zarr",
@@ -45,7 +45,7 @@ export const rna_seq = {
                             "setName": "obs/leiden"
                         }
                     ],
-                    "url": "https://assets.dev.sennetconsortium.org/02a93db2ef7fd8acfc3f66eb70fd037a/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
+                    "url": "https://assets.dev.sennetconsortium.org/" + dataset_id + "/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
                 },
                 {
                     "fileType": "anndata-expression-matrix.zarr",
@@ -54,7 +54,7 @@ export const rna_seq = {
                         "matrix": "X",
                         "matrixGeneFilter": "var/marker_genes_for_heatmap"
                     },
-                    "url": "https://assets.dev.sennetconsortium.org/02a93db2ef7fd8acfc3f66eb70fd037a/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
+                    "url": "https://assets.dev.sennetconsortium.org/" + dataset_id + "/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
                 }
             ],
             "name": "SNT753.WGBZ.884",
@@ -118,4 +118,4 @@ export const rna_seq = {
     ],
     "name": "My Config",
     "version": "1.0.14"
-}
+})

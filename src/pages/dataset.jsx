@@ -31,7 +31,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import $ from 'jquery'
 import {Snackbar} from "@mui/material";
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import MuiAlert from '@mui/material/Alert';
 
 
 const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
@@ -44,7 +44,6 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const [vit, setVit] = useState(null)
     const [vitessceTheme, setVitessceTheme] = useState("light")
     const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
     const [fullscreenIcon, setFullscreenIcon] = useState(true)
@@ -295,7 +294,7 @@ function ViewDataset() {
                                                                             </MuiAlert>
                                                                         </Snackbar>
                                                                         
-                                                                        <Vitessce config={rna_seq} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
+                                                                        <Vitessce config={rna_seq(data.uuid)} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
                                                                     </div>
                                                                 </div>
                                                             </div>
