@@ -30,6 +30,8 @@ import Link from 'next/link'
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import $ from 'jquery'
+import {Snackbar} from "@mui/material";
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 
 const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
@@ -46,13 +48,14 @@ function ViewDataset() {
     const [vitessceTheme, setVitessceTheme] = useState("light")
     const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
     const [fullscreenIcon, setFullscreenIcon] = useState(true)
+    const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
 
     const escFunction = useCallback((event) => {
         if (event.key === "Escape") {
             $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
             setFullscreenIcon(true)
-            console.log('ESCAPE')
+            setShowExitFullscreenMessage(false)
         }
 
         return () => {
@@ -63,6 +66,7 @@ function ViewDataset() {
     function expandVitessceToFullscreen() {
         document.addEventListener("keydown", escFunction, false);
         $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
+        setShowExitFullscreenMessage(true)
     }
     
     // only executed on init rendering, see the []
@@ -288,7 +292,13 @@ function ViewDataset() {
                                                                             </div>
                                                                         </div>
                                                                     <div id={'sennet-vitessce'}>
-                                                                        <Vitessce  config={rna_seq} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
+                                                                        <Snackbar open={showExitFullscreenMessage} autoHideDuration={8000} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} onClose={()=>{setShowExitFullscreenMessage(false)}}>
+                                                                            <MuiAlert onClose={()=>{setShowExitFullscreenMessage(false)}} severity="info" sx={{ width: '100%' }}>
+                                                                                Pres ESC to exit fullscreen
+                                                                            </MuiAlert>
+                                                                        </Snackbar>
+                                                                        
+                                                                        <Vitessce config={rna_seq} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
                                                                     </div>
                                                                 </div>
                                                             </div>
