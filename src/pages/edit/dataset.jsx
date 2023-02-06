@@ -82,6 +82,7 @@ export default function EditDataset() {
                         body['value'] = ancestor1.organ
                     }
                 }
+                // body['metadata'] = metadata
                 const requestOptions = {
                     method: 'POST',
                     headers: getHeaders(),

@@ -104,7 +104,7 @@ function EditSource() {
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
-
+            // values['metadata'] = metadata
 
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
                 setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})

@@ -287,7 +287,7 @@ function EditSample() {
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
-
+            // values['metadata'] = metadata
 
             await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
                 setModalDetails({
