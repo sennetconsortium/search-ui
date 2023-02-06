@@ -27,6 +27,6 @@
     "react-idle-timer": "^5.4.2",
     "sass": "^1.57.1",
     "search-ui": "file:search-ui",
-    "vitessce": "^2.0.2"
+    "vitessce": "^1.2.2"
   }
 }

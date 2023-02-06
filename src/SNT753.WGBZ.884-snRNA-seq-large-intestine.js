@@ -1,3 +1,5 @@
+import {getHeaders} from "./components/custom/js/functions";
+
 export const rna_seq = {
     "coordinationSpace": {
         "dataset": {
@@ -31,9 +33,7 @@ export const rna_seq = {
                         }
                     },
                     "requestInit": {
-                        "headers": {
-                            "Authorization": "Bearer Ag31n1Jw41EelKWE4rXa29rwOdjnpaJ8ePpm2QB7qPMVyXdwjDTVC3JbpDPJB6PB8BnG8og2W3dGEaTdNPJWXF7zd7d"
-                        }
+                        "headers": getHeaders()
                     },
                     "url": "https://assets.dev.sennetconsortium.org/02a93db2ef7fd8acfc3f66eb70fd037a/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
                 },
