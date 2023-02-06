@@ -1,14 +1,9 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useCallback} from "react";
 import {useRouter} from 'next/router';
 import {
-    ArrowsAngleExpand, ArrowsCollapse,
-    ArrowUpRightSquare,
-    ArrowUpSquare,
     BoxArrowUpRight,
-    CircleFill, Fullscreen, FullscreenExit,
-    List,
+    CircleFill, Fullscreen, List,
     MoonFill,
-    ShareFill,
     SunFill
 } from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
@@ -34,6 +29,8 @@ import {Share, Moon, Sun} from "react-bootstrap-icons";
 import Link from 'next/link'
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import $ from 'jquery'
+
 
 const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
 
@@ -51,7 +48,23 @@ function ViewDataset() {
     const [fullscreenIcon, setFullscreenIcon] = useState(true)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
 
+    const escFunction = useCallback((event) => {
+        if (event.key === "Escape") {
+            $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
+            setFullscreenIcon(true)
+            console.log('ESCAPE')
+        }
 
+        return () => {
+            document.removeEventListener("keydown", escFunction, false);
+        };
+    }, []);
+    
+    function expandVitessceToFullscreen() {
+        document.addEventListener("keydown", escFunction, false);
+        $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
+    }
+    
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
@@ -208,6 +221,7 @@ function ViewDataset() {
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
                                                          data={data}/>
+                                            {/* Vitessce */}
                                             {data.sennet_id === 'SNT753.WGBZ.884' &&
                                                 <div className="accordion accordion-flush sui-result" id="Vitessce">
                                                         <div className="accordion-item ">
@@ -223,7 +237,6 @@ function ViewDataset() {
                                                             <div id="vitessce-collapse"
                                                                  className="accordion-collapse collapse show">
                                                                 <div className="accordion-body" style={{height: '800px'}}>
-                                                                    
                                                                     <div className={'row'}>
                                                                         <div className={'col p-2 m-2'}>
                                                                             <span className={'fw-lighter'}>Powered by </span>
@@ -232,8 +245,7 @@ function ViewDataset() {
                                                                                 Vitessce V1.2.2
                                                                             </a>
                                                                         </div>
-                                                                            <div className={'col text-end p-2 m-2'}>
-                                                                                
+                                                                        <div className={'col text-end p-2 m-2'}>
                                                                                 <OverlayTrigger
                                                                                     placement={'top'}
                                                                                     overlay={
@@ -246,7 +258,6 @@ function ViewDataset() {
                                                                                         setShowCopiedToClipboard(true)
                                                                                     }} onMouseLeave={()=>setShowCopiedToClipboard(false)}/>
                                                                                 </OverlayTrigger>
-                                                                                
                                                                                 {
                                                                                     vitessceTheme === 'light' ? 
                                                                                         <>
@@ -268,18 +279,17 @@ function ViewDataset() {
                                                                                         </>
                                                                                     
                                                                                 }
-                                                                                {
-                                                                                    fullscreenIcon ? <OverlayTrigger placement={'top'} overlay={<Tooltip>Enter fullscreen</Tooltip>}>
-                                                                                            <Fullscreen style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>setFullscreenIcon(false)}/>
-                                                                                        </OverlayTrigger>
-                                                                                        :
-                                                                                        <OverlayTrigger placement={'top'} overlay={<Tooltip>Exit fullscreen</Tooltip>}>
-                                                                                            <FullscreenExit style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>setFullscreenIcon(true)}/>
-                                                                                        </OverlayTrigger>
-                                                                                }
+                                                                                <OverlayTrigger placement={'top'} overlay={<Tooltip>Enter fullscreen</Tooltip>}>
+                                                                                        <Fullscreen style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>{
+                                                                                            expandVitessceToFullscreen()
+                                                                                            setFullscreenIcon(false)}
+                                                                                        }/>
+                                                                                </OverlayTrigger>
                                                                             </div>
                                                                         </div>
-                                                                    <Vitessce config={rna_seq} theme={vitessceTheme} height={800}/>
+                                                                    <div id={'sennet-vitessce'}>
+                                                                        <Vitessce  config={rna_seq} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>

@@ -3,8 +3,17 @@ html {
 }
 
 .vitessce-container {
-    height: max(100%, 100vh);
-    width: 100%;
+  height: max(100%, 100vh);
+  width: 100%;
+}
+
+.vitessce_fullscreen {
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 .vitessce-container .card {
