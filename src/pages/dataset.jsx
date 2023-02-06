@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState, useCallback} from "react";
+import React, {useContext, useEffect, useState, useCallback, Suspense} from "react";
 import {useRouter} from 'next/router';
 import {
     BoxArrowUpRight,
@@ -49,7 +49,14 @@ function ViewDataset() {
     const [fullscreenIcon, setFullscreenIcon] = useState(true)
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
-
+    const [vitessceConfig, setVitessceConfig] = useState(null)
+    
+    useEffect(()=> {
+        if(data !== null) {
+            setVitessceConfig(rna_seq(data.uuid))
+        }
+    }, [data])
+    
     const escFunction = useCallback((event) => {
         if (event.key === "Escape") {
             $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
@@ -293,8 +300,9 @@ function ViewDataset() {
                                                                                 Pres ESC to exit fullscreen
                                                                             </MuiAlert>
                                                                         </Snackbar>
-                                                                        
-                                                                        <Vitessce config={rna_seq(data.uuid)} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
+                                                                        <Suspense fallback={<div>Loading...</div>}>
+                                                                            <Vitessce config={vitessceConfig} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
+                                                                        </Suspense>
                                                                     </div>
                                                                 </div>
                                                             </div>
