@@ -67,4 +67,26 @@ docker pull hubmap/portal-ui:1.0.0 (replace with the actual released version num
 Environment vars
 - `PORTAL_UI_CLOUDWATCH_LOG_GROUP='/aws/ec2/sennet-prod/portal-ui/next-server'`: The Cloudwatch log group that saves the nodejs/next-js server logs
 
+## Vitessce
+Visual integration tool for exploration of spatial single cell experiments
 
+http://vitessce.io/
+
+http://vitessce.io/docs/
+
+Vitessce is embedded in the view dataset page for snRNAseq data_types. The React component takes 3 props as input, a json object named config that describes the visualizations, a theme, and the height.
+
+### Vitessce View Config
+The view config is responsible for which views are rendered, what data is fetched, and the layout of the views. Vitessce can render many views for each individual dataset.
+
+An example json view config is `src/SNT753.WGBZ.884-snRNA-seq-large-intestine.js`
+
+*Hint* `The view config is logged in the console for HubMAP and SenNet.`
+
+http://vitessce.io/docs/view-config-js/
+
+### Vitessce App to validate view configs
+During development we can use the vitessce app to validate view configs. It will tell us if there are any errors in the config and then load the visualizations in the browser.
+
+
+http://vitessce.io/#?edit=true
