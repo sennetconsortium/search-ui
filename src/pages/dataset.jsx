@@ -56,11 +56,8 @@ function ViewDataset() {
             $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
             setFullscreenIcon(true)
             setShowExitFullscreenMessage(false)
-        }
-
-        return () => {
             document.removeEventListener("keydown", escFunction, false);
-        };
+        }
     }, []);
     
     function expandVitessceToFullscreen() {
