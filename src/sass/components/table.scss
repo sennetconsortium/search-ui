@@ -1,0 +1,21 @@
+.table {
+  &-responsive {
+    &.has-error {
+      border: solid 1px $col-err-bdr;
+      .rdt_TableCell > div {
+        white-space: inherit;
+        padding: 0.5em 0;
+      }
+      code {
+        font-weight: bold;
+        color: $col-err-txt;
+      }
+      .rdt_TableBody * {
+        background-color: $col-err-bg2;
+      }
+      .rdt_TableHeadRow *, .rdt_Pagination * {
+        background-color: white;
+      }
+    }
+  }
+}

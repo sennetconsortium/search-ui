@@ -32,6 +32,7 @@ export const EntityProvider = ({ children }) => {
         useState(null)
 
     const [response, setResponse] = useState()
+    const [metadata, setMetadata] = useState({})
 
     const isUnauthorized = () => {
         return authorized === false
@@ -141,7 +142,8 @@ export const EntityProvider = ({ children }) => {
                 modalTitle, setModalTitle,
                 userWriteGroups, setUserWriteGroups, onChange, editMode, setEditMode,
                 selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid,
-                disableSubmit, setDisableSubmit
+                disableSubmit, setDisableSubmit,
+                metadata, setMetadata
             }}
         >
             {children}

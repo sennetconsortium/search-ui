@@ -43,8 +43,23 @@
     }
   }
 
-  &__btn.swal2-styled {
-    padding: 0.3em;
+  .swal2-close:hover {
+    color: var(--bs-link-hover-color) !important;
+  }
+
+  .c-help__btn.swal2-styled {
+    padding: 0.4em;
+
+    background-color: transparent;
+    width: 100px;
+    border: solid 1px $col-bs-btn-gray;
+    color: $col-bs-btn-gray;
+    border-radius: 0;
+
+    &:hover {
+      background: $col-bs-btn-gray;
+      color: white;
+    }
   }
 
 }
