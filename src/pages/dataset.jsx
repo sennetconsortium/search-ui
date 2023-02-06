@@ -223,7 +223,7 @@ function ViewDataset() {
                                                          secondaryDate={data.last_modified_timestamp}
                                                          data={data}/>
                                             {/* Vitessce */}
-                                            {data.sennet_id === 'SNT753.WGBZ.884' &&
+                                            {data.data_types.includes('snRNA-seq') &&
                                                 <div className="accordion accordion-flush sui-result" id="Vitessce">
                                                         <div className="accordion-item ">
                                                             <div className="accordion-header">
