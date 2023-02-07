@@ -74,14 +74,14 @@ http://vitessce.io/
 
 http://vitessce.io/docs/
 
-Vitessce is embedded in the view dataset page for snRNAseq data_types. The React component takes 3 props as input, a json object named config that describes the visualizations, a theme, and the height.
+Vitessce is embedded in the view dataset page for sn-RNA-seq data types. The React component takes 3 props as input, a json object named config that describes the visualizations, a theme, and the height.
 
 ### Vitessce View Config
 The view config is responsible for which views are rendered, what data is fetched, and the layout of the views. Vitessce can render many views for each individual dataset.
 
 An example json view config is `src/SNT753.WGBZ.884-snRNA-seq-large-intestine.js`
 
-*Hint* `The view config is logged in the console for HubMAP and SenNet.`
+*Hint* `The view config is logged in the browser console for HubMAP and SenNet.`
 
 http://vitessce.io/docs/view-config-js/
 
@@ -90,3 +90,11 @@ During development we can use the vitessce app to validate view configs. It will
 
 
 http://vitessce.io/#?edit=true
+
+## Usage
+
+```
+const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
+<Vitessce config={rna_seq} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
+```
+
