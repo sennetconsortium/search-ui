@@ -98,3 +98,23 @@ const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.
 <Vitessce config={config} theme={'light'} height={800}/>
 ```
 
+## Common Coordination Framework Registration User Interface (CCF-RUI)
+The CCF-RUI allows a user to locate and record 3D coordinates of tissue blocks sampled from organs. Example [HubMAP RUI](https://hubmapconsortium.github.io/ccf-ui/rui/)
+
+[CCF-UI github repo](https://github.com/hubmapconsortium/ccf-ui)
+
+The tool is integrated as a web component with a react component wrapping it. The web component is
+
+```markdown
+<ccf-rui
+  ref={this.ruiRef}
+  base-href="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
+  theme={'sennet'}
+/>
+```
+
+The react component is `src/components/custom/edit/sample/rui/RuiIntegration.js`
+
+The tool is only available for human `Block` tissue samples with an ancestor of `Organ`
+
+The `Register location` button will display on the edit sample page and launch the CCF-RUI tool.
