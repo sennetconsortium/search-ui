@@ -45,6 +45,8 @@ RUN yum install -y yum-utils && \
 # Change to source code directory
 WORKDIR /usr/src/app/src
 
+RUN npm install -g npm@9.4.2
+
 # Install npm dependencies
 RUN npm install && \
     npm run sass-build && \
