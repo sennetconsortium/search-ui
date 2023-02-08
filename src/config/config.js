@@ -1,4 +1,4 @@
-import SearchAPIConnector from "../search-ui/packages/search-api-connector";
+import SearchAPIConnector from "search-ui/packages/search-api-connector";
 import {getCookie} from 'cookies-next';
 import {APP_ROUTES} from './constants'
 

@@ -23,6 +23,7 @@ import {TableResults, TableRowDetail} from "../../TableResults";
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import SelectedFilters from "../../layout/SelectedFilters";
+import {getOrganTypeFullName} from "../../js/functions";
 
 export default class AncestorId extends React.Component {
     constructor(props) {
@@ -128,7 +129,9 @@ export default class AncestorId extends React.Component {
                                                     )}
 
                                                     <Facets fields={exclude_dataset_config.searchQuery}
-                                                            filters={filters}/>
+                                                            filters={filters}
+                                                            transformFunction={getOrganTypeFullName}
+                                                    />
 
                                                 </div>
 
