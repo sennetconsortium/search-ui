@@ -138,6 +138,11 @@ function ViewDataset() {
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
                                             <li className="nav-item">
+                                                <a href="#Vitessce"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Visualization</a>
+                                            </li>
+                                            <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Provenance</a>
@@ -237,7 +242,7 @@ function ViewDataset() {
                                                                         data-bs-toggle="collapse"
                                                                         data-bs-target="#vitessce-collapse"
                                                                         aria-expanded="true"
-                                                                        aria-controls="vitessce-collapse">Vitessce
+                                                                        aria-controls="vitessce-collapse">Visualization
 
                                                                 </button>
                                                             </div>
