@@ -68,11 +68,9 @@ Environment vars
 - `PORTAL_UI_CLOUDWATCH_LOG_GROUP='/aws/ec2/sennet-prod/portal-ui/next-server'`: The Cloudwatch log group that saves the nodejs/next-js server logs
 
 ## Vitessce
-Visual integration tool for exploration of spatial single cell experiments
+[Visual integration tool for exploration of spatial single cell experiments](http://vitessce.io/)
 
-http://vitessce.io/
-
-http://vitessce.io/docs/
+[Vitessce docs](http://vitessce.io/docs/)
 
 Vitessce is embedded in the view dataset page for sn-RNA-seq data types. The React component takes 3 props as input, a json object named config that describes the visualizations, a theme, and the height.
 
@@ -85,13 +83,13 @@ An example json view config is `src/SNT753.WGBZ.884-snRNA-seq-large-intestine.js
 
 You can copy/paste the json object into the Vitessce [app](http://vitessce.io/#?edit=true).
 
-http://vitessce.io/docs/view-config-js/
+[Vitessce JS view config API](http://vitessce.io/docs/view-config-js/)
 
 ### Vitessce App to validate view configs
 During development we can use the vitessce app to validate view configs. It will tell us if there are any errors in the config and then load the visualizations in the browser.
 
 
-http://vitessce.io/#?edit=true
+[Vitessce app](http://vitessce.io/#?edit=true)
 
 ## Usage
 
