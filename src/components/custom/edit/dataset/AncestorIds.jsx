@@ -25,6 +25,7 @@ import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import $ from 'jquery'
 import SelectedFilters from "../../layout/SelectedFilters";
+import {getOrganTypeFullName} from "../../js/functions";
 
 export default class AncestorIds extends React.Component {
     constructor(props) {
@@ -152,7 +153,9 @@ export default class AncestorIds extends React.Component {
                                                     )}
 
                                                     <Facets fields={valid_dataset_ancestor_config.searchQuery}
-                                                            filters={filters}/>
+                                                            filters={filters}
+                                                            transformFunction={getOrganTypeFullName}
+                                                    />
 
                                                 </div>
 
