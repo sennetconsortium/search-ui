@@ -137,11 +137,13 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            <li className="nav-item">
-                                                <a href="#Vitessce"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Visualization</a>
-                                            </li>
+                                            {data.data_types.includes('snRNA-seq') &&
+                                                <li className="nav-item">
+                                                    <a href="#Vitessce"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Visualization</a>
+                                                </li>
+                                            }
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
