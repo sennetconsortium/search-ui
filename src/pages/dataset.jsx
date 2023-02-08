@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState, useCallback} from "react";
+import React, {useContext, useEffect, useState, useCallback, Suspense} from "react";
 import {useRouter} from 'next/router';
 import {
     BoxArrowUpRight,
@@ -31,7 +31,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import $ from 'jquery'
 import {Snackbar} from "@mui/material";
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import MuiAlert from '@mui/material/Alert';
 
 
 const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
@@ -44,13 +44,19 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const [vit, setVit] = useState(null)
     const [vitessceTheme, setVitessceTheme] = useState("light")
     const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
     const [fullscreenIcon, setFullscreenIcon] = useState(true)
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
-
+    const [vitessceConfig, setVitessceConfig] = useState(null)
+    
+    useEffect(()=> {
+        if(data !== null) {
+            setVitessceConfig(rna_seq(data.uuid))
+        }
+    }, [data])
+    
     const escFunction = useCallback((event) => {
         if (event.key === "Escape") {
             $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
@@ -131,6 +137,13 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
+                                            {data.data_types.includes('snRNA-seq') &&
+                                                <li className="nav-item">
+                                                    <a href="#Vitessce"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Visualization</a>
+                                                </li>
+                                            }
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
@@ -231,7 +244,7 @@ function ViewDataset() {
                                                                         data-bs-toggle="collapse"
                                                                         data-bs-target="#vitessce-collapse"
                                                                         aria-expanded="true"
-                                                                        aria-controls="vitessce-collapse">Vitessce
+                                                                        aria-controls="vitessce-collapse">Visualization
 
                                                                 </button>
                                                             </div>
@@ -294,8 +307,9 @@ function ViewDataset() {
                                                                                 Pres ESC to exit fullscreen
                                                                             </MuiAlert>
                                                                         </Snackbar>
-                                                                        
-                                                                        <Vitessce config={rna_seq} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
+                                                                        <Suspense fallback={<div>Loading...</div>}>
+                                                                            <Vitessce config={vitessceConfig} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
+                                                                        </Suspense>
                                                                     </div>
                                                                 </div>
                                                             </div>
