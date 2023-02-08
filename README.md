@@ -83,6 +83,8 @@ An example json view config is `src/SNT753.WGBZ.884-snRNA-seq-large-intestine.js
 
 *Hint* `The view config is logged in the browser console for HubMAP and SenNet.`
 
+You can copy/paste the json object into the Vitessce [app](http://vitessce.io/#?edit=true).
+
 http://vitessce.io/docs/view-config-js/
 
 ### Vitessce App to validate view configs
@@ -95,6 +97,6 @@ http://vitessce.io/#?edit=true
 
 ```
 const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
-<Vitessce config={config} theme={'light'} height={fullscreenIcon === 800}/>
+<Vitessce config={config} theme={'light'} height={800}/>
 ```
 
