@@ -2,10 +2,11 @@ import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import { Upload, CheckCircleFill, XCircleFill, Download} from "react-bootstrap-icons";
 import InputGroup from 'react-bootstrap/InputGroup';
-import {getIngestEndPoint} from "../../../config/config";
+import {getAuth, getIngestEndPoint} from "../../../config/config";
 import log from 'loglevel'
 import DataTable from 'react-data-table-component';
 import $ from 'jquery'
+import { get_auth_header } from "../../../lib/services";
 
 
 export const formatErrorColumn = (d = '"') => {
@@ -77,8 +78,7 @@ function MetadataUpload({ setMetadata, entity }) {
             setFileStatus(upload.name)
             formData.append('metadata', upload)
             formData.append('entity', entity)
-
-            const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData })
+            const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData, headers: get_auth_header() })
             const details = await response.json()
             if (details.code !== 200) {
                 setError(details.description)
