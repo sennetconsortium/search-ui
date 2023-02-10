@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import { Upload, CheckCircleFill, XCircleFill, Download} from "react-bootstrap-icons";
 import InputGroup from 'react-bootstrap/InputGroup';
-import {getAuth, getIngestEndPoint} from "../../../config/config";
+import {getIngestEndPoint} from "../../../config/config";
 import log from 'loglevel'
 import DataTable from 'react-data-table-component';
 import $ from 'jquery'
