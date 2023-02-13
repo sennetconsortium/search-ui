@@ -15,13 +15,14 @@
       font-size: 10px;
       margin-left: 5px;
     }
-
-    &.has-error small {
+    &.has-hover small {
       cursor: pointer;
-      color: $col-err-txt;
       &:hover {
         color: red;
       }
+    }
+    &.has-error small {
+      color: $col-err-txt;
     }
 
     &--fwd {
