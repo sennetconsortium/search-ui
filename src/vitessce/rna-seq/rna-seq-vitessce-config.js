@@ -1,4 +1,4 @@
-import {getHeaders} from "./components/custom/js/functions";
+import {getHeaders} from "../../components/custom/js/functions";
 
 export const rna_seq = (dataset_id) => ({
     "coordinationSpace": {
@@ -71,7 +71,7 @@ export const rna_seq = (dataset_id) => ({
                 "embeddingType": "A"
             },
             "h": 6,
-            "w": 6,
+            "w": 9,
             "x": 0,
             "y": 0
         },
@@ -80,9 +80,9 @@ export const rna_seq = (dataset_id) => ({
             "coordinationScopes": {
                 "dataset": "A"
             },
-            "h": 6,
+            "h": 3,
             "w": 3,
-            "x": 6,
+            "x": 9,
             "y": 0
         },
         {
@@ -90,19 +90,19 @@ export const rna_seq = (dataset_id) => ({
             "coordinationScopes": {
                 "dataset": "A"
             },
-            "h": 6,
+            "h": 3,
             "w": 3,
             "x": 9,
-            "y": 0
+            "y": 4
         },
         {
             "component": "cellSetExpression",
             "coordinationScopes": {
                 "dataset": "A"
             },
-            "h": 6,
-            "w": 6,
-            "x": 6,
+            "h": 4,
+            "w": 5,
+            "x": 7,
             "y": 6
         },
         {
@@ -110,12 +110,12 @@ export const rna_seq = (dataset_id) => ({
             "coordinationScopes": {
                 "dataset": "A"
             },
-            "h": 6,
-            "w": 6,
+            "h": 4,
+            "w": 7,
             "x": 0,
             "y": 6
         }
     ],
-    "name": "My Config",
+    "name": "rna-seq-config",
     "version": "1.0.14"
 })

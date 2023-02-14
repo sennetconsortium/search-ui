@@ -24,7 +24,7 @@ import {ENTITIES} from "../config/constants";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
-import {rna_seq} from "../SNT753.WGBZ.884-snRNA-seq-large-intestine";
+import {rna_seq} from "../vitessce/rna-seq/rna-seq-vitessce-config";
 import {Share, Moon, Sun} from "react-bootstrap-icons";
 import Link from 'next/link'
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -46,10 +46,15 @@ function ViewDataset() {
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
     const [vitessceTheme, setVitessceTheme] = useState("light")
     const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
-    const [fullscreenIcon, setFullscreenIcon] = useState(true)
+    const [isFullscreen, setIsFullscreen] = useState(false)
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
     const [vitessceConfig, setVitessceConfig] = useState(null)
+    
+    const showVitessce = (data_types) => {
+        const supportedVitessceDataTypes = ['snRNA-seq', 'scRNA-seq']
+        return supportedVitessceDataTypes.some(d=> data_types.includes(d))
+    }
     
     useEffect(()=> {
         if(data !== null) {
@@ -57,17 +62,17 @@ function ViewDataset() {
         }
     }, [data])
     
-    const escFunction = useCallback((event) => {
+    const collapseVitessceOnEsc = useCallback((event) => {
         if (event.key === "Escape") {
             $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
-            setFullscreenIcon(true)
+            setIsFullscreen(false)
             setShowExitFullscreenMessage(false)
-            document.removeEventListener("keydown", escFunction, false);
+            document.removeEventListener("keydown", collapseVitessceOnEsc, false);
         }
     }, []);
     
-    function expandVitessceToFullscreen() {
-        document.addEventListener("keydown", escFunction, false);
+    const expandVitessceToFullscreen = () => {
+        document.addEventListener("keydown", collapseVitessceOnEsc, false);
         $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
         setShowExitFullscreenMessage(true)
     }
@@ -137,7 +142,7 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            {data.data_types.includes('snRNA-seq') &&
+                                            {showVitessce(data.data_types) &&
                                                 <li className="nav-item">
                                                     <a href="#Vitessce"
                                                        className="nav-link"
@@ -236,7 +241,7 @@ function ViewDataset() {
                                                          secondaryDate={data.last_modified_timestamp}
                                                          data={data}/>
                                             {/* Vitessce */}
-                                            {data.data_types.includes('snRNA-seq') &&
+                                            {showVitessce(data.data_types) &&
                                                 <div className="accordion accordion-flush sui-result" id="Vitessce">
                                                         <div className="accordion-item ">
                                                             <div className="accordion-header">
@@ -296,7 +301,7 @@ function ViewDataset() {
                                                                                 <OverlayTrigger placement={'top'} overlay={<Tooltip>Enter fullscreen</Tooltip>}>
                                                                                         <Fullscreen style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>{
                                                                                             expandVitessceToFullscreen()
-                                                                                            setFullscreenIcon(false)}
+                                                                                            setIsFullscreen(true)}
                                                                                         }/>
                                                                                 </OverlayTrigger>
                                                                             </div>
@@ -308,7 +313,7 @@ function ViewDataset() {
                                                                             </MuiAlert>
                                                                         </Snackbar>
                                                                         <Suspense fallback={<div>Loading...</div>}>
-                                                                            <Vitessce config={vitessceConfig} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
+                                                                            <Vitessce config={vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
                                                                         </Suspense>
                                                                     </div>
                                                                 </div>
