@@ -66,7 +66,7 @@ function MetadataUpload({ setMetadata, entity }) {
             let {code, description} = details
             const preflight = description['Preflight']
             let err = preflight ? {error: preflight} : {error: description}
-            err = validationError && !preflight ? null : err
+            err = code == 406 && !preflight ? null : err
             data = err ? [err] : Array.from(description);
         } catch (e) {
             console.error(e)
