@@ -6,6 +6,7 @@ import {getIngestEndPoint} from "../../../config/config";
 import log from 'loglevel'
 import DataTable from 'react-data-table-component';
 import $ from 'jquery'
+import { get_auth_header } from "../../../lib/services";
 
 
 export const formatErrorColumn = (d = '"') => {
@@ -55,14 +56,18 @@ function MetadataUpload({ setMetadata, entity }) {
     const [fileStatus, setFileStatus] = useState('')
     const [error, setError] = useState(null)
     const [success, setSuccess] = useState(false)
+    const [validationError, setValidationError] = useState(false)
     const [table, setTable] = useState({})
 
 
-    const getErrorList = (response) => {
+    const getErrorList = (details) => {
         let data = []
         try {
-            let pre = response['Preflight'] ? {error: response['Preflight']} : null
-            data = pre ? [pre] : Array.from(response);
+            let {code, description} = details
+            const preflight = description['Preflight']
+            let err = preflight ? {error: preflight} : {error: description}
+            err = code == 406 && !preflight ? null : err
+            data = err ? [err] : Array.from(description);
         } catch (e) {
             console.error(e)
         }
@@ -77,19 +82,21 @@ function MetadataUpload({ setMetadata, entity }) {
             setFileStatus(upload.name)
             formData.append('metadata', upload)
             formData.append('entity', entity)
-
-            const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData })
+            const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData, headers: get_auth_header() })
             const details = await response.json()
             if (details.code !== 200) {
                 setError(details.description)
                 setFileStatus(details.name)
                 setSuccess(false)
-                const result = getErrorList(details.description)
+                const result = getErrorList(details)
+                if (details.code === 406) {
+                    setValidationError(true)
+                }
                 setTable(result)
-
                 formatErrorColumnTimer()
             } else {
                 setError(false)
+                setValidationError(false)
                 setFileStatus(upload.name)
                 setSuccess(true)
                 setMetadata(details.metadata)
@@ -101,7 +108,7 @@ function MetadataUpload({ setMetadata, entity }) {
 
     const downloadDetails = (e) => {
         try {
-            if (!error) return
+            if (!validationError) return
             const a = document.createElement('a')
 
             const url = window.URL.createObjectURL(new Blob([JSON.stringify(error, null, 2)],
@@ -126,10 +133,10 @@ function MetadataUpload({ setMetadata, entity }) {
                     <input onChange={handleUpload} type='file' id='entity_metadata' name='entity_metadata' />
                     <Upload size={12} />
                 </label>
-                <span className={`c-metadataUpload__meta js-fileInfo ${error ? 'has-error ' : ''}`}>
+                <span className={`c-metadataUpload__meta js-fileInfo ${error ? `has-error  ${validationError ? 'has-hover' : ''}` : ''}`}>
                     {error && <XCircleFill color='#842029' />}
                     {success && <CheckCircleFill color='#0d6efd' />}
-                    <small role={error ? 'button' : null} onClick={downloadDetails} title={`${error ? 'Download error report' : ''}`}>{fileStatus} {error && <Download />}</small>
+                    <small role={validationError ? 'button' : null} onClick={downloadDetails} title={`${validationError ? 'Download error report' : ''}`}>{fileStatus} {validationError && <Download />}</small>
                 </span>
                 {error &&  <div className='c-metadataUpload__table table-responsive has-error'>
                     <DataTable

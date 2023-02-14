@@ -24,17 +24,21 @@ export async function update_create_dataset(uuid, body, action = "Edit", router)
     }
 }
 
-
-function get_headers() {
+export function get_auth_header() {
     const headers = new Headers();
-    headers.append("Content-Type", "application/json");
     headers.append("Authorization", "Bearer " + getAuth())
     return headers;
 }
 
+
+function get_headers() {
+    const headers = get_auth_header();
+    headers.append("Content-Type", "application/json");
+    return headers;
+}
+
 export async function fetchGlobusFilepath(sennet_id) {
-    const headers = new Headers();
-    headers.append("Authorization", "Bearer " + getAuth())
+    const headers = get_auth_header();
     const url = getEntityEndPoint() + "entities/" + sennet_id + "/globus-url"
     const request_options = {
         method: 'GET',
