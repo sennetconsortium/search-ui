@@ -167,7 +167,7 @@ function EditSource() {
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
                                         onChange={onChange} text='Free text field to enter a description of the source.' />
 
-                                    <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />
+                                    {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />*/}
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}

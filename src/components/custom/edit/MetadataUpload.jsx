@@ -69,7 +69,23 @@ function MetadataUpload({ setMetadata, entity }) {
             const preflight = description['Preflight']
             let err = preflight ? {error: preflight} : {error: description}
             err = isUnacceptable(code) && !preflight ? null : err
-            data = err ? [err] : Array.from(description);
+            if (err) {
+                data = [err]
+            } else {
+                if (Array.isArray(description)) {
+                    if (typeof description[0] === 'string') {
+                        data = description.map(d => {
+                            return {error: d}
+                        })
+                    } else {
+                        data = Array.from(description)
+                    }
+                } else {
+                    data = [{error: description}]
+                }
+            }
+            log.debug('Metadata errors', data)
+
         } catch (e) {
             console.error(e)
         }
