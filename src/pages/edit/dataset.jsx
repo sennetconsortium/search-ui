@@ -200,6 +200,7 @@ export default function EditDataset() {
             log.debug("Form is invalid")
             setDisableSubmit(false);
         } else {
+
             event.preventDefault();
             if (values['direct_ancestor_uuids'] === undefined || values['direct_ancestor_uuids'].length === 0) {
                 event.stopPropagation();
@@ -207,6 +208,10 @@ export default function EditDataset() {
             } else {
 
                 log.debug("Form is valid")
+
+                if(!_.isEmpty(metadata)) {
+                    values["metadata"] = metadata
+                }
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
                 if (values['group_uuid'] === null && editMode === 'Create') {
