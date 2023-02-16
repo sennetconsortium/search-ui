@@ -1,5 +1,4 @@
-import React, {useContext, useEffect, useState, useCallback, Suspense} from "react";
-import {useRouter} from 'next/router';
+import React, {useContext, useEffect, useState, Suspense} from "react";
 import {
     BoxArrowUpRight,
     CircleFill, Fullscreen, List,
@@ -30,40 +29,42 @@ import {Share, Moon, Sun} from "react-bootstrap-icons";
 import Link from 'next/link'
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import $ from 'jquery'
 import {Snackbar} from "@mui/material";
 import MuiAlert from '@mui/material/Alert';
+import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
 
 
 const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
 
 function ViewDataset() {
-    const router = useRouter()
     const [data, setData] = useState(null)
-    const [ancestors, setAncestors] = useState(null)
-    const [descendants, setDescendants] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const [vitessceTheme, setVitessceTheme] = useState("light")
-    const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
-    const [isFullscreen, setIsFullscreen] = useState(false)
-    const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
-    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
-    const [vitessceConfig, setVitessceConfig] = useState(null)
-    const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
+    const {router, isRegisterHidden, isUnauthorized, isAuthorizing,} = useContext(AppContext)
+    const {
+        showVitessce,
+        isPrimaryDataset,
+        vitessceTheme,
+        setVitessceTheme,
+        vitessceConfig,
+        setVitessceConfig,
+        showCopiedToClipboard,
+        setShowCopiedToClipboard,
+        showExitFullscreenMessage,
+        setShowExitFullscreenMessage,
+        isFullscreen,
+        setIsFullscreen,
+        expandVitessceToFullscreen,
+        collapseVitessceOnEsc,
+    } = useContext(VisualizationContext)
     
-    const showVitessce = (data_types) => {
-        const supportedVitessceDataTypes = ['snRNA-seq', 'scRNA-seq', 'CODEX']
-        return supportedVitessceDataTypes.some(d=> data_types.includes(d))
-    }
-
     // Load the correct Vitessce view config
     useEffect(() => {
         if (data) {
             log.info(data)
             let datasetId = data.uuid;
-            if (isPrimaryDataset && data.immediate_descendants.length !== 0) {
+            if (isPrimaryDataset(data) && data.immediate_descendants.length !== 0) {
                 // Fetch files from the immediate descendant dataset (visualization dataset)
                 datasetId = data.descendant_ids[0]
             }
@@ -82,21 +83,6 @@ function ViewDataset() {
             })
         }
     }, [data])
-    
-    const collapseVitessceOnEsc = useCallback((event) => {
-        if (event.key === "Escape") {
-            $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
-            setIsFullscreen(false)
-            setShowExitFullscreenMessage(false)
-            document.removeEventListener("keydown", collapseVitessceOnEsc, false);
-        }
-    }, []);
-    
-    const expandVitessceToFullscreen = () => {
-        document.addEventListener("keydown", collapseVitessceOnEsc, false);
-        $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
-        setShowExitFullscreenMessage(true)
-    }
     
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -287,7 +273,7 @@ function ViewDataset() {
                                                                             </span>
                                                                         </div>
                                                                         <div className={'col p-2 m-2'}>
-                                                                            {isPrimaryDataset && data.immediate_descendants.length !== 0 &&
+                                                                            {isPrimaryDataset(data) && data.immediate_descendants.length !== 0 &&
                                                                                 <span className={'fw-light fs-6 m-2 p-2'}>
                                                                                     Derived from 
                                                                                     <Link target="_blank" href={{pathname: '/dataset', query: {uuid: data.immediate_descendants[0].uuid}}}>
@@ -389,5 +375,6 @@ function ViewDataset() {
     }
 }
 
+ViewDataset.withWrapper = function(page){ return <VisualizationProvider>{ page }</VisualizationProvider> }
 
 export default ViewDataset
