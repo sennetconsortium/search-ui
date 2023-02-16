@@ -25,6 +25,7 @@ import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
 import {rna_seq} from "../vitessce/rna-seq/rna-seq-vitessce-config";
+import {codex_config} from "../vitessce/codex/codex-vitessce-config";
 import {Share, Moon, Sun} from "react-bootstrap-icons";
 import Link from 'next/link'
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -52,13 +53,26 @@ function ViewDataset() {
     const [vitessceConfig, setVitessceConfig] = useState(null)
     
     const showVitessce = (data_types) => {
-        const supportedVitessceDataTypes = ['snRNA-seq', 'scRNA-seq']
+        const supportedVitessceDataTypes = ['snRNA-seq', 'scRNA-seq', 'CODEX']
         return supportedVitessceDataTypes.some(d=> data_types.includes(d))
     }
     
     useEffect(()=> {
         if(data !== null) {
-            setVitessceConfig(rna_seq(data.uuid))
+            let datasetId = data.uuid;
+            data.data_types.forEach(assay => {
+                switch (assay) {
+                    case 'snRNA-seq':
+                    case 'scRNA-seq':
+                        setVitessceConfig(rna_seq(datasetId))
+                        break
+                    case 'CODEX':
+                        setVitessceConfig(codex_config(datasetId))
+                        break
+                    default:
+                        console.log(`No Vitessce config found for assay type: ${assay}`)
+                }
+            })
         }
     }, [data])
     
