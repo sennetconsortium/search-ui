@@ -63,7 +63,7 @@ function ViewDataset() {
     useEffect(() => {
         if (data !== null) {
             let datasetId = data.uuid;
-            if (isPrimaryDataset()) {
+            if (isPrimaryDataset() && data.immediate_descendants.length !== 0) {
                 // Fetch files from the immediate descendant dataset (visualization dataset)
                 datasetId = data.descendant_ids[0]
             }
@@ -286,7 +286,7 @@ function ViewDataset() {
                                                                             </span>
                                                                         </div>
                                                                         <div className={'col p-2 m-2'}>
-                                                                            {isPrimaryDataset() &&
+                                                                            {isPrimaryDataset() && data.immediate_descendants.length !== 0 &&
                                                                                 <span className={'fw-light fs-6 m-2 p-2'}>
                                                                                     Derived from 
                                                                                     <Link target="_blank" href={{pathname: '/dataset', query: {uuid: data.immediate_descendants[0].uuid}}}>
