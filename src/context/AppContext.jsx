@@ -79,7 +79,6 @@ export const AppProvider = ({ children }) => {
     }
 
     const logout = () => {
-        localStorage.removeItem(pageKey)
         deleteCookies()
     }
 

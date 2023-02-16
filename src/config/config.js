@@ -60,6 +60,10 @@ export function getSearchEndPoint() {
     return process.env.NEXT_PUBLIC_SEARCH_API_ENDPOINT
 }
 
+export function getOntologyEndPoint() {
+    return process.env.NEXT_PUBLIC_ONTOLOGY_API_ENDPOINT
+}
+
 export function getEntityEndPoint() {
     return process.env.NEXT_PUBLIC_ENTITY_API_ENDPOINT
 }
