@@ -1,12 +1,11 @@
-import { createContext, useEffect, useState, useCallback } from 'react'
+import { createContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
 import { goToSearch } from '../components/custom/js/functions'
-import { getCookie, deleteCookie, setCookie } from 'cookies-next'
+import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import { get_read_write_privileges } from '../lib/services'
 import {deleteCookies} from "../lib/auth";
-import {APP_ROUTES, ENTITIES} from "../config/constants";
-import $ from "jquery";
+import {APP_ROUTES} from "../config/constants";
 
 const AppContext = createContext()
 
@@ -88,8 +87,6 @@ export const AppProvider = ({ children }) => {
     const _t = (msg) => {
         return msg
     }
-
-
     
     return (
         <AppContext.Provider
