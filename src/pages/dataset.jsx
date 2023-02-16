@@ -57,8 +57,9 @@ function ViewDataset() {
         return supportedVitessceDataTypes.some(d=> data_types.includes(d))
     }
     
-    useEffect(()=> {
-        if(data !== null) {
+    // Load the correct Vitessce view config
+    useEffect(() => {
+        if (data !== null) {
             let datasetId = data.uuid;
             data.data_types.forEach(assay => {
                 switch (assay) {
