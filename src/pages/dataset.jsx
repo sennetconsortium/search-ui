@@ -51,19 +51,19 @@ function ViewDataset() {
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
     const [vitessceConfig, setVitessceConfig] = useState(null)
+    const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
     
     const showVitessce = (data_types) => {
         const supportedVitessceDataTypes = ['snRNA-seq', 'scRNA-seq', 'CODEX']
         return supportedVitessceDataTypes.some(d=> data_types.includes(d))
     }
-    
-    const isPrimaryDataset = () => data.immediate_ancestors.some(ancestor => ancestor.entity_type === ENTITIES.sample)
-    
+
     // Load the correct Vitessce view config
     useEffect(() => {
-        if (data !== null) {
+        if (data) {
+            log.info(data)
             let datasetId = data.uuid;
-            if (isPrimaryDataset() && data.immediate_descendants.length !== 0) {
+            if (isPrimaryDataset && data.immediate_descendants.length !== 0) {
                 // Fetch files from the immediate descendant dataset (visualization dataset)
                 datasetId = data.descendant_ids[0]
             }
@@ -118,6 +118,7 @@ function ViewDataset() {
             } else {
                 // set state with the result
                 setData(data);
+                setIsPrimaryDataset(data.immediate_ancestors.some(ancestor => ancestor.entity_type === ENTITIES.sample))
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
@@ -286,7 +287,7 @@ function ViewDataset() {
                                                                             </span>
                                                                         </div>
                                                                         <div className={'col p-2 m-2'}>
-                                                                            {isPrimaryDataset() && data.immediate_descendants.length !== 0 &&
+                                                                            {isPrimaryDataset && data.immediate_descendants.length !== 0 &&
                                                                                 <span className={'fw-light fs-6 m-2 p-2'}>
                                                                                     Derived from 
                                                                                     <Link target="_blank" href={{pathname: '/dataset', query: {uuid: data.immediate_descendants[0].uuid}}}>
