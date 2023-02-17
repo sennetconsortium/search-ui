@@ -1,4 +1,4 @@
-import { getOntologyEndPoint } from '../config/config';
+import { getOntologyEndPoint } from '../config/config'
 import log from 'loglevel'
 import { get_json_header } from './services'
 
@@ -29,15 +29,14 @@ async function get_ontology_from_cache(key) {
     if (!ontology || ontology.length === 0) {
         ontology = await get_onotology_valueset(key)
         try {
-            await fetch(url, {method: 'PUT', body: JSON.stringify(ontology)})
+            await fetch(url, { method: 'PUT', body: JSON.stringify(ontology) })
             log.debug(`ONTOLOGY: wrote ${key} cache to file`)
         } catch (error) {
             log.debug(`ONTOLOGY: error writing ${key} cache to file`)
             console.error(error)
         }
-
     }
-    return ontology;
+    return ontology
 }
 
 function to_key_val(list) {

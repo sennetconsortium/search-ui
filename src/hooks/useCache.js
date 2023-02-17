@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import {get_data_assays, get_sample_categories} from '../lib/ontology'
+import { get_data_assays, get_sample_categories } from '../lib/ontology'
 
 function useCache() {
     const [dataTypes, setDataTypes] = useState({})
@@ -14,9 +14,7 @@ function useCache() {
 
     useEffect(() => {
         fetchData()
-        return () => {
-
-        }
+        return () => {}
     }, [])
     return { dataTypes, sampleCategories }
 }
