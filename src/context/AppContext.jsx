@@ -29,7 +29,6 @@ export const AppProvider = ({ children }) => {
 
         get_read_write_privileges()
             .then((response) => {
-
                 setAuthorized(response.read_privs)
                 setIsRegisterHidden(!response.write_privs)
             })

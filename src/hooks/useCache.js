@@ -5,9 +5,15 @@ function useCache() {
     const [dataTypes, setDataTypes] = useState({})
     const [sampleCategories, setSampleCategories] = useState({})
 
+    const fetchData = async () => {
+        const assays = await get_data_assays()
+        const categories = await get_sample_categories()
+        setDataTypes(assays)
+        setSampleCategories(categories)
+    }
+
     useEffect(() => {
-        setDataTypes(get_data_assays())
-        setSampleCategories(get_sample_categories())
+        fetchData()
         return () => {
 
         }

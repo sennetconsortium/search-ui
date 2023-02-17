@@ -48,6 +48,11 @@ function to_key_val(list) {
     return result
 }
 
+function add_other(list) {
+    list['Other'] = 'Other'
+    return list
+}
+
 export async function get_sample_categories() {
     let list = await get_ontology_from_cache('C020076')
     return to_key_val(list)
@@ -55,5 +60,6 @@ export async function get_sample_categories() {
 
 export async function get_data_assays() {
     const list = await get_ontology_from_cache('C004000') //C000001
-    return to_key_val(list)
+    const assays = to_key_val(list)
+    return add_other(assays)
 }

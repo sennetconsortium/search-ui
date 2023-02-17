@@ -46,7 +46,7 @@ function EditSample() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit
     } = useContext(EntityContext)
-    const {_t} = useContext(AppContext)
+    const {_t, cache} = useContext(AppContext)
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
@@ -82,7 +82,7 @@ function EditSample() {
                     const provenance_constraints = await response.json()
                     provenance_constraints.forEach(constraint => {
                         if (constraint.entity_type.toLowerCase() === 'sample') {
-                            const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => constraint.sample_category.includes(sample_category[0]));
+                            const filter = Object.entries(cache.sampleCategories).filter(sample_category => constraint.sample_category.includes(sample_category[0]));
                             let sample_categories = {}
                             filter.forEach(entry => sample_categories[entry[0]] = entry[1])
                             setSampleCategories(sample_categories)
@@ -364,7 +364,7 @@ function EditSample() {
                                                 set_organ_group_hide={set_organ_group_hide}
                                                 organ_other_hide={organ_other_hide}
                                                 set_organ_other_hide={set_organ_other_hide}
-                                                sample_categories={sampleCategories === null ? SAMPLE_CATEGORY : sampleCategories}
+                                                sample_categories={sampleCategories === null ? cache.sampleCategories : sampleCategories}
                                                 data={values}
                                                 source={source}
                                                 onChange={onChange}/>
