@@ -62,3 +62,8 @@ export async function get_data_assays() {
     const assays = to_key_val(list)
     return add_other(assays)
 }
+
+export async function get_organ_types() {
+    let list = await get_ontology_from_cache('C000008')
+    return to_key_val(list)
+}

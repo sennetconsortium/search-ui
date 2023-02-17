@@ -12,7 +12,7 @@ import {getIngestEndPoint, getLogLevel, IDLE_TIMEOUT} from '../config/config'
 import useGoogleTagManager from '../hooks/useGoogleTagManager'
 import addons from "../components/custom/js/addons/addons"
 import {AppProvider} from '../context/AppContext'
-import {ENTITIES, ORGAN_TYPES} from '../config/constants'
+import {ENTITIES} from '../config/constants'
 import {deleteCookies} from "../lib/auth";
 
 function MyApp({Component, pageProps}) {
@@ -21,7 +21,7 @@ function MyApp({Component, pageProps}) {
 
     useEffect(() => {
         const user = getCookie('user')
-        addons('init', {data: {facets: ORGAN_TYPES, user}, router, entities: ENTITIES})
+        addons('init', {data: {user}, router, entities: ENTITIES})
     }, [])
 
     const onIdle = () => {
