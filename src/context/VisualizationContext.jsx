@@ -12,23 +12,22 @@ export const VisualizationProvider = ({ children }) => {
     const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
     const [isFullscreen, setIsFullscreen] = useState(false)
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
+    const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
 
-    const showVitessce = (data_types) => {
+    const showVitessce = data_types => {
         const supportedVitessceDataTypes = ['snRNA-seq', 'scRNA-seq', 'CODEX']
-        return supportedVitessceDataTypes.some(d=> data_types.includes(d))
+        return supportedVitessceDataTypes.some(d => data_types.includes(d))
     }
-
-    const isPrimaryDataset = data => data.immediate_ancestors && data.immediate_ancestors.some(ancestor => ancestor.entity_type === ENTITIES.sample)
 
     const expandVitessceToFullscreen = () => {
         document.addEventListener("keydown", collapseVitessceOnEsc, false);
-        $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
+        $('#sennet-vitessce-view-config').toggleClass('vitessce_fullscreen');
         setShowExitFullscreenMessage(true)
     }
 
     const collapseVitessceOnEsc = useCallback((event) => {
         if (event.key === "Escape") {
-            $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
+            $('#sennet-vitessce-view-config').toggleClass('vitessce_fullscreen');
             setIsFullscreen(false)
             setShowExitFullscreenMessage(false)
             document.removeEventListener("keydown", collapseVitessceOnEsc, false);
@@ -50,7 +49,7 @@ export const VisualizationProvider = ({ children }) => {
         isFullscreen,
         setIsFullscreen,
         expandVitessceToFullscreen,
-        collapseVitessceOnEsc,
+        setIsPrimaryDataset
     }}>
         { children }
     </VisualizationContext.Provider>
