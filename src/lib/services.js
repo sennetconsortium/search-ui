@@ -24,6 +24,12 @@ export async function update_create_dataset(uuid, body, action = "Edit", router)
     }
 }
 
+export function get_json_header( headers ) {
+    headers = headers || new Headers();
+    headers.append("Content-Type", "application/json");
+    return headers;
+}
+
 
 function get_headers() {
     const headers = new Headers();

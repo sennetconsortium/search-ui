@@ -41,7 +41,7 @@ export default function EditDataset() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit
     } = useContext(EntityContext)
-    const {_t} = useContext(AppContext)
+    const {_t, cache} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
@@ -91,9 +91,9 @@ export default function EditDataset() {
                     provenance_constraints.forEach(constraint => {
                         if (constraint.entity_type.toLowerCase() === 'dataset') {
                             if (!Object.hasOwn(constraint, 'data_type')) {
-                                setDataTypes(DATA_TYPES)
+                                setDataTypes(cache.dataTypes)
                             } else {
-                                const filter = Object.entries(DATA_TYPES).filter(data_type => constraint.data_type.includes(data_type[0]));
+                                const filter = Object.entries(cache.dataTypes).filter(data_type => constraint.data_type.includes(data_type[0]));
                                 let data_types = {}
                                 filter.forEach(entry => data_types[entry[0]] = entry[1])
                                 setDataTypes(data_types)
@@ -345,7 +345,7 @@ export default function EditDataset() {
 
                                     {/*/!*Data Types*!/*/}
                                     {editMode &&
-                                        <DataTypes data_types={dataTypes === null ? DATA_TYPES : dataTypes}
+                                        <DataTypes data_types={dataTypes === null ? cache.dataTypes : dataTypes}
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 

@@ -6,6 +6,7 @@ import log from 'loglevel'
 import { get_read_write_privileges } from '../lib/services'
 import {deleteCookies} from "../lib/auth";
 import {APP_ROUTES} from "../config/constants";
+import useCache from '../hooks/useCache'
 
 const AppContext = createContext()
 
@@ -14,6 +15,7 @@ export const AppProvider = ({ children }) => {
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const [authorized, setAuthorized] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
+    const cache = useCache()
     const router = useRouter()
     const authKey = 'isAuthenticated'
     const pageKey = 'userPage'
@@ -24,8 +26,10 @@ export const AppProvider = ({ children }) => {
         if (noRedirectTo.indexOf(router.pathname) === -1) {
             localStorage.setItem(pageKey, router.asPath)
         }
+
         get_read_write_privileges()
             .then((response) => {
+
                 setAuthorized(response.read_privs)
                 setIsRegisterHidden(!response.write_privs)
             })
@@ -102,6 +106,7 @@ export const AppProvider = ({ children }) => {
                 logout,
                 login,
                 _t,
+                cache
             }}
         >
             {children}
