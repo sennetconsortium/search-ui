@@ -20,6 +20,7 @@ import { ENTITIES } from "../../config/constants"
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
+import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 
 
 function EditSource() {
@@ -33,7 +34,8 @@ function EditSource() {
         editMode, setEditMode,isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
-        disableSubmit, setDisableSubmit } = useContext(EntityContext)
+        disableSubmit, setDisableSubmit,
+        metadata, setMetadata } = useContext(EntityContext)
     const { _t } = useContext(AppContext)
 
     const router = useRouter()
@@ -102,7 +104,7 @@ function EditSource() {
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
-
+            // values['metadata'] = metadata
 
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
                 setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
@@ -165,6 +167,7 @@ function EditSource() {
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
                                         onChange={onChange} text='Free text field to enter a description of the source.' />
 
+                                    <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}

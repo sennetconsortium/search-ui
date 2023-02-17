@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
 import {Button, Form} from 'react-bootstrap'
@@ -26,6 +26,7 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
 import {getEntityEndPoint, valid_dataset_ancestor_config} from "../../config/config";
+import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 
 export default function EditDataset() {
     const {
@@ -39,7 +40,8 @@ export default function EditDataset() {
         editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
-        disableSubmit, setDisableSubmit
+        disableSubmit, setDisableSubmit,
+        metadata, setMetadata
     } = useContext(EntityContext)
     const {_t} = useContext(AppContext)
     const router = useRouter()
@@ -80,6 +82,7 @@ export default function EditDataset() {
                         body['value'] = ancestor1.organ
                     }
                 }
+                // body['metadata'] = metadata
                 const requestOptions = {
                     method: 'POST',
                     headers: getHeaders(),
@@ -349,6 +352,7 @@ export default function EditDataset() {
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 
+                                    <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.dataset} />
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}

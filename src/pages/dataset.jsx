@@ -1,6 +1,11 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useCallback, Suspense} from "react";
 import {useRouter} from 'next/router';
-import {BoxArrowUpRight, CircleFill, List} from 'react-bootstrap-icons';
+import {
+    BoxArrowUpRight,
+    CircleFill, Fullscreen, List,
+    MoonFill,
+    SunFill
+} from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
@@ -19,7 +24,17 @@ import {ENTITIES} from "../config/constants";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
 import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
+import {rna_seq} from "../SNT753.WGBZ.884-snRNA-seq-large-intestine";
+import {Share, Moon, Sun} from "react-bootstrap-icons";
+import Link from 'next/link'
+import Tooltip from 'react-bootstrap/Tooltip';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import $ from 'jquery'
+import {Snackbar} from "@mui/material";
+import MuiAlert from '@mui/material/Alert';
 
+
+const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
 
 function ViewDataset() {
     const router = useRouter()
@@ -29,9 +44,34 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-
+    const [vitessceTheme, setVitessceTheme] = useState("light")
+    const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
+    const [fullscreenIcon, setFullscreenIcon] = useState(true)
+    const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
-
+    const [vitessceConfig, setVitessceConfig] = useState(null)
+    
+    useEffect(()=> {
+        if(data !== null) {
+            setVitessceConfig(rna_seq(data.uuid))
+        }
+    }, [data])
+    
+    const escFunction = useCallback((event) => {
+        if (event.key === "Escape") {
+            $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
+            setFullscreenIcon(true)
+            setShowExitFullscreenMessage(false)
+            document.removeEventListener("keydown", escFunction, false);
+        }
+    }, []);
+    
+    function expandVitessceToFullscreen() {
+        document.addEventListener("keydown", escFunction, false);
+        $('#sennet-vitessce').toggleClass('vitessce_fullscreen');
+        setShowExitFullscreenMessage(true)
+    }
+    
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
@@ -97,6 +137,13 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
+                                            {data.data_types.includes('snRNA-seq') &&
+                                                <li className="nav-item">
+                                                    <a href="#Vitessce"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Visualization</a>
+                                                </li>
+                                            }
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
@@ -188,6 +235,87 @@ function ViewDataset() {
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
                                                          data={data}/>
+                                            {/* Vitessce */}
+                                            {data.data_types.includes('snRNA-seq') &&
+                                                <div className="accordion accordion-flush sui-result" id="Vitessce">
+                                                        <div className="accordion-item ">
+                                                            <div className="accordion-header">
+                                                                <button className="accordion-button" type="button"
+                                                                        data-bs-toggle="collapse"
+                                                                        data-bs-target="#vitessce-collapse"
+                                                                        aria-expanded="true"
+                                                                        aria-controls="vitessce-collapse">Visualization
+
+                                                                </button>
+                                                            </div>
+                                                            <div id="vitessce-collapse"
+                                                                 className="accordion-collapse collapse show">
+                                                                <div className="accordion-body" style={{height: '900px'}}>
+                                                                    <div className={'row'}>
+                                                                        <div className={'col p-2 m-2'}>
+                                                                            <span className={'fw-lighter'}>Powered by </span>
+                                                                            <Link href={'http://vitessce.io'}></Link>
+                                                                            <a target="_blank" href="http://vitessce.io/" rel="noopener noreferrer" title={'Vitessce.io'}>
+                                                                                Vitessce V1.2.2
+                                                                            </a>
+                                                                        </div>
+                                                                        <div className={'col text-end p-2 m-2'}>
+                                                                                <OverlayTrigger
+                                                                                    placement={'top'}
+                                                                                    overlay={
+                                                                                        <Tooltip id={'share-tooltip'}>
+                                                                                            {showCopiedToClipboard ? 'Shareable URL copied to clipboard!' : 'Share Visualization'}
+                                                                                        </Tooltip>
+                                                                                    }>
+                                                                                    <Share style={{cursor: 'pointer'}} color="royalblue" size={24} onClick={()=>{
+                                                                                        navigator.clipboard.writeText(document.location.href)
+                                                                                        setShowCopiedToClipboard(true)
+                                                                                    }} onMouseLeave={()=>setShowCopiedToClipboard(false)}/>
+                                                                                </OverlayTrigger>
+                                                                                {
+                                                                                    vitessceTheme === 'light' ? 
+                                                                                        <>
+                                                                                            <OverlayTrigger placement={'top'} overlay={<Tooltip id={'light-theme-tooltip'}>Switch to light theme</Tooltip>}>
+                                                                                                <SunFill style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('light')}} className={'m-2'} color="royalblue" size={24} title="Light mode"/>
+                                                                                            </OverlayTrigger>
+                                                                                            <OverlayTrigger placement={'top'} overlay={<Tooltip id={'dark-theme-tooltip'}>Switch to dark theme</Tooltip>}>
+                                                                                                <Moon style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} color="royalblue" size={24} title="Dark mode"/>
+                                                                                            </OverlayTrigger>
+                                                                                        </>
+                                                                                        :
+                                                                                        <>
+                                                                                            <OverlayTrigger placement={'top'} overlay={<Tooltip>Switch to light theme</Tooltip>}>
+                                                                                                <Sun style={{cursor: 'pointer'}} onClick={()=>setVitessceTheme('light')} className={'m-2'} color="royalblue" size={24} title="Light mode"/>
+                                                                                            </OverlayTrigger>
+                                                                                            <OverlayTrigger placement={'top'} overlay={<Tooltip>Switch to dark theme</Tooltip>}>
+                                                                                                <MoonFill style={{cursor: 'pointer'}} onClick={()=>{setVitessceTheme('dark')}} className={'m-2'} color="royalblue" size={24} title="Dark mode"/>
+                                                                                            </OverlayTrigger>
+                                                                                        </>
+                                                                                    
+                                                                                }
+                                                                                <OverlayTrigger placement={'top'} overlay={<Tooltip>Enter fullscreen</Tooltip>}>
+                                                                                        <Fullscreen style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={()=>{
+                                                                                            expandVitessceToFullscreen()
+                                                                                            setFullscreenIcon(false)}
+                                                                                        }/>
+                                                                                </OverlayTrigger>
+                                                                            </div>
+                                                                        </div>
+                                                                    <div id={'sennet-vitessce'}>
+                                                                        <Snackbar open={showExitFullscreenMessage} autoHideDuration={8000} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} onClose={()=>{setShowExitFullscreenMessage(false)}}>
+                                                                            <MuiAlert onClose={()=>{setShowExitFullscreenMessage(false)}} severity="info" sx={{ width: '100%' }}>
+                                                                                Pres ESC to exit fullscreen
+                                                                            </MuiAlert>
+                                                                        </Snackbar>
+                                                                        <Suspense fallback={<div>Loading...</div>}>
+                                                                            <Vitessce config={vitessceConfig} theme={vitessceTheme} height={fullscreenIcon === false ? null : 800}/>
+                                                                        </Suspense>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            }
 
                                             {/*Provenance*/}
                                             {data &&
