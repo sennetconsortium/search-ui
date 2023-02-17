@@ -82,7 +82,7 @@ export default function EditDataset() {
                         body['value'] = ancestor1.organ
                     }
                 }
-                // body['metadata'] = metadata
+                
                 const requestOptions = {
                     method: 'POST',
                     headers: getHeaders(),
@@ -210,7 +210,8 @@ export default function EditDataset() {
                 log.debug("Form is valid")
 
                 if(!_.isEmpty(metadata)) {
-                    values["metadata"] = metadata
+                    values["metadata"] = metadata.metadata
+                    values["pathname"] = metadata.pathname
                 }
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
