@@ -48,7 +48,7 @@ export const DATA_TYPES = {
     "snRNA-seq": "snRNA-seq",
     "Stained Slides": "Stained Slides",
     "Visium": "Visium",
-    "lightsheet": "Lightsheet",
+    "Lightsheet": "Lightsheet",
     "Other": "Other"
 };
 

@@ -19,7 +19,6 @@ export async function update_create_dataset(uuid, body, action = "Edit", router)
         let url = getIngestEndPoint() + "datasets" + (action === 'Create' ? '' : "/" + uuid + "/submit")
         let method = (action === 'Create' ? "POST" : "PUT")
         log.debug(url)
-
         return call_service(raw, url, method)
     }
 }
@@ -30,17 +29,19 @@ export function get_json_header( headers ) {
     return headers;
 }
 
-
-function get_headers() {
+export function get_auth_header() {
     const headers = new Headers();
-    headers.append("Content-Type", "application/json");
     headers.append("Authorization", "Bearer " + getAuth())
     return headers;
 }
 
+function get_headers() {
+    const headers = get_auth_header();
+    return get_json_header(headers);
+}
+
 export async function fetchGlobusFilepath(sennet_id) {
-    const headers = new Headers();
-    headers.append("Authorization", "Bearer " + getAuth())
+    const headers = get_auth_header();
     const url = getEntityEndPoint() + "entities/" + sennet_id + "/globus-url"
     const request_options = {
         method: 'GET',
@@ -54,7 +55,6 @@ export async function fetchGlobusFilepath(sennet_id) {
     } else {
         return filepath;
     }
-
 }
 
 // This function requires the bearer token passed to it as the middleware can't access "getAuth()"
@@ -85,15 +85,20 @@ export async function get_read_write_privileges() {
         method: 'GET',
         headers: get_headers()
     }
-    const response = await fetch(url, request_options)
-    if (!response.ok) {
-        return {
-            "read_privs": false,
-            "write_privs": false
-        };
+    try {
+        const response = await fetch(url, request_options)
+        if (!response.ok) {
+            return {
+                "read_privs": false,
+                "write_privs": false
+            };
+        }
+        let json = response.json()
+        return await json
+    } catch (e) {
+        console.error(e)
     }
-    let json = response.json()
-    return await json
+
 }
 
 export const write_privilege_for_group_uuid = (group_uuid) => get_write_privilege_for_group_uuid(group_uuid)

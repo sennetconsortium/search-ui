@@ -11,7 +11,7 @@ import {
     WithSearch
 } from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
-import Facets from "../search-ui/components/core/Facets";
+import Facets from "search-ui/components/core/Facets";
 import {TableResults, TableRowDetail} from "../components/custom/TableResults";
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import AppNavbar from "../components/custom/layout/AppNavbar";
@@ -24,6 +24,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import SelectedFilters from "../components/custom/layout/SelectedFilters";
+import {getOrganTypeFullName} from "../components/custom/js/functions";
 
 function Search() {
     const {
@@ -92,7 +93,8 @@ function Search() {
                                                         />
                                                     )}
 
-                                                    <Facets fields={config.searchQuery} filters={filters}/>
+                                                    <Facets fields={config.searchQuery} filters={filters}
+                                                            transformFunction={getOrganTypeFullName}/>
 
                                                 </div>
 

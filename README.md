@@ -67,4 +67,54 @@ docker pull hubmap/portal-ui:1.0.0 (replace with the actual released version num
 Environment vars
 - `PORTAL_UI_CLOUDWATCH_LOG_GROUP='/aws/ec2/sennet-prod/portal-ui/next-server'`: The Cloudwatch log group that saves the nodejs/next-js server logs
 
+## Vitessce
+[Visual integration tool for exploration of spatial single cell experiments](http://vitessce.io/)
 
+[Vitessce docs](http://vitessce.io/docs/)
+
+Vitessce is embedded in the view dataset page for sn-RNA-seq data types. The React component takes 3 props as input, a json object named config that describes the visualizations, a theme, and the height.
+
+### Vitessce View Config
+The view config is responsible for which views are rendered, what data is fetched, and the layout of the views. Vitessce can render many views for each individual dataset. The files are served by the [assets service](https://github.com/sennetconsortium/file-assets-auth)
+
+An example json view config is `src/SNT753.WGBZ.884-snRNA-seq-large-intestine.js`
+
+*Hint* `The view config is logged in the browser console for HubMAP and SenNet.`
+
+You can copy/paste the json object into the Vitessce [app](http://vitessce.io/#?edit=true).
+
+[Vitessce JS view config API](http://vitessce.io/docs/view-config-js/)
+
+### Vitessce App to validate view configs
+During development we can use the vitessce app to validate view configs. It will tell us if there are any errors in the config and then load the visualizations in the browser.
+
+
+[Vitessce app](http://vitessce.io/#?edit=true)
+
+## Usage
+
+```
+const Vitessce = React.lazy(() => import ('../components/custom/VitessceWrapper.js'))
+<Vitessce config={config} theme={'light'} height={800}/>
+```
+
+## Common Coordination Framework Registration User Interface (CCF-RUI)
+The CCF-RUI allows a user to locate and record 3D coordinates of tissue blocks sampled from organs. Example [HubMAP RUI](https://hubmapconsortium.github.io/ccf-ui/rui/)
+
+[CCF-UI github repo](https://github.com/hubmapconsortium/ccf-ui)
+
+The tool is integrated as a web component with a react component wrapping it. The web component is
+
+```markdown
+<ccf-rui
+  ref={this.ruiRef}
+  base-href="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
+  theme={'sennet'}
+/>
+```
+
+The react component is `src/components/custom/edit/sample/rui/RuiIntegration.js`
+
+The tool is only available for human `Block` tissue samples with an ancestor of `Organ`
+
+The `Register location` button will display on the edit sample page and launch the CCF-RUI tool.

@@ -29,7 +29,10 @@ import {ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
+
 import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/config";
+import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+
 
 
 function EditSample() {
@@ -44,7 +47,8 @@ function EditSample() {
         editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
-        disableSubmit, setDisableSubmit
+        disableSubmit, setDisableSubmit,
+        metadata, setMetadata
     } = useContext(EntityContext)
     const {_t, cache} = useContext(AppContext)
     const router = useRouter()
@@ -72,6 +76,7 @@ function EditSample() {
                         body['value'] = source.organ
                     }
                 }
+
                 const requestOptions = {
                     method: 'POST',
                     headers: getHeaders(),
@@ -282,7 +287,7 @@ function EditSample() {
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
-
+            // values['metadata'] = metadata
 
             await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
                 setModalDetails({
@@ -397,7 +402,7 @@ function EditSample() {
                                                      onChange={onChange}
                                                      text='Free text field to enter a description of the specimen'/>
 
-
+                                    {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}

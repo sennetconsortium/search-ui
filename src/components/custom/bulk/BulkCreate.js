@@ -18,6 +18,8 @@ import AppFooter from "../layout/AppFooter";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
+import {formatErrorColumn, tableColumns, formatErrorColumnTimer} from "../edit/MetadataUpload";
+import DataTable from 'react-data-table-component';
 
 
 export default function BulkCreate({
@@ -138,6 +140,7 @@ export default function BulkCreate({
         if (!response.ok) {
             setError({1: true})
             setErrorMessage(data)
+            formatErrorColumnTimer('`')
         } else {
             setTempId(data.temp_id)
             setValidationSuccess(true)
@@ -316,12 +319,9 @@ export default function BulkCreate({
                     </Stepper>
                     {isLoading && <Spinner/>}
                     {
-                        errorMessage && Object.entries(errorMessage.data)
-                            .map((value, key) => (
-                                <Alert severity="error" className={'m-2'} key={key}>
-                                    {value[1]}
-                                </Alert>
-                            ))
+                        errorMessage && <div className='c-metadataUpload__table table-responsive has-error'>
+                            <DataTable columns={tableColumns} data={errorMessage.data} pagination />
+                        </div>
                     }
                     {activeStep === 1 && !errorMessage && validationSuccess &&
                         <Alert severity="success" sx={{m: 2}}>

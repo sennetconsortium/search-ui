@@ -21,11 +21,12 @@
     "lodash": "^4.17.21",
     "next": "^13.0.3",
     "npm-run-all": "^4.1.5",
-    "provenance-ui": "github:sennetconsortium/provenance-ui#v2.3.6-rc",
+    "provenance-ui": "github:sennetconsortium/provenance-ui#main",
     "react-bootstrap-icons": "^1.8.4",
     "react-data-table-component": "^7.5.3",
     "react-idle-timer": "^5.4.2",
     "sass": "^1.57.1",
-    "search-ui": "file:search-ui"
+    "search-ui": "file:search-ui",
+    "vitessce": "^1.2.2"
   }
 }

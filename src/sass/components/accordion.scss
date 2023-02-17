@@ -21,3 +21,14 @@
   padding-bottom: 0px;
   padding-top: 0px;
 }
+
+.accordion-body .nav-item .nav-link {
+  border-radius: 0;
+  border: solid 1px #eee;
+}
+
+.accordion-body .nav-item {
+  padding-top: 7px;
+  padding-left: 10px;
+  padding-right: 10px;
+}

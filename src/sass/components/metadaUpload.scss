@@ -1,0 +1,52 @@
+.c-metadataUpload {
+
+  &__table {
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+  }
+
+  &__meta {
+    font-size: 16px;
+    padding-top: 10px;
+    margin-left: 10px !important;
+    position: relative;
+    .spinner {
+      width: 1em;
+      height: 1em;
+      padding: 0;
+      position: absolute;
+      top: 20px;
+      margin-left: 5px;
+    }
+    small {
+      font-size: 10px;
+      margin-left: 5px;
+    }
+    &.has-hover small {
+      cursor: pointer;
+      &:hover {
+        color: red;
+      }
+    }
+    &.has-error small {
+      color: $col-err-txt;
+    }
+
+    &--fwd {
+      svg {
+        fill: var(--bs-gray-600);
+      }
+      &:hover {
+        svg {
+          fill: var(--bs-gray-700);
+        }
+      }
+    }
+  }
+}
+
+.btn--fileUpload input[type=file] {
+  opacity: 0;
+  width: 20px;
+}
