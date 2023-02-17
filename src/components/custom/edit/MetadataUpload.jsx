@@ -120,7 +120,7 @@ function MetadataUpload({ setMetadata, entity }) {
                 setValidationError(false)
                 setFileStatus(upload.name)
                 setSuccess(true)
-                setMetadata(details.metadata)
+                setMetadata(details)
             }
             setIsValidating(false)
         } catch(e) {
