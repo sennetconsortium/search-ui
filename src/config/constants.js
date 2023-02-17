@@ -5,13 +5,6 @@ export const SOURCE_TYPE = {
     "Mouse organoid": "Mouse organoid"
 }
 
-export const SAMPLE_CATEGORY = {
-    "block": "Block",
-    "section": "Section",
-    "suspension": "Suspension",
-    "organ": "Organ"
-}
-
 export const ORGAN_TYPES = {
     "AD": "Adipose",
     "BD": "Blood",
@@ -28,28 +21,6 @@ export const ORGAN_TYPES = {
     "RO": "Ovary (Right)",
     "SK": "Skin",
     "OT": "Other"
-};
-
-export const DATA_TYPES = {
-    "Bulk RNA-seq": "Bulk RNA-seq",
-    "CITE-seq": "CITE-seq",
-    "CODEX": "CODEX",
-    "CosMX - RNA": "CosMX - RNA",
-    "DBiT-seq": "DBiT-seq",
-    "FACS - Fluorescence-activated Cell Sorting": "FACS - Fluorescence-activated Cell Sorting",
-    "GeoMX - RNA": "GeoMX - RNA",
-    "LC-MS": "LC-MS",
-    "MIBI": "MIBI",
-    "Mint-ChIP": "Mint-ChIP",
-    "Multiplexed": "Multiplexed",
-    "SASP": "SASP",
-    "scRNA-seq": "scRNA-seq",
-    "snATAC-seq": "snATAC-seq",
-    "snRNA-seq": "snRNA-seq",
-    "Stained Slides": "Stained Slides",
-    "Visium": "Visium",
-    "Lightsheet": "Lightsheet",
-    "Other": "Other"
 };
 
 export const APP_ROUTES = {
