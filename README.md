@@ -86,7 +86,7 @@ You can copy/paste the json object into the Vitessce [app](http://vitessce.io/#?
 [Vitessce JS view config API](http://vitessce.io/docs/view-config-js/)
 
 ### Vitessce App to validate view configs
-During development we can use the vitessce app to validate view configs. It will tell us if there are any errors in the config and then load the visualizations in the browser.
+During development, we can use the vitessce app to validate view configs. It will tell us if there are any errors in the config and then load the visualizations in the browser.
 
 
 [Vitessce app](http://vitessce.io/#?edit=true)
