@@ -82,7 +82,7 @@ export default function EditDataset() {
                         body['value'] = ancestor1.organ
                     }
                 }
-                // body['metadata'] = metadata
+                
                 const requestOptions = {
                     method: 'POST',
                     headers: getHeaders(),
@@ -142,7 +142,8 @@ export default function EditDataset() {
                     'description': data.description,
                     'dataset_info': data.dataset_info,
                     'direct_ancestor_uuids': immediate_ancestors,
-                    'contains_human_genetic_sequences': data.contains_human_genetic_sequences
+                    'contains_human_genetic_sequences': data.contains_human_genetic_sequences,
+                    'metadata': data.metadata
                 })
                 setEditMode("Edit")
             }
@@ -210,7 +211,8 @@ export default function EditDataset() {
                 log.debug("Form is valid")
 
                 if(!_.isEmpty(metadata)) {
-                    values["metadata"] = metadata
+                    values["metadata"] = metadata.metadata
+                    values["pathname"] = metadata.pathname
                 }
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
@@ -357,7 +359,7 @@ export default function EditDataset() {
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.dataset} />
+                                    {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.dataset} />*/}
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}
