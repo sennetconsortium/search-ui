@@ -15,5 +15,6 @@
 
 #sections-button {
   margin-left: -50px;
+  width: 42px; //This is set otherwise the z-index of this button interferes with other page functionality
   top: 90px !important
 }
