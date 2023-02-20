@@ -402,7 +402,7 @@ function EditSample() {
                                                      onChange={onChange}
                                                      text='Free text field to enter a description of the specimen'/>
 
-                                    <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />
+                                    {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}

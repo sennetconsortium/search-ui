@@ -51,15 +51,22 @@ function ViewDataset() {
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
     const [vitessceConfig, setVitessceConfig] = useState(null)
+    const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
     
     const showVitessce = (data_types) => {
         const supportedVitessceDataTypes = ['snRNA-seq', 'scRNA-seq', 'CODEX']
         return supportedVitessceDataTypes.some(d=> data_types.includes(d))
     }
-    
-    useEffect(()=> {
-        if(data !== null) {
+
+    // Load the correct Vitessce view config
+    useEffect(() => {
+        if (data) {
+            log.info(data)
             let datasetId = data.uuid;
+            if (isPrimaryDataset && data.immediate_descendants.length !== 0) {
+                // Fetch files from the immediate descendant dataset (visualization dataset)
+                datasetId = data.descendant_ids[0]
+            }
             data.data_types.forEach(assay => {
                 switch (assay) {
                     case 'snRNA-seq':
@@ -111,6 +118,7 @@ function ViewDataset() {
             } else {
                 // set state with the result
                 setData(data);
+                setIsPrimaryDataset(data.immediate_ancestors.some(ancestor => ancestor.entity_type === ENTITIES.sample))
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
@@ -272,11 +280,21 @@ function ViewDataset() {
                                                                 <div className="accordion-body" style={{height: '900px'}}>
                                                                     <div className={'row'}>
                                                                         <div className={'col p-2 m-2'}>
-                                                                            <span className={'fw-lighter'}>Powered by </span>
-                                                                            <Link href={'http://vitessce.io'}></Link>
-                                                                            <a target="_blank" href="http://vitessce.io/" rel="noopener noreferrer" title={'Vitessce.io'}>
-                                                                                Vitessce V1.2.2
-                                                                            </a>
+                                                                            <span className={'fw-light fs-6'}>Powered by 
+                                                                                <a className={'ms-2'} target="_blank" href="http://vitessce.io/" rel="noopener noreferrer" title={'Vitessce.io'}>
+                                                                                    Vitessce V1.2.2
+                                                                                </a>
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className={'col p-2 m-2'}>
+                                                                            {isPrimaryDataset && data.immediate_descendants.length !== 0 &&
+                                                                                <span className={'fw-light fs-6 m-2 p-2'}>
+                                                                                    Derived from 
+                                                                                    <Link target="_blank" href={{pathname: '/dataset', query: {uuid: data.immediate_descendants[0].uuid}}}>
+                                                                                        <span className={'ms-2 me-2'}>{data.immediate_descendants[0].sennet_id}</span>
+                                                                                    </Link>
+                                                                                </span>
+                                                                            }
                                                                         </div>
                                                                         <div className={'col text-end p-2 m-2'}>
                                                                                 <OverlayTrigger
