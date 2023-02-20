@@ -359,7 +359,7 @@ export default function EditDataset() {
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.dataset} />
+                                    {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.dataset} />*/}
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}
