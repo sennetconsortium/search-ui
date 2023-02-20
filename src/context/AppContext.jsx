@@ -1,7 +1,7 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
 import { goToSearch } from '../components/custom/js/functions'
-import { getCookie, deleteCookie, setCookie } from 'cookies-next'
+import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import { get_read_write_privileges } from '../lib/services'
 import {deleteCookies} from "../lib/auth";
@@ -87,7 +87,7 @@ export const AppProvider = ({ children }) => {
     const _t = (msg) => {
         return msg
     }
-
+    
     return (
         <AppContext.Provider
             value={{
@@ -103,6 +103,7 @@ export const AppProvider = ({ children }) => {
                 logout,
                 login,
                 _t,
+                router,
             }}
         >
             {children}
