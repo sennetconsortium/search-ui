@@ -14,7 +14,7 @@ import {
     getRequestHeaders
 } from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_entity, parseJson, get_ancestor_organs} from "../../lib/services";
+import {update_create_entity, parseJson, get_ancestor_organs, get_auth_header} from "../../lib/services";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
@@ -29,9 +29,8 @@ import {ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
-
-import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/config";
-import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+import {getEntityEndPoint, getIngestEndPoint, getUserName, isRuiSupported} from "../../config/config";
+import ImageSelector from "../../components/custom/edit/ImageSelector";
 
 
 
@@ -62,7 +61,8 @@ function EditSample() {
     const [sampleCategories, setSampleCategories] = useState(null)
     const [organ_group_hide, set_organ_group_hide] = useState('none')
     const [organ_other_hide, set_organ_other_hide] = useState('none')
-
+    const [tempFileIds, setTempFileIds] = useState([])
+    
     useEffect(() => {
         const fetchSampleCategories = async () => {
             setSampleCategories(null)
@@ -283,6 +283,8 @@ function EditSample() {
             if (ruiLocation !== '') {
                 values['rui_location'] = parseJson(ruiLocation)
             }
+            
+            values['image_files_to_add'] = tempFileIds
 
             // Remove empty strings
             let json = cleanJson(values);
@@ -401,6 +403,9 @@ function EditSample() {
                                                      value={data.description}
                                                      onChange={onChange}
                                                      text='Free text field to enter a description of the specimen'/>
+                                    
+                                    {/* Images */}
+                                    <ImageSelector tempFileIds={tempFileIds} setTempFileIds={setTempFileIds}/>
 
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
