@@ -18,6 +18,7 @@ export const ORGAN_TYPES = {
     "BR": "Brain",
     "BS": "Breast",
     "LI": "Large Intestine",
+    "LN": "Lymph Node",
     "LV": "Liver",
     "LL": "Lung (Left)",
     "RL": "Lung (Right)",
