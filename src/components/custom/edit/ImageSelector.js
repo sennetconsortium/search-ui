@@ -1,6 +1,6 @@
 import React, {useState, useRef} from 'react'
-import {Button, Badge, Alert, Form, Popover} from 'react-bootstrap';
-import {QuestionCircleFill, XCircle} from "react-bootstrap-icons";
+import {Button, Badge, Alert} from 'react-bootstrap';
+import {XCircle} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import {uploadFile} from "../../../lib/services";
@@ -48,7 +48,7 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
             <div className={'row'}>
                 <div className={'col m-4'}>
                     {images && images.map((img, index) => (
-                        <Badge key={img.name} className={'badge rounded-pill text-bg-primary ms-2'}>
+                        <Badge key={img.name} bg={'info'} className={'badge rounded-pill text-bg-primary ms-2'}>
                             <span className={'m-2'}>{img.name}</span>
                             <OverlayTrigger placement={'top'} overlay={<Tooltip id={'light-theme-tooltip'}>Remove image</Tooltip>}>
                                 <XCircle style={{cursor: 'pointer'}} className={'m-2'} onClick={() => removeImage(index)}/>

@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react'
-import {Button, Badge, Alert, Popover, Form} from 'react-bootstrap'
+import {Button, Badge, Alert} from 'react-bootstrap'
 import {uploadFile} from "../../../lib/services";
-import {QuestionCircleFill, XCircle} from "react-bootstrap-icons";
+import {XCircle} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
@@ -44,7 +44,7 @@ export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
             <div className={'col m-4'}>
                 { thumbnail &&
         
-                    <Badge className={'badge rounded-pill text-bg-primary ms-2'}>
+                    <Badge bg={'info'} className={'badge rounded-pill text-bg-primary ms-2'}>
                         <span className={'m-2'}>{thumbnail.name}</span>
                         <OverlayTrigger placement={'top'} overlay={<Tooltip id={'light-theme-tooltip'}>Remove thumbnail</Tooltip>}>
                             <XCircle style={{cursor: 'pointer'}} className={'m-2'} onClick={() => removeThumbnail()}/>
