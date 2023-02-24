@@ -41,21 +41,6 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                     onChange={handleFileChange}
                 />
                 {error && <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible><Alert.Heading>File is too large</Alert.Heading>{error}</Alert>}
-                <Form.Label>
-                    Images
-                    <OverlayTrigger
-                        placement="top"
-                        overlay={
-                            <Popover>
-                                <Popover.Body>
-                                    Upload images for this Source
-                                </Popover.Body>
-                            </Popover>
-                        }
-                    >
-                        <QuestionCircleFill className={'m-2'}/>
-                    </OverlayTrigger>
-                </Form.Label>
                 <Button variant={'outline-secondary rounded-0'} onClick={handleBrowseFilesClick}>
                     Add images
                 </Button>
