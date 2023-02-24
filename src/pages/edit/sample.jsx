@@ -31,6 +31,7 @@ import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
 import {getEntityEndPoint, getIngestEndPoint, getUserName, isRuiSupported} from "../../config/config";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
+import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
 
 
 
@@ -61,7 +62,8 @@ function EditSample() {
     const [sampleCategories, setSampleCategories] = useState(null)
     const [organ_group_hide, set_organ_group_hide] = useState('none')
     const [organ_other_hide, set_organ_other_hide] = useState('none')
-    const [tempFileIds, setTempFileIds] = useState([])
+    const [imageFilesToAdd, setImageFilesToAdd] = useState([])
+    const [thumbnailFileToAdd, setThumbnailFileToAdd] = useState(null)
     
     useEffect(() => {
         const fetchSampleCategories = async () => {
@@ -266,7 +268,7 @@ function EditSample() {
     const handleSubmit = async (event) => {
         setDisableSubmit(true);
 
-        const form = event.currentTarget.parentElement;
+        const form = event.currentTarget.parentElement.parentElement;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
@@ -284,7 +286,8 @@ function EditSample() {
                 values['rui_location'] = parseJson(ruiLocation)
             }
             
-            values['image_files_to_add'] = tempFileIds
+            values['image_files_to_add'] = imageFilesToAdd
+            values['thumbnail_file_to_add'] = thumbnailFileToAdd
 
             // Remove empty strings
             let json = cleanJson(values);
@@ -405,14 +408,19 @@ function EditSample() {
                                                      text='Free text field to enter a description of the specimen'/>
                                     
                                     {/* Images */}
-                                    <ImageSelector tempFileIds={tempFileIds} setTempFileIds={setTempFileIds}/>
+                                    <ImageSelector imageFilesToAdd={imageFilesToAdd} setImageFilesToAdd={setImageFilesToAdd}/>
+
+                                    {/* Thumbnail */}
+                                    <ThumbnailSelector setThumbnailFileToAdd={setThumbnailFileToAdd}/>
 
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
-                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
-                                            disabled={disableSubmit}>
-                                        {_t('Submit')}
+                                    <div className={'d-flex flex-row-reverse'}>
+                                        <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
+                                                disabled={disableSubmit}>
+                                            {_t('Submit')}
 
-                                    </Button>
+                                        </Button>
+                                    </div>
                                     {getModal()}
                                 </Form>
                             }

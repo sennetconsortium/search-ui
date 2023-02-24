@@ -1,35 +1,26 @@
-import React, {useState, useEffect, useRef} from 'react'
-import {Button, Badge} from 'react-bootstrap';
-import {get_auth_header} from "../../../lib/services";
-import {getIngestEndPoint} from "../../../config/config";
-import {XCircle} from "react-bootstrap-icons";
+import React, {useState, useRef} from 'react'
+import {Button, Badge, Alert, Form, Popover} from 'react-bootstrap';
+import {QuestionCircleFill, XCircle} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import {uploadFile} from "../../../lib/services";
 
 
 
-export default function ImageSelector({ tempFileIds, setTempFileIds}) {
+export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
     const imageInputRef = useRef()
     const [images, setImages] = useState([])
+    const [error, setError] = useState(null)
     
-    const uploadFile = async image => {
-        const formData = new FormData()
-        formData.append('file', image)
-        const requestOptions = {
-            headers: get_auth_header(),
-            method: 'POST',
-            body: formData
-        }
-        const response = await fetch(getIngestEndPoint() + 'file-upload', requestOptions)
-        const tempFileId = await response.json()
-        setTempFileIds(prevState => [...prevState, tempFileId])
-    }
-
     const handleFileChange = () => {
         const image = event.target.files && event.target.files[0]
         if (!image) return
         uploadFile(image)
-        setImages(prevState => [...prevState, image])
+            .then(r => {
+                setImageFilesToAdd(prevState => [...prevState, r])
+                setImages(prevState => [...prevState, image])
+            })
+            .catch(() => setError(`${image.name} (${Math.floor(image.size / 1000)} kb) has exceeded the file size limit.`))
         event.target.value = null
     }
 
@@ -37,30 +28,51 @@ export default function ImageSelector({ tempFileIds, setTempFileIds}) {
 
     const removeImage = index => {
         setImages(images.filter((_, i) => i !== index))
-        setTempFileIds(tempFileIds.filter((_, i) => i !== index))
+        setImageFilesToAdd(imageFilesToAdd.filter((_, i) => i !== index))
     }
 
-    return (<div className={'row'}>
-        <div className={'col mb-2'}>
-            <input
-                style={{display: 'none'}}
-                type={'file'}
-                ref={imageInputRef}
-                onChange={handleFileChange}
-            />
-            <Button variant={'outline-secondary rounded-0'} onClick={handleBrowseFilesClick}>
-                Add images
-            </Button>
-            {images && images.map((img, index) => (
-                <Badge style={{fontSize:'.9rem'}} key={img.name} className={'badge rounded-pill text-bg-primary ms-2'}>
-                    <span className={'m-2'}>{img.name}</span>
-                    <OverlayTrigger placement={'top'} overlay={<Tooltip id={'light-theme-tooltip'}>Remove image</Tooltip>}>
-                        <XCircle style={{cursor: 'pointer'}} className={'m-2'} onClick={() => removeImage(index)}/>
+    return (
+        <div className={'row'}>
+            <div className={'col'}>
+                <input
+                    style={{display: 'none'}}
+                    type={'file'}
+                    ref={imageInputRef}
+                    onChange={handleFileChange}
+                />
+                {error && <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible><Alert.Heading>File is too large</Alert.Heading>{error}</Alert>}
+                <Form.Label>
+                    Images
+                    <OverlayTrigger
+                        placement="top"
+                        overlay={
+                            <Popover>
+                                <Popover.Body>
+                                    Upload images for this Source
+                                </Popover.Body>
+                            </Popover>
+                        }
+                    >
+                        <QuestionCircleFill className={'m-2'}/>
                     </OverlayTrigger>
-                </Badge>)
-                )
-            }
+                </Form.Label>
+                <Button variant={'outline-secondary rounded-0'} onClick={handleBrowseFilesClick}>
+                    Add images
+                </Button>
+            </div>
+            <div className={'row'}>
+                <div className={'col m-4'}>
+                    {images && images.map((img, index) => (
+                        <Badge key={img.name} className={'badge rounded-pill text-bg-primary ms-2'}>
+                            <span className={'m-2'}>{img.name}</span>
+                            <OverlayTrigger placement={'top'} overlay={<Tooltip id={'light-theme-tooltip'}>Remove image</Tooltip>}>
+                                <XCircle style={{cursor: 'pointer'}} className={'m-2'} onClick={() => removeImage(index)}/>
+                            </OverlayTrigger>
+                        </Badge>)
+                    )}
+                </div>
+            </div>
         </div>
-    </div>)
+    )
 }
 

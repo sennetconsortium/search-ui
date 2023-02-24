@@ -11,7 +11,6 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
-
 import AppContext from '../../context/AppContext'
 import { EntityProvider } from '../../context/EntityContext'
 import EntityContext from '../../context/EntityContext'
@@ -20,7 +19,7 @@ import { ENTITIES } from "../../config/constants"
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
-import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+import ImageSelector from "../../components/custom/edit/ImageSelector";
 
 
 function EditSource() {
@@ -34,12 +33,11 @@ function EditSource() {
         editMode, setEditMode,isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
-        disableSubmit, setDisableSubmit,
-        metadata, setMetadata } = useContext(EntityContext)
+        disableSubmit, setDisableSubmit} = useContext(EntityContext)
     const { _t } = useContext(AppContext)
-
     const router = useRouter()
     const [source, setSource] = useState(null)
+    const [imageFilesToAdd, setImageFilesToAdd] = useState([])
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -87,7 +85,7 @@ function EditSource() {
 
     const handleSubmit = async (event) => {
         setDisableSubmit(true);
-        const form = event.currentTarget.parentElement;
+        const form = event.currentTarget.parentElement.parentElement;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
@@ -100,6 +98,8 @@ function EditSource() {
             if (values['group_uuid'] === null && !isEditMode()) {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
+
+            values['image_files_to_add'] = imageFilesToAdd
 
             // Remove empty strings
             let json = cleanJson(values);
@@ -167,12 +167,16 @@ function EditSource() {
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
                                         onChange={onChange} text='Free text field to enter a description of the source.' />
 
+                                    {/* Images */}
+                                    <ImageSelector imageFilesToAdd={imageFilesToAdd} setImageFilesToAdd={setImageFilesToAdd}/>
+                                    
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />*/}
-                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
-                                            disabled={disableSubmit}>
-                                        {_t('Submit')}
-                                    </Button>
-
+                                    <div className={'d-flex flex-row-reverse'}>
+                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
+                                                disabled={disableSubmit}>
+                                            {_t('Submit')}
+                                        </Button>
+                                    </div>
                                     {getModal()}
                                 </Form>
                             }
