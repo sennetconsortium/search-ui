@@ -37,7 +37,7 @@ export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
         onChange={handleThumbnailChange}
         />
         {error && <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible><Alert.Heading>File is too large</Alert.Heading>{error}</Alert>}
-        <Button variant={'outline-secondary rounded-0'} onClick={handleAddThumbnailClick}>
+        <Button variant={'outline-primary rounded-0'} onClick={handleAddThumbnailClick}>
             Add thumbnail
         </Button>
         <div className={'row'}>

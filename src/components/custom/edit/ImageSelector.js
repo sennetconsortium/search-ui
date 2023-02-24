@@ -41,7 +41,7 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                     onChange={handleFileChange}
                 />
                 {error && <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible><Alert.Heading>File is too large</Alert.Heading>{error}</Alert>}
-                <Button variant={'outline-secondary rounded-0'} onClick={handleBrowseFilesClick}>
+                <Button variant={'outline-primary rounded-0'} onClick={handleBrowseFilesClick}>
                     Add images
                 </Button>
             </div>
