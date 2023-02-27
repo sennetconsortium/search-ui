@@ -37,7 +37,7 @@ export default function ThumbnailSelector({setThumbnailFileToAdd }) {
             UPLOAD A THUMBNAIL
         </Button>
         <div className={'row'}>
-            <div className={'col ms-4'}>
+            <div className={'col m-4 align-content-center d-flex'}>
                 { thumbnail &&
                     <>
                         <Badge bg={'info'} className={'badge rounded-pill text-bg-primary m-2'}>
