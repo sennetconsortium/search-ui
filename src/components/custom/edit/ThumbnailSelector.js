@@ -1,12 +1,9 @@
 import React, {useRef, useState} from 'react'
-import {Button, Badge, Alert} from 'react-bootstrap'
+import {Button, Badge, Alert, CloseButton} from 'react-bootstrap'
 import {uploadFile} from "../../../lib/services";
-import {XCircle} from "react-bootstrap-icons";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
 
 
-export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
+export default function ThumbnailSelector({setThumbnailFileToAdd }) {
     const thumbnailInputRef = useRef()
     const [thumbnail, setThumbnail] = useState(null)
     const [error, setError] = useState(null)
@@ -27,29 +24,27 @@ export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
         setThumbnailFileToAdd(null)
     }
 
-    const handleAddThumbnailClick = () => thumbnailInputRef.current.click()
-    
+    const handleUploadThumbnailClick = () => thumbnailInputRef.current.click()
     return <div>
-        <input
-        style={{display: 'none'}}
-        type={'file'}
-        ref={thumbnailInputRef}
-        onChange={handleThumbnailChange}
+    <input
+            style={{display: 'none'}}
+            type={'file'}
+            ref={thumbnailInputRef}
+            onChange={handleThumbnailChange}
         />
         {error && <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible><Alert.Heading>File is too large</Alert.Heading>{error}</Alert>}
-        <Button variant={'outline-primary rounded-0'} onClick={handleAddThumbnailClick}>
+        <Button variant={'outline-primary rounded-0'} onClick={handleUploadThumbnailClick}>
             UPLOAD A THUMBNAIL
         </Button>
         <div className={'row'}>
-            <div className={'col m-4'}>
+            <div className={'col ms-4'}>
                 { thumbnail &&
-        
-                    <Badge bg={'info'} className={'badge rounded-pill text-bg-primary ms-2'}>
-                        <span className={'m-2'}>{thumbnail.name}</span>
-                        <OverlayTrigger placement={'top'} overlay={<Tooltip id={'light-theme-tooltip'}>Remove thumbnail</Tooltip>}>
-                            <XCircle style={{cursor: 'pointer'}} className={'m-2'} onClick={() => removeThumbnail()}/>
-                        </OverlayTrigger>
-                    </Badge>
+                    <>
+                        <Badge bg={'info'} className={'badge rounded-pill text-bg-primary m-2'}>
+                            <span className={'m-2'}>{thumbnail.name}</span>
+                        </Badge>
+                        <CloseButton onClick={removeThumbnail}/>
+                    </>
                 }
             </div>
         </div>

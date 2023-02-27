@@ -59,7 +59,7 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                             ref={imageInputRef}
                             onChange={() => handleFileChange(index, fileDetail)}
                         />
-                        <InputGroup className="w-75" key={'inputGroup' + index}>
+                        <InputGroup className="m-2 w-75" key={'inputGroup' + index}>
                             <Button variant="outline-secondary" onClick={handleChooseFileClick}>
                                 Choose file
                             </Button>
@@ -69,6 +69,7 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                                 placeholder={'Description'}
                                 onChange={e => handleImageDescriptionChange(index, e.target.value)}
                                 value={fileDetail.description}
+                                className={'me-2'}
                             />
                             <Badge bg={'info'} className={'badge rounded-pill text-bg-primary m-2'}>
                                 {images[index] && <span className={'m-2'}>{images[index].name}</span>}
