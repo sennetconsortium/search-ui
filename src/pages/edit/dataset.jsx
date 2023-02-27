@@ -360,11 +360,12 @@ export default function EditDataset() {
                                     }
 
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.dataset} />*/}
-                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
-                                            disabled={disableSubmit}>
-                                        {_t('Submit')}
-
-                                    </Button>
+                                    <div className={'d-flex flex-row-reverse'}>
+                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
+                                                disabled={disableSubmit}>
+                                            {_t('Submit')}
+                                        </Button>
+                                    </div>
 
                                     {getModal()}
                                 </Form>
