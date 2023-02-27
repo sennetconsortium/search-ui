@@ -37,7 +37,7 @@ function EditSource() {
         disableSubmit, setDisableSubmit,
         metadata, setMetadata } = useContext(EntityContext)
     const { _t } = useContext(AppContext)
-    
+
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [imageFilesToAdd, setImageFilesToAdd] = useState([])
