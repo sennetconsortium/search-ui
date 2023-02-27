@@ -41,7 +41,9 @@ export default function EditDataset() {
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
-        metadata, setMetadata
+        metadata, setMetadata,
+        getEntityConstraints,
+        getSampleEntityConstraints
     } = useContext(EntityContext)
     const {_t} = useContext(AppContext)
     const router = useRouter()
@@ -51,20 +53,15 @@ export default function EditDataset() {
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
-            const requestBody = {
-                entity_type: 'dataset'
-            }
             const fullBody = [
                 {
-                    descendants: [requestBody]
+                    descendants: [{
+                        entity_type: ENTITIES.dataset
+                    }]
                 }
             ]
-            const requestOptions = {
-                method: 'POST',
-                headers: getHeaders(),
-                body: JSON.stringify(fullBody)
-            }
-            const response = await fetch(getEntityEndPoint() + 'constraints?' + new URLSearchParams({order: 'descendants', filter: 'search'}), requestOptions)
+
+            const response = await getEntityConstraints(fullBody, {order: 'descendants', filter: 'search'})
             if (response.ok) {
                 const body = await response.json()
                 valid_dataset_ancestor_config['searchQuery']['includeFilters'] = body.description[0].description
@@ -78,29 +75,7 @@ export default function EditDataset() {
         const fetchDataTypes = async () => {
             setDataTypes(null)
             if (ancestors !== null && ancestors.length !== 0) {
-                const ancestor1 = ancestors[0];
-                const entityType = ancestor1.entity_type.toLowerCase()
-                let body = {entity_type: entityType}
-                if (entityType === 'sample') {
-                    const sample_category = ancestor1.sample_category.toLowerCase()
-                    body['sub_type'] = [sample_category]
-                    if (sample_category === 'organ') {
-                        body['sub_type_val'] = [ancestor1.organ]
-                    }
-                }
-
-                const fullBody = [
-                    {
-                        ancestors: [body]
-                    }
-                ]
-                
-                const requestOptions = {
-                    method: 'POST',
-                    headers: getHeaders(),
-                    body: JSON.stringify(fullBody)
-                }
-                const response = await fetch(getEntityEndPoint() + 'constraints', requestOptions)
+                const response = await getSampleEntityConstraints(ancestors[0])
                 if (response.ok) {
                     const body = await response.json()
                     const provenance_constraints = body.description[0].description

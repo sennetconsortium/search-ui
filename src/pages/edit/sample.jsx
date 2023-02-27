@@ -48,7 +48,8 @@ function EditSample() {
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
-        metadata, setMetadata
+        metadata, setMetadata,
+        getSampleEntityConstraints
     } = useContext(EntityContext)
     const {_t} = useContext(AppContext)
     const router = useRouter()
@@ -67,27 +68,7 @@ function EditSample() {
         const fetchSampleCategories = async () => {
             setSampleCategories(null)
             if (source !== null) {
-                const entityType = source.entity_type.toLowerCase()
-                let body = {entity_type: entityType}
-                if (entityType === 'sample') {
-                    const sample_category = source.sample_category.toLowerCase()
-                    body['sub_type'] = [sample_category]
-                    if (sample_category === 'organ') {
-                        body['sub_type_val'] = [source.organ]
-                    }
-                }
-                const fullBody = [
-                    {
-                        ancestors: [body]
-                    }
-                ]
-
-                const requestOptions = {
-                    method: 'POST',
-                    headers: getHeaders(),
-                    body: JSON.stringify(fullBody)
-                }
-                const response = await fetch(getEntityEndPoint() + 'constraints', requestOptions)
+                const response = await getSampleEntityConstraints(source)
                 if (response.ok) {
                     const body = await response.json()
                     const provenance_constraints = body.description[0].description
