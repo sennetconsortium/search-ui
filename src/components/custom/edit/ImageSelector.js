@@ -1,8 +1,5 @@
 import React, {useState, useRef} from 'react'
-import {Button, Badge, Alert} from 'react-bootstrap';
-import {XCircle} from "react-bootstrap-icons";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Tooltip from 'react-bootstrap/Tooltip';
+import {Button, Badge, Alert, Form, InputGroup, CloseButton} from 'react-bootstrap';
 import {uploadFile} from "../../../lib/services";
 
 
@@ -12,49 +9,74 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
     const [images, setImages] = useState([])
     const [error, setError] = useState(null)
     
-    const handleFileChange = () => {
+    const handleFileChange = (index, description) => {
         const image = event.target.files && event.target.files[0]
         if (!image) return
         uploadFile(image)
             .then(r => {
-                setImageFilesToAdd(prevState => [...prevState, r])
+                const merged = {
+                    ...r,
+                    ...description
+                }
+                const imageFilesToAddCopy = [...imageFilesToAdd]
+                imageFilesToAddCopy[index] = merged
+                setImageFilesToAdd(imageFilesToAddCopy)
                 setImages(prevState => [...prevState, image])
             })
             .catch(() => setError(`${image.name} (${Math.floor(image.size / 1000)} kb) has exceeded the file size limit.`))
         event.target.value = null
     }
 
-    const handleBrowseFilesClick = () => imageInputRef.current.click()
+    const handleChooseFileClick = () => imageInputRef.current.click()
+    
+    const handleUploadImagesClick = () => setImageFilesToAdd(prevState => [...prevState, { description: "" }])
 
-    const removeImage = index => {
+    const removeFile = index => {
         setImages(images.filter((_, i) => i !== index))
         setImageFilesToAdd(imageFilesToAdd.filter((_, i) => i !== index))
+    }
+    
+    const handleImageDescriptionChange = (index, description) => {
+        const imageFilesToAddCopy = [...imageFilesToAdd]
+        imageFilesToAddCopy[index].description = description
+        setImageFilesToAdd(imageFilesToAddCopy)
     }
 
     return (
         <div className={'row'}>
             <div className={'col'}>
-                <input
-                    style={{display: 'none'}}
-                    type={'file'}
-                    ref={imageInputRef}
-                    onChange={handleFileChange}
-                />
                 {error && <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible><Alert.Heading>File is too large</Alert.Heading>{error}</Alert>}
-                <Button variant={'outline-primary rounded-0'} onClick={handleBrowseFilesClick}>
+                <Button variant={'outline-primary rounded-0'} onClick={handleUploadImagesClick}>
                     UPLOAD IMAGES
                 </Button>
             </div>
             <div className={'row'}>
                 <div className={'col m-4'}>
-                    {images && images.map((img, index) => (
-                        <Badge key={img.name} bg={'info'} className={'badge rounded-pill text-bg-primary ms-2'}>
-                            <span className={'m-2'}>{img.name}</span>
-                            <OverlayTrigger placement={'top'} overlay={<Tooltip id={'light-theme-tooltip'}>Remove image</Tooltip>}>
-                                <XCircle style={{cursor: 'pointer'}} className={'m-2'} onClick={() => removeImage(index)}/>
-                            </OverlayTrigger>
-                        </Badge>)
-                    )}
+                    { imageFilesToAdd && imageFilesToAdd.map((fileDetail, index) => {
+                        return <><input
+                            style={{display: 'none'}}
+                            type={'file'}
+                            ref={imageInputRef}
+                            onChange={() => handleFileChange(index, fileDetail)}
+                        />
+                        <InputGroup className="w-75" key={'inputGroup' + index}>
+                            <Button variant="outline-secondary" onClick={handleChooseFileClick}>
+                                Choose file
+                            </Button>
+                            <Form.Control
+                                aria-label="Example text with button addon"
+                                aria-describedby="basic-addon1"
+                                placeholder={'Description'}
+                                onChange={e => handleImageDescriptionChange(index, e.target.value)}
+                                value={fileDetail.description}
+                            />
+                            <Badge bg={'info'} className={'badge rounded-pill text-bg-primary m-2'}>
+                                {images[index] && <span className={'m-2'}>{images[index].name}</span>}
+                            </Badge>
+                            <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
+                        </InputGroup></>
+                    })
+                    }
                 </div>
             </div>
         </div>
