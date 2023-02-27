@@ -29,7 +29,8 @@ import {ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
-import {getEntityEndPoint, getIngestEndPoint, getUserName, isRuiSupported} from "../../config/config";
+import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/config";
+import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
 
