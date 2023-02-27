@@ -19,7 +19,7 @@ function useCache() {
         fetchData()
         return () => {}
     }, [])
-    return { dataTypes, sampleCategories }
+    return { dataTypes, sampleCategories, organTypes }
 }
 
 export default useCache
