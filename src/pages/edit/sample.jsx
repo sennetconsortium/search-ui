@@ -14,7 +14,7 @@ import {
     getRequestHeaders
 } from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_entity, parseJson, get_ancestor_organs, get_auth_header} from "../../lib/services";
+import {update_create_entity, parseJson, get_ancestor_organs} from "../../lib/services";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
