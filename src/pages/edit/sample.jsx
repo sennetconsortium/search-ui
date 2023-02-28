@@ -36,6 +36,7 @@ import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
 
 
 
+
 function EditSample() {
     const {
         isUnauthorized, isAuthorizing, getModal, setModalDetails,
@@ -51,7 +52,7 @@ function EditSample() {
         disableSubmit, setDisableSubmit,
         metadata, setMetadata
     } = useContext(EntityContext)
-    const {_t} = useContext(AppContext)
+    const {_t, filterImageFilesToAdd} = useContext(AppContext)
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
@@ -286,8 +287,9 @@ function EditSample() {
             if (ruiLocation !== '') {
                 values['rui_location'] = parseJson(ruiLocation)
             }
-            
-            values['image_files_to_add'] = imageFilesToAdd
+
+            filterImageFilesToAdd(imageFilesToAdd, values);
+
             values['thumbnail_file_to_add'] = thumbnailFileToAdd
 
             // Remove empty strings

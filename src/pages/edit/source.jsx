@@ -1,25 +1,23 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
 import {cleanJson, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import { update_create_entity} from "../../lib/services";
+import {update_create_entity} from "../../lib/services";
 import SourceType from "../../components/custom/edit/source/SourceType";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
 import AppContext from '../../context/AppContext'
-import { EntityProvider } from '../../context/EntityContext'
-import EntityContext from '../../context/EntityContext'
+import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import { ENTITIES } from "../../config/constants"
+import {ENTITIES} from "../../config/constants"
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
-import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 
 
@@ -36,7 +34,7 @@ function EditSource() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         metadata, setMetadata } = useContext(EntityContext)
-    const { _t } = useContext(AppContext)
+    const { _t, filterImageFilesToAdd } = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
@@ -102,7 +100,7 @@ function EditSource() {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
-            values['image_files_to_add'] = imageFilesToAdd
+            filterImageFilesToAdd(imageFilesToAdd, values)
 
             // Remove empty strings
             let json = cleanJson(values);
