@@ -1,6 +1,7 @@
 import React, {useState, useRef} from 'react'
-import {Button, Badge, Alert, Form, InputGroup, CloseButton} from 'react-bootstrap';
+import {Button, Badge, Alert, Form, InputGroup, CloseButton, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import {uploadFile} from "../../../lib/services";
+import {SunFill} from "react-bootstrap-icons";
 
 
 
@@ -46,9 +47,12 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
         <div className={'row'}>
             <div className={'col'}>
                 {error && <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible><Alert.Heading>File is too large</Alert.Heading>{error}</Alert>}
-                <Button variant={'outline-primary rounded-0'} onClick={handleUploadImagesClick}>
-                    UPLOAD IMAGES
-                </Button>
+
+                <OverlayTrigger placement={'top'} overlay={<Tooltip>Click here to attach a single image or multiple images</Tooltip>}>
+                    <Button variant={'outline-primary rounded-0'} onClick={handleUploadImagesClick}>
+                        UPLOAD IMAGES
+                    </Button>
+                </OverlayTrigger>
             </div>
             <div className={'row'}>
                 <div className={'col m-4'}>
@@ -74,7 +78,9 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                             <Badge bg={'info'} className={'badge rounded-pill text-bg-primary m-2'}>
                                 {images[index] && <span className={'m-2'}>{images[index].name}</span>}
                             </Badge>
-                            <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
+                            <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
+                                <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
+                            </OverlayTrigger>
                         </InputGroup></>
                     })
                     }
