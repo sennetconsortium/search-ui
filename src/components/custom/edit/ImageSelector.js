@@ -77,7 +77,7 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                                     value={fileDetail.description}
                                     className={'me-2'}
                                 />
-                                <Badge bg={'info'} className={'badge rounded-pill text-bg-primary m-2'}>
+                                <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2'}>
                                     { images[index] && 
                                         <span className={'m-2'}>
                                             {images[index].name}

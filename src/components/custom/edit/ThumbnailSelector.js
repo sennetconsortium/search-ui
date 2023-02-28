@@ -53,7 +53,7 @@ export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
             <div className={'col m-4 align-content-center d-flex'}>
                 { thumbnail &&
                     <>
-                        <Badge bg={'info'} className={'badge rounded-pill text-bg-primary m-2'}>
+                        <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2'}>
                             <span className={'m-2'}>{thumbnail.name}</span>
                         </Badge>
                         <OverlayTrigger overlay={<Tooltip>Remove thumbnail</Tooltip>}>
