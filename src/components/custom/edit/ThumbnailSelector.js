@@ -3,7 +3,7 @@ import {Button, Badge, Alert, CloseButton} from 'react-bootstrap'
 import {uploadFile} from "../../../lib/services";
 
 
-export default function ThumbnailSelector({setThumbnailFileToAdd }) {
+export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
     const thumbnailInputRef = useRef()
     const [thumbnail, setThumbnail] = useState(null)
     const [error, setError] = useState(null)
@@ -26,7 +26,7 @@ export default function ThumbnailSelector({setThumbnailFileToAdd }) {
 
     const handleUploadThumbnailClick = () => thumbnailInputRef.current.click()
     return <div>
-    <input
+        <input
             style={{display: 'none'}}
             type={'file'}
             ref={thumbnailInputRef}
