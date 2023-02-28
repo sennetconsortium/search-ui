@@ -21,7 +21,10 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                 const imageFilesToAddCopy = [...imageFilesToAdd]
                 imageFilesToAddCopy[index] = merged
                 setImageFilesToAdd(imageFilesToAddCopy)
-                setImages(prevState => [...prevState, image])
+                
+                const c = [...images]
+                c[index] = image
+                setImages(c)
             })
             .catch(() => setError(`${image.name} (${Math.floor(image.size / 1000)} kb) has exceeded the file size limit.`))
         event.target.value = null
@@ -29,7 +32,10 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
 
     const handleChooseFileClick = () => imageInputRef.current.click()
     
-    const handleUploadImagesClick = () => setImageFilesToAdd(prevState => [...prevState, { description: "" }])
+    const handleUploadImagesClick = () => {
+        setImages(prevState => [...prevState, {}])
+        setImageFilesToAdd(prevState => [...prevState, { description: "" }])
+    }
 
     const removeFile = index => {
         setImages(images.filter((_, i) => i !== index))
@@ -58,39 +64,38 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                     </Button>
                 </OverlayTrigger>
             </div>
-
-                    { imageFilesToAdd && imageFilesToAdd.map((fileDetail, index) => {
-                        return <div key={'input' + index}>
-                            <input
-                                style={{display: 'none'}}
-                                type={'file'}
-                                ref={imageInputRef}
-                                onChange={() => handleFileChange(index, fileDetail)}
+                { imageFilesToAdd && imageFilesToAdd.map((fileDetail, index) => {
+                    return <div key={'input' + index}>
+                        <input
+                            style={{display: 'none'}}
+                            type={'file'}
+                            ref={imageInputRef}
+                            onChange={() => handleFileChange(index, fileDetail)}
+                        />
+                        <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
+                            { images[index] && images[index].name &&
+                                <span className={'m-2'}>
+                                    {images[index].name}
+                                </span>
+                            }
+                        </Badge>
+                        <InputGroup className="m-2 w-75" key={'inputGroup' + index}>
+                            <Button variant="outline-secondary" onClick={handleChooseFileClick}>
+                                Choose file
+                            </Button>
+                            <Form.Control
+                                placeholder={'Description'}
+                                onChange={e => handleImageDescriptionChange(index, e.target.value)}
+                                value={fileDetail.description}
+                                className={'me-2'}
                             />
-                            <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
-                                { images[index] &&
-                                    <span className={'m-2'}>
-                                            {images[index].name}
-                                        </span>
-                                }
-                            </Badge>
-                            <InputGroup className="m-2 w-75" key={'inputGroup' + index}>
-                                <Button variant="outline-secondary" onClick={handleChooseFileClick}>
-                                    Choose file
-                                </Button>
-                                <Form.Control
-                                    placeholder={'Description'}
-                                    onChange={e => handleImageDescriptionChange(index, e.target.value)}
-                                    value={fileDetail.description}
-                                    className={'me-2'}
-                                />
-                                <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
-                                    <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
-                                </OverlayTrigger>
-                            </InputGroup>
-                        </div>
-                    })
-                    }
+                            <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
+                                <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
+                            </OverlayTrigger>
+                        </InputGroup>
+                    </div>
+                })
+                }
         </div>
     )
 }
