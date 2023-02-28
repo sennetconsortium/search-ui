@@ -1,8 +1,6 @@
 import React, {useState, useRef} from 'react'
 import {Button, Badge, Alert, Form, InputGroup, CloseButton, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import {uploadFile} from "../../../lib/services";
-import {SunFill} from "react-bootstrap-icons";
-
 
 
 export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
@@ -46,42 +44,51 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
     return (
         <div className={'row'}>
             <div className={'col'}>
-                {error && <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible><Alert.Heading>File is too large</Alert.Heading>{error}</Alert>}
-
+                { error && 
+                    <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible>
+                        <Alert.Heading>File is too large</Alert.Heading>
+                        {error}
+                    </Alert>
+                }
                 <OverlayTrigger placement={'top'} overlay={<Tooltip>Click here to attach a single image or multiple images</Tooltip>}>
                     <Button variant={'outline-primary rounded-0'} onClick={handleUploadImagesClick}>
                         UPLOAD IMAGES
                     </Button>
                 </OverlayTrigger>
             </div>
+            
             <div className={'row'}>
                 <div className={'col m-4'}>
                     { imageFilesToAdd && imageFilesToAdd.map((fileDetail, index) => {
-                        return <><input
-                            style={{display: 'none'}}
-                            type={'file'}
-                            ref={imageInputRef}
-                            onChange={() => handleFileChange(index, fileDetail)}
-                        />
-                        <InputGroup className="m-2 w-75" key={'inputGroup' + index}>
-                            <Button variant="outline-secondary" onClick={handleChooseFileClick}>
-                                Choose file
-                            </Button>
-                            <Form.Control
-                                aria-label="Example text with button addon"
-                                aria-describedby="basic-addon1"
-                                placeholder={'Description'}
-                                onChange={e => handleImageDescriptionChange(index, e.target.value)}
-                                value={fileDetail.description}
-                                className={'me-2'}
+                        return <>
+                            <input
+                                style={{display: 'none'}}
+                                type={'file'}
+                                ref={imageInputRef}
+                                onChange={() => handleFileChange(index, fileDetail)}
                             />
-                            <Badge bg={'info'} className={'badge rounded-pill text-bg-primary m-2'}>
-                                {images[index] && <span className={'m-2'}>{images[index].name}</span>}
-                            </Badge>
-                            <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
-                                <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
-                            </OverlayTrigger>
-                        </InputGroup></>
+                            <InputGroup className="m-2 w-75" key={'inputGroup' + index}>
+                                <Button variant="outline-secondary" onClick={handleChooseFileClick}>
+                                    Choose file
+                                </Button>
+                                <Form.Control
+                                    placeholder={'Description'}
+                                    onChange={e => handleImageDescriptionChange(index, e.target.value)}
+                                    value={fileDetail.description}
+                                    className={'me-2'}
+                                />
+                                <Badge bg={'info'} className={'badge rounded-pill text-bg-primary m-2'}>
+                                    { images[index] && 
+                                        <span className={'m-2'}>
+                                            {images[index].name}
+                                        </span>
+                                    }
+                                </Badge>
+                                <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
+                                    <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
+                                </OverlayTrigger>
+                            </InputGroup>
+                        </>
                     })
                     }
                 </div>

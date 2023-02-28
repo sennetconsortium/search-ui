@@ -1,7 +1,6 @@
 import React, {useRef, useState} from 'react'
 import {Button, Badge, Alert, CloseButton, OverlayTrigger, Tooltip} from 'react-bootstrap'
 import {uploadFile} from "../../../lib/services";
-import {SunFill} from "react-bootstrap-icons";
 
 
 export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
@@ -26,6 +25,7 @@ export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
     }
 
     const handleUploadThumbnailClick = () => thumbnailInputRef.current.click()
+    
     return <div>
         <input
             style={{display: 'none'}}
@@ -33,12 +33,20 @@ export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
             ref={thumbnailInputRef}
             onChange={handleThumbnailChange}
         />
-        {error && <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible><Alert.Heading>File is too large</Alert.Heading>{error}</Alert>}
+        
+        { error && 
+            <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible>
+                <Alert.Heading>File is too large</Alert.Heading>
+                {error}
+            </Alert>
+        }
+        
         <OverlayTrigger placement={'top'} overlay={<Tooltip>Click here to attach a single thumbnail image</Tooltip>}>
             <Button variant={'outline-primary rounded-0'} onClick={handleUploadThumbnailClick}>
                 UPLOAD A THUMBNAIL
             </Button>
         </OverlayTrigger>
+        
         <div className={'row'}>
             <div className={'col m-4 align-content-center d-flex'}>
                 { thumbnail &&
