@@ -43,21 +43,21 @@ export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
         }
         
         <OverlayTrigger placement={'top'} overlay={<Tooltip>Click here to attach a single thumbnail image</Tooltip>}>
-            <Button className={'mt-2'} variant={'outline-primary rounded-0'} onClick={handleUploadThumbnailClick}>
+            <Button className={'mt-2 mb-2'} variant={'outline-primary rounded-0'} onClick={handleUploadThumbnailClick}>
                 Upload a Thumbnail File
                 <Paperclip className={'ms-2'}/>
             </Button>
         </OverlayTrigger>
         
         <div className={'row'}>
-            <div className={'col m-4 align-content-center d-flex'}>
+            <div className={'col align-items-center d-flex'}>
                 { thumbnail &&
                     <>
-                        <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2'}>
+                        <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                             <span className={'m-2'}>{thumbnail.name}</span>
                         </Badge>
                         <OverlayTrigger overlay={<Tooltip>Remove thumbnail</Tooltip>}>
-                            <CloseButton onClick={removeThumbnail}/>
+                            <CloseButton className={'p-2'} onClick={removeThumbnail}/>
                         </OverlayTrigger>
                     </>
                 }

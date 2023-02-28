@@ -67,7 +67,7 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                                 ref={imageInputRef}
                                 onChange={() => handleFileChange(index, fileDetail)}
                             />
-                            <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2'}>
+                            <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                                 { images[index] &&
                                     <span className={'m-2'}>
                                             {images[index].name}
