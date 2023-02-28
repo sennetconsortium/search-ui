@@ -8,6 +8,7 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
     const imageInputRef = useRef()
     const [images, setImages] = useState([])
     const [error, setError] = useState(null)
+    const [inputInformation, setInputInformation] = useState(null)
     
     const handleFileChange = (index, description) => {
         const image = event.target.files && event.target.files[0]
@@ -30,7 +31,10 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
         event.target.value = null
     }
 
-    const handleChooseFileClick = () => imageInputRef.current.click()
+    const handleChooseFileClick = (index, fileDetail) => {
+        setInputInformation({index, fileDetail})
+        imageInputRef.current.click()
+    }
     
     const handleUploadImagesClick = () => {
         setImages(prevState => [...prevState, {}])
@@ -64,14 +68,14 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                     </Button>
                 </OverlayTrigger>
             </div>
+            <input
+                style={{display: 'none'}}
+                type={'file'}
+                ref={imageInputRef}
+                onChange={() => handleFileChange(inputInformation.index, inputInformation.fileDetail)}
+            />
                 { imageFilesToAdd && imageFilesToAdd.map((fileDetail, index) => {
                     return <div key={'input' + index}>
-                        <input
-                            style={{display: 'none'}}
-                            type={'file'}
-                            ref={imageInputRef}
-                            onChange={() => handleFileChange(index, fileDetail)}
-                        />
                         <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                             { images[index] && images[index].name &&
                                 <span className={'m-2'}>
@@ -79,8 +83,8 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                                 </span>
                             }
                         </Badge>
-                        <InputGroup className="m-2 w-75" key={'inputGroup' + index}>
-                            <Button variant="outline-secondary" onClick={handleChooseFileClick}>
+                        <InputGroup className="m-2 w-75">
+                            <Button variant="outline-secondary" onClick={() => handleChooseFileClick(index, fileDetail)}>
                                 Choose file
                             </Button>
                             <Form.Control
