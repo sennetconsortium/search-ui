@@ -60,7 +60,7 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
             <div className={'row'}>
                 <div className={'col m-4'}>
                     { imageFilesToAdd && imageFilesToAdd.map((fileDetail, index) => {
-                        return <>
+                        return <div key={'input' + index}>
                             <input
                                 style={{display: 'none'}}
                                 type={'file'}
@@ -88,7 +88,7 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                                     <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
                                 </OverlayTrigger>
                             </InputGroup>
-                        </>
+                        </div>
                     })
                     }
                 </div>
