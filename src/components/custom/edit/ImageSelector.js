@@ -67,6 +67,13 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                                 ref={imageInputRef}
                                 onChange={() => handleFileChange(index, fileDetail)}
                             />
+                            <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2'}>
+                                { images[index] &&
+                                    <span className={'m-2'}>
+                                            {images[index].name}
+                                        </span>
+                                }
+                            </Badge>
                             <InputGroup className="m-2 w-75" key={'inputGroup' + index}>
                                 <Button variant="outline-secondary" onClick={handleChooseFileClick}>
                                     Choose file
@@ -77,13 +84,6 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                                     value={fileDetail.description}
                                     className={'me-2'}
                                 />
-                                <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2'}>
-                                    { images[index] && 
-                                        <span className={'m-2'}>
-                                            {images[index].name}
-                                        </span>
-                                    }
-                                </Badge>
                                 <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
                                     <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
                                 </OverlayTrigger>
