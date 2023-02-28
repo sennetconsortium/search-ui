@@ -1,5 +1,6 @@
 import React, {useRef, useState} from 'react'
 import {Button, Badge, Alert, CloseButton, OverlayTrigger, Tooltip} from 'react-bootstrap'
+import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
 
 
@@ -42,8 +43,9 @@ export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
         }
         
         <OverlayTrigger placement={'top'} overlay={<Tooltip>Click here to attach a single thumbnail image</Tooltip>}>
-            <Button variant={'outline-primary rounded-0'} onClick={handleUploadThumbnailClick}>
-                UPLOAD A THUMBNAIL
+            <Button className={'mt-2'} variant={'outline-primary rounded-0'} onClick={handleUploadThumbnailClick}>
+                Upload a Thumbnail File
+                <Paperclip className={'ms-2'}/>
             </Button>
         </OverlayTrigger>
         

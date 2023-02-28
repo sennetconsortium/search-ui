@@ -1,5 +1,6 @@
 import React, {useState, useRef} from 'react'
 import {Button, Badge, Alert, Form, InputGroup, CloseButton, OverlayTrigger, Tooltip} from 'react-bootstrap';
+import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
 
 
@@ -43,7 +44,7 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
 
     return (
         <div className={'row'}>
-            <div className={'col'}>
+            <div className={'col mb-2'}>
                 { error && 
                     <Alert className={'w-50'} variant={'danger'} onClose={() => setError(false)} dismissible>
                         <Alert.Heading>File is too large</Alert.Heading>
@@ -52,13 +53,12 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                 }
                 <OverlayTrigger placement={'top'} overlay={<Tooltip>Click here to attach a single image or multiple images</Tooltip>}>
                     <Button variant={'outline-primary rounded-0'} onClick={handleUploadImagesClick}>
-                        UPLOAD IMAGES
+                        Upload Image Files
+                        <Paperclip className={'ms-2'}/>
                     </Button>
                 </OverlayTrigger>
             </div>
-            
-            <div className={'row'}>
-                <div className={'col m-4'}>
+
                     { imageFilesToAdd && imageFilesToAdd.map((fileDetail, index) => {
                         return <div key={'input' + index}>
                             <input
@@ -91,8 +91,6 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                         </div>
                     })
                     }
-                </div>
-            </div>
         </div>
     )
 }
