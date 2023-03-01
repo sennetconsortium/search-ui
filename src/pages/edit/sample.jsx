@@ -65,6 +65,7 @@ function EditSample() {
     const [imageFilesToAdd, setImageFilesToAdd] = useState([])
     const [imageFilesToRemove, setImageFilesToRemove] = useState([])
     const [thumbnailFileToAdd, setThumbnailFileToAdd] = useState(null)
+    const [thumbnailFileToRemove, setThumbnailFileToRemove] = useState(null)
     
     useEffect(() => {
         const fetchSampleCategories = async () => {
@@ -134,7 +135,8 @@ function EditSample() {
                     'lab_tissue_sample_id': data.lab_tissue_sample_id,
                     'description': data.description,
                     'direct_ancestor_uuid': data.immediate_ancestors[0].uuid,
-                    'image_files': data.image_files
+                    'image_files': data.image_files,
+                    'thumbnail_file': data.thumbnail_file
                 })
                 setImageFilesToAdd(data.image_files)
                 setThumbnailFileToAdd(data.thumbnail_file)
@@ -296,10 +298,14 @@ function EditSample() {
                 values['image_files_to_remove'] = imageFilesToRemove
             }
             
-            if (thumbnailFileToAdd.temp_file_id !== undefined) {
+            if (thumbnailFileToAdd && thumbnailFileToAdd.temp_file_id !== undefined) {
                 values['thumbnail_file_to_add'] = thumbnailFileToAdd
             }
 
+            if (thumbnailFileToRemove) {
+                values['thumbnail_file_to_remove'] = thumbnailFileToRemove
+            }
+            
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
@@ -428,7 +434,11 @@ function EditSample() {
                                                    setImageFilesToRemove={setImageFilesToRemove}/>
 
                                     {/* Thumbnail */}
-                                    <ThumbnailSelector thumbnailFileToAdd={thumbnailFileToAdd} setThumbnailFileToAdd={setThumbnailFileToAdd}/>
+                                    <ThumbnailSelector editMode={editMode}
+                                                       values={values}
+                                                       thumbnailFileToAdd={thumbnailFileToAdd} 
+                                                       setThumbnailFileToAdd={setThumbnailFileToAdd}
+                                                       setThumbnailFileToRemove={setThumbnailFileToRemove}/>
 
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
                                     <div className={'d-flex flex-row-reverse'}>

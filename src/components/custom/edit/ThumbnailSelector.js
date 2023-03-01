@@ -4,7 +4,7 @@ import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
 
 
-export default function ThumbnailSelector({ thumbnailFileToAdd, setThumbnailFileToAdd }) {
+export default function ThumbnailSelector({ editMode, values, thumbnailFileToAdd, setThumbnailFileToAdd, setThumbnailFileToRemove }) {
     const thumbnailInputRef = useRef()
     const [thumbnail, setThumbnail] = useState(null)
     const [error, setError] = useState(null)
@@ -23,6 +23,9 @@ export default function ThumbnailSelector({ thumbnailFileToAdd, setThumbnailFile
     const removeThumbnail = () => {
         setThumbnail(null)
         setThumbnailFileToAdd(null)
+        if (editMode === 'Edit') {
+            setThumbnailFileToRemove(values.thumbnail_file.file_uuid)
+        }
     }
 
     const handleUploadThumbnailClick = () => thumbnailInputRef.current.click()
