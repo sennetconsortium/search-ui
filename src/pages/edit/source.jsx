@@ -39,6 +39,7 @@ function EditSource() {
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [imageFilesToAdd, setImageFilesToAdd] = useState([])
+    const [imageFilesToRemove, setImageFilesToRemove] = useState([])
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -103,6 +104,10 @@ function EditSource() {
             }
 
             filterImageFilesToAdd(imageFilesToAdd, values)
+            
+            if (imageFilesToRemove.length !== 0) {
+                values['image_files_to_remove'] = imageFilesToRemove
+            }
 
             // Remove empty strings
             let json = cleanJson(values);
@@ -175,7 +180,9 @@ function EditSource() {
                                                    values={values}
                                                    setValues={setValues}
                                                    imageFilesToAdd={imageFilesToAdd}
-                                                   setImageFilesToAdd={setImageFilesToAdd}/>
+                                                   setImageFilesToAdd={setImageFilesToAdd}
+                                                   imageFilesToRemove={imageFilesToRemove}
+                                                   setImageFilesToRemove={setImageFilesToRemove}/>
                                     
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />*/}
                                     <div className={'d-flex flex-row-reverse'}>

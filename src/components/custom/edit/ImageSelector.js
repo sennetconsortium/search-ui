@@ -4,7 +4,7 @@ import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
 
 
-export default function ImageSelector({ editMode, values, setValues, imageFilesToAdd, setImageFilesToAdd}) {
+export default function ImageSelector({ editMode, values, setValues, imageFilesToAdd, setImageFilesToAdd, imageFilesToRemove, setImageFilesToRemove}) {
     const imageInputRef = useRef()
     const [images, setImages] = useState([])
     const [error, setError] = useState(null)
@@ -44,6 +44,11 @@ export default function ImageSelector({ editMode, values, setValues, imageFilesT
     const removeFile = index => {
         setImages(images.filter((_, i) => i !== index))
         setImageFilesToAdd(imageFilesToAdd.filter((_, i) => i !== index))
+        if (editMode === 'Edit') {
+            const imageFilesToRemoveCopy = [...imageFilesToRemove]
+            imageFilesToRemoveCopy.push(values.image_files[index].file_uuid)
+            setImageFilesToRemove(imageFilesToRemoveCopy)
+        }
     }
     
     const handleImageDescriptionChange = (index, description) => {

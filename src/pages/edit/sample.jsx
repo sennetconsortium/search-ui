@@ -63,6 +63,7 @@ function EditSample() {
     const [organ_group_hide, set_organ_group_hide] = useState('none')
     const [organ_other_hide, set_organ_other_hide] = useState('none')
     const [imageFilesToAdd, setImageFilesToAdd] = useState([])
+    const [imageFilesToRemove, setImageFilesToRemove] = useState([])
     const [thumbnailFileToAdd, setThumbnailFileToAdd] = useState(null)
     
     useEffect(() => {
@@ -291,6 +292,10 @@ function EditSample() {
 
             filterImageFilesToAdd(imageFilesToAdd, values);
 
+            if (imageFilesToRemove.length !== 0) {
+                values['image_files_to_remove'] = imageFilesToRemove
+            }
+            
             if (thumbnailFileToAdd.temp_file_id !== undefined) {
                 values['thumbnail_file_to_add'] = thumbnailFileToAdd
             }
@@ -418,7 +423,9 @@ function EditSample() {
                                                    values={values} 
                                                    setValues={setValues}
                                                    imageFilesToAdd={imageFilesToAdd} 
-                                                   setImageFilesToAdd={setImageFilesToAdd}/>
+                                                   setImageFilesToAdd={setImageFilesToAdd}
+                                                   imageFilesToRemove={imageFilesToRemove}
+                                                   setImageFilesToRemove={setImageFilesToRemove}/>
 
                                     {/* Thumbnail */}
                                     <ThumbnailSelector thumbnailFileToAdd={thumbnailFileToAdd} setThumbnailFileToAdd={setThumbnailFileToAdd}/>
