@@ -40,7 +40,7 @@ export default function BulkCreate({
     const [errorMessage, setErrorMessage] = useState(null)
     const [validationSuccess, setValidationSuccess] = useState(null)
     const [bulkSuccess, setBulkSuccess] = useState(null)
-    const [bulkResponse, setBulkResponse] = useState(null)
+    const [bulkResponse, setBulkResponse] = useState([])
     const [isLoading, setIsLoading] = useState(null)
     const [steps, setSteps] = useState(['Attach Your File', 'Review Validation', 'Complete'])
     const [selectedGroup, setSelectedGroup] = useState(null)
@@ -139,10 +139,10 @@ export default function BulkCreate({
         const data = await response.json()
         if (!response.ok) {
             setError({1: true})
-            setErrorMessage(data)
+            setErrorMessage(data.description)
             formatErrorColumnTimer('`')
         } else {
-            setTempId(data.temp_id)
+            setTempId(data.description.temp_id)
             setValidationSuccess(true)
             setIsNextButtonDisabled(false)
         }
@@ -162,10 +162,10 @@ export default function BulkCreate({
         if (!response.ok) {
             setError(getStepsLength() === 3 ? {2: true} : {3: true})
             setIsNextButtonDisabled(true)
-            setErrorMessage(data)
+            setErrorMessage(data.description)
         } else {
             setBulkSuccess(true)
-            setBulkResponse(data)
+            setBulkResponse(data.description)
             setIsNextButtonDisabled(false)
         }
         setIsLoading(false)
@@ -253,11 +253,11 @@ export default function BulkCreate({
     function getModalBody() {
         let body = `Your ${entityType} were created:\n`
         if (entityType.toLowerCase() === 'sources') {
-            body += `Source types: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each =>
+            body += `Source types: \n${Array.from(new Set(Object.values(bulkResponse).map(each =>
                 '\t' + each.source_type.charAt(0).toUpperCase() + each.source_type.slice(1) + '\n'
             )))}`
         } else if (entityType.toLowerCase() === 'samples') {
-            body += `Sample categories: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each => {
+            body += `Sample categories: \n${Array.from(new Set(Object.values(bulkResponse).map(each => {
                     let organ_type = null
                     if (each.sample_category === 'organ') {
                         organ_type = each.organ
@@ -272,11 +272,11 @@ export default function BulkCreate({
                 }
             )))}`
         } else if (entityType.toLowerCase() === 'datasets') {
-            body += `Data types: \n${Array.from(new Set(Object.values(bulkResponse.data).map(each =>
+            body += `Data types: \n${Array.from(new Set(Object.values(bulkResponse).map(each =>
                 '\t' + each.data_types[0].charAt(0).toUpperCase() + each.data_types[0].slice(1) + '\n'
             )))}`
         }
-        body += 'Group Name: ' + bulkResponse.data[1].group_name + '\n' + 'SenNet IDs: \n' + Object.values(bulkResponse.data).map(each => '\t' + each.sennet_id + '\n')
+        body += 'Group Name: ' + bulkResponse[1].group_name + '\n' + 'SenNet IDs: \n' + Object.values(bulkResponse).map(each => '\t' + each.sennet_id + '\n')
         return body.replace(/,/g, '')
     }
 
@@ -320,7 +320,7 @@ export default function BulkCreate({
                     {isLoading && <Spinner/>}
                     {
                         errorMessage && <div className='c-metadataUpload__table table-responsive has-error'>
-                            <DataTable columns={tableColumns} data={errorMessage.data} pagination />
+                            <DataTable columns={tableColumns} data={errorMessage} pagination />
                         </div>
                     }
                     {activeStep === 1 && !errorMessage && validationSuccess &&
