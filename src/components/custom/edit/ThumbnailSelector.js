@@ -4,7 +4,7 @@ import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
 
 
-export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
+export default function ThumbnailSelector({ thumbnailFileToAdd, setThumbnailFileToAdd }) {
     const thumbnailInputRef = useRef()
     const [thumbnail, setThumbnail] = useState(null)
     const [error, setError] = useState(null)
@@ -55,6 +55,17 @@ export default function ThumbnailSelector({ setThumbnailFileToAdd }) {
                     <>
                         <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                             <span className={'m-2'}>{thumbnail.name}</span>
+                        </Badge>
+                        <OverlayTrigger overlay={<Tooltip>Remove thumbnail</Tooltip>}>
+                            <CloseButton className={'p-2'} onClick={removeThumbnail}/>
+                        </OverlayTrigger>
+                    </>
+                }
+                {/* Edit mode */}
+                { thumbnail === null && thumbnailFileToAdd &&
+                    <>
+                        <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
+                            <span className={'m-2'}>{thumbnailFileToAdd.filename}</span>
                         </Badge>
                         <OverlayTrigger overlay={<Tooltip>Remove thumbnail</Tooltip>}>
                             <CloseButton className={'p-2'} onClick={removeThumbnail}/>

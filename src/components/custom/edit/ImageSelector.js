@@ -4,7 +4,7 @@ import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
 
 
-export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
+export default function ImageSelector({ editMode, values, setValues, imageFilesToAdd, setImageFilesToAdd}) {
     const imageInputRef = useRef()
     const [images, setImages] = useState([])
     const [error, setError] = useState(null)
@@ -50,6 +50,11 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
         const imageFilesToAddCopy = [...imageFilesToAdd]
         imageFilesToAddCopy[index].description = description
         setImageFilesToAdd(imageFilesToAddCopy)
+        if (editMode === 'Edit') {
+            const valuesCopy = {...values}
+            valuesCopy.image_files[index].description = description
+            setValues(valuesCopy)
+        }
     }
 
     return (
@@ -74,23 +79,23 @@ export default function ImageSelector({ imageFilesToAdd, setImageFilesToAdd}) {
                 ref={imageInputRef}
                 onChange={() => handleFileChange(inputInformation.index, inputInformation.fileDetail)}
             />
-                { imageFilesToAdd && imageFilesToAdd.map((fileDetail, index) => {
+                { imageFilesToAdd && imageFilesToAdd.map((imageFileJson, index) => {
                     return <div key={'input' + index}>
                         <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
-                            { images[index] && images[index].name &&
+                            { ((images[index] && images[index].name) || imageFileJson.filename) &&
                                 <span className={'m-2'}>
-                                    {images[index].name}
+                                    {imageFileJson.filename !== undefined ? imageFileJson.filename : images[index].name}
                                 </span>
                             }
                         </Badge>
                         <InputGroup className="m-2 w-75">
-                            <Button variant="outline-secondary" onClick={() => handleChooseFileClick(index, fileDetail)}>
+                            <Button variant="outline-secondary" onClick={() => handleChooseFileClick(index, imageFileJson)}>
                                 Choose file
                             </Button>
                             <Form.Control
                                 placeholder={'Description'}
                                 onChange={e => handleImageDescriptionChange(index, e.target.value)}
-                                value={fileDetail.description}
+                                value={imageFileJson.description}
                                 className={'me-2'}
                             />
                             <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>

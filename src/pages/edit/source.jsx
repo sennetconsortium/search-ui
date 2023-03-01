@@ -62,8 +62,10 @@ function EditSource() {
                     'lab_source_id': data.lab_source_id,
                     'protocol_url': data.protocol_url,
                     'description': data.description,
-                    'source_type': data.source_type
+                    'source_type': data.source_type,
+                    'image_files': data.image_files
                 })
+                setImageFilesToAdd(data.image_files)
                 setEditMode("Edit")
             }
         }
@@ -169,7 +171,11 @@ function EditSource() {
                                         onChange={onChange} text='Free text field to enter a description of the source.' />
 
                                     {/* Images */}
-                                    <ImageSelector imageFilesToAdd={imageFilesToAdd} setImageFilesToAdd={setImageFilesToAdd}/>
+                                    <ImageSelector editMode={editMode}
+                                                   values={values}
+                                                   setValues={setValues}
+                                                   imageFilesToAdd={imageFilesToAdd}
+                                                   setImageFilesToAdd={setImageFilesToAdd}/>
                                     
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />*/}
                                     <div className={'d-flex flex-row-reverse'}>

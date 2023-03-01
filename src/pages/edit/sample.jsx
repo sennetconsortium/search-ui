@@ -35,8 +35,6 @@ import ImageSelector from "../../components/custom/edit/ImageSelector";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
 
 
-
-
 function EditSample() {
     const {
         isUnauthorized, isAuthorizing, getModal, setModalDetails,
@@ -134,8 +132,11 @@ function EditSample() {
                     'protocol_url': data.protocol_url,
                     'lab_tissue_sample_id': data.lab_tissue_sample_id,
                     'description': data.description,
-                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
+                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid,
+                    'image_files': data.image_files
                 })
+                setImageFilesToAdd(data.image_files)
+                setThumbnailFileToAdd(data.thumbnail_file)
                 setEditMode("Edit")
 
                 if (data.hasOwnProperty("immediate_ancestors")) {
@@ -290,7 +291,9 @@ function EditSample() {
 
             filterImageFilesToAdd(imageFilesToAdd, values);
 
-            values['thumbnail_file_to_add'] = thumbnailFileToAdd
+            if (thumbnailFileToAdd.temp_file_id !== undefined) {
+                values['thumbnail_file_to_add'] = thumbnailFileToAdd
+            }
 
             // Remove empty strings
             let json = cleanJson(values);
@@ -411,10 +414,14 @@ function EditSample() {
                                                      text='Free text field to enter a description of the specimen'/>
                                     
                                     {/* Images */}
-                                    <ImageSelector imageFilesToAdd={imageFilesToAdd} setImageFilesToAdd={setImageFilesToAdd}/>
+                                    <ImageSelector editMode={editMode} 
+                                                   values={values} 
+                                                   setValues={setValues}
+                                                   imageFilesToAdd={imageFilesToAdd} 
+                                                   setImageFilesToAdd={setImageFilesToAdd}/>
 
                                     {/* Thumbnail */}
-                                    <ThumbnailSelector setThumbnailFileToAdd={setThumbnailFileToAdd}/>
+                                    <ThumbnailSelector thumbnailFileToAdd={thumbnailFileToAdd} setThumbnailFileToAdd={setThumbnailFileToAdd}/>
 
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
                                     <div className={'d-flex flex-row-reverse'}>
