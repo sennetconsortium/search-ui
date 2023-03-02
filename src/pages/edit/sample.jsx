@@ -66,7 +66,9 @@ function EditSample() {
     const [imageFilesToRemove, setImageFilesToRemove] = useState([])
     const [thumbnailFileToAdd, setThumbnailFileToAdd] = useState(null)
     const [thumbnailFileToRemove, setThumbnailFileToRemove] = useState(null)
-    
+    const [imageByteArray, setImageByteArray] = useState([])
+
+
     useEffect(() => {
         const fetchSampleCategories = async () => {
             setSampleCategories(null)
@@ -339,6 +341,7 @@ function EditSample() {
                 if (values.thumbnail_file_to_remove) {
                     delete values.thumbnail_file_to_remove
                 }
+                setImageByteArray([])
             }).catch((e) => log.error(e))
         }
 
@@ -450,10 +453,8 @@ function EditSample() {
                                     <ImageSelector editMode={editMode} 
                                                    values={values} 
                                                    setValues={setValues}
-                                                   imageFilesToAdd={imageFilesToAdd} 
-                                                   setImageFilesToAdd={setImageFilesToAdd}
-                                                   imageFilesToRemove={imageFilesToRemove}
-                                                   setImageFilesToRemove={setImageFilesToRemove}/>
+                                                   imageByteArray={imageByteArray}
+                                                   setImageByteArray={setImageByteArray}/>
 
                                     {/* Thumbnail */}
                                     <ThumbnailSelector editMode={editMode}

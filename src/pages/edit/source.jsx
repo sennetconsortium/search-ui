@@ -38,6 +38,8 @@ function EditSource() {
 
     const router = useRouter()
     const [source, setSource] = useState(null)
+    const [imageByteArray, setImageByteArray] = useState([])
+
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -125,6 +127,7 @@ function EditSource() {
                 if (values.image_files_to_remove) {
                     delete values.image_files_to_remove
                 }
+                setImageByteArray([])
             }).catch((e) => log.error(e))
         }
         
@@ -186,7 +189,9 @@ function EditSource() {
                                     {/* Images */}
                                     <ImageSelector editMode={editMode}
                                                    values={values}
-                                                   setValues={setValues}/>
+                                                   setValues={setValues}
+                                                   imageByteArray={imageByteArray}
+                                                   setImageByteArray={setImageByteArray}/>
                                     
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />*/}
                                     <div className={'d-flex flex-row-reverse'}>

@@ -4,9 +4,8 @@ import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
 
 
-export default function ImageSelector({ editMode, values, setValues}) {
+export default function ImageSelector({ editMode, values, setValues, imageByteArray, setImageByteArray }) {
     const imageInputRef = useRef()
-    const [images, setImages] = useState([])
     const [error, setError] = useState(null)
     const [inputInformation, setInputInformation] = useState(null)
     
@@ -24,9 +23,9 @@ export default function ImageSelector({ editMode, values, setValues}) {
                 imageFilesToAddCopy[index] = merged
                 setValues(prevState => ({...prevState, image_files_to_add: imageFilesToAddCopy}))
                 
-                const c = [...images]
+                const c = [...imageByteArray]
                 c[index] = image
-                setImages(c)
+                setImageByteArray(c)
             })
             .catch(() => setError(`${image.name} (${Math.floor(image.size / 1000)} kb) has exceeded the file size limit.`))
         event.target.value = null
@@ -38,20 +37,67 @@ export default function ImageSelector({ editMode, values, setValues}) {
     }
     
     const handleUploadImagesClick = () => {
-        setImages(prevState => [...prevState, {}])
+        setImageByteArray(prevState => [...prevState, {}])
         setValues(prevState => {
             if (prevState.image_files_to_add === undefined) {
-                return {...values, image_files_to_add: [{ description: "" }]}
+                return {...prevState, image_files_to_add: [{ description: "" }]}
             } else {
                 const copy = [...prevState.image_files_to_add]
                 copy.push({description: ''})
-                return {...values, image_files_to_add: copy}
+                return {...prevState, image_files_to_add: copy}
+            }
+        })
+    }
+    
+    const removeImageFile = index => {
+        setImageByteArray(imageByteArray.filter((_, i) => i !== index))
+        let imageFiles = []
+        setValues(prevState => {
+            if (prevState.image_files) {
+                imageFiles = prevState.image_files.filter((_, i) => i !== index)
+
+                if (prevState.image_files && prevState.image_files[index]) {
+                    if (prevState.image_files_to_remove) {
+                        const imageFilesToRemoveCopy = [...prevState.image_files_to_remove]
+                        imageFilesToRemoveCopy.push(prevState.image_files[index].file_uuid)
+                        if (imageFiles.length === 0) {
+                            delete prevState.image_files
+                            return {...prevState, image_files_to_remove: imageFilesToRemoveCopy}
+                        } else {
+                            return {...prevState, image_files_to_remove: imageFilesToRemoveCopy, image_files: imageFiles}
+                        }
+                    } else {
+                        const fileToRemove = []
+                        fileToRemove.push(prevState.image_files[index].file_uuid)
+                        if (imageFiles.length === 0) {
+                            delete prevState.image_files
+                            return {...prevState, image_files_to_remove: fileToRemove}
+                        } else {
+                            return {...prevState, image_files_to_remove: fileToRemove, image_files: imageFiles}
+                        }
+                    }
+                }
+            }
+        })
+    }
+    
+    const removeImageFilesToAdd = index => {
+        setImageByteArray(imageByteArray.filter((_, i) => i !== index))
+        let imageFilesToAdd = []
+        setValues(prevState => {
+            if (prevState.image_files_to_add) {
+                imageFilesToAdd = prevState.image_files_to_add.filter((_, i) => i !== index)
+                if (imageFilesToAdd.length === 0) {
+                    delete prevState.image_files_to_add
+                    return prevState
+                }
+                return {...prevState, image_files_to_add: imageFilesToAdd}
             }
         })
     }
 
     const removeFile = index => {
-        setImages(images.filter((_, i) => i !== index))
+        setImageByteArray(imageByteArray.filter((_, i) => i !== index))
         let imageFilesToAdd = []
         let imageFiles = []
         
@@ -155,7 +201,7 @@ export default function ImageSelector({ editMode, values, setValues}) {
                             className={'me-2'}
                         />
                         <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
-                            <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
+                            <CloseButton className={'mt-2'} onClick={() => removeImageFile(index)}/>
                         </OverlayTrigger>
                     </InputGroup>
                 </div>
@@ -164,9 +210,9 @@ export default function ImageSelector({ editMode, values, setValues}) {
             { values && values.image_files_to_add && values.image_files_to_add.map((image_file_to_add, index) => {
                 return <div key={'image_files_to_add' + index}>
                     <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
-                        { images[index] && images[index].name &&
+                        { imageByteArray[index] && imageByteArray[index].name &&
                             <span className={'m-2'}>
-                                {images[index].name}
+                                {imageByteArray[index].name}
                             </span>
                         }
                     </Badge>
@@ -181,7 +227,7 @@ export default function ImageSelector({ editMode, values, setValues}) {
                             className={'me-2'}
                         />
                         <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
-                            <CloseButton className={'mt-2'} onClick={() => removeFile(index)}/>
+                            <CloseButton className={'mt-2'} onClick={() => removeImageFilesToAdd(index)}/>
                         </OverlayTrigger>
                     </InputGroup>
                 </div>
