@@ -108,10 +108,6 @@ function EditSource() {
             }
 
             filterImageFilesToAdd(values)
-            
-            // if (imageFilesToRemove.length !== 0) {
-            //     values['image_files_to_remove'] = imageFilesToRemove
-            // }
 
             // Remove empty strings
             let json = cleanJson(values);

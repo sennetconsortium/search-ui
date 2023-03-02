@@ -134,10 +134,14 @@ function EditSample() {
                     'protocol_url': data.protocol_url,
                     'lab_tissue_sample_id': data.lab_tissue_sample_id,
                     'description': data.description,
-                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid,
-                    'image_files': data.image_files,
-                    'thumbnail_file': data.thumbnail_file
+                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
                 })
+                if (data.image_files) {
+                    setValues(prevState => ({...prevState, image_files: data.image_files}))
+                }
+                if (data.thumbnail_file) {
+                    setValues(prevState => ({...prevState, thumbnail_file: data.thumbnail_file}))
+                }
                 setImageFilesToAdd(data.image_files)
                 setThumbnailFileToAdd(data.thumbnail_file)
                 setEditMode("Edit")
@@ -317,6 +321,24 @@ function EditSample() {
                     typeHeader: _t('Sample Category'), response
                 })
 
+                if (response.image_files) {
+                    setValues(prevState => ({...prevState, image_files: response.image_files}))
+                }
+                if (response.thumbnail_file) {
+                    setValues(prevState => ({...prevState, thumbnail_file: response.thumbnail_file}))
+                }
+                if (values.image_files_to_add) {
+                    delete values.image_files_to_add
+                }
+                if (values.image_files_to_remove) {
+                    delete values.image_files_to_remove
+                }
+                if (values.thumbnail_file_to_add) {
+                    delete values.thumbnail_file_to_add
+                }
+                if (values.thumbnail_file_to_remove) {
+                    delete values.thumbnail_file_to_remove
+                }
             }).catch((e) => log.error(e))
         }
 
@@ -436,9 +458,7 @@ function EditSample() {
                                     {/* Thumbnail */}
                                     <ThumbnailSelector editMode={editMode}
                                                        values={values}
-                                                       thumbnailFileToAdd={thumbnailFileToAdd} 
-                                                       setThumbnailFileToAdd={setThumbnailFileToAdd}
-                                                       setThumbnailFileToRemove={setThumbnailFileToRemove}/>
+                                                       setValues={setValues}/>
 
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
                                     <div className={'d-flex flex-row-reverse'}>

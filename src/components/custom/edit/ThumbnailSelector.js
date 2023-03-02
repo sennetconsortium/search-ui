@@ -4,7 +4,7 @@ import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
 
 
-export default function ThumbnailSelector({ editMode, values, thumbnailFileToAdd, setThumbnailFileToAdd, setThumbnailFileToRemove }) {
+export default function ThumbnailSelector({ editMode, values, setValues }) {
     const thumbnailInputRef = useRef()
     const [thumbnail, setThumbnail] = useState(null)
     const [error, setError] = useState(null)
@@ -13,7 +13,7 @@ export default function ThumbnailSelector({ editMode, values, thumbnailFileToAdd
         const thumbnailFile = event.target.files && event.target.files[0]
         if (!thumbnailFile) return
         uploadFile(thumbnailFile).then(r => {
-            setThumbnailFileToAdd(r)
+            setValues(prevState => ({...prevState, thumbnail_file_to_add: r}))
             setThumbnail(thumbnailFile)
         }).catch(() => setError(`${thumbnailFile.name} (${Math.floor(thumbnailFile.size / 1000)} kb) has exceeded the file size limit.`))
 
@@ -22,9 +22,18 @@ export default function ThumbnailSelector({ editMode, values, thumbnailFileToAdd
 
     const removeThumbnail = () => {
         setThumbnail(null)
-        setThumbnailFileToAdd(null)
+        if (values.thumbnail_file_to_add) {
+            delete values.thumbnail_file_to_add
+            setValues(values)
+        }
         if (editMode === 'Edit') {
-            setThumbnailFileToRemove(values.thumbnail_file.file_uuid)
+            if (values.thumbnail_file) {
+                setValues(prevState => {
+                    const id = prevState.thumbnail_file.file_uuid
+                    delete prevState.thumbnail_file
+                    return {...prevState, thumbnail_file_to_remove: id}
+                })
+            }
         }
     }
 
@@ -65,10 +74,10 @@ export default function ThumbnailSelector({ editMode, values, thumbnailFileToAdd
                     </>
                 }
                 {/* Edit mode */}
-                { thumbnail === null && thumbnailFileToAdd &&
+                { thumbnail === null && values.thumbnail_file &&
                     <>
                         <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
-                            <span className={'m-2'}>{thumbnailFileToAdd.filename}</span>
+                            <span className={'m-2'}>{values.thumbnail_file.filename}</span>
                         </Badge>
                         <OverlayTrigger overlay={<Tooltip>Remove thumbnail</Tooltip>}>
                             <CloseButton className={'p-2'} onClick={removeThumbnail}/>
