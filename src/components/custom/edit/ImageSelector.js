@@ -95,54 +95,6 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
             }
         })
     }
-
-    const removeFile = index => {
-        setImageByteArray(imageByteArray.filter((_, i) => i !== index))
-        let imageFilesToAdd = []
-        let imageFiles = []
-        
-        setValues(prevState => {
-
-            if (prevState.image_files) {
-                imageFiles = prevState.image_files.filter((_, i) => i !== index)
-
-                if (prevState.image_files && prevState.image_files[index]) {
-                    if (prevState.image_files_to_remove) {
-                        const imageFilesToRemoveCopy = [...prevState.image_files_to_remove]
-                        imageFilesToRemoveCopy.push(prevState.image_files[index].file_uuid)
-                        if (imageFiles.length === 0) {
-                            delete prevState.image_files
-                            return {...prevState, image_files_to_remove: imageFilesToRemoveCopy}
-                        } else {
-                            return {...prevState, image_files_to_remove: imageFilesToRemoveCopy, image_files: imageFiles}
-                        }
-                    } else {
-                        const fileToRemove = []
-                        fileToRemove.push(prevState.image_files[index].file_uuid)
-                        if (imageFiles.length === 0) {
-                            delete prevState.image_files
-                            return {...prevState, image_files_to_remove: fileToRemove}
-                        } else {
-                            return {...prevState, image_files_to_remove: fileToRemove, image_files: imageFiles}
-                        }
-                    }
-                }
-            } else if (prevState.image_files_to_add) {
-                imageFilesToAdd = prevState.image_files_to_add.filter((_, i) => i !== index)
-                if (imageFilesToAdd.length === 0) {
-                    delete prevState.image_files_to_add
-                    return prevState
-                }
-                return {...prevState, image_files_to_add: imageFilesToAdd}
-            }
-
-            if (imageFiles.length === 0) {
-                delete prevState.image_files
-                return {...prevState, image_files_to_add: imageFilesToAdd}
-            }
-        })
-    }
-    
     const handleImageDescriptionChange = (index, description, isAddingAnImage) => {
         if (isAddingAnImage) {
             const imageFilesToAddCopy = [...values.image_files_to_add]
