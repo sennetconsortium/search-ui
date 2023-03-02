@@ -88,8 +88,11 @@ export const AppProvider = ({ children }) => {
         return msg
     }
 
-    const filterImageFilesToAdd = (imageFilesToAdd, values) => {
-        const filtered = imageFilesToAdd.filter(i => i.temp_file_id !== undefined)
+    const filterImageFilesToAdd = values => {
+        if (!values.image_files_to_add) {
+            return
+        }
+        const filtered = values.image_files_to_add.filter(i => i.temp_file_id !== undefined)
         if (filtered.length !== 0) {
             values['image_files_to_add'] = filtered
         }

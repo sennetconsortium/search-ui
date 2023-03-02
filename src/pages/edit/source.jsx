@@ -38,8 +38,6 @@ function EditSource() {
 
     const router = useRouter()
     const [source, setSource] = useState(null)
-    const [imageFilesToAdd, setImageFilesToAdd] = useState([])
-    const [imageFilesToRemove, setImageFilesToRemove] = useState([])
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -59,14 +57,20 @@ function EditSource() {
             } else {
                 setData(data);
                 // Set state with default values that will be PUT to Entity API to update
-                setValues({
-                    'lab_source_id': data.lab_source_id,
-                    'protocol_url': data.protocol_url,
-                    'description': data.description,
-                    'source_type': data.source_type,
-                    'image_files': data.image_files
-                })
-                setImageFilesToAdd(data.image_files)
+                data.image_files ?
+                    setValues({
+                        'lab_source_id': data.lab_source_id,
+                        'protocol_url': data.protocol_url,
+                        'description': data.description,
+                        'source_type': data.source_type,
+                        'image_files': data.image_files
+                    }) : 
+                    setValues({
+                        'lab_source_id': data.lab_source_id,
+                        'protocol_url': data.protocol_url,
+                        'description': data.description,
+                        'source_type': data.source_type
+                    })
                 setEditMode("Edit")
             }
         }
@@ -103,11 +107,11 @@ function EditSource() {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
-            filterImageFilesToAdd(imageFilesToAdd, values)
+            filterImageFilesToAdd(values)
             
-            if (imageFilesToRemove.length !== 0) {
-                values['image_files_to_remove'] = imageFilesToRemove
-            }
+            // if (imageFilesToRemove.length !== 0) {
+            //     values['image_files_to_remove'] = imageFilesToRemove
+            // }
 
             // Remove empty strings
             let json = cleanJson(values);
@@ -116,10 +120,18 @@ function EditSource() {
 
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
                 setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
+                if (response.image_files) {
+                    setValues(prevState => ({...prevState, image_files: response.image_files}))
+                }
+                if (values.image_files_to_add) {
+                    delete values.image_files_to_add
+                }
+                if (values.image_files_to_remove) {
+                    delete values.image_files_to_remove
+                }
             }).catch((e) => log.error(e))
-
         }
-
+        
         setValidated(true);
     };
 
@@ -178,11 +190,7 @@ function EditSource() {
                                     {/* Images */}
                                     <ImageSelector editMode={editMode}
                                                    values={values}
-                                                   setValues={setValues}
-                                                   imageFilesToAdd={imageFilesToAdd}
-                                                   setImageFilesToAdd={setImageFilesToAdd}
-                                                   imageFilesToRemove={imageFilesToRemove}
-                                                   setImageFilesToRemove={setImageFilesToRemove}/>
+                                                   setValues={setValues}/>
                                     
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />*/}
                                     <div className={'d-flex flex-row-reverse'}>
