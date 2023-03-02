@@ -72,14 +72,16 @@ function EditSample() {
                 if (response.ok) {
                     const body = await response.json()
                     const provenance_constraints = body.description[0].description
+                    let sub_types = []
                     provenance_constraints.forEach(constraint => {
                         if (constraint.entity_type.toLowerCase() === 'sample') {
-                            const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => constraint.sub_type.includes(sample_category[0]));
-                            let sample_categories = {}
-                            filter.forEach(entry => sample_categories[entry[0]] = entry[1])
-                            setSampleCategories(sample_categories)
+                            sub_types = sub_types.concat(constraint.sub_type)
                         }
                     })
+                    const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => sub_types.includes(sample_category[0]));
+                    let sample_categories = {}
+                    filter.forEach(entry => sample_categories[entry[0]] = entry[1])
+                    setSampleCategories(sample_categories)
                 }
             }
         }
