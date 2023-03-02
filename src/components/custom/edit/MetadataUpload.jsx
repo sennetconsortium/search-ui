@@ -1,12 +1,13 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState, useCallback} from 'react'
 import PropTypes from 'prop-types'
-import { Upload, CheckCircleFill, XCircleFill, Download} from "react-bootstrap-icons";
+import { Upload, CheckCircleFill, XCircleFill, Download, ArrowRepeat} from "react-bootstrap-icons";
 import InputGroup from 'react-bootstrap/InputGroup';
 import {getIngestEndPoint} from "../../../config/config";
 import log from 'loglevel'
 import DataTable from 'react-data-table-component';
 import $ from 'jquery'
 import { get_auth_header } from "../../../lib/services";
+import EntityContext from "../../../context/EntityContext";
 
 
 export const formatErrorColumn = (d = '"') => {
@@ -49,9 +50,16 @@ export const formatErrorColumnTimer = (d = '"') => {
     }, 200)
 }
 
-function MetadataUpload({ setMetadata, entity }) {
-    useEffect(() => {
-    }, [])
+function MetadataUpload({ setMetadata, entity, subType }) {
+
+    useEffect(()=> {
+        if (file && rerun !== subType) {
+            setRerun(subType)
+        } else {
+            setRerun(null)
+        }
+    }, [subType])
+
     const [file, setFile] = useState('')
     const [fileStatus, setFileStatus] = useState('')
     const [error, setError] = useState(null)
@@ -59,6 +67,8 @@ function MetadataUpload({ setMetadata, entity }) {
     const [validationError, setValidationError] = useState(false)
     const [isValidating, setIsValidating] = useState(false)
     const [table, setTable] = useState({})
+    const [rerun, setRerun] = useState(null)
+
 
     const isUnacceptable = (code) => code === 406
 
@@ -81,7 +91,7 @@ function MetadataUpload({ setMetadata, entity }) {
                         data = Array.from(description)
                     }
                 } else {
-                    data = [{error: description}]
+                    data = [{error: JSON.stringify(description)}]
                 }
             }
             log.debug('Metadata errors', data)
@@ -94,14 +104,17 @@ function MetadataUpload({ setMetadata, entity }) {
 
     const handleUpload = async (e) => {
         try {
-            const upload = e.currentTarget.files[0]
+            const upload = e.currentTarget.files ? e.currentTarget.files[0] : file
             if (!upload) return
+            setRerun(null)
             setIsValidating(true)
             let formData = new FormData()
-            setFile(upload.name)
+            setFile(upload)
             setFileStatus(upload.name)
             formData.append('metadata', upload)
-            formData.append('entity', entity)
+            formData.append('entity_type', entity)
+            formData.append('sub_type', subType)
+            formData.append('ui_type', 'gui')
             const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData, headers: get_auth_header() })
             const details = await response.json()
             
@@ -136,7 +149,7 @@ function MetadataUpload({ setMetadata, entity }) {
             const url = window.URL.createObjectURL(new Blob([JSON.stringify(error, null, 2)],
                 {type: "application/json"}))
             a.href = url
-            a.download = `${file}-upload-results.json`
+            a.download = `${file.name}-upload-results.json`
             document.body.append(a)
             a.click()
             a.remove()
@@ -160,8 +173,9 @@ function MetadataUpload({ setMetadata, entity }) {
                     {success && <CheckCircleFill color='#0d6efd' />}
                     <small role={validationError ? 'button' : null} onClick={downloadDetails} title={`${validationError ? 'Download error report' : ''}`}>
                         {fileStatus} {validationError && <Download />}
-                        {isValidating && <span className="spinner spinner-border alert alert-info"></span>}
+                        {isValidating && <span className="spinner spinner-border ic alert alert-info"></span>}
                     </small>
+                    {rerun && <span role='button' onClick={handleUpload} title='Rerun validation' className='ic rerun'> <ArrowRepeat size={12} /></span>}
                 </span>
                 {error &&  <div className='c-metadataUpload__table table-responsive has-error'>
                     <DataTable
@@ -175,11 +189,14 @@ function MetadataUpload({ setMetadata, entity }) {
     )
 }
 
-MetadataUpload.defaultProps = {}
+MetadataUpload.defaultProps = {
+    subType: ''
+}
 
 MetadataUpload.propTypes = {
     setMetadata: PropTypes.func,
     entity: PropTypes.string.isRequired,
+    subType: PropTypes.string
 }
 
 export default MetadataUpload

@@ -63,7 +63,8 @@ function EditSource() {
                     'lab_source_id': data.lab_source_id,
                     'protocol_url': data.protocol_url,
                     'description': data.description,
-                    'source_type': data.source_type
+                    'source_type': data.source_type,
+                    'metadata': data.metadata
                 })
                 setEditMode("Edit")
             }
@@ -104,7 +105,11 @@ function EditSource() {
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
-            // values['metadata'] = metadata
+
+            if(!_.isEmpty(metadata)) {
+                values["metadata"] = metadata.metadata
+                values["pathname"] = metadata.pathname
+            }
 
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
                 setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
@@ -121,6 +126,7 @@ function EditSource() {
             isUnauthorized() ? <Unauthorized /> : <Spinner />
         )
     } else {
+        console.log(values)
         return (
             <>
                 {editMode &&
@@ -167,7 +173,8 @@ function EditSource() {
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
                                         onChange={onChange} text='Free text field to enter a description of the source.' />
 
-                                    {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />*/}
+                                    {/*# TODO: Use ontology*/}
+                                    { values && values.source_type === 'Human' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} subType={values.source_type} />}
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}

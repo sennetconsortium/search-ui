@@ -408,7 +408,7 @@ function EditSample() {
                                                      text='Free text field to enter a description of the specimen'/>
 
                                     {/*# TODO: Use ontology*/}
-                                    { values.sample_category !== 'organ' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} /> }
+                                    { values.sample_category && values.sample_category !== 'organ' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} subType={values.sample_category}  /> }
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}
