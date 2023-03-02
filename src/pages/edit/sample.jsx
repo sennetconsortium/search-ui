@@ -296,7 +296,7 @@ function EditSample() {
                 values['rui_location'] = parseJson(ruiLocation)
             }
 
-            filterImageFilesToAdd(imageFilesToAdd, values);
+            filterImageFilesToAdd(values);
 
             if (imageFilesToRemove.length !== 0) {
                 values['image_files_to_remove'] = imageFilesToRemove

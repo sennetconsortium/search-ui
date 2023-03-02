@@ -95,6 +95,8 @@ export const AppProvider = ({ children }) => {
         const filtered = values.image_files_to_add.filter(i => i.temp_file_id !== undefined)
         if (filtered.length !== 0) {
             values['image_files_to_add'] = filtered
+        } else {
+            delete values.image_files_to_add
         }
     }
     

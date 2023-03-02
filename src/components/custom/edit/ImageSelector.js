@@ -56,42 +56,40 @@ export default function ImageSelector({ editMode, values, setValues}) {
         let imageFiles = []
         
         setValues(prevState => {
-            
-            if (prevState.image_files_to_add) {
+
+            if (prevState.image_files) {
+                imageFiles = prevState.image_files.filter((_, i) => i !== index)
+
+                if (prevState.image_files && prevState.image_files[index]) {
+                    if (prevState.image_files_to_remove) {
+                        const imageFilesToRemoveCopy = [...prevState.image_files_to_remove]
+                        imageFilesToRemoveCopy.push(prevState.image_files[index].file_uuid)
+                        if (imageFiles.length === 0) {
+                            delete prevState.image_files
+                            return {...prevState, image_files_to_remove: imageFilesToRemoveCopy}
+                        } else {
+                            return {...prevState, image_files_to_remove: imageFilesToRemoveCopy, image_files: imageFiles}
+                        }
+                    } else {
+                        const fileToRemove = []
+                        fileToRemove.push(prevState.image_files[index].file_uuid)
+                        if (imageFiles.length === 0) {
+                            delete prevState.image_files
+                            return {...prevState, image_files_to_remove: fileToRemove}
+                        } else {
+                            return {...prevState, image_files_to_remove: fileToRemove, image_files: imageFiles}
+                        }
+                    }
+                }
+            } else if (prevState.image_files_to_add) {
                 imageFilesToAdd = prevState.image_files_to_add.filter((_, i) => i !== index)
                 if (imageFilesToAdd.length === 0) {
                     delete prevState.image_files_to_add
                     return prevState
                 }
                 return {...prevState, image_files_to_add: imageFilesToAdd}
-            } else {
-                if (prevState.image_files) {
-                    imageFiles = prevState.image_files.filter((_, i) => i !== index)
-
-                    if (prevState.image_files && prevState.image_files[index]) {
-                        if (prevState.image_files_to_remove) {
-                            const imageFilesToRemoveCopy = [...prevState.image_files_to_remove]
-                            imageFilesToRemoveCopy.push(prevState.image_files[index].file_uuid)
-                            if (imageFiles.length === 0) {
-                                delete prevState.image_files
-                                return {...prevState, image_files_to_remove: imageFilesToRemoveCopy}
-                            } else {
-                                return {...prevState, image_files_to_remove: imageFilesToRemoveCopy, image_files: imageFiles}
-                            }
-                        } else {
-                            const fileToRemove = []
-                            fileToRemove.push(prevState.image_files[index].file_uuid)
-                            if (imageFiles.length === 0) {
-                                delete prevState.image_files
-                                return {...prevState, image_files_to_remove: fileToRemove}
-                            } else {
-                                return {...prevState, image_files_to_remove: fileToRemove, image_files: imageFiles}
-                            }
-                        }
-                    }
-                }
             }
-            
+
             if (imageFiles.length === 0) {
                 delete prevState.image_files
                 return {...prevState, image_files_to_add: imageFilesToAdd}
@@ -140,7 +138,7 @@ export default function ImageSelector({ editMode, values, setValues}) {
                 onChange={() => handleFileChange(inputInformation.index, inputInformation.fileDetail)}
             />
             { editMode === 'Edit' && values.image_files && values.image_files.map((i, index) => (
-                <div>
+                <div key={'image_files' + index}>
                     <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                         <span className={'m-2'}>
                             {i.filename}
@@ -164,7 +162,7 @@ export default function ImageSelector({ editMode, values, setValues}) {
             ))
             }
             { values && values.image_files_to_add && values.image_files_to_add.map((image_file_to_add, index) => {
-                return <div key={'input' + index}>
+                return <div key={'image_files_to_add' + index}>
                     <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                         { images[index] && images[index].name &&
                             <span className={'m-2'}>
