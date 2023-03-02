@@ -130,7 +130,8 @@ function EditSample() {
                     'protocol_url': data.protocol_url,
                     'lab_tissue_sample_id': data.lab_tissue_sample_id,
                     'description': data.description,
-                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
+                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid,
+                    'metadata': data.metadata
                 })
                 setEditMode("Edit")
 
@@ -287,7 +288,11 @@ function EditSample() {
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
-            // values['metadata'] = metadata
+
+            if(!_.isEmpty(metadata)) {
+                values["metadata"] = metadata.metadata
+                values["pathname"] = metadata.pathname
+            }
 
             await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
                 setModalDetails({
@@ -402,7 +407,8 @@ function EditSample() {
                                                      onChange={onChange}
                                                      text='Free text field to enter a description of the specimen'/>
 
-                                    {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
+                                    {/*# TODO: Use ontology*/}
+                                    { values.sample_category !== 'organ' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} /> }
                                     <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                             disabled={disableSubmit}>
                                         {_t('Submit')}
