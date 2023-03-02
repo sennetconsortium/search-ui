@@ -82,17 +82,17 @@ export default function EditDataset() {
                     let sub_types = []
                     provenance_constraints.forEach(constraint => {
                         if (constraint.entity_type.toLowerCase() === 'dataset') {
-                            sub_types = sub_types.concat(constraint.sub_type)
-                            if (!Object.hasOwn(constraint, 'sub_type')) {
-                                setDataTypes(DATA_TYPES)
-                            } else {
-                                const filter = Object.entries(DATA_TYPES).filter(data_type => sub_types.includes(data_type[0]));
-                                let data_types = {}
-                                filter.forEach(entry => data_types[entry[0]] = entry[1])
-                                setDataTypes(data_types)
-                            }
+                            sub_types = sub_types.concat(constraint.sub_type || [])
                         }
                     })
+                    if (!sub_types.length) {
+                        setDataTypes(DATA_TYPES)
+                    } else {
+                        const filter = Object.entries(DATA_TYPES).filter(data_type => sub_types.includes(data_type[0]));
+                        let data_types = {}
+                        filter.forEach(entry => data_types[entry[0]] = entry[1])
+                        setDataTypes(data_types)
+                    }
                 }
             }
         }

@@ -75,7 +75,7 @@ function EditSample() {
                     let sub_types = []
                     provenance_constraints.forEach(constraint => {
                         if (constraint.entity_type.toLowerCase() === 'sample') {
-                            sub_types = sub_types.concat(constraint.sub_type)
+                            sub_types = sub_types.concat(constraint.sub_type || [])
                         }
                     })
                     const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => sub_types.includes(sample_category[0]));
