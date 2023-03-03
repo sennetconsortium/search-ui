@@ -153,7 +153,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             className={'me-2'}
                         />
                         <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
-                            <CloseButton className={'mt-2'} onClick={() => removeImageFile(index)}/>
+                            <CloseButton className={'link_with_icon'} onClick={() => removeImageFile(index)}/>
                         </OverlayTrigger>
                     </InputGroup>
                 </div>
@@ -179,7 +179,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             className={'me-2'}
                         />
                         <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
-                            <CloseButton className={'mt-2'} onClick={() => removeImageFilesToAdd(index)}/>
+                            <CloseButton className={'link_with_icon'} onClick={() => removeImageFilesToAdd(index)}/>
                         </OverlayTrigger>
                     </InputGroup>
                 </div>
