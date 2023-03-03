@@ -1,26 +1,24 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
 import {cleanJson, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import { update_create_entity} from "../../lib/services";
+import {update_create_entity} from "../../lib/services";
 import SourceType from "../../components/custom/edit/source/SourceType";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
-
 import AppContext from '../../context/AppContext'
-import { EntityProvider } from '../../context/EntityContext'
-import EntityContext from '../../context/EntityContext'
+import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import { ENTITIES } from "../../config/constants"
+import {ENTITIES} from "../../config/constants"
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
-import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+import ImageSelector from "../../components/custom/edit/ImageSelector";
 
 
 function EditSource() {
@@ -36,10 +34,12 @@ function EditSource() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         metadata, setMetadata } = useContext(EntityContext)
-    const { _t } = useContext(AppContext)
+    const { _t, filterImageFilesToAdd } = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
+    const [imageByteArray, setImageByteArray] = useState([])
+
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -59,13 +59,17 @@ function EditSource() {
             } else {
                 setData(data);
                 // Set state with default values that will be PUT to Entity API to update
-                setValues({
+                let _values = {
                     'lab_source_id': data.lab_source_id,
                     'protocol_url': data.protocol_url,
                     'description': data.description,
                     'source_type': data.source_type,
                     'metadata': data.metadata
-                })
+                }
+                if (data.image_files) {
+                    _values['image_files'] = data.image_files
+                }
+                setValues(_values)
                 setEditMode("Edit")
             }
         }
@@ -88,7 +92,7 @@ function EditSource() {
 
     const handleSubmit = async (event) => {
         setDisableSubmit(true);
-        const form = event.currentTarget.parentElement;
+        const form = event.currentTarget.parentElement.parentElement;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
@@ -102,6 +106,8 @@ function EditSource() {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
+            filterImageFilesToAdd(values)
+
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
@@ -113,10 +119,19 @@ function EditSource() {
 
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
                 setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
+                if (response.image_files) {
+                    setValues(prevState => ({...prevState, image_files: response.image_files}))
+                }
+                if (values.image_files_to_add) {
+                    delete values.image_files_to_add
+                }
+                if (values.image_files_to_remove) {
+                    delete values.image_files_to_remove
+                }
+                setImageByteArray([])
             }).catch((e) => log.error(e))
-
         }
-
+        
         setValidated(true);
     };
 
@@ -173,13 +188,22 @@ function EditSource() {
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
                                         onChange={onChange} text='Free text field to enter a description of the source.' />
 
+
+                                    {/* Images */}
+                                    <ImageSelector editMode={editMode}
+                                                   values={values}
+                                                   setValues={setValues}
+                                                   imageByteArray={imageByteArray}
+                                                   setImageByteArray={setImageByteArray}/>
+
                                     {/*# TODO: Use ontology*/}
                                     { values && values.source_type === 'Human' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} subType={values.source_type} />}
-                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
-                                            disabled={disableSubmit}>
-                                        {_t('Submit')}
-                                    </Button>
-
+                                    <div className={'d-flex flex-row-reverse'}>
+                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
+                                                disabled={disableSubmit}>
+                                            {_t('Submit')}
+                                        </Button>
+                                    </div>
                                     {getModal()}
                                 </Form>
                             }

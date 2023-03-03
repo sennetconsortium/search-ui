@@ -184,3 +184,19 @@ export async function get_ancestor_organs(uuid) {
     });
     return organs
 }
+
+export const uploadFile = async file => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const requestOptions = {
+        headers: get_auth_header(),
+        method: 'POST',
+        body: formData
+    }
+    try {
+        const response = await fetch(getIngestEndPoint() + 'file-upload', requestOptions)
+        return await response.json()
+    } catch (error) {
+        throw Error('413')
+    }
+}

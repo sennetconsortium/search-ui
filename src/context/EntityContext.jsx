@@ -5,10 +5,12 @@ import {
     get_user_write_groups,
 } from '../lib/services'
 import log from 'loglevel'
-import { APP_ROUTES } from '../config/constants'
+import {APP_ROUTES, ENTITIES} from '../config/constants'
 import AppModal from '../components/AppModal'
 import AppContext from './AppContext'
 import {simple_query_builder} from "search-ui/lib/search-tools";
+import {getHeaders} from "../components/custom/js/functions";
+import {getEntityEndPoint} from "../config/config";
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
@@ -91,6 +93,34 @@ export const EntityProvider = ({ children }) => {
         });
     };
 
+    const getEntityConstraints = async (body, params) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(body)
+        }
+        const requestParams = params ?  '?' + new URLSearchParams(params) : ''
+        return await fetch(getEntityEndPoint() + 'constraints' + requestParams, requestOptions)
+    }
+
+    const getSampleEntityConstraints = async (source) => {
+        const entityType = source.entity_type.toLowerCase()
+        let body = {entity_type: ENTITIES[entityType]}
+        if (entityType === 'sample') {
+            const sample_category = source.sample_category.toLowerCase()
+            body['sub_type'] = [sample_category]
+            if (sample_category === 'organ') {
+                body['sub_type_val'] = [source.organ]
+            }
+        }
+        const fullBody = [
+            {
+                ancestors: [body]
+            }
+        ]
+        return getEntityConstraints(fullBody)
+    }
+
     const setModalDetails = ({entity, type, typeHeader, response}) => {
         setShowModal(true)
         setDisableSubmit(false)
@@ -148,7 +178,8 @@ export const EntityProvider = ({ children }) => {
                 userWriteGroups, setUserWriteGroups, onChange, editMode, setEditMode,
                 selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid,
                 disableSubmit, setDisableSubmit,
-                metadata, setMetadata
+                metadata, setMetadata,
+                getEntityConstraints, getSampleEntityConstraints
             }}
         >
             {children}
