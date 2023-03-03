@@ -43,7 +43,7 @@ function EditSample() {
         values, setValues,
         errorMessage, setErrorMessage,
         validated, setValidated,
-        userWriteGroups,
+        userWriteGroups, onChange,
         editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
@@ -173,18 +173,10 @@ function EditSample() {
     }, [ancestorOrgan, values]);
 
     // callback provided to components to update the main list of form values
-    const onChange = (e, fieldId, value) => {
+    const _onChange = (e, fieldId, value) => {
         // log.debug('onChange', fieldId, value)
         // use a callback to find the field in the value list and update it
-        setValues((previousValues) => {
-            if (previousValues !== null) {
-                return {...previousValues, [fieldId]: value}
-            } else {
-                return {
-                    [fieldId]: value
-                }
-            }
-        });
+        onChange(e, fieldId, value)
 
         if (fieldId === 'direct_ancestor_uuid') {
             resetSampleCategory(e)
@@ -194,13 +186,13 @@ function EditSample() {
     const resetSampleCategory = (e) => {
 
         if (Object.hasOwn(values, 'sample_category')) {
-            onChange(e, "sample_category", "")
+            _onChange(e, "sample_category", "")
         }
         if (Object.hasOwn(values, 'organ')) {
-            onChange(e, "organ", "")
+            _onChange(e, "organ", "")
         }
         if (Object.hasOwn(values, 'organ_other')) {
-            onChange(e, "organ_other", "")
+            _onChange(e, "organ_other", "")
         }
         set_organ_group_hide('none')
         set_organ_other_hide('none')
@@ -350,14 +342,14 @@ function EditSample() {
                                         <GroupSelect
                                             data={data}
                                             groups={userWriteGroups}
-                                            onGroupSelectChange={onChange}
+                                            onGroupSelectChange={_onChange}
                                             entity_type={'sample'}/>
                                     }
 
                                     {/*Ancestor ID*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
-                                        <AncestorId source={source} onChange={onChange} fetchSource={fetchSource}/>
+                                        <AncestorId source={source} onChange={_onChange} fetchSource={fetchSource}/>
                                     }
 
                                     {/*Source Information Box*/}
@@ -377,7 +369,7 @@ function EditSample() {
                                                 sample_categories={sampleCategories === null ? SAMPLE_CATEGORY : sampleCategories}
                                                 data={values}
                                                 source={source}
-                                                onChange={onChange}/>
+                                                onChange={_onChange}/>
                                             <RUIButton
                                                 showRegisterLocationButton={showRuiButton}
                                                 ruiLocation={ruiLocation}
@@ -390,21 +382,21 @@ function EditSample() {
                                     <EntityFormGroup label="Preparation Protocol" placeholder='protocols.io DOI'
                                                      controlId='protocol_url' value={data.protocol_url}
                                                      isRequired={true} pattern={getDOIPattern()}
-                                                     onChange={onChange}
+                                                     onChange={_onChange}
                                                      text='The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see https://www.protocols.io/'/>
 
                                     {/*/!*Lab Sample ID*!/*/}
                                     <EntityFormGroup label='Lab Sample ID' placeholder='Lab specific alpha-numeric ID'
                                                      controlId='lab_tissue_sample_id'
                                                      value={data.lab_tissue_sample_id}
-                                                     onChange={onChange} text='An identifier used by the lab to identify the specimen, this
+                                                     onChange={_onChange} text='An identifier used by the lab to identify the specimen, this
                                         can be an identifier from the system used to track the specimen in the lab. This field will be entered by the user.'/>
 
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description'
                                                      value={data.description}
-                                                     onChange={onChange}
+                                                     onChange={_onChange}
                                                      text='Free text field to enter a description of the specimen'/>
 
                                     {/*# TODO: Use ontology*/}

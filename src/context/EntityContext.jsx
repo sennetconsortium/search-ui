@@ -78,13 +78,18 @@ export const EntityProvider = ({ children }) => {
     }, [])
 
     const onChange = (e, fieldId, value) => {
+        // log.debug('onChange', fieldId, value)
         // use a callback to find the field in the value list and update it
-        setValues((currentValues) => {
-            // log.info(currentValues)
-            currentValues[fieldId] = value
-            return currentValues
-        })
-    }
+        setValues((previousValues) => {
+            if (previousValues !== null) {
+                return {...previousValues, [fieldId]: value}
+            } else {
+                return {
+                    [fieldId]: value
+                }
+            }
+        });
+    };
 
     const setModalDetails = ({entity, type, typeHeader, response}) => {
         setShowModal(true)
