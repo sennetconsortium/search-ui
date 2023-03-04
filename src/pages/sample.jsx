@@ -133,7 +133,7 @@ function ViewSample() {
                                 <main className="col m-md-3 entity_details">
                                     <div className="d-none d-md-block sticky-top" id="sections-button">
                                         <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                           className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/></a>
+                                           className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
                                     </div>
 
                                     <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]}
