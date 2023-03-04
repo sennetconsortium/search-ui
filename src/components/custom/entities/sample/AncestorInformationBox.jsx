@@ -14,7 +14,7 @@ export default class AncestorInformationBox extends React.Component {
                         <tr>
                             <th><a
                                 href={'/' + this.props.ancestor.entity_type.toLowerCase() + '?uuid=' + this.props.ancestor.uuid}
-                                className="link_with_icon">{this.props.ancestor.sennet_id}</a></th>
+                                className="icon_inline">{this.props.ancestor.sennet_id}</a></th>
                         </tr>
                         <tr>
                             <th>Ancestor Type</th>

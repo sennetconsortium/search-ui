@@ -46,7 +46,7 @@ const AppFooter = ({isFixedBottom}) => {
                     </a>
                 </div>
                 <div className="text-center text-muted">
-                    Copyright <a className="text-muted link_with_icon" href="https://commonfund.nih.gov/senescence">
+                    Copyright <a className="text-muted icon_inline" href="https://commonfund.nih.gov/senescence">
                         NIH Cellular Senescence Network (SenNet)</a> 2023. All rights reserved.
                 </div>
             </footer>

@@ -23,7 +23,7 @@ export default class DerivedDatasetItem extends React.Component {
                 {this.state.descendant_data != null &&
                     <tr key={"descendant_data_" + this.props.index}>
                         <td>
-                            <a href={`/dataset?uuid=${this.state.descendant_data.uuid}`} className="link_with_icon">
+                            <a href={`/dataset?uuid=${this.state.descendant_data.uuid}`} className="icon_inline">
                                 <span className="me-1">{this.state.descendant_data.sennet_id}</span> <BoxArrowUpRight/>
                             </a>
                         </td>

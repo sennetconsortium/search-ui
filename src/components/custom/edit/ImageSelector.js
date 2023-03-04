@@ -142,7 +142,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             {i.filename}
                         </span>
                     </Badge>
-                    <InputGroup className="m-2 w-75">
+                    <InputGroup className="m-2 w-75 icon_inline">
                         <Button variant="outline-secondary" onClick={() => handleChooseFileClick(index, i)}>
                             Choose file
                         </Button>
@@ -153,7 +153,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             className={'me-2'}
                         />
                         <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
-                            <CloseButton className={'link_with_icon'} onClick={() => removeImageFile(index)}/>
+                            <CloseButton onClick={() => removeImageFile(index)}/>
                         </OverlayTrigger>
                     </InputGroup>
                 </div>
@@ -168,7 +168,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             </span>
                         }
                     </Badge>
-                    <InputGroup className="m-2 w-75">
+                    <InputGroup className="m-2 w-75 icon_inline">
                         <Button variant="outline-secondary" onClick={() => handleChooseFileClick(index, image_file_to_add)}>
                             Choose file
                         </Button>
@@ -179,7 +179,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             className={'me-2'}
                         />
                         <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
-                            <CloseButton className={'link_with_icon'} onClick={() => removeImageFilesToAdd(index)}/>
+                            <CloseButton onClick={() => removeImageFilesToAdd(index)}/>
                         </OverlayTrigger>
                     </InputGroup>
                 </div>
