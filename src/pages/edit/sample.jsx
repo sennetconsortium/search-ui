@@ -33,6 +33,7 @@ import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/confi
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
+import {SenPopoverOptions} from "../../components/SenPopover";
 
 
 function EditSample() {
@@ -418,8 +419,9 @@ function EditSample() {
                                     <EntityFormGroup label="Preparation Protocol" placeholder='protocols.io DOI'
                                                      controlId='protocol_url' value={data.protocol_url}
                                                      isRequired={true} pattern={getDOIPattern()}
+                                                     popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                                      onChange={_onChange}
-                                                     text='The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see https://www.protocols.io/'/>
+                                                     text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see <a href="https://www.protocols.io/.">https://www.protocols.io/.</a></span>}/>
 
                                     {/*/!*Lab Sample ID*!/*/}
                                     <EntityFormGroup label='Lab Sample ID' placeholder='Lab specific alpha-numeric ID'

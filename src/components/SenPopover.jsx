@@ -39,12 +39,26 @@ export const handlePopoverDisplay = (className, stateCallback) => {
 
 function SenPopover({children, text, placement, className, trigger}) {
 
-    const [showTooltip, setShowTooltip] = useState(false)
+    const [showTooltip, setShowTooltip] = useState(undefined)
+
+    const isHoverOnClickOff = () => {
+        if  (trigger === SenPopoverOptions.triggers.hoverOnClickOff) {
+            return true
+        } else {
+            return undefined
+        }
+    }
 
     useEffect(() => {
-        if (trigger === SenPopoverOptions.triggers.hoverOnClickOff) {
-            $(document).on('click', (e)=>{
+        if (isHoverOnClickOff()) {
+            setShowTooltip(false)
+
+            $(document).on('click', (e)=> {
                 setShowTooltip(false)
+            })
+
+            $(`.${className}-pc`).on('mouseover', (e)=>{
+                setShowTooltip(true)
             })
 
             handlePopoverDisplay(className, setShowTooltip)
@@ -52,22 +66,16 @@ function SenPopover({children, text, placement, className, trigger}) {
 
     }, [])
 
-    const showPopover = () => {
-        if (trigger === SenPopoverOptions.triggers.hoverOnClickOff) {
-            setShowTooltip(true)
-        }
-    }
-
     return (
 
-        <OverlayTrigger show={showTooltip} trigger={trigger} placement={placement} overlay={
+        <OverlayTrigger show={showTooltip}  trigger={trigger} placement={placement} overlay={
             <Popover className={className}>
                 <Popover.Body>
                     {text}
                 </Popover.Body>
             </Popover>
         }>
-            <span onMouseEnter={showPopover}>
+            <span className={`${className}-pc`}>
                 {children}
             </span>
 
@@ -77,12 +85,14 @@ function SenPopover({children, text, placement, className, trigger}) {
 }
 
 SenPopover.defaultProps = {
-    placement: 'top'
+    placement: 'top',
+    className: 'sen-popover'
 }
 
 SenPopover.propTypes = {
     children: PropTypes.node,
-    placement: PropTypes.string
+    placement: PropTypes.string,
+    className: PropTypes.string
 }
 
 export default SenPopover

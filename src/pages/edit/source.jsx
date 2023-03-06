@@ -20,6 +20,7 @@ import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+import {SenPopoverOptions} from "../../components/SenPopover";
 
 
 function EditSource() {
@@ -181,9 +182,9 @@ function EditSource() {
                                     <SourceType data={data} onChange={onChange}/>
 
                                     {/*Case Selection Protocol*/}
-                                    <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI'
+                                    <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI' popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                         controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
-                                        onChange={onChange} text='The protocol used when choosing and acquiring the source. This can be supplied as a DOI from https://www.protocols.io/.' />
+                                                     onChange={onChange} text={<span>The protocol used when choosing and acquiring the source. This can be supplied as a DOI from <a href="https://www.protocols.io/.">https://www.protocols.io/.</a></span>} />
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
