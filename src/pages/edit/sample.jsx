@@ -48,7 +48,8 @@ function EditSample() {
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
-        metadata, setMetadata
+        metadata, setMetadata,
+        getSampleEntityConstraints
     } = useContext(EntityContext)
     const {_t, filterImageFilesToAdd} = useContext(AppContext)
     const router = useRouter()
@@ -73,32 +74,20 @@ function EditSample() {
         const fetchSampleCategories = async () => {
             setSampleCategories(null)
             if (source !== null) {
-                const entityType = source.entity_type.toLowerCase()
-                let body = {entity_type: entityType}
-                if (entityType === 'sample') {
-                    const sample_category = source.sample_category.toLowerCase()
-                    body['sample_category'] = sample_category
-                    if (sample_category === 'organ') {
-                        body['value'] = source.organ
-                    }
-                }
-
-                const requestOptions = {
-                    method: 'POST',
-                    headers: getHeaders(),
-                    body: JSON.stringify(body)
-                }
-                const response = await fetch(getEntityEndPoint() + 'constraints?' + new URLSearchParams({relationship_direction: 'descendants'}), requestOptions)
+                const response = await getSampleEntityConstraints(source)
                 if (response.ok) {
-                    const provenance_constraints = await response.json()
+                    const body = await response.json()
+                    const provenance_constraints = body.description[0].description
+                    let sub_types = []
                     provenance_constraints.forEach(constraint => {
                         if (constraint.entity_type.toLowerCase() === 'sample') {
-                            const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => constraint.sample_category.includes(sample_category[0]));
-                            let sample_categories = {}
-                            filter.forEach(entry => sample_categories[entry[0]] = entry[1])
-                            setSampleCategories(sample_categories)
+                            sub_types = sub_types.concat(constraint.sub_type || [])
                         }
                     })
+                    const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => sub_types.includes(sample_category[0]));
+                    let sample_categories = {}
+                    filter.forEach(entry => sample_categories[entry[0]] = entry[1])
+                    setSampleCategories(sample_categories)
                 }
             }
         }
