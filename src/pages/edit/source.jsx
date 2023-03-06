@@ -19,6 +19,7 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
+import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 
 
 function EditSource() {

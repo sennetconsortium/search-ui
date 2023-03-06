@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useState, useCallback} from 'react'
 import PropTypes from 'prop-types'
 import { Upload, CheckCircleFill, XCircleFill, Download, ArrowRepeat} from "react-bootstrap-icons";
-import InputGroup from 'react-bootstrap/InputGroup';
+import {InputGroup, OverlayTrigger, Tooltip, Popover} from 'react-bootstrap';
 import {getIngestEndPoint} from "../../../config/config";
 import log from 'loglevel'
 import DataTable from 'react-data-table-component';
 import $ from 'jquery'
 import { get_auth_header } from "../../../lib/services";
-import EntityContext from "../../../context/EntityContext";
+import SenPopover, {SenPopoverOptions} from "../../SenPopover";
 
 
 export const formatErrorColumn = (d = '"') => {
@@ -58,6 +58,8 @@ function MetadataUpload({ setMetadata, entity, subType }) {
         } else {
             setRerun(null)
         }
+
+
     }, [subType])
 
     const [file, setFile] = useState('')
@@ -68,7 +70,6 @@ function MetadataUpload({ setMetadata, entity, subType }) {
     const [isValidating, setIsValidating] = useState(false)
     const [table, setTable] = useState({})
     const [rerun, setRerun] = useState(null)
-
 
     const isUnacceptable = (code) => code === 406
 
@@ -106,6 +107,7 @@ function MetadataUpload({ setMetadata, entity, subType }) {
         try {
             const upload = e.currentTarget.files ? e.currentTarget.files[0] : file
             if (!upload) return
+            log.debug('Metadata', file)
             setRerun(null)
             setIsValidating(true)
             let formData = new FormData()
@@ -117,7 +119,7 @@ function MetadataUpload({ setMetadata, entity, subType }) {
             formData.append('ui_type', 'gui')
             const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData, headers: get_auth_header() })
             const details = await response.json()
-            
+            $('[type=file]').val(null)
             if (details.code !== 200) {
                 setError(details.description)
                 setFileStatus(details.name)
@@ -159,15 +161,30 @@ function MetadataUpload({ setMetadata, entity, subType }) {
         }
     }
 
+    const getSchemaUrl = () => {
+        let url = 'https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/'
+        url += entity
+        url = subType ? `${url}-${subType}` : url
+        return url.toLowerCase()
+    }
+
     return (
         <div className={`c-metadataUpload`}>
             <InputGroup className="mb-3">
 
-                <label htmlFor='entity_metadata' className='btn btn-outline-primary rounded-0 mt-1 btn--fileUpload'>
-                    Upload Metadata
-                    <input onInput={handleUpload} type='file' id='entity_metadata' name='entity_metadata' />
-                    <Upload size={12} />
-                </label>
+                <SenPopover placement={SenPopoverOptions.placement.right} trigger={SenPopoverOptions.triggers.hoverOnClickOff}
+                            className='c-metadataUpload__popover'
+                            text={<span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
+                            <small className='popover-note text-muted'>For example TSV schemas, please see the <a href={getSchemaUrl()}>docs</a>.</small></span>}
+                >
+                    <label htmlFor='entity_metadata' className='btn btn-outline-primary rounded-0 mt-1 btn--fileUpload'>
+                        Upload Metadata
+                        <input onInput={handleUpload} type='file' id='entity_metadata' name='entity_metadata' />
+                        <Upload size={12} />
+                    </label>
+                </SenPopover>
+
+
                 <span className={`c-metadataUpload__meta js-fileInfo ${error ? `has-error  ${validationError ? 'has-hover' : ''}` : ''}`}>
                     {error && <XCircleFill color='#842029' />}
                     {success && <CheckCircleFill color='#0d6efd' />}

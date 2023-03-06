@@ -51,7 +51,11 @@
   }
 }
 
-.btn--fileUpload input[type=file] {
-  opacity: 0;
-  width: 20px;
+.btn--fileUpload {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  input[type=file] {
+    opacity: 0;
+    width: 10px;
+  }
 }
