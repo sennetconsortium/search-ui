@@ -43,7 +43,7 @@ export default class Lineage extends React.Component {
             this.props.lineage.map((lineage_data, index) => {
                 this.data.push({
                     sennet_id: <a href={'/' + lineage_data.entity_type.toLowerCase() + '?uuid=' + lineage_data.uuid}
-                                  className="link_with_icon">{lineage_data.sennet_id}</a>,
+                                  className="icon_inline">{lineage_data.sennet_id}</a>,
                     entity_type: lineage_data.entity_type,
                     lab_id: lineage_data.lab_tissue_sample_id ? lineage_data.lab_tissue_sample_id
                         : lineage_data.lab_source_id ? lineage_data.lab_source_id

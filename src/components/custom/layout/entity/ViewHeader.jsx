@@ -32,7 +32,7 @@ function EntityViewHeader({entity, data, hasWritePrivilege, idKey}) {
             <h4>{ENTITIES[entity]}</h4>
             <h3>{data.sennet_id}</h3>
             <div className="d-flex justify-content-between mb-2">
-                <div className="entity_subtitle link_with_icon">
+                <div className="entity_subtitle icon_inline">
                     {data.origin_sample &&
                         displayBodyHeader(getOrganTypeFullName(data.origin_sample.organ))
                     }

@@ -87,6 +87,18 @@ export const AppProvider = ({ children }) => {
     const _t = (msg) => {
         return msg
     }
+
+    const filterImageFilesToAdd = values => {
+        if (!values.image_files_to_add) {
+            return
+        }
+        const filtered = values.image_files_to_add.filter(i => i.temp_file_id !== undefined)
+        if (filtered.length !== 0) {
+            values['image_files_to_add'] = filtered
+        } else {
+            delete values.image_files_to_add
+        }
+    }
     
     return (
         <AppContext.Provider
@@ -104,6 +116,7 @@ export const AppProvider = ({ children }) => {
                 login,
                 _t,
                 router,
+                filterImageFilesToAdd,
             }}
         >
             {children}

@@ -28,7 +28,7 @@ export default class Contributors extends React.Component {
                                         <td>{contributor.name}</td>
                                         <td>{contributor.affiliation}</td>
                                         <td>
-                                            <a className="link_with_icon"
+                                            <a className="icon_inline"
                                                href={`https://orcid.org/${contributor.orcid_id}`}>
                                                 <span className="me-1">{contributor.orcid_id}</span> <BoxArrowUpRight/>
                                             </a>

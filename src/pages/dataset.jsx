@@ -177,7 +177,7 @@ function ViewDataset() {
                                 <main className="col m-md-3 entity_details">
                                     <div className="d-none d-md-block sticky-top" id="sections-button">
                                         <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                           className="btn btn-outline-primary rounded-0 link_with_icon mb-2"><List/></a>
+                                           className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
                                     </div>
 
                                     <div style={{width: '100%'}}>
@@ -185,7 +185,7 @@ function ViewDataset() {
                                         <h3>{data.sennet_id}</h3>
 
                                         <div className="d-flex justify-content-between mb-2">
-                                            <div className="entity_subtitle link_with_icon">
+                                            <div className="entity_subtitle icon_inline">
                                                 {data.data_types &&
                                                     <>
                                                         {data.data_types[0]}
@@ -201,14 +201,14 @@ function ViewDataset() {
                                                 {data.doi_url &&
                                                     <>
                                                         |
-                                                        <a href={data.doi_url} className="ms-1 link_with_icon">
+                                                        <a href={data.doi_url} className="ms-1 icon_inline">
                                                             <span className="me-1">doi:{data.registered_doi}</span>
                                                             <BoxArrowUpRight/>
                                                         </a>
                                                     </>
                                                 }
                                             </div>
-                                            <div className="entity_subtitle link_with_icon">
+                                            <div className="entity_subtitle icon_inline">
                                                 <CircleFill
                                                     className={`me-1 text-${getStatusColor(data.status)}`}/>
                                                 <div className={'m-2'}>{data.status}</div>

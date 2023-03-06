@@ -194,7 +194,7 @@ export default function EditDataset() {
     const handleSubmit = async (event) => {
         setDisableSubmit(true);
 
-        const form = event.currentTarget.parentElement;
+        const form = event.currentTarget.parentElement.parentElement;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
@@ -360,11 +360,12 @@ export default function EditDataset() {
                                     }
 
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.dataset} />*/}
-                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
-                                            disabled={disableSubmit}>
-                                        {_t('Submit')}
-
-                                    </Button>
+                                    <div className={'d-flex flex-row-reverse'}>
+                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
+                                                disabled={disableSubmit}>
+                                            {_t('Submit')}
+                                        </Button>
+                                    </div>
 
                                     {getModal()}
                                 </Form>
