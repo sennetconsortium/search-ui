@@ -137,7 +137,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                 onChange={() => handleFileChange(inputInformation.index, inputInformation.fileDetail)}
             />
             { editMode === 'Edit' && values.image_files && values.image_files.map((i, index) => (
-                <div key={'image_files' + index}>
+                <div key={'image_files' + index} className={'mb-2'}>
                     <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                         <span className={'m-2'}>
                             {i.filename}
@@ -161,7 +161,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
             ))
             }
             { values && values.image_files_to_add && values.image_files_to_add.map((image_file_to_add, index) => {
-                return <div key={'image_files_to_add' + index}>
+                return <div key={'image_files_to_add' + index} className={'mb-2'}>
                     <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                         { imageByteArray[index] && imageByteArray[index].name &&
                             <span className={'m-2'}>
