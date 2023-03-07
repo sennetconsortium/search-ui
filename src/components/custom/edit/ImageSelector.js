@@ -143,7 +143,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             {i.filename}
                         </span>
                     </Badge>
-                    <InputGroup className="m-2 w-75">
+                    <InputGroup className="m-2 w-75 icon_inline">
                         <Button variant="outline-secondary" onClick={() => handleChooseFileClick(index, i)}>
                             Choose file
                         </Button>
@@ -153,9 +153,8 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             value={i.description}
                             className={'me-2'}
                         />
-
                         <SenPopover className={'remove-image'} text={'Remove image'}>
-                            <CloseButton className={'mt-2'} onClick={() => removeImageFile(index)}/>
+                            <CloseButton onClick={() => removeImageFile(index)}/>
                         </SenPopover>
                     </InputGroup>
                 </div>
@@ -170,7 +169,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             </span>
                         }
                     </Badge>
-                    <InputGroup className="m-2 w-75">
+                    <InputGroup className="m-2 w-75 icon_inline">
                         <Button variant="outline-secondary" onClick={() => handleChooseFileClick(index, image_file_to_add)}>
                             Choose file
                         </Button>
@@ -181,9 +180,8 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             className={'me-2'}
                         />
                         <SenPopover className={'remove-image-files'} text={'Remove image'}>
-                            <CloseButton className={'mt-2'} onClick={() => removeImageFilesToAdd(index)}/>
+                            <CloseButton onClick={() => removeImageFilesToAdd(index)}/>
                         </SenPopover>
-
                     </InputGroup>
                 </div>
             })

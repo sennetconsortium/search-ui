@@ -28,7 +28,7 @@ export default class Files extends React.Component {
                         Files are available through the Globus Research Data Management System. Access dataset <a
                         target="_blank"
                         href={this.state.file_url}
-                        className="link_with_icon"><span
+                        className="icon_inline"><span
                         className="me-1">{this.props.sennet_id}</span> <BoxArrowUpRight/></a>
                     </div>
                 </li>

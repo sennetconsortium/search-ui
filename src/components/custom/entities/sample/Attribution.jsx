@@ -30,7 +30,7 @@ export default class Attribution extends React.Component {
                                         {this.props.data.created_by_user_displayname}
                                         <br></br>
                                         <a href={`mailto:${this.props.data.created_by_user_email}`}
-                                           className="link_with_icon"><span
+                                           className="icon_inline"><span
                                             className="me-1">{this.props.data.created_by_user_email}</span>
                                             <EnvelopeFill/></a>
                                     </td>
