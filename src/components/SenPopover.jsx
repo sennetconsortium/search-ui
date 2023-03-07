@@ -40,6 +40,8 @@ export const handlePopoverDisplay = (className, stateCallback) => {
 function SenPopover({children, text, placement, className, trigger}) {
 
     const [showTooltip, setShowTooltip] = useState(undefined)
+    const containerClassName = `${className}-popover`
+    const triggerClassName = `${className}-pc`
 
     const isHoverOnClickOff = () => {
         if  (trigger === SenPopoverOptions.triggers.hoverOnClickOff) {
@@ -65,7 +67,7 @@ function SenPopover({children, text, placement, className, trigger}) {
 
             let st
 
-            $(`.${className}-pc`).on('mouseover', (e)=>{
+            $(`.${triggerClassName}`).on('mouseover', (e)=>{
                 setShowTooltip(true)
             }).on('click', (e)=>{
                 setShowTooltip(!showTooltip)
@@ -75,23 +77,23 @@ function SenPopover({children, text, placement, className, trigger}) {
                     if (canLeave) {
                         setShowTooltip(false)
                     }
-                }, 3000)
+                }, 2000)
             })
 
-            handlePopoverDisplay(className, setShowTooltip)
+            handlePopoverDisplay(containerClassName, setShowTooltip)
         }
 
     }, [])
 
     return (
         <OverlayTrigger show={showTooltip} trigger={trigger} placement={placement} overlay={
-            <Popover className={`${className}-popover`}>
+            <Popover className={containerClassName}>
                 <Popover.Body>
                     {text}
                 </Popover.Body>
             </Popover>
         }>
-            <span className={`${className}-pc`} style={{display: 'inline-block'}}>
+            <span className={triggerClassName} style={{display: 'inline-block'}}>
                 {children}
             </span>
         </OverlayTrigger>
@@ -100,7 +102,8 @@ function SenPopover({children, text, placement, className, trigger}) {
 
 SenPopover.defaultProps = {
     placement: SenPopoverOptions.placement.top,
-    className: 'sen-popover'
+    className: 'sen-popover',
+    trigger: SenPopoverOptions.triggers.hoverOnClickOff
 }
 
 SenPopover.propTypes = {

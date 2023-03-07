@@ -56,7 +56,7 @@ export default function ThumbnailSelector({ editMode, values, setValues }) {
         }
 
         <SenPopover className={'thumbnail-selector'}  placement={'top'} text={'Click here to attach a single thumbnail image'}>
-            <Button className={'mt-2 mb-2'} variant={'outline-primary rounded-0'} onClick={handleUploadThumbnailClick}>
+            <Button className={'mb-2'} variant={'outline-primary rounded-0'} onClick={handleUploadThumbnailClick}>
                 Upload a Thumbnail File
                 <Paperclip className={'ms-2'}/>
             </Button>

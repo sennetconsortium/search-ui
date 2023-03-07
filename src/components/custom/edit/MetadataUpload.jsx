@@ -178,7 +178,7 @@ function MetadataUpload({ setMetadata, entity, subType }) {
                             text={<span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
                             <small className='popover-note text-muted'>For example TSV schemas, please see the <a href={getSchemaUrl()}>docs</a>.</small></span>}
                 >
-                    <label htmlFor='entity_metadata' className='btn btn-outline-primary rounded-0 mt-1 btn--fileUpload'>
+                    <label htmlFor='entity_metadata' className='btn btn-outline-primary rounded-0 btn--fileUpload'>
                         <span>Upload Metadata File</span>
                         <input onInput={handleUpload} type='file' id='entity_metadata' name='entity_metadata' />
                         <Paperclip  />

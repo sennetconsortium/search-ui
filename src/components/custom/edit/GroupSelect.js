@@ -4,6 +4,7 @@ import {Form} from 'react-bootstrap';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import SenPopover from "../../SenPopover";
+import {ENTITIES} from "../../../config/constants";
 
 const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural}) => {
     return (
@@ -12,7 +13,7 @@ const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural}) => {
                 <Form.Label>Group<span
                     className="required">* </span>
                     <SenPopover className={'group_uuid'} text={<>{`You are a member of more than one Globus group and need to pick a group to associate with ${plural ? 'these ' : 'this '}`}
-                        <strong>{entity_type}</strong></>}>
+                        <code>{ENTITIES[entity_type]}</code></>}>
                         <QuestionCircleFill/>
                     </SenPopover>
 
