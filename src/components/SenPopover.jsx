@@ -40,7 +40,7 @@ export const handlePopoverDisplay = (className, stateCallback) => {
 function SenPopover({children, text, placement, className, trigger}) {
 
     const [showTooltip, setShowTooltip] = useState(undefined)
-    const containerClassName = `${className}-popover`
+    const containerClassName = `${className}`
     const triggerClassName = `${className}-pc`
 
     const isHoverOnClickOff = () => {
