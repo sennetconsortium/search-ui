@@ -68,8 +68,6 @@ function SenPopover({children, text, placement, className, trigger}) {
             $(`.${className}-pc`).on('mouseover', (e)=>{
                 setShowTooltip(true)
             }).on('click', (e)=>{
-                e.stopPropagation()
-                e.preventDefault()
                 setShowTooltip(!showTooltip)
             }).on('mouseleave', (e) =>{
                 clearTimeout(st)
@@ -108,7 +106,7 @@ SenPopover.defaultProps = {
 SenPopover.propTypes = {
     children: PropTypes.node,
     placement: PropTypes.string,
-    className: PropTypes.string,
+    className: PropTypes.string.isRequired,
     trigger: PropTypes.string,
 }
 
