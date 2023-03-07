@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import $ from "jquery";
 import {OverlayTrigger, Popover} from 'react-bootstrap';
@@ -52,13 +52,32 @@ function SenPopover({children, text, placement, className, trigger}) {
     useEffect(() => {
         if (isHoverOnClickOff()) {
             setShowTooltip(false)
+            let canLeave = true
 
-            $(document).on('click', (e)=> {
-                setShowTooltip(false)
+            $(`body`).on('click', (e)=> {
+                canLeave = true
+                if (!$(e.target).parents('.popover').length) {
+                    setShowTooltip(false)
+                } else{
+                    canLeave = false
+                }
             })
+
+            let st
 
             $(`.${className}-pc`).on('mouseover', (e)=>{
                 setShowTooltip(true)
+            }).on('click', (e)=>{
+                e.stopPropagation()
+                e.preventDefault()
+                setShowTooltip(!showTooltip)
+            }).on('mouseleave', (e) =>{
+                clearTimeout(st)
+                st = setTimeout(()=>{
+                    if (canLeave) {
+                        setShowTooltip(false)
+                    }
+                }, 3000)
             })
 
             handlePopoverDisplay(className, setShowTooltip)
@@ -67,32 +86,30 @@ function SenPopover({children, text, placement, className, trigger}) {
     }, [])
 
     return (
-
-        <OverlayTrigger show={showTooltip}  trigger={trigger} placement={placement} overlay={
-            <Popover className={className}>
+        <OverlayTrigger show={showTooltip} trigger={trigger} placement={placement} overlay={
+            <Popover className={`${className}-popover`}>
                 <Popover.Body>
                     {text}
                 </Popover.Body>
             </Popover>
         }>
-            <span className={`${className}-pc`}>
+            <span className={`${className}-pc`} style={{display: 'inline-block'}}>
                 {children}
             </span>
-
         </OverlayTrigger>
-
     )
 }
 
 SenPopover.defaultProps = {
-    placement: 'top',
+    placement: SenPopoverOptions.placement.top,
     className: 'sen-popover'
 }
 
 SenPopover.propTypes = {
     children: PropTypes.node,
     placement: PropTypes.string,
-    className: PropTypes.string
+    className: PropTypes.string,
+    trigger: PropTypes.string,
 }
 
 export default SenPopover

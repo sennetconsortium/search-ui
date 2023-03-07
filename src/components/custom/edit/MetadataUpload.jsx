@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState, useCallback} from 'react'
 import PropTypes from 'prop-types'
-import { Upload, CheckCircleFill, XCircleFill, Download, ArrowRepeat} from "react-bootstrap-icons";
+import {Upload, CheckCircleFill, XCircleFill, Download, ArrowRepeat, Paperclip} from "react-bootstrap-icons";
 import {InputGroup, OverlayTrigger, Tooltip, Popover} from 'react-bootstrap';
 import {getIngestEndPoint} from "../../../config/config";
 import log from 'loglevel'
@@ -172,15 +172,16 @@ function MetadataUpload({ setMetadata, entity, subType }) {
         <div className={`c-metadataUpload`}>
             <InputGroup className="mb-3">
 
-                <SenPopover placement={SenPopoverOptions.placement.right} trigger={SenPopoverOptions.triggers.hoverOnClickOff}
+                <SenPopover placement={SenPopoverOptions.placement.right}
+                            trigger={SenPopoverOptions.triggers.hoverOnClickOff}
                             className='c-metadataUpload__popover'
                             text={<span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
                             <small className='popover-note text-muted'>For example TSV schemas, please see the <a href={getSchemaUrl()}>docs</a>.</small></span>}
                 >
                     <label htmlFor='entity_metadata' className='btn btn-outline-primary rounded-0 mt-1 btn--fileUpload'>
-                        Upload Metadata
+                        <span>Upload Metadata File</span>
                         <input onInput={handleUpload} type='file' id='entity_metadata' name='entity_metadata' />
-                        <Upload size={12} />
+                        <Paperclip  />
                     </label>
                 </SenPopover>
 

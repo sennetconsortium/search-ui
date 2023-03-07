@@ -4,6 +4,7 @@ import {ORGAN_TYPES, SAMPLE_CATEGORY} from "../../../../config/constants";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import SenPopover from "../../../SenPopover";
 
 function SampleCategory({
                             organ_group_hide,
@@ -63,19 +64,13 @@ function SampleCategory({
             <Form.Group className="mb-3" controlId="sample_category">
                 <Form.Label>Sample Category <span
                     className="required">* </span>
-                    <OverlayTrigger
-                        placement="top"
-                        overlay={
-                            <Popover>
-                                <Popover.Body>
-                                    The category this sample belongs to. <br />
-                                    <small className='popover-note text-muted mt-2'>Note: CCF Registration User Interface (CCF-RUI) tool becomes available for the <code>Block</code> sample category where the <em>Ancestor</em> source is of type <code>Human</code> or <code>Human organoid</code>.</small>
-                                </Popover.Body>
-                            </Popover>
-                        }
-                    >
+                    <SenPopover text={<>
+                        The category this sample belongs to. <br />
+                        <small className='popover-note text-muted mt-2'>Note: CCF Registration User Interface (CCF-RUI) tool becomes available for the <code>Block</code> sample category where the <em>Ancestor</em> source is of type <code>Human</code> or <code>Human organoid</code>.</small>
+                    </>}>
                         <QuestionCircleFill/>
-                    </OverlayTrigger>
+                    </SenPopover>
+
                 </Form.Label>
 
                 <Form.Select required aria-label="Sample Category"

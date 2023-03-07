@@ -2,6 +2,7 @@ import React, {useRef, useState} from 'react'
 import {Button, Badge, Alert, CloseButton, OverlayTrigger, Tooltip} from 'react-bootstrap'
 import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
+import SenPopover from "../../SenPopover";
 
 
 export default function ThumbnailSelector({ editMode, values, setValues }) {
@@ -38,7 +39,7 @@ export default function ThumbnailSelector({ editMode, values, setValues }) {
     }
 
     const handleUploadThumbnailClick = () => thumbnailInputRef.current.click()
-    
+
     return <div>
         <input
             style={{display: 'none'}}
@@ -53,13 +54,13 @@ export default function ThumbnailSelector({ editMode, values, setValues }) {
                 {error}
             </Alert>
         }
-        
-        <OverlayTrigger placement={'top'} overlay={<Tooltip>Click here to attach a single thumbnail image</Tooltip>}>
+
+        <SenPopover className={'thumbnail-selector'}  placement={'top'} text={'Click here to attach a single thumbnail image'}>
             <Button className={'mt-2 mb-2'} variant={'outline-primary rounded-0'} onClick={handleUploadThumbnailClick}>
                 Upload a Thumbnail File
                 <Paperclip className={'ms-2'}/>
             </Button>
-        </OverlayTrigger>
+        </SenPopover>
         
         <div className={'row'}>
             <div className={'col align-items-center d-flex'}>
@@ -68,9 +69,9 @@ export default function ThumbnailSelector({ editMode, values, setValues }) {
                         <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                             <span className={'m-2'}>{thumbnail.name}</span>
                         </Badge>
-                        <OverlayTrigger overlay={<Tooltip>Remove thumbnail</Tooltip>}>
+                        <SenPopover className={'remove-thumb-1'} text={'Remove thumbnail'}>
                             <CloseButton className={'p-2'} onClick={removeThumbnail}/>
-                        </OverlayTrigger>
+                        </SenPopover>
                     </>
                 }
                 {/* Edit mode */}
@@ -79,9 +80,9 @@ export default function ThumbnailSelector({ editMode, values, setValues }) {
                         <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                             <span className={'m-2'}>{values.thumbnail_file.filename}</span>
                         </Badge>
-                        <OverlayTrigger overlay={<Tooltip>Remove thumbnail</Tooltip>}>
+                        <SenPopover className={'remove-thumb-edit'} text={'Remove thumbnail'}>
                             <CloseButton className={'p-2'} onClick={removeThumbnail}/>
-                        </OverlayTrigger>
+                        </SenPopover>
                     </>
                 }
             </div>

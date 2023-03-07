@@ -4,6 +4,7 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import {SOURCE_TYPE} from "../../../../config/constants";
+import SenPopover from "../../../SenPopover";
 
 export default class SourceType extends React.Component {
     render() {
@@ -13,19 +14,12 @@ export default class SourceType extends React.Component {
                 <Form.Group className="mb-3" controlId="source_type">
                     <Form.Label>Source Type <span
                         className="required">* </span>
-                        <OverlayTrigger
-                            placement="top"
-                            overlay={
-                                <Popover>
-                                    <Popover.Body>
-                                        Source type <br />
-                                        <small className='popover-note text-muted'>Note: CCF Registration User Interface (CCF-RUI) tool is only available for <code>Human</code> and <code>Human organoid</code> types.</small>
-                                    </Popover.Body>
-                                </Popover>
-                            }
-                        >
+                        <SenPopover className={'source_type'} text={<>
+                            Source type <br />
+                            <small className='popover-note text-muted'>Note: CCF Registration User Interface (CCF-RUI) tool is only available for <code>Human</code> and <code>Human organoid</code> types.</small>
+                        </>}>
                             <QuestionCircleFill/>
-                        </OverlayTrigger>
+                        </SenPopover>
                     </Form.Label>
 
                     <Form.Select required aria-label="Source Type"

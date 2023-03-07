@@ -13,7 +13,7 @@ function EntityFormGroup({ controlId, label, text, onChange, value, type, placeh
     <>
     
         <Form.Group className="mb-3" controlId={controlId}>
-            <Form.Label>{_t(label)} {isRequired && <span className="required">* </span>} {!isRequired && <span> </span>}
+            <Form.Label>{_t(label)} {isRequired && <span className="required">* </span>}
                 <SenPopover text={text} trigger={popoverTrigger} className={`popover-${controlId}`}>
                     <QuestionCircleFill/>
                 </SenPopover>
