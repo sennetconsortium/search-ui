@@ -199,7 +199,7 @@ function EditSource() {
                                                    setImageByteArray={setImageByteArray}/>
 
                                     {/*# TODO: Use ontology*/}
-                                    { values && values.source_type === 'Human' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} subType={values.source_type} />}
+                                    { values && values.source_type === 'Human' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}
                                     <div className={'d-flex flex-row-reverse'}>
                                         <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
                                                 disabled={disableSubmit}>
