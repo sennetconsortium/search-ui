@@ -1,7 +1,7 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
 import { goToSearch } from '../components/custom/js/functions'
-import { getCookie, deleteCookie, setCookie } from 'cookies-next'
+import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import { get_read_write_privileges } from '../lib/services'
 import {deleteCookies} from "../lib/auth";
@@ -90,6 +90,18 @@ export const AppProvider = ({ children }) => {
         return msg
     }
 
+    const filterImageFilesToAdd = values => {
+        if (!values.image_files_to_add) {
+            return
+        }
+        const filtered = values.image_files_to_add.filter(i => i.temp_file_id !== undefined)
+        if (filtered.length !== 0) {
+            values['image_files_to_add'] = filtered
+        } else {
+            delete values.image_files_to_add
+        }
+    }
+    
     return (
         <AppContext.Provider
             value={{
@@ -105,7 +117,9 @@ export const AppProvider = ({ children }) => {
                 logout,
                 login,
                 _t,
-                cache
+                cache,
+                router,
+                filterImageFilesToAdd
             }}
         >
             {children}

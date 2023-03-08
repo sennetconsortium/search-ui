@@ -29,10 +29,10 @@ import {ENTITIES} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from "../../components/custom/Alert";
-
 import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/config";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
-
+import ImageSelector from "../../components/custom/edit/ImageSelector";
+import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
 
 
 function EditSample() {
@@ -48,9 +48,10 @@ function EditSample() {
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
-        metadata, setMetadata
+        metadata, setMetadata,
+        getSampleEntityConstraints
     } = useContext(EntityContext)
-    const {_t, cache} = useContext(AppContext)
+    const {_t, cache, filterImageFilesToAdd} = useContext(AppContext)
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
@@ -62,37 +63,31 @@ function EditSample() {
     const [sampleCategories, setSampleCategories] = useState(null)
     const [organ_group_hide, set_organ_group_hide] = useState('none')
     const [organ_other_hide, set_organ_other_hide] = useState('none')
+    const [imageFilesToAdd, setImageFilesToAdd] = useState([])
+    const [imageFilesToRemove, setImageFilesToRemove] = useState([])
+    const [thumbnailFileToAdd, setThumbnailFileToAdd] = useState(null)
+    const [thumbnailFileToRemove, setThumbnailFileToRemove] = useState(null)
+    const [imageByteArray, setImageByteArray] = useState([])
+
 
     useEffect(() => {
         const fetchSampleCategories = async () => {
             setSampleCategories(null)
             if (source !== null) {
-                const entityType = source.entity_type.toLowerCase()
-                let body = {entity_type: entityType}
-                if (entityType === 'sample') {
-                    const sample_category = source.sample_category.toLowerCase()
-                    body['sample_category'] = sample_category
-                    if (sample_category === 'organ') {
-                        body['value'] = source.organ
-                    }
-                }
-
-                const requestOptions = {
-                    method: 'POST',
-                    headers: getHeaders(),
-                    body: JSON.stringify(body)
-                }
-                const response = await fetch(getEntityEndPoint() + 'constraints?' + new URLSearchParams({relationship_direction: 'descendants'}), requestOptions)
+                const response = await getSampleEntityConstraints(source)
                 if (response.ok) {
-                    const provenance_constraints = await response.json()
+                    const body = await response.json()
+                    const provenance_constraints = body.description[0].description
+                    let sub_types = []
                     provenance_constraints.forEach(constraint => {
                         if (constraint.entity_type.toLowerCase() === 'sample') {
-                            const filter = Object.entries(cache.sampleCategories).filter(sample_category => constraint.sample_category.includes(sample_category[0]));
-                            let sample_categories = {}
-                            filter.forEach(entry => sample_categories[entry[0]] = entry[1])
-                            setSampleCategories(sample_categories)
+                            sub_types = sub_types.concat(constraint.sub_type || [])
                         }
                     })
+                    const filter = Object.entries(cache.sampleCategories).filter(sample_category => sub_types.includes(sample_category[0]));
+                    let sample_categories = {}
+                    filter.forEach(entry => sample_categories[entry[0]] = entry[1])
+                    setSampleCategories(sample_categories)
                 }
             }
         }
@@ -132,6 +127,14 @@ function EditSample() {
                     'description': data.description,
                     'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
                 })
+                if (data.image_files) {
+                    setValues(prevState => ({...prevState, image_files: data.image_files}))
+                }
+                if (data.thumbnail_file) {
+                    setValues(prevState => ({...prevState, thumbnail_file: data.thumbnail_file}))
+                }
+                setImageFilesToAdd(data.image_files)
+                setThumbnailFileToAdd(data.thumbnail_file)
                 setEditMode("Edit")
 
                 if (data.hasOwnProperty("immediate_ancestors")) {
@@ -266,7 +269,7 @@ function EditSample() {
     const handleSubmit = async (event) => {
         setDisableSubmit(true);
 
-        const form = event.currentTarget.parentElement;
+        const form = event.currentTarget.parentElement.parentElement;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
@@ -284,6 +287,20 @@ function EditSample() {
                 values['rui_location'] = parseJson(ruiLocation)
             }
 
+            filterImageFilesToAdd(values);
+
+            if (imageFilesToRemove.length !== 0) {
+                values['image_files_to_remove'] = imageFilesToRemove
+            }
+            
+            if (thumbnailFileToAdd && thumbnailFileToAdd.temp_file_id !== undefined) {
+                values['thumbnail_file_to_add'] = thumbnailFileToAdd
+            }
+
+            if (thumbnailFileToRemove) {
+                values['thumbnail_file_to_remove'] = thumbnailFileToRemove
+            }
+            
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
@@ -295,6 +312,25 @@ function EditSample() {
                     typeHeader: _t('Sample Category'), response
                 })
 
+                if (response.image_files) {
+                    setValues(prevState => ({...prevState, image_files: response.image_files}))
+                }
+                if (response.thumbnail_file) {
+                    setValues(prevState => ({...prevState, thumbnail_file: response.thumbnail_file}))
+                }
+                if (values.image_files_to_add) {
+                    delete values.image_files_to_add
+                }
+                if (values.image_files_to_remove) {
+                    delete values.image_files_to_remove
+                }
+                if (values.thumbnail_file_to_add) {
+                    delete values.thumbnail_file_to_add
+                }
+                if (values.thumbnail_file_to_remove) {
+                    delete values.thumbnail_file_to_remove
+                }
+                setImageByteArray([])
             }).catch((e) => log.error(e))
         }
 
@@ -401,13 +437,27 @@ function EditSample() {
                                                      value={data.description}
                                                      onChange={onChange}
                                                      text='Free text field to enter a description of the specimen'/>
+                                    
+                                    {/* Images */}
+                                    <ImageSelector editMode={editMode} 
+                                                   values={values} 
+                                                   setValues={setValues}
+                                                   imageByteArray={imageByteArray}
+                                                   setImageByteArray={setImageByteArray}/>
+
+                                    {/* Thumbnail */}
+                                    <ThumbnailSelector editMode={editMode}
+                                                       values={values}
+                                                       setValues={setValues}/>
 
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
-                                    <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
-                                            disabled={disableSubmit}>
-                                        {_t('Submit')}
+                                    <div className={'d-flex flex-row-reverse'}>
+                                        <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
+                                                disabled={disableSubmit}>
+                                            {_t('Submit')}
 
-                                    </Button>
+                                        </Button>
+                                    </div>
                                     {getModal()}
                                 </Form>
                             }

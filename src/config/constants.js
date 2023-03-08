@@ -14,6 +14,7 @@ export const ORGAN_TYPES = {
     "LV": "Liver",
     "LL": "Lung (Left)",
     "RL": "Lung (Right)",
+    "LN": "Lymph Node",
     "LK": "Kidney (Left)",
     "RK": "Kidney (Right)",
     "MU": "Muscle",
