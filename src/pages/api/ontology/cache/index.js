@@ -14,7 +14,6 @@ export default async function handler(req, res) {
             try {
                 filePath = ONTOLOGY_CACHE_PATH + '/.ontology_' + key
                 let del = await fs.rm(filePath)
-                console.log(del)
                 if (!del) {
                     log.debug(`CACHE Cleared`)
                 } else {
@@ -28,4 +27,6 @@ export default async function handler(req, res) {
         const code = !results.length ? 200 : 400
         res.status(code).json(results)
     }
+
+    res.status(404).json([])
 }
