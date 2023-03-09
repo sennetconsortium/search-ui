@@ -299,9 +299,13 @@ function EditSample() {
             let json = cleanJson(values);
             let uuid = data.uuid
 
-            if(!_.isEmpty(metadata) && supportsMetadata()) {
-                values["metadata"] = metadata.metadata
-                values["pathname"] = metadata.pathname
+            if(!_.isEmpty(metadata)) {
+                if (supportsMetadata()) {
+                    values["metadata"] = metadata.metadata
+                    values["pathname"] = metadata.pathname
+                } else {
+                    delete values["metadata"]
+                }
             }
 
             await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
