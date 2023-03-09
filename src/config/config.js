@@ -92,6 +92,10 @@ export function getGoogleTagManagerId() {
     return process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER
 }
 
+export function getUIPassword() {
+    return process.env.NEXT_PUBLIC_UI_PSWD
+}
+
 export const connector = new SearchAPIConnector({
     indexName: getIndex(),
     indexUrl: getSearchEndPoint(),

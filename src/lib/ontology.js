@@ -2,6 +2,12 @@ import { getOntologyEndPoint } from '../config/config'
 import log from 'loglevel'
 import { get_json_header } from './services'
 
+export const ONTOLOGY_CODES = {
+    'sample_categories': 'C020076',
+    'data_assays': 'C004000',
+    'organ_types': 'C000008'
+}
+
 export async function get_onotology_valueset(code) {
     const url = getOntologyEndPoint() + `valueset?parent_sab=SENNET&parent_code=${code}&child_sabs=SENNET`
     const request_options = {
@@ -18,7 +24,7 @@ export async function get_onotology_valueset(code) {
 
 async function get_ontology_from_cache(key) {
     let ontology = []
-    const url = '/api/ontology?code=' + key
+    const url = '/api/ontology/' + key
     try {
         const response = await fetch(url)
         ontology = await response.json()

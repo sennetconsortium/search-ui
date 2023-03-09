@@ -25,6 +25,7 @@
     "react-bootstrap-icons": "^1.8.4",
     "react-data-table-component": "^7.5.3",
     "react-idle-timer": "^5.4.2",
+    "react-toastify": "^9.1.1",
     "sass": "^1.57.1",
     "search-ui": "file:search-ui",
     "vitessce": "^1.2.2"

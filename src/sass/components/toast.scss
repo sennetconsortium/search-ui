@@ -1,0 +1,58 @@
+.Toastify .Toastify__toast {
+  //&.is-error {
+  //  border-color: $col-err-bdr;
+  //  .toast-header {
+  //    background: $col-err-txt;
+  //    color: $col-err-bg;
+  //  }
+  //  .text-muted {
+  //    color: $col-err-bg !important;
+  //  }
+  //
+  //  .toast-body {
+  //    color: $col-err-txt;
+  //    background: $col-err-bg;
+  //  }
+  //}
+  &--info {
+    .Toastify {
+      &__progress-bar {
+        background: $col-bs-btn-gray;
+      }
+      &__toast-icon {
+        svg {
+          fill: $col-bs-btn-gray;
+        }
+      }
+    }
+  }
+  &--success {
+    .Toastify {
+      &__progress-bar {
+        background: $col-bs-blue;
+      }
+      &__toast-icon {
+        svg {
+          fill: $col-bs-blue;
+        }
+      }
+    }
+  }
+  &--error {
+    color: $col-err-txt;
+    background: $col-err-bg;
+
+    .Toastify {
+      &__progress-bar {
+        background: $col-err-txt;
+      }
+      &__toast-icon {
+        svg {
+          fill: $col-err-txt
+        }
+      }
+    }
+    border-color: $col-err-bdr;
+  }
+}
+
