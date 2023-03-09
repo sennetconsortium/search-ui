@@ -27,6 +27,7 @@ import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
 import {getEntityEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+import SenPopover from "../../components/SenPopover";
 
 export default function EditDataset() {
     const {
@@ -293,7 +294,7 @@ export default function EditDataset() {
                                     <EntityFormGroup label='Lab Notes' type='textarea'
                                                      controlId='dataset_info' value={data.dataset_info}
                                                      onChange={onChange}
-                                                     text='Free text field to enter a description of the dataset.'/>
+                                                     text={<>Free text field to enter a description of the <code>Dataset</code>.</>} />
 
 
                                     {/*/!*Human Gene Sequences*!/*/}
@@ -301,18 +302,10 @@ export default function EditDataset() {
                                         <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
                                             <Form.Label>{_t('Human Gene Sequences')} <span
                                                 className="required">* </span>
-                                                <OverlayTrigger
-                                                    placement="top"
-                                                    overlay={
-                                                        <Popover>
-                                                            <Popover.Body>
-                                                                {_t('Does this data contain any human genetic sequences?')}
-                                                            </Popover.Body>
-                                                        </Popover>
-                                                    }
-                                                >
+                                                <SenPopover className={'contains_human_genetic_sequences'} text={'Does this data contain any human genetic sequences?'}>
                                                     <QuestionCircleFill/>
-                                                </OverlayTrigger>
+                                                </SenPopover>
+
                                             </Form.Label>
                                             <div
                                                 className="mb-2 text-muted">{_t('Does this data contain any human genetic sequences?')}

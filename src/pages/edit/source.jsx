@@ -19,6 +19,8 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
+import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+import {SenPopoverOptions} from "../../components/SenPopover";
 
 
 function EditSource() {
@@ -59,20 +61,17 @@ function EditSource() {
             } else {
                 setData(data);
                 // Set state with default values that will be PUT to Entity API to update
-                data.image_files ?
-                    setValues({
-                        'lab_source_id': data.lab_source_id,
-                        'protocol_url': data.protocol_url,
-                        'description': data.description,
-                        'source_type': data.source_type,
-                        'image_files': data.image_files
-                    }) : 
-                    setValues({
-                        'lab_source_id': data.lab_source_id,
-                        'protocol_url': data.protocol_url,
-                        'description': data.description,
-                        'source_type': data.source_type
-                    })
+                let _values = {
+                    'lab_source_id': data.lab_source_id,
+                    'protocol_url': data.protocol_url,
+                    'description': data.description,
+                    'source_type': data.source_type,
+                    'metadata': data.metadata
+                }
+                if (data.image_files) {
+                    _values['image_files'] = data.image_files
+                }
+                setValues(_values)
                 setEditMode("Edit")
             }
         }
@@ -114,7 +113,11 @@ function EditSource() {
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
-            // values['metadata'] = metadata
+
+            if(!_.isEmpty(metadata)) {
+                values["metadata"] = metadata.metadata
+                values["pathname"] = metadata.pathname
+            }
 
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
                 setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
@@ -140,6 +143,7 @@ function EditSource() {
             isUnauthorized() ? <Unauthorized /> : <Spinner />
         )
     } else {
+        console.log(values)
         return (
             <>
                 {editMode &&
@@ -172,19 +176,20 @@ function EditSource() {
                                     {/*Lab's Source Non-PHI ID*/}
                                     <EntityFormGroup label="Lab's Source Non-PHI ID or Name" placeholder='An non-PHI ID or deidentified name used by the lab when referring to the source.'
                                         controlId='lab_source_id' value={data.lab_source_id} isRequired={true}
-                                        onChange={onChange} text='An identifier used by the lab to identify the source.' />
+                                        onChange={onChange} text={<>An identifier used by the lab to identify the <code>Source</code>.</>} />
 
                                     {/*Source Type*/}
                                     <SourceType data={data} onChange={onChange}/>
 
                                     {/*Case Selection Protocol*/}
-                                    <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI'
+                                    <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI' popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                         controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
-                                        onChange={onChange} text='The protocol used when choosing and acquiring the source. This can be supplied as a DOI from https://www.protocols.io/.' />
+                                                     onChange={onChange} text={<span>The protocol used when choosing and acquiring the <code>Source</code>. This can be supplied as a DOI from <a href="https://www.protocols.io/.">https://www.protocols.io/.</a></span>} />
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
-                                        onChange={onChange} text='Free text field to enter a description of the source.' />
+                                                     onChange={onChange} text={<>Free text field to enter a description of the <code>Source</code>.</>} />
+
 
                                     {/* Images */}
                                     <ImageSelector editMode={editMode}
@@ -192,8 +197,9 @@ function EditSource() {
                                                    setValues={setValues}
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
-                                    
-                                    {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />*/}
+
+                                    {/*# TODO: Use ontology*/}
+                                    { values && values.source_type === 'Human' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}
                                     <div className={'d-flex flex-row-reverse'}>
                                         <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
                                                 disabled={disableSubmit}>

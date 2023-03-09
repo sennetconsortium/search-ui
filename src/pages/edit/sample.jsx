@@ -33,6 +33,7 @@ import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/confi
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
+import {SenPopoverOptions} from "../../components/SenPopover";
 
 
 function EditSample() {
@@ -43,7 +44,7 @@ function EditSample() {
         values, setValues,
         errorMessage, setErrorMessage,
         validated, setValidated,
-        userWriteGroups,
+        userWriteGroups, onChange,
         editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
@@ -125,7 +126,8 @@ function EditSample() {
                     'protocol_url': data.protocol_url,
                     'lab_tissue_sample_id': data.lab_tissue_sample_id,
                     'description': data.description,
-                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid
+                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid,
+                    'metadata': data.metadata
                 })
                 if (data.image_files) {
                     setValues(prevState => ({...prevState, image_files: data.image_files}))
@@ -175,18 +177,10 @@ function EditSample() {
     }, [ancestorOrgan, values]);
 
     // callback provided to components to update the main list of form values
-    const onChange = (e, fieldId, value) => {
+    const _onChange = (e, fieldId, value) => {
         // log.debug('onChange', fieldId, value)
         // use a callback to find the field in the value list and update it
-        setValues((previousValues) => {
-            if (previousValues !== null) {
-                return {...previousValues, [fieldId]: value}
-            } else {
-                return {
-                    [fieldId]: value
-                }
-            }
-        });
+        onChange(e, fieldId, value)
 
         if (fieldId === 'direct_ancestor_uuid') {
             resetSampleCategory(e)
@@ -196,13 +190,13 @@ function EditSample() {
     const resetSampleCategory = (e) => {
 
         if (Object.hasOwn(values, 'sample_category')) {
-            onChange(e, "sample_category", "")
+            _onChange(e, "sample_category", "")
         }
         if (Object.hasOwn(values, 'organ')) {
-            onChange(e, "organ", "")
+            _onChange(e, "organ", "")
         }
         if (Object.hasOwn(values, 'organ_other')) {
-            onChange(e, "organ_other", "")
+            _onChange(e, "organ_other", "")
         }
         set_organ_group_hide('none')
         set_organ_other_hide('none')
@@ -304,7 +298,11 @@ function EditSample() {
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
-            // values['metadata'] = metadata
+
+            if(!_.isEmpty(metadata)) {
+                values["metadata"] = metadata.metadata
+                values["pathname"] = metadata.pathname
+            }
 
             await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
                 setModalDetails({
@@ -381,14 +379,14 @@ function EditSample() {
                                         <GroupSelect
                                             data={data}
                                             groups={userWriteGroups}
-                                            onGroupSelectChange={onChange}
+                                            onGroupSelectChange={_onChange}
                                             entity_type={'sample'}/>
                                     }
 
                                     {/*Ancestor ID*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
-                                        <AncestorId source={source} onChange={onChange} fetchSource={fetchSource}/>
+                                        <AncestorId source={source} onChange={_onChange} fetchSource={fetchSource}/>
                                     }
 
                                     {/*Source Information Box*/}
@@ -408,7 +406,7 @@ function EditSample() {
                                                 sample_categories={sampleCategories === null ? SAMPLE_CATEGORY : sampleCategories}
                                                 data={values}
                                                 source={source}
-                                                onChange={onChange}/>
+                                                onChange={_onChange}/>
                                             <RUIButton
                                                 showRegisterLocationButton={showRuiButton}
                                                 ruiLocation={ruiLocation}
@@ -421,21 +419,22 @@ function EditSample() {
                                     <EntityFormGroup label="Preparation Protocol" placeholder='protocols.io DOI'
                                                      controlId='protocol_url' value={data.protocol_url}
                                                      isRequired={true} pattern={getDOIPattern()}
-                                                     onChange={onChange}
-                                                     text='The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see https://www.protocols.io/'/>
+                                                     popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
+                                                     onChange={_onChange}
+                                                     text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see <a href="https://www.protocols.io/.">https://www.protocols.io/.</a></span>}/>
 
                                     {/*/!*Lab Sample ID*!/*/}
                                     <EntityFormGroup label='Lab Sample ID' placeholder='Lab specific alpha-numeric ID'
                                                      controlId='lab_tissue_sample_id'
                                                      value={data.lab_tissue_sample_id}
-                                                     onChange={onChange} text='An identifier used by the lab to identify the specimen, this
+                                                     onChange={_onChange} text='An identifier used by the lab to identify the specimen, this
                                         can be an identifier from the system used to track the specimen in the lab. This field will be entered by the user.'/>
 
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description'
                                                      value={data.description}
-                                                     onChange={onChange}
+                                                     onChange={_onChange}
                                                      text='Free text field to enter a description of the specimen'/>
                                     
                                     {/* Images */}
@@ -450,7 +449,8 @@ function EditSample() {
                                                        values={values}
                                                        setValues={setValues}/>
 
-                                    {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
+                                    {/*# TODO: Use ontology*/}
+                                    { values.sample_category && values.sample_category !== 'organ' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} subType={values.sample_category}  /> }
                                     <div className={'d-flex flex-row-reverse'}>
                                         <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
                                                 disabled={disableSubmit}>
