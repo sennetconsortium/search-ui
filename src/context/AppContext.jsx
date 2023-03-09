@@ -131,7 +131,7 @@ export const AppProvider = ({ children }) => {
 
         if (!uiAuthCookie) {
             const result = await promptForUIPasscode()
-            if (result.value === getUIPassword()) {
+            if (result.value === atob(getUIPassword())) {
                 setCookie('adminUIAuthorized', true)
                 setUIAuthorized(true)
             } else {
