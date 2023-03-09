@@ -294,7 +294,7 @@ export default function EditDataset() {
                                     <EntityFormGroup label='Lab Notes' type='textarea'
                                                      controlId='dataset_info' value={data.dataset_info}
                                                      onChange={onChange}
-                                                     text='Free text field to enter a description of the dataset.'/>
+                                                     text={<>Free text field to enter a description of the <code>Dataset</code>.</>} />
 
 
                                     {/*/!*Human Gene Sequences*!/*/}

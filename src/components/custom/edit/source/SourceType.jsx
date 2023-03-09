@@ -15,7 +15,7 @@ export default class SourceType extends React.Component {
                     <Form.Label>Source Type <span
                         className="required">* </span>
                         <SenPopover className={'source_type'} text={<>
-                            Source type <br />
+                            <code>Source</code> type <br />
                             <small className='popover-note text-muted'>Note: CCF Registration User Interface (CCF-RUI) tool is only available for <code>Human</code> and <code>Human organoid</code> types.</small>
                         </>}>
                             <QuestionCircleFill/>

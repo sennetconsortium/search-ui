@@ -65,8 +65,8 @@ function SampleCategory({
                 <Form.Label>Sample Category <span
                     className="required">* </span>
                     <SenPopover text={<>
-                        The category this sample belongs to. <br />
-                        <small className='popover-note text-muted mt-2'>Note: CCF Registration User Interface (CCF-RUI) tool becomes available for the <code>Block</code> sample category where the <em>Ancestor</em> source is of type <code>Human</code> or <code>Human organoid</code>.</small>
+                        The category this <code>Sample</code> belongs to. <br />
+                        <small className='popover-note text-muted mt-2'>Note: CCF Registration User Interface (CCF-RUI) tool becomes available for the <code>Block Sample</code> category where the <em>Ancestor</em> <code>Source</code> is of type <code>Human</code> or <code>Human organoid</code>.</small>
                     </>}>
                         <QuestionCircleFill/>
                     </SenPopover>

@@ -58,7 +58,7 @@ export default class AncestorId extends React.Component {
                 <Form.Label>Ancestor ID <span
                     className="required">* </span>
                     <SenPopover className={'direct_ancestor_uuid'} text={<>The SenNet Unique identifier of the direct origin entity,
-                        other sample or source, where this sample came from.</>}>
+                        other <code>Sample</code> or <code>Source</code>, where this <code>Sample</code> came from.</>}>
                         <QuestionCircleFill/>
                     </SenPopover>
                 </Form.Label>
