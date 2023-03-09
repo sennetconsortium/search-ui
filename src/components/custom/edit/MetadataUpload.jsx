@@ -54,7 +54,11 @@ function MetadataUpload({ setMetadata, entity, subType }) {
 
     useEffect(()=> {
         if (file && rerun !== subType) {
+            setError(true)
             setRerun(subType)
+            setSuccess(false)
+            setMetadata({})
+            handleUpload(null)
         } else {
             setRerun(null)
         }
@@ -105,7 +109,7 @@ function MetadataUpload({ setMetadata, entity, subType }) {
 
     const handleUpload = async (e) => {
         try {
-            const upload = e.currentTarget.files ? e.currentTarget.files[0] : file
+            const upload = e && e.currentTarget.files ? e.currentTarget.files[0] : file
             if (!upload) return
             log.debug('Metadata', file)
             setRerun(null)
@@ -122,7 +126,8 @@ function MetadataUpload({ setMetadata, entity, subType }) {
             $('[type=file]').val(null)
             if (details.code !== 200) {
                 setError(details.description)
-                setFileStatus(details.name)
+                const uploadName = upload.name.length > 12 ? upload.name.substr(0, 12) + '...' : upload.name
+                setFileStatus(`${details.name}: ${uploadName}`)
                 setSuccess(false)
                 const result = getErrorList(details)
                 if (isUnacceptable(details.code)) {
@@ -190,12 +195,11 @@ function MetadataUpload({ setMetadata, entity, subType }) {
                     {error && <XCircleFill color='#842029' />}
                     {success && <CheckCircleFill color='#0d6efd' />}
                     <small role={validationError ? 'button' : null} onClick={downloadDetails} title={`${validationError ? 'Download error report' : ''}`}>
-                        {fileStatus} {validationError && <Download />}
+                        <span className={'c-metadataUpload__fileStatus'}>{fileStatus}</span> {validationError && <Download />}
                         {isValidating && <span className="spinner spinner-border ic alert alert-info"></span>}
                     </small>
-                    {rerun && <span role='button' onClick={handleUpload} title='Rerun validation' className='ic rerun'> <ArrowRepeat size={12} /></span>}
                 </span>
-                {error &&  <div className='c-metadataUpload__table table-responsive has-error'>
+                {error && table.data && <div className='c-metadataUpload__table table-responsive has-error'>
                     <DataTable
                         columns={table.columns}
                         data={table.data}

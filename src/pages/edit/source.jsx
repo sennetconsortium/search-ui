@@ -114,7 +114,7 @@ function EditSource() {
             let json = cleanJson(values);
             let uuid = data.uuid
 
-            if(!_.isEmpty(metadata)) {
+            if(!_.isEmpty(metadata) && supportsMetadata()) {
                 values["metadata"] = metadata.metadata
                 values["pathname"] = metadata.pathname
             }
@@ -137,6 +137,10 @@ function EditSource() {
         setValidated(true);
     };
 
+    const supportsMetadata = () => {
+        {/*# TODO: Use ontology*/}
+        return values.source_type === 'Human'
+    }
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
@@ -198,8 +202,7 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    {/*# TODO: Use ontology*/}
-                                    { values && values.source_type === 'Human' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}
+                                    { values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}
                                     <div className={'d-flex flex-row-reverse'}>
                                         <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
                                                 disabled={disableSubmit}>
