@@ -2,6 +2,7 @@ import React, {useState, useRef} from 'react'
 import {Button, Badge, Alert, Form, InputGroup, CloseButton, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
+import SenPopover from "../../SenPopover";
 
 
 export default function ImageSelector({ editMode, values, setValues, imageByteArray, setImageByteArray }) {
@@ -122,12 +123,12 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                         {error}
                     </Alert>
                 }
-                <OverlayTrigger placement={'top'} overlay={<Tooltip>Click here to attach a single image or multiple images</Tooltip>}>
+                <SenPopover className={'image-selector'} placement={'top'} text={'Click here to attach a single image or multiple images'}>
                     <Button variant={'outline-primary rounded-0'} onClick={handleUploadImagesClick}>
                         Upload Image Files
                         <Paperclip className={'ms-2'}/>
                     </Button>
-                </OverlayTrigger>
+                </SenPopover>
             </div>
             <input
                 style={{display: 'none'}}
@@ -136,7 +137,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                 onChange={() => handleFileChange(inputInformation.index, inputInformation.fileDetail)}
             />
             { editMode === 'Edit' && values.image_files && values.image_files.map((i, index) => (
-                <div key={'image_files' + index}>
+                <div key={'image_files' + index} className={'mb-2'}>
                     <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                         <span className={'m-2'}>
                             {i.filename}
@@ -152,15 +153,15 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             value={i.description}
                             className={'me-2'}
                         />
-                        <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
+                        <SenPopover className={'remove-image'} text={'Remove image'}>
                             <CloseButton onClick={() => removeImageFile(index)}/>
-                        </OverlayTrigger>
+                        </SenPopover>
                     </InputGroup>
                 </div>
             ))
             }
             { values && values.image_files_to_add && values.image_files_to_add.map((image_file_to_add, index) => {
-                return <div key={'image_files_to_add' + index}>
+                return <div key={'image_files_to_add' + index} className={'mb-2'}>
                     <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                         { imageByteArray[index] && imageByteArray[index].name &&
                             <span className={'m-2'}>
@@ -178,9 +179,9 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                             value={image_file_to_add.description}
                             className={'me-2'}
                         />
-                        <OverlayTrigger overlay={<Tooltip>Remove image</Tooltip>}>
+                        <SenPopover className={'remove-image-files'} text={'Remove image'}>
                             <CloseButton onClick={() => removeImageFilesToAdd(index)}/>
-                        </OverlayTrigger>
+                        </SenPopover>
                     </InputGroup>
                 </div>
             })
