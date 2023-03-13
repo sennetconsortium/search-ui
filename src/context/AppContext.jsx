@@ -23,7 +23,7 @@ export const AppProvider = ({ children }) => {
         const noRedirectTo = Object.values(APP_ROUTES)
         if (noRedirectTo.indexOf(router.pathname) === -1) {
             // Set expiry for 10 minutes
-            setLocalItemWithExpiry(pageKey, router.asPath, 600000)
+            setLocalItemWithExpiry(pageKey, router.asPath, 600)
         }
         get_read_write_privileges()
             .then((response) => {
