@@ -115,8 +115,12 @@ function EditSource() {
             let uuid = data.uuid
 
             if(!_.isEmpty(metadata)) {
-                values["metadata"] = metadata.metadata
-                values["pathname"] = metadata.pathname
+                if (supportsMetadata()) {
+                    values["metadata"] = metadata.metadata
+                    values["pathname"] = metadata.pathname
+                } else {
+                    delete values["metadata"]
+                }
             }
 
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
@@ -137,6 +141,10 @@ function EditSource() {
         setValidated(true);
     };
 
+    const supportsMetadata = () => {
+        {/*# TODO: Use ontology*/}
+        return values.source_type === 'Human'
+    }
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
@@ -198,8 +206,7 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    {/*# TODO: Use ontology*/}
-                                    { values && values.source_type === 'Human' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}
+                                    { values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}
                                     <div className={'d-flex flex-row-reverse'}>
                                         <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
                                                 disabled={disableSubmit}>
