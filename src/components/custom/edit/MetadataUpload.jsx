@@ -64,7 +64,6 @@ function MetadataUpload({ setMetadata, entity, subType }) {
 
     useEffect(()=> {
         if (!initialized.current){
-            console.log('Initialized metadata')
             initialized.current = true
             setMetadata({})
         }
