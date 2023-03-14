@@ -121,6 +121,27 @@ export const EntityProvider = ({ children }) => {
         return getEntityConstraints(fullBody)
     }
 
+    const checkMetadata = (subTypeKey, supportsMetadata) => {
+        if(!_.isEmpty(metadata)) {
+            if (supportsMetadata) {
+                values["metadata"] = metadata.metadata[0]
+                values["metadata"]["pathname"] = metadata.pathname
+            } else {
+                delete values["metadata"]
+            }
+        } else {
+            if (isEditMode()) {
+                //TODO: Remove. This is just for entries with previous metadata to facilitate expected testing.
+                if (values.metadata && !values.metadata.pathname) {
+                    delete values["metadata"]
+                }
+                if (data[subTypeKey] !== values[subTypeKey] || !supportsMetadata) {
+                    delete values["metadata"]
+                }
+            }
+        }
+    }
+
     const setModalDetails = ({entity, type, typeHeader, response}) => {
         setShowModal(true)
         setDisableSubmit(false)
@@ -179,7 +200,8 @@ export const EntityProvider = ({ children }) => {
                 selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid,
                 disableSubmit, setDisableSubmit,
                 metadata, setMetadata,
-                getEntityConstraints, getSampleEntityConstraints
+                getEntityConstraints, getSampleEntityConstraints,
+                checkMetadata
             }}
         >
             {children}
