@@ -31,17 +31,6 @@ async function get_ontology_from_cache(key) {
     } catch (error) {
         console.error(`ONTOLOGY: ${key} cache not initialized`)
     }
-
-    if (!ontology || ontology.length === 0) {
-        ontology = await get_onotology_valueset(key)
-        try {
-            await fetch(url, { method: 'PUT', body: JSON.stringify(ontology) })
-            log.debug(`ONTOLOGY: wrote ${key} cache to file`)
-        } catch (error) {
-            log.debug(`ONTOLOGY: error writing ${key} cache to file`)
-            console.error(error)
-        }
-    }
     return ontology
 }
 

@@ -2,6 +2,7 @@ import path from 'path'
 import { promises as fs } from 'fs'
 import log from 'loglevel'
 import {get_read_write_privileges} from "../../../lib/services";
+import {get_onotology_valueset} from "../../../lib/ontology";
 
 const ONTOLOGY_CACHE_PATH = path.join(process.cwd(), 'cache')
 
@@ -10,31 +11,21 @@ export default async function handler(req, res) {
     try {
         const filePath = ONTOLOGY_CACHE_PATH + '/.ontology_' + key
 
-        if (req.method === 'PUT') {
+        let ontology
 
-            const response = await get_read_write_privileges()
+        try {
+            ontology = await fs.readFile(filePath, 'utf8')
+            ontology = JSON.parse(ontology)
+        } catch (e) {
+            log.debug(`ONTOLOGY API file ${filePath} doesn't exist, creating...`)
+            ontology = await get_onotology_valueset(key)
+            await fs.writeFile(filePath, JSON.stringify(ontology), 'utf8')
+        }
 
-            if (response.write_privs && response.read_privs) {
-                await fs.writeFile(filePath, req.body, 'utf8')
-                res.status(200).json({ code: key })
-            } else {
-                res.status(401).json('Forbidden')
-            }
+        if (ontology) {
+            res.status(200).json(ontology)
         } else {
-            let ontology
-
-            try {
-                ontology = await fs.readFile(filePath, 'utf8')
-            } catch (e) {
-                log.debug(`ONTOLOGY API file ${filePath} doesn't exist, creating...`)
-                await fs.writeFile(filePath, '')
-            }
-
-            if (ontology) {
-                res.status(200).json(JSON.parse(ontology))
-            } else {
-                res.status(404).json([])
-            }
+            res.status(404).json({ code: key })
         }
     } catch (error) {
         console.error(`ONTOLOGY API`, error)
