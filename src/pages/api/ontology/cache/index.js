@@ -8,12 +8,6 @@ const ONTOLOGY_CACHE_PATH = path.join(process.cwd(), 'cache')
 export default async function handler(req, res) {
 
     if (req.method === 'DELETE') {
-        const response = await get_read_write_privileges()
-
-        if (!response.write_privs) {
-            res.status(401).json('Forbidden')
-        }
-
         let filePath
         const codes = Object.values(ONTOLOGY_CODES)
         let results = []
