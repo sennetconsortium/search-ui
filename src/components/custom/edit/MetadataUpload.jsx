@@ -1,7 +1,7 @@
-import React, {useContext, useEffect, useState, useCallback} from 'react'
+import React, {useContext, useEffect, useState, useRef} from 'react'
 import PropTypes from 'prop-types'
-import {Upload, CheckCircleFill, XCircleFill, Download, ArrowRepeat, Paperclip} from "react-bootstrap-icons";
-import {InputGroup, OverlayTrigger, Tooltip, Popover} from 'react-bootstrap';
+import {CheckCircleFill, XCircleFill, Download, Paperclip} from "react-bootstrap-icons";
+import {InputGroup} from 'react-bootstrap';
 import {getIngestEndPoint} from "../../../config/config";
 import log from 'loglevel'
 import DataTable from 'react-data-table-component';
@@ -52,7 +52,21 @@ export const formatErrorColumnTimer = (d = '"') => {
 
 function MetadataUpload({ setMetadata, entity, subType }) {
 
+    const [file, setFile] = useState('')
+    const [fileStatus, setFileStatus] = useState('')
+    const [error, setError] = useState(null)
+    const [success, setSuccess] = useState(false)
+    const [validationError, setValidationError] = useState(false)
+    const [isValidating, setIsValidating] = useState(false)
+    const [table, setTable] = useState({})
+    const [rerun, setRerun] = useState(null)
+    const initialized = useRef(false)
+
     useEffect(()=> {
+        if (!initialized.current){
+            initialized.current = true
+            setMetadata({})
+        }
         if (file && rerun !== subType) {
             setError(true)
             setRerun(subType)
@@ -63,17 +77,7 @@ function MetadataUpload({ setMetadata, entity, subType }) {
             setRerun(null)
         }
 
-
     }, [subType])
-
-    const [file, setFile] = useState('')
-    const [fileStatus, setFileStatus] = useState('')
-    const [error, setError] = useState(null)
-    const [success, setSuccess] = useState(false)
-    const [validationError, setValidationError] = useState(false)
-    const [isValidating, setIsValidating] = useState(false)
-    const [table, setTable] = useState({})
-    const [rerun, setRerun] = useState(null)
 
     const isUnacceptable = (code) => code === 406
 

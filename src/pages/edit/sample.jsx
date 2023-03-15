@@ -50,7 +50,8 @@ function EditSample() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         metadata, setMetadata,
-        getSampleEntityConstraints
+        getSampleEntityConstraints,
+        checkMetadata
     } = useContext(EntityContext)
     const {_t, filterImageFilesToAdd} = useContext(AppContext)
     const router = useRouter()
@@ -299,14 +300,7 @@ function EditSample() {
             let json = cleanJson(values);
             let uuid = data.uuid
 
-            if(!_.isEmpty(metadata)) {
-                if (supportsMetadata()) {
-                    values["metadata"] = metadata.metadata
-                    values["pathname"] = metadata.pathname
-                } else {
-                    delete values["metadata"]
-                }
-            }
+            checkMetadata('sample_category', supportsMetadata())
 
             await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
                 setModalDetails({
