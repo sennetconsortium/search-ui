@@ -266,7 +266,7 @@ function EditSample() {
         }
     }
 
-    const handleSubmit = async (event) => {
+    const handleSave = async (event) => {
         setDisableSubmit(true);
 
         const form = event.currentTarget.parentElement.parentElement;
@@ -452,9 +452,9 @@ function EditSample() {
 
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} />*/}
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
+                                        <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSave}
                                                 disabled={disableSubmit}>
-                                            {_t('Submit')}
+                                            {_t('Save')}
 
                                         </Button>
                                     </div>

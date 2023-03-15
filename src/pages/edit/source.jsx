@@ -93,7 +93,7 @@ function EditSource() {
         }
     }, [router]);
 
-    const handleSubmit = async (event) => {
+    const handleSave = async (event) => {
         setDisableSubmit(true);
         const form = event.currentTarget.parentElement.parentElement;
         if (form.checkValidity() === false) {
@@ -158,7 +158,7 @@ function EditSource() {
                                 <EntityHeader entity={ENTITIES.source} isEditMode={isEditMode()} data={data} />
                             }
                             bodyContent={
-                                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                <Form noValidate validated={validated} onSubmit={handleSave}>
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || isEditMode()) &&
@@ -195,9 +195,9 @@ function EditSource() {
                                     
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />*/}
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
+                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSave}
                                                 disabled={disableSubmit}>
-                                            {_t('Submit')}
+                                            {_t('Save')}
                                         </Button>
                                     </div>
                                     {getModal()}
