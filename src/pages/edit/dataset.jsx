@@ -358,7 +358,7 @@ export default function EditDataset() {
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.dataset} />*/}
                                     
                                     <div className={'d-flex flex-row-reverse'}>
-                                        { editMode === 'Edit' &&
+                                        { editMode === 'Edit' && data['status'] === 'New' &&
                                             <OverlayTrigger
                                                 placement="top"
                                                 overlay={
@@ -376,22 +376,24 @@ export default function EditDataset() {
                                             </OverlayTrigger>
                                             
                                         }
-                                        <OverlayTrigger
-                                            placement="top"
-                                            overlay={
-                                                <Popover>
-                                                    <Popover.Body>
-                                                        {_t('Save changes to this dataset')}
-                                                    </Popover.Body>
-                                                </Popover>
-                                            }>
-                                            <Button variant="outline-primary rounded-0 js-btn--submit"
-                                                    className={'me-2'}
-                                                    onClick={handleSave}
-                                                    disabled={disableSubmit}>
-                                                {_t('Save')}
-                                            </Button>
-                                        </OverlayTrigger>
+                                        { data['status'] !== 'Processing' &&
+                                            <OverlayTrigger
+                                                placement="top"
+                                                overlay={
+                                                    <Popover>
+                                                        <Popover.Body>
+                                                            {_t('Save changes to this dataset')}
+                                                        </Popover.Body>
+                                                    </Popover>
+                                                }>
+                                                <Button variant="outline-primary rounded-0 js-btn--submit"
+                                                        className={'me-2'}
+                                                        onClick={handleSave}
+                                                        disabled={disableSubmit}>
+                                                    {_t('Save')}
+                                                </Button>
+                                            </OverlayTrigger>
+                                        }
                                     </div>
                                     {getModal()}
                                 </Form>
