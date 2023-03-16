@@ -31,7 +31,7 @@ export function get_auth_header() {
 }
 
 
-function get_headers() {
+export function get_headers() {
     const headers = get_auth_header();
     headers.append("Content-Type", "application/json");
     return headers;
