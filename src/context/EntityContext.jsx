@@ -168,6 +168,13 @@ export const EntityProvider = ({ children }) => {
 
         }
     }
+    
+    const setSubmissionModal = (body) => {
+        setShowModal(true)
+        setDisableSubmit(false)
+        setModalTitle('Submitted dataset for processing')
+        setModalBody(body)
+    }
 
     const getModal = () => {
         return <AppModal
@@ -186,6 +193,7 @@ export const EntityProvider = ({ children }) => {
             value={{
                 isUnauthorized, isAuthorizing,
                 getModal, setModalDetails,
+                setSubmissionModal,
                 isEditMode,
                 data, setData,
                 error, setError,
