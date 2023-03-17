@@ -33,7 +33,7 @@ import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/confi
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
-import {SenPopoverOptions} from "../../components/SenPopover";
+import {SenPopoverOptions} from "../../components/SenNetPopover";
 
 
 function EditSample() {

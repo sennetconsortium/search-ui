@@ -20,7 +20,7 @@ import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
-import {SenPopoverOptions} from "../../components/SenPopover";
+import {SenPopoverOptions} from "../../components/SenNetPopover";
 
 
 function EditSource() {
