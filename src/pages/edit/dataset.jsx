@@ -27,7 +27,7 @@ import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
 import {getEntityEndPoint, getIngestEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
-import SenPopover from "../../components/SenPopover";
+import SenNetPopover from "../../components/SenNetPopover";
 
 export default function EditDataset() {
     const {
@@ -315,9 +315,9 @@ export default function EditDataset() {
                                         <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
                                             <Form.Label>{_t('Human Gene Sequences')} <span
                                                 className="required">* </span>
-                                                <SenPopover className={'contains_human_genetic_sequences'} text={'Does this data contain any human genetic sequences?'}>
+                                                <SenNetPopover className={'contains_human_genetic_sequences'} text={'Does this data contain any human genetic sequences?'}>
                                                     <QuestionCircleFill/>
-                                                </SenPopover>
+                                                </SenNetPopover>
 
                                             </Form.Label>
                                             <div
@@ -359,40 +359,23 @@ export default function EditDataset() {
                                     
                                     <div className={'d-flex flex-row-reverse'}>
                                         { editMode === 'Edit' && data['status'] === 'New' &&
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            {_t('Submit this dataset for processing')}
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }>
+                                            <SenNetPopover text={'Submit this dataset for processing'} className={'submit-dataset'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--submit"
                                                         onClick={handleSubmit}
                                                         disabled={disableSubmit}>
                                                     {_t('Submit')}
                                                 </Button>
-                                            </OverlayTrigger>
-                                            
+                                            </SenNetPopover>
                                         }
                                         { data['status'] !== 'Processing' &&
-                                            <OverlayTrigger
-                                                placement="top"
-                                                overlay={
-                                                    <Popover>
-                                                        <Popover.Body>
-                                                            {_t('Save changes to this dataset')}
-                                                        </Popover.Body>
-                                                    </Popover>
-                                                }>
+                                            <SenNetPopover text={'Save changes to this dataset'} className={'save-button'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--submit"
                                                         className={'me-2'}
                                                         onClick={handleSave}
                                                         disabled={disableSubmit}>
                                                     {_t('Save')}
                                                 </Button>
-                                            </OverlayTrigger>
+                                            </SenNetPopover>
                                         }
                                     </div>
                                     {getModal()}

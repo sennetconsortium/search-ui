@@ -37,7 +37,7 @@ export const handlePopoverDisplay = (className, stateCallback) => {
     domMutation(callback)
 }
 
-function SenPopover({children, text, placement, className, trigger}) {
+function SenNetPopover({children, text, placement, className, trigger}) {
 
     const [showTooltip, setShowTooltip] = useState(undefined)
     const containerClassName = `${className}`
@@ -100,17 +100,17 @@ function SenPopover({children, text, placement, className, trigger}) {
     )
 }
 
-SenPopover.defaultProps = {
+SenNetPopover.defaultProps = {
     placement: SenPopoverOptions.placement.top,
     className: 'sen-popover',
     trigger: SenPopoverOptions.triggers.hoverOnClickOff
 }
 
-SenPopover.propTypes = {
+SenNetPopover.propTypes = {
     children: PropTypes.node,
     placement: PropTypes.string,
     className: PropTypes.string.isRequired,
     trigger: PropTypes.string,
 }
 
-export default SenPopover
+export default SenNetPopover

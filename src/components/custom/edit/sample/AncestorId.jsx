@@ -24,7 +24,7 @@ import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import SelectedFilters from "../../layout/SelectedFilters";
 import {getOrganTypeFullName} from "../../js/functions";
-import SenPopover from "../../../SenPopover";
+import SenNetPopover from "../../../SenNetPopover";
 
 export default class AncestorId extends React.Component {
     constructor(props) {
@@ -57,10 +57,10 @@ export default class AncestorId extends React.Component {
             <>
                 <Form.Label>Ancestor ID <span
                     className="required">* </span>
-                    <SenPopover className={'direct_ancestor_uuid'} text={<>The SenNet Unique identifier of the direct origin entity,
+                    <SenNetPopover className={'direct_ancestor_uuid'} text={<>The SenNet Unique identifier of the direct origin entity,
                         other <code>Sample</code> or <code>Source</code>, where this <code>Sample</code> came from.</>}>
                         <QuestionCircleFill/>
-                    </SenPopover>
+                    </SenNetPopover>
                 </Form.Label>
                 <InputGroup className="mb-3" id="direct_ancestor_uuid">
                     <Form.Control required type="text" placeholder=""

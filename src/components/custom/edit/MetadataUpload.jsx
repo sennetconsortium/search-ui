@@ -7,7 +7,7 @@ import log from 'loglevel'
 import DataTable from 'react-data-table-component';
 import $ from 'jquery'
 import { get_auth_header } from "../../../lib/services";
-import SenPopover, {SenPopoverOptions} from "../../SenPopover";
+import SenNetPopover, {SenPopoverOptions} from "../../SenNetPopover";
 
 
 export const formatErrorColumn = (d = '"') => {
@@ -181,10 +181,10 @@ function MetadataUpload({ setMetadata, entity, subType }) {
         <div className={`c-metadataUpload`}>
             <InputGroup className="mb-3">
 
-                <SenPopover placement={SenPopoverOptions.placement.right}
-                            trigger={SenPopoverOptions.triggers.hoverOnClickOff}
-                            className='c-metadataUpload__popover'
-                            text={<span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
+                <SenNetPopover placement={SenPopoverOptions.placement.right}
+                               trigger={SenPopoverOptions.triggers.hoverOnClickOff}
+                               className='c-metadataUpload__popover'
+                               text={<span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
                             <small className='popover-note text-muted'>For example TSV schemas, please see the <a href={getSchemaUrl()}>docs</a>.</small></span>}
                 >
                     <label htmlFor='entity_metadata' className='btn btn-outline-primary rounded-0 btn--fileUpload'>
@@ -192,7 +192,7 @@ function MetadataUpload({ setMetadata, entity, subType }) {
                         <input onInput={handleUpload} type='file' id='entity_metadata' name='entity_metadata' />
                         <Paperclip  />
                     </label>
-                </SenPopover>
+                </SenNetPopover>
 
 
                 <span className={`c-metadataUpload__meta js-fileInfo ${error ? `has-error  ${validationError ? 'has-hover' : ''}` : ''}`}>

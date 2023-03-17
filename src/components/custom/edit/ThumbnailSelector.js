@@ -2,7 +2,7 @@ import React, {useRef, useState} from 'react'
 import {Button, Badge, Alert, CloseButton, OverlayTrigger, Tooltip} from 'react-bootstrap'
 import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
-import SenPopover from "../../SenPopover";
+import SenNetPopover from "../../SenNetPopover";
 
 
 export default function ThumbnailSelector({ editMode, values, setValues }) {
@@ -55,12 +55,12 @@ export default function ThumbnailSelector({ editMode, values, setValues }) {
             </Alert>
         }
 
-        <SenPopover className={'thumbnail-selector'}  placement={'top'} text={'Click here to attach a single thumbnail image'}>
+        <SenNetPopover className={'thumbnail-selector'} placement={'top'} text={'Click here to attach a single thumbnail image'}>
             <Button className={'mb-2'} variant={'outline-primary rounded-0'} onClick={handleUploadThumbnailClick}>
                 Upload a Thumbnail File
                 <Paperclip className={'ms-2'}/>
             </Button>
-        </SenPopover>
+        </SenNetPopover>
         
         <div className={'row'}>
             <div className={'col align-items-center d-flex'}>
@@ -69,9 +69,9 @@ export default function ThumbnailSelector({ editMode, values, setValues }) {
                         <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                             <span className={'m-2'}>{thumbnail.name}</span>
                         </Badge>
-                        <SenPopover className={'remove-thumb-1'} text={'Remove thumbnail'}>
+                        <SenNetPopover className={'remove-thumb-1'} text={'Remove thumbnail'}>
                             <CloseButton className={'p-2'} onClick={removeThumbnail}/>
-                        </SenPopover>
+                        </SenNetPopover>
                     </>
                 }
                 {/* Edit mode */}
@@ -80,9 +80,9 @@ export default function ThumbnailSelector({ editMode, values, setValues }) {
                         <Badge bg={'primary'} className={'badge rounded-pill text-bg-primary m-2 p-2'}>
                             <span className={'m-2'}>{values.thumbnail_file.filename}</span>
                         </Badge>
-                        <SenPopover className={'remove-thumb-edit'} text={'Remove thumbnail'}>
+                        <SenNetPopover className={'remove-thumb-edit'} text={'Remove thumbnail'}>
                             <CloseButton className={'p-2'} onClick={removeThumbnail}/>
-                        </SenPopover>
+                        </SenNetPopover>
                     </>
                 }
             </div>
