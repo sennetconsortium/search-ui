@@ -98,21 +98,26 @@ export const EntityProvider = ({ children }) => {
         return await fetch(getEntityEndPoint() + 'constraints' + requestParams, requestOptions)
     }
 
-    const getSampleEntityConstraints = async (source) => {
-        const entityType = source.entity_type.toLowerCase()
+    const buildConstraint = (entity, constraint = [], key = 'ancestors') => {
+        const entityType = entity.entity_type.toLowerCase()
         let body = {entity_type: ENTITIES[entityType]}
         if (entityType === 'sample') {
-            const sample_category = source.sample_category.toLowerCase()
+            const sample_category = entity.sample_category.toLowerCase()
             body['sub_type'] = [sample_category]
             if (sample_category === 'organ') {
-                body['sub_type_val'] = [source.organ]
+                body['sub_type_val'] = [entity.organ]
             }
         }
-        const fullBody = [
-            {
-                ancestors: [body]
-            }
-        ]
+
+        constraint.push({
+            [key]: [body]
+        })
+
+        return constraint
+    }
+
+    const getSampleEntityConstraints = async (source) => {
+        const fullBody = buildConstraint(source)
         return getEntityConstraints(fullBody)
     }
 
@@ -174,7 +179,7 @@ export const EntityProvider = ({ children }) => {
                 selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid,
                 disableSubmit, setDisableSubmit,
                 metadata, setMetadata,
-                getEntityConstraints, getSampleEntityConstraints
+                getEntityConstraints, getSampleEntityConstraints, buildConstraint
             }}
         >
             {children}
