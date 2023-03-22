@@ -136,7 +136,7 @@ function EditSource() {
 
     const supportsMetadata = () => {
         {/*# TODO: Use ontology*/}
-        return values.source_type === 'Human'
+        return values.source_type === 'Mouse'
     }
 
     if (isAuthorizing() || isUnauthorized()) {
@@ -199,7 +199,7 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    { values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}
+                                    {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}*/}
                                     <div className={'d-flex flex-row-reverse'}>
                                         <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSave}
                                                 disabled={disableSubmit}>
