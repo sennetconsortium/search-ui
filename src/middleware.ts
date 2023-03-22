@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.rewrite(new URL('/404', request.url))
     } else if (entity_type != "") {
         let updated_url = request.url.replace(/(source|sample|dataset)/, entity_type)
-        const response = NextResponse.redirect(updated_url)
+        const response = NextResponse.redirect(updated_url + '/')
         response.cookies.set("redirect", "true")
         return response
     }
