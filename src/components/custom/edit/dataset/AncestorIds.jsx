@@ -26,6 +26,7 @@ import addons from "../../js/addons/addons";
 import $ from 'jquery'
 import SelectedFilters from "../../layout/SelectedFilters";
 import {getOrganTypeFullName} from "../../js/functions";
+import SenNetPopover from "../../../SenNetPopover";
 
 export default class AncestorIds extends React.Component {
     constructor(props) {
@@ -69,19 +70,12 @@ export default class AncestorIds extends React.Component {
             <>
                 <Form.Label>Ancestors(s) <span
                     className="required">* </span>
-                    <OverlayTrigger
-                        placement="top"
-                        overlay={
-                            <Popover>
-                                <Popover.Body>
-                                    The ancestor samples or data from which this data was derived. At least one
-                                    ancestor is required, but multiple may be specified.
-                                </Popover.Body>
-                            </Popover>
-                        }
-                    >
+                    <SenNetPopover className={'direct_ancestor_uuids'} text={<>
+                        The ancestor samples or data from which this data was derived. At least one
+                        ancestor is required, but multiple may be specified.
+                    </>}>
                         <QuestionCircleFill/>
-                    </OverlayTrigger>
+                    </SenNetPopover>
                 </Form.Label>
                 <Form.Group controlId="direct_ancestor_uuids">
 

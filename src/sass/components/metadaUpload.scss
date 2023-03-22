@@ -6,19 +6,32 @@
     width: 100%;
   }
 
+  &__fileStatus {
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-flex;
+    max-width: 200px;
+    text-overflow: ellipsis;
+  }
+
   &__meta {
     font-size: 16px;
     padding-top: 10px;
     margin-left: 10px !important;
     position: relative;
+
+    .ic {
+      margin-left: 5px;
+    }
+
     .spinner {
       width: 1em;
       height: 1em;
       padding: 0;
       position: absolute;
       top: 20px;
-      margin-left: 5px;
     }
+
     small {
       font-size: 10px;
       margin-left: 5px;
@@ -46,7 +59,11 @@
   }
 }
 
-.btn--fileUpload input[type=file] {
-  opacity: 0;
-  width: 20px;
+.btn--fileUpload {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  input[type=file] {
+    opacity: 0;
+    width: 10px;
+  }
 }
