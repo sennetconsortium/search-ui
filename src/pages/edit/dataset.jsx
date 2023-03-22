@@ -83,7 +83,7 @@ export default function EditDataset() {
                     constraints = buildConstraint(ancestor, constraints)
                 }
                 const response = await getEntityConstraints(constraints)
-                let totalDataTypes = {}
+                let constraintsDataTypes = {}
                 if (response.ok) {
                     const body = await response.json()
                     for (let constraintResponse of body.description) {
@@ -100,13 +100,13 @@ export default function EditDataset() {
                             let data_types = {}
                             filter.forEach(entry => data_types[entry[0]] = entry[1])
                             // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
-                            $.extend(totalDataTypes, data_types)
+                            $.extend(constraintsDataTypes, data_types)
                         }
                     } // end for
-                    if ($.isEmptyObject(totalDataTypes)) {
+                    if ($.isEmptyObject(constraintsDataTypes)) {
                         setDataTypes(DATA_TYPES)
                     } else {
-                        setDataTypes(totalDataTypes)
+                        setDataTypes(constraintsDataTypes)
                     }
                 }
             }
