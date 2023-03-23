@@ -34,6 +34,7 @@ import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
+import {BoxArrowUpRight} from "react-bootstrap-icons";
 
 
 function EditSample() {
@@ -442,7 +443,7 @@ function EditSample() {
                                                      isRequired={true} pattern={getDOIPattern()}
                                                      popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                                      onChange={_onChange}
-                                                     text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see <a href="https://www.protocols.io/.">https://www.protocols.io/.</a></span>}/>
+                                                     text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>}/>
 
                                     {/*/!*Lab Sample ID*!/*/}
                                     <EntityFormGroup label='Lab Sample ID' placeholder='Lab specific alpha-numeric ID'
