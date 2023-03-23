@@ -86,6 +86,10 @@ export function getLogoutURL() {
     return getIngestEndPoint() + APP_ROUTES.logout.slice(1)
 }
 
+export function getProtocolsToken() {
+    return process.env.NEXT_PUBLIC_PROTOCOLS_TOKEN
+}
+
 export function getGoogleTagManagerId() {
     return process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER
 }
