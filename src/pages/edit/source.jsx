@@ -142,20 +142,27 @@ function EditSource() {
     }
 
     const metadataNote = () => {
-        {/*# TODO:  1. Update copy text and mailto, 2. Use ontology*/}
+        {/*# TODO:  1. Update copy text and mailto, format. 2. Use ontology*/}
         if (values.source_type === 'Human') {
             alertStyle.current = 'info'
             return values.metadata ?
-                <span>Metadata for this <code>Source</code> exists. You may view it via <a target='_blank' className={'js-btn--json icon_inline'} href={`/api/json/source?uuid=${data.uuid}`}><span className={'me-1'}>the full entity JSON</span>  <BoxArrowUpRight/></a>.</span>
-                : <span>Please send the <code>{values.source_type} Source</code> metadata to the <a  href={`mailto:curator@pitt.edu`}>curator</a>.</span>;
+                <span>Metadata for this <code>Source</code> exists. You may view it via
+                    <a target='_blank' className={'js-btn--json lnk--ic'} href={`/api/json/source?uuid=${data.uuid}`}>the full entity JSON  <BoxArrowUpRight/></a>.
+                </span>
+                : <span>Please send the <code>{values.source_type} Source</code> metadata to the <a href={`mailto:curator@pitt.edu`}>curator</a>. <br />
+                    <small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;
+                        <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.
+                    </small>
+                </span>;
         } else {
             if (isEditMode() && values.metadata && data.source_type === 'Human') {
                 alertStyle.current = 'warning'
-                return <span>Metadata for this <code>Source</code> exists. Changing the <code>Source</code> type will result in loss of this metadata and cannot be undone once submitted.</span>
+                return <span>Metadata for this <code>Source</code> exists.
+                    Changing the <code>Source</code> type will result in loss of this metadata and cannot be undone once submitted.
+                </span>
             } else {
                 return false
             }
-
         }
     }
 
