@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useEffect, useState, useContext, useRef} from "react";
 import {useRouter} from 'next/router';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
@@ -28,7 +28,7 @@ import Spinner from '../../components/custom/Spinner'
 import {ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
-import Alert from "../../components/custom/Alert";
+import Alert from 'react-bootstrap/Alert';
 import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/config";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
@@ -51,7 +51,7 @@ function EditSample() {
         disableSubmit, setDisableSubmit,
         metadata, setMetadata,
         getSampleEntityConstraints,
-        checkMetadata
+        checkMetadata, getMetadataNote
     } = useContext(EntityContext)
     const {_t, filterImageFilesToAdd} = useContext(AppContext)
     const router = useRouter()
@@ -70,6 +70,7 @@ function EditSample() {
     const [thumbnailFileToAdd, setThumbnailFileToAdd] = useState(null)
     const [thumbnailFileToRemove, setThumbnailFileToRemove] = useState(null)
     const [imageByteArray, setImageByteArray] = useState([])
+    const alertStyle = useRef('info')
 
 
     useEffect(() => {
@@ -338,6 +339,24 @@ function EditSample() {
         return values.sample_category !== 'organ'
     }
 
+    const metadataNote = () => {
+        {/*# TODO:  1. Update copy text and mailto, format. 2. Use ontology*/}
+        if (isEditMode() && values.metadata) {
+            let text = []
+            text.push(getMetadataNote(ENTITIES.sample, 0))
+            if (data.sample_category === values.sample_category) {
+                alertStyle.current = 'info'
+                text.push(getMetadataNote(ENTITIES.sample, 1))
+            } else {
+                alertStyle.current = 'warning'
+                text.push(getMetadataNote(ENTITIES.sample, 2))
+            }
+            return text
+        } else {
+            return false
+        }
+    }
+
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
@@ -352,7 +371,7 @@ function EditSample() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert message={errorMessage}/>
+                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
                 }
                 {showRui &&
                     <RuiIntegration
@@ -438,6 +457,8 @@ function EditSample() {
                                                      value={data.description}
                                                      onChange={_onChange}
                                                      text='Free text field to enter a description of the specimen'/>
+
+                                    {metadataNote() && <Alert variant={alertStyle.current}><span>{metadataNote()}</span></Alert>}
                                     
                                     {/* Images */}
                                     <ImageSelector editMode={editMode} 

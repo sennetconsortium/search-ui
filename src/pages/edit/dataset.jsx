@@ -24,7 +24,7 @@ import Spinner from '../../components/custom/Spinner'
 import {DATA_TYPES, ENTITIES} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
-import Alert from '../../components/custom/Alert'
+import Alert from 'react-bootstrap/Alert';
 import {getEntityEndPoint, getIngestEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import SenNetPopover from "../../components/SenNetPopover";
@@ -265,7 +265,7 @@ export default function EditDataset() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert message={errorMessage}/>
+                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
                 }
                 {data && !error &&
                     <div className="no_sidebar">

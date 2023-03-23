@@ -36,7 +36,7 @@ function EditSource() {
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
-        metadata, setMetadata, checkMetadata } = useContext(EntityContext)
+        metadata, setMetadata, checkMetadata, getMetadataNote } = useContext(EntityContext)
     const { _t, filterImageFilesToAdd } = useContext(AppContext)
 
     const router = useRouter()
@@ -143,23 +143,25 @@ function EditSource() {
 
     const metadataNote = () => {
         {/*# TODO:  1. Update copy text and mailto, format. 2. Use ontology*/}
+        let text = []
+        text.push(getMetadataNote(ENTITIES.source, 0))
         if (values.source_type === 'Human') {
             alertStyle.current = 'info'
-            return values.metadata ?
-                <span>Metadata for this <code>Source</code> exists. You may view it via
-                    <a target='_blank' className={'js-btn--json lnk--ic'} href={`/api/json/source?uuid=${data.uuid}`}>the full entity JSON  <BoxArrowUpRight/></a>.
-                </span>
-                : <span>Please send the <code>{values.source_type} Source</code> metadata to the <a href={`mailto:curator@pitt.edu`}>curator</a>. <br />
+            if (values.metadata) {
+                text.push(getMetadataNote(ENTITIES.source, 1))
+                return text
+            } else {
+                return <>Please send the <code>{values.source_type} Source</code> metadata to the <a href={`mailto:curator@pitt.edu`}>curator</a>. <br />
                     <small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;
                         <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.
                     </small>
-                </span>;
+                </>
+            }
         } else {
             if (isEditMode() && values.metadata && data.source_type === 'Human') {
                 alertStyle.current = 'warning'
-                return <span>Metadata for this <code>Source</code> exists.
-                    Changing the <code>Source</code> type will result in loss of this metadata and cannot be undone once submitted.
-                </span>
+                text.push(getMetadataNote(ENTITIES.source, 2, 'type'))
+                return text
             } else {
                 return false
             }
@@ -181,7 +183,7 @@ function EditSource() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert message={errorMessage} />
+                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
                 }
                 {data && !error &&
                     <div className="no_sidebar">
@@ -218,7 +220,7 @@ function EditSource() {
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
                                                      onChange={onChange} text={<>Free text field to enter a description of the <code>Source</code>.</>} />
 
-                                    {metadataNote() && <Alert variant={alertStyle.current}>{metadataNote()}</Alert>}
+                                    {metadataNote() && <Alert variant={alertStyle.current}><span>{metadataNote()}</span></Alert>}
                                     {/* Images */}
                                     <ImageSelector editMode={editMode}
                                                    values={values}
