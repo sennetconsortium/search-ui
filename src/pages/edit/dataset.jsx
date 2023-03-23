@@ -27,7 +27,8 @@ import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
 import {getEntityEndPoint, getIngestEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
-import SenNetPopover from "../../components/SenNetPopover";
+import $ from 'jquery'
+import SenNetPopover from "../../components/SenNetPopover"
 
 export default function EditDataset() {
     const {
@@ -44,7 +45,8 @@ export default function EditDataset() {
         disableSubmit, setDisableSubmit,
         metadata, setMetadata,
         getEntityConstraints,
-        getSampleEntityConstraints
+        getSampleEntityConstraints,
+        buildConstraint
     } = useContext(EntityContext)
     const {_t} = useContext(AppContext)
     const router = useRouter()
@@ -76,23 +78,35 @@ export default function EditDataset() {
         const fetchDataTypes = async () => {
             setDataTypes(null)
             if (ancestors !== null && ancestors.length !== 0) {
-                const response = await getSampleEntityConstraints(ancestors[0])
+                let constraints = []
+                for (let ancestor of ancestors) {
+                    constraints = buildConstraint(ancestor, constraints)
+                }
+                const response = await getEntityConstraints(constraints)
+                let constraintsDataTypes = {}
                 if (response.ok) {
                     const body = await response.json()
-                    const provenance_constraints = body.description[0].description
-                    let sub_types = []
-                    provenance_constraints.forEach(constraint => {
-                        if (constraint.entity_type.toLowerCase() === 'dataset') {
-                            sub_types = sub_types.concat(constraint.sub_type || [])
+                    for (let constraintResponse of body.description) {
+                        let currentConstraints = constraintResponse.description
+
+                        let sub_types = []
+                        currentConstraints.forEach(constraint => {
+                            if (constraint.entity_type.toLowerCase() === 'dataset') {
+                                sub_types = sub_types.concat(constraint.sub_type || [])
+                            }
+                        })
+                        if (sub_types.length) {
+                            const filter = Object.entries(DATA_TYPES).filter(data_type => sub_types.includes(data_type[0]));
+                            let data_types = {}
+                            filter.forEach(entry => data_types[entry[0]] = entry[1])
+                            // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
+                            $.extend(constraintsDataTypes, data_types)
                         }
-                    })
-                    if (!sub_types.length) {
+                    } // end for
+                    if ($.isEmptyObject(constraintsDataTypes)) {
                         setDataTypes(DATA_TYPES)
                     } else {
-                        const filter = Object.entries(DATA_TYPES).filter(data_type => sub_types.includes(data_type[0]));
-                        let data_types = {}
-                        filter.forEach(entry => data_types[entry[0]] = entry[1])
-                        setDataTypes(data_types)
+                        setDataTypes(constraintsDataTypes)
                     }
                 }
             }
