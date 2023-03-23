@@ -1,4 +1,4 @@
-import {getAuth, getRootURL} from "../../../config/config";
+import {getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
 import {APP_ROUTES, ORGAN_TYPES} from "../../../config/constants";
 import log from "loglevel";
 
@@ -36,7 +36,9 @@ export async function fetchProtocols(protocolUrl) {
     let protocolId = protocolUrl.replace(/http(s)?(:)?(\/\/)?|(\/\/)?(www\.)?/, '')
     log.info(protocolId)
     protocolId = protocolId.replace('dx.doi.org/', '')
-    const response = await fetch("https://www.protocols.io/api/v4/protocols/" + protocolId);
+    const response = await fetch("https://www.protocols.io/api/v4/protocols/" + protocolId,
+        {headers: {Authentication: 'Bearer ' + getProtocolsToken()}}
+    );
 
     if (!response.ok) {
         return null
