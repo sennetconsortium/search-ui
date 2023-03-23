@@ -20,7 +20,7 @@ import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from "../../components/custom/Alert";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
-import {SenPopoverOptions} from "../../components/SenPopover";
+import {SenPopoverOptions} from "../../components/SenNetPopover";
 
 
 function EditSource() {
@@ -35,7 +35,7 @@ function EditSource() {
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
-        metadata, setMetadata } = useContext(EntityContext)
+        metadata, setMetadata, checkMetadata } = useContext(EntityContext)
     const { _t, filterImageFilesToAdd } = useContext(AppContext)
 
     const router = useRouter()
@@ -92,7 +92,7 @@ function EditSource() {
         }
     }, [router]);
 
-    const handleSubmit = async (event) => {
+    const handleSave = async (event) => {
         setDisableSubmit(true);
         const form = event.currentTarget.parentElement.parentElement;
         if (form.checkValidity() === false) {
@@ -114,10 +114,7 @@ function EditSource() {
             let json = cleanJson(values);
             let uuid = data.uuid
 
-            if(!_.isEmpty(metadata)) {
-                values["metadata"] = metadata.metadata
-                values["pathname"] = metadata.pathname
-            }
+            checkMetadata('source_type', supportsMetadata())
 
             await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
                 setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
@@ -137,6 +134,10 @@ function EditSource() {
         setValidated(true);
     };
 
+    const supportsMetadata = () => {
+        {/*# TODO: Use ontology*/}
+        return values.source_type === 'Mouse'
+    }
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
@@ -162,7 +163,7 @@ function EditSource() {
                                 <EntityHeader entity={ENTITIES.source} isEditMode={isEditMode()} data={data} />
                             }
                             bodyContent={
-                                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                                <Form noValidate validated={validated} onSubmit={handleSave}>
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || isEditMode()) &&
@@ -198,12 +199,11 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    {/*# TODO: Use ontology*/}
-                                    { values && values.source_type === 'Human' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}
+                                    {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}*/}
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
+                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSave}
                                                 disabled={disableSubmit}>
-                                            {_t('Submit')}
+                                            {_t('Save')}
                                         </Button>
                                     </div>
                                     {getModal()}

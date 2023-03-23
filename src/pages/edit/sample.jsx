@@ -33,7 +33,7 @@ import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/confi
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
-import {SenPopoverOptions} from "../../components/SenPopover";
+import {SenPopoverOptions} from "../../components/SenNetPopover";
 
 
 function EditSample() {
@@ -50,7 +50,8 @@ function EditSample() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         metadata, setMetadata,
-        getSampleEntityConstraints
+        getSampleEntityConstraints,
+        checkMetadata
     } = useContext(EntityContext)
     const {_t, cache, filterImageFilesToAdd} = useContext(AppContext)
     const router = useRouter()
@@ -260,7 +261,7 @@ function EditSample() {
         }
     }
 
-    const handleSubmit = async (event) => {
+    const handleSave = async (event) => {
         setDisableSubmit(true);
 
         const form = event.currentTarget.parentElement.parentElement;
@@ -299,10 +300,7 @@ function EditSample() {
             let json = cleanJson(values);
             let uuid = data.uuid
 
-            if(!_.isEmpty(metadata)) {
-                values["metadata"] = metadata.metadata
-                values["pathname"] = metadata.pathname
-            }
+            checkMetadata('sample_category', supportsMetadata())
 
             await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
                 setModalDetails({
@@ -335,6 +333,10 @@ function EditSample() {
         setValidated(true);
     };
 
+    const supportsMetadata = () => {
+        {/*# TODO: Use ontology*/}
+        return values.sample_category !== 'organ'
+    }
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
@@ -449,12 +451,11 @@ function EditSample() {
                                                        values={values}
                                                        setValues={setValues}/>
 
-                                    {/*# TODO: Use ontology*/}
-                                    { values.sample_category && values.sample_category !== 'organ' && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} subType={values.sample_category}  /> }
+                                    { values.sample_category && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} subType={values.sample_category}  /> }
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSubmit}
+                                        <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSave}
                                                 disabled={disableSubmit}>
-                                            {_t('Submit')}
+                                            {_t('Save')}
 
                                         </Button>
                                     </div>

@@ -4,7 +4,7 @@ import {ORGAN_TYPES} from "../../../../config/constants";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import SenPopover from "../../../SenPopover";
+import SenNetPopover from "../../../SenNetPopover";
 
 function SampleCategory({
                             organ_group_hide,
@@ -64,12 +64,12 @@ function SampleCategory({
             <Form.Group className="mb-3" controlId="sample_category">
                 <Form.Label>Sample Category <span
                     className="required">* </span>
-                    <SenPopover text={<>
+                    <SenNetPopover text={<>
                         The category this <code>Sample</code> belongs to. <br />
                         <small className='popover-note text-muted mt-2'>Note: CCF Registration User Interface (CCF-RUI) tool becomes available for the <code>Block Sample</code> category where the <em>Ancestor</em> <code>Source</code> is of type <code>Human</code> or <code>Human organoid</code>.</small>
                     </>}>
                         <QuestionCircleFill/>
-                    </SenPopover>
+                    </SenNetPopover>
 
                 </Form.Label>
 

@@ -8,7 +8,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Popover from 'react-bootstrap/Popover'
 import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
-import {update_create_dataset} from '../../lib/services'
+import {get_headers, update_create_dataset} from '../../lib/services'
 import {cleanJson, fetchEntity, getHeaders, getRequestHeaders} from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
 import DataTypes from '../../components/custom/edit/dataset/DataTypes'
@@ -25,13 +25,13 @@ import {ENTITIES} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from '../../components/custom/Alert'
-import {getEntityEndPoint, valid_dataset_ancestor_config} from "../../config/config";
+import {getEntityEndPoint, getIngestEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
-import SenPopover from "../../components/SenPopover";
+import SenNetPopover from "../../components/SenNetPopover";
 
 export default function EditDataset() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails,
+        isUnauthorized, isAuthorizing, getModal, setModalDetails, setSubmissionModal,
         data, setData,
         error, setError,
         values, setValues,
@@ -181,8 +181,21 @@ export default function EditDataset() {
         setAncestors(updated_ancestors);
         log.debug(updated_ancestors);
     }
+    
+    const handleSubmit = async () => {
+        const requestOptions = {
+            method: 'PUT',
+            headers: get_headers(),
+            body: JSON.stringify(values)
+        }
+        const submitDatasetUrl = getIngestEndPoint() + 'datasets/' + data['uuid'] + '/submit'
+        const response = await fetch(submitDatasetUrl, requestOptions)
+        await response.text().then(json => {
+            setSubmissionModal(json)
+        })
+    }
 
-    const handleSubmit = async (event) => {
+    const handleSave = async (event) => {
         setDisableSubmit(true);
 
         const form = event.currentTarget.parentElement.parentElement;
@@ -302,9 +315,9 @@ export default function EditDataset() {
                                         <Form.Group controlId="contains_human_genetic_sequences" className="mb-3">
                                             <Form.Label>{_t('Human Gene Sequences')} <span
                                                 className="required">* </span>
-                                                <SenPopover className={'contains_human_genetic_sequences'} text={'Does this data contain any human genetic sequences?'}>
+                                                <SenNetPopover className={'contains_human_genetic_sequences'} text={'Does this data contain any human genetic sequences?'}>
                                                     <QuestionCircleFill/>
-                                                </SenPopover>
+                                                </SenNetPopover>
 
                                             </Form.Label>
                                             <div
@@ -343,13 +356,28 @@ export default function EditDataset() {
                                     }
 
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.dataset} />*/}
+                                    
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSubmit}
-                                                disabled={disableSubmit}>
-                                            {_t('Submit')}
-                                        </Button>
+                                        { editMode === 'Edit' && data['status'] === 'New' &&
+                                            <SenNetPopover text={'Submit this dataset for processing'} className={'submit-dataset'}>
+                                                <Button variant="outline-primary rounded-0 js-btn--submit"
+                                                        onClick={handleSubmit}
+                                                        disabled={disableSubmit}>
+                                                    {_t('Submit')}
+                                                </Button>
+                                            </SenNetPopover>
+                                        }
+                                        { data['status'] !== 'Processing' &&
+                                            <SenNetPopover text={'Save changes to this dataset'} className={'save-button'}>
+                                                <Button variant="outline-primary rounded-0 js-btn--submit"
+                                                        className={'me-2'}
+                                                        onClick={handleSave}
+                                                        disabled={disableSubmit}>
+                                                    {_t('Save')}
+                                                </Button>
+                                            </SenNetPopover>
+                                        }
                                     </div>
-
                                     {getModal()}
                                 </Form>
                             }

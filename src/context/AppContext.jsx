@@ -27,7 +27,8 @@ export const AppProvider = ({ children }) => {
         // Should only include: '/', '/search', '/logout', '/login', '/404'
         const noRedirectTo = Object.values(APP_ROUTES)
         if (noRedirectTo.indexOf(router.pathname) === -1) {
-            localStorage.setItem(pageKey, router.asPath)
+            // Set expiry for 10 minutes
+            setLocalItemWithExpiry(pageKey, router.asPath, 600000)
         }
 
         get_read_write_privileges()
@@ -37,6 +38,36 @@ export const AppProvider = ({ children }) => {
             })
             .catch((error) => log.error(error))
     })
+
+    const setLocalItemWithExpiry = (key, value, ttl) => {
+        const now = new Date()
+        const item = {
+            value: value,
+            expiry: now.getTime() + ttl
+        }
+
+        localStorage.setItem(key, JSON.stringify(item))
+    }
+
+    const getLocalItemWithExpiry = (key) => {
+        const jsonItem = localStorage.getItem(key)
+
+        // If the jsonItem doesn't exist, return null
+        if (!jsonItem) {
+            return null
+        }
+
+        const item = JSON.parse(jsonItem)
+        const now = new Date()
+
+        // Compare the expiry time of the item with the current time
+        if (now.getTime() > item.expiry) {
+            // If the item is expired, delete the item from storage
+            localStorage.removeItem(key)
+            return null
+        }
+        return item.value
+    }
 
     const hasAuthenticationCookie = () => {
         return getCookie(authKey)
@@ -64,7 +95,7 @@ export const AppProvider = ({ children }) => {
                         setCookie('user', {email, globus_id})
                     }
                     // Redirect to home page without query string
-                    const page = localStorage.getItem(pageKey)
+                    const page = getLocalItemWithExpiry(pageKey)
                     if (page) {
                         window.location = page;
                     }

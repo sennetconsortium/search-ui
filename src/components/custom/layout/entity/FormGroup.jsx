@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 import { QuestionCircleFill } from 'react-bootstrap-icons'
 import AppContext from '../../../../context/AppContext'
-import SenPopover from "../../../SenPopover";
+import SenNetPopover from "../../../SenNetPopover";
 
 function EntityFormGroup({ controlId, label, text, onChange, value, type, placeholder, isRequired, pattern, popoverTrigger }) {
   const {_t } = useContext(AppContext)
@@ -14,9 +14,9 @@ function EntityFormGroup({ controlId, label, text, onChange, value, type, placeh
     
         <Form.Group className="mb-3" controlId={controlId}>
             <Form.Label>{_t(label)} {isRequired && <span className="required">* </span>}
-                <SenPopover text={text} trigger={popoverTrigger} className={`popover-${controlId}`}>
+                <SenNetPopover text={text} trigger={popoverTrigger} className={`popover-${controlId}`}>
                     <QuestionCircleFill/>
-                </SenPopover>
+                </SenNetPopover>
 
             </Form.Label>
             {!isTextarea && <Form.Control type={type}  defaultValue={value} placeholder={_t(placeholder)} required={isRequired}

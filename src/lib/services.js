@@ -35,7 +35,8 @@ export function get_auth_header() {
     return headers;
 }
 
-function get_headers() {
+export function get_headers() {
+
     const headers = get_auth_header();
     return get_json_header(headers);
 }

@@ -1,13 +1,13 @@
-import React, {useContext, useEffect, useState, useCallback} from 'react'
+import React, {useContext, useEffect, useState, useRef} from 'react'
 import PropTypes from 'prop-types'
-import {Upload, CheckCircleFill, XCircleFill, Download, ArrowRepeat, Paperclip} from "react-bootstrap-icons";
-import {InputGroup, OverlayTrigger, Tooltip, Popover} from 'react-bootstrap';
+import {CheckCircleFill, XCircleFill, Download, Paperclip} from "react-bootstrap-icons";
+import {InputGroup} from 'react-bootstrap';
 import {getIngestEndPoint} from "../../../config/config";
 import log from 'loglevel'
 import DataTable from 'react-data-table-component';
 import $ from 'jquery'
 import { get_auth_header } from "../../../lib/services";
-import SenPopover, {SenPopoverOptions} from "../../SenPopover";
+import SenNetPopover, {SenPopoverOptions} from "../../SenNetPopover";
 
 
 export const formatErrorColumn = (d = '"') => {
@@ -52,16 +52,6 @@ export const formatErrorColumnTimer = (d = '"') => {
 
 function MetadataUpload({ setMetadata, entity, subType }) {
 
-    useEffect(()=> {
-        if (file && rerun !== subType) {
-            setRerun(subType)
-        } else {
-            setRerun(null)
-        }
-
-
-    }, [subType])
-
     const [file, setFile] = useState('')
     const [fileStatus, setFileStatus] = useState('')
     const [error, setError] = useState(null)
@@ -70,6 +60,24 @@ function MetadataUpload({ setMetadata, entity, subType }) {
     const [isValidating, setIsValidating] = useState(false)
     const [table, setTable] = useState({})
     const [rerun, setRerun] = useState(null)
+    const initialized = useRef(false)
+
+    useEffect(()=> {
+        if (!initialized.current){
+            initialized.current = true
+            setMetadata({})
+        }
+        if (file && rerun !== subType) {
+            setError(true)
+            setRerun(subType)
+            setSuccess(false)
+            setMetadata({})
+            handleUpload(null)
+        } else {
+            setRerun(null)
+        }
+
+    }, [subType])
 
     const isUnacceptable = (code) => code === 406
 
@@ -105,7 +113,7 @@ function MetadataUpload({ setMetadata, entity, subType }) {
 
     const handleUpload = async (e) => {
         try {
-            const upload = e.currentTarget.files ? e.currentTarget.files[0] : file
+            const upload = e && e.currentTarget.files ? e.currentTarget.files[0] : file
             if (!upload) return
             log.debug('Metadata', file)
             setRerun(null)
@@ -122,7 +130,8 @@ function MetadataUpload({ setMetadata, entity, subType }) {
             $('[type=file]').val(null)
             if (details.code !== 200) {
                 setError(details.description)
-                setFileStatus(details.name)
+                const uploadName = upload.name.length > 12 ? upload.name.substr(0, 12) + '...' : upload.name
+                setFileStatus(`${details.name}: ${uploadName}`)
                 setSuccess(false)
                 const result = getErrorList(details)
                 if (isUnacceptable(details.code)) {
@@ -172,10 +181,10 @@ function MetadataUpload({ setMetadata, entity, subType }) {
         <div className={`c-metadataUpload`}>
             <InputGroup className="mb-3">
 
-                <SenPopover placement={SenPopoverOptions.placement.right}
-                            trigger={SenPopoverOptions.triggers.hoverOnClickOff}
-                            className='c-metadataUpload__popover'
-                            text={<span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
+                <SenNetPopover placement={SenPopoverOptions.placement.right}
+                               trigger={SenPopoverOptions.triggers.hoverOnClickOff}
+                               className='c-metadataUpload__popover'
+                               text={<span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
                             <small className='popover-note text-muted'>For example TSV schemas, please see the <a href={getSchemaUrl()}>docs</a>.</small></span>}
                 >
                     <label htmlFor='entity_metadata' className='btn btn-outline-primary rounded-0 btn--fileUpload'>
@@ -183,19 +192,18 @@ function MetadataUpload({ setMetadata, entity, subType }) {
                         <input onInput={handleUpload} type='file' id='entity_metadata' name='entity_metadata' />
                         <Paperclip  />
                     </label>
-                </SenPopover>
+                </SenNetPopover>
 
 
                 <span className={`c-metadataUpload__meta js-fileInfo ${error ? `has-error  ${validationError ? 'has-hover' : ''}` : ''}`}>
                     {error && <XCircleFill color='#842029' />}
                     {success && <CheckCircleFill color='#0d6efd' />}
                     <small role={validationError ? 'button' : null} onClick={downloadDetails} title={`${validationError ? 'Download error report' : ''}`}>
-                        {fileStatus} {validationError && <Download />}
+                        <span className={'c-metadataUpload__fileStatus'}>{fileStatus}</span> {validationError && <Download />}
                         {isValidating && <span className="spinner spinner-border ic alert alert-info"></span>}
                     </small>
-                    {rerun && <span role='button' onClick={handleUpload} title='Rerun validation' className='ic rerun'> <ArrowRepeat size={12} /></span>}
                 </span>
-                {error &&  <div className='c-metadataUpload__table table-responsive has-error'>
+                {error && table.data && <div className='c-metadataUpload__table table-responsive has-error'>
                     <DataTable
                         columns={table.columns}
                         data={table.data}
