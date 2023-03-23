@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useRef} from "react";
 import {useRouter} from 'next/router';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
@@ -17,10 +17,11 @@ import Spinner from '../../components/custom/Spinner'
 import {ENTITIES} from "../../config/constants"
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
-import Alert from "../../components/custom/Alert";
+import Alert from 'react-bootstrap/Alert';
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
+import {BoxArrowUpRight} from "react-bootstrap-icons";
 
 
 function EditSource() {
@@ -41,6 +42,7 @@ function EditSource() {
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [imageByteArray, setImageByteArray] = useState([])
+    const alertStyle = useRef('info')
 
 
     // only executed on init rendering, see the []
@@ -139,6 +141,24 @@ function EditSource() {
         return values.source_type === 'Mouse'
     }
 
+    const metadataNote = () => {
+        {/*# TODO:  1. Update copy text and mailto, 2. Use ontology*/}
+        if (values.source_type === 'Human') {
+            alertStyle.current = 'info'
+            return values.metadata ?
+                <span>Metadata for this <code>Source</code> exists. You may view it via <a target='_blank' className={'js-btn--json icon_inline'} href={`/api/json/source?uuid=${data.uuid}`}><span className={'me-1'}>the full entity JSON</span>  <BoxArrowUpRight/></a>.</span>
+                : <span>Please send the <code>{values.source_type} Source</code> metadata to the <a  href={`mailto:curator@pitt.edu`}>curator</a>.</span>;
+        } else {
+            if (isEditMode() && values.metadata && data.source_type === 'Human') {
+                alertStyle.current = 'warning'
+                return <span>Metadata for this <code>Source</code> exists. Changing the <code>Source</code> type will result in loss of this metadata and cannot be undone once submitted.</span>
+            } else {
+                return false
+            }
+
+        }
+    }
+
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
@@ -191,7 +211,7 @@ function EditSource() {
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
                                                      onChange={onChange} text={<>Free text field to enter a description of the <code>Source</code>.</>} />
 
-
+                                    {metadataNote() && <Alert variant={alertStyle.current}>{metadataNote()}</Alert>}
                                     {/* Images */}
                                     <ImageSelector editMode={editMode}
                                                    values={values}
