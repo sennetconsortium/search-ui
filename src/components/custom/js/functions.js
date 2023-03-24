@@ -1,4 +1,4 @@
-import {getAuth, getRootURL} from "../../../config/config";
+import {getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
 import {APP_ROUTES, ORGAN_TYPES} from "../../../config/constants";
 import log from "loglevel";
 
@@ -32,11 +32,15 @@ export async function fetchEntity(ancestorId) {
 }
 
 export async function fetchProtocols(protocolUrl) {
-    // Remove http(s) and www from URL so only dx.doi.org/<ID> remains
-    let protocolId = protocolUrl.replace(/http(s)?(:)?(\/\/)?|(\/\/)?(www\.)?/, '')
-    log.info(protocolId)
-    protocolId = protocolId.replace('dx.doi.org/', '')
-    const response = await fetch("https://www.protocols.io/api/v4/protocols/" + protocolId);
+    // The ID is everything after "dx.doi.org/"
+    const regex = new RegExp("(?<=dx.doi.org/).*")
+    let protocolId = regex.exec(protocolUrl)
+    log.info("https://www.protocols.io/api/v4/protocols/" + protocolId)
+    const response = await fetch("https://www.protocols.io/api/v4/protocols/" + protocolId,
+        {
+            headers: new Headers({Authorization: 'Bearer ' + getProtocolsToken()})
+        }
+    );
 
     if (!response.ok) {
         return null

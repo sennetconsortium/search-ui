@@ -5,7 +5,9 @@ import { get_json_header } from './services'
 export const ONTOLOGY_CODES = {
     'sample_categories': 'C020076',
     'data_assays': 'C004000',
-    'organ_types': 'C000008'
+    'organ_types': 'C000008',
+    'source_types': 'C050020',
+    'entities': 'C000012'
 }
 
 export async function get_onotology_valueset(code) {
@@ -48,17 +50,27 @@ function add_other(list) {
 }
 
 export async function get_sample_categories() {
-    let list = await get_ontology_from_cache('C020076')
+    let list = await get_ontology_from_cache(ONTOLOGY_CODES.sample_categories)
     return to_key_val(list)
 }
 
 export async function get_data_assays() {
-    const list = await get_ontology_from_cache('C004000') //C000001
+    const list = await get_ontology_from_cache(ONTOLOGY_CODES.data_assays) //C000001
     const assays = to_key_val(list)
     return add_other(assays)
 }
 
 export async function get_organ_types() {
-    let list = await get_ontology_from_cache('C000008')
+    let list = await get_ontology_from_cache(ONTOLOGY_CODES.organ_types)
+    return to_key_val(list)
+}
+
+export async function get_source_types() {
+    let list = await get_ontology_from_cache(ONTOLOGY_CODES.source_types)
+    return to_key_val(list)
+}
+
+export async function get_entities() {
+    let list = await get_ontology_from_cache(ONTOLOGY_CODES.entities)
     return to_key_val(list)
 }

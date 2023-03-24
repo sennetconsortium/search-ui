@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState, useContext } from 'react'
+import React, { createContext, useEffect, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import {
     get_read_write_privileges,
@@ -11,6 +11,7 @@ import AppContext from './AppContext'
 import {simple_query_builder} from "search-ui/lib/search-tools";
 import {getHeaders} from "../components/custom/js/functions";
 import {getEntityEndPoint} from "../config/config";
+import {BoxArrowUpRight} from "react-bootstrap-icons";
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
@@ -103,22 +104,48 @@ export const EntityProvider = ({ children }) => {
         return await fetch(getEntityEndPoint() + 'constraints' + requestParams, requestOptions)
     }
 
-    const getSampleEntityConstraints = async (source) => {
-        const entityType = source.entity_type.toLowerCase()
+    const buildConstraint = (entity, constraint = [], key = 'ancestors') => {
+        const entityType = entity.entity_type.toLowerCase()
         let body = {entity_type: ENTITIES[entityType]}
         if (entityType === 'sample') {
-            const sample_category = source.sample_category.toLowerCase()
+            const sample_category = entity.sample_category.toLowerCase()
             body['sub_type'] = [sample_category]
             if (sample_category === 'organ') {
-                body['sub_type_val'] = [source.organ]
+                body['sub_type_val'] = [entity.organ]
             }
         }
-        const fullBody = [
-            {
-                ancestors: [body]
-            }
-        ]
+
+        constraint.push({
+            [key]: [body]
+        })
+
+        return constraint
+    }
+
+    const getSampleEntityConstraints = async (source) => {
+        const fullBody = buildConstraint(source)
         return getEntityConstraints(fullBody)
+    }
+
+    const getMetadataNote = (entity, noteKey, field = 'category') => {
+        let note;
+        switch (noteKey) {
+            case 0:
+                note = <>Metadata for this <code>{entity}</code> exists. </>
+                break
+            case 1:
+                note = <>You may view it via <a target='_blank' className={'js-btn--json lnk--ic'} href={`/api/json/${entity.toLowerCase()}?uuid=${data.uuid}`}> the full entity JSON  <BoxArrowUpRight/></a>.</>
+                break
+            case 2:
+                let prop = `${entity.toLowerCase()}_${field}`
+                let val = data[prop]
+                val = val[0].toUpperCase() + val.slice(1)
+                note =  <>Changing the <code>{entity}</code> {field} will result in loss of this metadata and cannot be undone once submitted. <br /> Please revert back to <span role={'button'} onClick={() => window.location = `#${prop}`}><code>{entity}</code> {field}</span> <code>{val}</code> to keep current metadata.</>
+                break
+            default:
+                note = <></>
+        }
+        return note;
     }
 
     const checkMetadata = (subTypeKey, supportsMetadata) => {
@@ -208,8 +235,8 @@ export const EntityProvider = ({ children }) => {
                 selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid,
                 disableSubmit, setDisableSubmit,
                 metadata, setMetadata,
-                getEntityConstraints, getSampleEntityConstraints,
-                checkMetadata
+                getEntityConstraints, getSampleEntityConstraints, buildConstraint,
+                checkMetadata, getMetadataNote
             }}
         >
             {children}
