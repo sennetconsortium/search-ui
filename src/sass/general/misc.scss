@@ -44,3 +44,11 @@ p {
   color: #808080;
 }
 
+.lnk--ic {
+  display: inline-flex !important;
+  align-items: center;
+  text-decoration: none;
+  svg {
+    margin-left: 0.25rem;
+  }
+}

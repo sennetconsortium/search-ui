@@ -15,7 +15,7 @@ import Header from "../components/custom/layout/Header";
 import Files from "../components/custom/entities/dataset/Files";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
-import Alert from "../components/custom/Alert";
+import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
 import {ENTITIES} from "../config/constants";
 import Metadata from "../components/custom/entities/sample/Metadata";
@@ -33,7 +33,7 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {router, isRegisterHidden, isUnauthorized, isAuthorizing,} = useContext(AppContext)
+    const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t} = useContext(AppContext)
     const {
         showVitessce,
         setVitessceConfig,
@@ -116,7 +116,7 @@ function ViewDataset() {
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
                 {error &&
-                    <Alert message={errorMessage}/>
+                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
                 }
                 {data && !error &&
                     <>
