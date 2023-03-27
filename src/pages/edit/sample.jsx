@@ -7,7 +7,7 @@ import SampleCategory from "../../components/custom/edit/sample/SampleCategory";
 import AncestorInformationBox from "../../components/custom/entities/sample/AncestorInformationBox";
 import log from "loglevel";
 import {
-    cleanJson,
+    cleanJson, equals,
     fetchEntity,
     getDOIPattern,
     getHeaders,
@@ -84,7 +84,7 @@ function EditSample() {
                     const provenance_constraints = body.description[0].description
                     let sub_types = []
                     provenance_constraints.forEach(constraint => {
-                        if (constraint.entity_type.toLowerCase() === 'sample') {
+                        if (equals(constraint.entity_type, cache.entities.Sample)) {
                             sub_types = sub_types.concat(constraint.sub_type || [])
                         }
                     })
@@ -336,8 +336,7 @@ function EditSample() {
     };
 
     const supportsMetadata = () => {
-        {/*# TODO: Use ontology*/}
-        return values.sample_category !== 'organ'
+        return values.sample_category !== cache.sampleCategories.Organ
     }
 
     const metadataNote = () => {

@@ -9,7 +9,7 @@ import Popover from 'react-bootstrap/Popover'
 import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
 import {get_headers, update_create_dataset} from '../../lib/services'
-import {cleanJson, fetchEntity, getHeaders, getRequestHeaders} from '../../components/custom/js/functions'
+import {cleanJson, equals, fetchEntity, getHeaders, getRequestHeaders} from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
 import DataTypes from '../../components/custom/edit/dataset/DataTypes'
 import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
@@ -59,7 +59,7 @@ export default function EditDataset() {
             const fullBody = [
                 {
                     descendants: [{
-                        entity_type: ENTITIES.dataset
+                        entity_type: cache.entities.Dataset
                     }]
                 }
             ]
@@ -91,7 +91,7 @@ export default function EditDataset() {
 
                         let sub_types = []
                         currentConstraints.forEach(constraint => {
-                            if (constraint.entity_type.toLowerCase() === 'dataset') {
+                            if (equals(constraint.entity_type, cache.entities.Dataset)) {
                                 sub_types = sub_types.concat(constraint.sub_type || [])
                             }
                         })

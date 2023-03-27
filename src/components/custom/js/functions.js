@@ -165,3 +165,19 @@ export function goToSearch() {
 export function gotToLogin() {
     goIntent('login')
 }
+
+
+export function urlify(text) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url) {
+        return '<a href="' + url + '">' + url + '</a>';
+    })
+}
+
+export function equals(s1, s2, insensitive = true) {
+    let res = s1 === s2
+    if (insensitive && !_.isUndefined(s1) && !_.isUndefined(s2)) {
+        res = s1.toLowerCase() === s2.toLowerCase()
+    }
+    return res
+}
