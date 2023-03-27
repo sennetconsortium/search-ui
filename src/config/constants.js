@@ -1,9 +1,3 @@
-export const SOURCE_TYPE = {
-    "Human": "Human",
-    "Human organoid": "Human organoid",
-    "Mouse": "Mouse",
-    "Mouse organoid": "Mouse organoid"
-}
 
 export const ORGAN_TYPES = {
     "AD": "Adipose",
@@ -32,4 +26,3 @@ export const APP_ROUTES = {
     "notFound": "/404"
 };
 
-export const ENTITIES = {'source': 'Source', 'sample': 'Sample', 'dataset': 'Dataset'}

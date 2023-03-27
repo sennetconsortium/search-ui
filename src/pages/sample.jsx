@@ -15,7 +15,6 @@ import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
-import {ENTITIES} from "../config/constants";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {List} from "react-bootstrap-icons";
 
@@ -29,7 +28,7 @@ function ViewSample() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t} = useContext(AppContext)
+    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -136,7 +135,7 @@ function ViewSample() {
                                            className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
                                     </div>
 
-                                    <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]}
+                                    <EntityViewHeader data={data} entity={cache.sample.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege} idKey='sample_category'/>
 
 

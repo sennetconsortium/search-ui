@@ -14,7 +14,6 @@ import Header from "../../components/custom/layout/Header";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import {ENTITIES} from "../../config/constants"
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
@@ -118,8 +117,8 @@ function EditSource() {
 
             checkMetadata('source_type', supportsMetadata())
 
-            await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
-                setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
+            await update_create_entity(uuid, json, editMode, cache.entities.source, router).then((response) => {
+                setModalDetails({entity: cache.entities.source, type: response.source_type, typeHeader: _t('Source Type'), response})
                 if (response.image_files) {
                     setValues(prevState => ({...prevState, image_files: response.image_files}))
                 }
@@ -142,11 +141,11 @@ function EditSource() {
 
     const metadataNote = () => {
         let text = []
-        text.push(getMetadataNote(cache.entities.Source, 0))
+        text.push(getMetadataNote(cache.entities.source, 0))
         if (equals(values.source_type, cache.sourceTypes.Human)) {
             alertStyle.current = 'info'
             if (values.metadata) {
-                text.push(getMetadataNote(cache.entities.Source, 1))
+                text.push(getMetadataNote(cache.entities.source, 1))
                 return text
             } else {
                 // TODO: Card #444 <a href={`mailto:`}>curator</a>
@@ -159,7 +158,7 @@ function EditSource() {
         } else {
             if (isEditMode() && values.metadata && equals(data.source_type, cache.sourceTypes.Human)) {
                 alertStyle.current = 'warning'
-                text.push(getMetadataNote(cache.entities.Source, 2, 'type'))
+                text.push(getMetadataNote(cache.entities.source, 2, 'type'))
                 return text
             } else {
                 return false
@@ -188,7 +187,7 @@ function EditSource() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={cache.entities.Source} isEditMode={isEditMode()} data={data} />
+                                <EntityHeader entity={cache.entities.source} isEditMode={isEditMode()} data={data} />
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSave}>
@@ -227,7 +226,7 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.Source} />}*/}
+                                    {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}*/}
                                     <div className={'d-flex flex-row-reverse'}>
                                         <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSave}
                                                 disabled={disableSubmit}>

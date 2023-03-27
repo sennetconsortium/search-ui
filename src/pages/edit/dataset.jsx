@@ -4,8 +4,6 @@ import 'bootstrap/dist/css/bootstrap.css'
 import {Button, Form} from 'react-bootstrap'
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
-import Popover from 'react-bootstrap/Popover'
 import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
 import {get_headers, update_create_dataset} from '../../lib/services'
@@ -21,7 +19,6 @@ import Header from '../../components/custom/layout/Header'
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import {ENTITIES} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
@@ -59,7 +56,7 @@ export default function EditDataset() {
             const fullBody = [
                 {
                     descendants: [{
-                        entity_type: cache.entities.Dataset
+                        entity_type: cache.entities.dataset
                     }]
                 }
             ]
@@ -91,7 +88,7 @@ export default function EditDataset() {
 
                         let sub_types = []
                         currentConstraints.forEach(constraint => {
-                            if (equals(constraint.entity_type, cache.entities.Dataset)) {
+                            if (equals(constraint.entity_type, cache.entities.dataset)) {
                                 sub_types = sub_types.concat(constraint.sub_type || [])
                             }
                         })
@@ -243,7 +240,7 @@ export default function EditDataset() {
 
                 await update_create_dataset(uuid, json, editMode, router).then((response) => {
                     setModalDetails({
-                        entity: ENTITIES.dataset,
+                        entity: cache.entities.dataset,
                         type: (response.data_types ? response.data_types[0] : null),
                         typeHeader: _t('Data Type'),
                         response
@@ -285,7 +282,7 @@ export default function EditDataset() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={ENTITIES.dataset} isEditMode={isEditMode()} data={data}/>
+                                <EntityHeader entity={cache.entities.dataset} isEditMode={isEditMode()} data={data}/>
                             }
                             bodyContent={
                                 <Form noValidate validated={validated}>

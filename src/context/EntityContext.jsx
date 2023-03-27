@@ -5,17 +5,16 @@ import {
     get_user_write_groups,
 } from '../lib/services'
 import log from 'loglevel'
-import {APP_ROUTES, ENTITIES} from '../config/constants'
+import {APP_ROUTES} from '../config/constants'
 import AppModal from '../components/AppModal'
 import AppContext from './AppContext'
-import {simple_query_builder} from "search-ui/lib/search-tools";
 import {getHeaders} from "../components/custom/js/functions";
 import {getEntityEndPoint} from "../config/config";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
-    const {_t } = useContext(AppContext)
+    const {_t, cache } = useContext(AppContext)
     const router = useRouter()
     const [authorized, setAuthorized] = useState(null)
     const [validated, setValidated] = useState(false)
@@ -106,7 +105,7 @@ export const EntityProvider = ({ children }) => {
 
     const buildConstraint = (entity, constraint = [], key = 'ancestors') => {
         const entityType = entity.entity_type.toLowerCase()
-        let body = {entity_type: ENTITIES[entityType]}
+        let body = {entity_type: cache.entities[entityType]}
         if (entityType === 'sample') {
             const sample_category = entity.sample_category.toLowerCase()
             body['sub_type'] = [sample_category]

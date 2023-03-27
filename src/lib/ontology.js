@@ -10,8 +10,13 @@ export const ONTOLOGY_CODES = {
     'entities': 'C000012'
 }
 
+const ONTOLOGY_ENDPOINTS = {
+    'C004000': 'datasets?application_context=SENNET'
+}
+
 export async function get_onotology_valueset(code) {
-    const url = getOntologyEndPoint() + `valueset?parent_sab=SENNET&parent_code=${code}&child_sabs=SENNET`
+    const ep = ONTOLOGY_ENDPOINTS[code] ? ONTOLOGY_ENDPOINTS[code] :  `valueset?parent_sab=SENNET&parent_code=${code}&child_sabs=SENNET`
+    const url = getOntologyEndPoint() + ep
     const request_options = {
         method: 'GET',
         headers: get_json_header()
@@ -36,10 +41,15 @@ async function get_ontology_from_cache(key) {
     return ontology
 }
 
-function to_key_val(list) {
+function to_key_val(list, lowerProp = false, key = 'term') {
     let result = {}
+    let prop
+    let val
     for (let i of list) {
-        result[i.term] = i.term
+        val = i[key]
+        val = val ? val.trim() : val
+        prop = lowerProp ? val.toLowerCase() : val
+        result[prop] = val
     }
     return result
 }
@@ -56,7 +66,7 @@ export async function get_sample_categories() {
 
 export async function get_data_assays() {
     const list = await get_ontology_from_cache(ONTOLOGY_CODES.data_assays) //C000001
-    const assays = to_key_val(list)
+    const assays = to_key_val(list, false, 'data_type')
     return add_other(assays)
 }
 
@@ -72,5 +82,5 @@ export async function get_source_types() {
 
 export async function get_entities() {
     let list = await get_ontology_from_cache(ONTOLOGY_CODES.entities)
-    return to_key_val(list)
+    return to_key_val(list, true)
 }
