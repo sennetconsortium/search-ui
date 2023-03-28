@@ -82,5 +82,8 @@ export async function get_source_types() {
 
 export async function get_entities() {
     let list = await get_ontology_from_cache(ONTOLOGY_CODES.entities)
+    // order the list
+    let dataset = list.shift()
+    list.push(dataset)
     return to_key_val(list, true)
 }
