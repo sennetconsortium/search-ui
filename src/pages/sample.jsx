@@ -135,7 +135,7 @@ function ViewSample() {
                                            className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
                                     </div>
 
-                                    <EntityViewHeader data={data} entity={cache.sample.toLowerCase()}
+                                    <EntityViewHeader data={data} entity={cache.entities.sample.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege} idKey='sample_category'/>
 
 

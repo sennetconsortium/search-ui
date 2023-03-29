@@ -5,7 +5,6 @@ import 'provenance-ui/dist/ProvenanceUI.css'
 import Spinner from '../Spinner'
 import {getAuth, getEntityEndPoint} from "../../../config/config";
 import AppModal from "../../AppModal";
-import {ArrowsAngleExpand} from "react-bootstrap-icons";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
@@ -26,6 +25,8 @@ function Provenance({nodeData}) {
     const activityHidden = useRef(true)
     const svgTranslate = useRef({})
     const { _t } = useContext(AppContext)
+    const [error, setError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState(null)
 
     const canvas = (ops) => $(`#${ops.options.selectorId}`)
 
