@@ -153,16 +153,16 @@ export const EntityProvider = ({ children }) => {
                 values["metadata"] = metadata.metadata[0]
                 values["metadata"]["pathname"] = metadata.pathname
             } else {
-                delete values["metadata"]
+                values["metadata"] = {}
             }
         } else {
             if (isEditMode()) {
                 //TODO: Remove. This is just for entries with previous metadata to facilitate expected testing.
                 if (values.metadata && !values.metadata.pathname) {
-                    delete values["metadata"]
+                    values["metadata"] = {}
                 }
                 if (data[subTypeKey] !== values[subTypeKey] || !supportsMetadata) {
-                    delete values["metadata"]
+                    values["metadata"] = {}
                 }
             }
         }
