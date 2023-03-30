@@ -9,37 +9,46 @@ export default class Metadata extends React.Component {
         const tableDataTSV = tableDataToTSV(this.props.data);
         const downloadURL = createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
         return (
-            <li className="sui-result" id="Metadata">
-                <div className="sui-result__header">
-                    <span className="sui-result__title">Metadata</span>
-                    <div className="d-flex justify-content-between mb-2" style={{display: 'inline-block'}}>
-                        <a href={downloadURL} download={`${this.props.filename}.tsv`}><Button
-                            variant="primary"><Download/></Button></a>
+            <div className="accordion accordion-flush sui-result" id="Metadata">
+                <div className="accordion-item ">
+                    <div className="accordion-header">
+                        <button className="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#metadata-collapse" aria-expanded="true"
+                                aria-controls="metadata-collapse">Metadata
+                            <div className="w-100 pe-4">
+                                <a href={downloadURL} download={`${this.props.filename}.tsv`}
+                                   className="float-end"><Button
+                                    variant="primary"><Download/></Button></a>
+                            </div>
+
+                        </button>
                     </div>
-                </div>
-                <div className="card-body">
-                    <div className={styles.table_wrapper}>
-                        <Table>
-                            <thead>
-                            <tr>
-                                <th>Key</th>
-                                <th>Value</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {Object.entries(this.props.data).map(([key, value]) => {
-                                return (
-                                    <tr key={"metadata_" + key}>
-                                        <td>{this.props.metadataKey}{key}</td>
-                                        <td>{Array.isArray(value) ? value.join(', ') : value}</td>
+                    <div id="metadata-collapse" className="accordion-collapse collapse show">
+                        <div className="accordion-body">
+                            <div className={styles.table_wrapper}>
+                                <Table>
+                                    <thead>
+                                    <tr>
+                                        <th>Key</th>
+                                        <th>Value</th>
                                     </tr>
-                                )
-                            })}
-                            </tbody>
-                        </Table>
+                                    </thead>
+                                    <tbody>
+                                    {Object.entries(this.props.data).map(([key, value]) => {
+                                        return (
+                                            <tr key={"metadata_" + key}>
+                                                <td>{this.props.metadataKey}{key}</td>
+                                                <td>{Array.isArray(value) ? value.join(', ') : value}</td>
+                                            </tr>
+                                        )
+                                    })}
+                                    </tbody>
+                                </Table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </li>
+            </div>
         )
     }
 }
