@@ -13,7 +13,7 @@ import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
-import Alert from "../components/custom/Alert";
+import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
 import {ENTITIES} from "../config/constants";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
@@ -29,7 +29,7 @@ function ViewSample() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing} = useContext(AppContext)
+    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -81,7 +81,7 @@ function ViewSample() {
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
                 {error &&
-                    <Alert message={errorMessage}/>
+                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
                 }
                 {data && !error &&
                     <>

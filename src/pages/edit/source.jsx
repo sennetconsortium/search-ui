@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useRef} from "react";
 import {useRouter} from 'next/router';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
@@ -17,10 +17,11 @@ import Spinner from '../../components/custom/Spinner'
 import {ENTITIES} from "../../config/constants"
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
-import Alert from "../../components/custom/Alert";
+import Alert from 'react-bootstrap/Alert';
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
+import {BoxArrowUpRight} from "react-bootstrap-icons";
 
 
 function EditSource() {
@@ -35,12 +36,13 @@ function EditSource() {
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
-        metadata, setMetadata, checkMetadata } = useContext(EntityContext)
+        metadata, setMetadata, checkMetadata, getMetadataNote } = useContext(EntityContext)
     const { _t, filterImageFilesToAdd } = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [imageByteArray, setImageByteArray] = useState([])
+    const alertStyle = useRef('info')
 
 
     // only executed on init rendering, see the []
@@ -139,6 +141,34 @@ function EditSource() {
         return values.source_type === 'Mouse'
     }
 
+    const metadataNote = () => {
+        {/*# TODO:  1. Update copy text and mailto, format. 2. Use ontology*/}
+        let text = []
+        text.push(getMetadataNote(ENTITIES.source, 0))
+        if (values.source_type === 'Human') {
+            alertStyle.current = 'info'
+            if (values.metadata) {
+                text.push(getMetadataNote(ENTITIES.source, 1))
+                return text
+            } else {
+                // TODO: Card #444 <a href={`mailto:`}>curator</a>
+                return <>Please send the <code>{values.source_type} Source</code> metadata to the curator. <br />
+                    <small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;
+                        <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.
+                    </small>
+                </>
+            }
+        } else {
+            if (isEditMode() && values.metadata && data.source_type === 'Human') {
+                alertStyle.current = 'warning'
+                text.push(getMetadataNote(ENTITIES.source, 2, 'type'))
+                return text
+            } else {
+                return false
+            }
+        }
+    }
+
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
@@ -154,7 +184,7 @@ function EditSource() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert message={errorMessage} />
+                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
                 }
                 {data && !error &&
                     <div className="no_sidebar">
@@ -185,13 +215,13 @@ function EditSource() {
                                     {/*Case Selection Protocol*/}
                                     <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI' popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                         controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
-                                                     onChange={onChange} text={<span>The protocol used when choosing and acquiring the <code>Source</code>. This can be supplied as a DOI from <a href="https://www.protocols.io/.">https://www.protocols.io/.</a></span>} />
+                                                     onChange={onChange} text={<span>The protocol used when choosing and acquiring the <code>Source</code>. This can be supplied as a DOI from <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>} />
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
                                                      onChange={onChange} text={<>Free text field to enter a description of the <code>Source</code>.</>} />
 
-
+                                    {metadataNote() && <Alert variant={alertStyle.current}><span>{metadataNote()}</span></Alert>}
                                     {/* Images */}
                                     <ImageSelector editMode={editMode}
                                                    values={values}
