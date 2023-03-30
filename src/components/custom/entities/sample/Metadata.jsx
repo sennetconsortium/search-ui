@@ -1,10 +1,36 @@
 import React from 'react';
-import {Button, Table} from 'react-bootstrap';
-import styles from '../../style.module.css'
+import {Button} from 'react-bootstrap';
 import {Download} from "react-bootstrap-icons";
 import {createDownloadUrl, tableDataToTSV} from "../../js/functions";
+import DataTable from "react-data-table-component";
 
 export default class Metadata extends React.Component {
+    constructor(props) {
+        super(props);
+        this.columns = [
+            {
+                name: 'Key',
+                selector: row => row.key,
+                sortable: true,
+            },
+            {
+                name: 'Value',
+                selector: row => row.value,
+                sortable: true,
+            }
+        ];
+
+        this.data = [];
+        {
+            Object.entries(this.props.data).map(([key, value]) => {
+                this.data.push({
+                    key: this.props.metadataKey + key,
+                    value: Array.isArray(value) ? value.join(', ') : value
+                })
+            })
+        }
+    }
+
     render() {
         const tableDataTSV = tableDataToTSV(this.props.data);
         const downloadURL = createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
@@ -25,25 +51,11 @@ export default class Metadata extends React.Component {
                     </div>
                     <div id="metadata-collapse" className="accordion-collapse collapse show">
                         <div className="accordion-body">
-                            <div className={styles.table_wrapper}>
-                                <Table>
-                                    <thead>
-                                    <tr>
-                                        <th>Key</th>
-                                        <th>Value</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {Object.entries(this.props.data).map(([key, value]) => {
-                                        return (
-                                            <tr key={"metadata_" + key}>
-                                                <td>{this.props.metadataKey}{key}</td>
-                                                <td>{Array.isArray(value) ? value.join(', ') : value}</td>
-                                            </tr>
-                                        )
-                                    })}
-                                    </tbody>
-                                </Table>
+                            <div className="table-responsive">
+                                <DataTable
+                                    columns={this.columns}
+                                    data={this.data}
+                                    pagination/>
                             </div>
                         </div>
                     </div>
