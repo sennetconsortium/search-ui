@@ -1,10 +1,45 @@
 import React from 'react';
-import {Table} from 'react-bootstrap';
-import styles from '../../style.module.css'
 import {BoxArrowUpRight} from 'react-bootstrap-icons';
+import DataTable from "react-data-table-component";
 
 
 export default class Contributors extends React.Component {
+    constructor(props) {
+        super(props);
+        this.columns = [
+            {
+                name: 'Name',
+                selector: row => row.name,
+                sortable: true,
+            },
+            {
+                name: 'Affiliation',
+                selector: row => row.affiliation,
+                sortable: true,
+            },
+            {
+                name: 'ORCID',
+                selector: row => row.orcid,
+                sortable: true,
+            }
+        ];
+
+        this.contributor_data = [];
+        {
+            this.props.data.map((contributor, index) => {
+                this.contributor_data.push({
+                    name: contributor.name,
+                    affiliation: contributor.affiliation,
+                    orcid: <a className="icon_inline"
+                              href={`https://orcid.org/${contributor.orcid_id}`}>
+                        <span className="me-1">{contributor.orcid_id}</span>
+                        <BoxArrowUpRight/></a>
+                });
+            })
+        }
+
+    }
+
     render() {
         return (
             <div className="accordion accordion-flush sui-result" id="Contributors">
@@ -18,34 +53,11 @@ export default class Contributors extends React.Component {
                     </div>
                     <div id="contributors-collapse" className="accordion-collapse collapse show">
                         <div className="accordion-body">
-
-                            <div className={styles.table_wrapper}>
-                                <Table>
-                                    <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Affiliation</th>
-                                        <th>ORCID</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {this.props.data.map((contributor, index) => {
-                                        return (
-                                            <tr key={"contributor" + index}>
-                                                <td>{contributor.name}</td>
-                                                <td>{contributor.affiliation}</td>
-                                                <td>
-                                                    <a className="icon_inline"
-                                                       href={`https://orcid.org/${contributor.orcid_id}`}>
-                                                        <span className="me-1">{contributor.orcid_id}</span>
-                                                        <BoxArrowUpRight/>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })}
-                                    </tbody>
-                                </Table>
+                            <div className="table-responsive">
+                                <DataTable
+                                    columns={this.columns}
+                                    data={this.contributor_data}
+                                    pagination/>
                             </div>
                         </div>
                     </div>
