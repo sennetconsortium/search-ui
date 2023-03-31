@@ -244,7 +244,7 @@ function ViewDataset() {
 
                                             {/*Metadata*/}
                                             {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                                <Metadata data={data.metadata.metadata} filename={data.sennet_id}/>
+                                                <Metadata metadataKey={""} data={data.metadata.metadata} filename={data.sennet_id}/>
                                             }
 
                                             {/*Contributors*/}
