@@ -167,10 +167,10 @@ export function gotToLogin() {
 }
 
 
-export function urlify(text, blank = true) {
+export function urlify(text, blank = true, max = 40) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.replace(urlRegex, function(url) {
-        return `<a href="${url}" ${blank ? 'target="_blank" class="ic--ext"' : ''}>${url}</a>`;
+        return `<a href="${url}" title="${url}" ${blank ? 'target="_blank" class="ic--ext"' : ''}>${url.length > max ? url.substr(0, 40) + '...' : url}</a>`;
     })
 }
 
