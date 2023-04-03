@@ -37,6 +37,11 @@ function Provenance({nodeData}) {
     }
 
     const onAfterBuild = (ops) => {
+        const ui = window.ProvenanceTreeD3[ops.options.selectorId]
+        if (ui) {
+            ui.enableZoom()
+        }
+
         let hidden = activityHidden.current
         // Fine tune a bit based on graph size and UI viewport area
         const x1 = 50
@@ -57,6 +62,7 @@ function Provenance({nodeData}) {
             // Nudge a bit for better positioning
             ops.$el.svg.transition().call(ops.options.zoom.translateBy, -7, -x1)
         }
+        onInitializationComplete(ops.options.selectorId)
         canvas(ops).find('svg').css('opacity', 1)
     }
 
