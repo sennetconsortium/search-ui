@@ -27,6 +27,7 @@ function Provenance({nodeData}) {
     const { _t } = useContext(AppContext)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
+    let cbTimeout;
 
     const canvas = (ops) => $(`#${ops.options.selectorId}`)
 
@@ -85,6 +86,14 @@ function Provenance({nodeData}) {
         return sz
     }
 
+    const onInitializationComplete = (selectorId) => {
+        clearTimeout(cbTimeout)
+        cbTimeout = setTimeout(()=>{
+            const ui = window.ProvenanceTreeD3[selectorId]
+            ui.disableZoom()
+        }, 1000)
+    }
+
     const graphOptions = {
         idNavigate: {
             props: ['sennet:sennet_id', 'sennet:protocol_url'],
@@ -128,6 +137,7 @@ function Provenance({nodeData}) {
                 width: 50
             }
         },
+        zoomActivated: true,
         visitedNodes: new Set(),
         initParentKey: DataConverterNeo4J.KEY_P_ENTITY,
         displayEdgeLabels: false,
@@ -137,6 +147,7 @@ function Provenance({nodeData}) {
         selectorId: 'neo4j--page',
         callbacks: {
             onCenterX,
+            onInitializationComplete,
             onAfterBuild,
             onSvgSizing
         }
