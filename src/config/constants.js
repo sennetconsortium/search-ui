@@ -26,3 +26,9 @@ export const APP_ROUTES = {
     "notFound": "/404"
 };
 
+
+export const ENTITIES = {
+    "source": "Source",
+    "sample": "Sample",
+    "dataset": "Dataset"
+}

@@ -18,6 +18,7 @@ import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {List} from 'react-bootstrap-icons';
+import {ENTITIES} from "../config/constants";
 
 function ViewSource() {
     const router = useRouter()
@@ -63,6 +64,8 @@ function ViewSource() {
         }
     }, [router]);
 
+    console.log("Test cache in source: ", cache.entities.source)
+    
     if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
@@ -130,7 +133,7 @@ function ViewSource() {
                                            className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
                                     </div>
 
-                                    <EntityViewHeader data={data} entity={cache.entities.source.toLowerCase()}
+                                    <EntityViewHeader data={data} entity={ENTITIES.source}
                                                       hasWritePrivilege={hasWritePrivilege}/>
 
                                     <div className="row">

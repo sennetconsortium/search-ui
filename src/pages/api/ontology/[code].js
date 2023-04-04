@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     const key = req.query.code
     try {
         const filePath = ONTOLOGY_CACHE_PATH + '/.ontology_' + key
-        console.log('CACHING TO', filePath)
+        log.debug('CACHING TO ...', filePath)
         let ontology
 
         try {
@@ -18,9 +18,12 @@ export default async function handler(req, res) {
         } catch (e) {
             log.debug(`ONTOLOGY API file ${filePath} doesn't exist, creating...`)
             ontology = await get_onotology_valueset(key)
-            await fs.mkdir(path.dirname(filePath), {recursive: true}).then(function () {
-                fs.writeFile(filePath, JSON.stringify(ontology), 'utf8')
-            })
+            log.debug(`Ontology for ${ontology}`, ontology)
+            if (ontology && ontology.length) {
+                await fs.mkdir(path.dirname(filePath), {recursive: true}).then(function () {
+                    fs.writeFile(filePath, JSON.stringify(ontology), 'utf8')
+                })
+            }
         }
 
         if (ontology) {
