@@ -383,7 +383,7 @@ export default function EditDataset() {
                                         }
                                         { data['status'] !== 'Processing' &&
                                             <SenNetPopover text={'Save changes to this dataset'} className={'save-button'}>
-                                                <Button variant="outline-primary rounded-0 js-btn--submit"
+                                                <Button variant="outline-primary rounded-0 js-btn--save"
                                                         className={'me-2'}
                                                         onClick={handleSave}
                                                         disabled={disableSubmit}>
