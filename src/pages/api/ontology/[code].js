@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     const key = req.query.code
     try {
         const filePath = ONTOLOGY_CACHE_PATH + '/.ontology_' + key
-
+        console.log('CACHING TO', filePath)
         let ontology
 
         try {
