@@ -133,7 +133,7 @@ function ViewSource() {
                                            className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
                                     </div>
 
-                                    <EntityViewHeader data={data} entity={ENTITIES.source}
+                                    <EntityViewHeader data={data} entity={ENTITIES.source.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}/>
 
                                     <div className="row">

@@ -215,7 +215,7 @@ function ViewDataset() {
                                                 |
                                                 {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
 
-                                                <EntityViewHeaderButtons data={data} entity={ENTITIES.dataset}
+                                                <EntityViewHeaderButtons data={data} entity={ENTITIES.dataset.toLowerCase()}
                                                                          hasWritePrivilege={hasWritePrivilege}/>
                                             </div>
                                         </div>
