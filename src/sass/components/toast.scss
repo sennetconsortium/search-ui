@@ -1,0 +1,43 @@
+.Toastify .Toastify__toast {
+  &--info {
+    .Toastify {
+      &__progress-bar {
+        background: $col-bs-btn-gray;
+      }
+      &__toast-icon {
+        svg {
+          fill: $col-bs-btn-gray;
+        }
+      }
+    }
+  }
+  &--success {
+    .Toastify {
+      &__progress-bar {
+        background: $col-bs-blue;
+      }
+      &__toast-icon {
+        svg {
+          fill: $col-bs-blue;
+        }
+      }
+    }
+  }
+  &--error {
+    color: $col-err-txt;
+    background: $col-err-bg;
+
+    .Toastify {
+      &__progress-bar {
+        background: $col-err-txt;
+      }
+      &__toast-icon {
+        svg {
+          fill: $col-err-txt
+        }
+      }
+    }
+    border-color: $col-err-bdr;
+  }
+}
+

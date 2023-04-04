@@ -1,3 +1,19 @@
+.card {
+  &.tooly {
+    .row {
+      position: relative;
+      .btn {
+        width: 100%;
+      }
+      .spinner {
+        position: absolute;
+        top: 10px;
+        border-width: 3px;
+      }
+    }
+  }
+}
+
 .card-body {
   padding: 0 24px !important;
 }
