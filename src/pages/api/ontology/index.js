@@ -1,14 +1,14 @@
 import path from 'path'
 import {promises as fs} from 'fs'
 import log from 'loglevel'
-import {ONTOLOGY_CODES} from '../../../lib/ontology'
+import { getUbkgCodes } from '../../../config/config'
 
 const ONTOLOGY_CACHE_PATH = path.join(process.cwd(), 'cache')
 export default async function handler(req, res) {
 
     if (req.method === 'DELETE') {
         let filePath
-        const codes = Object.values(ONTOLOGY_CODES)
+        const codes = Object.values(getUbkgCodes())
         let results = []
         for (let key of codes) {
             try {
