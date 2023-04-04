@@ -51,6 +51,3 @@ src/.prettierrc
 #css
 src/public/css/main.css
 src/public/css/main.css.map
-
-##cache
-src/cache/*

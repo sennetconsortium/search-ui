@@ -24,6 +24,7 @@ import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
 import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
 import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
+import {ENTITIES} from "../config/constants";
 
 
 
@@ -214,7 +215,7 @@ function ViewDataset() {
                                                 |
                                                 {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
 
-                                                <EntityViewHeaderButtons data={data} entity={cache.entities.dataset.toLowerCase()}
+                                                <EntityViewHeaderButtons data={data} entity={ENTITIES.dataset.toLowerCase()}
                                                                          hasWritePrivilege={hasWritePrivilege}/>
                                             </div>
                                         </div>
