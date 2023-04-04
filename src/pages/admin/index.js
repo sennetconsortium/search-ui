@@ -4,11 +4,10 @@ import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import Header from "../../components/custom/layout/Header";
 import AppContext from "../../context/AppContext";
-import {APP_TITLE, getUIPassword} from "../../config/config";
+import {APP_TITLE} from "../../config/config";
 import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import {toast} from "react-toastify";
-
 
 
 function Login() {
@@ -23,7 +22,7 @@ function Login() {
     }, [])
 
     const clearCache = async (e) => {
-        const url = '/api/ontology/cache/'
+        const url = '/api/ontology'
         try {
             setBusy(true)
             const response = await toast.promise(
