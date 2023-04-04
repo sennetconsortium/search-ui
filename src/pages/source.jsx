@@ -64,8 +64,8 @@ function ViewSource() {
         }
     }, [router]);
 
-    console.log("Test cache in source: ", cache.entities.source)
-    
+    console.log("Test cache in source: ", cache)
+
     if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
