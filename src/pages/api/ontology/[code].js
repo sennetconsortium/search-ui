@@ -34,16 +34,16 @@ export default async function handler(req, res) {
             }
 
         }  catch (e) {
-            log.debug(`ONTOLOGY API error encountered at ontology code ${key}: ${e}`)
+            log.debug(`ONTOLOGY API > Error encountered on code ${key}: ${e}`)
             if (ontology && ontology.length) {
                 // Create a backup of what's there already
                 await createFile(filePathBackUp, ontology)
             } else {
-                log.debug(`ONTOLOGY API Unfortunately no cache exists ${filePath}`)
+                log.debug(`ONTOLOGY API > No cache exists ${filePath}`)
 
                 ontology = await get_onotology_valueset(key)
                 if (ontology && ontology.length) {
-                    log.debug(`ONTOLOGY API get_onotology_valueset obtained on ${key}`)
+                    log.debug(`ONTOLOGY API > get_onotology_valueset obtained on ${key}`)
                     await createFile(filePath, ontology)
                 }
             }
