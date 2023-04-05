@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     try {
         const filePath = ONTOLOGY_CACHE_PATH + '/.ontology_' + key
         const filePathBackUp = filePath + '_bk'
-        log.debug('CACHING TO ...', filePath)
+        log.debug('ONTOLOGY API > Beginning cache fetching process ... ', filePath)
         let ontology
         let ontologyBackUp
 
