@@ -27,7 +27,7 @@ export default async function handler(req, res) {
                 ontology = JSON.parse(ontology)
             }
 
-            // Look for a backup then create (in catch) if it does not exist
+            // Look for a backup or create (in catch) if it does not exist
             ontologyBackUp = await fs.readFile(filePathBackUp, 'utf8')
             if (ontologyBackUp) {
                 ontologyBackUp = JSON.parse(ontologyBackUp)
