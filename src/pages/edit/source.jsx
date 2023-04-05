@@ -148,8 +148,7 @@ function EditSource() {
                 text.push(getMetadataNote(cache.entities.source, 1))
                 return text
             } else {
-                // TODO: Card #444 <a href={`mailto:`}>curator</a>
-                return <>Please send the <code>{values.source_type} Source</code> metadata to the curator. <br />
+                return <>Please send the <code>{values.source_type} Source</code> metadata to the <a href={`mailto:help@sennetconsortium.org`}>curator</a>. <br />
                     <small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;
                         <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.
                     </small>
