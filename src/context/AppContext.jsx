@@ -6,28 +6,22 @@ import log from 'loglevel'
 import { get_read_write_privileges } from '../lib/services'
 import {deleteCookies} from "../lib/auth";
 import {APP_ROUTES} from "../config/constants";
-import useCache from '../hooks/useCache'
 import {getUIPassword} from "../config/config";
 import Swal from 'sweetalert2'
 
 const AppContext = createContext()
 
-export const AppProvider = ({ children }) => {
+export const AppProvider = ({ cache, children }) => {
     const [isBusy, setIsBusy] = useState(false)
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const [authorized, setAuthorized] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
     const [uiAdminAuthorized, setUIAuthorized] = useState(false)
-    const cache = useCache()
     const router = useRouter()
     const authKey = 'isAuthenticated'
     const pageKey = 'userPage'
 
     useEffect(() => {
-        if (window.addons) {
-            window.addons.init.entities = cache.entities
-        }
-        
         // Should only include: '/', '/search', '/logout', '/login', '/404'
         const noRedirectTo = Object.values(APP_ROUTES)
         if (noRedirectTo.indexOf(router.pathname) === -1) {
