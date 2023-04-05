@@ -25,9 +25,8 @@ function MyApp({Component, pageProps}) {
     useEffect(() => {
         const user = getCookie('user')
 
-        addons('init', {data: {user}, router})
-
         caching.fetchData().then((response) => {
+            addons('init', {data: {user}, router, entities: response.cache.entities})
             setCache(response.cache)
         }).catch((error) => console.error(error))
     }, [])

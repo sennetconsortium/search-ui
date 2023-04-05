@@ -22,10 +22,6 @@ export const AppProvider = ({ cache, children }) => {
     const pageKey = 'userPage'
 
     useEffect(() => {
-        if (window.addons) {
-            window.addons.init.entities = cache.entities
-        }
-
         // Should only include: '/', '/search', '/logout', '/login', '/404'
         const noRedirectTo = Object.values(APP_ROUTES)
         if (noRedirectTo.indexOf(router.pathname) === -1) {
