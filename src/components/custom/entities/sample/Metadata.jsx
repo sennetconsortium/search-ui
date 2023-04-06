@@ -51,12 +51,10 @@ export default class Metadata extends React.Component {
                     </div>
                     <div id="metadata-collapse" className="accordion-collapse collapse show">
                         <div className="accordion-body">
-                            <div className="table-responsive">
-                                <DataTable
-                                    columns={this.columns}
-                                    data={this.data}
-                                    pagination/>
-                            </div>
+                            <DataTable
+                                columns={this.columns}
+                                data={this.data}
+                                pagination/>
                         </div>
                     </div>
                 </div>

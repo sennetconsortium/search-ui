@@ -19,7 +19,7 @@ import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
-import {EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
+import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
 import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
@@ -39,7 +39,7 @@ function ViewDataset() {
         isPrimaryDataset,
         setIsPrimaryDataset
     } = useContext(VisualizationContext)
-    
+
     // Load the correct Vitessce view config
     useEffect(() => {
         if (data) {
@@ -64,7 +64,7 @@ function ViewDataset() {
             })
         }
     }, [data])
-    
+
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
@@ -179,47 +179,10 @@ function ViewDataset() {
                                            className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
                                     </div>
 
-                                    <div style={{width: '100%'}}>
-                                        <h4>Dataset</h4>
-                                        <h3>{data.sennet_id}</h3>
-
-                                        <div className="d-flex justify-content-between mb-2">
-                                            <div className="entity_subtitle icon_inline">
-                                                {data.data_types &&
-                                                    <>
-                                                        {data.data_types[0]}
-                                                    </>
-                                                }
-                                                {data.lab_dataset_id &&
-                                                    <>
-                                                        <span className="mx-2">|</span>
-                                                        {getOrganTypeFullName(data.origin_sample.organ)}
-                                                    </>
-                                                }
-
-                                                {data.doi_url &&
-                                                    <>
-                                                        |
-                                                        <a href={data.doi_url} className="ms-1 icon_inline">
-                                                            <span className="me-1">doi:{data.registered_doi}</span>
-                                                            <BoxArrowUpRight/>
-                                                        </a>
-                                                    </>
-                                                }
-                                            </div>
-                                            <div className="entity_subtitle icon_inline">
-                                                <CircleFill
-                                                    className={`me-1 text-${getStatusColor(data.status)}`}/>
-                                                <div className={'m-2'}>{data.status}</div>
-                                                |
-                                                {/*TODO: Add some access level?  | {data.mapped_data_access_level} Access*/}
-
-                                                <EntityViewHeaderButtons data={data} entity={cache.entities.dataset.toLowerCase()}
-                                                                         hasWritePrivilege={hasWritePrivilege}/>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                    <EntityViewHeader data={data}
+                                                      uniqueHeader={data.data_types[0]}
+                                                      entity={cache.entities.dataset.toLowerCase()}
+                                                      hasWritePrivilege={hasWritePrivilege}/>
 
                                     <div className="row">
                                         <div className="col-12">
@@ -229,7 +192,7 @@ function ViewDataset() {
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
                                                          data={data}/>
-                                            
+
                                             {/* Vitessce */}
                                             <SennetVitessce data={data}/>
 
