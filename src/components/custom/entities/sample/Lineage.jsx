@@ -60,12 +60,10 @@ export default class Lineage extends React.Component {
 
     render() {
         return (
-            <div className="table-responsive">
-                <DataTable
-                    columns={this.columns}
-                    data={this.data}
-                    pagination/>
-            </div>
+            <DataTable
+                columns={this.columns}
+                data={this.data}
+                pagination/>
         )
     }
 }

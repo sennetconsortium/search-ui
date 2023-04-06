@@ -137,8 +137,8 @@ function ViewSample() {
                                     </div>
 
                                     <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[1]}
-                                                      hasWritePrivilege={hasWritePrivilege} idKey='sample_category'/>
-
+                                                      hasWritePrivilege={hasWritePrivilege}
+                                                      uniqueHeader={data.sample_category}/>
 
                                     <div className="row">
                                         <div className="col-12">
