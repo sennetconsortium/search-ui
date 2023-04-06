@@ -1,23 +1,15 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
 import {APP_TITLE, getLogoutURL} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
-import {useContext, useEffect, useRef} from 'react'
+import {useContext} from 'react'
 import styles from '../appNavbar.module.css'
 import logo from './sennet-logo.png'
 import Image from 'next/image'
 import AppContext from '../../../context/AppContext'
-import Addon from "../js/addons/Addon";
 
 const AppNavbar = ({hidden, signoutHidden}) => {
     const {_t, isLoggedIn, logout, cache} = useContext(AppContext)
-    const hasInit = useRef(false)
 
-    useEffect(()=>{
-        if (hasInit.current === false) {
-            hasInit.current = true
-            Addon.navBar()
-        }
-    })
 
     const handleSession = (e) => {
         e.preventDefault()
@@ -104,12 +96,11 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                             {Object.keys(supportedMetadata()).map((entity, key) => (
                                 <div key={`dropdownItem-md-${entity}`}>
                                 { key !== 0 && <NavDropdown.Divider  /> }
-                                    <NavDropdown.Item className='dropdown-item is-heading dropdown-toggle' aria-controls={`submenu-md-${entity}`}>
+                                    <NavDropdown.Item className='dropdown-item is-heading' aria-controls={`submenu-md-${entity}`}>
                                         {entity}s
                                     </NavDropdown.Item>
 
                                    <div className={'submenu'} id={`submenu-md-${entity}`}>
-                                       <NavDropdown.Divider />
                                        {Object.entries(supportedMetadata()[entity].categories).map((type, typekey) => (
                                            <NavDropdown.Item key={`submenuItem-md-${type}`} href={`/edit/bulk/${type}?action=metadata&category=${type}`} className={'is-subItem'}>
                                                <span>{supportedMetadata()[entity].categories[typekey]}</span>

@@ -23,7 +23,6 @@
 .dropdown-menu {
   text-transform: capitalize;
   .submenu {
-    display: none;
     &.is-active {
       display: block;
     }
@@ -31,8 +30,9 @@
 }
 
 .dropdown-item {
-
   &.is-heading {
+    color: var(--bs-gray-800);
+    font-size: 90%;
     &:hover {
       cursor: pointer;
       background-color: transparent;
@@ -41,11 +41,5 @@
       }
     }
   }
-  &.is-subItem {
-    color: var(--bs-gray-800);
-    span {
-      padding-left: .4em;
-    }
-    font-size: 90%;
-  }
+
 }
