@@ -10,9 +10,11 @@ const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
     return (
         <div>
             {hasWritePrivilege &&
-                <Button aria-label={`Edit ${cache.entities[entity]}`} className="ms-3 js-btn--edit" href={`/edit/${entity}?uuid=${data.uuid}`}
+                <Button aria-label={`Edit ${cache.entities[entity]}`} className="js-btn--edit"
+                        href={`/edit/${entity}?uuid=${data.uuid}`}
                         variant="outline-primary rounded-0">{_t('Edit')}</Button>}{' '}
-                <Button target='_blank' aria-label={`View JSON of the ${cache.entities[entity]}`} className="ms-3 js-btn--json" href={`/api/json/${entity}?uuid=${data.uuid}`}
+            <Button target='_blank' aria-label={`View JSON of the ${cache.entities[entity]}`}
+                    className={`${hasWritePrivilege ? "mx-2" : ""} js-btn--json`} href={`/api/json/${entity}?uuid=${data.uuid}`}
                     variant="outline-primary rounded-0"><FiletypeJson/></Button>
         </div>
     )
