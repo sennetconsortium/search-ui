@@ -17,7 +17,6 @@ import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import {ENTITIES} from "../config/constants";
 import {List} from 'react-bootstrap-icons';
 
 function ViewSource() {
@@ -26,7 +25,7 @@ function ViewSource() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t} = useContext(AppContext);
+    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -131,7 +130,7 @@ function ViewSource() {
                                            className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
                                     </div>
 
-                                    <EntityViewHeader data={data} entity={Object.keys(ENTITIES)[0]}
+                                    <EntityViewHeader data={data} entity={cache.entities.source.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}/>
 
                                     <div className="row">

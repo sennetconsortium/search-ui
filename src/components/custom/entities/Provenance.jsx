@@ -5,7 +5,6 @@ import 'provenance-ui/dist/ProvenanceUI.css'
 import Spinner from '../Spinner'
 import {getAuth, getEntityEndPoint} from "../../../config/config";
 import AppModal from "../../AppModal";
-import {ArrowsAngleExpand} from "react-bootstrap-icons";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
@@ -26,6 +25,9 @@ function Provenance({nodeData}) {
     const activityHidden = useRef(true)
     const svgTranslate = useRef({})
     const { _t } = useContext(AppContext)
+    const [error, setError] = useState(false)
+    const [errorMessage, setErrorMessage] = useState(null)
+    let cbTimeout;
 
     const canvas = (ops) => $(`#${ops.options.selectorId}`)
 
@@ -35,6 +37,11 @@ function Provenance({nodeData}) {
     }
 
     const onAfterBuild = (ops) => {
+        const ui = window.ProvenanceTreeD3[ops.options.selectorId]
+        if (ui) {
+            ui.enableZoom()
+        }
+
         let hidden = activityHidden.current
         // Fine tune a bit based on graph size and UI viewport area
         const x1 = 50
@@ -55,6 +62,7 @@ function Provenance({nodeData}) {
             // Nudge a bit for better positioning
             ops.$el.svg.transition().call(ops.options.zoom.translateBy, -7, -x1)
         }
+        onInitializationComplete(ops.options.selectorId)
         canvas(ops).find('svg').css('opacity', 1)
     }
 
@@ -82,6 +90,14 @@ function Provenance({nodeData}) {
             sz.height = 500
         }
         return sz
+    }
+
+    const onInitializationComplete = (selectorId) => {
+        clearTimeout(cbTimeout)
+        cbTimeout = setTimeout(()=>{
+            const ui = window.ProvenanceTreeD3[selectorId]
+            ui.disableZoom()
+        }, 1000)
     }
 
     const graphOptions = {
@@ -127,6 +143,7 @@ function Provenance({nodeData}) {
                 width: 50
             }
         },
+        zoomActivated: true,
         visitedNodes: new Set(),
         initParentKey: DataConverterNeo4J.KEY_P_ENTITY,
         displayEdgeLabels: false,
@@ -136,6 +153,7 @@ function Provenance({nodeData}) {
         selectorId: 'neo4j--page',
         callbacks: {
             onCenterX,
+            onInitializationComplete,
             onAfterBuild,
             onSvgSizing
         }

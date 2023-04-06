@@ -5,4 +5,6 @@ export function deleteCookies() {
     deleteCookie('groups_token')
     deleteCookie('info')
     deleteCookie('user')
+    deleteCookie('adminUIAuthorized')
+    localStorage.removeItem('userPage')
 }

@@ -17,10 +17,9 @@ import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
-import {ENTITIES} from "../config/constants";
 import Metadata from "../components/custom/entities/sample/Metadata";
 import Contributors from "../components/custom/entities/dataset/Contributors";
-import {EntityViewHeader, EntityViewHeaderButtons} from "../components/custom/layout/entity/ViewHeader";
+import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
 import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
@@ -33,7 +32,7 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t} = useContext(AppContext)
+    const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
     const {
         showVitessce,
         setVitessceConfig,
@@ -86,7 +85,7 @@ function ViewDataset() {
             } else {
                 // set state with the result
                 setData(data);
-                setIsPrimaryDataset(data.immediate_ancestors.some(ancestor => ancestor.entity_type === ENTITIES.sample))
+                setIsPrimaryDataset(data.immediate_ancestors.some(ancestor => ancestor.entity_type === cache.entities.sample))
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
@@ -182,7 +181,7 @@ function ViewDataset() {
 
                                     <EntityViewHeader data={data}
                                                       uniqueHeader={data.data_types[0]}
-                                                      entity={Object.keys(ENTITIES)[2]}
+                                                      entity={cache.entities.dataset.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}/>
 
                                     <div className="row">

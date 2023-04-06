@@ -3,19 +3,16 @@ import AppContext from '../../../../context/AppContext'
 import {Button} from 'react-bootstrap';
 import {FiletypeJson} from 'react-bootstrap-icons';
 import {displayBodyHeader, getOrganTypeFullName, getStatusColor} from "../../js/functions";
-import {ENTITIES} from "../../../../config/constants";
 import PropTypes from 'prop-types'
 
 const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
-    const {_t} = useContext(AppContext)
+    const {_t, cache } = useContext(AppContext)
     return (
         <div>
             {hasWritePrivilege &&
-                <Button aria-label={`Edit ${ENTITIES[entity]}`} className="js-btn--edit"
-                        href={`/edit/${entity}?uuid=${data.uuid}`}
+                <Button aria-label={`Edit ${cache.entities[entity]}`} className="ms-3 js-btn--edit" href={`/edit/${entity}?uuid=${data.uuid}`}
                         variant="outline-primary rounded-0">{_t('Edit')}</Button>}{' '}
-            <Button target='_blank' aria-label={`View JSON of the ${ENTITIES[entity]}`} className="ms-3 js-btn--json"
-                    href={`/api/json/${entity}?uuid=${data.uuid}`}
+                <Button target='_blank' aria-label={`View JSON of the ${cache.entities[entity]}`} className="ms-3 js-btn--json" href={`/api/json/${entity}?uuid=${data.uuid}`}
                     variant="outline-primary rounded-0"><FiletypeJson/></Button>
         </div>
     )
@@ -28,10 +25,10 @@ EntityViewHeaderButtons.propTypes = {
 }
 
 function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
-    const {_t} = useContext(AppContext)
+    const {_t, cache } = useContext(AppContext)
     return (
         <div style={{width: '100%'}}>
-            <h4>{ENTITIES[entity]}</h4>
+            <h4>{cache.entities[entity]}</h4>
             <h3>{data.sennet_id}</h3>
             <div className="row mb-2">
                 <div className="col-md-6 col-sm-12 entity_subtitle icon_inline">

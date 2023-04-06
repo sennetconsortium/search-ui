@@ -7,7 +7,7 @@ import SampleCategory from "../../components/custom/edit/sample/SampleCategory";
 import AncestorInformationBox from "../../components/custom/entities/sample/AncestorInformationBox";
 import log from "loglevel";
 import {
-    cleanJson,
+    cleanJson, equals,
     fetchEntity,
     getDOIPattern,
     getHeaders,
@@ -25,7 +25,6 @@ import AppContext from '../../context/AppContext'
 import {EntityProvider} from '../../context/EntityContext'
 import EntityContext from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import {ENTITIES, SAMPLE_CATEGORY} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from 'react-bootstrap/Alert';
@@ -54,7 +53,7 @@ function EditSample() {
         getSampleEntityConstraints,
         checkMetadata, getMetadataNote
     } = useContext(EntityContext)
-    const {_t, filterImageFilesToAdd} = useContext(AppContext)
+    const {_t, cache, filterImageFilesToAdd} = useContext(AppContext)
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
@@ -84,11 +83,11 @@ function EditSample() {
                     const provenance_constraints = body.description[0].description
                     let sub_types = []
                     provenance_constraints.forEach(constraint => {
-                        if (constraint.entity_type.toLowerCase() === 'sample') {
+                        if (equals(constraint.entity_type, cache.entities.sample)) {
                             sub_types = sub_types.concat(constraint.sub_type || [])
                         }
                     })
-                    const filter = Object.entries(SAMPLE_CATEGORY).filter(sample_category => sub_types.includes(sample_category[0]));
+                    const filter = Object.entries(cache.sampleCategories).filter(sample_category => sub_types.includes(sample_category[0]));
                     let sample_categories = {}
                     filter.forEach(entry => sample_categories[entry[0]] = entry[1])
                     setSampleCategories(sample_categories)
@@ -304,9 +303,9 @@ function EditSample() {
 
             checkMetadata('sample_category', supportsMetadata())
 
-            await update_create_entity(uuid, json, editMode, ENTITIES.sample, router).then((response) => {
+            await update_create_entity(uuid, json, editMode, cache.entities.sample, router).then((response) => {
                 setModalDetails({
-                    entity: ENTITIES.sample, type: response.sample_category,
+                    entity: cache.entities.sample, type: response.sample_category,
                     typeHeader: _t('Sample Category'), response
                 })
 
@@ -336,21 +335,20 @@ function EditSample() {
     };
 
     const supportsMetadata = () => {
-        {/*# TODO: Use ontology*/}
-        return values.sample_category !== 'organ'
+        return values.sample_category !== cache.sampleCategories.Organ
     }
 
     const metadataNote = () => {
         {/*# TODO:  1. Update copy text and mailto, format. 2. Use ontology*/}
         if (isEditMode() && values.metadata) {
             let text = []
-            text.push(getMetadataNote(ENTITIES.sample, 0))
+            text.push(getMetadataNote(cache.entities.sample, 0))
             if (data.sample_category === values.sample_category) {
                 alertStyle.current = 'info'
-                text.push(getMetadataNote(ENTITIES.sample, 1))
+                text.push(getMetadataNote(cache.entities.sample, 1))
             } else {
                 alertStyle.current = 'warning'
-                text.push(getMetadataNote(ENTITIES.sample, 2))
+                text.push(getMetadataNote(cache.entities.sample, 2))
             }
             return text
         } else {
@@ -389,7 +387,7 @@ function EditSample() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={ENTITIES.sample} isEditMode={isEditMode()} data={data}/>
+                                <EntityHeader entity={cache.entities.sample} isEditMode={isEditMode()} data={data}/>
 
                             }
                             bodyContent={
@@ -425,7 +423,7 @@ function EditSample() {
                                                 set_organ_group_hide={set_organ_group_hide}
                                                 organ_other_hide={organ_other_hide}
                                                 set_organ_other_hide={set_organ_other_hide}
-                                                sample_categories={sampleCategories === null ? SAMPLE_CATEGORY : sampleCategories}
+                                                sample_categories={sampleCategories === null ? cache.sampleCategories : sampleCategories}
                                                 data={values}
                                                 source={source}
                                                 onChange={_onChange}/>
@@ -473,9 +471,9 @@ function EditSample() {
                                                        values={values}
                                                        setValues={setValues}/>
 
-                                    { values.sample_category && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.sample} subType={values.sample_category}  /> }
+                                    { values.sample_category && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.sample} subType={values.sample_category}  /> }
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--submit" onClick={handleSave}
+                                        <Button variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
                                                 disabled={disableSubmit}>
                                             {_t('Save')}
 

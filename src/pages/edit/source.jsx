@@ -3,7 +3,7 @@ import {useRouter} from 'next/router';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {cleanJson, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
+import {cleanJson, equals, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {update_create_entity} from "../../lib/services";
 import SourceType from "../../components/custom/edit/source/SourceType";
@@ -14,7 +14,6 @@ import Header from "../../components/custom/layout/Header";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import {ENTITIES} from "../../config/constants"
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
@@ -37,7 +36,7 @@ function EditSource() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         metadata, setMetadata, checkMetadata, getMetadataNote } = useContext(EntityContext)
-    const { _t, filterImageFilesToAdd } = useContext(AppContext)
+    const { _t, filterImageFilesToAdd, cache } = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
@@ -118,8 +117,8 @@ function EditSource() {
 
             checkMetadata('source_type', supportsMetadata())
 
-            await update_create_entity(uuid, json, editMode, ENTITIES.source, router).then((response) => {
-                setModalDetails({entity: ENTITIES.source, type: response.source_type, typeHeader: _t('Source Type'), response})
+            await update_create_entity(uuid, json, editMode, cache.entities.source, router).then((response) => {
+                setModalDetails({entity: cache.entities.source, type: response.source_type, typeHeader: _t('Source Type'), response})
                 if (response.image_files) {
                     setValues(prevState => ({...prevState, image_files: response.image_files}))
                 }
@@ -137,18 +136,16 @@ function EditSource() {
     };
 
     const supportsMetadata = () => {
-        {/*# TODO: Use ontology*/}
-        return values.source_type === 'Mouse'
+        return values.source_type === cache.sourceTypes.Mouse
     }
 
     const metadataNote = () => {
-        {/*# TODO:  1. Update copy text and mailto, format. 2. Use ontology*/}
         let text = []
-        text.push(getMetadataNote(ENTITIES.source, 0))
-        if (values.source_type === 'Human') {
+        text.push(getMetadataNote(cache.entities.source, 0))
+        if (equals(values.source_type, cache.sourceTypes.Human)) {
             alertStyle.current = 'info'
             if (values.metadata) {
-                text.push(getMetadataNote(ENTITIES.source, 1))
+                text.push(getMetadataNote(cache.entities.source, 1))
                 return text
             } else {
                 // TODO: Card #444 <a href={`mailto:`}>curator</a>
@@ -159,9 +156,9 @@ function EditSource() {
                 </>
             }
         } else {
-            if (isEditMode() && values.metadata && data.source_type === 'Human') {
+            if (isEditMode() && values.metadata && equals(data.source_type, cache.sourceTypes.Human)) {
                 alertStyle.current = 'warning'
-                text.push(getMetadataNote(ENTITIES.source, 2, 'type'))
+                text.push(getMetadataNote(cache.entities.source, 2, 'type'))
                 return text
             } else {
                 return false
@@ -190,7 +187,7 @@ function EditSource() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={ENTITIES.source} isEditMode={isEditMode()} data={data} />
+                                <EntityHeader entity={cache.entities.source} isEditMode={isEditMode()} data={data} />
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSave}>
@@ -229,9 +226,9 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={ENTITIES.source} />}*/}
+                                    {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}*/}
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSave}
+                                        <Button variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
                                                 disabled={disableSubmit}>
                                             {_t('Save')}
                                         </Button>

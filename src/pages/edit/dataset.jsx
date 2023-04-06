@@ -4,12 +4,10 @@ import 'bootstrap/dist/css/bootstrap.css'
 import {Button, Form} from 'react-bootstrap'
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
-import Popover from 'react-bootstrap/Popover'
 import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
 import {get_headers, update_create_dataset} from '../../lib/services'
-import {cleanJson, fetchEntity, getHeaders, getRequestHeaders} from '../../components/custom/js/functions'
+import {cleanJson, equals, fetchEntity, getHeaders, getRequestHeaders} from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
 import DataTypes from '../../components/custom/edit/dataset/DataTypes'
 import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
@@ -21,7 +19,6 @@ import Header from '../../components/custom/layout/Header'
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
-import {DATA_TYPES, ENTITIES} from '../../config/constants'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
@@ -48,7 +45,7 @@ export default function EditDataset() {
         getSampleEntityConstraints,
         buildConstraint
     } = useContext(EntityContext)
-    const {_t} = useContext(AppContext)
+    const {_t, cache} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
@@ -59,7 +56,7 @@ export default function EditDataset() {
             const fullBody = [
                 {
                     descendants: [{
-                        entity_type: ENTITIES.dataset
+                        entity_type: cache.entities.dataset
                     }]
                 }
             ]
@@ -91,12 +88,12 @@ export default function EditDataset() {
 
                         let sub_types = []
                         currentConstraints.forEach(constraint => {
-                            if (constraint.entity_type.toLowerCase() === 'dataset') {
+                            if (equals(constraint.entity_type, cache.entities.dataset)) {
                                 sub_types = sub_types.concat(constraint.sub_type || [])
                             }
                         })
                         if (sub_types.length) {
-                            const filter = Object.entries(DATA_TYPES).filter(data_type => sub_types.includes(data_type[0]));
+                            const filter = Object.entries(cache.dataTypes).filter(data_type => sub_types.includes(data_type[0]));
                             let data_types = {}
                             filter.forEach(entry => data_types[entry[0]] = entry[1])
                             // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
@@ -104,7 +101,7 @@ export default function EditDataset() {
                         }
                     } // end for
                     if ($.isEmptyObject(constraintsDataTypes)) {
-                        setDataTypes(DATA_TYPES)
+                        setDataTypes(cache.dataTypes)
                     } else {
                         setDataTypes(constraintsDataTypes)
                     }
@@ -243,7 +240,7 @@ export default function EditDataset() {
 
                 await update_create_dataset(uuid, json, editMode, router).then((response) => {
                     setModalDetails({
-                        entity: ENTITIES.dataset,
+                        entity: cache.entities.dataset,
                         type: (response.data_types ? response.data_types[0] : null),
                         typeHeader: _t('Data Type'),
                         response
@@ -285,7 +282,7 @@ export default function EditDataset() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={ENTITIES.dataset} isEditMode={isEditMode()} data={data}/>
+                                <EntityHeader entity={cache.entities.dataset} isEditMode={isEditMode()} data={data}/>
                             }
                             bodyContent={
                                 <Form noValidate validated={validated}>
@@ -365,7 +362,7 @@ export default function EditDataset() {
 
                                     {/*/!*Data Types*!/*/}
                                     {editMode &&
-                                        <DataTypes data_types={dataTypes === null ? DATA_TYPES : dataTypes}
+                                        <DataTypes data_types={dataTypes === null ? cache.dataTypes : dataTypes}
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 
@@ -383,7 +380,7 @@ export default function EditDataset() {
                                         }
                                         { data['status'] !== 'Processing' &&
                                             <SenNetPopover text={'Save changes to this dataset'} className={'save-button'}>
-                                                <Button variant="outline-primary rounded-0 js-btn--submit"
+                                                <Button variant="outline-primary rounded-0 js-btn--save"
                                                         className={'me-2'}
                                                         onClick={handleSave}
                                                         disabled={disableSubmit}>
