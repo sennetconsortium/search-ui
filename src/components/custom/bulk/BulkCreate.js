@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useContext} from 'react';
 import {styled} from '@mui/material/styles';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -12,23 +12,30 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
-import {getAuth} from "../../../config/config";
+import {Row, Col} from "react-bootstrap";
+import {Download, ArrowRightSquareFill} from "react-bootstrap-icons";
+import {getAuth, getIngestEndPoint} from "../../../config/config";
 import Spinner from "../Spinner";
 import AppFooter from "../layout/AppFooter";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
-import {formatErrorColumn, tableColumns, formatErrorColumnTimer} from "../edit/MetadataUpload";
+import {formatErrorColumn, tableColumns, formatErrorColumnTimer, getErrorList} from "../edit/MetadataUpload";
 import DataTable from 'react-data-table-component';
+import {equals} from "../js/functions";
+import AppContext from "../../../context/AppContext";
+import {get_headers, get_auth_header} from "../../../lib/services";
 
 
 export default function BulkCreate({
                                        entityType,
+                                       subType,
                                        exampleFileName,
                                        bulkUploadUrl,
                                        bulkUrl,
                                        userWriteGroups,
                                        handleHome,
+                                       isMetadata=false,
                                    }) {
     const buttonVariant = "btn btn-outline-primary rounded-0"
     const inputFileRef = useRef(null)
@@ -42,9 +49,11 @@ export default function BulkCreate({
     const [bulkSuccess, setBulkSuccess] = useState(null)
     const [bulkResponse, setBulkResponse] = useState([])
     const [isLoading, setIsLoading] = useState(null)
-    const [steps, setSteps] = useState(['Attach Your File', 'Review Validation', 'Complete'])
+    const stepLabels = ['Attach Your File', 'Review Validation', 'Complete']
+    const [steps, setSteps] = useState(stepLabels)
     const [selectedGroup, setSelectedGroup] = useState(null)
     const [showModal, setShowModal] = useState(true)
+    const {cache} = useContext(AppContext)
 
     const ColorlibConnector = styled(StepConnector)(({theme}) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -119,23 +128,72 @@ export default function BulkCreate({
 
     useEffect(() => {
         if (userWriteGroups && getUserWriteGroupsLength() > 1) {
-            setSteps(['Attach Your File', 'Review Validation', 'Select group', 'Complete'])
+            if (isMetadata) {
+                setSteps(stepLabels)
+            } else {
+                let extraSteps = Array.from(stepLabels)
+                const lastStep = extraSteps.pop()
+                extraSteps.push('Select group')
+                extraSteps.push(lastStep)
+                setSteps(extraSteps)
+            }
         }
         if (userWriteGroups && getUserWriteGroupsLength() === 1) {
             setSelectedGroup(userWriteGroups[0].uuid)
         }
     }, [userWriteGroups])
 
-    async function postBulkUploads() {
+    const getEntityValidationUrl = () => {
+        return `${getIngestEndPoint()}${entityType}s/bulk/validate`
+    }
+
+    const getEntityRegistrationUrl = () => {
+        return `${getIngestEndPoint()}${entityType}s/bulk/register`
+    }
+
+    const getMetadataValidationUrl = () => {
+        return `${getIngestEndPoint()}metadata/validate`
+    }
+
+    async function metadataValidation() {
+        setIsLoading(true)
+        const formData = new FormData()
+        formData.append('metadata', file)
+        formData.append('entity_type', cache.entities[entityType])
+        formData.append('sub_type', subType)
+        formData.append('validate_uuids', '1')
+        formData.append('ui_type', 'gui')
+        const requestOptions = {
+            method: 'POST',
+            headers: get_auth_header(),
+            body: formData
+        }
+        const response = await fetch(getMetadataValidationUrl(), requestOptions)
+        const data = await response.json()
+        if (!response.ok) {
+            setError({1: true})
+            const errorList = getErrorList(data)
+            setErrorMessage(errorList)
+            formatErrorColumnTimer('`')
+        } else {
+            setTempId(data.description)
+            setValidationSuccess(true)
+            setIsNextButtonDisabled(false)
+        }
+        setIsLoading(false)
+    }
+
+    // This makes a request to ingest-api, validating the upload
+    async function entityValidation() {
         setIsLoading(true)
         const formData = new FormData()
         formData.append('file', file)
         const requestOptions = {
             method: 'POST',
-            headers: {'Authorization': 'Bearer ' + getAuth()},
+            headers: get_auth_header(),
             body: formData
         }
-        const response = await fetch(bulkUploadUrl, requestOptions)
+        const response = await fetch(getEntityValidationUrl(), requestOptions)
         const data = await response.json()
         if (!response.ok) {
             setError({1: true})
@@ -149,23 +207,25 @@ export default function BulkCreate({
         setIsLoading(false)
     }
 
-    async function postBulk() {
+    async function entityRegistration() {
         setIsLoading(true)
         const body = {temp_id: tempId, group_uuid: selectedGroup}
         const requestOptions = {
             method: 'POST',
-            headers: {'Authorization': 'Bearer ' + getAuth(), 'Content-Type': 'application/json'},
+            headers: get_headers(),
             body: JSON.stringify(body)
         }
-        const response = await fetch(bulkUrl, requestOptions)
-        const data = await response.json()
-        if (!response.ok) {
+        // const response = await fetch(getEntityRegistrationUrl(), requestOptions)
+        // const data = await response.json()
+        if (false) { //if (!response.ok) {
             setError(getStepsLength() === 3 ? {2: true} : {3: true})
             setIsNextButtonDisabled(true)
             setErrorMessage(data.description)
         } else {
+            let dummyResponse = {"code":200,"description":{"1":{"created_by_user_displayname":"Lisa-Ann Bruney","created_by_user_email":"LIB118@pitt.edu","created_by_user_sub":"cd17bfa7-24fd-49ca-82ec-2d456ba53730","created_timestamp":1680890041829,"data_access_level":"consortium","description":"ww2 whip","entity_type":"Sample","group_name":"University of Michigan TDA","group_uuid":"7fe86fe2-ee72-11ec-b04f-67218ab1b594","lab_tissue_sample_id":"19-002","last_modified_timestamp":1680890041829,"last_modified_user_displayname":"Lisa-Ann Bruney","last_modified_user_email":"LIB118@pitt.edu","last_modified_user_sub":"cd17bfa7-24fd-49ca-82ec-2d456ba53730","organ":"BR","sample_category":"organ","sennet_id":"SNT297.NZPK.294","uuid":"4accfc4d40087f15012621512bfaae24"}},"name":"OK"}
             setBulkSuccess(true)
-            setBulkResponse(data.description)
+            setBulkResponse(dummyResponse.description)
+            //setBulkResponse(data.description)
             setIsNextButtonDisabled(false)
         }
         setIsLoading(false)
@@ -184,28 +244,51 @@ export default function BulkCreate({
         setIsNextButtonDisabled(false)
     }
 
-    const handleNext = () => {
+    const onRegisterNext = () => {
         setIsNextButtonDisabled(true)
         if (getStepsLength() === 3) {
             if (activeStep === 0) {
-                postBulkUploads()
+                entityValidation()
             } else if (activeStep === 1) {
-                postBulk()
+                entityRegistration()
             } else if (activeStep === 2) {
                 handleReset()
                 return
             }
         } else {
             if (activeStep === 0) {
-                postBulkUploads()
+                entityValidation()
             } else if (activeStep === 2) {
-                postBulk()
+                entityRegistration()
             } else if (activeStep === 3) {
                 handleReset()
                 return
             }
         }
         setActiveStep(prevState => prevState + 1)
+    }
+
+    const onMetadataNext = () => {
+        setIsNextButtonDisabled(true)
+        if (getStepsLength() === 3) {
+            if (activeStep === 0) {
+                metadataValidation()
+            } else if (activeStep === 1) {
+                entityRegistration()
+            } else if (activeStep === 2) {
+                handleReset()
+                return
+            }
+        }
+        setActiveStep(prevState => prevState + 1)
+    }
+
+    const handleNext = () => {
+        if (isMetadata) {
+            onMetadataNext()
+        } else {
+            onRegisterNext()
+        }
     }
 
     const handleBack = () => {
@@ -251,33 +334,131 @@ export default function BulkCreate({
     }
 
     function getModalBody() {
-        let body = `Your ${entityType} were created:\n`
-        if (entityType.toLowerCase() === 'sources') {
-            body += `Source types: \n${Array.from(new Set(Object.values(bulkResponse).map(each =>
-                '\t' + each.source_type.charAt(0).toUpperCase() + each.source_type.slice(1) + '\n'
-            )))}`
-        } else if (entityType.toLowerCase() === 'samples') {
-            body += `Sample categories: \n${Array.from(new Set(Object.values(bulkResponse).map(each => {
-                    let organ_type = null
-                    if (each.sample_category === 'organ') {
-                        organ_type = each.organ
-                    }
-                    let result = '\t' + each.sample_category.charAt(0).toUpperCase() + each.sample_category.slice(1)
-                    if (organ_type !== null) {
-                        result += ` (${organ_type})` + '\n'
-                    } else {
-                        result += '\n'
-                    }
-                    return result
-                }
-            )))}`
-        } else if (entityType.toLowerCase() === 'datasets') {
-            body += `Data types: \n${Array.from(new Set(Object.values(bulkResponse).map(each =>
-                '\t' + each.data_types[0].charAt(0).toUpperCase() + each.data_types[0].slice(1) + '\n'
-            )))}`
+        let body = []
+        // body.push(
+        //     <p>Your <code>{cache.entities[entityType]}s</code> were {getVerb(true, true)}:</p>
+        // )
+        body.push(<p>
+            <strong>Group Name:</strong>  {bulkResponse[1].group_name}
+        </p>)
+        let typeCol;
+        let labIdCol
+        if (equals(entityType, cache.entities.source)) {
+            typeCol = 'source_type'
+            labIdCol = 'lab_source_id'
+        } else if (equals(entityType, cache.entities.sample)) {
+            typeCol = 'sample_category'
+            labIdCol = 'lab_tissue_sample_id'
+        } else {
+            typeCol = 'data_types'
+            labIdCol = 'lab_dataset_id'
         }
-        body += 'Group Name: ' + bulkResponse[1].group_name + '\n' + 'SenNet IDs: \n' + Object.values(bulkResponse).map(each => '\t' + each.sennet_id + '\n')
-        return body.replace(/,/g, '')
+        let columns = [{
+                name: 'lab_id',
+                selector: row => row[labIdCol],
+                sortable: true,
+                width: '150px'
+            },
+            {
+                name: 'sennet_id',
+                selector: row => row.sennet_id,
+                sortable: true,
+                width: '170px'
+            },
+            {
+                name: typeCol,
+                selector: row => row[typeCol],
+                sortable: true,
+                width: '160px'
+            }
+        ]
+
+        if (equals(entityType, cache.entities.sample)) {
+            columns.push({
+                name: 'organ_type',
+                selector: row => row.organ ? row.organ : '',
+                sortable: true,
+                width: '150px'
+            })
+        }
+
+        let tableData = Object.values(bulkResponse)
+        body.push(
+            <DataTable columns={columns} data={tableData} pagination />
+        )
+
+        let categories = []
+        Object.values(bulkResponse).map(each => {
+            categories.push(each[typeCol])
+        })
+
+        if (categories.length === 1) {
+            body.push(
+                <Row className={'mt-4 text-right'}>
+
+                    <Col>
+                        <button className={'btn btn-outline-primary rounded-0'}>Download registered data <Download /></button>
+                        <button className={'btn btn-primary rounded-0'}>Continue to metadata upload <ArrowRightSquareFill /></button></Col>
+
+                </Row>
+            )
+        }
+        return body;
+    }
+
+    // function getModalBodyOld() {
+    //     let body = `Your ${cache.entities[entityType]}s were ${getVerb(true, true)}:\n`
+    //     if (equals(entityType, cache.entities.source)) {
+    //         body += `Source types: \n${Array.from(new Set(Object.values(bulkResponse).map(each =>
+    //             '\t' + each.source_type.charAt(0).toUpperCase() + each.source_type.slice(1) + '\n'
+    //         )))}`
+    //     } else if (equals(entityType, cache.entities.sample)) {
+    //         body += `Sample categories: \n${Array.from(new Set(Object.values(bulkResponse).map(each => {
+    //                 let organ_type = null
+    //                 if (equals(each.sample_category, cache.sampleCategories.Organ)) {
+    //                     organ_type = each.organ
+    //                 }
+    //                 let result = '\t' + each.sample_category.charAt(0).toUpperCase() + each.sample_category.slice(1)
+    //                 if (organ_type !== null) {
+    //                     result += ` (${organ_type})` + '\n'
+    //                 } else {
+    //                     result += '\n'
+    //                 }
+    //                 return result
+    //             }
+    //         )))}`
+    //     } else if (equals(entityType, cache.entities.dataset)) {
+    //         body += `Data types: \n${Array.from(new Set(Object.values(bulkResponse).map(each =>
+    //             '\t' + each.data_types[0].charAt(0).toUpperCase() + each.data_types[0].slice(1) + '\n'
+    //         )))}`
+    //     }
+    //
+    //     body += 'Group Name: ' + bulkResponse[1].group_name + '\n' + 'SenNet IDs: \n' + Object.values(bulkResponse).map(each => '\t' + each.sennet_id + '\n')
+    //     return body.replace(/,/g, '')
+    // }
+
+    const isAtLastStep = () => {
+        return (activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4)
+    }
+
+    const getVerb = (past = false, lowercase = false) => {
+        let verb = isMetadata ? 'Upload' : 'Register'
+        verb = past ? `${verb}ed` : verb
+        return lowercase ? verb.toLowerCase() : verb
+    }
+
+    const getTitle = () => {
+        const entity = cache.entities[entityType]
+        let title = `${getVerb()} ${entity}s`
+        if (isMetadata) {
+            title = `${getVerb()} ${entity} ${subType}s' Metadata`
+        }
+        return title
+    }
+
+    const getFilename = () => {
+        let filename = `example_${entityType}`
+        return isMetadata ? `${filename}_${subType}_metadata` : filename
     }
 
     return (
@@ -291,11 +472,11 @@ export default function BulkCreate({
                     <a
                         download
                         className={buttonVariant}
-                        href={`/${exampleFileName}`}
+                        href={`/${getFilename().toLowerCase()}.tsv`}
                     >
                         <FileDownloadIcon/> {' '} EXAMPLE.TSV
                     </a>
-                    <h1 className={'text-center'}>Upload {entityType}</h1>
+                    <h1 className={'text-center'}>{getTitle()}</h1>
                     <div className={'p-4 text-center'}>To register multiple items at one time, upload a tsv file in the
                         format specified by the example file.
                     </div>
@@ -320,7 +501,7 @@ export default function BulkCreate({
                     {isLoading && <Spinner/>}
                     {
                         errorMessage && <div className='c-metadataUpload__table table-responsive has-error'>
-                            <DataTable columns={tableColumns} data={errorMessage} pagination />
+                            <DataTable columns={tableColumns} data={isMetadata ? errorMessage.data : errorMessage} pagination />
                         </div>
                     }
                     {activeStep === 1 && !errorMessage && validationSuccess &&
@@ -328,10 +509,11 @@ export default function BulkCreate({
                             Validation successful please continue onto the next step
                         </Alert>}
                     {
-                        (activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4) && !errorMessage && bulkSuccess &&
+                        isAtLastStep() && !errorMessage && bulkSuccess &&
                         <AppModal
-                            modalTitle={entityType + ' created'}
+                            modalTitle={`${cache.entities[entityType]}s ${getVerb(true, true)}`}
                             modalBody={getModalBody()}
+                            modalSize='lg'
                             showModal={showModal}
                             handleHome={handleHome}
                             handleClose={() => setShowModal(false)}
@@ -339,7 +521,7 @@ export default function BulkCreate({
                         />
                     }
                     {
-                        activeStep === 2 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
+                        !isMetadata && activeStep === 2 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
                         <Grid container className={'text-center mt-5'}>
                             <Grid item xs></Grid>
                             <Grid item xs>
