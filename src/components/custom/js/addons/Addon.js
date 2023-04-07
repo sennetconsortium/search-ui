@@ -22,30 +22,6 @@ class Addon {
         }
     }
 
-    static cssClasses() {
-        return {
-            active: 'is-active'
-        }
-    }
-
-    static navBar() {
-        const classes = Addon.cssClasses()
-        const sel = {
-            heading: '.dropdown-item.is-heading',
-            submenu: '+ .submenu'
-        }
-        $('.nav-link').on('click', (e)=>{
-            $(sel.heading).find(sel.submenu).removeClass(classes.active)
-        })
-        $('body').on('mouseover', sel.heading, (e) => {
-            $(sel.heading).find(sel.submenu).removeClass(classes.active)
-            $(e.currentTarget).find(sel.submenu).addClass(classes.active)
-        }).on('click', sel.heading, (e) => {
-            e.stopPropagation()
-            $(e.currentTarget).find(sel.submenu).toggleClass(classes.active)
-        })
-    }
-
     handleKeydown(e, trigger) {
         this.currentTarget(e).trigger(trigger)
         this.currentTarget(e).focus()

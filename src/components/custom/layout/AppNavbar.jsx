@@ -102,9 +102,10 @@ const AppNavbar = ({hidden, signoutHidden}) => {
 
                                    <div className={'submenu'} id={`submenu-md-${entity}`}>
                                        {Object.entries(supportedMetadata()[entity].categories).map((type, typekey) => (
-                                           <NavDropdown.Item key={`submenuItem-md-${type}`} href={`/edit/bulk/${type}?action=metadata&category=${type}`} className={'is-subItem'}>
-                                               <span>{supportedMetadata()[entity].categories[typekey]}</span>
+                                           <NavDropdown.Item key={`submenuItem-md-${type[1]}`} href={`/edit/bulk/${entity.toLowerCase()}?action=metadata&category=${type[1]}`} className={'is-subItem'}>
+                                               <span>{type[1]}</span>
                                            </NavDropdown.Item>
+
                                        ))}
                                    </div>
                                 </div>
