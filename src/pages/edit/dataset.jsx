@@ -212,7 +212,7 @@ export default function EditDataset() {
     const handleSave = async (event) => {
         setDisableSubmit(true);
 
-        const form = event.currentTarget.parentElement.parentElement;
+        const form = $(event.currentTarget.form)[0]
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();

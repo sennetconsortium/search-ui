@@ -35,6 +35,7 @@ import ImageSelector from "../../components/custom/edit/ImageSelector";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
+import $ from "jquery";
 
 
 function EditSample() {
@@ -266,7 +267,7 @@ function EditSample() {
     const handleSave = async (event) => {
         setDisableSubmit(true);
 
-        const form = event.currentTarget.parentElement.parentElement;
+        const form = $(event.currentTarget.form)[0]
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
