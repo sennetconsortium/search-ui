@@ -22,7 +22,7 @@ import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
 import {formatErrorColumn, tableColumns, formatErrorColumnTimer, getErrorList} from "../edit/MetadataUpload";
 import DataTable from 'react-data-table-component';
-import {equals} from "../js/functions";
+import {createDownloadUrl, equals, tableDataToTSV} from "../js/functions";
 import AppContext from "../../../context/AppContext";
 import {get_headers, get_auth_header} from "../../../lib/services";
 
@@ -333,6 +333,24 @@ export default function BulkCreate({
         return error !== null && error[index] !== null && error[index] === true
     }
 
+    function generateTSVData(columns, labIdCol) {
+        let tableDataTSV = ''
+        let _colName
+        for (let col of columns) {
+            tableDataTSV += `${col.name}\t`
+        }
+        tableDataTSV += "\n"
+        for (let col of columns) {
+            _colName = equals(col.name, 'lab_id') ? labIdCol : col.name
+            _colName = equals(col.name, 'organ_type') ? 'organ' : _colName
+            for (let key in bulkResponse) {
+                tableDataTSV += `${bulkResponse[key][_colName]}\t`
+            }
+        }
+        tableDataTSV += "\n"
+        return createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
+    }
+
     function getModalBody() {
         let body = []
         // body.push(
@@ -383,6 +401,8 @@ export default function BulkCreate({
         }
 
         let tableData = Object.values(bulkResponse)
+        const downloadURL = generateTSVData(columns, labIdCol)
+
         body.push(
             <DataTable columns={columns} data={tableData} pagination />
         )
@@ -397,7 +417,8 @@ export default function BulkCreate({
                 <Row className={'mt-4 text-right'}>
 
                     <Col>
-                        <button className={'btn btn-outline-primary rounded-0'}>Download registered data <Download /></button>
+                        <a role={'button'} className={'btn btn-outline-primary rounded-0'}
+                           href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>
                         <button className={'btn btn-primary rounded-0'}>Continue to metadata upload <ArrowRightSquareFill /></button></Col>
 
                 </Row>
@@ -405,37 +426,6 @@ export default function BulkCreate({
         }
         return body;
     }
-
-    // function getModalBodyOld() {
-    //     let body = `Your ${cache.entities[entityType]}s were ${getVerb(true, true)}:\n`
-    //     if (equals(entityType, cache.entities.source)) {
-    //         body += `Source types: \n${Array.from(new Set(Object.values(bulkResponse).map(each =>
-    //             '\t' + each.source_type.charAt(0).toUpperCase() + each.source_type.slice(1) + '\n'
-    //         )))}`
-    //     } else if (equals(entityType, cache.entities.sample)) {
-    //         body += `Sample categories: \n${Array.from(new Set(Object.values(bulkResponse).map(each => {
-    //                 let organ_type = null
-    //                 if (equals(each.sample_category, cache.sampleCategories.Organ)) {
-    //                     organ_type = each.organ
-    //                 }
-    //                 let result = '\t' + each.sample_category.charAt(0).toUpperCase() + each.sample_category.slice(1)
-    //                 if (organ_type !== null) {
-    //                     result += ` (${organ_type})` + '\n'
-    //                 } else {
-    //                     result += '\n'
-    //                 }
-    //                 return result
-    //             }
-    //         )))}`
-    //     } else if (equals(entityType, cache.entities.dataset)) {
-    //         body += `Data types: \n${Array.from(new Set(Object.values(bulkResponse).map(each =>
-    //             '\t' + each.data_types[0].charAt(0).toUpperCase() + each.data_types[0].slice(1) + '\n'
-    //         )))}`
-    //     }
-    //
-    //     body += 'Group Name: ' + bulkResponse[1].group_name + '\n' + 'SenNet IDs: \n' + Object.values(bulkResponse).map(each => '\t' + each.sennet_id + '\n')
-    //     return body.replace(/,/g, '')
-    // }
 
     const isAtLastStep = () => {
         return (activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4)
