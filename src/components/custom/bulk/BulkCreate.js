@@ -24,7 +24,7 @@ import {formatErrorColumn, tableColumns, formatErrorColumnTimer, getErrorList} f
 import DataTable from 'react-data-table-component';
 import {createDownloadUrl, equals, tableDataToTSV} from "../js/functions";
 import AppContext from "../../../context/AppContext";
-import {get_headers, get_auth_header} from "../../../lib/services";
+import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
 
 
 export default function BulkCreate({
@@ -176,12 +176,21 @@ export default function BulkCreate({
             setErrorMessage(errorList)
             formatErrorColumnTimer('`')
         } else {
-            setTempId(data.description)
+            setBulkResponse(data.description)
             setValidationSuccess(true)
             setIsNextButtonDisabled(false)
         }
         setIsLoading(false)
     }
+
+    async function metadataCommit() {
+        for (let response of bulkResponse) {
+            let item = response.description
+            let result = await update_create_entity(item.uuid, item)
+            console.log(result)
+        }
+    }
+
 
     // This makes a request to ingest-api, validating the upload
     async function entityValidation() {
@@ -274,7 +283,7 @@ export default function BulkCreate({
             if (activeStep === 0) {
                 metadataValidation()
             } else if (activeStep === 1) {
-                entityRegistration()
+                metadataCommit()
             } else if (activeStep === 2) {
                 handleReset()
                 return
@@ -351,7 +360,8 @@ export default function BulkCreate({
         return createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
     }
 
-    function getModalBody() {
+
+    function getEntityModalBody() {
         let body = []
         // body.push(
         //     <p>Your <code>{cache.entities[entityType]}s</code> were {getVerb(true, true)}:</p>
@@ -425,6 +435,18 @@ export default function BulkCreate({
             )
         }
         return body;
+    }
+
+    function getMetadataModalBody() {
+        let body = []
+        body.push(
+            <p>Your <code>{cache.entities[entityType]}s'</code> metadata were {getVerb(true, true)}:</p>
+        )
+        return body
+    }
+
+    function getModalBody() {
+        return isMetadata ? getMetadataModalBody() : getEntityModalBody()
     }
 
     const isAtLastStep = () => {
