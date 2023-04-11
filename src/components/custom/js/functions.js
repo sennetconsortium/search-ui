@@ -176,7 +176,7 @@ export function urlify(text, blank = true, max = 40) {
 
 export function equals(s1, s2, insensitive = true) {
     let res = s1 === s2
-    if (insensitive && !_.isUndefined(s1) && !_.isUndefined(s2)) {
+    if (insensitive && s1 !== undefined && s2 !== undefined) {
         res = s1.toLowerCase() === s2.toLowerCase()
     }
     return res
