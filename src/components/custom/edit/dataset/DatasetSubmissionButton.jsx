@@ -32,7 +32,10 @@ export default class DatasetSubmissionButton extends React.Component {
                         By clicking "Submit" this dataset will be processed and its status set to "QA".
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="outline-primary rounded-0 js-btn--submit" onClick={this.props.onClick}>
+                        <Button variant="outline-primary rounded-0 js-btn--submit" onClick={() => {
+                            this.props.onClick();
+                            this.hideModal()
+                        }}>
                             Submit
                         </Button>
                         <Button variant="outline-secondary rounded-0" onClick={this.hideModal}>
