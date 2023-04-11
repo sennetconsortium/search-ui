@@ -24,7 +24,7 @@ import {formatErrorColumn, tableColumns, formatErrorColumnTimer, getErrorList} f
 import DataTable from 'react-data-table-component';
 import {createDownloadUrl, equals, tableDataToTSV} from "../js/functions";
 import AppContext from "../../../context/AppContext";
-import {get_headers, get_auth_header, get_app_header, update_create_entity} from "../../../lib/services";
+import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
 
 
 export default function BulkCreate({
