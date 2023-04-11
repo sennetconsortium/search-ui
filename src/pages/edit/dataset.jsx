@@ -29,6 +29,7 @@ import {getEntityEndPoint, getIngestEndPoint, valid_dataset_ancestor_config} fro
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
+import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
 
 export default function EditDataset() {
     const {
@@ -374,11 +375,7 @@ export default function EditDataset() {
                                     <div className={'d-flex flex-row-reverse'}>
                                         { editMode === 'Edit' && data['status'] === 'New' &&
                                             <SenNetPopover text={'Submit this dataset for processing'} className={'submit-dataset'}>
-                                                <Button variant="outline-primary rounded-0 js-btn--submit"
-                                                        onClick={handleSubmit}
-                                                        disabled={disableSubmit}>
-                                                    {_t('Submit')}
-                                                </Button>
+                                                <DatasetSubmissionButton onClick={handleSubmit} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
                                         { data['status'] !== 'Processing' &&
