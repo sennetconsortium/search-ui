@@ -3,7 +3,7 @@ import log from "loglevel";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
-export async function update_create_entity(uuid, body, action = "Edit", entity_type = null, router) {
+export async function update_create_entity(uuid, body, action = "Edit", entity_type = null) {
     let raw = JSON.stringify(body)
     let url = getEntityEndPoint() + "entities/" + (action === 'Create' ? entity_type : uuid)
     let method = (action === 'Create' ? "POST" : "PUT")
@@ -11,9 +11,9 @@ export async function update_create_entity(uuid, body, action = "Edit", entity_t
     return call_service(raw, url, method)
 }
 
-export async function update_create_dataset(uuid, body, action = "Edit", router) {
+export async function update_create_dataset(uuid, body, action = "Edit") {
     if (action === 'Edit') {
-        return update_create_entity(uuid, body, action, router);
+        return update_create_entity(uuid, body, action);
     } else {
         let raw = JSON.stringify(body)
         let url = getIngestEndPoint() + "datasets" + (action === 'Create' ? '' : "/" + uuid + "/submit")
@@ -139,13 +139,9 @@ export async function get_user_write_groups() {
 }
 
 async function call_service(raw, url, method) {
-    var headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", "Bearer " + getAuth())
-
     return await fetch(url, {
         method: method,
-        headers: headers,
+        headers: get_headers(),
         body: raw,
     }).then(response => response.json())
         .then(result => {
