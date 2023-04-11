@@ -187,6 +187,7 @@ export default function BulkCreate({
         let passes = []
         let fails = []
         let row = 0
+        setIsLoading(true)
         for (let resp of bulkResponse.data) {
             let item = resp.description
             item.metadata['pathname'] = bulkResponse.pathname
@@ -202,6 +203,7 @@ export default function BulkCreate({
             }
             row++
         }
+        setIsLoading(false)
         setBulkSuccess({fails, passes})
     }
 
