@@ -29,10 +29,7 @@ export default function EditBulk() {
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
-        let entity_title = ''
-        let exampleFileName = ''
-        let bulkUploadUrl = getIngestEndPoint()
-        let bulkUrl = getIngestEndPoint()
+
         let supportedEntities = Object.keys(cache.entities)
         if (supportedEntities.indexOf(entityType) !== -1) {
             result = <>
