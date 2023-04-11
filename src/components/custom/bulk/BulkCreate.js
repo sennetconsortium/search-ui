@@ -14,7 +14,7 @@ import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
 import {Row, Col} from "react-bootstrap";
 import {Download, ArrowRightSquareFill} from "react-bootstrap-icons";
-import {getAuth, getIngestEndPoint} from "../../../config/config";
+import {getAuth, getEntityEndPoint, getIngestEndPoint} from "../../../config/config";
 import Spinner from "../Spinner";
 import AppFooter from "../layout/AppFooter";
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -24,7 +24,7 @@ import {formatErrorColumn, tableColumns, formatErrorColumnTimer, getErrorList} f
 import DataTable from 'react-data-table-component';
 import {createDownloadUrl, equals, tableDataToTSV} from "../js/functions";
 import AppContext from "../../../context/AppContext";
-import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
+import {get_headers, get_auth_header, get_app_header, update_create_entity} from "../../../lib/services";
 
 
 export default function BulkCreate({
@@ -184,13 +184,26 @@ export default function BulkCreate({
     }
 
     async function metadataCommit() {
-        for (let response of bulkResponse) {
-            let item = response.description
-            let result = await update_create_entity(item.uuid, item)
-            console.log(result)
+        let passes = []
+        let fails = []
+        let row = 0
+        for (let resp of bulkResponse.data) {
+            let item = resp.description
+            item.metadata['pathname'] = bulkResponse.pathname
+            item.metadata['file_row'] = row
+            let {typeCol, labIdCol} = getColNames()
+            let response = await update_create_entity(item.uuid, {metadata: item.metadata, [typeCol]: item[typeCol]}, 'Edit', entityType)
+            debugger
+            let result = {uuid: item.uuid, sennet_id: item.sennet_id, [labIdCol]: item[labIdCol], [typeCol]: item[typeCol]}
+            if (!response.error){
+                passes.push(result)
+            } else {
+                fails.push(result)
+            }
+            row++
         }
+        setBulkSuccess({fails, passes})
     }
-
 
     // This makes a request to ingest-api, validating the upload
     async function entityValidation() {
@@ -360,15 +373,7 @@ export default function BulkCreate({
         return createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
     }
 
-
-    function getEntityModalBody() {
-        let body = []
-        // body.push(
-        //     <p>Your <code>{cache.entities[entityType]}s</code> were {getVerb(true, true)}:</p>
-        // )
-        body.push(<p>
-            <strong>Group Name:</strong>  {bulkResponse[1].group_name}
-        </p>)
+    function getColNames() {
         let typeCol;
         let labIdCol
         if (equals(entityType, cache.entities.source)) {
@@ -381,11 +386,16 @@ export default function BulkCreate({
             typeCol = 'data_types'
             labIdCol = 'lab_dataset_id'
         }
-        let columns = [{
-                name: 'lab_id',
-                selector: row => row[labIdCol],
-                sortable: true,
-                width: '150px'
+        return {typeCol, labIdCol}
+    }
+
+    function getDefaultModalTableCols() {
+        let {typeCol, labIdCol} = getColNames()
+        return [{
+            name: 'lab_id',
+            selector: row => row[labIdCol],
+            sortable: true,
+            width: '150px'
             },
             {
                 name: 'sennet_id',
@@ -400,6 +410,17 @@ export default function BulkCreate({
                 width: '160px'
             }
         ]
+    }
+
+
+    function getEntityModalBody() {
+        let body = []
+        body.push(<p>
+            <strong>Group Name:</strong>  {bulkResponse[1].group_name}
+        </p>)
+        let {typeCol, labIdCol} = getColNames()
+
+        let columns = getDefaultModalTableCols()
 
         if (equals(entityType, cache.entities.sample)) {
             columns.push({
@@ -439,10 +460,35 @@ export default function BulkCreate({
 
     function getMetadataModalBody() {
         let body = []
+
+        let sentencePre = bulkSuccess.fails.length ? 'Some of your ' : 'Your ';
+
         body.push(
-            <p>Your <code>{cache.entities[entityType]}s'</code> metadata were {getVerb(true, true)}:</p>
+            <p>{sentencePre} <code>{cache.entities[entityType]}s'</code> metadata were {getVerb(true, true)}.</p>
         )
+
+        let {typeCol, labIdCol} = getColNames()
+        let columns = getDefaultModalTableCols()
+
+        if (bulkSuccess.passes.length) {
+            body.push(
+                <DataTable columns={columns} data={bulkSuccess.passes} pagination/>
+            )
+        }
+        if (bulkSuccess.fails.length) {
+            body.push(
+                <div className='c-metadataUpload__table table-responsive has-error'>
+                    <DataTable columns={columns} data={bulkSuccess.fails} pagination />
+                </div>
+            )
+        }
+
         return body
+    }
+
+    function getModalTitle() {
+        const inner = isMetadata ? "' Metadata" : ""
+        return `${cache.entities[entityType]}s${inner} ${getVerb(true, true)}`
     }
 
     function getModalBody() {
@@ -523,7 +569,7 @@ export default function BulkCreate({
                     {
                         isAtLastStep() && !errorMessage && bulkSuccess &&
                         <AppModal
-                            modalTitle={`${cache.entities[entityType]}s ${getVerb(true, true)}`}
+                            modalTitle={getModalTitle()}
                             modalBody={getModalBody()}
                             modalSize='lg'
                             showModal={showModal}
