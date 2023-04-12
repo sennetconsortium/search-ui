@@ -181,3 +181,10 @@ export function equals(s1, s2, insensitive = true) {
     }
     return res
 }
+
+
+Object.assign(String.prototype, {
+    upperCaseFirst() {
+        return this[0].toUpperCase() + this.slice(1);
+    }
+})

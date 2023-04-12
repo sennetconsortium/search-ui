@@ -30,9 +30,6 @@ import {get_headers, get_auth_header, update_create_entity} from "../../../lib/s
 export default function BulkCreate({
                                        entityType,
                                        subType,
-                                       exampleFileName,
-                                       bulkUploadUrl,
-                                       bulkUrl,
                                        userWriteGroups,
                                        handleHome,
                                        isMetadata=false,
@@ -445,7 +442,7 @@ export default function BulkCreate({
             categories.push(each[typeCol])
         })
 
-       const canContinueBulkMetadata = () => supportedMetadata()[cache.entities[entityType]][categories[0]]
+       const canContinueBulkMetadata = () => supportedMetadata()[cache.entities[entityType]].categories.includes(categories[0])
 
         body.push(
             <Row className={'mt-4 text-right'}>

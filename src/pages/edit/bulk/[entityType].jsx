@@ -7,9 +7,10 @@ import {getIngestEndPoint} from "../../../config/config";
 import EntityContext, {EntityProvider} from "../../../context/EntityContext";
 import Spinner from "../../../components/custom/Spinner";
 import AppContext from "../../../context/AppContext";
+import NotFound from "../../../components/custom/NotFound";
 
 export default function EditBulk() {
-    const {cache} = useContext(AppContext)
+    const {cache, supportedMetadata} = useContext(AppContext)
 
     const {
         isUnauthorized,
@@ -19,8 +20,9 @@ export default function EditBulk() {
     } = useContext(EntityContext)
 
     const router = useRouter()
-    const entityType = router.query['entityType']
-    const subType = router.query['category']
+    let entityType = router.query['entityType']
+    entityType = entityType.toLowerCase()
+    let subType = router.query['category']
     const isMetadata = router.query['action'] === 'metadata'
     let result
 
@@ -29,13 +31,26 @@ export default function EditBulk() {
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
+        if (subType) {
+            //ensure formatting
+            subType = subType.toLowerCase()
+            subType = subType.upperCaseFirst()
+        }
 
         let supportedEntities = Object.keys(cache.entities)
-        if (supportedEntities.indexOf(entityType) !== -1) {
+        const isSupported = () => {
+            if (isMetadata) {
+                let supp = supportedMetadata()[cache.entities[entityType]]
+                return supp ? supp.categories.includes(subType) : false
+            } else {
+                return (supportedEntities.includes(entityType))
+            }
+        }
+        if (isSupported()) {
             result = <>
                 <AppNavbar/>
                 <BulkCreate
-                    entityType={entityType.toLowerCase()}
+                    entityType={entityType}
                     subType={subType}
                     userWriteGroups={userWriteGroups}
                     handleHome={handleHome}
@@ -43,7 +58,7 @@ export default function EditBulk() {
                 />
             </>
         } else {
-            return (<Unauthorized/>)
+            return (<NotFound />)
         }
     }
 
