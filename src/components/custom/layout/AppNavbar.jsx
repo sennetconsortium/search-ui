@@ -8,7 +8,7 @@ import Image from 'next/image'
 import AppContext from '../../../context/AppContext'
 
 const AppNavbar = ({hidden, signoutHidden}) => {
-    const {_t, isLoggedIn, logout, cache} = useContext(AppContext)
+    const {_t, isLoggedIn, logout, cache, supportedMetadata} = useContext(AppContext)
 
 
     const handleSession = (e) => {
@@ -21,22 +21,6 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         window.location.replace(url)
     }
 
-    const supportedMetadata = () => {
-        let supported = {}
-        supported[cache.entities.source] = {
-            categories: [
-                cache.sourceTypes['Mouse']
-            ]
-        }
-        supported[cache.entities.sample] = {
-            categories: [
-                cache.sampleCategories.Block,
-                cache.sampleCategories.Section,
-                cache.sampleCategories.Suspension,
-            ]
-        }
-        return supported
-    }
 
     return (
         <Navbar

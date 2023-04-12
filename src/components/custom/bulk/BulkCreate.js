@@ -53,7 +53,7 @@ export default function BulkCreate({
     const [steps, setSteps] = useState(stepLabels)
     const [selectedGroup, setSelectedGroup] = useState(null)
     const [showModal, setShowModal] = useState(true)
-    const {cache} = useContext(AppContext)
+    const {cache, supportedMetadata} = useContext(AppContext)
 
     const ColorlibConnector = styled(StepConnector)(({theme}) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -445,18 +445,23 @@ export default function BulkCreate({
             categories.push(each[typeCol])
         })
 
-        if (categories.length === 1) {
-            body.push(
-                <Row className={'mt-4 text-right'}>
+       const canContinueBulkMetadata = () => supportedMetadata()[cache.entities[entityType]][categories[0]]
 
-                    <Col>
-                        <a role={'button'} className={'btn btn-outline-primary rounded-0 mr-2'}
-                           href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>
-                        <a className={'btn btn-primary rounded-0'} href={`/edit/bulk/${entityType}?action=metadata&category=${subType}`}>Continue to metadata upload <ArrowRightSquareFill /></a></Col>
+        body.push(
+            <Row className={'mt-4 text-right'}>
 
-                </Row>
-            )
-        }
+                <Col>
+                    <a role={'button'} className={'btn btn-outline-primary rounded-0'}
+                       href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>&nbsp;
+                    {(categories.length === 1) && canContinueBulkMetadata() &&
+                        <a className={'btn btn-primary rounded-0'} href={`/edit/bulk/${entityType}?action=metadata&category=${categories[0]}`}>
+                        Continue to metadata upload <ArrowRightSquareFill />
+                        </a>
+                    }
+                </Col>
+
+            </Row>
+        )
         return body;
     }
 
