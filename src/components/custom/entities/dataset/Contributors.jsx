@@ -53,12 +53,10 @@ export default class Contributors extends React.Component {
                     </div>
                     <div id="contributors-collapse" className="accordion-collapse collapse show">
                         <div className="accordion-body">
-                            <div className="table-responsive">
-                                <DataTable
-                                    columns={this.columns}
-                                    data={this.contributor_data}
-                                    pagination/>
-                            </div>
+                            <DataTable
+                                columns={this.columns}
+                                data={this.contributor_data}
+                                pagination/>
                         </div>
                     </div>
                 </div>

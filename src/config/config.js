@@ -190,6 +190,14 @@ export const config = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            status: {
+                label: 'Status',
+                type: 'value',
+                field: 'status.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
             group_name: {
                 label: 'Data Provider Group',
                 type: 'value',
