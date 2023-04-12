@@ -22,6 +22,7 @@ import ImageSelector from "../../components/custom/edit/ImageSelector";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
+import $ from "jquery";
 
 
 function EditSource() {
@@ -96,7 +97,7 @@ function EditSource() {
 
     const handleSave = async (event) => {
         setDisableSubmit(true);
-        const form = event.currentTarget.parentElement.parentElement;
+        const form = $(event.currentTarget.form)[0]
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
