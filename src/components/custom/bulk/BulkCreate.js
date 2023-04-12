@@ -520,7 +520,7 @@ export default function BulkCreate({
 
     const getFilename = () => {
         let filename = `example_${entityType}`
-        return isMetadata ? `${filename}_${subType}_metadata` : filename
+        return isMetadata ? `metadata/${filename}_${subType}_metadata` : `entities/${filename}`
     }
 
     return (
@@ -534,7 +534,7 @@ export default function BulkCreate({
                     <a
                         download
                         className={buttonVariant}
-                        href={`/${getFilename().toLowerCase()}.tsv`}
+                        href={`/bulk/${getFilename().toLowerCase()}.tsv`}
                     >
                         <FileDownloadIcon/> {' '} EXAMPLE.TSV
                     </a>

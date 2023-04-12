@@ -1,4 +1,0 @@
-lab_id	ancestor_id	doi_abstract	human_gene_sequences	data_types
-lab id 1	SNT232.VXKW.677	single data type	TRUE	CODEX
-second test lab id	"SNT539.ZHHQ.259, SNT232.VXKW.677"	2 good data types	FALSE	MIBI
-	SNT232.VXKW.677		FALSE	SASP

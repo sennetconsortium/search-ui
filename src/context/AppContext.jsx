@@ -138,11 +138,12 @@ export const AppProvider = ({ cache, children }) => {
 
     const supportedMetadata = () => {
         let supported = {}
-        supported[cache.entities.source] = {
-            categories: [
-                cache.sourceTypes.Mouse
-            ]
-        }
+        // TODO: Uncomment when received spec support for Mouse
+        // supported[cache.entities.source] = {
+        //     categories: [
+        //         cache.sourceTypes.Mouse
+        //     ]
+        // }
         supported[cache.entities.sample] = {
             categories: [
                 cache.sampleCategories.Block,
