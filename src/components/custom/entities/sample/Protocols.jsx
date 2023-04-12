@@ -58,7 +58,14 @@ export default class Protocols extends React.Component {
                                         {this.state.protocol_data.authors.map((author, index, array) => {
                                             return (
                                                 <span key={index}>
-                                                    {author.name}
+                                                    {author.username != "" ? (
+                                                            <a href={`https://www.protocols.io/researchers/${author.username}`}
+                                                               className="icon_inline" target="_blank">
+                                                                <span className="me-1">{author.name}</span> <BoxArrowUpRight/>
+                                                            </a>
+                                                        ) :
+                                                        <>{author.name}</>
+                                                    }
                                                     {index !== array.length - 1 ? <>, </> : <></>}
                                                 </span>
                                             );
@@ -69,7 +76,16 @@ export default class Protocols extends React.Component {
                                         <tr>
                                             <td>
                                                 <span className={"title"}>Abstract</span><br></br>
-                                                <span>{JSON.parse(this.state.protocol_data.description).blocks[0].text}</span>
+                                                {JSON.parse(this.state.protocol_data.description).blocks.map((block, index, array) => {
+                                                    return (
+                                                        <span key={index}>
+                                                            {block.text != "" &&
+                                                                <>{block.text}</>
+                                                            }
+                                                            {index !== array.length - 1 ? <br></br> : <></>}
+                                                        </span>
+                                                    )
+                                                })}
                                             </td>
                                         </tr>
                                     </>
