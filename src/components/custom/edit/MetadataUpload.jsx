@@ -76,7 +76,6 @@ export const getErrorList = (details) => {
                     } else {
                         data = Array.from(description)
                     }
-
                 }
             } else {
                 data = [{error: JSON.stringify(description)}]

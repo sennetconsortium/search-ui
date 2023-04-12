@@ -239,17 +239,17 @@ export default function BulkCreate({
             headers: get_headers(),
             body: JSON.stringify(body)
         }
-        // const response = await fetch(getEntityRegistrationUrl(), requestOptions)
-        // const data = await response.json()
-        if (false) { //if (!response.ok) {
+        const response = await fetch(getEntityRegistrationUrl(), requestOptions)
+        const data = await response.json()
+        if (!response.ok) { //if (false) {
             setError(getStepsLength() === 3 ? {2: true} : {3: true})
             setIsNextButtonDisabled(true)
-            setErrorMessage(data.description)
+            setErrorMessage(Object.values(data.description))
         } else {
-            let dummyResponse = {"code":200,"description":{"1":{"created_by_user_displayname":"Lisa-Ann Bruney","created_by_user_email":"LIB118@pitt.edu","created_by_user_sub":"cd17bfa7-24fd-49ca-82ec-2d456ba53730","created_timestamp":1680890041829,"data_access_level":"consortium","description":"ww2 whip","entity_type":"Sample","group_name":"University of Michigan TDA","group_uuid":"7fe86fe2-ee72-11ec-b04f-67218ab1b594","lab_tissue_sample_id":"19-002","last_modified_timestamp":1680890041829,"last_modified_user_displayname":"Lisa-Ann Bruney","last_modified_user_email":"LIB118@pitt.edu","last_modified_user_sub":"cd17bfa7-24fd-49ca-82ec-2d456ba53730","organ":"BR","sample_category":"organ","sennet_id":"SNT297.NZPK.294","uuid":"4accfc4d40087f15012621512bfaae24"}},"name":"OK"}
+            //let dummyResponse = {"code":200,"description":{"1":{"created_by_user_displayname":"Lisa-Ann Bruney","created_by_user_email":"LIB118@pitt.edu","created_by_user_sub":"cd17bfa7-24fd-49ca-82ec-2d456ba53730","created_timestamp":1680890041829,"data_access_level":"consortium","description":"ww2 whip","entity_type":"Sample","group_name":"University of Michigan TDA","group_uuid":"7fe86fe2-ee72-11ec-b04f-67218ab1b594","lab_tissue_sample_id":"19-002","last_modified_timestamp":1680890041829,"last_modified_user_displayname":"Lisa-Ann Bruney","last_modified_user_email":"LIB118@pitt.edu","last_modified_user_sub":"cd17bfa7-24fd-49ca-82ec-2d456ba53730","organ":"BR","sample_category":"organ","sennet_id":"SNT297.NZPK.294","uuid":"4accfc4d40087f15012621512bfaae24"}},"name":"OK"}
             setBulkSuccess(true)
-            setBulkResponse(dummyResponse.description)
-            //setBulkResponse(data.description)
+            //setBulkResponse(dummyResponse.description)
+            setBulkResponse(data.description)
             setIsNextButtonDisabled(false)
         }
         setIsLoading(false)
@@ -450,9 +450,9 @@ export default function BulkCreate({
                 <Row className={'mt-4 text-right'}>
 
                     <Col>
-                        <a role={'button'} className={'btn btn-outline-primary rounded-0'}
+                        <a role={'button'} className={'btn btn-outline-primary rounded-0 mr-2'}
                            href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>
-                        <button className={'btn btn-primary rounded-0'}>Continue to metadata upload <ArrowRightSquareFill /></button></Col>
+                        <a className={'btn btn-primary rounded-0'} href={`/edit/bulk/${entityType}?action=metadata&category=${subType}`}>Continue to metadata upload <ArrowRightSquareFill /></a></Col>
 
                 </Row>
             )
@@ -561,7 +561,7 @@ export default function BulkCreate({
                     {isLoading && <Spinner/>}
                     {
                         errorMessage && <div className='c-metadataUpload__table table-responsive has-error'>
-                            <DataTable columns={tableColumns} data={isMetadata ? errorMessage.data : errorMessage} pagination />
+                            <DataTable columns={tableColumns} data={errorMessage.data ? errorMessage.data : errorMessage} pagination />
                         </div>
                     }
                     {activeStep === 1 && !errorMessage && validationSuccess &&
