@@ -1,5 +1,5 @@
 import {getHeaders} from "../../components/custom/js/functions";
-import {getAuth} from "../../config/config";
+import {getAssetsEndpoint, getAuth} from "../../config/config";
 
 export const codex_config = (dataset_id) => ({
     "coordinationSpace": {
@@ -40,7 +40,7 @@ export const codex_config = (dataset_id) => ({
                         "xy": "obsm/xy"
                     },
                     "type": "cells",
-                    "url": `https://assets.dev.sennetconsortium.org/${dataset_id}/anndata-zarr/reg001_expr-anndata.zarr`
+                    "url": `${getAssetsEndpoint()}${dataset_id}/anndata-zarr/reg001_expr-anndata.zarr`
                 },
                 {
                     "fileType": "anndata-cell-sets.zarr",
@@ -75,7 +75,7 @@ export const codex_config = (dataset_id) => ({
                         }
                     ],
                     "type": "cell-sets",
-                    "url": `https://assets.dev.sennetconsortium.org/${dataset_id}/anndata-zarr/reg001_expr-anndata.zarr`
+                    "url": `${getAssetsEndpoint()}${dataset_id}/anndata-zarr/reg001_expr-anndata.zarr`
                 },
                 {
                     "fileType": "anndata-expression-matrix.zarr",
@@ -83,7 +83,7 @@ export const codex_config = (dataset_id) => ({
                         "matrix": "X"
                     },
                     "type": "expression-matrix",
-                    "url": `https://assets.dev.sennetconsortium.org/${dataset_id}/anndata-zarr/reg001_expr-anndata.zarr`
+                    "url": `${getAssetsEndpoint()}${dataset_id}/anndata-zarr/reg001_expr-anndata.zarr`
                 },
                 {
                     "fileType": "raster.json",
@@ -92,20 +92,20 @@ export const codex_config = (dataset_id) => ({
                             {
                                 "metadata": {
                                     "isBitmask": false,
-                                    "omeTiffOffsetsUrl": `https://assets.dev.sennetconsortium.org/${dataset_id}/output_offsets/pipeline_output/expr/reg001_expr.offsets.json?token=${getAuth()}`
+                                    "omeTiffOffsetsUrl": `${getAssetsEndpoint()}${dataset_id}/output_offsets/pipeline_output/expr/reg001_expr.offsets.json?token=${getAuth()}`
                                 },
                                 "name": "reg001_expr",
                                 "type": "ome-tiff",
-                                "url": `https://assets.dev.sennetconsortium.org/${dataset_id}/ometiff-pyramids/pipeline_output/expr/reg001_expr.ome.tif?token=${getAuth()}`
+                                "url": `${getAssetsEndpoint()}${dataset_id}/ometiff-pyramids/pipeline_output/expr/reg001_expr.ome.tif?token=${getAuth()}`
                             },
                             {
                                 "metadata": {
                                     "isBitmask": true,
-                                    "omeTiffOffsetsUrl": `https://assets.dev.sennetconsortium.org/${dataset_id}/output_offsets/pipeline_output/mask/reg001_mask.offsets.json?token=${getAuth()}`
+                                    "omeTiffOffsetsUrl": `${getAssetsEndpoint()}${dataset_id}/output_offsets/pipeline_output/mask/reg001_mask.offsets.json?token=${getAuth()}`
                                 },
                                 "name": "reg001_mask",
                                 "type": "ome-tiff",
-                                "url": `https://assets.dev.sennetconsortium.org/${dataset_id}/ometiff-pyramids/pipeline_output/mask/reg001_mask.ome.tif?token=${getAuth()}`
+                                "url": `${getAssetsEndpoint()}${dataset_id}/ometiff-pyramids/pipeline_output/mask/reg001_mask.ome.tif?token=${getAuth()}`
                             }
                         ],
                         "renderLayers": [
