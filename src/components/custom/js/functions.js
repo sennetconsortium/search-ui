@@ -181,3 +181,10 @@ export function equals(s1, s2, insensitive = true) {
     }
     return res
 }
+
+export const flipObj = (obj) => {
+    return Object.keys(obj).reduce((ret, key) => {
+        ret[obj[key]] = key;
+        return ret;
+    }, {})
+}
