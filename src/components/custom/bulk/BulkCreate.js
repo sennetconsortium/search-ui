@@ -440,7 +440,10 @@ export default function BulkCreate({
             categories.push(each[typeCol])
         })
 
-       const canContinueBulkMetadata = () => supportedMetadata()[cache.entities[entityType]].categories.includes(categories[0])
+       const canContinueBulkMetadata = () => {
+            let supported = supportedMetadata()[cache.entities[entityType]]
+            return supported ? supported.categories.includes(categories[0]) : false
+       }
 
         body.push(
             <Row className={'mt-4 text-right'}>
