@@ -380,6 +380,7 @@ function EditSample() {
                         blockStartLocation={ruiLocation}
                         setRuiLocation={setRuiLocation}
                         setShowRui={setShowRui}
+                        cache={cache}
                     />
                 }
 

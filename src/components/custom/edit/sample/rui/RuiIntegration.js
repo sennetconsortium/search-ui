@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import {ORGAN_TYPES} from "../../../../../config/constants";
 import Script from 'next/script'
 import {parseJson} from "../../../../../lib/services";
 import Head from 'next/head'
@@ -57,8 +56,8 @@ class RUIIntegration extends Component {
     }
 
     updateRUIConfig() {
-        const organ = ORGAN_TYPES[this.props.organ]
-        const organ_info = ORGAN_TYPES[this.props.organ].split("(")
+        const organ = this.props.cache.organTypes[this.props.organ]
+        const organ_info = this.props.cache.organTypes[this.props.organ].split("(")
         const organ_side = organ_info[1]?.replace(/\(|\)/g, "").toLowerCase()
         const sex = this.props.sex
         const user_name = this.props.user || ""

@@ -11,7 +11,9 @@ function useCache() {
         const sourceTypes = await get_source_types()
         const organTypesCodes = flipObj(organTypes)
 
-        return {cache: {dataTypes, sampleCategories, organTypes, entities, sourceTypes, organTypesCodes}}
+        const cache = {cache: {dataTypes, sampleCategories, organTypes, entities, sourceTypes, organTypesCodes}}
+        window.UBKG_CACHE = cache.cache
+        return cache
     }
 
     return {  fetchData }

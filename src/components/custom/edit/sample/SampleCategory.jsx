@@ -1,6 +1,5 @@
 import React, {useContext} from 'react';
 import {Col, Form, Row} from 'react-bootstrap';
-import {ORGAN_TYPES} from "../../../../config/constants";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import SenNetPopover from "../../../SenNetPopover";
 import AppContext from "../../../../context/AppContext";
@@ -104,7 +103,7 @@ function SampleCategory({
                     }}
                                  defaultValue={data.organ}>
                         <option value="">----</option>
-                        {Object.entries(ORGAN_TYPES).map(op => {
+                        {Object.entries(cache.organTypes).map(op => {
                             return (
                                 <option key={op[0]} value={op[0]}>
                                     {op[1]}
