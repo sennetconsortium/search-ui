@@ -1,10 +1,10 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Col, Form, Row} from 'react-bootstrap';
 import {ORGAN_TYPES} from "../../../../config/constants";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import SenNetPopover from "../../../SenNetPopover";
+import AppContext from "../../../../context/AppContext";
+import {equals} from "../../js/functions";
 
 function SampleCategory({
                             organ_group_hide,
@@ -16,9 +16,10 @@ function SampleCategory({
                             sample_categories
                         }) {
 
+    const {cache} = useContext(AppContext)
     const handleSampleCategoryChange = (e, onChange) => {
         // If sample category is 'Organ' then display the organ type input group
-        if (e.target.value === 'organ') {
+        if (equals(e.target.value, cache.sampleCategories.Organ)) {
             //Organ Type set display and require
             set_organ_group_hide('')
             document.getElementById("organ").setAttribute("required", "")
@@ -30,7 +31,7 @@ function SampleCategory({
 
     const handleOrganChange = (e, onChange) => {
         // If organ type is 'Other' then display organ_other group
-        if (e.target.value === 'other') {
+        if (equals(e.target.value, cache.organTypes.OT)) {
             set_organ_other_hide('')
             document.getElementById("organ_other").setAttribute("required", "")
 

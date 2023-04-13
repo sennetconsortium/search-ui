@@ -4,7 +4,6 @@ import Script from 'next/script'
 import {parseJson} from "../../../../../lib/services";
 import Head from 'next/head'
 
-
 class RUIIntegration extends Component {
 
     constructor(props) {

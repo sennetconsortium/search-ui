@@ -116,7 +116,7 @@ function EditSample() {
                 setData(data);
 
                 // Show organ input group if sample category is 'organ'
-                if (data.sample_category === 'organ') {
+                if (equals(data.sample_category, cache.sampleCategories.Organ)) {
                     set_organ_group_hide('')
                 }
 
