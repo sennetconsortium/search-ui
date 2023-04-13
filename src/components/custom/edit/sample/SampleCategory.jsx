@@ -30,7 +30,7 @@ function SampleCategory({
 
     const handleOrganChange = (e, onChange) => {
         // If organ type is 'Other' then display organ_other group
-        if (e.target.value === 'other') {
+        if (e.target.value === 'OT') {
             set_organ_other_hide('')
             document.getElementById("organ_other").setAttribute("required", "")
 
