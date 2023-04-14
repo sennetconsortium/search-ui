@@ -57,7 +57,7 @@ export async function get_sample_categories() {
 
 export async function get_data_assays() {
     const list = await get_ontology_from_cache(getUbkgCodes().data_assays) //C000001
-    const assays = to_key_val(list, false, 'data_type')
+    const assays = to_key_val(list, false, 'data_type', 'data_type')
     return add_other(assays)
 }
 
