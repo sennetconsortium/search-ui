@@ -26,6 +26,9 @@ chown -R codcc:codcc /var/run/nginx.pid
 chown -R codcc:codcc /var/cache/nginx
 chown -R codcc:codcc /var/log/nginx
 
+# Needed to allow for read/write access of UBKG Ontology API Cache
+chown -R codcc:codcc /usr/src/app/src/cache
+
 # Lastly we use gosu to execute our process "$@" as that user
 # Remember CMD from a Dockerfile of child image gets passed to the entrypoint.sh as command line arguments
 # "$@" is a shell variable that means "all the arguments"

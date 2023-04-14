@@ -62,6 +62,22 @@ export function getSearchEndPoint() {
     return process.env.NEXT_PUBLIC_SEARCH_API_ENDPOINT
 }
 
+export function getUbkgEndPoint() {
+    return process.env.NEXT_PUBLIC_UBKG_API_ENDPOINT
+}
+
+export function getUbkgValuesetPath() {
+    return process.env.NEXT_PUBLIC_UBKG_VALUESET_PATH
+}
+
+export function getUbkgCodes() {
+    return JSON.parse(process.env.NEXT_PUBLIC_UBKG_CODES)
+}
+
+export function getUbkgCodesPath() {
+    return JSON.parse(process.env.NEXT_PUBLIC_UBKG_CODES_PATHS)
+}
+
 export function getEntityEndPoint() {
     return process.env.NEXT_PUBLIC_ENTITY_API_ENDPOINT
 }
@@ -96,6 +112,10 @@ export function getProtocolsToken() {
 
 export function getGoogleTagManagerId() {
     return process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER
+}
+
+export function getUIPassword() {
+    return process.env.NEXT_PUBLIC_UI_PSWD
 }
 
 export const connector = new SearchAPIConnector({
@@ -170,6 +190,14 @@ export const config = {
                 label: 'Data Type',
                 type: 'value',
                 field: 'data_types.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            status: {
+                label: 'Status',
+                type: 'value',
+                field: 'status.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,

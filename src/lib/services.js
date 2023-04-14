@@ -19,9 +19,14 @@ export async function update_create_dataset(uuid, body, action = "Edit", router)
         let url = getIngestEndPoint() + "datasets" + (action === 'Create' ? '' : "/" + uuid + "/submit")
         let method = (action === 'Create' ? "POST" : "PUT")
         log.debug(url)
-
         return call_service(raw, url, method)
     }
+}
+
+export function get_json_header( headers ) {
+    headers = headers || new Headers();
+    headers.append("Content-Type", "application/json");
+    return headers;
 }
 
 export function get_auth_header() {
@@ -30,11 +35,10 @@ export function get_auth_header() {
     return headers;
 }
 
-
 export function get_headers() {
+
     const headers = get_auth_header();
-    headers.append("Content-Type", "application/json");
-    return headers;
+    return get_json_header(headers);
 }
 
 export async function fetchGlobusFilepath(sennet_id) {
@@ -52,7 +56,6 @@ export async function fetchGlobusFilepath(sennet_id) {
     } else {
         return filepath;
     }
-
 }
 
 // This function requires the bearer token passed to it as the middleware can't access "getAuth()"

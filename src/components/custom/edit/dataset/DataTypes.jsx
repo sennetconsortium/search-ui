@@ -3,7 +3,6 @@ import {Col, Form, Row} from 'react-bootstrap';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import {DATA_TYPES} from "../../../../config/constants";
 
 export default class DataTypes extends React.Component {
     constructor(props) {

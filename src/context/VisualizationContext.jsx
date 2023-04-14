@@ -1,5 +1,4 @@
 import {createContext, useCallback, useState} from "react";
-import {ENTITIES} from "../config/constants";
 import $ from "jquery";
 
 const VisualizationContext = createContext({})

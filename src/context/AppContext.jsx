@@ -6,14 +6,17 @@ import log from 'loglevel'
 import { get_read_write_privileges } from '../lib/services'
 import {deleteCookies} from "../lib/auth";
 import {APP_ROUTES} from "../config/constants";
+import {getUIPassword} from "../config/config";
+import Swal from 'sweetalert2'
 
 const AppContext = createContext()
 
-export const AppProvider = ({ children }) => {
+export const AppProvider = ({ cache, children }) => {
     const [isBusy, setIsBusy] = useState(false)
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const [authorized, setAuthorized] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
+    const [uiAdminAuthorized, setUIAuthorized] = useState(false)
     const router = useRouter()
     const authKey = 'isAuthenticated'
     const pageKey = 'userPage'
@@ -25,6 +28,7 @@ export const AppProvider = ({ children }) => {
             // Set expiry for 10 minutes
             setLocalItemWithExpiry(pageKey, router.asPath, 600000)
         }
+
         get_read_write_privileges()
             .then((response) => {
                 if (response) {
@@ -112,7 +116,6 @@ export const AppProvider = ({ children }) => {
     }
 
     const logout = () => {
-        localStorage.removeItem(pageKey)
         deleteCookies()
     }
 
@@ -132,6 +135,43 @@ export const AppProvider = ({ children }) => {
             delete values.image_files_to_add
         }
     }
+
+    const promptForUIPasscode = async () => {
+        const result = await Swal.fire({
+            customClass: {
+                container: 'c-help',
+                title: 'c-help__title',
+                confirmButton: 'c-help__btn'
+            },
+            width: 500,
+            title: `Password Prompt`,
+            input: 'password',
+            inputLabel: 'Please enter admin password to continue...',
+            inputValue: '',
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to write something!'
+                }
+            }
+        })
+        return result
+    }
+
+    const checkUIPassword = async () => {
+        const uiAuthCookie = getCookie('adminUIAuthorized')
+
+        if (!uiAuthCookie) {
+            const result = await promptForUIPasscode()
+            if (result.value === atob(getUIPassword())) {
+                setCookie('adminUIAuthorized', true)
+                setUIAuthorized(true)
+            } else {
+                await checkUIPassword()
+            }
+        } else {
+            setUIAuthorized(true)
+        }
+    }
     
     return (
         <AppContext.Provider
@@ -148,8 +188,11 @@ export const AppProvider = ({ children }) => {
                 logout,
                 login,
                 _t,
+                cache,
                 router,
                 filterImageFilesToAdd,
+                uiAdminAuthorized,
+                checkUIPassword
             }}
         >
             {children}

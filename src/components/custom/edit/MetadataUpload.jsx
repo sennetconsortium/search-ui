@@ -8,14 +8,16 @@ import DataTable from 'react-data-table-component';
 import $ from 'jquery'
 import { get_auth_header } from "../../../lib/services";
 import SenNetPopover, {SenPopoverOptions} from "../../SenNetPopover";
+import {urlify} from "../js/functions";
 
 
 export const formatErrorColumn = (d = '"') => {
     const formatError = (val) => val.replaceAll(' '+d, ' <code>').replaceAll(' "', ' <code>').replaceAll(d, '</code>').replaceAll('"', '</code>')
 
     $('.rdt_TableBody [data-column-id="2"] div').each((i, el) => {
-        const txt = $(el).html()
-        $(el).html(formatError(txt))
+        let txt = $(el).html()
+        txt = formatError(txt)
+        $(el).html(urlify(txt))
     })
 }
 

@@ -4,6 +4,8 @@ import logo from "./sennet-logo.png";
 import nih from "./nih-logo.png"
 import Image from "next/image";
 import AppContext from "../../../context/AppContext";
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const AppFooter = ({isFixedBottom}) => {
     const {_t} = useContext(AppContext)
@@ -11,6 +13,7 @@ const AppFooter = ({isFixedBottom}) => {
     let fixedBottom = isFixedBottom ? 'fixed-bottom' : ''
     return (
         <Container>
+            <ToastContainer />
             <footer className={`py-3 my-4 ${fixedBottom}`}>
                 <ul className="nav justify-content-center border-bottom pb-3 mb-3">
                     <li className="nav-item">
