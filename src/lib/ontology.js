@@ -29,21 +29,24 @@ async function get_ontology_from_cache(key) {
     return ontology
 }
 
-function to_key_val(list, lowerProp = false, key = 'term') {
+function to_key_val(list, lowerProp = false, key = 'term', key2 = 'term') {
+    if (!Array.isArray(list)) return null
     let result = {}
     let prop
     let val
     for (let i of list) {
-        val = i[key]
+        prop = i[key]
+        val = i[key2]
+        prop = prop ? prop.trim() : prop
         val = val ? val.trim() : val
-        prop = lowerProp ? val.toLowerCase() : val
+        prop = lowerProp ? prop.toLowerCase() : prop
         result[prop] = val
     }
     return result
 }
 
-function add_other(list) {
-    list['Other'] = 'Other'
+function add_other(list, key = 'Other') {
+    list[key] = 'Other'
     return list
 }
 
@@ -54,13 +57,14 @@ export async function get_sample_categories() {
 
 export async function get_data_assays() {
     const list = await get_ontology_from_cache(getUbkgCodes().data_assays) //C000001
-    const assays = to_key_val(list, false, 'data_type')
+    const assays = to_key_val(list, false, 'data_type', 'data_type')
     return add_other(assays)
 }
 
 export async function get_organ_types() {
     let list = await get_ontology_from_cache(getUbkgCodes().organ_types)
-    return to_key_val(list)
+    list = to_key_val(list, false,'rui_code')
+    return add_other(list,'OT')
 }
 
 export async function get_source_types() {

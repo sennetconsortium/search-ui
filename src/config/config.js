@@ -94,6 +94,10 @@ export function getUUIDEndpoint() {
     return process.env.NEXT_PUBLIC_UUID_API_ENDPOINT
 }
 
+export function getAssetsEndpoint() {
+    return process.env.NEXT_PUBLIC_ASSETS_ENDPOINT
+}
+
 export function getRootURL() {
     return process.env.NEXT_PUBLIC_APP_ROOT_URL
 }
