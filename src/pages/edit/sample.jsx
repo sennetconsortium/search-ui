@@ -64,7 +64,7 @@ function EditSample() {
     const [ancestorSource, setAncestorSource] = useState([])
     const [sampleCategories, setSampleCategories] = useState(null)
     const [organ_group_hide, set_organ_group_hide] = useState('none')
-    const [organ_other_hide, set_organ_other_hide] = useState('none')
+
     const [imageFilesToAdd, setImageFilesToAdd] = useState([])
     const [imageFilesToRemove, setImageFilesToRemove] = useState([])
     const [thumbnailFileToAdd, setThumbnailFileToAdd] = useState(null)
@@ -201,7 +201,7 @@ function EditSample() {
             _onChange(e, "organ_other", "")
         }
         set_organ_group_hide('none')
-        set_organ_other_hide('none')
+
 
         const sample_category = document.getElementById('sample_category')
         const organ = document.getElementById("organ")
@@ -422,8 +422,6 @@ function EditSample() {
                                             <SampleCategory
                                                 organ_group_hide={organ_group_hide}
                                                 set_organ_group_hide={set_organ_group_hide}
-                                                organ_other_hide={organ_other_hide}
-                                                set_organ_other_hide={set_organ_other_hide}
                                                 sample_categories={sampleCategories === null ? cache.sampleCategories : sampleCategories}
                                                 data={values}
                                                 source={source}

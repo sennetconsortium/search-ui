@@ -8,8 +8,6 @@ import {equals} from "../../js/functions";
 function SampleCategory({
                             organ_group_hide,
                             set_organ_group_hide,
-                            organ_other_hide,
-                            set_organ_other_hide,
                             data,
                             onChange,
                             sample_categories
@@ -28,17 +26,6 @@ function SampleCategory({
         }
     };
 
-    const handleOrganChange = (e, onChange) => {
-        // If organ type is 'Other' then display organ_other group
-        if (equals(e.target.value, cache.organTypesCodes.Other)) {
-            set_organ_other_hide('')
-            document.getElementById("organ_other").setAttribute("required", "")
-
-        } else {
-            resetOrganTypeOther(e, onChange);
-        }
-    }
-
     const resetOrganType = (e, onChange) => {
         set_organ_group_hide('none')
         document.getElementById("organ").removeAttribute("required")
@@ -46,16 +33,6 @@ function SampleCategory({
         document.getElementById("organ").value = "";
         onChange(e, "organ", "")
 
-        // Need to also reset organ_other
-        resetOrganTypeOther(e, onChange);
-    }
-
-    const resetOrganTypeOther = (e, onChange) => {
-        set_organ_other_hide('none')
-        document.getElementById("organ_other").removeAttribute("required")
-        // Empty the value of the fields and trigger onChange
-        document.getElementById("organ_other").value = "";
-        onChange(e, "organ_other", "")
     }
 
     return (
@@ -96,9 +73,8 @@ function SampleCategory({
                         style={{display: organ_group_hide}}>
                 <Form.Label column sm="2">Organ Type <span
                     className="required">*</span></Form.Label>
-                <Col sm="6">
+                <Col sm="10">
                     <Form.Select aria-label="Organ Type" id="organ" onChange={e => {
-                        handleOrganChange(e, onChange);
                         onChange(e, e.target.id, e.target.value)
                     }}
                                  defaultValue={data.organ}>
@@ -113,16 +89,7 @@ function SampleCategory({
                         })}
                     </Form.Select>
                 </Col>
-                {/*Organ Type Other*/}
-                <Col sm="4">
-                    <Form.Control style={{display: organ_other_hide}} type="text"
-                                  id="organ_other"
-                                  defaultValue={data.organ_other}
-                                  onChange={e => {
-                                      onChange(e, e.target.id, e.target.value)
-                                  }}
-                                  placeholder="Please specify"/>
-                </Col>
+
             </Form.Group>
         </>
     )
