@@ -1,5 +1,5 @@
 import {getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
-import {APP_ROUTES, ORGAN_TYPES} from "../../../config/constants";
+import {APP_ROUTES} from "../../../config/constants";
 import log from "loglevel";
 
 export function getHeaders() {
@@ -78,8 +78,9 @@ export function displayBodyHeader(header) {
 }
 
 export function getOrganTypeFullName(organ) {
-    if (organ in ORGAN_TYPES)
-        return ORGAN_TYPES[organ]
+    if (!window.UBKG_CACHE) return organ
+    if (organ in window.UBKG_CACHE.organTypes)
+        return window.UBKG_CACHE.organTypes[organ]
     else
         return organ
 }
@@ -180,4 +181,11 @@ export function equals(s1, s2, insensitive = true) {
         res = s1.toLowerCase() === s2.toLowerCase()
     }
     return res
+}
+
+export const flipObj = (obj) => {
+    return Object.keys(obj).reduce((ret, key) => {
+        ret[obj[key]] = key;
+        return ret;
+    }, {})
 }
