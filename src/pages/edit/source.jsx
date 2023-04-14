@@ -21,6 +21,7 @@ import ImageSelector from "../../components/custom/edit/ImageSelector";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
+import $ from "jquery";
 
 
 function EditSource() {
@@ -95,7 +96,7 @@ function EditSource() {
 
     const handleSave = async (event) => {
         setDisableSubmit(true);
-        const form = event.currentTarget.parentElement.parentElement;
+        const form = $(event.currentTarget.form)[0]
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
@@ -227,7 +228,7 @@ function EditSource() {
 
                                     {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}*/}
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--submit " onClick={handleSave}
+                                        <Button variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
                                                 disabled={disableSubmit}>
                                             {_t('Save')}
                                         </Button>

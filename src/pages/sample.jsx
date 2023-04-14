@@ -136,8 +136,8 @@ function ViewSample() {
                                     </div>
 
                                     <EntityViewHeader data={data} entity={cache.entities.sample.toLowerCase()}
-                                                      hasWritePrivilege={hasWritePrivilege} idKey='sample_category'/>
-
+                                                      hasWritePrivilege={hasWritePrivilege}
+                                                      uniqueHeader={data.sample_category}/>
 
                                     <div className="row">
                                         <div className="col-12">

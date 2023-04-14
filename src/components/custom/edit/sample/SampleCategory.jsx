@@ -25,7 +25,7 @@ function SampleCategory({
             resetOrganType(e, onChange);
         }
     };
-
+    
     const resetOrganType = (e, onChange) => {
         set_organ_group_hide('none')
         document.getElementById("organ").removeAttribute("required")
