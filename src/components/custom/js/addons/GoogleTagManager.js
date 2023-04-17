@@ -84,7 +84,8 @@ class GoogleTagManager extends Addon {
     }
 
     getPath() {
-        return this.router.asPath.length > 70 ? this.router.pathname : this.router.asPath
+        const path = window.location.pathname + window.location.search
+        return path > 70 ? window.location : path;
     }
     handleLinks(e) {
         this.event = 'links'

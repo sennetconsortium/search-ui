@@ -422,9 +422,7 @@ export default function BulkCreate({
 
     function getEntityModalBody() {
         let body = []
-        body.push(<p>
-            <strong>Group Name:</strong>  {bulkResponse[1].group_name}
-        </p>)
+        body.push(<p key={'modal-subtitle'}><strong>Group Name:</strong>  {bulkResponse[1].group_name}</p>)
         let {typeCol, labIdCol} = getColNames()
 
         let columns = getDefaultModalTableCols()
@@ -442,7 +440,7 @@ export default function BulkCreate({
         const downloadURL = generateTSVData(columns, labIdCol, bulkResponse)
 
         body.push(
-            <DataTable columns={columns} data={tableData} pagination />
+            <DataTable key={'success-table'} columns={columns} data={tableData} pagination />
         )
 
         let categories = []
@@ -456,9 +454,8 @@ export default function BulkCreate({
        }
 
         body.push(
-            <Row className={'mt-4 pull-right'}>
-
-                <Stack direction="horizontal" gap={3}>
+            <Row key='modal-download-area' className={'mt-4 pull-right'}>
+                <Stack direction='horizontal' gap={3}>
                     <a role={'button'} className={'btn btn-outline-success rounded-0'}
                        href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>&nbsp;
                     {(categories.length === 1) && canContinueBulkMetadata() &&
@@ -467,7 +464,6 @@ export default function BulkCreate({
                         </a>
                     }
                 </Stack>
-
             </Row>
         )
         return body;
@@ -476,10 +472,11 @@ export default function BulkCreate({
     function getMetadataModalBody() {
         let body = []
 
-        let sentencePre = bulkSuccess.fails.length ? 'Some of your ' : 'Your ';
+        let prefix = bulkSuccess.fails.length && !bulkSuccess.passes.length ? 'None' : 'Some';
+        let sentencePre = bulkSuccess.fails.length ? `${prefix} of your ` : 'Your ';
 
         body.push(
-            <p>{sentencePre} <code>{cache.entities[entityType]}s'</code> metadata were {getVerb(true, true)}.</p>
+            <p key={'modal-subtitle'}>{sentencePre} <code>{cache.entities[entityType]}s'</code> metadata were {getVerb(true, true)}.</p>
         )
 
         let {typeCol, labIdCol} = getColNames()
@@ -487,13 +484,13 @@ export default function BulkCreate({
 
         if (bulkSuccess.passes.length) {
             body.push(
-                <DataTable columns={columns} data={bulkSuccess.passes} pagination/>
+                <DataTable key={'success-table'} columns={columns} data={bulkSuccess.passes} pagination/>
             )
         }
         if (bulkSuccess.fails.length) {
             body.push(
                 <div className='c-metadataUpload__table table-responsive has-error'>
-                    <DataTable columns={columns} data={bulkSuccess.fails} pagination />
+                    <DataTable key={'fail-table'} columns={columns} data={bulkSuccess.fails} pagination />
                 </div>
             )
         }
@@ -501,22 +498,17 @@ export default function BulkCreate({
         const downloadURLPasses = generateTSVData(columns, labIdCol, bulkSuccess.passes)
         const downloadURLFails = generateTSVData(columns, labIdCol, bulkSuccess.fails)
         body.push(
-            <Row className={'mt-4 pull-right'}>
-
+            <Row key="modal-download-area" className={'mt-4 pull-right'}>
                 <Stack direction="horizontal" gap={3}>
                     { bulkSuccess.passes.length > 0 &&
                     <a role={'button'} title={'Download successfully uploaded metadata details'} className={'btn btn-outline-success rounded-0'}
-                       href={downloadURLPasses} download={`${file.name.replace('.tsv', '-success.tsv')}`}>Download succeeded details <Download /></a>
+                       href={downloadURLPasses} download={`${file.name.replace('.tsv', '-success.tsv')}`}>Download upload data <Download /></a>
                     }
                     { bulkSuccess.fails.length > 0 &&
-
                         <a role={'button'} title={'Download unsuccessfully uploaded metadata details'} className={'btn btn-outline-danger rounded-0'}
-                               href={downloadURLFails} download={`${file.name.replace('.tsv', '-fails.tsv')}`}>Download failed details <Download /></a>
+                               href={downloadURLFails} download={`${file.name.replace('.tsv', '-fails.tsv')}`}>Download failed uploads data <Download /></a>
                     }
                 </Stack>
-
-
-
             </Row>
         )
 

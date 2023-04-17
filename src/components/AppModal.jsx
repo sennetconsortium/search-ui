@@ -18,7 +18,7 @@ const AppModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, sh
                     <Modal.Title>{modalTitle}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {modalBody && <p>{modalBody}</p> }
+                    {modalBody && <div key="modal-body">{modalBody}</div> }
                     {children}
                 </Modal.Body>
                 <Modal.Footer>
