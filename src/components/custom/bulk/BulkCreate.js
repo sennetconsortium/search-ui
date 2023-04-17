@@ -352,7 +352,7 @@ export default function BulkCreate({
         return error !== null && error[index] !== null && error[index] === true
     }
 
-    function generateTSVData(columns, labIdCol) {
+    function generateTSVData(columns, labIdCol, data) {
         let tableDataTSV = ''
         let _colName
         for (let col of columns) {
@@ -362,8 +362,14 @@ export default function BulkCreate({
         for (let col of columns) {
             _colName = equals(col.name, 'lab_id') ? labIdCol : col.name
             _colName = equals(col.name, 'organ_type') ? 'organ' : _colName
-            for (let key in bulkResponse) {
-                tableDataTSV += `${bulkResponse[key][_colName]}\t`
+            if (Array.isArray(data)) {
+                for (let row of data) {
+                    tableDataTSV += `${row[_colName]}\t`
+                }
+            } else {
+                for (let key in data) {
+                    tableDataTSV += `${data[key][_colName]}\t`
+                }
             }
         }
         tableDataTSV += "\n"
@@ -429,7 +435,7 @@ export default function BulkCreate({
         }
 
         let tableData = Object.values(bulkResponse)
-        const downloadURL = generateTSVData(columns, labIdCol)
+        const downloadURL = generateTSVData(columns, labIdCol, bulkResponse)
 
         body.push(
             <DataTable columns={columns} data={tableData} pagination />
@@ -487,6 +493,18 @@ export default function BulkCreate({
                 </div>
             )
         }
+
+        const downloadURL = generateTSVData(columns, labIdCol, bulkSuccess.passes)
+        body.push(
+            <Row className={'mt-4 text-right'}>
+
+                <Col>
+                    <a role={'button'} className={'btn btn-outline-primary rounded-0'}
+                       href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>&nbsp;
+                </Col>
+
+            </Row>
+        )
 
         return body
     }
