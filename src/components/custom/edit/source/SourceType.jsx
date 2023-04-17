@@ -18,7 +18,7 @@ function SourceType( { data, onChange } ) {
                     className="required">* </span>
                     <SenNetPopover className={'source_type'} text={<>
                         <code>Source</code> type <br />
-                        <small className='popover-note text-muted'>Note: CCF Registration User Interface (CCF-RUI) tool is only available for <code>Human</code> and <code>Human Organoid</code> types.</small>
+                        <small className='popover-note text-muted'>Note: CCF Registration User Interface (CCF-RUI) tool is only available for <code>{cache.sourceTypes.Human}</code> and <code>{cache.sourceTypes['Human Organoid']}</code> types.</small>
                     </>}>
                         <QuestionCircleFill/>
                     </SenNetPopover>
