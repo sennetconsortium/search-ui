@@ -136,6 +136,24 @@ export const AppProvider = ({ cache, children }) => {
         }
     }
 
+    const supportedMetadata = () => {
+        let supported = {}
+        // TODO: Uncomment when received spec support for Mouse
+        // supported[cache.entities.source] = {
+        //     categories: [
+        //         cache.sourceTypes.Mouse
+        //     ]
+        // }
+        supported[cache.entities.sample] = {
+            categories: [
+                cache.sampleCategories.Block,
+                cache.sampleCategories.Section,
+                cache.sampleCategories.Suspension,
+            ]
+        }
+        return supported
+    }
+
     const promptForUIPasscode = async () => {
         const result = await Swal.fire({
             customClass: {
@@ -192,7 +210,8 @@ export const AppProvider = ({ cache, children }) => {
                 router,
                 filterImageFilesToAdd,
                 uiAdminAuthorized,
-                checkUIPassword
+                checkUIPassword,
+                supportedMetadata
             }}
         >
             {children}

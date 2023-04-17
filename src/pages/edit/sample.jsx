@@ -303,8 +303,7 @@ function EditSample() {
             let uuid = data.uuid
 
             checkMetadata('sample_category', supportsMetadata())
-
-            await update_create_entity(uuid, json, editMode, cache.entities.sample, router).then((response) => {
+            await update_create_entity(uuid, json, editMode, cache.entities.sample).then((response) => {
                 setModalDetails({
                     entity: cache.entities.sample, type: response.sample_category,
                     typeHeader: _t('Sample Category'), response
