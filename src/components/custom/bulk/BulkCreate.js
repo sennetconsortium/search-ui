@@ -12,7 +12,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
-import {Row, Col} from "react-bootstrap";
+import {Row, Col, Stack} from "react-bootstrap";
 import {Download, ArrowRightSquareFill} from "react-bootstrap-icons";
 import {getIngestEndPoint} from "../../../config/config";
 import Spinner from "../Spinner";
@@ -191,7 +191,6 @@ export default function BulkCreate({
             item.metadata['file_row'] = row
             let {typeCol, labIdCol} = getColNames()
             let response = await update_create_entity(item.uuid, {metadata: item.metadata, [typeCol]: item[typeCol]}, 'Edit', entityType)
-            debugger
             let result = {uuid: item.uuid, sennet_id: item.sennet_id, [labIdCol]: item[labIdCol], [typeCol]: item[typeCol]}
             if (!response.error){
                 passes.push(result)
@@ -452,17 +451,17 @@ export default function BulkCreate({
        }
 
         body.push(
-            <Row className={'mt-4 text-right'}>
+            <Row className={'mt-4 pull-right'}>
 
-                <Col>
-                    <a role={'button'} className={'btn btn-outline-primary rounded-0'}
+                <Stack direction="horizontal" gap={3}>
+                    <a role={'button'} className={'btn btn-outline-success rounded-0'}
                        href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>&nbsp;
                     {(categories.length === 1) && canContinueBulkMetadata() &&
                         <a className={'btn btn-primary rounded-0'} href={`/edit/bulk/${entityType}?action=metadata&category=${categories[0]}`}>
                         Continue to metadata upload <ArrowRightSquareFill />
                         </a>
                     }
-                </Col>
+                </Stack>
 
             </Row>
         )
@@ -494,14 +493,24 @@ export default function BulkCreate({
             )
         }
 
-        const downloadURL = generateTSVData(columns, labIdCol, bulkSuccess.passes)
+        const downloadURLPasses = generateTSVData(columns, labIdCol, bulkSuccess.passes)
+        const downloadURLFails = generateTSVData(columns, labIdCol, bulkSuccess.fails)
         body.push(
-            <Row className={'mt-4 text-right'}>
+            <Row className={'mt-4 pull-right'}>
 
-                <Col>
-                    <a role={'button'} className={'btn btn-outline-primary rounded-0'}
-                       href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>&nbsp;
-                </Col>
+                <Stack direction="horizontal" gap={3}>
+                    { bulkSuccess.passes.length &&
+                    <a role={'button'} title={'Download successfully uploaded metadata details'} className={'btn btn-outline-success rounded-0'}
+                       href={downloadURLPasses} download={`${file.name.replace('.tsv', '-success.tsv')}`}>Download succeeded details <Download /></a>
+                    }
+                    { bulkSuccess.fails.length &&
+
+                        <a role={'button'} title={'Download unsuccessfully uploaded metadata details'} className={'btn btn-outline-danger rounded-0'}
+                               href={downloadURLFails} download={`${file.name.replace('.tsv', '-fails.tsv')}`}>Download failed details <Download /></a>
+                    }
+                </Stack>
+
+
 
             </Row>
         )
