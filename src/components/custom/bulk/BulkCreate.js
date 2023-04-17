@@ -358,20 +358,25 @@ export default function BulkCreate({
             tableDataTSV += `${col.name}\t`
         }
         tableDataTSV += "\n"
-        for (let col of columns) {
-            _colName = equals(col.name, 'lab_id') ? labIdCol : col.name
-            _colName = equals(col.name, 'organ_type') ? 'organ' : _colName
-            if (Array.isArray(data)) {
-                for (let row of data) {
-                    tableDataTSV += `${row[_colName]}\t`
-                }
-            } else {
-                for (let key in data) {
-                    tableDataTSV += `${data[key][_colName]}\t`
-                }
+        let colVal;
+        try {
+            if (!Array.isArray(data)) {
+                data = Object.values(data)
             }
+
+            for (let row of data) {
+                for (let col of columns) {
+                    _colName = equals(col.name, 'lab_id') ? labIdCol : col.name
+                    _colName = equals(col.name, 'organ_type') ? 'organ' : _colName
+                    colVal = row[_colName] ? row[_colName] : ''
+                    tableDataTSV += `${colVal}\t`
+                }
+                tableDataTSV += "\n"
+            }
+        } catch (e) {
+            console.error(e);
         }
-        tableDataTSV += "\n"
+
         return createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
     }
 
@@ -499,11 +504,11 @@ export default function BulkCreate({
             <Row className={'mt-4 pull-right'}>
 
                 <Stack direction="horizontal" gap={3}>
-                    { bulkSuccess.passes.length &&
+                    { bulkSuccess.passes.length > 0 &&
                     <a role={'button'} title={'Download successfully uploaded metadata details'} className={'btn btn-outline-success rounded-0'}
                        href={downloadURLPasses} download={`${file.name.replace('.tsv', '-success.tsv')}`}>Download succeeded details <Download /></a>
                     }
-                    { bulkSuccess.fails.length &&
+                    { bulkSuccess.fails.length > 0 &&
 
                         <a role={'button'} title={'Download unsuccessfully uploaded metadata details'} className={'btn btn-outline-danger rounded-0'}
                                href={downloadURLFails} download={`${file.name.replace('.tsv', '-fails.tsv')}`}>Download failed details <Download /></a>
