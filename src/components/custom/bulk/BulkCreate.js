@@ -443,22 +443,26 @@ export default function BulkCreate({
             <DataTable key={'success-table'} columns={columns} data={tableData} pagination />
         )
 
-        let categories = []
+        const isBulkMetadataSupported = (cat) => {
+            let supported = supportedMetadata()[cache.entities[entityType]]
+            return supported ? supported.categories.includes(cat) : false
+        }
+
+        let categoriesSet = new Set()
         Object.values(bulkResponse).map(each => {
-            categories.push(each[typeCol])
+            if (isBulkMetadataSupported(each[typeCol])) {
+                categoriesSet.add(each[typeCol])
+            }
         })
 
-       const canContinueBulkMetadata = () => {
-            let supported = supportedMetadata()[cache.entities[entityType]]
-            return supported ? supported.categories.includes(categories[0]) : false
-       }
+        const categories = Array.from(categoriesSet)
 
         body.push(
             <Row key='modal-download-area' className={'mt-4 pull-right'}>
                 <Stack direction='horizontal' gap={3}>
                     <a role={'button'} className={'btn btn-outline-success rounded-0'}
-                       href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>&nbsp;
-                    {(categories.length === 1) && canContinueBulkMetadata() &&
+                       href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>
+                    {(categories.length === 1) &&
                         <a className={'btn btn-primary rounded-0'} href={`/edit/bulk/${entityType}?action=metadata&category=${categories[0]}`}>
                         Continue to metadata upload <ArrowRightSquareFill />
                         </a>
