@@ -206,7 +206,7 @@ export const EntityProvider = ({ children }) => {
         return <AppModal
             showModal={showModal}
             modalTitle={modalTitle}
-            modalBody={modalBody}
+            modalBody={<p>{modalBody}</p>}
             handleClose={isEditMode() ? handleClose : goToEntity}
             handleHome={handleHome}
             showCloseButton={showCloseButton}
