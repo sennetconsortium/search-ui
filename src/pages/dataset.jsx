@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {
-    BoxArrowUpRight,
-    CircleFill, List
+    List
 } from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
@@ -24,6 +23,7 @@ import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
 import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
 import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
+import {get_primary_data_assays} from "../lib/ontology";
 
 
 
@@ -36,33 +36,35 @@ function ViewDataset() {
     const {
         showVitessce,
         setVitessceConfig,
-        isPrimaryDataset,
         setIsPrimaryDataset
     } = useContext(VisualizationContext)
 
     // Load the correct Vitessce view config
     useEffect(() => {
-        if (data) {
-            log.info(data)
-            let datasetId = data.uuid;
-            if (isPrimaryDataset && data.immediate_descendants.length !== 0) {
-                // Fetch files from the immediate descendant dataset (visualization dataset)
-                datasetId = data.descendant_ids[0]
+        const initVitessceConfig = async () => {
+            if (data) {
+                const primary_assays = await get_primary_data_assays()
+                // TODO: Check each data_type in the list instead of the first item
+                let is_primary_dataset = primary_assays.includes(data.data_types[0]);
+                setIsPrimaryDataset(is_primary_dataset)
+                let has_descandants = data.immediate_descendants.length !== 0;
+                let datasetId = is_primary_dataset && has_descandants ? data.descendant_ids[0] : data.uuid
+                data.data_types.forEach(assay => {
+                    switch (assay) {
+                        case 'snRNA-seq':
+                        case 'scRNA-seq':
+                            setVitessceConfig(rna_seq(datasetId))
+                            break
+                        case 'CODEX':
+                            setVitessceConfig(codex_config(datasetId))
+                            break
+                        default:
+                            console.log(`No Vitessce config found for assay type: ${assay}`)
+                    }
+                })
             }
-            data.data_types.forEach(assay => {
-                switch (assay) {
-                    case 'snRNA-seq':
-                    case 'scRNA-seq':
-                        setVitessceConfig(rna_seq(datasetId))
-                        break
-                    case 'CODEX':
-                        setVitessceConfig(codex_config(datasetId))
-                        break
-                    default:
-                        console.log(`No Vitessce config found for assay type: ${assay}`)
-                }
-            })
         }
+        initVitessceConfig()
     }, [data])
 
     // only executed on init rendering, see the []
@@ -85,7 +87,6 @@ function ViewDataset() {
             } else {
                 // set state with the result
                 setData(data);
-                setIsPrimaryDataset(data.immediate_ancestors.some(ancestor => ancestor.entity_type === cache.entities.sample))
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
