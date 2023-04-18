@@ -1,5 +1,5 @@
-import {getUbkgCodes, getUbkgCodesPath, getUbkgEndPoint, getUbkgValuesetPath} from '../config/config'
-import {get_json_header} from './services'
+import { getUbkgEndPoint, getUbkgCodes, getUbkgValuesetPath, getUbkgCodesPath } from '../config/config'
+import { get_json_header } from './services'
 
 export async function get_onotology_valueset(code) {
     const path = getUbkgCodesPath() ? getUbkgCodesPath()[code] : null
@@ -59,12 +59,6 @@ export async function get_data_assays() {
     const list = await get_ontology_from_cache(getUbkgCodes().data_assays) //C000001
     const assays = to_key_val(list, false, 'data_type', 'data_type')
     return add_other(assays)
-}
-export async function get_primary_data_assays() {
-    const list = await get_ontology_from_cache(getUbkgCodes().data_assays)
-    const primary_assays = list.filter(assay => assay.primary)
-    const assays = to_key_val(primary_assays, false, 'data_type', 'data_type')
-    return Object.values(add_other(assays))
 }
 
 export async function get_organ_types() {
