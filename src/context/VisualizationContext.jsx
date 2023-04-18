@@ -13,9 +13,9 @@ export const VisualizationProvider = ({ children }) => {
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
 
-    const showVitessce = data_types => {
+    const showVitessce = (data_types, is_primary_dataset, immediate_descendants) => {
         const supportedVitessceDataTypes = ['snRNA-seq', 'scRNA-seq', 'CODEX']
-        return supportedVitessceDataTypes.some(d => data_types.includes(d))
+        return supportedVitessceDataTypes.some(d => data_types.includes(d)) && immediate_descendants !== 0
     }
 
     const expandVitessceToFullscreen = () => {
