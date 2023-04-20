@@ -5,7 +5,7 @@ import {
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getOrganTypeFullName, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
+import {getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -43,20 +43,24 @@ function ViewDataset() {
     useEffect(() => {
         const initVitessceConfig = async () => {
             if (data) {
+                let dataset_id = data.uuid
                 const primary_assays = await get_primary_data_assays()
                 // TODO: Check each data_type in the list instead of the first item
                 let is_primary_dataset = primary_assays.includes(data.data_types[0]);
                 setIsPrimaryDataset(is_primary_dataset)
-                let has_descandants = data.immediate_descendants.length !== 0;
-                let datasetId = is_primary_dataset && has_descandants ? data.descendant_ids[0] : data.uuid
+                if (is_primary_dataset && data.immediate_descendants.length !== 0) {
+                    let immediate_descendant = data.immediate_descendants[0];
+                    dataset_id = immediate_descendant.uuid
+                }
                 data.data_types.forEach(assay => {
                     switch (assay) {
                         case 'snRNA-seq':
                         case 'scRNA-seq':
-                            setVitessceConfig(rna_seq(datasetId))
+                            setVitessceConfig(rna_seq(dataset_id))
                             break
+                        case 'CODEX [Cytokit + SPRM]':
                         case 'CODEX':
-                            setVitessceConfig(codex_config(datasetId))
+                            setVitessceConfig(codex_config(dataset_id))
                             break
                         default:
                             console.log(`No Vitessce config found for assay type: ${assay}`)
