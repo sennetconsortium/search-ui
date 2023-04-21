@@ -177,11 +177,17 @@ export function urlify(text, blank = true, max = 40) {
 
 export function equals(s1, s2, insensitive = true) {
     let res = s1 === s2
-    if (insensitive && !_.isUndefined(s1) && !_.isUndefined(s2)) {
+    if (insensitive && s1 !== undefined && s2 !== undefined) {
         res = s1.toLowerCase() === s2.toLowerCase()
     }
     return res
 }
+
+Object.assign(String.prototype, {
+    upperCaseFirst() {
+        return this[0].toUpperCase() + this.slice(1);
+    }
+})
 
 export const flipObj = (obj) => {
     return Object.keys(obj).reduce((ret, key) => {
@@ -189,3 +195,4 @@ export const flipObj = (obj) => {
         return ret;
     }, {})
 }
+

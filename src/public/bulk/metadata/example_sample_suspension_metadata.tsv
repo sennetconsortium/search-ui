@@ -1,0 +1,2 @@
+version	sample_id	type	source_storage_time_value	source_storage_time_unit	preparation_media	preparation_temperature	processing_time_value	processing_time_unit	storage_media	storage_temperature	quality_criteria	suspension_entity	suspension_entity_number	suspension_enriched	suspension_enriched_target	notes
+1	SNT748.TXHX.675	suspension	30	min	PFA (4%)	Dry Ice	22	min	Buffered Formalin (10% NBF)	Liquid Nitrogen Vapor		cell	44	yes		

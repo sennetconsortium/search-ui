@@ -51,6 +51,43 @@ export const formatErrorColumnTimer = (d = '"') => {
         formatErrorColumn(d)
     }, 200)
 }
+const isUnacceptable = (code) => code === 406
+
+export const getErrorList = (details) => {
+    let data = []
+    try {
+        let {code, description} = details
+        const preflight = description['Preflight']
+        let err = preflight ? {error: preflight} : {error: description}
+        err = isUnacceptable(code) && !preflight ? null : err
+        if (err) {
+            data = [err]
+        } else {
+            if (Array.isArray(description)) {
+                if (typeof description[0] === 'string') {
+                    data = description.map(d => {
+                        return {error: d}
+                    })
+                } else {
+                    if (description[0].description !== undefined) {
+                        data = description.map(d => {
+                            return d.description
+                        })
+                    } else {
+                        data = Array.from(description)
+                    }
+                }
+            } else {
+                data = [{error: JSON.stringify(description)}]
+            }
+        }
+        log.debug('Metadata errors', data)
+
+    } catch (e) {
+        console.error(e)
+    }
+    return {data, columns: tableColumns};
+}
 
 function MetadataUpload({ setMetadata, entity, subType }) {
 
@@ -81,37 +118,9 @@ function MetadataUpload({ setMetadata, entity, subType }) {
 
     }, [subType])
 
-    const isUnacceptable = (code) => code === 406
 
-    const getErrorList = (details) => {
-        let data = []
-        try {
-            let {code, description} = details
-            const preflight = description['Preflight']
-            let err = preflight ? {error: preflight} : {error: description}
-            err = isUnacceptable(code) && !preflight ? null : err
-            if (err) {
-                data = [err]
-            } else {
-                if (Array.isArray(description)) {
-                    if (typeof description[0] === 'string') {
-                        data = description.map(d => {
-                            return {error: d}
-                        })
-                    } else {
-                        data = Array.from(description)
-                    }
-                } else {
-                    data = [{error: JSON.stringify(description)}]
-                }
-            }
-            log.debug('Metadata errors', data)
 
-        } catch (e) {
-            console.error(e)
-        }
-        return {data, columns: tableColumns};
-    }
+
 
     const handleUpload = async (e) => {
         try {
@@ -127,7 +136,7 @@ function MetadataUpload({ setMetadata, entity, subType }) {
             formData.append('entity_type', entity)
             formData.append('sub_type', subType)
             formData.append('ui_type', 'gui')
-            const response = await fetch(getIngestEndPoint() + 'validation', { method: 'POST', body: formData, headers: get_auth_header() })
+            const response = await fetch(getIngestEndPoint() + 'metadata/validate', { method: 'POST', body: formData, headers: get_auth_header() })
             const details = await response.json()
             $('[type=file]').val(null)
             if (details.code !== 200) {

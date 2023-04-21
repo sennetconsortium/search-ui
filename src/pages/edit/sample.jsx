@@ -251,7 +251,7 @@ function EditSample() {
         // This Sample must a Sample Category: "Block"
         log.debug(ancestorOrgan)
         if (ancestorOrgan.length > 0) {
-            if (values !== null && values['sample_category'] === 'block' && isRuiSupported(ancestorOrgan, ancestorSource)) {
+            if (values !== null && values['sample_category'] === cache.sampleCategories.Block && isRuiSupported(ancestorOrgan, ancestorSource)) {
                 if (!showRuiButton) {
                     setShowRuiButton(true)
                 }
@@ -303,8 +303,7 @@ function EditSample() {
             let uuid = data.uuid
 
             checkMetadata('sample_category', supportsMetadata())
-
-            await update_create_entity(uuid, json, editMode, cache.entities.sample, router).then((response) => {
+            await update_create_entity(uuid, json, editMode, cache.entities.sample).then((response) => {
                 setModalDetails({
                     entity: cache.entities.sample, type: response.sample_category,
                     typeHeader: _t('Sample Category'), response
