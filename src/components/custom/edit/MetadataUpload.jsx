@@ -34,13 +34,12 @@ export const tableColumns = [
             let err = row.error
             if (typeof row.error === 'object') {
                 err = err.msg
-                if (err.data) {
-                    const jsonStr = JSON.stringify(err.data);
-                    err += 'http://local/api/json?view='+btoa(jsonStr)
+                if (row.error.data) {
+                    const jsonStr = JSON.stringify(row.error.data);
+                    err += ' http://local/api/json?view='+btoa(jsonStr)
                 }
             }
-            let txt = row.column ? ` "${row.column}" ` + row.error : row.error
-
+            return row.column ? ` "${row.column}" ` + err : err
         },
         sortable: true,
     }
