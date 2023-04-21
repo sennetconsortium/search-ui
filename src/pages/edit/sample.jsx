@@ -158,7 +158,7 @@ function EditSample() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (router.query.uuid === 'create') {
+            if (router.query.uuid === 'register') {
                 setData(true)
                 setEditMode("Create")
             } else {
