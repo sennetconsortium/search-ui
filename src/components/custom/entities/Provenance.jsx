@@ -118,12 +118,12 @@ function Provenance({nodeData}) {
             'sennet:created_by_user_displayname': 'agent'
         },
         imageMap: {
-            "Sample|sennet:sample_category|organ": null,
-            "Sample|sennet:sample_category|block": null,
-            "Sample|sennet:sample_category|section": null,
+            "Sample|sennet:sample_category|Organ": null,
+            "Sample|sennet:sample_category|Block": null,
+            "Sample|sennet:sample_category|Section": null,
         },
         imageMapActions: {
-            "Sample|sennet:sample_category|organ": {
+            "Sample|sennet:sample_category|Organ": {
                 fn: 'append',
                 type: 'g',
                 data: [
@@ -132,12 +132,12 @@ function Provenance({nodeData}) {
                     }
                 ]
             },
-            "Sample|sennet:sample_category|block": {
+            "Sample|sennet:sample_category|Block": {
                 type: 'rect',
                 height: 28,
                 width: 28
             },
-            "Sample|sennet:sample_category|section": {
+            "Sample|sennet:sample_category|Section": {
                 type: 'rect',
                 height: 25,
                 width: 50
