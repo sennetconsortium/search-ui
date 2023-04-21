@@ -47,7 +47,7 @@ function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
                     }
                     {uniqueHeader &&
                         <h5><span className="badge bg-secondary mx-2">
-                            {displayBodyHeader(uniqueHeader)}
+                            {uniqueHeader}
                          </span></h5>
                     }
                     {data.status &&
