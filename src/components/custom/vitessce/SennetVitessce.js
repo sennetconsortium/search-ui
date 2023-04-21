@@ -25,7 +25,7 @@ export const SennetVitessce = ({ data }) => {
     } = useContext(VisualizationContext)
     
     return <>
-        { showVitessce(data.data_types) &&
+        { showVitessce(data.data_types, isPrimaryDataset, data.immediate_descendants.length) &&
             <div className="accordion accordion-flush sui-result" id="Vitessce">
             <div className="accordion-item ">
                 <div className="accordion-header">
