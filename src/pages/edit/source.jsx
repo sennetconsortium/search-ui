@@ -79,9 +79,9 @@ function EditSource() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (router.query.uuid === 'register') {
+            if (equals(router.query.uuid, 'register')) {
                 setData(true)
-                setEditMode("Create")
+                setEditMode("Register")
             } else {
                 // call the function
                 fetchData(router.query.uuid)

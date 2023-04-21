@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
 
     // Check for redirect cookie and if it exists just continue
     // Check if user is trying to create entity
-    if (request.cookies.get('redirect')?.value === "true" || uuid === 'create') {
+    if (request.cookies.get('redirect')?.value === "true" || uuid === 'register') {
         const response = NextResponse.rewrite(request.url)
         response.cookies.delete("redirect")
         return response

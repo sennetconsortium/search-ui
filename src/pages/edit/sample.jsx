@@ -158,9 +158,9 @@ function EditSample() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (router.query.uuid === 'register') {
+            if (equals(router.query.uuid, 'register')) {
                 setData(true)
-                setEditMode("Create")
+                setEditMode("Register")
             } else {
                 // call the function
                 fetchData(router.query.uuid)
@@ -276,7 +276,7 @@ function EditSample() {
             event.preventDefault();
             log.debug("Form is valid")
 
-            if (values['group_uuid'] === null && editMode === 'Create') {
+            if (values['group_uuid'] === null && editMode === 'Register') {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
@@ -417,7 +417,7 @@ function EditSample() {
 
                                     {/*/!*Tissue Sample Type*!/*/}
 
-                                    {((isEditMode() && source) || (editMode === 'Create')) &&
+                                    {((isEditMode() && source) || (editMode === 'Register')) &&
                                         <>
                                             <SampleCategory
                                                 organ_group_hide={organ_group_hide}
