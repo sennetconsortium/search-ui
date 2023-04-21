@@ -39,7 +39,7 @@ function Provenance({nodeData}) {
     const onAfterBuild = (ops) => {
         const ui = window.ProvenanceTreeD3[ops.options.selectorId]
         if (ui) {
-            // ui.enableZoom()
+            ui.enableZoom()
         }
 
         let hidden = activityHidden.current
@@ -96,7 +96,7 @@ function Provenance({nodeData}) {
         clearTimeout(cbTimeout)
         cbTimeout = setTimeout(()=>{
             const ui = window.ProvenanceTreeD3[selectorId]
-            // ui.disableZoom()
+            ui.disableZoom()
         }, 1000)
     }
 
