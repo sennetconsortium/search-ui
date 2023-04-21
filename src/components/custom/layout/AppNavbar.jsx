@@ -52,7 +52,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                             id="nav-dropdown"
                         >
                             {Object.keys(cache.entities).map((entity) => (
-                                <NavDropdown.Item key={entity} href={`/edit/${entity}?uuid=create`}>
+                                <NavDropdown.Item key={entity} href={`/edit/${entity}?uuid=register`}>
                                     {_t(entity)}
                                 </NavDropdown.Item>
                             ))}

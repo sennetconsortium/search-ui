@@ -30,7 +30,17 @@ export const tableColumns = [
     },
     {
         name: 'Error',
-        selector: row => row.column ? ` "${row.column}" ` + row.error : row.error,
+        selector: row => {
+            let err = row.error
+            if (typeof row.error === 'object') {
+                err = err.msg
+                if (row.error.data) {
+                    const jsonStr = JSON.stringify(row.error.data);
+                    err += ' http://local/api/json?view='+btoa(jsonStr)
+                }
+            }
+            return row.column ? ` "${row.column}" ` + err : err
+        },
         sortable: true,
     }
 ]

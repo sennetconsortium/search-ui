@@ -173,7 +173,7 @@ export const EntityProvider = ({ children }) => {
         setDisableSubmit(false)
 
         if ('uuid' in response) {
-            const verb = isEditMode() ? 'Updated' : 'Created'
+            const verb = isEditMode() ? 'Updated' : 'Registered'
             setHasSubmissionError(false)
             setModalTitle(`${entity} ${verb}`)
             setModalBody(`${_t(`Your ${entity} was ${verb.toLocaleLowerCase()}`)}:\n` +
@@ -183,7 +183,7 @@ export const EntityProvider = ({ children }) => {
             setResponse(response)
         } else {
             setHasSubmissionError(true)
-            setModalTitle(`Error Creating ${entity}`)
+            setModalTitle(`Error Registering ${entity}`)
             let responseText = ""
             if ("error" in response) {
                 responseText = response.error
