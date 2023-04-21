@@ -5,8 +5,8 @@ import log from "loglevel";
 
 export async function update_create_entity(uuid, body, action = "Edit", entity_type = null) {
     let raw = JSON.stringify(body)
-    let url = getEntityEndPoint() + "entities/" + (action === 'Create' ? entity_type : uuid)
-    let method = (action === 'Create' ? "POST" : "PUT")
+    let url = getEntityEndPoint() + "entities/" + (action === 'Register' ? entity_type : uuid)
+    let method = (action === 'Register' ? "POST" : "PUT")
 
     return call_service(raw, url, method)
 }
@@ -16,8 +16,8 @@ export async function update_create_dataset(uuid, body, action = "Edit") {
         return update_create_entity(uuid, body, action);
     } else {
         let raw = JSON.stringify(body)
-        let url = getIngestEndPoint() + "datasets" + (action === 'Create' ? '' : "/" + uuid + "/submit")
-        let method = (action === 'Create' ? "POST" : "PUT")
+        let url = getIngestEndPoint() + "datasets" + (action === 'Register' ? '' : "/" + uuid + "/submit")
+        let method = (action === 'Register' ? "POST" : "PUT")
         log.debug(url)
         return call_service(raw, url, method)
     }

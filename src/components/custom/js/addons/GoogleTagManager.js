@@ -153,7 +153,8 @@ class GoogleTagManager extends Addon {
 
         if ( pos !== -1) {
             data.entity = this.entities[entities[pos]]
-            const actions = ['create', 'edit']
+            // TODO: check GTM
+            const actions = ['register', 'edit']
             for (let action of actions) {
                 if (this.router.route.indexOf(action) !== -1) {
                     data.action = action
