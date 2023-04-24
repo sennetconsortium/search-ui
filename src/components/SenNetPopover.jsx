@@ -37,7 +37,7 @@ export const handlePopoverDisplay = (className, stateCallback) => {
     domMutation(callback)
 }
 
-function SenNetPopover({children, text, placement, className, trigger}) {
+function SenNetPopover({children, text, placement, className, trigger, show}) {
 
     const [showTooltip, setShowTooltip] = useState(undefined)
     const containerClassName = `${className}`
@@ -86,7 +86,7 @@ function SenNetPopover({children, text, placement, className, trigger}) {
     }, [])
 
     return (
-        <OverlayTrigger show={showTooltip} trigger={trigger} placement={placement} overlay={
+        <OverlayTrigger show={show || showTooltip} trigger={trigger} placement={placement} overlay={
             <Popover className={containerClassName}>
                 <Popover.Body>
                     {text}

@@ -1,4 +1,11 @@
 .popover {
+  &-clipboard-pc {
+    &:hover {
+      svg {
+        fill: var(--bs-link-hover-color)
+      }
+    }
+  }
   z-index: 10;
   &.is-error {
     color: $col-err-txt;
