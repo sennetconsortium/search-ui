@@ -18,6 +18,7 @@ import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {List} from 'react-bootstrap-icons';
+import SidebarBtn from "../components/SidebarBtn";
 
 function ViewSource() {
     const router = useRouter()
@@ -83,7 +84,7 @@ function ViewSource() {
                     <>
                         <div className="container-fluid">
                             <div className="row flex-nowrap entity_body">
-                                <div className="col-auto p-0">
+                                <div className="col-auto p-0 sidebar-drawer">
                                     <div id="sidebar"
                                          className="collapse collapse-horizontal sticky-top custom-sticky">
                                         <ul id="sidebar-nav"
@@ -127,10 +128,7 @@ function ViewSource() {
                                 </div>
 
                                 <main className="col m-md-3 entity_details">
-                                    <div className="d-none d-md-block sticky-top" id="sections-button">
-                                        <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                           className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
-                                    </div>
+                                    <SidebarBtn />
 
                                     <EntityViewHeader data={data} entity={cache.entities.source.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}/>

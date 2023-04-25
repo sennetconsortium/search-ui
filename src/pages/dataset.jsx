@@ -24,6 +24,7 @@ import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config"
 import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
 import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
 import {get_primary_data_assays} from "../lib/ontology";
+import SidebarBtn from "../components/SidebarBtn";
 
 
 
@@ -127,7 +128,7 @@ function ViewDataset() {
                     <>
                         <div className="container-fluid">
                             <div className="row flex-nowrap entity_body">
-                                <div className="col-auto p-0">
+                                <div className="col-auto p-0 sidebar-drawer">
                                     <div id="sidebar"
                                          className="collapse collapse-horizontal sticky-top custom-sticky">
                                         <ul id="sidebar-nav"
@@ -180,10 +181,7 @@ function ViewDataset() {
                                 </div>
 
                                 <main className="col m-md-3 entity_details">
-                                    <div className="d-none d-md-block sticky-top" id="sections-button">
-                                        <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                           className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
-                                    </div>
+                                    <SidebarBtn />
 
                                     <EntityViewHeader data={data}
                                                       uniqueHeader={data.data_types[0]}
