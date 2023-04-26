@@ -87,7 +87,7 @@ function ViewSample() {
                     <>
                         <div className="container-fluid">
                             <div className="row flex-nowrap entity_body">
-                                <div className="col-auto p-0 sidebar-drawer">
+                                <div className="col-auto p-0">
                                     <div id="sidebar"
                                          className="collapse collapse-horizontal sticky-top custom-sticky">
                                         <ul id="sidebar-nav"
