@@ -10,7 +10,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
 import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
-import {fetchEntity} from "../js/functions";
+import {fetchEntity, getOrganTypeFullName} from "../js/functions";
 
 
 function Provenance({nodeData}) {
@@ -118,12 +118,12 @@ function Provenance({nodeData}) {
             'sennet:created_by_user_displayname': 'agent'
         },
         imageMap: {
-            "Sample|sennet:sample_category|organ": null,
-            "Sample|sennet:sample_category|block": null,
-            "Sample|sennet:sample_category|section": null,
+            "Sample|sennet:sample_category|Organ": null,
+            "Sample|sennet:sample_category|Block": null,
+            "Sample|sennet:sample_category|Section": null,
         },
         imageMapActions: {
-            "Sample|sennet:sample_category|organ": {
+            "Sample|sennet:sample_category|Organ": {
                 fn: 'append',
                 type: 'g',
                 data: [
@@ -132,12 +132,12 @@ function Provenance({nodeData}) {
                     }
                 ]
             },
-            "Sample|sennet:sample_category|block": {
+            "Sample|sennet:sample_category|Block": {
                 type: 'rect',
                 height: 28,
                 width: 28
             },
-            "Sample|sennet:sample_category|section": {
+            "Sample|sennet:sample_category|Section": {
                 type: 'rect',
                 height: 25,
                 width: 50
@@ -172,11 +172,12 @@ function Provenance({nodeData}) {
         props: ['sennet:sennet_id'],
         typeProps: {
             Source: ['sennet:source_type'],
-            Sample: ['sennet:sample_category'],
+            Sample: ['sennet:sample_category', 'sennet:organ'],
             Activity: ['sennet:created_timestamp', 'sennet:protocol_url', 'sennet:created_by_user_displayname']
         },
         callbacks: {
-            'sennet:created_timestamp': 'formatDate'
+            'sennet:created_timestamp': 'formatDate',
+            'sennet:organ': getOrganTypeFullName
         }
     }
 
