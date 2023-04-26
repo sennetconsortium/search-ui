@@ -16,5 +16,38 @@
 #sections-button {
   margin-left: -50px;
   width: 42px; //This is set otherwise the z-index of this button interferes with other page functionality
-  top: 90px !important
+  top: 220px !important;
+}
+
+.sidebar {
+  &-drawer {
+    border-left: solid 10px var(--bs-gray-600);
+
+    &-btn {
+      position: relative;
+      background-color: var(--bs-gray-600);
+      &:hover {
+        background-color: var(--bs-gray-700);
+        svg {
+          transform: translateX(3px);
+        }
+      }
+      &.is-open {
+        svg {
+          left: 0;
+        }
+        &:hover {
+          svg {
+            transform: translateX(-3px);
+          }
+        }
+      }
+      svg {
+        position: relative;
+        transition: all .4s ease-in-out;
+        fill: white;
+        left: 7px;
+      }
+    }
+  }
 }
