@@ -1,11 +1,28 @@
-.modal-full {
-  .modal-dialog {
-    max-width: 100%;
+.modal {
+  &--ctaConfirm {
+    .modal-title {
+      .title-text {
+        position: relative;
+        top: 2px;
+        margin-left: 4px;
+      }
+    }
+    &.is-error {
+      .modal-content {
+        color: $col-err-txt;
+        background: $col-err-bg;
+        border-color: $col-err-bdr;
+      }
+    }
   }
-
-  .c-provenance {
-    height: inherit;
-    min-height: 500px;
+  &-full {
+    .modal-dialog {
+      max-width: 100%;
+    }
+    .c-provenance {
+      height: inherit;
+      min-height: 500px;
+    }
   }
 }
 

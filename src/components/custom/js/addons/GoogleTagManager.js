@@ -84,7 +84,8 @@ class GoogleTagManager extends Addon {
     }
 
     getPath() {
-        return this.router.asPath.length > 70 ? this.router.pathname : this.router.asPath
+        const path = window.location.pathname + window.location.search
+        return path > 70 ? window.location : path;
     }
     handleLinks(e) {
         this.event = 'links'
@@ -152,7 +153,7 @@ class GoogleTagManager extends Addon {
 
         if ( pos !== -1) {
             data.entity = this.entities[entities[pos]]
-            const actions = ['create', 'edit']
+            const actions = ['register', 'edit']
             for (let action of actions) {
                 if (this.router.route.indexOf(action) !== -1) {
                     data.action = action

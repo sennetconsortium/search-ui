@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useContext} from 'react';
 import {styled} from '@mui/material/styles';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -12,23 +12,27 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
-import {getAuth} from "../../../config/config";
+import {Row, Col, Stack} from "react-bootstrap";
+import {Download, ArrowRightSquareFill} from "react-bootstrap-icons";
+import {getIngestEndPoint} from "../../../config/config";
 import Spinner from "../Spinner";
 import AppFooter from "../layout/AppFooter";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
-import {formatErrorColumn, tableColumns, formatErrorColumnTimer} from "../edit/MetadataUpload";
+import {tableColumns, formatErrorColumnTimer, getErrorList} from "../edit/MetadataUpload";
 import DataTable from 'react-data-table-component';
+import {createDownloadUrl, equals} from "../js/functions";
+import AppContext from "../../../context/AppContext";
+import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
 
 
 export default function BulkCreate({
                                        entityType,
-                                       exampleFileName,
-                                       bulkUploadUrl,
-                                       bulkUrl,
+                                       subType,
                                        userWriteGroups,
                                        handleHome,
+                                       isMetadata=false,
                                    }) {
     const buttonVariant = "btn btn-outline-primary rounded-0"
     const inputFileRef = useRef(null)
@@ -42,9 +46,11 @@ export default function BulkCreate({
     const [bulkSuccess, setBulkSuccess] = useState(null)
     const [bulkResponse, setBulkResponse] = useState([])
     const [isLoading, setIsLoading] = useState(null)
-    const [steps, setSteps] = useState(['Attach Your File', 'Review Validation', 'Complete'])
+    const stepLabels = ['Attach Your File', 'Review Validation', 'Complete']
+    const [steps, setSteps] = useState(stepLabels)
     const [selectedGroup, setSelectedGroup] = useState(null)
     const [showModal, setShowModal] = useState(true)
+    const {cache, supportedMetadata} = useContext(AppContext)
 
     const ColorlibConnector = styled(StepConnector)(({theme}) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -119,23 +125,95 @@ export default function BulkCreate({
 
     useEffect(() => {
         if (userWriteGroups && getUserWriteGroupsLength() > 1) {
-            setSteps(['Attach Your File', 'Review Validation', 'Select group', 'Complete'])
+            if (isMetadata) {
+                setSteps(stepLabels)
+            } else {
+                let extraSteps = Array.from(stepLabels)
+                const lastStep = extraSteps.pop()
+                extraSteps.push('Select group')
+                extraSteps.push(lastStep)
+                setSteps(extraSteps)
+            }
         }
         if (userWriteGroups && getUserWriteGroupsLength() === 1) {
             setSelectedGroup(userWriteGroups[0].uuid)
         }
     }, [userWriteGroups])
 
-    async function postBulkUploads() {
+    const getEntityValidationUrl = () => {
+        return `${getIngestEndPoint()}${entityType}s/bulk/validate`
+    }
+
+    const getEntityRegistrationUrl = () => {
+        return `${getIngestEndPoint()}${entityType}s/bulk/register`
+    }
+
+    const getMetadataValidationUrl = () => {
+        return `${getIngestEndPoint()}metadata/validate`
+    }
+
+    async function metadataValidation() {
+        setIsLoading(true)
+        const formData = new FormData()
+        formData.append('metadata', file)
+        formData.append('entity_type', cache.entities[entityType])
+        formData.append('sub_type', subType)
+        formData.append('validate_uuids', '1')
+        formData.append('ui_type', 'gui')
+        const requestOptions = {
+            method: 'POST',
+            headers: get_auth_header(),
+            body: formData
+        }
+        const response = await fetch(getMetadataValidationUrl(), requestOptions)
+        const data = await response.json()
+        if (!response.ok) {
+            setError({1: true})
+            const errorList = getErrorList(data)
+            setErrorMessage(errorList)
+            formatErrorColumnTimer('`')
+        } else {
+            setBulkResponse(data.description)
+            setValidationSuccess(true)
+            setIsNextButtonDisabled(false)
+        }
+        setIsLoading(false)
+    }
+
+    async function metadataCommit() {
+        let passes = []
+        let fails = []
+        let row = 0
+        setIsLoading(true)
+        for (let resp of bulkResponse.data) {
+            let item = resp.description
+            item.metadata['pathname'] = bulkResponse.pathname
+            item.metadata['file_row'] = row
+            let {typeCol, labIdCol} = getColNames()
+            let response = await update_create_entity(item.uuid, {metadata: item.metadata, [typeCol]: item[typeCol]}, 'Edit', entityType)
+            let result = {uuid: item.uuid, sennet_id: item.sennet_id, [labIdCol]: item[labIdCol], [typeCol]: item[typeCol]}
+            if (!response.error){
+                passes.push(result)
+            } else {
+                fails.push(result)
+            }
+            row++
+        }
+        setIsLoading(false)
+        setBulkSuccess({fails, passes})
+    }
+
+    // This makes a request to ingest-api, validating the upload
+    async function entityValidation() {
         setIsLoading(true)
         const formData = new FormData()
         formData.append('file', file)
         const requestOptions = {
             method: 'POST',
-            headers: {'Authorization': 'Bearer ' + getAuth()},
+            headers: get_auth_header(),
             body: formData
         }
-        const response = await fetch(bulkUploadUrl, requestOptions)
+        const response = await fetch(getEntityValidationUrl(), requestOptions)
         const data = await response.json()
         if (!response.ok) {
             setError({1: true})
@@ -149,20 +227,20 @@ export default function BulkCreate({
         setIsLoading(false)
     }
 
-    async function postBulk() {
+    async function entityRegistration() {
         setIsLoading(true)
         const body = {temp_id: tempId, group_uuid: selectedGroup}
         const requestOptions = {
             method: 'POST',
-            headers: {'Authorization': 'Bearer ' + getAuth(), 'Content-Type': 'application/json'},
+            headers: get_headers(),
             body: JSON.stringify(body)
         }
-        const response = await fetch(bulkUrl, requestOptions)
+        const response = await fetch(getEntityRegistrationUrl(), requestOptions)
         const data = await response.json()
         if (!response.ok) {
             setError(getStepsLength() === 3 ? {2: true} : {3: true})
             setIsNextButtonDisabled(true)
-            setErrorMessage(data.description)
+            setErrorMessage(Object.values(data.description))
         } else {
             setBulkSuccess(true)
             setBulkResponse(data.description)
@@ -184,28 +262,51 @@ export default function BulkCreate({
         setIsNextButtonDisabled(false)
     }
 
-    const handleNext = () => {
+    const onRegisterNext = () => {
         setIsNextButtonDisabled(true)
         if (getStepsLength() === 3) {
             if (activeStep === 0) {
-                postBulkUploads()
+                entityValidation()
             } else if (activeStep === 1) {
-                postBulk()
+                entityRegistration()
             } else if (activeStep === 2) {
                 handleReset()
                 return
             }
         } else {
             if (activeStep === 0) {
-                postBulkUploads()
+                entityValidation()
             } else if (activeStep === 2) {
-                postBulk()
+                entityRegistration()
             } else if (activeStep === 3) {
                 handleReset()
                 return
             }
         }
         setActiveStep(prevState => prevState + 1)
+    }
+
+    const onMetadataNext = () => {
+        setIsNextButtonDisabled(true)
+        if (getStepsLength() === 3) {
+            if (activeStep === 0) {
+                metadataValidation()
+            } else if (activeStep === 1) {
+                metadataCommit()
+            } else if (activeStep === 2) {
+                handleReset()
+                return
+            }
+        }
+        setActiveStep(prevState => prevState + 1)
+    }
+
+    const handleNext = () => {
+        if (isMetadata) {
+            onMetadataNext()
+        } else {
+            onRegisterNext()
+        }
     }
 
     const handleBack = () => {
@@ -250,34 +351,205 @@ export default function BulkCreate({
         return error !== null && error[index] !== null && error[index] === true
     }
 
-    function getModalBody() {
-        let body = `Your ${entityType} were created:\n`
-        if (entityType.toLowerCase() === 'sources') {
-            body += `Source types: \n${Array.from(new Set(Object.values(bulkResponse).map(each =>
-                '\t' + each.source_type.charAt(0).toUpperCase() + each.source_type.slice(1) + '\n'
-            )))}`
-        } else if (entityType.toLowerCase() === 'samples') {
-            body += `Sample categories: \n${Array.from(new Set(Object.values(bulkResponse).map(each => {
-                    let organ_type = null
-                    if (each.sample_category === 'organ') {
-                        organ_type = each.organ
-                    }
-                    let result = '\t' + each.sample_category.charAt(0).toUpperCase() + each.sample_category.slice(1)
-                    if (organ_type !== null) {
-                        result += ` (${organ_type})` + '\n'
-                    } else {
-                        result += '\n'
-                    }
-                    return result
-                }
-            )))}`
-        } else if (entityType.toLowerCase() === 'datasets') {
-            body += `Data types: \n${Array.from(new Set(Object.values(bulkResponse).map(each =>
-                '\t' + each.data_types[0].charAt(0).toUpperCase() + each.data_types[0].slice(1) + '\n'
-            )))}`
+    function generateTSVData(columns, labIdCol, data) {
+        let tableDataTSV = ''
+        let _colName
+        for (let col of columns) {
+            tableDataTSV += `${col.name}\t`
         }
-        body += 'Group Name: ' + bulkResponse[1].group_name + '\n' + 'SenNet IDs: \n' + Object.values(bulkResponse).map(each => '\t' + each.sennet_id + '\n')
-        return body.replace(/,/g, '')
+        tableDataTSV += "\n"
+        let colVal;
+        try {
+            if (!Array.isArray(data)) {
+                data = Object.values(data)
+            }
+
+            for (let row of data) {
+                for (let col of columns) {
+                    _colName = equals(col.name, 'lab_id') ? labIdCol : col.name
+                    _colName = equals(col.name, 'organ_type') ? 'organ' : _colName
+                    colVal = row[_colName] ? row[_colName] : ''
+                    tableDataTSV += `${colVal}\t`
+                }
+                tableDataTSV += "\n"
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
+        return createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
+    }
+
+    function getColNames() {
+        let typeCol;
+        let labIdCol
+        if (equals(entityType, cache.entities.source)) {
+            typeCol = 'source_type'
+            labIdCol = 'lab_source_id'
+        } else if (equals(entityType, cache.entities.sample)) {
+            typeCol = 'sample_category'
+            labIdCol = 'lab_tissue_sample_id'
+        } else {
+            typeCol = 'data_types'
+            labIdCol = 'lab_dataset_id'
+        }
+        return {typeCol, labIdCol}
+    }
+
+    function getDefaultModalTableCols() {
+        let {typeCol, labIdCol} = getColNames()
+        return [{
+            name: 'lab_id',
+            selector: row => row[labIdCol],
+            sortable: true,
+            width: '150px'
+            },
+            {
+                name: 'sennet_id',
+                selector: row => row.sennet_id,
+                sortable: true,
+                width: '170px'
+            },
+            {
+                name: typeCol,
+                selector: row => row[typeCol],
+                sortable: true,
+                width: '160px'
+            }
+        ]
+    }
+
+
+    function getEntityModalBody() {
+        let body = []
+        body.push(<p key={'modal-subtitle'}><strong>Group Name:</strong>  {bulkResponse[1].group_name}</p>)
+        let {typeCol, labIdCol} = getColNames()
+
+        let columns = getDefaultModalTableCols()
+
+        if (equals(entityType, cache.entities.sample)) {
+            columns.push({
+                name: 'organ_type',
+                selector: row => row.organ ? row.organ : '',
+                sortable: true,
+                width: '150px'
+            })
+        }
+
+        let tableData = Object.values(bulkResponse)
+        const downloadURL = generateTSVData(columns, labIdCol, bulkResponse)
+
+        body.push(
+            <DataTable key={'success-table'} columns={columns} data={tableData} pagination />
+        )
+
+        const isBulkMetadataSupported = (cat) => {
+            let supported = supportedMetadata()[cache.entities[entityType]]
+            return supported ? supported.categories.includes(cat) : false
+        }
+
+        let categoriesSet = new Set()
+        Object.values(bulkResponse).map(each => {
+            if (isBulkMetadataSupported(each[typeCol])) {
+                categoriesSet.add(each[typeCol])
+            }
+        })
+
+        const categories = Array.from(categoriesSet)
+
+        body.push(
+            <Row key='modal-download-area' className={'mt-4 pull-right'}>
+                <Stack direction='horizontal' gap={3}>
+                    <a role={'button'} className={'btn btn-outline-success rounded-0'}
+                       href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>
+                    {(categories.length === 1) &&
+                        <a className={'btn btn-primary rounded-0'} href={`/edit/bulk/${entityType}?action=metadata&category=${categories[0]}`}>
+                        Continue to metadata upload <ArrowRightSquareFill />
+                        </a>
+                    }
+                </Stack>
+            </Row>
+        )
+        return body;
+    }
+
+    function getMetadataModalBody() {
+        let body = []
+
+        let prefix = bulkSuccess.fails.length && !bulkSuccess.passes.length ? 'None' : 'Some';
+        let sentencePre = bulkSuccess.fails.length ? `${prefix} of your ` : 'Your ';
+
+        body.push(
+            <p key={'modal-subtitle'}>{sentencePre} <code>{cache.entities[entityType]}s'</code> metadata were {getVerb(true, true)}.</p>
+        )
+
+        let {typeCol, labIdCol} = getColNames()
+        let columns = getDefaultModalTableCols()
+
+        if (bulkSuccess.passes.length) {
+            body.push(
+                <DataTable key={'success-table'} columns={columns} data={bulkSuccess.passes} pagination/>
+            )
+        }
+        if (bulkSuccess.fails.length) {
+            body.push(
+                <div className='c-metadataUpload__table table-responsive has-error'>
+                    <DataTable key={'fail-table'} columns={columns} data={bulkSuccess.fails} pagination />
+                </div>
+            )
+        }
+
+        const downloadURLPasses = generateTSVData(columns, labIdCol, bulkSuccess.passes)
+        const downloadURLFails = generateTSVData(columns, labIdCol, bulkSuccess.fails)
+        body.push(
+            <Row key="modal-download-area" className={'mt-4 pull-right'}>
+                <Stack direction="horizontal" gap={3}>
+                    { bulkSuccess.passes.length > 0 &&
+                    <a role={'button'} title={'Download successfully uploaded metadata details'} className={'btn btn-outline-success rounded-0'}
+                       href={downloadURLPasses} download={`${file.name.replace('.tsv', '-success.tsv')}`}>Download upload data <Download /></a>
+                    }
+                    { bulkSuccess.fails.length > 0 &&
+                        <a role={'button'} title={'Download unsuccessfully uploaded metadata details'} className={'btn btn-outline-danger rounded-0'}
+                               href={downloadURLFails} download={`${file.name.replace('.tsv', '-fails.tsv')}`}>Download failed uploads data <Download /></a>
+                    }
+                </Stack>
+            </Row>
+        )
+
+        return body
+    }
+
+    function getModalTitle() {
+        const inner = isMetadata ? "' Metadata" : ""
+        return `${cache.entities[entityType]}s${inner} ${getVerb(true, true)}`
+    }
+
+    function getModalBody() {
+        return isMetadata ? getMetadataModalBody() : getEntityModalBody()
+    }
+
+    const isAtLastStep = () => {
+        return (activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4)
+    }
+
+    const getVerb = (past = false, lowercase = false) => {
+        let verb = isMetadata ? 'Upload' : 'Register'
+        verb = past ? `${verb}ed` : verb
+        return lowercase ? verb.toLowerCase() : verb
+    }
+
+    const getTitle = () => {
+        const entity = cache.entities[entityType]
+        let title = `${getVerb()} ${entity}s`
+        if (isMetadata) {
+            title = `${getVerb()} ${entity} ${subType}s' Metadata`
+        }
+        return title
+    }
+
+    const getFilename = () => {
+        let filename = `example_${entityType}`
+        return isMetadata ? `metadata/${filename}_${subType}_metadata` : `entities/${filename}`
     }
 
     return (
@@ -291,11 +563,11 @@ export default function BulkCreate({
                     <a
                         download
                         className={buttonVariant}
-                        href={`/${exampleFileName}`}
+                        href={`/bulk/${getFilename().toLowerCase()}.tsv`}
                     >
                         <FileDownloadIcon/> {' '} EXAMPLE.TSV
                     </a>
-                    <h1 className={'text-center'}>Upload {entityType}</h1>
+                    <h1 className={'text-center'}>{getTitle()}</h1>
                     <div className={'p-4 text-center'}>To register multiple items at one time, upload a tsv file in the
                         format specified by the example file.
                     </div>
@@ -320,7 +592,7 @@ export default function BulkCreate({
                     {isLoading && <Spinner/>}
                     {
                         errorMessage && <div className='c-metadataUpload__table table-responsive has-error'>
-                            <DataTable columns={tableColumns} data={errorMessage} pagination />
+                            <DataTable columns={tableColumns} data={errorMessage.data ? errorMessage.data : errorMessage} pagination />
                         </div>
                     }
                     {activeStep === 1 && !errorMessage && validationSuccess &&
@@ -328,10 +600,11 @@ export default function BulkCreate({
                             Validation successful please continue onto the next step
                         </Alert>}
                     {
-                        (activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4) && !errorMessage && bulkSuccess &&
+                        isAtLastStep() && !errorMessage && bulkSuccess &&
                         <AppModal
-                            modalTitle={entityType + ' created'}
+                            modalTitle={getModalTitle()}
                             modalBody={getModalBody()}
+                            modalSize='lg'
                             showModal={showModal}
                             handleHome={handleHome}
                             handleClose={() => setShowModal(false)}
@@ -339,7 +612,7 @@ export default function BulkCreate({
                         />
                     }
                     {
-                        activeStep === 2 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
+                        !isMetadata && activeStep === 2 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
                         <Grid container className={'text-center mt-5'}>
                             <Grid item xs></Grid>
                             <Grid item xs>

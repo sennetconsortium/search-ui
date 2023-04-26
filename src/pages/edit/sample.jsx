@@ -158,9 +158,9 @@ function EditSample() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (router.query.uuid === 'create') {
+            if (equals(router.query.uuid, 'register')) {
                 setData(true)
-                setEditMode("Create")
+                setEditMode("Register")
             } else {
                 // call the function
                 fetchData(router.query.uuid)
@@ -276,7 +276,7 @@ function EditSample() {
             event.preventDefault();
             log.debug("Form is valid")
 
-            if (values['group_uuid'] === null && editMode === 'Create') {
+            if (values['group_uuid'] === null && editMode === 'Register') {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
@@ -303,8 +303,7 @@ function EditSample() {
             let uuid = data.uuid
 
             checkMetadata('sample_category', supportsMetadata())
-
-            await update_create_entity(uuid, json, editMode, cache.entities.sample, router).then((response) => {
+            await update_create_entity(uuid, json, editMode, cache.entities.sample).then((response) => {
                 setModalDetails({
                     entity: cache.entities.sample, type: response.sample_category,
                     typeHeader: _t('Sample Category'), response
@@ -418,7 +417,7 @@ function EditSample() {
 
                                     {/*/!*Tissue Sample Type*!/*/}
 
-                                    {((isEditMode() && source) || (editMode === 'Create')) &&
+                                    {((isEditMode() && source) || (editMode === 'Register')) &&
                                         <>
                                             <SampleCategory
                                                 organ_group_hide={organ_group_hide}

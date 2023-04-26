@@ -3,21 +3,21 @@ import log from "loglevel";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
-export async function update_create_entity(uuid, body, action = "Edit", entity_type = null, router) {
+export async function update_create_entity(uuid, body, action = "Edit", entity_type = null) {
     let raw = JSON.stringify(body)
-    let url = getEntityEndPoint() + "entities/" + (action === 'Create' ? entity_type : uuid)
-    let method = (action === 'Create' ? "POST" : "PUT")
+    let url = getEntityEndPoint() + "entities/" + (action === 'Register' ? entity_type : uuid)
+    let method = (action === 'Register' ? "POST" : "PUT")
 
     return call_service(raw, url, method)
 }
 
-export async function update_create_dataset(uuid, body, action = "Edit", router) {
+export async function update_create_dataset(uuid, body, action = "Edit") {
     if (action === 'Edit') {
-        return update_create_entity(uuid, body, action, router);
+        return update_create_entity(uuid, body, action);
     } else {
         let raw = JSON.stringify(body)
-        let url = getIngestEndPoint() + "datasets" + (action === 'Create' ? '' : "/" + uuid + "/submit")
-        let method = (action === 'Create' ? "POST" : "PUT")
+        let url = getIngestEndPoint() + "datasets" + (action === 'Register' ? '' : "/" + uuid + "/submit")
+        let method = (action === 'Register' ? "POST" : "PUT")
         log.debug(url)
         return call_service(raw, url, method)
     }
@@ -50,12 +50,8 @@ export async function fetchGlobusFilepath(sennet_id) {
     }
     const response = await fetch(url, request_options)
     const filepath = await response.text();
-    if (response.status != 200) {
-        log.error(filepath)
-        return null;
-    } else {
-        return filepath;
-    }
+    log.error(filepath)
+    return {status: response.status, filepath};
 }
 
 // This function requires the bearer token passed to it as the middleware can't access "getAuth()"
@@ -139,13 +135,9 @@ export async function get_user_write_groups() {
 }
 
 async function call_service(raw, url, method) {
-    var headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", "Bearer " + getAuth())
-
     return await fetch(url, {
         method: method,
-        headers: headers,
+        headers: get_headers(),
         body: raw,
     }).then(response => response.json())
         .then(result => {

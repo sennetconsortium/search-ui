@@ -1,9 +1,11 @@
-import React, {useContext} from 'react'
+import React, {useContext, useState} from 'react'
 import AppContext from '../../../../context/AppContext'
 import {Button} from 'react-bootstrap';
-import {FiletypeJson} from 'react-bootstrap-icons';
+import {FiletypeJson, Clipboard} from 'react-bootstrap-icons';
 import {displayBodyHeader, getOrganTypeFullName, getStatusColor} from "../../js/functions";
 import PropTypes from 'prop-types'
+import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
+import ClipboardCopy from "../../../ClipboardCopy";
 
 const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
     const {_t, cache } = useContext(AppContext)
@@ -28,10 +30,13 @@ EntityViewHeaderButtons.propTypes = {
 
 function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
     const {_t, cache } = useContext(AppContext)
+
     return (
         <div style={{width: '100%'}}>
             <h4>{cache.entities[entity]}</h4>
-            <h3>{data.sennet_id}</h3>
+            <h3>{data.sennet_id}
+                <ClipboardCopy text={data.sennet_id} />
+            </h3>
             <div className="row mb-2">
                 <div className="col-md-6 col-sm-12 entity_subtitle icon_inline">
                     {data.origin_sample &&

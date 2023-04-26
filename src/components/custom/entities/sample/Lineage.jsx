@@ -49,7 +49,9 @@ export default class Lineage extends React.Component {
                         : lineage_data.lab_source_id ? lineage_data.lab_source_id
                             : lineage_data.lab_dataset_id ? lineage_data.lab_dataset_id
                                 : null,
-                    display_subtype: lineage_data?.display_subtype,
+                    display_subtype: (lineage_data.sample_category ? (
+                              lineage_data.sample_category
+                            ) : lineage_data.display_subtype),
                     organ: getOrganTypeFullName(lineage_data?.origin_sample?.organ),
                     group_name: lineage_data.group_name
                 });

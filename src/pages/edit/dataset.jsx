@@ -153,9 +153,9 @@ export default function EditDataset() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (router.query.uuid === 'create') {
+            if (equals(router.query.uuid, 'register')) {
                 setData(true)
-                setEditMode("Create")
+                setEditMode("Register")
             } else {
                 // call the function
                 fetchData(router.query.uuid)
@@ -232,7 +232,7 @@ export default function EditDataset() {
                 }
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
-                if (values['group_uuid'] === null && editMode === 'Create') {
+                if (values['group_uuid'] === null && editMode === 'Register') {
                     values['group_uuid'] = selectedUserWriteGroupUuid
                 }
                 // Remove empty strings

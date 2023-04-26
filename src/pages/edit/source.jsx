@@ -79,9 +79,9 @@ function EditSource() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (router.query.uuid === 'create') {
+            if (equals(router.query.uuid, 'register')) {
                 setData(true)
-                setEditMode("Create")
+                setEditMode("Register")
             } else {
                 // call the function
                 fetchData(router.query.uuid)
@@ -118,7 +118,7 @@ function EditSource() {
 
             checkMetadata('source_type', supportsMetadata())
 
-            await update_create_entity(uuid, json, editMode, cache.entities.source, router).then((response) => {
+            await update_create_entity(uuid, json, editMode, cache.entities.source).then((response) => {
                 setModalDetails({entity: cache.entities.source, type: response.source_type, typeHeader: _t('Source Type'), response})
                 if (response.image_files) {
                     setValues(prevState => ({...prevState, image_files: response.image_files}))
