@@ -11,6 +11,9 @@ import AppContext from './AppContext'
 import {equals, getHeaders} from "../components/custom/js/functions";
 import {getEntityEndPoint} from "../config/config";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import ClipboardCopy from "../components/ClipboardCopy";
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
@@ -175,15 +178,18 @@ export const EntityProvider = ({ children }) => {
         if ('uuid' in response) {
             const verb = isEditMode() ? 'Updated' : 'Registered'
             setHasSubmissionError(false)
-            setModalTitle(`${entity} ${verb}`)
-            setModalBody(`${_t(`Your ${entity} was ${verb.toLocaleLowerCase()}`)}:\n` +
-                `${_t(typeHeader)}: ` + type + "\n" +
-                `${_t('Group Name')}: ` + response.group_name + "\n" +
-                `${_('SenNet ID')}: ` + response.sennet_id)
+            let body = []
+            setModalTitle(<span><TaskAltIcon color={'success'} /><span className={'title-text'}> {entity} {verb}</span></span>)
+            body.push(<span>{_t(`Your ${entity} was ${verb.toLocaleLowerCase()}`)}. <br /></span>)
+            body.push(<span><strong>{_t(typeHeader)}:</strong> {type}<br /></span>)
+            body.push(<span><strong>{_t('Group Name')}:</strong> {response.group_name}<br /></span>)
+            body.push(<span><strong>{_t('SenNet ID')}:</strong> {response.sennet_id} <ClipboardCopy text={response.sennet_id} /> </span>)
+            setModalBody(body)
             setResponse(response)
         } else {
+            const verb = isEditMode() ? 'Updating' : 'Registering'
             setHasSubmissionError(true)
-            setModalTitle(`Error Registering ${entity}`)
+            setModalTitle(<span><WarningAmberIcon sx={{color: '#842029'}} /><span className={'title-text'}>Error {verb} {entity}</span></span>)
             let responseText = ""
             if ("error" in response) {
                 responseText = response.error
@@ -204,6 +210,7 @@ export const EntityProvider = ({ children }) => {
 
     const getModal = () => {
         return <AppModal
+            className={`modal--ctaConfirm ${hasSubmissionError ? 'is-error' : ''}`}
             showModal={showModal}
             modalTitle={modalTitle}
             modalBody={<p>{modalBody}</p>}

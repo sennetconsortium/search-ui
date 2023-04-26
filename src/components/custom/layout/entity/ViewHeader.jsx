@@ -5,6 +5,7 @@ import {FiletypeJson, Clipboard} from 'react-bootstrap-icons';
 import {displayBodyHeader, getOrganTypeFullName, getStatusColor} from "../../js/functions";
 import PropTypes from 'prop-types'
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
+import ClipboardCopy from "../../../ClipboardCopy";
 
 const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
     const {_t, cache } = useContext(AppContext)
@@ -30,28 +31,11 @@ EntityViewHeaderButtons.propTypes = {
 function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
     const {_t, cache } = useContext(AppContext)
 
-    const [showTooltip, setShowTooltip] = useState(false)
-
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(data.sennet_id)
-        setShowTooltip(true)
-        let st
-        clearTimeout(st)
-        st = setTimeout(()=>{
-            setShowTooltip(false)
-        }, 2000)
-    }
-
     return (
         <div style={{width: '100%'}}>
             <h4>{cache.entities[entity]}</h4>
             <h3>{data.sennet_id}
-
-                <SenNetPopover text={'Copied!'} show={showTooltip} trigger={SenPopoverOptions.triggers.click} className={`popover-clipboard`}>
-                    <sup title='Copy SenNet ID to clipboard' role={'button'} onClick={copyToClipboard}>
-                        <Clipboard size={12} />
-                    </sup>
-                </SenNetPopover>
+                <ClipboardCopy text={data.sennet_id} />
             </h3>
             <div className="row mb-2">
                 <div className="col-md-6 col-sm-12 entity_subtitle icon_inline">
