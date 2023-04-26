@@ -24,6 +24,7 @@ import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config"
 import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
 import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
 import {get_primary_data_assays} from "../lib/ontology";
+import SidebarBtn from "../components/SidebarBtn";
 
 
 
@@ -180,10 +181,7 @@ function ViewDataset() {
                                 </div>
 
                                 <main className="col m-md-3 entity_details">
-                                    <div className="d-none d-md-block sticky-top" id="sections-button">
-                                        <a href="#" data-bs-target="#sidebar" data-bs-toggle="collapse"
-                                           className="btn btn-outline-primary rounded-0 icon_inline mb-2"><List/></a>
-                                    </div>
+                                    <SidebarBtn />
 
                                     <EntityViewHeader data={data}
                                                       uniqueHeader={data.data_types[0]}

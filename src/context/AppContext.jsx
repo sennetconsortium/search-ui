@@ -17,6 +17,7 @@ export const AppProvider = ({ cache, children }) => {
     const [authorized, setAuthorized] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
     const [uiAdminAuthorized, setUIAuthorized] = useState(false)
+    const [sidebarVisible, setSidebarVisible] = useState(false)
     const router = useRouter()
     const authKey = 'isAuthenticated'
     const pageKey = 'userPage'
@@ -154,6 +155,10 @@ export const AppProvider = ({ cache, children }) => {
         return supported
     }
 
+    const handleSidebar = () => {
+        setSidebarVisible(!sidebarVisible)
+    }
+
     const promptForUIPasscode = async () => {
         const result = await Swal.fire({
             customClass: {
@@ -211,7 +216,9 @@ export const AppProvider = ({ cache, children }) => {
                 filterImageFilesToAdd,
                 uiAdminAuthorized,
                 checkUIPassword,
-                supportedMetadata
+                supportedMetadata,
+                handleSidebar,
+                sidebarVisible
             }}
         >
             {children}
