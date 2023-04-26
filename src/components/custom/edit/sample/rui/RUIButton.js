@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {Check2Circle, QuestionCircleFill} from "react-bootstrap-icons";
 import RUIModal from "./RUIModal";
 import {Button, Form, OverlayTrigger, Popover} from 'react-bootstrap';
+import AppContext from "../../../../../context/AppContext";
 
 
 const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
+    const {cache } = useContext(AppContext)
+
     const [showRuiLocationModal, setShowRuiLocationModal] = useState(false)
 
     const handleRegisterLocationClick = () => {
@@ -42,7 +45,7 @@ const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
 
                 </Form.Label>
                 <div className="mb-2 text-muted">
-                CCF Registration User Interface (CCF-RUI) tool is only available for <code>Human</code> and <code>Human organoid</code> <em>Ancestor</em> source types and sample category <code>Block</code>.
+                CCF Registration User Interface (CCF-RUI) tool is only available for <code>{cache.sourceTypes.Human}</code> and <code>{cache.sourceTypes['Human Organoid']}</code> <em>Ancestor</em> source types and sample category <code>{cache.sampleCategories.Block}</code>.
                 </div>
                 </>
             }

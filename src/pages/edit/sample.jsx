@@ -251,7 +251,7 @@ function EditSample() {
         // This Sample must a Sample Category: "Block"
         log.debug(ancestorOrgan)
         if (ancestorOrgan.length > 0) {
-            if (values !== null && values['sample_category'] === 'block' && isRuiSupported(ancestorOrgan, ancestorSource)) {
+            if (values !== null && values['sample_category'] === cache.sampleCategories.Block && isRuiSupported(ancestorOrgan, ancestorSource)) {
                 if (!showRuiButton) {
                     setShowRuiButton(true)
                 }
