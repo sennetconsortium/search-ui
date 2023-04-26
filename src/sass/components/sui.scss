@@ -21,9 +21,10 @@
   border-bottom: 0;
 }
 
-.sui-multi-checkbox-facet__input-text {
-  text-transform: capitalize;
-}
+//No longer needed since UBKG integration
+//.sui-multi-checkbox-facet__input-text {
+//  text-transform: capitalize;
+//}
 
 @media (max-width: 800px) {
   .sui-layout-sidebar {
