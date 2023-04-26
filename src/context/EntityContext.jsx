@@ -179,11 +179,11 @@ export const EntityProvider = ({ children }) => {
             const verb = isEditMode() ? 'Updated' : 'Registered'
             setHasSubmissionError(false)
             let body = []
-            setModalTitle(<span><TaskAltIcon color={'success'} /><span className={'title-text'}> {entity} {verb}</span></span>)
-            body.push(<span>{_t(`Your ${entity} was ${verb.toLocaleLowerCase()}`)}. <br /></span>)
-            body.push(<span><strong>{_t(typeHeader)}:</strong> {type}<br /></span>)
-            body.push(<span><strong>{_t('Group Name')}:</strong> {response.group_name}<br /></span>)
-            body.push(<span><strong>{_t('SenNet ID')}:</strong> {response.sennet_id} <ClipboardCopy text={response.sennet_id} /> </span>)
+            setModalTitle(<span><TaskAltIcon color={'success'} /><span className={'title-text'} > {entity} {verb}</span></span>)
+            body.push(<span key='bdy-1'>{_t(`Your ${entity} was ${verb.toLocaleLowerCase()}`)}. <br /></span>)
+            body.push(<span key='bdy-2'><strong>{_t(typeHeader)}:</strong> {type}<br /></span>)
+            body.push(<span key='bdy-3'><strong>{_t('Group Name')}:</strong> {response.group_name}<br /></span>)
+            body.push(<span key='bdy-4'><strong>{_t('SenNet ID')}:</strong> {response.sennet_id} <ClipboardCopy text={response.sennet_id} /> </span>)
             setModalBody(body)
             setResponse(response)
         } else {
