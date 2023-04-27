@@ -29,12 +29,21 @@ import {getOrganTypeFullName} from "../components/custom/js/functions";
 function Search() {
     const {
         _t,
+        cache,
         logout,
         isRegisterHidden,
         isAuthorizing,
         isUnauthorized,
         hasAuthenticationCookie
     } = useContext(AppContext);
+
+    // Return an array of data types that should be excluded from search
+    const excludeDataTypes = cache.dataTypeObj.filter(data_type => data_type['vis-only'] === true).map(data_type => data_type.data_type);
+    console.log(excludeDataTypes)
+    config['searchQuery']['excludeFilters'] = [{
+        keyword: "data_types.keyword",
+        value: excludeDataTypes
+    }];
 
     if (isAuthorizing()) {
         return <Spinner/>

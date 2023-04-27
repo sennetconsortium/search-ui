@@ -34,6 +34,14 @@ export default class AncestorIds extends React.Component {
         this.state = {
             showHideModal: false,
         };
+
+        // Return an array of data types that should be excluded from search
+        const excludeDataTypes = window.UBKG_CACHE.dataTypeObj.filter(data_type => data_type['vis-only'] === true).map(data_type => data_type.data_type);
+        console.log(excludeDataTypes)
+        valid_dataset_ancestor_config['searchQuery']['excludeFilters'] = [{
+            keyword: "data_types.keyword",
+            value: excludeDataTypes
+        }];
     }
 
     showModal = () => {
