@@ -20,31 +20,31 @@ const handlePagingInfo = (page, resultsPerPage, totalRows) => {
     const $pgInfo = $('.sui-paging-info')
     let upTo = resultsPerPage * page
     upTo = upTo > totalRows ? totalRows : upTo
-    $pgInfo.find('strong').eq(0).text(`${((page - 1) * resultsPerPage) + 1} - ${upTo}`)
-
+    $pgInfo.find('strong').eq(0).html(`${((page - 1) * resultsPerPage) + 1} - ${upTo}`)
 }
 function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
 
     const getOptions = () => {
         let result = []
         for (let x of RESULTS_PER_PAGE) {
-            result.push(
-                {value: x, label: x}
-            )
+            if (x <= totalRows || x - totalRows < 10) {
+                result.push(
+                    {value: x, label: x}
+                )
+            }
         }
         return result
     }
 
     const handleChange = (e) => {
-        setDefaultValue(e)
         setResultsPerPage(e.value)
         handlePagingInfo(1, e.value, totalRows)
     }
 
-    const [defaultValue, setDefaultValue] = useState(getOptions()[1])
+    const getDefaultValue = () => getOptions().length > 1 ? getOptions()[1] : getOptions()[0]
 
     return (
-        <>&nbsp; <Select className={'sui-react-select'} blurInputOnSelect={false} options={getOptions()} value={defaultValue} onChange={handleChange} name={'resultsPerPage'} /></>
+        <div className={'sui-react-select'}>&nbsp; {getOptions().length && <Select blurInputOnSelect={false} options={getOptions()} value={getDefaultValue()} onChange={handleChange} name={'resultsPerPage'} />}</div>
     )
 }
 
@@ -80,6 +80,7 @@ function TableResults({ children, filters, onRowClicked}) {
 
     const getTableData = () => {
         pageData = []
+        handlePageChange(1, children.length)
         if (children.length) {
             for (let row of children) {
                 pageData.push({...row.props.result, id: row.props.result.sennet_id.raw})
@@ -121,7 +122,7 @@ function TableResults({ children, filters, onRowClicked}) {
                 }
             )
         }
-        cols.push.apply(cols, columns);
+        cols = cols.concat(columns)
         cols.push(
             {
                 name: 'Group',
@@ -202,10 +203,10 @@ function TableResults({ children, filters, onRowClicked}) {
             cols = defaultColumns({});
         } else {
             cols = filters.map((filter, index) => {
+                let columns = []
                 if (filter.field === 'entity_type') {
                     const hasOneEntity = filter.values.length === 1
                     const entityType = filter.values[0]
-                    let columns = []
                     if (hasOneEntity && equals(entityType, cache.entities.source)) {
                         columns = sourceColumns
                     } else if (hasOneEntity && equals(entityType, cache.entities.sample)) {
@@ -215,10 +216,10 @@ function TableResults({ children, filters, onRowClicked}) {
                     } else {
                         log.debug('Table Results', hasMultipleEntityTypes)
                     }
-                    return defaultColumns({hasMultipleEntityTypes, columns});
                 }
+                return defaultColumns({hasMultipleEntityTypes, columns});
             })
-            cols = cols[0]
+            cols = cols[cols.length - 1]
         }
 
         return cols;
