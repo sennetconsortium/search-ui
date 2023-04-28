@@ -1,10 +1,10 @@
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import {
     ErrorBoundary,
     Paging,
     PagingInfo,
     Results,
-    ResultsPerPage,
+    //ResultsPerPage,
     SearchBox,
     SearchProvider,
     Sorting,
@@ -12,7 +12,7 @@ import {
 } from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
 import Facets from "search-ui/components/core/Facets";
-import {TableResults, TableRowDetail} from "../components/custom/TableResults";
+import {TableResults} from '../components/TableResults'
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import AppFooter from "../components/custom/layout/AppFooter";
@@ -86,12 +86,6 @@ function Search() {
                                                 <div data-js-ada='facets'>
                                                     <CustomClearSearchBox/>
                                                     <SelectedFilters/>
-                                                    {wasSearched && (
-                                                        <Sorting
-                                                            label={_t('Sort by')}
-                                                            sortOptions={SORT_OPTIONS}
-                                                        />
-                                                    )}
 
                                                     <Facets fields={config.searchQuery} filters={filters}
                                                             transformFunction={getOrganTypeFullName}/>
@@ -101,20 +95,18 @@ function Search() {
                                             }
                                             bodyContent={
                                                 <div className="js-gtm--results" data-js-ada='tr'>
-                                                    <Results filters={filters} titleField={filters}
-                                                             view={TableResults} resultView={TableRowDetail}
-                                                    />
+                                                    {wasSearched && <Results filters={filters} titleField={filters}
+                                                             view={TableResults}
+                                                    />}
+                                                    {!wasSearched && <Spinner /> }
                                                 </div>
 
                                             }
                                             bodyHeader={
                                                 <React.Fragment>
                                                     {wasSearched && <PagingInfo/>}
-                                                    {<Paging/>}
-                                                    {wasSearched && <ResultsPerPage options={RESULTS_PER_PAGE}/>}
                                                 </React.Fragment>
                                             }
-                                            bodyFooter={<Paging/>}
                                         />
                                     </ErrorBoundary>
                                 </div>
