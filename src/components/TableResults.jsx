@@ -14,6 +14,9 @@ import Badge from 'react-bootstrap/Badge'
 import Select from 'react-select'
 import {RESULTS_PER_PAGE} from "../config/config";
 import $ from 'jquery'
+import {
+    PagingInfo
+} from "@elastic/react-search-ui";
 
 
 const handlePagingInfo = (page, resultsPerPage, totalRows) => {
@@ -22,6 +25,7 @@ const handlePagingInfo = (page, resultsPerPage, totalRows) => {
     upTo = upTo > totalRows ? totalRows : upTo
     $pgInfo.find('strong').eq(0).html(`${((page - 1) * resultsPerPage) + 1} - ${upTo}`)
 }
+
 function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
 
     const getOptions = () => {
@@ -64,6 +68,8 @@ function TableResults({ children, filters, onRowClicked}) {
         event.stopPropagation()
         if (onRowClicked === undefined) {
             window.location = "/" + row.entity_type?.raw.toLowerCase() + "?uuid=" + row.uuid?.raw
+        } else {
+            onRowClicked(event, row.uuid?.raw)
         }
     }
 
@@ -74,7 +80,7 @@ function TableResults({ children, filters, onRowClicked}) {
     useEffect(() => {
         log.debug('Results', children)
         handlePageChange(1, children.length)
-        $('.sui-react-select').appendTo('.sui-layout-main-header__inner')
+
     }, [])
 
 
@@ -227,7 +233,13 @@ function TableResults({ children, filters, onRowClicked}) {
 
     return (
         <>
-            <ResultsPerPage setResultsPerPage={setResultsPerPage} totalRows={children.length} />
+            <div className='sui-layout-main-header'>
+                <div className='sui-layout-main-header__inner'>
+                    <PagingInfo />
+                    <ResultsPerPage setResultsPerPage={setResultsPerPage} totalRows={children.length} />
+                </div>
+            </div>
+
             <DataTable key={`results-${new Date().getTime()}`}
                        columns={getTableColumns()}
                        data={getTableData()}
