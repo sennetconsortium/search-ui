@@ -11,13 +11,19 @@ import {
 import AppContext from "../context/AppContext"
 import log from 'loglevel'
 import Badge from 'react-bootstrap/Badge'
-import Spinner from "./custom/Spinner";
 import Select from 'react-select'
 import {RESULTS_PER_PAGE} from "../config/config";
 import $ from 'jquery'
 
 
-function ResultsPerPage({resultsPerPage, setResultsPerPage}) {
+const handlePagingInfo = (page, resultsPerPage, totalRows) => {
+    const $pgInfo = $('.sui-paging-info')
+    let upTo = resultsPerPage * page
+    upTo = upTo > totalRows ? totalRows : upTo
+    $pgInfo.find('strong').eq(0).text(`${((page - 1) * resultsPerPage) + 1} - ${upTo}`)
+
+}
+function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
 
     const getOptions = () => {
         let result = []
@@ -32,15 +38,13 @@ function ResultsPerPage({resultsPerPage, setResultsPerPage}) {
     const handleChange = (e) => {
         setDefaultValue(e)
         setResultsPerPage(e.value)
-    }
-    const setValue = (valueType, actionTypes) => {
-        console.log(valueType)
+        handlePagingInfo(1, e.value, totalRows)
     }
 
     const [defaultValue, setDefaultValue] = useState(getOptions()[1])
 
     return (
-        <>&nbsp; <Select className={'sui-react-select'} blurInputOnSelect={false} options={getOptions()} value={defaultValue}  onChange={handleChange} name={'resultsPerPage'} /></>
+        <>&nbsp; <Select className={'sui-react-select'} blurInputOnSelect={false} options={getOptions()} value={defaultValue} onChange={handleChange} name={'resultsPerPage'} /></>
     )
 }
 
@@ -64,10 +68,7 @@ function TableResults({ children, filters, onRowClicked}) {
     }
 
     const handlePageChange = (page, totalRows) => {
-        const $pgInfo = $('.sui-paging-info')
-        let upTo = resultsPerPage * page
-        upTo = upTo > totalRows ? totalRows : upTo
-        $pgInfo.find('strong').eq(0).text(`${((page - 1) * resultsPerPage) + 1} - ${upTo}`)
+        handlePagingInfo(page, resultsPerPage, totalRows)
     }
 
     useEffect(() => {
@@ -225,7 +226,7 @@ function TableResults({ children, filters, onRowClicked}) {
 
     return (
         <>
-            <ResultsPerPage setResultsPerPage={setResultsPerPage} />
+            <ResultsPerPage setResultsPerPage={setResultsPerPage} totalRows={children.length} />
             <DataTable key={`results-${new Date().getTime()}`}
                        columns={getTableColumns()}
                        data={getTableData()}
