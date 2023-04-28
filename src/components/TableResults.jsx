@@ -12,30 +12,70 @@ import AppContext from "../context/AppContext"
 import log from 'loglevel'
 import Badge from 'react-bootstrap/Badge'
 import Spinner from "./custom/Spinner";
+import Select from 'react-select'
+import {RESULTS_PER_PAGE} from "../config/config";
+import $ from 'jquery'
 
 
+function ResultsPerPage({resultsPerPage, setResultsPerPage}) {
+
+    const getOptions = () => {
+        let result = []
+        for (let x of RESULTS_PER_PAGE) {
+            result.push(
+                {value: x, label: x}
+            )
+        }
+        return result
+    }
+
+    const handleChange = (e) => {
+        setDefaultValue(e)
+        setResultsPerPage(e.value)
+    }
+    const setValue = (valueType, actionTypes) => {
+        console.log(valueType)
+    }
+
+    const [defaultValue, setDefaultValue] = useState(getOptions()[1])
+
+    return (
+        <>&nbsp; <Select className={'sui-react-select'} blurInputOnSelect={false} options={getOptions()} value={defaultValue}  onChange={handleChange} name={'resultsPerPage'} /></>
+    )
+}
 
 function TableResults({ children, filters, onRowClicked}) {
 
     const {isLoggedIn, cache} = useContext(AppContext)
     let hasMultipleEntityTypes = checkMultipleFilterEntityType(filters);
     let pageData = []
-    const [rowsPerPage, setRowsPerPage] = useState(10)
+    const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
 
     createTheme('plain', {
         background: {
             default: 'transparent',
         }})
 
-    useEffect(() => {
-        console.log('Results', children)
-    }, [])
-
     const handleOnRowClicked = (row, event) => {
+        event.stopPropagation()
         if (onRowClicked === undefined) {
             window.location = "/" + row.entity_type?.raw.toLowerCase() + "?uuid=" + row.uuid?.raw
         }
     }
+
+    const handlePageChange = (page, totalRows) => {
+        const $pgInfo = $('.sui-paging-info')
+        let upTo = resultsPerPage * page
+        upTo = upTo > totalRows ? totalRows : upTo
+        $pgInfo.find('strong').eq(0).text(`${((page - 1) * resultsPerPage) + 1} - ${upTo}`)
+    }
+
+    useEffect(() => {
+        log.debug('Results', children)
+        handlePageChange(1, children.length)
+        $('.sui-react-select').appendTo('.sui-layout-main-header__inner')
+    }, [])
+
 
     const getTableData = () => {
         pageData = []
@@ -183,22 +223,23 @@ function TableResults({ children, filters, onRowClicked}) {
         return cols;
     }
 
-    if (!getTableData().length) {
-        return <Spinner />
-    }
-
     return (
-        <DataTable key={`results-${new Date().getTime()}`}
-                   columns={getTableColumns()}
-                   data={getTableData()}
-                   theme={'plain'}
-                   defaultSortAsc={false}
-                   pointerOnHover={true}
-                   highlightOnHover={true}
-                   onRowClicked={handleOnRowClicked}
-                   paginationPerPage={rowsPerPage}
-                   paginationRowsPerPageOptions={[10, 15, 20, 25, 30, 50, 100]}
-                   pagination />
+        <>
+            <ResultsPerPage setResultsPerPage={setResultsPerPage} />
+            <DataTable key={`results-${new Date().getTime()}`}
+                       columns={getTableColumns()}
+                       data={getTableData()}
+                       theme={'plain'}
+                       defaultSortAsc={false}
+                       pointerOnHover={true}
+                       highlightOnHover={true}
+                       onChangePage={handlePageChange}
+                       onRowClicked={handleOnRowClicked}
+                       paginationPerPage={resultsPerPage}
+                       paginationRowsPerPageOptions={RESULTS_PER_PAGE}
+                       pagination />
+        </>
+
     )
 }
 
@@ -208,4 +249,4 @@ TableResults.propTypes = {
     children: PropTypes.node
 }
 
-export {TableResults}
+export {TableResults, ResultsPerPage}
