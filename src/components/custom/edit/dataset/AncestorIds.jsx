@@ -25,7 +25,7 @@ import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import $ from 'jquery'
 import SelectedFilters from "../../layout/SelectedFilters";
-import {getOrganTypeFullName} from "../../js/functions";
+import {getDataTypesByProperty, getOrganTypeFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
 
 export default class AncestorIds extends React.Component {
@@ -36,7 +36,7 @@ export default class AncestorIds extends React.Component {
         };
 
         // Return an array of data types that should be excluded from search
-        const excludeDataTypes = window.UBKG_CACHE.dataTypeObj.filter(data_type => data_type['vis-only'] === true).map(data_type => data_type.data_type);
+        const excludeDataTypes = getDataTypesByProperty("vis-only", true)
         console.log(excludeDataTypes)
         valid_dataset_ancestor_config['searchQuery']['excludeFilters'] = [{
             keyword: "data_types.keyword",

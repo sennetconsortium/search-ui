@@ -24,7 +24,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import SelectedFilters from "../components/custom/layout/SelectedFilters";
-import {getOrganTypeFullName} from "../components/custom/js/functions";
+import {getDataTypesByProperty, getOrganTypeFullName} from "../components/custom/js/functions";
 
 function Search() {
     const {
@@ -38,7 +38,7 @@ function Search() {
     } = useContext(AppContext);
 
     // Return an array of data types that should be excluded from search
-    const excludeDataTypes = cache.dataTypeObj.filter(data_type => data_type['vis-only'] === true).map(data_type => data_type.data_type);
+    const excludeDataTypes = getDataTypesByProperty("vis-only", true)
     console.log(excludeDataTypes)
     config['searchQuery']['excludeFilters'] = [{
         keyword: "data_types.keyword",

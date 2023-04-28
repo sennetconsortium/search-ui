@@ -85,6 +85,10 @@ export function getOrganTypeFullName(organ) {
         return organ
 }
 
+export function getDataTypesByProperty(property, value) {
+    return window.UBKG_CACHE.dataTypeObj.filter(data_type => data_type[property] === value).map(data_type => data_type.data_type);
+}
+
 export function getDOIPattern() {
     return "(^(http(s)?:\/\/)?dx.doi.org\/10.\\d{4,9}\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10.\\d{4,9}\/protocols\.io\..+)"
 }
