@@ -29,10 +29,13 @@ const handlePagingInfo = (page, resultsPerPage, totalRows) => {
 }
 
 function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
+    let opsDict
     const getOptions = () => {
         let result = []
+        opsDict = {}
         for (let x of RESULTS_PER_PAGE) {
             if (x <= totalRows || x - totalRows < 10) {
+                opsDict[x] = true
                 result.push(
                     {value: x, label: x}
                 )
@@ -51,8 +54,10 @@ function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
 
     const [value, setValue] = useState(getDefaultValue())
 
+    const getCurrentValue = () => opsDict[value.value] ? value : getDefaultValue()
+
     return (
-        <div className={'sui-react-select'}>&nbsp; {getOptions().length > 0 && <Select blurInputOnSelect={false} options={getOptions()} defaultValue={getDefaultValue()} value={value} onChange={handleChange} name={'resultsPerPage'} />}</div>
+        <div className={'sui-react-select'}>&nbsp; {getOptions().length > 0 && <Select blurInputOnSelect={false} options={getOptions()} defaultValue={getDefaultValue()} value={getCurrentValue()} onChange={handleChange} name={'resultsPerPage'} />}</div>
     )
 }
 
@@ -156,7 +161,7 @@ function TableResults({children, filters, onRowClicked}) {
         },
         {
             name: 'Organ',
-            selector: row => getOrganTypeFullName(row.organ?.raw),
+            selector: row => getOrganTypeFullName(row.origin_sample?.raw.organ),
             sortable: true,
             width: '15%',
         }
