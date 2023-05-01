@@ -90,7 +90,7 @@ function Search() {
 
                                             }
                                             bodyContent={
-                                                <div className="js-gtm--results" data-js-ada='.rdt_TableCell'>
+                                                <div className="js-gtm--results" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
                                                     {wasSearched && <Results filters={filters} titleField={filters}
                                                              view={TableResults}
                                                     />}
@@ -98,11 +98,6 @@ function Search() {
                                                 </div>
 
                                             }
-                                            // bodyHeader={
-                                            //     <React.Fragment>
-                                            //         {wasSearched && <PagingInfo/>}
-                                            //     </React.Fragment>
-                                            // }
                                         />
                                     </ErrorBoundary>
                                 </div>
