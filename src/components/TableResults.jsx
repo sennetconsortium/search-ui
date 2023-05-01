@@ -19,30 +19,35 @@ import {
 } from "@elastic/react-search-ui";
 
 
-const handlePagingInfo = (page, resultsPerPage, totalRows) => {
-    const $pgInfo = $('.sui-paging-info')
-    let upTo = resultsPerPage * page
-    upTo = upTo > totalRows ? totalRows : upTo
-    let from = ((page - 1) * resultsPerPage) + 1
-    from = upTo > 0 ? from : 0
-    $pgInfo.find('strong').eq(0).html(`${from} - ${upTo}`)
+const handlePagingInfo = () => {
+    try {
+        const $pgInfo = $('.sui-paging-info')
+        let txt = $('.rdt_Pagination span').eq(1).text()
+        $pgInfo.find('strong').eq(0).html(`${txt.split('of')[0]}`)
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+let opsDict
+const getOptions = (totalRows) => {
+    let result = []
+    opsDict = {}
+    for (let x of RESULTS_PER_PAGE) {
+        if (x <= totalRows || x - totalRows < 10) {
+            opsDict[x] = {value: x, label: x}
+            result.push(
+                {value: x, label: x}
+            )
+        }
+    }
+    return result
 }
 
 function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
-    let opsDict
-    const getOptions = () => {
-        let result = []
-        opsDict = {}
-        for (let x of RESULTS_PER_PAGE) {
-            if (x <= totalRows || x - totalRows < 10) {
-                opsDict[x] = true
-                result.push(
-                    {value: x, label: x}
-                )
-            }
-        }
-        return result
-    }
+    const getDefaultValue = () => getOptions(totalRows).length > 1 ? getOptions(totalRows)[1] : getOptions(totalRows)[0]
+
+    const [value, setValue] = useState(getDefaultValue())
 
     const handleChange = (e) => {
         setResultsPerPage(e.value)
@@ -50,14 +55,15 @@ function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
         handlePagingInfo(1, e.value, totalRows)
     }
 
-    const getDefaultValue = () => getOptions().length > 1 ? getOptions()[1] : getOptions()[0]
-
-    const [value, setValue] = useState(getDefaultValue())
-
-    const getCurrentValue = () => opsDict[value.value] ? value : getDefaultValue()
+    const getCurrentValue = () => {
+        if (resultsPerPage !== value.value) {
+            return opsDict[resultsPerPage]
+        }
+        return opsDict[value.value] ? value : getDefaultValue()
+    }
 
     return (
-        <div className={'sui-react-select'}>&nbsp; {getOptions().length > 0 && <Select blurInputOnSelect={false} options={getOptions()} defaultValue={getDefaultValue()} value={getCurrentValue()} onChange={handleChange} name={'resultsPerPage'} />}</div>
+        <div className={'sui-react-select'}>&nbsp; {getOptions(totalRows).length > 0 && <Select blurInputOnSelect={false} options={getOptions(totalRows)} defaultValue={getDefaultValue()} value={getCurrentValue()} onChange={handleChange} name={'resultsPerPage'} />}</div>
     )
 }
 
@@ -85,11 +91,14 @@ function TableResults({children, filters, onRowClicked}) {
     const handlePageChange = (page, totalRows) => {
         handlePagingInfo(page, resultsPerPage, totalRows)
     }
+    const handleRowsPerPageChange = (currentRowsPerPage, currentPage) => {
+        handlePagingInfo(currentPage, currentRowsPerPage, children.length)
+        setResultsPerPage(currentRowsPerPage)
+    }
 
     useEffect(() => {
         log.debug('Results', children)
         handlePageChange(1, children.length)
-
     }, [])
 
 
@@ -229,12 +238,15 @@ function TableResults({children, filters, onRowClicked}) {
         return cols;
     }
 
+    // Prepare opsDict
+    getOptions(children.length)
+
     return (
         <>
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
-                    <ResultsPerPage setResultsPerPage={setResultsPerPage} totalRows={children.length} />
+                    <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={children.length}  />
                 </div>
             </div>
 
@@ -247,9 +259,10 @@ function TableResults({children, filters, onRowClicked}) {
                        pointerOnHover={true}
                        highlightOnHover={true}
                        onChangePage={handlePageChange}
+                       onChangeRowsPerPage={handleRowsPerPageChange}
                        onRowClicked={handleOnRowClicked}
                        paginationPerPage={resultsPerPage}
-                       paginationRowsPerPageOptions={RESULTS_PER_PAGE}
+                       paginationRowsPerPageOptions={Object.keys(opsDict)}
                        pagination />
         </>
     )
