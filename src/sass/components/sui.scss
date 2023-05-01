@@ -54,11 +54,13 @@
         padding-left: 28px;
       }
     }
+
     .sui-result__title {
       padding-left: 0.3em;
       padding-top: 10px;
     }
   }
+
   &--padded {
     padding-top: 20px;
     padding-bottom: 20px;
@@ -67,19 +69,19 @@
 
 }
 
-
-
 .search-box-header {
   padding: 32px 24px;
   border-bottom: 1px solid #eeeeee;
 }
 
 .no_sidebar .sui-layout-sidebar {
+  flex: 0 !important;
   width: 0 !important;
   padding: 0 !important;
 }
 
 .no_sidebar .sui-layout-main {
+  padding: 32px 0 0 0 !important;
   width: 100% !important;
 }
 
@@ -90,4 +92,65 @@
 
 .clear-filter-button {
   width: 100%;
+}
+
+.sui-layout-body__inner {
+  max-width: 100vw;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  padding: 0 24px;
+}
+
+.sui-layout-sidebar {
+  -ms-flex: 0 0 300px;
+  flex: 0 0 300px;
+  padding: 32px 32px 0 0;
+}
+
+.sui-layout-sidebar--toggled {
+  display: block !important;
+  animation: fadein 0.2s ease-out;
+}
+
+@media (max-width: 859px) {
+  .sui-layout-body__inner {
+    display: block;
+    padding: 0 15px;
+  }
+
+  .sui-layout-sidebar {
+    z-index: 99;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0 15px 30px 15px;
+    background-color: #fcfcfc;
+    overflow: auto;
+  }
+
+  .sui-layout-sidebar-toggle {
+    display: block !important;
+    width: 100%;
+    margin-top: 20px;
+    padding: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-size: 14px;
+    font-weight: 700;
+    color: #3a56e4;
+    background-color: #fff;
+    border: 1px solid #3a56e4;
+    border-radius: 4px;
+  }
+
+}
+
+.sui-layout-main {
+  width: 100%;
+  padding: 32px 0 32px 32px;
 }
