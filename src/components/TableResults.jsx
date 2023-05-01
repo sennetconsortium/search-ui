@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState, useRef} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import DataTable, { createTheme } from 'react-data-table-component'
 import {
@@ -23,11 +23,12 @@ const handlePagingInfo = (page, resultsPerPage, totalRows) => {
     const $pgInfo = $('.sui-paging-info')
     let upTo = resultsPerPage * page
     upTo = upTo > totalRows ? totalRows : upTo
-    $pgInfo.find('strong').eq(0).html(`${((page - 1) * resultsPerPage) + 1} - ${upTo}`)
+    let from = ((page - 1) * resultsPerPage) + 1
+    from = upTo > 0 ? from : 0
+    $pgInfo.find('strong').eq(0).html(`${from} - ${upTo}`)
 }
 
 function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
-
     const getOptions = () => {
         let result = []
         for (let x of RESULTS_PER_PAGE) {
@@ -42,17 +43,20 @@ function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
 
     const handleChange = (e) => {
         setResultsPerPage(e.value)
+        setValue(e)
         handlePagingInfo(1, e.value, totalRows)
     }
 
     const getDefaultValue = () => getOptions().length > 1 ? getOptions()[1] : getOptions()[0]
 
+    const [value, setValue] = useState(getDefaultValue())
+
     return (
-        <div className={'sui-react-select'}>&nbsp; {getOptions().length && <Select blurInputOnSelect={false} options={getOptions()} value={getDefaultValue()} onChange={handleChange} name={'resultsPerPage'} />}</div>
+        <div className={'sui-react-select'}>&nbsp; {getOptions().length > 0 && <Select blurInputOnSelect={false} options={getOptions()} defaultValue={getDefaultValue()} value={value} onChange={handleChange} name={'resultsPerPage'} />}</div>
     )
 }
 
-function TableResults({ children, filters, onRowClicked}) {
+function TableResults({children, filters, onRowClicked}) {
 
     const {isLoggedIn, cache} = useContext(AppContext)
     let hasMultipleEntityTypes = checkMultipleFilterEntityType(filters);
@@ -101,51 +105,43 @@ function TableResults({ children, filters, onRowClicked}) {
                 name: 'SenNet ID',
                 selector: row => row.sennet_id?.raw,
                 sortable: true,
-                width: '150px',
+                maxWidth: '140px',
+                width: '21%'
             },
-
         ]
         if (hasMultipleEntityTypes) {
-            cols.push(
-                {
-                    name: 'Entity Type',
-                    selector: row => row.entity_type?.raw,
-                    sortable: true,
-                    width: '150px',
-                }
-            )
+            cols.push({
+                name: 'Entity Type',
+                selector: row => row.entity_type?.raw,
+                sortable: true,
+                maxWidth: '15%'
+            })
         }
         if (isLoggedIn) {
-            cols.push(
-                {
-                    name: 'Lab ID',
-                    selector: row => {
-                        const raw = (obj) => obj ? obj.raw : null
-                        return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
-                    },
-                    sortable: true,
-                    width: '150px',
-                }
-            )
+            cols.push({
+                name: 'Lab ID',
+                selector: row => {
+                    const raw = (obj) => obj ? obj.raw : null
+                    return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
+                },
+                sortable: true,
+                width: '25%'
+            })
         }
         cols = cols.concat(columns)
-        cols.push(
-            {
+        cols.push({
                 name: 'Group',
                 selector: row => row.group_name?.raw,
                 sortable: true,
-                width: '20%',
-            }
-        )
+
+            })
         return cols;
     }
 
     const sourceColumns = [
         {
             name: 'Type',
-            selector: row => {
-                return row.source_type?.raw
-            },
+            selector: row => row.source_type?.raw,
             sortable: true,
             width: '15%',
         }
@@ -171,13 +167,13 @@ function TableResults({ children, filters, onRowClicked}) {
             name: 'Data Types',
             selector: row => row.data_types?.raw,
             sortable: true,
-            width: '20%',
+            width: '15%'
         },
         {
             name: 'Organ',
             selector: row => getOrganTypeFullName(row?.origin_sample?.raw?.organ),
             sortable: true,
-            width: '15%',
+            width: '10%'
         },
         {
             name: 'Status',
@@ -188,18 +184,15 @@ function TableResults({ children, filters, onRowClicked}) {
             sortFunction: (rowA, rowB) => {
                 const a = rowA.status?.raw.toLowerCase();
                 const b = rowB.status?.raw.toLowerCase();
-
                 if (a > b) {
                     return 1;
                 }
-
                 if (b > a) {
                     return -1;
                 }
-
                 return 0;
             },
-            width: '100px',
+            width: '10%',
         }
     ]
 
@@ -241,6 +234,7 @@ function TableResults({ children, filters, onRowClicked}) {
             </div>
 
             <DataTable key={`results-${new Date().getTime()}`}
+                       className='rdt_Results'
                        columns={getTableColumns()}
                        data={getTableData()}
                        theme={'plain'}
@@ -253,14 +247,14 @@ function TableResults({ children, filters, onRowClicked}) {
                        paginationRowsPerPageOptions={RESULTS_PER_PAGE}
                        pagination />
         </>
-
     )
 }
 
 TableResults.defaultProps = {}
 
 TableResults.propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
+    onRowClicked: PropTypes.func
 }
 
 export {TableResults, ResultsPerPage}

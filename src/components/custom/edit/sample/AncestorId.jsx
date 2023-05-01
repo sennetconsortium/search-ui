@@ -14,12 +14,10 @@ import {Layout} from "@elastic/react-search-ui-views";
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import {exclude_dataset_config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../../config/config";
 import Facets from "search-ui/components/core/Facets";
-import {TableResults, TableRowDetail} from "../../TableResults";
+import {TableResults} from '../../../TableResults';
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import SelectedFilters from "../../layout/SelectedFilters";
@@ -113,13 +111,6 @@ export default class AncestorId extends React.Component {
                                                 <div data-js-ada='facets'>
                                                     <CustomClearSearchBox/>
                                                     <SelectedFilters/>
-                                                    {wasSearched && (
-                                                        <Sorting
-                                                            label={"Sort by"}
-                                                            sortOptions={SORT_OPTIONS}
-                                                        />
-                                                    )}
-
                                                     <Facets fields={exclude_dataset_config.searchQuery}
                                                             filters={filters}
                                                             transformFunction={getOrganTypeFullName}
@@ -129,22 +120,13 @@ export default class AncestorId extends React.Component {
 
                                             }
                                             bodyContent={
-                                                <div className="js-gtm--results" data-js-ada='tr'>
+                                                <div className="js-gtm--results" data-js-ada='.rdt_TableCell'>
                                                     <Results view={TableResults} filters={filters}
-                                                             titleField={filters}
-                                                             resultView={TableRowDetail}
-                                                             urlField={this.changeSource}
+                                                             onRowClicked={this.changeSource}
                                                     />
                                                 </div>
                                             }
-                                            bodyHeader={
-                                                <React.Fragment>
-                                                    {wasSearched && <PagingInfo/>}
-                                                    {<Paging/>}
-                                                    {wasSearched && <ResultsPerPage options={RESULTS_PER_PAGE}/>}
-                                                </React.Fragment>
-                                            }
-                                            bodyFooter={<Paging/>}
+
                                         />
                                     );
                                 }}

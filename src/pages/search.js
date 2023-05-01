@@ -1,13 +1,9 @@
 import React, {useContext, useState} from "react";
 import {
     ErrorBoundary,
-    Paging,
-    PagingInfo,
     Results,
-    //ResultsPerPage,
     SearchBox,
     SearchProvider,
-    Sorting,
     WithSearch
 } from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
@@ -94,7 +90,7 @@ function Search() {
 
                                             }
                                             bodyContent={
-                                                <div className="js-gtm--results" data-js-ada='tr'>
+                                                <div className="js-gtm--results" data-js-ada='.rdt_TableCell'>
                                                     {wasSearched && <Results filters={filters} titleField={filters}
                                                              view={TableResults}
                                                     />}
@@ -102,11 +98,11 @@ function Search() {
                                                 </div>
 
                                             }
-                                            bodyHeader={
-                                                <React.Fragment>
-                                                    {wasSearched && <PagingInfo/>}
-                                                </React.Fragment>
-                                            }
+                                            // bodyHeader={
+                                            //     <React.Fragment>
+                                            //         {wasSearched && <PagingInfo/>}
+                                            //     </React.Fragment>
+                                            // }
                                         />
                                     </ErrorBoundary>
                                 </div>

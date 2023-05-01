@@ -147,7 +147,7 @@ export default class AncestorIds extends React.Component {
 
                                             }
                                             bodyContent={
-                                                <div className="js-gtm--results" data-js-ada='tr'
+                                                <div className="js-gtm--results" data-js-ada='.rdt_TableCell'
                                                      data-js-tooltip='{"trigger":".rdt_TableBody [role=\"row\"]", "diffY": -80, "data":".modal-content .rdt_Table", "class": "is-error"}'>
 
 
