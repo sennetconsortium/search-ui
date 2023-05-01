@@ -75,6 +75,7 @@
 }
 
 .no_sidebar .sui-layout-sidebar {
+  flex: 0 !important;
   width: 0 !important;
   padding: 0 !important;
 }
