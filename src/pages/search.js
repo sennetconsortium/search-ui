@@ -8,7 +8,7 @@ import {
 } from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
 import Facets from "search-ui/components/core/Facets";
-import {TableResults} from '../components/TableResults'
+import {TableResults} from '../components/custom/TableResults'
 import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import AppFooter from "../components/custom/layout/AppFooter";

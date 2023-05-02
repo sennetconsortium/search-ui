@@ -17,7 +17,7 @@ import Modal from 'react-bootstrap/Modal';
 import {PlusLg, QuestionCircleFill} from "react-bootstrap-icons";
 import {valid_dataset_ancestor_config} from "../../../../config/config";
 import Facets from "search-ui/components/core/Facets";
-import {TableResults} from '../../../TableResults'
+import {TableResults} from '../../TableResults'
 import AncestorsTable from "./AncestorsTable";
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";

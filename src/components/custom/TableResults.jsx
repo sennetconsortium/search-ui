@@ -7,12 +7,12 @@ import {
     displayBodyHeader, equals,
     getOrganTypeFullName,
     getStatusColor
-} from './custom/js/functions'
-import AppContext from "../context/AppContext"
+} from './js/functions'
+import AppContext from "../../context/AppContext"
 import log from 'loglevel'
 import Badge from 'react-bootstrap/Badge'
 import Select from 'react-select'
-import {RESULTS_PER_PAGE} from "../config/config";
+import {RESULTS_PER_PAGE} from "../../config/config";
 import $ from 'jquery'
 import {
     PagingInfo
