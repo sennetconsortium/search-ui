@@ -1,7 +1,6 @@
 import React from 'react';
 import {Container, Tab, Table, Tabs} from 'react-bootstrap';
 import DerivedDatasetItem from "./DerivedDatasetItem";
-import styles from "../../style.module.css";
 
 export default class DerivedDataset extends React.Component {
     render() {
@@ -26,7 +25,7 @@ export default class DerivedDataset extends React.Component {
                         {/*Samples section specifically for Source*/}
                         {this.props.includeSample &&
                             <Tab eventKey="samples" title="Samples">
-                                <Container className={`mt-3 ${styles.table_wrapper}`}>
+                                <Container className={`mt-3 table--derivedDataset`}>
                                     <Table>
                                         <thead>
                                         <tr>
@@ -56,7 +55,7 @@ export default class DerivedDataset extends React.Component {
                         }
 
                         <Tab eventKey="datasets" title="Datasets">
-                            <Container className={`mt-3 ${styles.table_wrapper}`}>
+                            <Container className={`mt-3 table--derivedDataset`}>
                                 <Table>
                                     <thead>
                                     <tr>
