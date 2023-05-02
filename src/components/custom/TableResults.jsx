@@ -22,9 +22,11 @@ import {
 const handlePagingInfo = (page, resultsPerPage, totalRows) => {
     try {
         const $pgInfo = $('.sui-paging-info')
-        let txt = $('.rdt_Pagination span').eq(1).text()
-        txt = totalRows > 0 ? txt.split('of')[0] : '0 - 0'
-        $pgInfo.find('strong').eq(0).html(`${txt}`)
+        setTimeout(()=> {
+            let txt = $('.rdt_Pagination span').eq(1).text()
+            txt = totalRows > 0 ? txt.split('of')[0] : '0 - 0'
+            $pgInfo.find('strong').eq(0).html(`${txt}`)
+        }, 100)
     } catch (e) {
         console.error(e)
     }
