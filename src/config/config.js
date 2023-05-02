@@ -284,7 +284,7 @@ export const config = {
         ],
     },
     initialState: {
-        resultsPerPage: 100,
+        resultsPerPage: 10000,
         sortList: [{
             field: "last_modified_timestamp",
             direction: "desc"
