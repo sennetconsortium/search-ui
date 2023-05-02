@@ -83,10 +83,12 @@ function TableResults({children, filters, onRowClicked}) {
             default: 'transparent',
         }})
 
+    const getHotLink = (row) => "/" + row.entity_type?.raw.toLowerCase() + "?uuid=" + row.uuid?.raw
+
     const handleOnRowClicked = (row, event) => {
         event.stopPropagation()
         if (onRowClicked === undefined) {
-            window.location = "/" + row.entity_type?.raw.toLowerCase() + "?uuid=" + row.uuid?.raw
+            window.location = getHotLink(row)
         } else {
             onRowClicked(event, row.uuid?.raw)
         }
@@ -123,6 +125,7 @@ function TableResults({children, filters, onRowClicked}) {
                 name: 'SenNet ID',
                 selector: row => row.sennet_id?.raw,
                 sortable: true,
+                format: column => <a href={getHotLink(column)}>{column.id}</a>,
                 maxWidth: '140px',
                 width: '22%'
             },
