@@ -97,7 +97,7 @@ export default class AncestorIds extends React.Component {
                 </InputGroup>
 
                 <Modal
-                    size="xl"
+                    size="xxl"
                     show={this.state.showHideModal}
                     onHide={this.hideModal}
                     backdrop="static"
