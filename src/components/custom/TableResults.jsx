@@ -236,10 +236,10 @@ function TableResults({children, filters, onRowClicked}) {
                     } else {
                         log.debug('Table Results', hasMultipleEntityTypes)
                     }
+                    return defaultColumns({hasMultipleEntityTypes, columns});
                 }
-                return defaultColumns({hasMultipleEntityTypes, columns});
             })
-            cols = cols[cols.length - 1]
+            cols = cols[0]
         }
 
         return cols;
