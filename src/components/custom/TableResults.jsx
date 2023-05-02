@@ -127,7 +127,7 @@ function TableResults({children, filters, onRowClicked}) {
                 sortable: true,
                 format: column => <a href={getHotLink(column)}>{column.id}</a>,
                 maxWidth: '140px',
-                width: '15%'
+                width: '17%'
             },
         ]
         if (hasMultipleEntityTypes) {
