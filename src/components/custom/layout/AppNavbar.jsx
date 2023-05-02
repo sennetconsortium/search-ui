@@ -2,7 +2,6 @@ import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
 import {APP_TITLE, getLogoutURL} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
 import {useContext} from 'react'
-import styles from '../appNavbar.module.css'
 import logo from './sennet-logo.png'
 import Image from 'next/image'
 import AppContext from '../../../context/AppContext'
@@ -26,7 +25,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         <Navbar
             variant={'dark'}
             expand="lg"
-            className={`sticky-top ${styles.navbar_custom}`}
+            className={`sticky-top bg--navBarGrey`}
         >
             <Container fluid={true}>
                 <Navbar.Brand
