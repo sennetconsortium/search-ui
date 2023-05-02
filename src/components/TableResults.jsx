@@ -19,11 +19,12 @@ import {
 } from "@elastic/react-search-ui";
 
 
-const handlePagingInfo = () => {
+const handlePagingInfo = (page, resultsPerPage, totalRows) => {
     try {
         const $pgInfo = $('.sui-paging-info')
         let txt = $('.rdt_Pagination span').eq(1).text()
-        $pgInfo.find('strong').eq(0).html(`${txt.split('of')[0]}`)
+        txt = totalRows > 0 ? txt.split('of')[0] : '0 - 0'
+        $pgInfo.find('strong').eq(0).html(`${txt}`)
     } catch (e) {
         console.error(e)
     }
@@ -56,10 +57,11 @@ function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
     }
 
     const getCurrentValue = () => {
-        if (resultsPerPage !== value.value) {
+        const hasValue = value !== undefined
+        if (hasValue && resultsPerPage !== value.value) {
             return opsDict[resultsPerPage]
         }
-        return opsDict[value.value] ? value : getDefaultValue()
+        return hasValue && opsDict[value.value] ? value : getDefaultValue()
     }
 
     return (
@@ -250,7 +252,7 @@ function TableResults({children, filters, onRowClicked}) {
                 </div>
             </div>
 
-            <DataTable key={`results-${new Date().getTime()}`}
+            {children.length > 0 && <DataTable key={`results-${new Date().getTime()}`}
                        className='rdt_Results'
                        columns={getTableColumns()}
                        data={getTableData()}
@@ -263,7 +265,7 @@ function TableResults({children, filters, onRowClicked}) {
                        onRowClicked={handleOnRowClicked}
                        paginationPerPage={resultsPerPage}
                        paginationRowsPerPageOptions={Object.keys(opsDict)}
-                       pagination />
+                       pagination /> }
         </>
     )
 }
