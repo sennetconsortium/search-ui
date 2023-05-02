@@ -122,7 +122,7 @@ function TableResults({children, filters, onRowClicked}) {
                 selector: row => row.sennet_id?.raw,
                 sortable: true,
                 maxWidth: '140px',
-                width: '21%'
+                width: '22%'
             },
         ]
         if (hasMultipleEntityTypes) {
@@ -130,7 +130,7 @@ function TableResults({children, filters, onRowClicked}) {
                 name: 'Entity Type',
                 selector: row => row.entity_type?.raw,
                 sortable: true,
-                maxWidth: '15%'
+                maxWidth: '17%'
             })
         }
         if (isLoggedIn) {
@@ -141,7 +141,7 @@ function TableResults({children, filters, onRowClicked}) {
                     return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
                 },
                 sortable: true,
-                width: '25%'
+                width: hasMultipleEntityTypes ? '25%' : '20%'
             })
         }
         cols = cols.concat(columns)
@@ -183,13 +183,13 @@ function TableResults({children, filters, onRowClicked}) {
             name: 'Data Types',
             selector: row => row.data_types?.raw,
             sortable: true,
-            width: '15%'
+            width: '17%'
         },
         {
             name: 'Organ',
             selector: row => getOrganTypeFullName(row?.origin_sample?.raw?.organ),
             sortable: true,
-            width: '10%'
+            width: '15%'
         },
         {
             name: 'Status',
@@ -208,7 +208,7 @@ function TableResults({children, filters, onRowClicked}) {
                 }
                 return 0;
             },
-            width: '10%',
+            width: hasMultipleEntityTypes ? '10%' : '12%',
         }
     ]
 
