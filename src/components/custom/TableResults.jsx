@@ -188,7 +188,7 @@ function TableResults({children, filters, onRowClicked}) {
             name: 'Data Types',
             selector: row => row.data_types?.raw,
             sortable: true,
-            width: '17%'
+            maxWidth: '20%'
         },
         {
             name: 'Organ',
