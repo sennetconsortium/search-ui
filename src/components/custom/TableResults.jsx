@@ -126,8 +126,7 @@ function TableResults({children, filters, onRowClicked}) {
                 selector: row => row.sennet_id?.raw,
                 sortable: true,
                 format: column => <a href={getHotLink(column)}>{column.id}</a>,
-                maxWidth: '140px',
-                width: '17%'
+                maxWidth: '20%'
             },
         ]
         if (hasMultipleEntityTypes) {
@@ -188,7 +187,7 @@ function TableResults({children, filters, onRowClicked}) {
             name: 'Data Types',
             selector: row => row.data_types?.raw,
             sortable: true,
-            maxWidth: '20%'
+            width: '17%'
         },
         {
             name: 'Organ',
