@@ -221,9 +221,11 @@ function TableResults({children, filters, onRowClicked}) {
         if (checkFilterEntityType(filters) === false) {
             cols = defaultColumns({});
         } else {
+            let typeIndex = 0;
             cols = filters.map((filter, index) => {
                 let columns = []
                 if (filter.field === 'entity_type') {
+                    typeIndex = index
                     const hasOneEntity = filter.values.length === 1
                     const entityType = filter.values[0]
                     if (hasOneEntity && equals(entityType, cache.entities.source)) {
@@ -238,7 +240,7 @@ function TableResults({children, filters, onRowClicked}) {
                     return defaultColumns({hasMultipleEntityTypes, columns});
                 }
             })
-            cols = cols[0]
+            cols = cols[typeIndex]
         }
 
         return cols;
