@@ -14,12 +14,10 @@ import {Layout} from "@elastic/react-search-ui-views";
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import {PlusLg, QuestionCircleFill} from "react-bootstrap-icons";
-import {RESULTS_PER_PAGE, SORT_OPTIONS, valid_dataset_ancestor_config} from "../../../../config/config";
+import {valid_dataset_ancestor_config} from "../../../../config/config";
 import Facets from "search-ui/components/core/Facets";
-import {TableResults, TableRowDetail} from "../../TableResults";
+import {TableResults} from '../../TableResults'
 import AncestorsTable from "./AncestorsTable";
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
@@ -50,7 +48,7 @@ export default class AncestorIds extends React.Component {
     // Handles when updates are made to `Ancestor ID` when the search feature is used
     changeAncestor = async (e, ancestorId) => {
         let old_uuids = [];
-        const $modalTable = $('.modal-content .table')
+        const $modalTable = $('.modal-content .rdt_Table')
         if (this.props.values.direct_ancestor_uuids !== undefined) {
             old_uuids = [...this.props.values.direct_ancestor_uuids]
         }
@@ -99,7 +97,7 @@ export default class AncestorIds extends React.Component {
                 </InputGroup>
 
                 <Modal
-                    size="xl"
+                    size="xxl"
                     show={this.state.showHideModal}
                     onHide={this.hideModal}
                     backdrop="static"
@@ -139,12 +137,6 @@ export default class AncestorIds extends React.Component {
                                                 <div data-js-ada='facets'>
                                                     <CustomClearSearchBox/>
                                                     <SelectedFilters/>
-                                                    {wasSearched && (
-                                                        <Sorting
-                                                            label={"Sort by"}
-                                                            sortOptions={SORT_OPTIONS}
-                                                        />
-                                                    )}
 
                                                     <Facets fields={valid_dataset_ancestor_config.searchQuery}
                                                             filters={filters}
@@ -155,23 +147,15 @@ export default class AncestorIds extends React.Component {
 
                                             }
                                             bodyContent={
-                                                <div className="js-gtm--results" data-js-ada='tr'
-                                                     data-js-tooltip='{"trigger":"tr", "diffY": -80, "data":".modal-content .table", "class": "is-error"}'>
-                                                    <Results view={TableResults} filters={filters}
-                                                             titleField={filters}
-                                                             resultView={TableRowDetail}
-                                                             urlField={this.changeAncestor}
-                                                    />
+                                                <div className="js-gtm--results" data-js-ada='.rdt_TableCell'
+                                                     data-js-tooltip='{"trigger":".rdt_TableBody [role=\"row\"]", "diffY": -80, "data":".modal-content .rdt_Table", "class": "is-error"}'>
+
+
+                                                    {wasSearched && <Results filters={filters}
+                                                                             view={TableResults} onRowClicked={this.changeAncestor}
+                                                    />}
                                                 </div>
                                             }
-                                            bodyHeader={
-                                                <React.Fragment>
-                                                    {wasSearched && <PagingInfo/>}
-                                                    {<Paging/>}
-                                                    {wasSearched && <ResultsPerPage options={RESULTS_PER_PAGE}/>}
-                                                </React.Fragment>
-                                            }
-                                            bodyFooter={<Paging/>}
                                         />
                                     );
                                 }}

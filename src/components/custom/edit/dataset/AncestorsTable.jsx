@@ -15,7 +15,7 @@ export default class AncestorsTable extends React.Component {
 
     render() {
         return (
-            <Table>
+            <Table className={'table--ancestors'}>
                 <thead>
                 <tr>
                     <th>Ancestor ID</th>

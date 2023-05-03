@@ -284,7 +284,7 @@ export const config = {
         ],
     },
     initialState: {
-        resultsPerPage: 20,
+        resultsPerPage: 10000,
         sortList: [{
             field: "last_modified_timestamp",
             direction: "desc"
@@ -299,7 +299,7 @@ export const config = {
     },
 }
 
-export const RESULTS_PER_PAGE = [10, 20, 30]
+export const RESULTS_PER_PAGE = [10, 20, 30, 50, 100]
 
 // some sort fields require .keyword in order to sort them
 export const SORT_OPTIONS = [

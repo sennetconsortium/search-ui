@@ -16,6 +16,12 @@ class Ada extends Addon {
         }
     }
 
+    tableResults() {
+        const data = this.el.data('ada-data')
+        this.el.find(data.tabIndex).attr('tabindex', 0)
+        this.events(data.tabIndex, data.trigger)
+    }
+
     facets() {
         this.onKeydownEnter('.sui-facet__title, .sui-select__control')
 
@@ -26,11 +32,12 @@ class Ada extends Addon {
     }
 
 
-    events() {
-
-        this.el.on('keydown', `${this._el}`, ((e) => {
+    events(sel, sel2) {
+        sel = sel || this._el
+        this.el.on('keydown', `${sel}`, ((e) => {
             if (this.isEnter(e)) {
-                this.currentTarget(e).click()
+                const $el = sel2 ? this.currentTarget(e).find(sel2) : this.currentTarget(e)
+                $el.click()
             }
         }).bind(this));
     }

@@ -1,4 +1,8 @@
 .modal {
+  &-xxl {
+    width: 80%;
+    max-width: inherit;
+  }
   &--ctaConfirm {
     .modal-title {
       .title-text {
