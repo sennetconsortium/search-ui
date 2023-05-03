@@ -72,13 +72,13 @@ class GoogleTagManager extends Addon {
         const th = ['created_by', 'sennet_id', 'entity', 'lab_id', 'category', 'group']
         const data = {}
         for (let i = 0; i < th.length; i++) {
-            data[th[i]] = tr.find('td').eq(i).text()
+            data[th[i]] = tr.find('.rdt_TableCell').eq(i).text()
         }
         this.gtm(data)
     }
 
     results() {
-        this.el.on('click', 'tbody tr', ((e) => {
+        this.el.on('click', '.rdt_TableBody .rdt_TableRow', ((e) => {
             this.handleResults(e)
         }).bind(this))
     }
