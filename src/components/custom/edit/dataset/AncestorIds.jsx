@@ -23,7 +23,7 @@ import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import $ from 'jquery'
 import SelectedFilters from "../../layout/SelectedFilters";
-import {getDataTypesByProperty, getOrganTypeFullName} from "../../js/functions";
+import {getDataTypesByProperty, getUBKGFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
 
 export default class AncestorIds extends React.Component {
@@ -148,7 +148,7 @@ export default class AncestorIds extends React.Component {
 
                                                     <Facets fields={valid_dataset_ancestor_config.searchQuery}
                                                             filters={filters}
-                                                            transformFunction={getOrganTypeFullName}
+                                                            transformFunction={getUBKGFullName}
                                                     />
 
                                                 </div>

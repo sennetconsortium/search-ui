@@ -5,7 +5,7 @@ import {
     checkFilterEntityType,
     checkMultipleFilterEntityType,
     displayBodyHeader, equals,
-    getOrganTypeFullName,
+    getUBKGFullName,
     getStatusColor
 } from './js/functions'
 import AppContext from "../../context/AppContext"
@@ -176,7 +176,7 @@ function TableResults({children, filters, onRowClicked}) {
         },
         {
             name: 'Organ',
-            selector: row => getOrganTypeFullName(row.origin_sample?.raw.organ),
+            selector: row => getUBKGFullName(row.origin_sample?.raw.organ),
             sortable: true,
             width: '15%',
         }
@@ -185,13 +185,13 @@ function TableResults({children, filters, onRowClicked}) {
     const datasetColumns = [
         {
             name: 'Data Types',
-            selector: row => row.data_types?.raw,
+            selector: row => getUBKGFullName(row.data_types?.raw[0]),
             sortable: true,
             width: '17%'
         },
         {
             name: 'Organ',
-            selector: row => getOrganTypeFullName(row?.origin_sample?.raw?.organ),
+            selector: row => getUBKGFullName(row?.origin_sample?.raw?.organ),
             sortable: true,
             width: '15%'
         },

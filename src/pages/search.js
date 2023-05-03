@@ -20,7 +20,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import SelectedFilters from "../components/custom/layout/SelectedFilters";
-import {getDataTypesByProperty, getOrganTypeFullName} from "../components/custom/js/functions";
+import {getDataTypesByProperty, getUBKGFullName} from "../components/custom/js/functions";
 
 function Search() {
     const {
@@ -93,7 +93,7 @@ function Search() {
                                                     <SelectedFilters/>
 
                                                     <Facets fields={config.searchQuery} filters={filters}
-                                                            transformFunction={getOrganTypeFullName}/>
+                                                            transformFunction={getUBKGFullName}/>
 
                                                 </div>
 

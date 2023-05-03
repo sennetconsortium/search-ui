@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react'
 import AppContext from '../../../../context/AppContext'
 import {Button} from 'react-bootstrap';
 import {FiletypeJson, Clipboard} from 'react-bootstrap-icons';
-import {displayBodyHeader, getOrganTypeFullName, getStatusColor} from "../../js/functions";
+import {displayBodyHeader, getUBKGFullName, getStatusColor} from "../../js/functions";
 import PropTypes from 'prop-types'
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 import ClipboardCopy from "../../../ClipboardCopy";
@@ -41,7 +41,7 @@ function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
                 <div className="col-md-6 col-sm-12 entity_subtitle icon_inline">
                     {data.origin_sample &&
                         <h5><span className="badge bg-secondary">
-                            {displayBodyHeader(getOrganTypeFullName(data.origin_sample.organ))}
+                            {displayBodyHeader(getUBKGFullName(data.origin_sample.organ))}
                         </span></h5>
                     }
                     {data.source_type &&
@@ -52,7 +52,7 @@ function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
                     }
                     {uniqueHeader &&
                         <h5><span className="badge bg-secondary mx-2">
-                            {uniqueHeader}
+                            {getUBKGFullName(uniqueHeader)}
                          </span></h5>
                     }
                     {data.status &&
