@@ -256,20 +256,21 @@ function TableResults({children, filters, onRowClicked}) {
                 </div>
             </div>
 
-            {children.length > 0 && <DataTable key={`results-${new Date().getTime()}`}
-                       className='rdt_Results'
-                       columns={getTableColumns()}
-                       data={getTableData()}
-                       theme={'plain'}
-                       defaultSortAsc={false}
-                       pointerOnHover={true}
-                       highlightOnHover={true}
-                       onChangePage={handlePageChange}
-                       onChangeRowsPerPage={handleRowsPerPageChange}
-                       onRowClicked={handleOnRowClicked}
-                       paginationPerPage={resultsPerPage}
-                       paginationRowsPerPageOptions={Object.keys(opsDict)}
-                       pagination /> }
+            {<DataTable key={`results-${new Date().getTime()}`}
+                                               className='rdt_Results'
+                                               columns={getTableColumns()}
+                                               data={getTableData()}
+                                               theme={'plain'}
+                                               defaultSortAsc={false}
+                                               pointerOnHover={true}
+                                               highlightOnHover={true}
+                                               noDataComponent={<div style={{padding: '24px'}}>There are currently no published entities available to view. Please sign in to view non-published data.</div>}
+                                               onChangePage={handlePageChange}
+                                               onChangeRowsPerPage={handleRowsPerPageChange}
+                                               onRowClicked={handleOnRowClicked}
+                                               paginationPerPage={resultsPerPage}
+                                               paginationRowsPerPageOptions={Object.keys(opsDict)}
+                                               pagination/>}
         </>
     )
 }
