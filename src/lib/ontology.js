@@ -60,11 +60,10 @@ export async function get_data_assays() {
     const assays = to_key_val(list, false, 'data_type', 'data_type')
     return add_other(assays)
 }
-export async function get_primary_data_assays() {
-    const list = await get_ontology_from_cache(getUbkgCodes().data_assays)
-    const primary_assays = list.filter(assay => assay.primary)
-    const assays = to_key_val(primary_assays, false, 'data_type', 'data_type')
-    return Object.values(add_other(assays))
+
+export async function get_data_assays_obj() {
+    const json = await get_ontology_from_cache(getUbkgCodes().data_assays)
+    return json
 }
 
 export async function get_organ_types() {

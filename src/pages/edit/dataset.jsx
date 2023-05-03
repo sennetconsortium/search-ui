@@ -363,7 +363,7 @@ export default function EditDataset() {
 
                                     {/*/!*Data Types*!/*/}
                                     {editMode &&
-                                        <DataTypes data_types={dataTypes === null ? cache.dataTypes : dataTypes}
+                                        <DataTypes data_types={dataTypes === null ? cache.dataTypeObj : dataTypes}
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 

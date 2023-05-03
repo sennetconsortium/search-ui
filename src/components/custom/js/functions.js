@@ -77,12 +77,21 @@ export function displayBodyHeader(header) {
         return ""
 }
 
-export function getOrganTypeFullName(organ) {
-    if (!window.UBKG_CACHE) return organ
-    if (organ in window.UBKG_CACHE.organTypes)
-        return window.UBKG_CACHE.organTypes[organ]
+
+export function getUBKGFullName(term) {
+    console.log(term)
+    if (!window.UBKG_CACHE) return term
+    if (term in window.UBKG_CACHE.organTypes) {
+        return window.UBKG_CACHE.organTypes[term]
+    } else if (window.UBKG_CACHE.dataTypeObj.filter(data_type => data_type['data_type'] === term).length > 0) {
+        return window.UBKG_CACHE.dataTypeObj.filter(data_type => data_type['data_type'] === term).map(data_type => data_type.description)[0];
+    }
     else
-        return organ
+        return term
+}
+
+export function getDataTypesByProperty(property, value) {
+    return window.UBKG_CACHE.dataTypeObj.filter(data_type => data_type[property] === value).map(data_type => data_type.data_type);
 }
 
 export function getDOIPattern() {

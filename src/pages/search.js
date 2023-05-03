@@ -20,17 +20,26 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import SelectedFilters from "../components/custom/layout/SelectedFilters";
-import {getOrganTypeFullName} from "../components/custom/js/functions";
+import {getDataTypesByProperty, getUBKGFullName} from "../components/custom/js/functions";
 
 function Search() {
     const {
         _t,
+        cache,
         logout,
         isRegisterHidden,
         isAuthorizing,
         isUnauthorized,
         hasAuthenticationCookie
     } = useContext(AppContext);
+
+    // Return an array of data types that should be excluded from search
+    const excludeDataTypes = getDataTypesByProperty("vis-only", true)
+    console.log(excludeDataTypes)
+    config['searchQuery']['excludeFilters'] = [{
+        keyword: "data_types.keyword",
+        value: excludeDataTypes
+    }];
 
     if (isAuthorizing()) {
         return <Spinner/>
@@ -84,7 +93,7 @@ function Search() {
                                                     <SelectedFilters/>
 
                                                     <Facets fields={config.searchQuery} filters={filters}
-                                                            transformFunction={getOrganTypeFullName}/>
+                                                            transformFunction={getUBKGFullName}/>
 
                                                 </div>
 

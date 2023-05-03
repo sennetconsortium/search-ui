@@ -75,10 +75,10 @@ export default class DataTypes extends React.Component {
                                  }}
                                  defaultValue={this.props.data?.data_types?.[0]}>
                         <option value="">----</option>
-                        {Object.entries(this.props.data_types).map(op => {
+                        {this.props.data_types.map(op => {
                             return (
-                                <option key={op[0]} value={op[0]}>
-                                    {op[1]}
+                                <option key={op['data_type']} value={op['data_type']}>
+                                    {op['description']}
                                 </option>
                             );
 
