@@ -79,7 +79,6 @@ export function displayBodyHeader(header) {
 
 
 export function getUBKGFullName(term) {
-    console.log(term)
     if (!window.UBKG_CACHE) return term
     if (term in window.UBKG_CACHE.organTypes) {
         return window.UBKG_CACHE.organTypes[term]
