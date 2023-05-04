@@ -7,7 +7,14 @@ import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
 import {get_headers, update_create_dataset} from '../../lib/services'
-import {cleanJson, equals, fetchEntity, getHeaders, getRequestHeaders} from '../../components/custom/js/functions'
+import {
+    cleanJson,
+    equals,
+    fetchEntity,
+    getDataTypesByProperty,
+    getHeaders,
+    getRequestHeaders
+} from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
 import DataTypes from '../../components/custom/edit/dataset/DataTypes'
 import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
@@ -94,15 +101,13 @@ export default function EditDataset() {
                             }
                         })
                         if (sub_types.length) {
-                            const filter = Object.entries(cache.dataTypes).filter(data_type => sub_types.includes(data_type[0]));
-                            let data_types = {}
-                            filter.forEach(entry => data_types[entry[0]] = entry[1])
+                            constraintsDataTypes = cache.dataTypeObj.filter(data_type => sub_types.includes(data_type["data_type"]));
                             // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
-                            $.extend(constraintsDataTypes, data_types)
+                            // $.extend(constraintsDataTypes, data_types)
                         }
                     } // end for
                     if ($.isEmptyObject(constraintsDataTypes)) {
-                        setDataTypes(cache.dataTypes)
+                        setDataTypes(cache.dataTypeObj)
                     } else {
                         setDataTypes(constraintsDataTypes)
                     }
