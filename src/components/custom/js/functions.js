@@ -167,6 +167,10 @@ export function gotToLogin() {
     goIntent('login')
 }
 
+export function getEntityViewUrl(entity, uuid) {
+    return "/" + entity.toLowerCase() + "?uuid=" + uuid
+}
+
 
 export function urlify(text, blank = true, max = 40) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;

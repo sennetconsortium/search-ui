@@ -4,7 +4,7 @@ import DataTable, { createTheme } from 'react-data-table-component'
 import {
     checkFilterEntityType,
     checkMultipleFilterEntityType,
-    displayBodyHeader, equals,
+    displayBodyHeader, equals, getEntityViewUrl,
     getOrganTypeFullName,
     getStatusColor
 } from './js/functions'
@@ -83,7 +83,7 @@ function TableResults({children, filters, onRowClicked}) {
             default: 'transparent',
         }})
 
-    const getHotLink = (row) => "/" + row.entity_type?.raw.toLowerCase() + "?uuid=" + row.uuid?.raw
+    const getHotLink = (row) => getEntityViewUrl(row.entity_type?.raw, row.uuid?.raw)
 
     const handleOnRowClicked = (row, event) => {
         event.stopPropagation()
