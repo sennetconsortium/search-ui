@@ -126,7 +126,7 @@ function TableResults({children, filters, onRowClicked}) {
                 selector: row => row.sennet_id?.raw,
                 sortable: true,
                 format: column => <a href={getHotLink(column)}>{column.id}</a>,
-                maxWidth: '20%'
+                // minWidth: '20%'
             },
         ]
         if (hasMultipleEntityTypes) {
@@ -134,7 +134,7 @@ function TableResults({children, filters, onRowClicked}) {
                 name: 'Entity Type',
                 selector: row => row.entity_type?.raw,
                 sortable: true,
-                maxWidth: '17%'
+                // maxWidth: '17%'
             })
         }
         if (isLoggedIn) {
@@ -145,7 +145,7 @@ function TableResults({children, filters, onRowClicked}) {
                     return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
                 },
                 sortable: true,
-                width: hasMultipleEntityTypes ? '25%' : '20%'
+                // width: hasMultipleEntityTypes ? '25%' : '20%'
             })
         }
         cols = cols.concat(columns)
@@ -163,7 +163,7 @@ function TableResults({children, filters, onRowClicked}) {
             name: 'Type',
             selector: row => row.source_type?.raw,
             sortable: true,
-            width: '15%',
+            // width: '15%',
         }
     ]
 
@@ -172,13 +172,13 @@ function TableResults({children, filters, onRowClicked}) {
             name: 'Category',
             selector: row => displayBodyHeader(row.sample_category?.raw),
             sortable: true,
-            width: '15%',
+            // width: '15%',
         },
         {
             name: 'Organ',
             selector: row => getUBKGFullName(row.origin_sample?.raw.organ),
             sortable: true,
-            width: '15%',
+            // width: '15%',
         }
     ]
 
@@ -187,13 +187,13 @@ function TableResults({children, filters, onRowClicked}) {
             name: 'Data Types',
             selector: row => getUBKGFullName(row.data_types?.raw[0]),
             sortable: true,
-            width: '17%'
+            // width: '17%'
         },
         {
             name: 'Organ',
             selector: row => getUBKGFullName(row?.origin_sample?.raw?.organ),
             sortable: true,
-            width: '15%'
+            // width: '15%'
         },
         {
             name: 'Status',
@@ -212,7 +212,7 @@ function TableResults({children, filters, onRowClicked}) {
                 }
                 return 0;
             },
-            width: hasMultipleEntityTypes ? '10%' : '12%',
+            // width: hasMultipleEntityTypes ? '10%' : '12%',
         }
     ]
 
