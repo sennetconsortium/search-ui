@@ -63,6 +63,16 @@ export async function get_data_assays() {
 
 export async function get_data_assays_obj() {
     const json = await get_ontology_from_cache(getUbkgCodes().data_assays)
+    json.push({
+        "alt-names": [],
+        "contains-pii": true,
+        "data_type": "Other",
+        "dataset_provider": "SenNet IEC",
+        "description": "Other",
+        "primary": true,
+        "vis-only": false,
+        "vitessce-hints": []
+    })
     return json
 }
 

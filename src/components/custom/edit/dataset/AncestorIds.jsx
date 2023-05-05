@@ -36,10 +36,10 @@ export default class AncestorIds extends React.Component {
         // Return an array of data types that should be excluded from search
         const excludeDataTypes = getDataTypesByProperty("vis-only", true)
         console.log(excludeDataTypes)
-        valid_dataset_ancestor_config['searchQuery']['excludeFilters'] = [{
+        valid_dataset_ancestor_config['searchQuery']['excludeFilters'].push({
             keyword: "data_types.keyword",
             value: excludeDataTypes
-        }];
+        });
     }
 
     showModal = () => {

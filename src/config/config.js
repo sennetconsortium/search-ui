@@ -127,6 +127,10 @@ export const connector = new SearchAPIConnector({
 export const config = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
+        excludeFilters: [{
+            keyword: "entity_type.keyword",
+            value: "Collection"
+        }],
         facets: {
             entity_type: {
                 label: 'Entity Type',
@@ -417,10 +421,10 @@ export let valid_dataset_ancestor_config = _.cloneDeep(ancestor_config)
 valid_dataset_ancestor_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
 export let exclude_dataset_config = _.cloneDeep(ancestor_config);
-exclude_dataset_config['searchQuery']['excludeFilters'] = [{
+exclude_dataset_config['searchQuery']['excludeFilters'].push({
     keyword: "entity_type.keyword",
     value: "Dataset"
-}];
+});
 exclude_dataset_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
 
