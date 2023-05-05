@@ -101,13 +101,13 @@ export default function EditDataset() {
                             }
                         })
                         if (sub_types.length) {
-                            constraintsDataTypes = cache.dataTypeObj.filter(data_type => sub_types.includes(data_type["data_type"]));
+                            constraintsDataTypes = cache.dataTypeObj.filter(data_type => sub_types.includes(data_type["data_type"])).map(data_type => data_type.data_type);
                             // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
                             // $.extend(constraintsDataTypes, data_types)
                         }
                     } // end for
                     if ($.isEmptyObject(constraintsDataTypes)) {
-                        setDataTypes(cache.dataTypeObj)
+                        getDataTypesByProperty("primary", true)
                     } else {
                         setDataTypes(constraintsDataTypes)
                     }
@@ -368,7 +368,7 @@ export default function EditDataset() {
 
                                     {/*/!*Data Types*!/*/}
                                     {editMode &&
-                                        <DataTypes data_types={dataTypes === null ? cache.dataTypeObj : dataTypes}
+                                        <DataTypes data_types={dataTypes === null ? getDataTypesByProperty("primary", true) : dataTypes}
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 

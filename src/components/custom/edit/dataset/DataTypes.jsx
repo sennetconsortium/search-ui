@@ -3,6 +3,7 @@ import {Col, Form, Row} from 'react-bootstrap';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import {getUBKGFullName} from "../../js/functions";
 
 export default class DataTypes extends React.Component {
     constructor(props) {
@@ -69,21 +70,30 @@ export default class DataTypes extends React.Component {
                         </OverlayTrigger>
                     </Form.Label>
 
-                    <Form.Select required aria-label="Data Types"
-                                 onChange={e => {
-                                     this.handleDataTypeChange(e, this.props.onChange)
-                                 }}
-                                 defaultValue={this.props.data?.data_types?.[0]}>
-                        <option value="">----</option>
-                        {this.props.data_types.map(op => {
-                            return (
-                                <option key={op['data_type']} value={op['data_type']}>
-                                    {op['description']}
-                                </option>
-                            );
+                    {/*Check that there exists a data type for this dataset and if it is not a part of the list of primary assay types*/}
+                    {this.props.data?.data_types?.[0] && !this.props.data_types.includes(this.props.data.data_types[0]) ?
+                        (
+                            <Form.Select required aria-label="Data Types" disabled>
+                                <option
+                                    value={this.props.data.data_types[0]}>{getUBKGFullName(this.props.data.data_types[0])}</option>
+                            </Form.Select>
+                        ) : (
+                            <Form.Select required aria-label="Data Types"
+                                         onChange={e => {
+                                             this.handleDataTypeChange(e, this.props.onChange)
+                                         }}
+                                         defaultValue={this.props.data?.data_types?.[0]}>
+                                <option value="">----</option>
+                                {this.props.data_types.map(data_type => {
+                                    return (
+                                        <option key={data_type} value={data_type}>
+                                            {getUBKGFullName(data_type)}
+                                        </option>
+                                    );
+                                })}
+                            </Form.Select>
+                        )}
 
-                        })}
-                    </Form.Select>
                 </Form.Group>
 
                 {/*Data Types Other*/}
