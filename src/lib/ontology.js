@@ -81,7 +81,6 @@ export async function get_source_types() {
 export async function get_entities() {
     let list = await get_ontology_from_cache(getUbkgCodes().entities)
     // order the list
-    let dataset = list.shift()
-    list.push(dataset)
+    list.sort((a, b) => b.code.localeCompare(a.code))
     return to_key_val(list, true)
 }
