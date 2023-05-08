@@ -5,7 +5,7 @@ import AppContext from "../../../../context/AppContext";
 import {getEntityEndPoint} from "../../../../config/config";
 import {getEntityViewUrl} from "../../js/functions";
 
-function VersionDropdown({data, hasWritePrivilege}) {
+function VersionDropdown({data}) {
 
     const {_t, cache } = useContext(AppContext)
     const [revisions, setRevisions] = useState([])
@@ -32,13 +32,23 @@ function VersionDropdown({data, hasWritePrivilege}) {
             return getEntityViewUrl(cache.entities.dataset, _entity.uuid)
         }
 
+        const getActive = (_entity) => setUrl(_entity) === '#' ? true : null
+
         for (let r of revisions) {
             results.push(
-                <Dropdown.Item active={setUrl(r) === '#' ? true : null} key={`version-${r.revision_number}`} href={setUrl(r)}
+                <Dropdown.Item active={getActive(r)} key={`version-${r.revision_number}`} href={setUrl(r)}
                                title={r.dataset.sennet_id}>Version {r.revision_number}</Dropdown.Item>
             )
         }
         return results;
+    }
+
+    const getActiveRevision = () => {
+        for (let r of revisions) {
+            if (data.uuid === r.uuid) {
+                return r.revision_number
+            }
+        }
     }
 
     if (isBusy || (!isBusy && revisions.length <= 0)) {
@@ -48,7 +58,7 @@ function VersionDropdown({data, hasWritePrivilege}) {
     return (
         <Dropdown>
             <Dropdown.Toggle  id="dropdown-basic">
-                Version {revisions.length}
+                Version {getActiveRevision()}
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
