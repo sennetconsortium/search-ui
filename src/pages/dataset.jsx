@@ -5,7 +5,7 @@ import {
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestHeaders} from "../components/custom/js/functions";
+import {getDataTypesByProperty, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -23,7 +23,6 @@ import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
 import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
 import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
-import {get_primary_data_assays} from "../lib/ontology";
 import SidebarBtn from "../components/SidebarBtn";
 
 
@@ -45,7 +44,7 @@ function ViewDataset() {
         const initVitessceConfig = async () => {
             if (data) {
                 let dataset_id = data.uuid
-                const primary_assays = await get_primary_data_assays()
+                const primary_assays = getDataTypesByProperty("primary", true)
                 // TODO: Check each data_type in the list instead of the first item
                 let is_primary_dataset = primary_assays.includes(data.data_types[0]);
                 setIsPrimaryDataset(is_primary_dataset)
@@ -60,7 +59,7 @@ function ViewDataset() {
                         case 'scRNA-seq (10x Genomics) [Salmon]':    
                             setVitessceConfig(rna_seq(dataset_id))
                             break
-                        case 'CODEX [Cytokit + SPRM]':
+                        case 'codex_cytokit':
                         case 'CODEX':
                             setVitessceConfig(codex_config(dataset_id))
                             break
