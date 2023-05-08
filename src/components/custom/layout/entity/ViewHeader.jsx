@@ -1,16 +1,17 @@
 import React, {useContext, useState} from 'react'
 import AppContext from '../../../../context/AppContext'
-import {Button} from 'react-bootstrap';
+import {Button, Stack} from 'react-bootstrap';
 import {FiletypeJson, Clipboard} from 'react-bootstrap-icons';
-import {displayBodyHeader, getUBKGFullName, getStatusColor} from "../../js/functions";
+import {displayBodyHeader, equals, getUBKGFullName,  getStatusColor} from "../../js/functions";
 import PropTypes from 'prop-types'
-import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 import ClipboardCopy from "../../../ClipboardCopy";
+import VersionDropdown from "./VersionDropdown";
 
 const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
     const {_t, cache } = useContext(AppContext)
     return (
         <div>
+            <Stack direction="horizontal" gap={1}>
             {hasWritePrivilege &&
                 <Button aria-label={`Edit ${cache.entities[entity]}`} className="js-btn--edit"
                         href={`/edit/${entity}?uuid=${data.uuid}`}
@@ -18,6 +19,10 @@ const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
             <Button target='_blank' aria-label={`View JSON of the ${cache.entities[entity]}`}
                     className={`${hasWritePrivilege ? "mx-2" : ""} js-btn--json`} href={`/api/json/${entity}?uuid=${data.uuid}`}
                     variant="outline-primary rounded-0"><FiletypeJson/></Button>
+
+                {equals(entity, cache.entities.dataset) && equals(data.status, 'published') && <VersionDropdown data={data} /> }
+            </Stack>
+
         </div>
     )
 }
