@@ -305,15 +305,18 @@ export default function EditDataset() {
                                     }
 
                                     {/*/!*Lab Name or ID*!/*/}
-                                    <EntityFormGroup label='Lab Name or ID' placeholder='Lab Name or ID'
+                                    <EntityFormGroup label='Lab Name or ID' placeholder='A non-PHI ID or deidentified name used by the lab when referring to the dataset'
                                                      controlId='lab_dataset_id' value={data.lab_dataset_id}
-                                                     onChange={onChange} text='Lab Name or ID'/>
+                                                     onChange={onChange}
+                                                     text={<>An identifier used internally by the lab to identify
+                                                         the <code>Dataset</code>. This can be useful for lab members to
+                                                         identify and look-up Datasets.</>}/>
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='DOI Abstract' type='textarea' controlId='description'
                                                      value={data.description}
                                                      onChange={onChange}
-                                                     text='Add information here which can be used to find this data including lab specific (non-PHI) identifiers.'/>
+                                                     text={<>An abstract publicly published when the dataset is published.  This will be included with the DOI information of the published <code>Dataset</code>.</>}/>
 
                                     {/*/!*Additional Information*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea'

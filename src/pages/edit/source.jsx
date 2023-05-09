@@ -202,9 +202,14 @@ function EditSource() {
                                     }
 
                                     {/*Lab's Source Non-PHI ID*/}
-                                    <EntityFormGroup label="Lab's Source Non-PHI ID or Name" placeholder='An non-PHI ID or deidentified name used by the lab when referring to the source.'
-                                        controlId='lab_source_id' value={data.lab_source_id} isRequired={true}
-                                        onChange={onChange} text={<>An identifier used by the lab to identify the <code>Source</code>.</>} />
+                                    <EntityFormGroup label="Lab's Source Non-PHI ID or Name" placeholder='A non-PHI ID or deidentified name used by the lab when referring to the source.'
+                                                     controlId='lab_source_id' value={data.lab_source_id}
+                                                     isRequired={true}
+                                                     onChange={onChange}
+                                                     text={<>An identifier used internally by the lab to identify
+                                                         the <code>Source</code>. This can be useful for lab members to
+                                                         identify and look-up Sources.
+                                                     </>}/>
 
                                     {/*Source Type*/}
                                     <SourceType data={data} onChange={onChange}/>
@@ -212,7 +217,7 @@ function EditSource() {
                                     {/*Case Selection Protocol*/}
                                     <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI' popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                         controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
-                                                     onChange={onChange} text={<span>The protocol used when choosing and acquiring the <code>Source</code>. This can be supplied as a DOI from <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>} />
+                                                     onChange={onChange} text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>} />
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}

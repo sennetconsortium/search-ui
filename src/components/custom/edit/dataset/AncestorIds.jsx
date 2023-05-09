@@ -69,7 +69,7 @@ export default class AncestorIds extends React.Component {
                 <Form.Label>Ancestors(s) <span
                     className="required">* </span>
                     <SenNetPopover className={'direct_ancestor_uuids'} text={<>
-                        The ancestor samples or data from which this data was derived. At least one
+                        The SenNet ID(s) of ancestor samples or data from which this data was derived. At least one
                         ancestor is required, but multiple may be specified.
                     </>}>
                         <QuestionCircleFill/>
