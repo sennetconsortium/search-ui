@@ -10,11 +10,11 @@ function SenNetAccordion({children, title}) {
             <div className="accordion-item ">
                 <div className="accordion-header">
                     <button className="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#attribution-collapse" aria-expanded="true"
-                            aria-controls="attribution-collapse">{title}
+                            data-bs-target={`#${title}-collapse`} aria-expanded="true"
+                            aria-controls={`${title}-collapse`}>{title}
                     </button>
                 </div>
-                <div id="attribution-collapse" className="accordion-collapse collapse show">
+                <div id={`${title}-collapse`} className="accordion-collapse collapse show">
                     <div className="accordion-body">
                         {children}
                     </div>

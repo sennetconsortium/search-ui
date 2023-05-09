@@ -1,15 +1,10 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import DataTable, { createTheme } from 'react-data-table-component'
-import {BoxArrowUpRight} from "react-bootstrap-icons";
+import DataTable from 'react-data-table-component'
 import {TableResults} from "../../TableResults";
 import SenNetAccordion from "../../layout/SeNetAccordion";
 
 function Datasets({ data }) {
-
-    useEffect(() => {
-        console.log('All co', data)
-    }, [])
 
     const getColumns = () => {
         const {datasetColumns, defaultColumns} = TableResults({forData: true, rowFn: (row) => row ? row : null})

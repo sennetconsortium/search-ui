@@ -1,7 +1,4 @@
 import React, {useContext, useEffect, useState} from "react";
-import {
-    List
-} from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
 import log from "loglevel";
 import {getRequestHeaders} from "../components/custom/js/functions";
@@ -15,7 +12,7 @@ import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Contributors from "../components/custom/entities/collection/Contributors";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
+import {VisualizationProvider} from "../context/VisualizationContext";
 import SidebarBtn from "../components/SidebarBtn";
 import {useRouter} from "next/router";
 import Protocols from "../components/custom/entities/sample/Protocols";
@@ -26,8 +23,6 @@ import Datasets from "../components/custom/entities/collection/Datasets";
 function ViewCollection() {
     const router = useRouter()
     const [data, setData] = useState(null)
-    const [ancestors, setAncestors] = useState(null)
-    const [descendants, setDescendants] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -55,9 +50,9 @@ function ViewCollection() {
                 // set state with the result
                 setData(data);
 
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
-                    setHasWritePrivilege(response.has_write_privs)
-                }).catch(log.error)
+                // get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                //     setHasWritePrivilege(response.has_write_privs)
+                // }).catch(log.error)
             }
         }
 
@@ -101,7 +96,7 @@ function ViewCollection() {
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="#Metadata"
+                                                <a href="#Contacts"
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Contacts</a>
                                             </li>
@@ -111,9 +106,14 @@ function ViewCollection() {
                                                    data-bs-parent="#sidebar">Datasets</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="#Contributors"
+                                                <a href="#Protocols"
+                                                   className="nav-link "
+                                                   data-bs-parent="#sidebar">Protocols</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a href="#Creators"
                                                    className="nav-link"
-                                                   data-bs-parent="#sidebar">Contributors</a>
+                                                   data-bs-parent="#sidebar">Creators</a>
                                             </li>
 
                                         </ul>
@@ -125,7 +125,7 @@ function ViewCollection() {
 
                                     <EntityViewHeader data={data} entity={'collection'}
                                                       hasWritePrivilege={hasWritePrivilege}
-                                                      uniqueHeader={data.doi_url} />
+                                                      uniqueHeader={data.title} />
 
                                     <div className="row">
                                         <div className="col-12">
@@ -147,6 +147,7 @@ function ViewCollection() {
                                                 <Protocols protocol_url={data.doi_url}/>
                                             }
 
+                                            {/*Creators*/}
                                             <Contributors title={'Creators'} data={data.creators} />
                                         </div>
                                     </div>

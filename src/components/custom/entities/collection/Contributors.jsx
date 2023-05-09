@@ -37,7 +37,7 @@ function Contributors({data, title}) {
 Contributors.defaultProps = {}
 
 Contributors.propTypes = {
-    data: PropTypes.object
+    data: PropTypes.array
 }
 
 export default Contributors
