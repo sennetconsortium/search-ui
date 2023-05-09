@@ -36,7 +36,8 @@ function ViewDataset() {
     const {
         showVitessce,
         setVitessceConfig,
-        setIsPrimaryDataset
+        setIsPrimaryDataset,
+        isPrimaryDataset
     } = useContext(VisualizationContext)
 
     // Load the correct Vitessce view config
@@ -137,7 +138,7 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            {showVitessce(data.data_types) &&
+                                            {showVitessce(data.data_types, isPrimaryDataset, data.immediate_descendants.length) &&
                                                 <li className="nav-item">
                                                     <a href="#Vitessce"
                                                        className="nav-link"
