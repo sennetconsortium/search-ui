@@ -173,7 +173,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn})
     const sampleColumns = [
         {
             name: 'Category',
-            selector: row => displayBodyHeader(raw(row.sample_category)),
+            selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
             sortable: true,
             // width: '15%',
         },
