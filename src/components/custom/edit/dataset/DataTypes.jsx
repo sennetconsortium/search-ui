@@ -3,6 +3,7 @@ import {Col, Form, Row} from 'react-bootstrap';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import SenNetPopover from "../../../SenNetPopover";
 import {getUBKGFullName} from "../../js/functions";
 
 export default class DataTypes extends React.Component {
@@ -56,18 +57,11 @@ export default class DataTypes extends React.Component {
                 <Form.Group className="mb-3" controlId="data_types">
                     <Form.Label>Data Types <span
                         className="required">* </span>
-                        <OverlayTrigger
-                            placement="top"
-                            overlay={
-                                <Popover>
-                                    <Popover.Body>
-                                        Data type
-                                    </Popover.Body>
-                                </Popover>
-                            }
-                        >
+                        <SenNetPopover className={'data_types'}
+                                       text={<>The type of data contained in this <code>Dataset</code>. Choose from one
+                                           of the available options.</>}>
                             <QuestionCircleFill/>
-                        </OverlayTrigger>
+                        </SenNetPopover>
                     </Form.Label>
 
                     {/*Check that there exists a data type for this dataset and if it is not a part of the list of primary assay types*/}
