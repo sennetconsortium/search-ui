@@ -10,7 +10,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
 import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
-import {fetchEntity, getOrganTypeFullName} from "../js/functions";
+import {fetchEntity, getUBKGFullName} from "../js/functions";
 
 
 function Provenance({nodeData}) {
@@ -177,7 +177,7 @@ function Provenance({nodeData}) {
         },
         callbacks: {
             'sennet:created_timestamp': 'formatDate',
-            'sennet:organ': getOrganTypeFullName
+            'sennet:organ': getUBKGFullName
         }
     }
 

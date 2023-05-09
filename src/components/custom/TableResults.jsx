@@ -4,8 +4,7 @@ import DataTable, { createTheme } from 'react-data-table-component'
 import {
     checkFilterEntityType,
     checkMultipleFilterEntityType,
-    displayBodyHeader, equals,
-    getOrganTypeFullName,
+    displayBodyHeader, equals, getEntityViewUrl, getUBKGFullName,
     getStatusColor
 } from './js/functions'
 import AppContext from "../../context/AppContext"
@@ -85,7 +84,8 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn})
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
-    const getHotLink = (row) => "/" + raw(row.entity_type)?.toLowerCase() + "?uuid=" + raw(row.uuid)
+    const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid))
+
 
     const handleOnRowClicked = (row, event) => {
         event.stopPropagation()
@@ -130,7 +130,8 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn})
                 selector: row => raw(row.sennet_id),
                 sortable: true,
                 format: column => <a href={getHotLink(column)}>{column.id || column.sennet_id}</a>,
-                maxWidth: '20%'
+                // minWidth: '20%'
+
             },
         ]
         if (hasMultipleEntityTypes) {
@@ -138,7 +139,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn})
                 name: 'Entity Type',
                 selector: row => raw(row.entity_type),
                 sortable: true,
-                maxWidth: '17%'
+                // maxWidth: '17%'
             })
         }
         if (isLoggedIn || _isLoggedIn) {
@@ -148,7 +149,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn})
                     return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
                 },
                 sortable: true,
-                width: hasMultipleEntityTypes ? '25%' : '20%'
+                // width: hasMultipleEntityTypes ? '25%' : '20%'
             })
         }
         cols = cols.concat(columns)
@@ -165,7 +166,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn})
             name: 'Type',
             selector: row => raw(row.source_type),
             sortable: true,
-            width: '15%',
+            // width: '15%',
         }
     ]
 
@@ -174,35 +175,40 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn})
             name: 'Category',
             selector: row => displayBodyHeader(raw(row.sample_category)),
             sortable: true,
-            width: '15%',
+            // width: '15%',
         },
         {
             name: 'Organ',
-            selector: row => getOrganTypeFullName(raw(row.origin_sample)?.organ),
+            selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-            width: '15%',
+            // width: '15%',
         }
     ]
 
     const datasetColumns = [
         {
             name: 'Data Types',
-            selector: row => raw(row.data_types),
+            selector: row => {
+                let val = raw(row.data_types)
+                if (val) {
+                    return Array.isArray(val) ? getUBKGFullName(val[0]) : val
+                }
+            },
             sortable: true,
-            width: '17%'
+            // width: '17%'
         },
         {
             name: 'Organ',
-            selector: row => getOrganTypeFullName(raw(row.origin_sample)?.organ),
+            selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-            width: '15%'
+            // width: '15%'
         },
         {
             name: 'Status',
             selector: row => raw(row.status),
             format: (row) => <Badge pill bg={getStatusColor(raw(row.status))}>{raw(row.status)}</Badge>,
             sortable: true,
-            width: hasMultipleEntityTypes ? '10%' : '12%',
+            //width: hasMultipleEntityTypes ? '10%' : '12%',
         }
     ]
 
