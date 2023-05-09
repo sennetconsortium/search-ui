@@ -1,0 +1,21 @@
+footer {
+  width: 100%;
+  .nav {
+    &--menu, &--copyright {
+      a {
+        &:hover {
+          text-decoration: underline;
+          color: black !important;
+        }
+      }
+    }
+
+    &--menu {
+      font-weight: bold;
+    }
+
+    &--copyright {
+      margin-left: 5px;
+    }
+  }
+}
