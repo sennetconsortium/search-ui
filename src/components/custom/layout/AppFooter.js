@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {Container, Row, Col} from 'react-bootstrap'
-import logo from "./sennet-text-logo.png";
-import nih from "./nih-fund-logo.png"
+import logo from "./sennet-txt-horizontal-logo.png";
+import nih from "./nih-txt-horizontal-logo.png"
 import Image from "next/image";
 import AppContext from "../../../context/AppContext";
 import {ToastContainer} from "react-toastify";
@@ -30,7 +30,7 @@ const AppFooter = ({isFixedBottom}) => {
                                             <Image
                                                 className="d-inline-block align-text-top"
                                                 src={logo}
-                                                width="30"
+                                                width="150"
                                                 alt={_t("SenNet logo")}
                                             />
                                         </a>
@@ -57,7 +57,7 @@ const AppFooter = ({isFixedBottom}) => {
                                             <Image
                                                 className="d-inline-block align-text-top"
                                                 src={nih}
-                                                width="30"
+                                                width="350"
                                                 alt={_t("NIH logo")}
                                             />
                                         </a>
@@ -67,17 +67,14 @@ const AppFooter = ({isFixedBottom}) => {
 
 
                             </div></Col>
-                            <Col sm={8}>
-                                <ul className="nav pb-3 mb-3 nav--copyright" aria-label='Copyright'>
-                                    <li className="text-muted">
-                                        Copyright <a className="text-muted lnk--ic" href="https://commonfund.nih.gov/senescence">
-                                        NIH Cellular Senescence Network (SenNet) <BoxArrowUpRight/></a> 2023. All rights reserved.
-                                    </li>
-                                </ul>
-                            </Col>
+
                         </Row>
 
                     </Col>
+                </Row>
+                <Row>
+                    <div className={'text-center text-muted'}>Copyright <a className="text-muted lnk--ic" href="https://commonfund.nih.gov/senescence">
+                        NIH Cellular Senescence Network (SenNet) <BoxArrowUpRight/></a> 2023. All rights reserved.</div>
                 </Row>
 
             </footer>
