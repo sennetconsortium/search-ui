@@ -8,10 +8,9 @@ import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {BoxArrowUpRight, EnvelopeFill} from 'react-bootstrap-icons';
 
-const AppFooter = ({isFixedBottom}) => {
+const AppFooter = () => {
     const {_t} = useContext(AppContext)
 
-    let fixedBottom = isFixedBottom ? 'fixed-bottom' : ''
     return (
         <div className={`footer-wrapper sui-layout-body__inner bg--entityWhite border-top`}>
             <ToastContainer />
