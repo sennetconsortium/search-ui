@@ -1,6 +1,6 @@
 import React from 'react';
 import DataTable from 'react-data-table-component';
-import {getOrganTypeFullName} from "../../js/functions";
+import {getUBKGFullName} from "../../js/functions";
 
 export default class Lineage extends React.Component {
     constructor(props) {
@@ -52,7 +52,7 @@ export default class Lineage extends React.Component {
                     display_subtype: (lineage_data.sample_category ? (
                               lineage_data.sample_category
                             ) : lineage_data.display_subtype),
-                    organ: getOrganTypeFullName(lineage_data?.origin_sample?.organ),
+                    organ: getUBKGFullName(lineage_data?.origin_sample?.organ),
                     group_name: lineage_data.group_name
                 });
             })

@@ -21,7 +21,7 @@ import {TableResults} from '../../TableResults';
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import SelectedFilters from "../../layout/SelectedFilters";
-import {getOrganTypeFullName} from "../../js/functions";
+import {getUBKGFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
 
 export default class AncestorId extends React.Component {
@@ -55,8 +55,9 @@ export default class AncestorId extends React.Component {
             <>
                 <Form.Label>Ancestor ID <span
                     className="required">* </span>
-                    <SenNetPopover className={'direct_ancestor_uuid'} text={<>The SenNet Unique identifier of the direct origin entity,
-                        other <code>Sample</code> or <code>Source</code>, where this <code>Sample</code> came from.</>}>
+                    <SenNetPopover className={'direct_ancestor_uuid'}
+                                   text={<>The SenNet ID of the entity that this <code>Sample</code> came from. Must be
+                                       another <code>Sample</code> or <code>Source</code>.</>}>
                         <QuestionCircleFill/>
                     </SenNetPopover>
                 </Form.Label>
@@ -113,7 +114,7 @@ export default class AncestorId extends React.Component {
                                                     <SelectedFilters/>
                                                     <Facets fields={exclude_dataset_config.searchQuery}
                                                             filters={filters}
-                                                            transformFunction={getOrganTypeFullName}
+                                                            transformFunction={getUBKGFullName}
                                                     />
 
                                                 </div>

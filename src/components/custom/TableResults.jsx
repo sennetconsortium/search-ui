@@ -4,8 +4,7 @@ import DataTable, { createTheme } from 'react-data-table-component'
 import {
     checkFilterEntityType,
     checkMultipleFilterEntityType,
-    displayBodyHeader, equals,
-    getOrganTypeFullName,
+    displayBodyHeader, equals, getEntityViewUrl, getUBKGFullName,
     getStatusColor
 } from './js/functions'
 import AppContext from "../../context/AppContext"
@@ -83,7 +82,7 @@ function TableResults({children, filters, onRowClicked}) {
             default: 'transparent',
         }})
 
-    const getHotLink = (row) => "/" + row.entity_type?.raw.toLowerCase() + "?uuid=" + row.uuid?.raw
+    const getHotLink = (row) => getEntityViewUrl(row.entity_type?.raw, row.uuid?.raw)
 
     const handleOnRowClicked = (row, event) => {
         event.stopPropagation()
@@ -176,7 +175,7 @@ function TableResults({children, filters, onRowClicked}) {
         },
         {
             name: 'Organ',
-            selector: row => getOrganTypeFullName(row.origin_sample?.raw.organ),
+            selector: row => getUBKGFullName(row.origin_sample?.raw.organ),
             sortable: true,
             // width: '15%',
         }
@@ -185,13 +184,13 @@ function TableResults({children, filters, onRowClicked}) {
     const datasetColumns = [
         {
             name: 'Data Types',
-            selector: row => row.data_types?.raw,
+            selector: row => getUBKGFullName(row.data_types?.raw[0]),
             sortable: true,
             // width: '17%'
         },
         {
             name: 'Organ',
-            selector: row => getOrganTypeFullName(row?.origin_sample?.raw?.organ),
+            selector: row => getUBKGFullName(row?.origin_sample?.raw?.organ),
             sortable: true,
             // width: '15%'
         },

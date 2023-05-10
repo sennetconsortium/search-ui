@@ -23,7 +23,7 @@ import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import $ from 'jquery'
 import SelectedFilters from "../../layout/SelectedFilters";
-import {getOrganTypeFullName} from "../../js/functions";
+import {getDataTypesByProperty, getUBKGFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
 
 export default class AncestorIds extends React.Component {
@@ -32,6 +32,14 @@ export default class AncestorIds extends React.Component {
         this.state = {
             showHideModal: false,
         };
+
+        // Return an array of data types that should be excluded from search
+        const excludeDataTypes = getDataTypesByProperty("vis-only", true)
+        console.log(excludeDataTypes)
+        valid_dataset_ancestor_config['searchQuery']['excludeFilters'].push({
+            keyword: "data_types.keyword",
+            value: excludeDataTypes
+        });
     }
 
     showModal = () => {
@@ -69,7 +77,7 @@ export default class AncestorIds extends React.Component {
                 <Form.Label>Ancestors(s) <span
                     className="required">* </span>
                     <SenNetPopover className={'direct_ancestor_uuids'} text={<>
-                        The ancestor samples or data from which this data was derived. At least one
+                        The SenNet ID(s) of ancestor samples or data from which this data was derived. At least one
                         ancestor is required, but multiple may be specified.
                     </>}>
                         <QuestionCircleFill/>
@@ -140,7 +148,7 @@ export default class AncestorIds extends React.Component {
 
                                                     <Facets fields={valid_dataset_ancestor_config.searchQuery}
                                                             filters={filters}
-                                                            transformFunction={getOrganTypeFullName}
+                                                            transformFunction={getUBKGFullName}
                                                     />
 
                                                 </div>
