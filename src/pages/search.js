@@ -90,7 +90,7 @@ function Search() {
 
                                             }
                                             bodyContent={
-                                                <div className="js-gtm--results" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
+                                                <div className="js-gtm--results sui-resultsTable" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
                                                     {wasSearched && <Results filters={filters} titleField={filters}
                                                              view={TableResults}
                                                     />}
