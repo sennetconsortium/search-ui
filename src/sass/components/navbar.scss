@@ -10,12 +10,12 @@
   }
 }
 
-@media screen and (max-height: 750px) {
-  .navbar + .container {
+@media screen and (max-height: 900px) {
+  .navbar + .container, .navbar + .sui-layout {
     min-height: calc(100vh - 277px)
   }
 
-  footer {
+  .footer-wrapper {
     position: inherit !important;
   }
 }
