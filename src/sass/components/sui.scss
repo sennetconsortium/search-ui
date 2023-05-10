@@ -76,6 +76,11 @@
   width: 100% !important;
 }
 
+.sui-layout-main {
+  width: 100%;
+  padding: 32px 0 32px 32px;
+}
+
 // Facets
 .clear-filter-div {
   padding-bottom: 32px;
@@ -120,6 +125,10 @@
     padding: 0 15px;
   }
 
+  .sui-layout-main {
+    padding: 0 !important;
+  }
+
   .sui-layout-sidebar {
     z-index: 1021;
     display: none;
@@ -158,6 +167,10 @@
     padding: 0 15px;
   }
 
+  .sui-layout-main {
+    padding: 0 !important;
+  }
+
   .modal-content .sui-layout-sidebar {
     z-index: 1021;
     display: none;
@@ -188,7 +201,6 @@
   }
 }
 
-
 .sui-resultsTable {
   @media (min-width: 1200px) {
     .spinner-wrapper {
@@ -199,3 +211,4 @@
   }
 
 }
+

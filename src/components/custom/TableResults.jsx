@@ -4,8 +4,7 @@ import DataTable, { createTheme } from 'react-data-table-component'
 import {
     checkFilterEntityType,
     checkMultipleFilterEntityType,
-    displayBodyHeader, equals,
-    getOrganTypeFullName,
+    displayBodyHeader, equals, getEntityViewUrl, getUBKGFullName,
     getStatusColor
 } from './js/functions'
 import AppContext from "../../context/AppContext"
@@ -71,7 +70,7 @@ function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
     )
 }
 
-function TableResults({children, filters, onRowClicked}) {
+function TableResults({children, filters, onRowClicked, forData = false, rowFn}) {
 
     const {isLoggedIn, cache} = useContext(AppContext)
     let hasMultipleEntityTypes = checkMultipleFilterEntityType(filters);
@@ -83,7 +82,10 @@ function TableResults({children, filters, onRowClicked}) {
             default: 'transparent',
         }})
 
-    const getHotLink = (row) => "/" + row.entity_type?.raw.toLowerCase() + "?uuid=" + row.uuid?.raw
+    const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
+
+    const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid))
+
 
     const handleOnRowClicked = (row, event) => {
         event.stopPropagation()
@@ -103,8 +105,10 @@ function TableResults({children, filters, onRowClicked}) {
     }
 
     useEffect(() => {
-        log.debug('Results', children)
-        handlePageChange(1, children.length)
+        if (!forData) {
+            log.debug('Results', children)
+            handlePageChange(1, children.length)
+        }
     }, [])
 
 
@@ -119,41 +123,40 @@ function TableResults({children, filters, onRowClicked}) {
         return pageData;
     }
 
-    const defaultColumns = ({hasMultipleEntityTypes = true, columns = []}) => {
+    const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn}) => {
         let cols = [
             {
                 name: 'SenNet ID',
-                selector: row => row.sennet_id?.raw,
+                selector: row => raw(row.sennet_id),
                 sortable: true,
-                format: column => <a href={getHotLink(column)}>{column.id}</a>,
-                maxWidth: '20%'
+                format: column => <a href={getHotLink(column)}>{column.id || column.sennet_id}</a>,
+                // minWidth: '20%'
+
             },
         ]
         if (hasMultipleEntityTypes) {
             cols.push({
                 name: 'Entity Type',
-                selector: row => row.entity_type?.raw,
+                selector: row => raw(row.entity_type),
                 sortable: true,
-                maxWidth: '17%'
+                // maxWidth: '17%'
             })
         }
-        if (isLoggedIn) {
+        if (isLoggedIn || _isLoggedIn) {
             cols.push({
                 name: 'Lab ID',
                 selector: row => {
-                    const raw = (obj) => obj ? obj.raw : null
                     return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
                 },
                 sortable: true,
-                width: hasMultipleEntityTypes ? '25%' : '20%'
+                // width: hasMultipleEntityTypes ? '25%' : '20%'
             })
         }
         cols = cols.concat(columns)
         cols.push({
                 name: 'Group',
-                selector: row => row.group_name?.raw,
+                selector: row => raw(row.group_name),
                 sortable: true,
-
             })
         return cols;
     }
@@ -161,58 +164,51 @@ function TableResults({children, filters, onRowClicked}) {
     const sourceColumns = [
         {
             name: 'Type',
-            selector: row => row.source_type?.raw,
+            selector: row => raw(row.source_type),
             sortable: true,
-            width: '15%',
+            // width: '15%',
         }
     ]
 
     const sampleColumns = [
         {
             name: 'Category',
-            selector: row => displayBodyHeader(row.sample_category?.raw),
+            selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
             sortable: true,
-            width: '15%',
+            // width: '15%',
         },
         {
             name: 'Organ',
-            selector: row => getOrganTypeFullName(row.origin_sample?.raw.organ),
+            selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-            width: '15%',
+            // width: '15%',
         }
     ]
 
     const datasetColumns = [
         {
             name: 'Data Types',
-            selector: row => row.data_types?.raw,
+            selector: row => {
+                let val = raw(row.data_types)
+                if (val) {
+                    return Array.isArray(val) ? getUBKGFullName(val[0]) : val
+                }
+            },
             sortable: true,
-            width: '17%'
+            // width: '17%'
         },
         {
             name: 'Organ',
-            selector: row => getOrganTypeFullName(row?.origin_sample?.raw?.organ),
+            selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-            width: '15%'
+            // width: '15%'
         },
         {
             name: 'Status',
-            selector: row => {
-                return <Badge pill bg={getStatusColor(row.status?.raw)}>{row.status?.raw}</Badge>
-            },
+            selector: row => raw(row.status),
+            format: (row) => <Badge pill bg={getStatusColor(raw(row.status))}>{raw(row.status)}</Badge>,
             sortable: true,
-            sortFunction: (rowA, rowB) => {
-                const a = rowA.status?.raw.toLowerCase();
-                const b = rowB.status?.raw.toLowerCase();
-                if (a > b) {
-                    return 1;
-                }
-                if (b > a) {
-                    return -1;
-                }
-                return 0;
-            },
-            width: hasMultipleEntityTypes ? '10%' : '12%',
+            //width: hasMultipleEntityTypes ? '10%' : '12%',
         }
     ]
 
@@ -244,6 +240,10 @@ function TableResults({children, filters, onRowClicked}) {
         }
 
         return cols;
+    }
+
+    if (forData) {
+        return {sourceColumns, sampleColumns, datasetColumns, defaultColumns}
     }
 
     // Prepare opsDict

@@ -440,14 +440,16 @@ function EditSample() {
                                                      isRequired={true} pattern={getDOIPattern()}
                                                      popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                                      onChange={_onChange}
-                                                     text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>}/>
+                                                     text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see: <a
+                                                         href="https://www.protocols.io/." target='_blank'
+                                                         className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>}/>
 
                                     {/*/!*Lab Sample ID*!/*/}
-                                    <EntityFormGroup label='Lab Sample ID' placeholder='Lab specific alpha-numeric ID'
+                                    <EntityFormGroup label='Lab Sample ID' placeholder='A non-PHI ID or deidentified name used by the lab when referring to the specimen'
                                                      controlId='lab_tissue_sample_id'
                                                      value={data.lab_tissue_sample_id}
-                                                     onChange={_onChange} text='An identifier used by the lab to identify the specimen, this
-                                        can be an identifier from the system used to track the specimen in the lab. This field will be entered by the user.'/>
+                                                     onChange={_onChange}
+                                                     text='An identifier used internally by the lab to identify the specimen. This can be useful for lab members to identify and look-up Samples.'/>
 
 
                                     {/*/!*Description*!/*/}

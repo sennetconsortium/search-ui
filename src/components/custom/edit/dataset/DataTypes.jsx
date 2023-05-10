@@ -3,6 +3,8 @@ import {Col, Form, Row} from 'react-bootstrap';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import SenNetPopover from "../../../SenNetPopover";
+import {getUBKGFullName} from "../../js/functions";
 
 export default class DataTypes extends React.Component {
     constructor(props) {
@@ -55,35 +57,37 @@ export default class DataTypes extends React.Component {
                 <Form.Group className="mb-3" controlId="data_types">
                     <Form.Label>Data Types <span
                         className="required">* </span>
-                        <OverlayTrigger
-                            placement="top"
-                            overlay={
-                                <Popover>
-                                    <Popover.Body>
-                                        Data type
-                                    </Popover.Body>
-                                </Popover>
-                            }
-                        >
+                        <SenNetPopover className={'data_types'}
+                                       text={<>The type of data contained in this <code>Dataset</code>. Choose from one
+                                           of the available options.</>}>
                             <QuestionCircleFill/>
-                        </OverlayTrigger>
+                        </SenNetPopover>
                     </Form.Label>
 
-                    <Form.Select required aria-label="Data Types"
-                                 onChange={e => {
-                                     this.handleDataTypeChange(e, this.props.onChange)
-                                 }}
-                                 defaultValue={this.props.data?.data_types?.[0]}>
-                        <option value="">----</option>
-                        {Object.entries(this.props.data_types).map(op => {
-                            return (
-                                <option key={op[0]} value={op[0]}>
-                                    {op[1]}
-                                </option>
-                            );
+                    {/*Check that there exists a data type for this dataset and if it is not a part of the list of primary assay types*/}
+                    {this.props.data?.data_types?.[0] && !this.props.data_types.includes(this.props.data.data_types[0]) ?
+                        (
+                            <Form.Select required aria-label="Data Types" disabled>
+                                <option
+                                    value={this.props.data.data_types[0]}>{getUBKGFullName(this.props.data.data_types[0])}</option>
+                            </Form.Select>
+                        ) : (
+                            <Form.Select required aria-label="Data Types"
+                                         onChange={e => {
+                                             this.handleDataTypeChange(e, this.props.onChange)
+                                         }}
+                                         defaultValue={this.props.data?.data_types?.[0]}>
+                                <option value="">----</option>
+                                {this.props.data_types.map(data_type => {
+                                    return (
+                                        <option key={data_type} value={data_type}>
+                                            {getUBKGFullName(data_type)}
+                                        </option>
+                                    );
+                                })}
+                            </Form.Select>
+                        )}
 
-                        })}
-                    </Form.Select>
                 </Form.Group>
 
                 {/*Data Types Other*/}

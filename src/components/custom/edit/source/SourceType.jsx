@@ -17,7 +17,7 @@ function SourceType( { data, onChange } ) {
                 <Form.Label>Source Type <span
                     className="required">* </span>
                     <SenNetPopover className={'source_type'} text={<>
-                        <code>Source</code> type <br />
+                        The type of this <code>Source</code>. Choose from one of the available options.<br />
                         <small className='popover-note text-muted'>Note: CCF Registration User Interface (CCF-RUI) tool is only available for <code>{cache.sourceTypes.Human}</code> and <code>{cache.sourceTypes['Human Organoid']}</code> types.</small>
                     </>}>
                         <QuestionCircleFill/>
