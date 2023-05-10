@@ -9,6 +9,7 @@ class Addon {
         this.user = {}
         this.router = args.router
         this.entities = args.entities
+        this.st = null
         if (args.data && args.data.user) {
             this.user = JSON.parse(args.data.user)
         }
@@ -30,7 +31,10 @@ class Addon {
     onKeydownEnter(sel, cb, trigger = 'click') {
         this.el.on('keydown', `${sel}`, ((e) => {
             if (this.isEnter(e)) {
-                cb ? cb(e) : this.handleKeydown(e, trigger)
+                clearTimeout(this.st)
+                this.st = setTimeout((()=> {
+                    cb ? cb(e) : this.handleKeydown(e, trigger)
+                }).bind(this), 100)
             }
         }).bind(this))
     }
