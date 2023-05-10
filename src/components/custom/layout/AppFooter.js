@@ -13,7 +13,7 @@ const AppFooter = ({isFixedBottom}) => {
 
     let fixedBottom = isFixedBottom ? 'fixed-bottom' : ''
     return (
-        <div className={`footer-wrapper sui-layout-body__inner bg--entityWhite border-top fixed-bottom`}>
+        <div className={`footer-wrapper sui-layout-body__inner bg--entityWhite border-top`}>
             <ToastContainer />
 
             <footer className={`py-3`}>
@@ -24,7 +24,7 @@ const AppFooter = ({isFixedBottom}) => {
                     <Col sm={10} className='col--main'>
                         <Row>
                             <Col sm={4} className='col--logos'>
-                                <ul className="nav pb-3 mb-3 nav--org" aria-label='Organization name'>
+                                <ul className="pb-3 mb-3 nav--org" aria-label='Organization name'>
                                     <li className="nav-item">
                                         <a className="navbar-brand" href="https://sennetconsortium.org/">
                                             <Image

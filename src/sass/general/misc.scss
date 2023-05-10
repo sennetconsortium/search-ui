@@ -68,3 +68,20 @@ p {
 .bg--entityWhite {
   background-color: #fcfcfc;
 }
+
+.mt-resp {
+  @media (min-width: 950px) {
+    margin-top: 5rem;
+  }
+}
+
+#__next, #__next > div:not(.sui-layout, .footer-wrapper, .spinner-wrapper) {
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  grid-template-columns:100%;
+
+  /* fallback height */
+  min-height: calc(100vh - 277px);
+  /* new small viewport height for modern browsers */
+  min-height: calc(100svh - 277px);
+}
