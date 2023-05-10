@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DataTable from 'react-data-table-component'
 import {TableResults} from "../../TableResults";
-import SenNetAccordion from "../../layout/SeNetAccordion";
+import SenNetAccordion from "../../layout/SenNetAccordion";
 
 function Datasets({ data }) {
 

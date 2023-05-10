@@ -1,7 +1,7 @@
 import React from 'react';
 import {BoxArrowUpRight, EnvelopeFill} from 'react-bootstrap-icons';
 import {fetchGlobusFilepath} from "../../../../lib/services";
-import SenNetAccordion from "../../layout/SeNetAccordion";
+import SenNetAccordion from "../../layout/SenNetAccordion";
 
 
 export default class Files extends React.Component {

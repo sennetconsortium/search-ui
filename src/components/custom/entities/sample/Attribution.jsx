@@ -1,7 +1,7 @@
 import React from 'react';
 import {Table} from 'react-bootstrap';
 import {EnvelopeFill} from "react-bootstrap-icons";
-import SenNetAccordion from "../../layout/SeNetAccordion";
+import SenNetAccordion from "../../layout/SenNetAccordion";
 
 export default class Attribution extends React.Component {
     render() {
