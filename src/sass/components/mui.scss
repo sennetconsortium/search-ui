@@ -1,0 +1,10 @@
+.MuiContainer-root {
+  @media (max-width: 950px) {
+    .MuiBox-root {
+      text-align: center;
+      > .btn {
+        margin-bottom: 1rem;
+      }
+    }
+  }
+}

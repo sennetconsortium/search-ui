@@ -22,7 +22,7 @@ function Login() {
             <Header title={APP_TITLE} />
             <AppNavbar hidden={true} />
             <Container>
-                <Row>
+                <Row className='mt-resp' style={{minHeight: '530px'}}>
                     <Col></Col>
                     <Col xs={10} lg={6}>
                         <div className={`card alert alert-info mt-4`}>
@@ -54,7 +54,7 @@ function Login() {
                     <Col></Col>
                 </Row>
             </Container>
-            <AppFooter isFixedBottom={true} />
+            <AppFooter  />
         </div>
     )
 }
