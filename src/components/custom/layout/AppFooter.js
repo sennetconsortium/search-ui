@@ -75,7 +75,7 @@ const AppFooter = () => {
                 </Row>
                 <Row>
                     <div className={'text-center text-muted nav--copyright'}>Copyright <a className="text-muted lnk--ic" href="https://sennetconsortium.org/">
-                        NIH Cellular Senescence Network (SenNet) <BoxArrowUpRight/></a> 2023. All rights reserved.</div>
+                        NIH Cellular Senescence Network (SenNet)</a> 2023. All rights reserved.</div>
                 </Row>
 
             </footer>
