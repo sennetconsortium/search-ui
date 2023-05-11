@@ -71,7 +71,7 @@ function Login() {
                         </Col>
                     </Row>
                 </Container>
-                <AppFooter isFixedBottom={true}/>
+                <AppFooter />
             </div>
         )
     }

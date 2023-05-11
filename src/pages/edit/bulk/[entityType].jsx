@@ -8,6 +8,7 @@ import EntityContext, {EntityProvider} from "../../../context/EntityContext";
 import Spinner from "../../../components/custom/Spinner";
 import AppContext from "../../../context/AppContext";
 import NotFound from "../../../components/custom/NotFound";
+import AppFooter from "../../../components/custom/layout/AppFooter";
 
 export default function EditBulk() {
     const {cache, supportedMetadata} = useContext(AppContext)
@@ -56,6 +57,7 @@ export default function EditBulk() {
                     handleHome={handleHome}
                     isMetadata={isMetadata}
                 />
+                <AppFooter />
             </>
         } else {
             return (<NotFound />)
