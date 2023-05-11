@@ -213,7 +213,7 @@ function ViewDataset() {
 
                                             {/*Contributors*/}
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                                <Contributors data={data.contributors}/>
+                                                <Contributors title={'Contributors'} data={data.contributors}/>
                                             }
 
                                             {/*Attribution*/}
