@@ -53,7 +53,7 @@ const AppFooter = () => {
                                     <li className="nav-item"><a href="https://sennetconsortium.org/about-2/">Project Website</a></li>
                                     <li className="nav-item"><a href="https://sennetconsortium.org/involvement/">Funded Research</a></li>
                                     <li className="nav-item"><a href="https://docs.sennetconsortium.org/">Documentation</a></li>
-                                    <li className="nav-item"><a href="https://sennetconsortium.org/contact">Contact</a></li>
+                                    <li className="nav-item"><a href="mailto:help@sennetconsortium.org">Contact</a></li>
                                 </ul>
                             </Col>
                             <Col sm={2}>
@@ -74,7 +74,7 @@ const AppFooter = () => {
                     </Col>
                 </Row>
                 <Row>
-                    <div className={'text-center text-muted nav--copyright'}>Copyright <a className="text-muted lnk--ic" href="https://commonfund.nih.gov/senescence">
+                    <div className={'text-center text-muted nav--copyright'}>Copyright <a className="text-muted lnk--ic" href="https://sennetconsortium.org/">
                         NIH Cellular Senescence Network (SenNet) <BoxArrowUpRight/></a> 2023. All rights reserved.</div>
                 </Row>
 
