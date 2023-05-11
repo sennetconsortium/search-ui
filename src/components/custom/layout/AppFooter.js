@@ -28,7 +28,7 @@ const AppFooter = () => {
                                         <a className="navbar-brand" href="https://sennetconsortium.org/">
                                             <Image
                                                 title='Senescence Network (SenNet)'
-                                                className="d-inline-block align-text-top"
+                                                className="d-inline-block align-text-top sennet-logo"
                                                 src={logo}
                                                 width="150"
                                                 alt={_t("SenNet logo")}
