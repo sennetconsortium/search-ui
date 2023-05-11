@@ -9,7 +9,7 @@ function Contributors({data, title}) {
         return [
             {
                 name: 'Name',
-                selector: row => row.first_name +' '+row.last_name,
+                selector: row => row.name ? row.name : (row.first_name +' '+row.last_name),
                 sortable: true
             },
             {
