@@ -138,7 +138,7 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            {showVitessce(data.data_types, isPrimaryDataset, data.immediate_descendants.length) &&
+                                            {showVitessce(isPrimaryDataset, data) &&
                                                 <li className="nav-item">
                                                     <a href="#Vitessce"
                                                        className="nav-link"
