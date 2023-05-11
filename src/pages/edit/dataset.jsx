@@ -233,7 +233,7 @@ export default function EditDataset() {
 
                 if(!_.isEmpty(metadata)) {
                     values["metadata"] = metadata.metadata
-                    values["pathname"] = metadata.pathname
+                    values["metadata"]['pathname'] = metadata.pathname
                 }
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
@@ -375,7 +375,7 @@ export default function EditDataset() {
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    {/*<MetadataUpload setMetadata={setMetadata} entity={ENTITIES.dataset} />*/}
+                                    {/*<MetadataUpload setMetadata={setMetadata} entity={cache.entities.dataset} />*/}
                                     
                                     <div className={'d-flex flex-row-reverse'}>
                                         { editMode === 'Edit' && data['status'] === 'New' &&

@@ -1,7 +1,4 @@
 import React, {useContext, useEffect, useState} from "react";
-import {
-    List
-} from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
