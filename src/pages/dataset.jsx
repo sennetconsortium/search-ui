@@ -1,7 +1,4 @@
 import React, {useContext, useEffect, useState} from "react";
-import {
-    List
-} from 'react-bootstrap-icons';
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
@@ -17,7 +14,7 @@ import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
 import Metadata from "../components/custom/entities/sample/Metadata";
-import Contributors from "../components/custom/entities/dataset/Contributors";
+import Contributors from "../components/custom/entities/Contributors";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
@@ -216,7 +213,7 @@ function ViewDataset() {
 
                                             {/*Contributors*/}
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                                <Contributors data={data.contributors}/>
+                                                <Contributors title={'Contributors'} data={data.contributors}/>
                                             }
 
                                             {/*Attribution*/}

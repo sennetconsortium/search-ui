@@ -10,7 +10,7 @@ import Header from "../components/custom/layout/Header";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import Contributors from "../components/custom/entities/collection/Contributors";
+import Contributors from "../components/custom/entities/Contributors";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {VisualizationProvider} from "../context/VisualizationContext";
 import SidebarBtn from "../components/SidebarBtn";

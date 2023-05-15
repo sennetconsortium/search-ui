@@ -6,6 +6,12 @@ footer {
   width: 100%;
   li  img {
     display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .sennet-logo {
+    max-width: 150px;
   }
 
   .nih-logo {

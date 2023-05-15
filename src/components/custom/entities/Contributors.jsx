@@ -2,14 +2,14 @@ import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import DataTable, { createTheme } from 'react-data-table-component'
 import {BoxArrowUpRight} from "react-bootstrap-icons";
-import SenNetAccordion from "../../layout/SenNetAccordion";
+import SenNetAccordion from "../layout/SenNetAccordion";
 
 function Contributors({data, title}) {
     const getColumns = () => {
         return [
             {
                 name: 'Name',
-                selector: row => row.first_name +' '+row.last_name,
+                selector: row => row.name ? row.name : (row.first_name +' '+row.last_name),
                 sortable: true
             },
             {

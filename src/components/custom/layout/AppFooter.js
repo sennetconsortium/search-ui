@@ -28,7 +28,7 @@ const AppFooter = () => {
                                         <a className="navbar-brand" href="https://sennetconsortium.org/">
                                             <Image
                                                 title='Senescence Network (SenNet)'
-                                                className="d-inline-block align-text-top"
+                                                className="d-inline-block align-text-top sennet-logo"
                                                 src={logo}
                                                 width="150"
                                                 alt={_t("SenNet logo")}
@@ -75,7 +75,7 @@ const AppFooter = () => {
                 </Row>
                 <Row>
                     <div className={'text-center text-muted nav--copyright'}>Copyright <a className="text-muted lnk--ic" href="https://sennetconsortium.org/">
-                        NIH Cellular Senescence Network (SenNet) <BoxArrowUpRight/></a> 2023. All rights reserved.</div>
+                        NIH Cellular Senescence Network (SenNet)</a> 2023. All rights reserved.</div>
                 </Row>
 
             </footer>
