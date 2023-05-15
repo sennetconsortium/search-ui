@@ -26,7 +26,7 @@ export const SennetVitessce = ({ data }) => {
     } = useContext(VisualizationContext)
     
     return <>
-        { showVitessce(data.data_types, isPrimaryDataset, data.immediate_descendants.length) &&
+        {showVitessce(isPrimaryDataset, data) &&
             <SenNetAccordion title='Visualization' id={'Vitessce'} className={'accordion--vitessce'}>
                 <div className={'row'}>
                     <div className={'col p-2 m-2'}>
