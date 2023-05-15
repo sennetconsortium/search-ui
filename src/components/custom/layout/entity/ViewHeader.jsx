@@ -38,7 +38,8 @@ function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
 
     return (
         <div style={{width: '100%'}}>
-            <h4>{cache.entities[entity]}</h4>
+            {/*TODO: should ideally depend on ontology */}
+            <h4>{cache.entities[entity] || entity.upperCaseFirst()}</h4>
             <h3>{data.sennet_id}
                 <ClipboardCopy text={data.sennet_id} />
             </h3>

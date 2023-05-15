@@ -8,7 +8,7 @@ export function SpinnerEl({className = '', variant = 'ic'}) {
 
 function Spinner({ text }) {
     return (
-        <div className="text-center p-3">
+        <div className="text-center p-3 spinner-wrapper">
             <span>{text}</span>
             <br></br>
             <SpinnerEl variant={'spinner-border-lg align-center'} />

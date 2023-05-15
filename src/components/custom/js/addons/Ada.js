@@ -23,6 +23,7 @@ class Ada extends Addon {
     }
 
     facets() {
+        Addon.log('Ada > Facets')
         this.onKeydownEnter('.sui-facet__title, .sui-select__control')
 
         this.onKeydownEnter( '.sui-multi-checkbox-facet__checkbox', ((e) => {
