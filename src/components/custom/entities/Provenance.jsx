@@ -11,6 +11,7 @@ import $ from 'jquery'
 import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
 import {fetchEntity, getUBKGFullName} from "../js/functions";
+import SenNetAccordion from "../layout/SenNetAccordion";
 
 
 function Provenance({nodeData}) {
@@ -304,46 +305,33 @@ function Provenance({nodeData}) {
     }
 
     return (
-        <div className="accordion accordion-flush sui-result" id="Provenance">
-            <div className="accordion-item ">
-                <div className="accordion-header">
-                    <button className="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#provenance-collapse" aria-expanded="true"
-                            aria-controls="provenance-collapse">Provenance
-
-                    </button>
-                </div>
-                <div id="provenance-collapse" className="accordion-collapse collapse show">
-                    <div className="accordion-body">
-                        <Tabs
-                            defaultActiveKey="graph"
-                            className="mb-3"
-                            variant="pills"
-                        >
-                            <Tab eventKey="graph" title="Graph" >
-                                {!loading && <ProvenanceUI options={options} data={treeData}/>}
-                                {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId} otherLegend={otherLegend} />}
-                                {loading && <Spinner/>}
-                                <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
-                                    {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 105 }} data={treeData} />}
-                                    {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={modalId} />}
-                                </AppModal>
-                            </Tab>
-                            {ancestors && ancestors.length > 0 &&
-                                <Tab eventKey="ancestor" title="Ancestors">
-                                    <Lineage lineage={ancestors}/>
-                                </Tab>
-                            }
-                            {descendants && descendants.length > 0 &&
-                                <Tab eventKey="descendant" title="Descendants">
-                                    <Lineage lineage={descendants}/>
-                                </Tab>
-                            }
-                        </Tabs>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <SenNetAccordion title={'Provenance'}>
+            <Tabs
+                defaultActiveKey="graph"
+                className="mb-3"
+                variant="pills"
+            >
+                <Tab eventKey="graph" title="Graph" >
+                    {!loading && <ProvenanceUI options={options} data={treeData}/>}
+                    {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId} otherLegend={otherLegend} />}
+                    {loading && <Spinner/>}
+                    <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
+                        {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 105 }} data={treeData} />}
+                        {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={modalId} />}
+                    </AppModal>
+                </Tab>
+                {ancestors && ancestors.length > 0 &&
+                    <Tab eventKey="ancestor" title="Ancestors">
+                        <Lineage lineage={ancestors}/>
+                    </Tab>
+                }
+                {descendants && descendants.length > 0 &&
+                    <Tab eventKey="descendant" title="Descendants">
+                        <Lineage lineage={descendants}/>
+                    </Tab>
+                }
+            </Tabs>
+        </SenNetAccordion>
     )
 }
 

@@ -1,20 +1,24 @@
 import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 
-function SenNetAccordion({children, title}) {
+function SenNetAccordion({children, title, id, afterTitle, className}) {
+    const [refId, setRefId] = useState(id)
     useEffect(() => {
+        if (id == null && typeof title === 'string') {
+            setRefId(title)
+        }
     }, [])
 
     return (
-        <div className="accordion accordion-flush sui-result" id={title}>
+        <div className={`accordion accordion-flush sui-result ${className}`} id={refId}>
             <div className="accordion-item ">
                 <div className="accordion-header">
                     <button className="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target={`#${title}-collapse`} aria-expanded="true"
-                            aria-controls={`${title}-collapse`}>{title}
+                            data-bs-target={`#${refId}-collapse`} aria-expanded="true"
+                            aria-controls={`${refId}-collapse`}>{title}{afterTitle}
                     </button>
                 </div>
-                <div id={`${title}-collapse`} className="accordion-collapse collapse show">
+                <div id={`${refId}-collapse`} className="accordion-collapse collapse show">
                     <div className="accordion-body">
                         {children}
                     </div>
@@ -24,10 +28,14 @@ function SenNetAccordion({children, title}) {
     )
 }
 
-SenNetAccordion.defaultProps = {}
+SenNetAccordion.defaultProps = {
+    className: ''
+}
 
 SenNetAccordion.propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
+    id: PropTypes.string,
+    className: PropTypes.string
 }
 
 export default SenNetAccordion
