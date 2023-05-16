@@ -10,16 +10,6 @@
   }
 }
 
-@media screen and (max-height: 750px) {
-  .navbar + .container {
-    min-height: calc(100vh - 277px)
-  }
-
-  footer {
-    position: inherit !important;
-  }
-}
-
 .dropdown-menu {
   text-transform: capitalize;
   .submenu {

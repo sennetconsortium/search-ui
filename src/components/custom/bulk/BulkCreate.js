@@ -553,7 +553,7 @@ export default function BulkCreate({
     }
 
     return (
-        <div>
+        <div className='main-wrapper'>
             <Container sx={{mt: 5}}>
                 <Box sx={{
                     backgroundColor: 'white',
@@ -666,9 +666,6 @@ export default function BulkCreate({
                     </Grid>
                 </Box>
             </Container>
-            <AppFooter
-                isFixedBottom={!error}
-            />
         </div>
     );
 }
