@@ -219,7 +219,7 @@ export default function EditPublication() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={cache.entities.publication} isEditMode={isEditMode()} data={data}/>
+                                <EntityHeader entity={cache.entities.publication} isEditMode={isEditMode()} data={data} showGroup={false}/>
                             }
                             bodyContent={
                                 <Form noValidate validated={validated}>
@@ -326,7 +326,7 @@ export default function EditPublication() {
                                     <div className={'d-flex flex-row-reverse'}>
 
                                         { data['status'] !== 'Processing' &&
-                                            <SenNetPopover text={'Save changes to this dataset'} className={'save-button'}>
+                                            <SenNetPopover text={'Save changes to this publication'} className={'save-button'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--save"
                                                         className={'me-2'}
                                                         onClick={handleSave}
