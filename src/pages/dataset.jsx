@@ -119,7 +119,7 @@ function ViewDataset() {
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
                 {error &&
-                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
+                    <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
                 }
                 {data && !error &&
                     <>

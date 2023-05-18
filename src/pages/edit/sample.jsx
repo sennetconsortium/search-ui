@@ -370,7 +370,7 @@ function EditSample() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
+                    <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
                 }
                 {showRui &&
                     <RuiIntegration
