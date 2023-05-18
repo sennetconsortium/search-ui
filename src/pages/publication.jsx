@@ -2,23 +2,23 @@ import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getDataTypesByProperty, getRequestHeaders} from "../components/custom/js/functions";
+import {getDataTypesByProperty, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
-import Files from "../components/custom/entities/dataset/Files";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
-import Alert from 'react-bootstrap/Alert';
+import {Alert, Stack, Table, Badge} from 'react-bootstrap';
+
 import Provenance from "../components/custom/entities/Provenance";
-import Metadata from "../components/custom/entities/sample/Metadata";
-import Contributors from "../components/custom/entities/Contributors";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
 
 import SidebarBtn from "../components/SidebarBtn";
+import SenNetAccordion from "../components/custom/layout/SenNetAccordion";
+import {BoxArrowUpRight} from "react-bootstrap-icons";
 
 
 
@@ -136,7 +136,63 @@ function ViewPublication() {
                                                          secondaryDate={data.last_modified_timestamp}
                                                          data={data}/>
 
+                                            {/*Publication Details*/}
+                                            <SenNetAccordion title={'Publication Details'}>
+                                                <div>
 
+                                                    <Table borderless>
+                                                        <tr>
+                                                            <th>Title</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>{data.title}</td>
+                                                        </tr>
+                                                    </Table>
+                                                    <br />
+                                                    <Table borderless>
+                                                        <tr>
+                                                            <th style={{width: '44%'}}>Venue</th>
+                                                            <th>Published?</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>{data.publication_venue}</td>
+                                                            <td><Badge pill bg={data.publication_status ? 'success' : 'secondary'}>{data.publication_status ? 'YES' : 'NO'}</Badge></td>
+                                                        </tr>
+                                                    </Table>
+                                                    <br />
+                                                    <Table borderless>
+                                                        <tr>
+                                                            <th style={{width: '44%'}}>Issue/Volume Number</th>
+                                                            <th>Pages or Article Number</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>{data.issue}/{data.volume}</td>
+                                                            <td>{data.pages_or_article_num}</td>
+                                                        </tr>
+                                                    </Table>
+                                                    <br />
+                                                    { data.publication_url &&
+                                                    <Table borderless>
+                                                        <tr>
+                                                            <th>Publication URL</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><a href={data.publication_url} className={'lnk--ic pl-0'}>{data.publication_url} <BoxArrowUpRight/></a></td>
+                                                        </tr>
+                                                    </Table>
+                                                    }
+                                                    {data.publication_doi &&
+                                                    <Table borderless>
+                                                        <tr>
+                                                            <th>Publication DOI</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><a href={data.publication_doi} className={'lnk--ic pl-0'}>{data.publication_doi} <BoxArrowUpRight/></a></td>
+                                                        </tr>
+                                                    </Table> }
+
+                                                </div>
+                                            </SenNetAccordion>
                                             {/*Provenance*/}
                                             {data &&
                                                 <Provenance nodeData={data}/>
