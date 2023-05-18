@@ -130,7 +130,11 @@ export const config = {
         excludeFilters: [{
             keyword: "entity_type.keyword",
             value: "Collection"
-        }],
+        }, {
+            keyword: "entity_type.keyword",
+            value: "Publication"
+        }
+        ],
         facets: {
             entity_type: {
                 label: 'Entity Type',
