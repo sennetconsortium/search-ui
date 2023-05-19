@@ -289,7 +289,7 @@ export default function EditPublication() {
                                                      text={<>The URL at the publishers server for print/pre-print (http(s)://[alpha-numeric-string].[alpha-numeric-string].[...]</>}/>
 
                                     {/*/!*Publication DOI*!/*/}
-                                    <EntityFormGroup label='Publication DOI' controlId='publication_doi'
+                                    <EntityFormGroup label='DOI Abstract' controlId='publication_doi'
                                                      value={data.publication_doi}
                                                      onChange={onChange}
                                                      text={<>An abstract publicly published when the <code>Publication</code> is published.  This will be included with the DOI information of the published <code>Publication</code>.</>}/>
