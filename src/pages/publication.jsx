@@ -141,54 +141,74 @@ function ViewPublication() {
                                                 <div>
 
                                                     <Table borderless>
+                                                        <thead>
                                                         <tr>
                                                             <th>Title</th>
                                                         </tr>
+                                                        </thead>
+                                                        <tbody>
                                                         <tr>
                                                             <td>{data.title}</td>
                                                         </tr>
+                                                        </tbody>
                                                     </Table>
                                                     <br />
                                                     <Table borderless>
+                                                        <thead>
                                                         <tr>
                                                             <th style={{width: '44%'}}>Venue</th>
                                                             <th>Published?</th>
                                                         </tr>
+                                                        </thead>
+                                                        <tbody>
                                                         <tr>
                                                             <td>{data.publication_venue}</td>
                                                             <td><Badge pill bg={data.publication_status ? 'success' : 'secondary'}>{data.publication_status ? 'YES' : 'NO'}</Badge></td>
                                                         </tr>
+                                                        </tbody>
                                                     </Table>
                                                     <br />
                                                     <Table borderless>
+                                                        <thead>
                                                         <tr>
                                                             <th style={{width: '44%'}}>Issue/Volume Number</th>
                                                             <th>Pages or Article Number</th>
                                                         </tr>
+                                                        </thead>
+                                                        <tbody>
                                                         <tr>
                                                             <td>{data.issue}/{data.volume}</td>
                                                             <td>{data.pages_or_article_num}</td>
                                                         </tr>
+                                                        </tbody>
                                                     </Table>
                                                     <br />
                                                     { data.publication_url &&
                                                     <Table borderless>
+                                                        <thead>
                                                         <tr>
                                                             <th>Publication URL</th>
                                                         </tr>
+                                                        </thead>
+                                                        <tbody>
                                                         <tr>
                                                             <td><a href={data.publication_url} className={'lnk--ic pl-0'}>{data.publication_url} <BoxArrowUpRight/></a></td>
                                                         </tr>
+                                                        </tbody>
                                                     </Table>
                                                     }
                                                     {data.publication_doi &&
                                                     <Table borderless>
+                                                        <thead>
                                                         <tr>
                                                             <th>Publication DOI</th>
                                                         </tr>
+                                                        </thead>
+                                                        <tbody>
                                                         <tr>
                                                             <td><a href={data.publication_doi} className={'lnk--ic pl-0'}>{data.publication_doi} <BoxArrowUpRight/></a></td>
                                                         </tr>
+                                                        </tbody>
                                                     </Table> }
 
                                                 </div>

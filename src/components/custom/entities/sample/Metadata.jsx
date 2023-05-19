@@ -38,8 +38,8 @@ export default class Metadata extends React.Component {
         return (
             <SenNetAccordion title={'Metadata'} afterTitle={<div className="w-100 pe-4">
                 <a href={downloadURL} download={`${this.props.filename}.tsv`}
-                   className="float-end"><Button
-                    variant="primary"><Download/></Button></a>
+                   className="float-end"><span
+                    className="btn btn-primary" role='button' aria-label='Download Metadata' title='Download Metadata'><Download/></span></a>
             </div>}>
                 <DataTable
                     columns={this.columns}
