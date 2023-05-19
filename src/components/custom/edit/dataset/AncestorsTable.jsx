@@ -2,6 +2,7 @@ import React from 'react';
 import {Table} from 'react-bootstrap';
 import {getStatusColor} from "../../js/functions";
 import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
 import {TrashFill} from "react-bootstrap-icons";
 
 export default class AncestorsTable extends React.Component {
@@ -33,8 +34,8 @@ export default class AncestorsTable extends React.Component {
                             <td>{ancestor?.display_subtype}</td>
                             <td>{ancestor.group_name}</td>
                             <td><Badge pill bg={getStatusColor(ancestor?.status)}>{ancestor?.status}</Badge></td>
-                            <td><TrashFill role="button" color="red" onClick={() => this.deleteAncestor(this, ancestor.uuid)}/></td>
-
+                            <td><Button className="pt-0 pb-0" variant="link" onClick={() => this.deleteAncestor(this, ancestor.uuid)}><TrashFill
+                                color="red"/></Button></td>
                         </tr>
                     )
                 })}

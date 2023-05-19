@@ -49,6 +49,7 @@ export default function EditDataset() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         metadata, setMetadata,
+        dataAccessPublic, setDataAccessPublic,
         getEntityConstraints,
         getSampleEntityConstraints,
         buildConstraint
@@ -117,6 +118,18 @@ export default function EditDataset() {
         fetchDataTypes()
     }, [ancestors])
 
+    // Disable all form elements if data_access_level is "public"
+    // Wait until "dataTypes" and "editMode" are set prior to running this
+    useEffect(() => {
+        if (dataAccessPublic === true) {
+            const form = document.getElementById("dataset-form");
+            const elements = form.elements;
+            for (let i = 0, len = elements.length; i < len; ++i) {
+                elements[i].setAttribute('disabled', true);
+            }
+        }
+    }, [dataAccessPublic, dataTypes, editMode])
+
     // only executed on init rendering, see the []
     useEffect(() => {
 
@@ -134,7 +147,6 @@ export default function EditDataset() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data);
-
                 let immediate_ancestors = []
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     for (const ancestor of data.immediate_ancestors) {
@@ -154,6 +166,7 @@ export default function EditDataset() {
                     'metadata': data.metadata
                 })
                 setEditMode("Edit")
+                setDataAccessPublic(data.data_access_level === 'public')
             }
         }
 
@@ -291,7 +304,7 @@ export default function EditDataset() {
                                 <EntityHeader entity={cache.entities.dataset} isEditMode={isEditMode()} data={data}/>
                             }
                             bodyContent={
-                                <Form noValidate validated={validated}>
+                                <Form noValidate validated={validated} id="dataset-form">
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || isEditMode()) &&
@@ -378,6 +391,10 @@ export default function EditDataset() {
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={cache.entities.dataset} />*/}
                                     
                                     <div className={'d-flex flex-row-reverse'}>
+                                        <Button variant="outline-primary rounded-0 js-btn--cancel"
+                                                href={`/dataset?uuid=${router.query.uuid}`} >
+                                            {_t('Cancel')}
+                                        </Button>
                                         { editMode === 'Edit' && data['status'] === 'New' &&
                                             <SenNetPopover text={'Submit this dataset for processing'} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton onClick={handleSubmit} disableSubmit={disableSubmit}/>
