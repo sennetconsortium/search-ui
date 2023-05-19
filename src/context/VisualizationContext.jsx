@@ -6,9 +6,7 @@ const VisualizationContext = createContext({})
 export const VisualizationProvider = ({ children }) => {
     
     //region Vitessce
-    const [vitessceTheme, setVitessceTheme] = useState("light")
     const [vitessceConfig, setVitessceConfig] = useState(null)
-    const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
     const [isFullscreen, setIsFullscreen] = useState(false)
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
@@ -36,12 +34,8 @@ export const VisualizationProvider = ({ children }) => {
     return <VisualizationContext.Provider value={{
         showVitessce,
         isPrimaryDataset,
-        vitessceTheme,
-        setVitessceTheme,
         vitessceConfig,
         setVitessceConfig,
-        showCopiedToClipboard,
-        setShowCopiedToClipboard,
         showExitFullscreenMessage,
         setShowExitFullscreenMessage,
         isFullscreen,
