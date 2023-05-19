@@ -292,7 +292,7 @@ export default function EditPublication() {
                                     <EntityFormGroup label='Publication DOI' controlId='publication_doi'
                                                      value={data.publication_doi}
                                                      onChange={onChange}
-                                                     text={<>The doi of the publication. (##.####/[alpha-numeric-string])</>}/>
+                                                     text={<>An abstract publicly published when the <code>Publication</code> is published.  This will be included with the DOI information of the published <code>Publication</code>.</>}/>
 
                                     {/*/!*Issue*!/*/}
                                     <EntityFormGroup label='Issue Number' controlId='issue'
