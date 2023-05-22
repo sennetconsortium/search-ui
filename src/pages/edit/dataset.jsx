@@ -230,7 +230,7 @@ export default function EditDataset() {
                 }
             }
             if (!allValid) {
-                results.push(<p><br />Not all DOI URLs are valid. Please click on the failed SenNet IDs from the list above and correct. Then return to this form and submit again for processing. </p>)
+                results.push(<p key={`doi-check-msg`}><br />Not all DOI URLs are valid. Please click on the failed SenNet IDs from the list above and correct. Then return to this form and submit again for processing. </p>)
             } else {
                 setShowModal(false)
             }
@@ -251,9 +251,9 @@ export default function EditDataset() {
                 body: JSON.stringify(values)
             }
             const submitDatasetUrl = getIngestEndPoint() + 'datasets/' + data['uuid'] + '/submit'
-            const response = await fetch(submitDatasetUrl, requestOptions)
-            let submitResult = await response.text()
-            setSubmissionModal(submitResult, !response.ok)
+            // const response = await fetch(submitDatasetUrl, requestOptions)
+            // let submitResult = await response.text()
+            // setSubmissionModal(submitResult, !response.ok)
         }
 
     }

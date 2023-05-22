@@ -1,6 +1,8 @@
 import React from "react";
-import Modal from 'react-bootstrap/Modal';
+import Badge from 'react-bootstrap/Badge'
 import {Button} from 'react-bootstrap';
+import AppModal from "../../../AppModal";
+import {getStatusColor} from "../../js/functions";
 
 export default class DatasetSubmissionButton extends React.Component {
     constructor(props) {
@@ -24,25 +26,22 @@ export default class DatasetSubmissionButton extends React.Component {
                         onClick={this.showModal}>
                     Submit
                 </Button>
-                <Modal show={this.state.showModal} onHide={this.hideModal} keyboard={false}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Confirm Submission</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        By clicking "Submit" this dataset will be processed and its status set to "QA".
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="outline-primary rounded-0 js-btn--submit" onClick={() => {
-                            this.props.onClick();
-                            this.hideModal()
-                        }}>
-                            Submit
-                        </Button>
-                        <Button variant="outline-secondary rounded-0" onClick={this.hideModal}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
+
+                <AppModal
+                    className={`modal--ctaConfirm`}
+                    showModal={this.state.showModal}
+                    modalTitle={'Confirm Submission'}
+                    modalBody={<div>By clicking "Submit" this <code>Dataset</code> will be processed and its status set to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</div>}
+                    handleClose={this.hideModal}
+                    handleHome={() => {
+                        this.props.onClick();
+                        this.hideModal()
+                    }}
+                    actionButtonLabel={'Submit'}
+                    actionBtnClassName={'js-btn--submit'}
+                    showCloseButton={true}
+                    closeButtonLabel={'Close'}
+                />
             </>
         )
     }

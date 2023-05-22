@@ -1,6 +1,7 @@
 import {getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
 import {APP_ROUTES} from "../../../config/constants";
 import log from "loglevel";
+import fetchJsonp from "fetch-jsonp";
 
 export function getHeaders() {
     const myHeaders = new Headers();
@@ -31,16 +32,37 @@ export async function fetchEntity(ancestorId) {
     }
 }
 
-export async function fetchProtocols(protocolUrl) {
+export function getProtocolId(protocolUrl) {
     // The ID is everything after "dx.doi.org/"
     const regex = new RegExp("(?<=dx.doi.org/).*")
-    let protocolId = regex.exec(protocolUrl)
-    log.info("https://www.protocols.io/api/v4/protocols/" + protocolId)
-    const response = await fetch("https://www.protocols.io/api/v4/protocols/" + protocolId,
+    return regex.exec(protocolUrl)
+}
+
+export async function fetchProtocol(protocolUrl) {
+    log.info(protocolUrl)
+    return await fetch(protocolUrl,
         {
             headers: new Headers({Authorization: 'Bearer ' + getProtocolsToken()})
         }
     );
+}
+
+export async function fetchProtocolView(protocolUrl) {
+    if (!protocolUrl) return null
+    let uri = protocolUrl.indexOf('http') !== -1 ? protocolUrl : `https://${protocolUrl}`
+    let result = await fetchJsonp(uri, {
+        timeout: 2000,
+    }).then(function(json) {
+        return true
+    }).catch(function(resp) {
+        return resp.message.indexOf('timed out') !== -1
+    })
+    return {ok: result}
+}
+
+export async function fetchProtocols(protocolUrl) {
+    if (!protocolUrl) return null
+    const response = await fetchProtocol('https://www.protocols.io/api/v4/protocols/' + getProtocolId(protocolUrl))
 
     if (!response.ok) {
         return null
@@ -175,8 +197,9 @@ export function gotToLogin() {
     goIntent('login')
 }
 
-export function getEntityViewUrl(entity, uuid) {
-    return "/" + entity.toLowerCase() + "?uuid=" + uuid
+export function getEntityViewUrl(entity, uuid, {isEdit = false}) {
+    const pre = isEdit ? '/edit' : ''
+    return pre + "/" + entity.toLowerCase() + "?uuid=" + uuid
 }
 
 
