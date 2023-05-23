@@ -225,6 +225,9 @@ Object.assign(String.prototype, {
     },
     contains(needle) {
         return this.indexOf(needle) !== -1
+    },
+    stripTags() {
+        return this.replace(/(<([^>]+)>)/gi, "")
     }
 })
 
