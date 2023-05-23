@@ -222,6 +222,7 @@ export const EntityProvider = ({ children }) => {
     }
 
     const checkProtocolUrl = async (value) => {
+        if (!value) return
         let protocolCheck = await fetchProtocolView(value)
         let values = {...warningClasses}
         if (!protocolCheck.ok) {
