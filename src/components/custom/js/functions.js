@@ -49,13 +49,13 @@ export async function fetchProtocol(protocolUrl) {
 
 export async function fetchProtocolView(protocolUrl) {
     if (!protocolUrl) return null
-    let uri = protocolUrl.indexOf('http') !== -1 ? protocolUrl : `https://${protocolUrl}`
+    let uri = getClickableLink(protocolUrl)
     let result = await fetchJsonp(uri, {
         timeout: 2000,
     }).then(function(json) {
         return true
     }).catch(function(resp) {
-        return resp.message.indexOf('timed out') !== -1
+        return resp.message.contains('timed out')
     })
     return {ok: result}
 }
@@ -222,6 +222,9 @@ export function equals(s1, s2, insensitive = true) {
 Object.assign(String.prototype, {
     upperCaseFirst() {
         return this[0].toUpperCase() + this.slice(1);
+    },
+    contains(needle) {
+        return this.indexOf(needle) !== -1
     }
 })
 
