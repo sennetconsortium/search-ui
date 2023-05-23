@@ -29,13 +29,14 @@ function EditSource() {
         data, setData,
         error, setError,
         values, setValues,
-        errorMessage, setErrorMessage, 
+        errorMessage, setErrorMessage,
         validated, setValidated,
-        userWriteGroups, onChange, 
+        userWriteGroups, onChange,
         editMode, setEditMode,isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
+        dataAccessPublic, setDataAccessPublic,
         metadata, setMetadata, checkMetadata, getMetadataNote, checkProtocolUrl,
         warningClasses } = useContext(EntityContext)
     const { _t, filterImageFilesToAdd, cache } = useContext(AppContext)
@@ -45,6 +46,18 @@ function EditSource() {
     const [imageByteArray, setImageByteArray] = useState([])
     const alertStyle = useRef('info')
 
+
+    // Disable all form elements if data_access_level is "public"
+    // Wait until "sampleCategories" and "editMode" are set prior to running this
+    useEffect(() => {
+        if (dataAccessPublic === true) {
+            const form = document.getElementById("source-form");
+            const elements = form.elements;
+            for (let i = 0, len = elements.length; i < len; ++i) {
+                elements[i].setAttribute('disabled', true);
+            }
+        }
+    }, [dataAccessPublic, editMode])
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -79,6 +92,7 @@ function EditSource() {
                 }
                 setValues(_values)
                 setEditMode("Edit")
+                setDataAccessPublic(data.data_access_level === 'public')
             }
         }
 
@@ -136,7 +150,7 @@ function EditSource() {
                 setImageByteArray([])
             }).catch((e) => log.error(e))
         }
-        
+
         setValidated(true);
     };
 
@@ -196,7 +210,7 @@ function EditSource() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
+                    <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
                 }
                 {data && !error &&
                     <div className="no_sidebar">
@@ -205,7 +219,7 @@ function EditSource() {
                                 <EntityHeader entity={cache.entities.source} isEditMode={isEditMode()} data={data} />
                             }
                             bodyContent={
-                                <Form noValidate validated={validated} onSubmit={handleSave}>
+                                <Form noValidate validated={validated} onSubmit={handleSave} id={"source-form"}>
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || isEditMode()) &&
@@ -250,7 +264,11 @@ function EditSource() {
 
                                     {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}*/}
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
+                                        <Button variant="outline-primary rounded-0 js-btn--cancel"
+                                                href={`/source?uuid=${router.query.uuid}`}>
+                                            {_t('Cancel')}
+                                        </Button>
+                                        <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
                                                 disabled={disableSubmit}>
                                             {_t('Save')}
                                         </Button>
@@ -265,7 +283,7 @@ function EditSource() {
 
             </>
         )
-    } 
+    }
 }
 
 EditSource.withWrapper = function(page) {

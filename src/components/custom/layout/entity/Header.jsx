@@ -3,7 +3,7 @@ import {Col, Container, Row} from 'react-bootstrap'
 import AppContext from '../../../../context/AppContext'
 import HipaaModal from "../../edit/sample/HipaaModal";
 
-function EntityHeader({entity, data, isEditMode}) {
+function EntityHeader({entity, data, isEditMode, showGroup = true}) {
   const {_t } = useContext(AppContext)
   return (
     <Container className="px-0" fluid={true}>
@@ -14,7 +14,7 @@ function EntityHeader({entity, data, isEditMode}) {
             <>
                 <Row>
                     <Col md={6}><h5>{_t('SenNet ID')}: {data.sennet_id}</h5></Col>
-                    <Col md={6}><h5>{_t('Group')}: {data.group_name}</h5></Col>
+                    {showGroup && <Col md={6}><h5>{_t('Group')}: {data.group_name}</h5></Col> }
                 </Row>
                 <Row>
                     <Col md={6}><h5>{_t('Entered By')}: {data.created_by_user_email}</h5></Col>

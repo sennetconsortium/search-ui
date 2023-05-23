@@ -22,7 +22,7 @@ export default class DatasetSubmissionButton extends React.Component {
     render() {
         return (
             <>
-                <Button variant="outline-primary rounded-0" disabled={this.props.disableSubmit}
+                <Button className="me-2" variant="outline-primary rounded-0" disabled={this.props.disableSubmit}
                         onClick={this.showModal}>
                     Submit
                 </Button>
