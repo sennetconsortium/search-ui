@@ -4,15 +4,14 @@ import 'bootstrap/dist/css/bootstrap.css'
 import {Button, Form} from 'react-bootstrap'
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
-import {BoxArrowUpRight, QuestionCircleFill} from 'react-bootstrap-icons'
+import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
 import {get_headers, update_create_dataset} from '../../lib/services'
 import {
     cleanJson,
     equals,
-    fetchEntity, fetchProtocol, fetchProtocols, fetchProtocolView,
+    fetchEntity, fetchProtocols, fetchProtocolView,
     getDataTypesByProperty, getEntityViewUrl,
-    getHeaders, getProtocolId,
     getRequestHeaders
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
@@ -25,7 +24,7 @@ import Header from '../../components/custom/layout/Header'
 
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
-import Spinner, {SpinnerEl} from '../../components/custom/Spinner'
+import Spinner from '../../components/custom/Spinner'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
@@ -39,8 +38,6 @@ import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
-import TaskAltIcon from "@mui/icons-material/TaskAlt";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 export default function EditDataset() {
     const {
