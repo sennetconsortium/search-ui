@@ -25,3 +25,43 @@ html {
   background-clip: border-box;
   border-radius: .25rem;
 }
+
+.vitessce-container.vitessce-theme-light .bg-secondary {
+  background-color: #f1f1f1 !important;
+  color: #f1f1f1;
+}
+
+.vitessce-container.vitessce-theme-light .bg-primary {
+  background-color: #f1f1f1 !important;
+  color: #333;
+}
+
+.vitessce-container.vitessce-theme-light .card {
+  border: 1px solid rgba(241,241,241,.125);
+}
+
+.vitessce-container.vitessce-theme-light .scroll {
+  overflow-y: auto;
+}
+
+.vitessce-container.vitessce-theme-dark .bg-secondary {
+  background-color: #222 !important;
+  color: #d3d3d3;
+}
+
+.vitessce-container.vitessce-theme-dark .bg-primary {
+  background-color: #222 !important;
+  color: #d3d3d3;
+}
+
+.vitessce-container.vitessce-theme-dark .card {
+  border: 1px solid rgb(34, 34, 34);
+}
+
+.vitessce-container.vitessce-theme-dark .scroll {
+  overflow-y: auto;
+}
+
+.vega-container {
+  color: black;
+}
