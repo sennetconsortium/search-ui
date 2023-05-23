@@ -37,7 +37,8 @@ function EditSource() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
-        metadata, setMetadata, checkMetadata, getMetadataNote } = useContext(EntityContext)
+        metadata, setMetadata, checkMetadata, getMetadataNote, checkProtocolUrl,
+        warningClasses } = useContext(EntityContext)
     const { _t, filterImageFilesToAdd, cache } = useContext(AppContext)
 
     const router = useRouter()
@@ -75,6 +76,9 @@ function EditSource() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data);
+
+                checkProtocolUrl(data.protocol_url)
+
                 // Set state with default values that will be PUT to Entity API to update
                 let _values = {
                     'lab_source_id': data.lab_source_id,
@@ -180,6 +184,17 @@ function EditSource() {
         }
     }
 
+
+    const _onChange = (e, fieldId, value) => {
+        // log.debug('onChange', fieldId, value)
+        // use a callback to find the field in the value list and update it
+        onChange(e, fieldId, value)
+
+        if (fieldId === 'protocol_url') {
+            checkProtocolUrl(value)
+        }
+    };
+
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
@@ -231,7 +246,9 @@ function EditSource() {
                                     {/*Case Selection Protocol*/}
                                     <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI' popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                         controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
-                                                     onChange={onChange} text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>} />
+                                                     className={warningClasses.protocol_url}
+                                                     warningText={<>The supplied protocols.io DOI URL, formatting is correct but does not resolve. This will need to be corrected for any <code>Dataset</code> submission that uses this entity as an ancestor.</>}
+                                                     onChange={_onChange} text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>} />
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}

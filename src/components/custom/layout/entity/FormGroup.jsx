@@ -1,18 +1,19 @@
-import {useContext} from 'react'
+import React, {useContext} from 'react'
 import { Form } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 import { QuestionCircleFill } from 'react-bootstrap-icons'
 import AppContext from '../../../../context/AppContext'
 import SenNetPopover from "../../../SenNetPopover";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-function EntityFormGroup({ controlId, label, text, onChange, value, type, placeholder, isRequired, pattern, popoverTrigger }) {
+function EntityFormGroup({ controlId, label, text, onChange, value, type, placeholder, isRequired, pattern, popoverTrigger, className, warningText }) {
   const {_t } = useContext(AppContext)
   const isTextarea = (type === 'textarea')
 
   return (
     <>
     
-        <Form.Group className="mb-3" controlId={controlId}>
+        <Form.Group className={`mb-3 form-group ${className}`} controlId={controlId}>
             <Form.Label>{_t(label)} {isRequired && <span className="required">* </span>}
                 <SenNetPopover text={text} trigger={popoverTrigger} className={`popover-${controlId}`}>
                     <QuestionCircleFill/>
@@ -26,6 +27,11 @@ function EntityFormGroup({ controlId, label, text, onChange, value, type, placeh
             {isTextarea && <Form.Control as={type} rows={4} defaultValue={value}
                         onChange={e => onChange(e, e.target.id, e.target.value)} /> }
 
+            {(className && className.indexOf('warning') !== -1) && <div className={'warning-icon-trigger'}>
+                <SenNetPopover text={warningText} trigger={popoverTrigger} className={`popover-warning-${controlId}`}>
+                    <span ><WarningAmberIcon sx={{color: '#ffc107'}} /></span></SenNetPopover>
+            </div>}
+
         </Form.Group>
     </>
     
@@ -35,12 +41,14 @@ function EntityFormGroup({ controlId, label, text, onChange, value, type, placeh
 EntityFormGroup.defaultProps = {
     type: 'text',
     isRequired: false,
-    placeholder: ''
+    placeholder: '',
+    className: ' ',
 }
 
 EntityFormGroup.propTypes = {
     type: PropTypes.string,
     placeholder: PropTypes.string,
+    className: PropTypes.string,
     isRequired: PropTypes.bool,
     popoverTrigger: PropTypes.string
 }

@@ -84,7 +84,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn})
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
-    const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid))
+    const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid), {})
 
 
     const handleOnRowClicked = (row, event) => {
