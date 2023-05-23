@@ -20,6 +20,12 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         window.location.replace(url)
     }
 
+    const supportedBulkRegister = () => {
+        let entities = Object.keys(cache.entities)
+        let notSupported = ['publication']
+        return entities.filter(entity => !notSupported.includes(entity))
+    }
+
 
     return (
         <Navbar
@@ -63,7 +69,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                             hidden={hidden}
                             title="Bulk register entities"
                             id="nav-dropdown--bulkCreate">
-                            {Object.keys(cache.entities).map((entity) => (
+                            {supportedBulkRegister().map((entity) => (
                                 <NavDropdown.Item key={entity} href={`/edit/bulk/${entity}?action=register`}>
                                     {entity}s
                                 </NavDropdown.Item>

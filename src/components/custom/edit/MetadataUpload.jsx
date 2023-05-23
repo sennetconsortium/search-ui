@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState, useRef} from 'react'
 import PropTypes from 'prop-types'
+import {Button, Form} from 'react-bootstrap';
 import {CheckCircleFill, XCircleFill, Download, Paperclip} from "react-bootstrap-icons";
 import {InputGroup} from 'react-bootstrap';
 import {getIngestEndPoint} from "../../../config/config";
@@ -101,6 +102,7 @@ export const getErrorList = (details) => {
 
 function MetadataUpload({ setMetadata, entity, subType }) {
 
+    const metadataInputRef = useRef()
     const [file, setFile] = useState('')
     const [fileStatus, setFileStatus] = useState('')
     const [error, setError] = useState(null)
@@ -198,9 +200,14 @@ function MetadataUpload({ setMetadata, entity, subType }) {
         return url.toLowerCase()
     }
 
+    const handleUploadMetadataClick = () => metadataInputRef.current.click()
+
+
     return (
         <div className={`c-metadataUpload`}>
             <InputGroup className="mb-3">
+                <input style={{display: 'none'}} onInput={handleUpload} type='file' id='entity_metadata'
+                       name='entity_metadata' ref={metadataInputRef}/>
 
                 <SenNetPopover placement={SenPopoverOptions.placement.right}
                                trigger={SenPopoverOptions.triggers.hoverOnClickOff}
@@ -208,11 +215,10 @@ function MetadataUpload({ setMetadata, entity, subType }) {
                                text={<span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
                             <small className='popover-note text-muted'>For example TSV schemas, please see the <a href={getSchemaUrl()}>docs</a>.</small></span>}
                 >
-                    <label htmlFor='entity_metadata' className='btn btn-outline-primary rounded-0 btn--fileUpload'>
-                        <span>Upload Metadata File</span>
-                        <input onInput={handleUpload} type='file' id='entity_metadata' name='entity_metadata' />
-                        <Paperclip  />
-                    </label>
+                    <Button variant={'outline-primary rounded-0'} onClick={handleUploadMetadataClick}>
+                        Upload Metadata File
+                        <Paperclip className={'ms-2'}/>
+                    </Button>
                 </SenNetPopover>
 
 

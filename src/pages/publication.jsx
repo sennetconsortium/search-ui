@@ -2,30 +2,27 @@ import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getDataTypesByProperty, getRequestHeaders} from "../components/custom/js/functions";
+import {getDataTypesByProperty, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
-import Files from "../components/custom/entities/dataset/Files";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
-import Alert from 'react-bootstrap/Alert';
+import {Alert, Stack, Table, Badge} from 'react-bootstrap';
+
 import Provenance from "../components/custom/entities/Provenance";
-import Metadata from "../components/custom/entities/sample/Metadata";
-import Contributors from "../components/custom/entities/Contributors";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
-import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
-import {kuppe2022nature} from "../vitessce-view-config/rna-seq/kuppe_2022_nature";
 import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
-import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
+
 import SidebarBtn from "../components/SidebarBtn";
+import SenNetAccordion from "../components/custom/layout/SenNetAccordion";
+import {BoxArrowUpRight} from "react-bootstrap-icons";
 
 
 
-function ViewDataset() {
+function ViewPublication() {
     const [data, setData] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
@@ -38,41 +35,7 @@ function ViewDataset() {
         isPrimaryDataset
     } = useContext(VisualizationContext)
 
-    // Load the correct Vitessce view config
-    useEffect(() => {
-        const initVitessceConfig = async () => {
-            if (data) {
-                let dataset_id = data.uuid
-                const primary_assays = getDataTypesByProperty("primary", true)
-                // TODO: Check each data_type in the list instead of the first item
-                let is_primary_dataset = primary_assays.includes(data.data_types[0]);
-                setIsPrimaryDataset(is_primary_dataset)
-                if (is_primary_dataset && data.immediate_descendants.length !== 0) {
-                    let immediate_descendant = data.immediate_descendants[0];
-                    dataset_id = immediate_descendant.uuid
-                }
-                data.data_types.forEach(assay => {
-                    switch (assay) {
-                        case 'snRNA-seq':
-                        case 'scRNA-seq':
-                        case 'scRNA-seq (10x Genomics) [Salmon]':    
-                            setVitessceConfig(rna_seq(dataset_id))
-                            break
-                        case 'Visium':
-                            setVitessceConfig(kuppe2022nature())
-                            break
-                        case 'codex_cytokit':
-                        case 'CODEX':
-                            setVitessceConfig(codex_config(dataset_id))
-                            break
-                        default:
-                            console.log(`No Vitessce config found for assay type: ${assay}`)
-                    }
-                })
-            }
-        }
-        initVitessceConfig()
-    }, [data])
+
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -80,13 +43,13 @@ function ViewDataset() {
         const fetchData = async (uuid) => {
 
 
-            log.debug('dataset: getting data...', uuid)
+            log.debug('publication: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
             const data = await response.json();
 
-            log.debug('dataset: Got data', data)
+            log.debug('publication: Got data', data)
             if (data.hasOwnProperty("error")) {
                 setError(true)
                 setErrorMessage(data["error"])
@@ -118,7 +81,7 @@ function ViewDataset() {
     } else {
         return (
             <>
-                {data && <Header title={`${data.sennet_id} | Dataset | SenNet`}></Header>}
+                {data && <Header title={`${data.sennet_id} | Publication | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
@@ -139,39 +102,14 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            {showVitessce(isPrimaryDataset, data) &&
-                                                <li className="nav-item">
-                                                    <a href="#Vitessce"
-                                                       className="nav-link"
-                                                       data-bs-parent="#sidebar">Visualization</a>
-                                                </li>
-                                            }
+
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
-                                            <li className="nav-item">
-                                                <a href="#Files"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Files</a>
-                                            </li>
 
-                                            {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                                <li className="nav-item">
-                                                    <a href="#Metadata"
-                                                       className="nav-link"
-                                                       data-bs-parent="#sidebar">Metadata</a>
-                                                </li>
-                                            }
 
-                                            {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                                <li className="nav-item">
-                                                    <a href="#Contributors"
-                                                       className="nav-link"
-                                                       data-bs-parent="#sidebar">Contributors</a>
-                                                </li>
-                                            }
                                             <li className="nav-item">
                                                 <a href="#Attribution"
                                                    className="nav-link"
@@ -186,7 +124,7 @@ function ViewDataset() {
 
                                     <EntityViewHeader data={data}
                                                       uniqueHeader={data.data_types[0]}
-                                                      entity={cache.entities.dataset.toLowerCase()}
+                                                      entity={cache.entities.publication.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}/>
 
                                     <div className="row">
@@ -198,27 +136,88 @@ function ViewDataset() {
                                                          secondaryDate={data.last_modified_timestamp}
                                                          data={data}/>
 
-                                            {/* Vitessce */}
-                                            <SennetVitessce data={data}/>
+                                            {/*Publication Details*/}
+                                            <SenNetAccordion title={'Publication Details'}>
+                                                <div>
 
+                                                    <Table borderless>
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Title</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td>{data.title}</td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </Table>
+                                                    <br />
+                                                    <Table borderless>
+                                                        <thead>
+                                                        <tr>
+                                                            <th style={{width: '44%'}}>Venue</th>
+                                                            <th>Published?</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td>{data.publication_venue}</td>
+                                                            <td><Badge pill bg={data.publication_status ? 'success' : 'secondary'}>{data.publication_status ? 'YES' : 'NO'}</Badge></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </Table>
+                                                    <br />
+                                                    <Table borderless>
+                                                        <thead>
+                                                        <tr>
+                                                            <th style={{width: '44%'}}>Issue/Volume Number</th>
+                                                            <th>Pages or Article Number</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td>{data.issue}/{data.volume}</td>
+                                                            <td>{data.pages_or_article_num}</td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </Table>
+                                                    <br />
+                                                    { data.publication_url &&
+                                                    <Table borderless>
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Publication URL</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td><a href={data.publication_url} className={'lnk--ic pl-0'}>{data.publication_url} <BoxArrowUpRight/></a></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </Table>
+                                                    }
+                                                    {data.publication_doi &&
+                                                    <Table borderless>
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Publication DOI</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td><a href={data.publication_doi} className={'lnk--ic pl-0'}>{data.publication_doi} <BoxArrowUpRight/></a></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </Table> }
+
+                                                </div>
+                                            </SenNetAccordion>
                                             {/*Provenance*/}
                                             {data &&
                                                 <Provenance nodeData={data}/>
                                             }
 
-                                            {/*Files*/}
-                                            <Files sennet_id={data.sennet_id}/>
-
-
-                                            {/*Metadata*/}
-                                            {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                                <Metadata metadataKey={""} data={data.metadata.metadata} filename={data.sennet_id}/>
-                                            }
-
-                                            {/*Contributors*/}
-                                            {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                                <Contributors title={'Contributors'} data={data.contributors}/>
-                                            }
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>
@@ -236,6 +235,6 @@ function ViewDataset() {
     }
 }
 
-ViewDataset.withWrapper = function(page) { return <VisualizationProvider>{ page }</VisualizationProvider> }
+ViewPublication.withWrapper = function(page) { return <VisualizationProvider>{ page }</VisualizationProvider> }
 
-export default ViewDataset
+export default ViewPublication

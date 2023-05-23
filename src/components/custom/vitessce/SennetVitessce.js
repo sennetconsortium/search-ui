@@ -1,7 +1,7 @@
 import React, {useContext, Suspense} from "react";
 import VisualizationContext from "../../../context/VisualizationContext";
 import Link from "next/link";
-import {Fullscreen, Moon, MoonFill, Share, Sun, SunFill} from "react-bootstrap-icons";
+import {Fullscreen} from "react-bootstrap-icons";
 import {Snackbar} from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import Tooltip from 'react-bootstrap/Tooltip';
@@ -12,11 +12,7 @@ export const SennetVitessce = ({ data }) => {
     const Vitessce = React.lazy(() => import ('./VitessceWrapper.js'))
     const {
         showVitessce,
-        vitessceTheme,
-        setVitessceTheme,
         vitessceConfig,
-        showCopiedToClipboard,
-        setShowCopiedToClipboard,
         showExitFullscreenMessage,
         setShowExitFullscreenMessage,
         isFullscreen,
@@ -26,13 +22,13 @@ export const SennetVitessce = ({ data }) => {
     } = useContext(VisualizationContext)
     
     return <>
-        { showVitessce(data.data_types, isPrimaryDataset, data.immediate_descendants.length) &&
+        {showVitessce(isPrimaryDataset, data) &&
             <SenNetAccordion title='Visualization' id={'Vitessce'} className={'accordion--vitessce'}>
                 <div className={'row'}>
                     <div className={'col p-2 m-2'}>
                         <span className={'fw-light fs-6'}>Powered by
                             <a className={'ms-2'} target="_blank" href="http://vitessce.io/" rel="noopener noreferrer" title={'Vitessce.io'}>
-                                Vitessce V1.2.2
+                                Vitessce V2.0.3
                             </a>
                         </span>
                     </div>
@@ -47,39 +43,6 @@ export const SennetVitessce = ({ data }) => {
                         }
                     </div>
                     <div className={'col text-end p-2 m-2'}>
-                        <OverlayTrigger
-                            placement={'top'}
-                            overlay={
-                                <Tooltip id={'share-tooltip'}>
-                                    { showCopiedToClipboard ? 'Shareable URL copied to clipboard!' : 'Share Visualization' }
-                                </Tooltip>
-                            }>
-                            <Share style={{cursor: 'pointer'}} color="royalblue" size={24} onClick={()=>{
-                                navigator.clipboard.writeText(document.location.href)
-                                setShowCopiedToClipboard(true)
-                            }} onMouseLeave={() => setShowCopiedToClipboard(false)}/>
-                        </OverlayTrigger>
-                        {
-                            vitessceTheme === 'light' ?
-                                <>
-                                    <OverlayTrigger placement={'top'} overlay={<Tooltip id={'light-theme-tooltip'}>Switch to light theme</Tooltip>}>
-                                        <SunFill style={{cursor: 'pointer'}} onClick={() => setVitessceTheme('light')} className={'m-2'} color="royalblue" size={24} title="Light mode"/>
-                                    </OverlayTrigger>
-                                    <OverlayTrigger placement={'top'} overlay={<Tooltip id={'dark-theme-tooltip'}>Switch to dark theme</Tooltip>}>
-                                        <Moon style={{cursor: 'pointer'}} onClick={() => setVitessceTheme('dark')} className={'m-2'} color="royalblue" size={24} title="Dark mode"/>
-                                    </OverlayTrigger>
-                                </>
-                                :
-                                <>
-                                    <OverlayTrigger placement={'top'} overlay={<Tooltip>Switch to light theme</Tooltip>}>
-                                        <Sun style={{cursor: 'pointer'}} onClick={() => setVitessceTheme('light')} className={'m-2'} color="royalblue" size={24} title="Light mode"/>
-                                    </OverlayTrigger>
-                                    <OverlayTrigger placement={'top'} overlay={<Tooltip>Switch to dark theme</Tooltip>}>
-                                        <MoonFill style={{cursor: 'pointer'}} onClick={() => setVitessceTheme('dark')} className={'m-2'} color="royalblue" size={24} title="Dark mode"/>
-                                    </OverlayTrigger>
-                                </>
-
-                        }
                         <OverlayTrigger placement={'top'} overlay={<Tooltip>Enter fullscreen</Tooltip>}>
                             <Fullscreen style={{cursor: 'pointer'}} className={'m-2'} color="royalblue" size={24} title="Fullscreen" onClick={() => {
                                 expandVitessceToFullscreen()
@@ -96,7 +59,7 @@ export const SennetVitessce = ({ data }) => {
                         </MuiAlert>
                     </Snackbar>
                     <Suspense fallback={<div>Loading...</div>}>
-                        <Vitessce config={ vitessceConfig } theme={ vitessceTheme } height={ isFullscreen ? null : 800 }/>
+                        <Vitessce config={ vitessceConfig } theme={ 'light' } height={ isFullscreen ? null : 800 }/>
                     </Suspense>
                 </div>
             </SenNetAccordion>

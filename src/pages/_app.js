@@ -1,4 +1,3 @@
-import 'vitessce/dist/es/production/static/css/index.css';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
 import '../public/css/main.css'

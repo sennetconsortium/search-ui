@@ -33,6 +33,7 @@ export const EntityProvider = ({ children }) => {
     const [modalTitle, setModalTitle] = useState(null)
     const [hasSubmissionError, setHasSubmissionError] = useState(false)
     const [disableSubmit, setDisableSubmit] = useState(false)
+    const [dataAccessPublic, setDataAccessPublic] = useState(null)
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] =
         useState(null)
@@ -267,6 +268,7 @@ export const EntityProvider = ({ children }) => {
                 selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid,
                 disableSubmit, setDisableSubmit,
                 metadata, setMetadata,
+                dataAccessPublic, setDataAccessPublic,
                 getEntityConstraints, getSampleEntityConstraints, buildConstraint,
                 checkMetadata, getMetadataNote, successIcon, errIcon, checkProtocolUrl,
                 warningClasses, setWarningClasses
