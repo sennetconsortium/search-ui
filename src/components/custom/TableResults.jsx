@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState, useRef} from 'react'
 import PropTypes from 'prop-types'
 import DataTable, { createTheme } from 'react-data-table-component'
 import {
@@ -74,6 +74,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
 
     const {isLoggedIn, cache} = useContext(AppContext)
     let hasMultipleEntityTypes = checkMultipleFilterEntityType(filters);
+    const hasLoaded = useRef(false)
     let pageData = []
     const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
 
@@ -105,6 +106,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
     }
 
     useEffect(() => {
+        hasLoaded.current = true
         if (!forData) {
             log.debug('Results', children)
             handlePageChange(1, children.length)
@@ -213,10 +215,11 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
     ]
 
     const hasSearch = () => {
-        return filters.length > 0 || $('#search').val().length > 0
+        return filters.length > 0 || $('#search').val()?.length > 0
     }
 
     const getNoDataMessage = () => {
+        if (!hasLoaded.current) return (<></>)
         return (
             <div className={'alert alert-warning text-center'} style={{padding: '24px'}}>
                 {hasSearch() && <span>No results to show. Please check search filters/keywords and try again.</span>}
