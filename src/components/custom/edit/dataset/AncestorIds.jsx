@@ -160,7 +160,7 @@ export default class AncestorIds extends React.Component {
 
 
                                                     {wasSearched && <Results filters={filters}
-                                                                             view={TableResults} onRowClicked={this.changeAncestor}
+                                                                             view={TableResults} inModal={true} onRowClicked={this.changeAncestor}
                                                     />}
                                                 </div>
                                             }

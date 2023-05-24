@@ -14,7 +14,6 @@ import {BoxArrowUpRight} from "react-bootstrap-icons";
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import ClipboardCopy from "../components/ClipboardCopy";
-import Spinner, {SpinnerEl} from "../components/custom/Spinner";
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
@@ -208,6 +207,7 @@ export const EntityProvider = ({ children }) => {
     const errIcon = () => <WarningAmberIcon sx={{color: '#842029'}} />
 
     const setCheckDoiModal = (body) => {
+        setHasSubmissionError(false)
         setShowModal(true)
         setModalTitle(<span><span className={'title-text'}>Validating DOI URLs of ancestor entities ...</span></span>)
         setModalBody(body)
