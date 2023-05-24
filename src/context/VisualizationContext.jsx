@@ -13,8 +13,21 @@ export const VisualizationProvider = ({ children }) => {
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
 
-    const showVitessce = (data_types, is_primary_dataset, immediate_descendants) => {
-        return is_primary_dataset && immediate_descendants !== 0 || !is_primary_dataset
+    const showVitessce = (is_primary_dataset, data) => {
+        return isDatasetStatusPassed(data) && ((is_primary_dataset && data.immediate_descendants.length !== 0) || !is_primary_dataset)
+    }
+    
+    const isDatasetStatusPassed = data => {
+        let result = null
+        data.descendants.forEach(d => {
+            if (d.status === 'Processing' || d.status === 'Error') {
+                result = false
+            }
+        })
+        if (result === null) {
+            result = (data.status !== 'Processing' && data.status !=='Error')
+        }
+        return result
     }
 
     const expandVitessceToFullscreen = () => {

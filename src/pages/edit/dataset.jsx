@@ -10,9 +10,8 @@ import {get_headers, update_create_dataset} from '../../lib/services'
 import {
     cleanJson,
     equals,
-    fetchEntity,
-    getDataTypesByProperty,
-    getHeaders,
+    fetchEntity, fetchProtocols, fetchProtocolView,
+    getDataTypesByProperty, getEntityViewUrl,
     getRequestHeaders
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
@@ -29,7 +28,12 @@ import Spinner from '../../components/custom/Spinner'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
-import {getEntityEndPoint, getIngestEndPoint, valid_dataset_ancestor_config} from "../../config/config";
+import {
+    getEntityEndPoint,
+    getIngestEndPoint,
+    getProtocolsToken,
+    valid_dataset_ancestor_config
+} from "../../config/config";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
@@ -37,7 +41,7 @@ import DatasetSubmissionButton from "../../components/custom/edit/dataset/Datase
 
 export default function EditDataset() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails, setSubmissionModal,
+        isUnauthorized, isAuthorizing, getModal, setModalDetails, setSubmissionModal, setCheckDoiModal,
         data, setData,
         error, setError,
         values, setValues,
@@ -45,19 +49,21 @@ export default function EditDataset() {
         validated, setValidated,
         userWriteGroups, onChange,
         editMode, setEditMode, isEditMode,
-        showModal,
+        showModal, setShowModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         metadata, setMetadata,
+        dataAccessPublic, setDataAccessPublic,
         getEntityConstraints,
         getSampleEntityConstraints,
-        buildConstraint
+        buildConstraint, successIcon, errIcon
     } = useContext(EntityContext)
     const {_t, cache} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
     const [dataTypes, setDataTypes] = useState(null)
+    const [doiCheckResultBody, setDoiCheckResultBody] = useState([])
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -117,6 +123,18 @@ export default function EditDataset() {
         fetchDataTypes()
     }, [ancestors])
 
+    // Disable all form elements if data_access_level is "public"
+    // Wait until "dataTypes" and "editMode" are set prior to running this
+    useEffect(() => {
+        if (dataAccessPublic === true) {
+            const form = document.getElementById("dataset-form");
+            const elements = form.elements;
+            for (let i = 0, len = elements.length; i < len; ++i) {
+                elements[i].setAttribute('disabled', true);
+            }
+        }
+    }, [dataAccessPublic, dataTypes, editMode])
+
     // only executed on init rendering, see the []
     useEffect(() => {
 
@@ -134,7 +152,6 @@ export default function EditDataset() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data);
-
                 let immediate_ancestors = []
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     for (const ancestor of data.immediate_ancestors) {
@@ -154,6 +171,7 @@ export default function EditDataset() {
                     'metadata': data.metadata
                 })
                 setEditMode("Edit")
+                setDataAccessPublic(data.data_access_level === 'public')
             }
         }
 
@@ -199,21 +217,61 @@ export default function EditDataset() {
         log.debug(updated_ancestors);
     }
 
+
     const handleRevert = async () => {
 
     }
+
+    const checkDoi = async () => {
+        try {
+            setDisableSubmit(true)
+            setCheckDoiModal(<span className={'text-center p-3 spinner-wrapper'}><Spinner text={''} /></span>)
+            let i = 0
+            let results = []
+            let allValid = true
+            let apiResult
+            let viewResult
+            let uri
+            for (const ancestor of data.ancestors) {
+                if (equals(ancestor.entity_type, cache.entities.source) || equals(ancestor.entity_type, cache.entities.sample)) {
+                    uri = ancestor.protocol_url
+                    apiResult = await fetchProtocols(uri)
+                    viewResult = await fetchProtocolView(uri)
+                    if (!apiResult || !viewResult.ok) {
+                        allValid = false
+                    }
+                    let icon = apiResult && viewResult.ok ? successIcon() : errIcon()
+                    results.push(<span key={`doi-check-${i}`}>{icon} <a href={getEntityViewUrl(ancestor.entity_type, ancestor.uuid, {isEdit: true})} target='_blank'>{ancestor.sennet_id}</a>  <br /></span>)
+                    i++
+                }
+            }
+            if (!allValid) {
+                results.push(<p key={`doi-check-msg`}><br />Not all DOI URLs are valid. Please click on the failed SenNet IDs from the list above to correct. Then return to this form and submit again for processing. </p>)
+            } else {
+                setShowModal(false)
+            }
+            setDisableSubmit(false)
+            setCheckDoiModal(results)
+            return allValid
+        } catch (e) {
+            log.error(e)
+        }
+    }
     
     const handleSubmit = async () => {
-        const requestOptions = {
-            method: 'PUT',
-            headers: get_headers(),
-            body: JSON.stringify(values)
+        let result = await checkDoi()
+        if (result) {
+            const requestOptions = {
+                method: 'PUT',
+                headers: get_headers(),
+                body: JSON.stringify(values)
+            }
+            const submitDatasetUrl = getIngestEndPoint() + 'datasets/' + data['uuid'] + '/submit'
+            const response = await fetch(submitDatasetUrl, requestOptions)
+            let submitResult = await response.text()
+            setSubmissionModal(submitResult, !response.ok)
         }
-        const submitDatasetUrl = getIngestEndPoint() + 'datasets/' + data['uuid'] + '/submit'
-        const response = await fetch(submitDatasetUrl, requestOptions)
-        await response.text().then(json => {
-            setSubmissionModal(json)
-        })
+
     }
 
     const handleSave = async (event) => {
@@ -286,7 +344,7 @@ export default function EditDataset() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
+                    <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
                 }
                 {data && !error &&
                     <div className="no_sidebar">
@@ -295,7 +353,7 @@ export default function EditDataset() {
                                 <EntityHeader entity={cache.entities.dataset} isEditMode={isEditMode()} data={data}/>
                             }
                             bodyContent={
-                                <Form noValidate validated={validated}>
+                                <Form noValidate validated={validated} id="dataset-form">
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || isEditMode()) &&
@@ -391,6 +449,11 @@ export default function EditDataset() {
                                             </Button>
                                         </SenNetPopover>
                                         }
+                                        <Button variant="outline-primary rounded-0 js-btn--cancel"
+                                                href={`/dataset?uuid=${router.query.uuid}`} >
+                                            {_t('Cancel')}
+                                        </Button>
+
                                         { isEditMode() && data['status'] === 'New' &&
                                             <SenNetPopover text={<>Submit this <code>Dataset</code> for processing.</>} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton onClick={handleSubmit} disableSubmit={disableSubmit}/>

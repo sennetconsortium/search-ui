@@ -8,7 +8,7 @@ import log from 'loglevel'
 import {APP_ROUTES} from '../config/constants'
 import AppModal from '../components/AppModal'
 import AppContext from './AppContext'
-import {equals, getHeaders} from "../components/custom/js/functions";
+import {equals, fetchProtocolView, getHeaders} from "../components/custom/js/functions";
 import {getEntityEndPoint} from "../config/config";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
@@ -32,12 +32,14 @@ export const EntityProvider = ({ children }) => {
     const [modalTitle, setModalTitle] = useState(null)
     const [hasSubmissionError, setHasSubmissionError] = useState(false)
     const [disableSubmit, setDisableSubmit] = useState(false)
+    const [dataAccessPublic, setDataAccessPublic] = useState(null)
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] =
         useState(null)
 
     const [response, setResponse] = useState()
     const [metadata, setMetadata] = useState({})
+    const [warningClasses, setWarningClasses] = useState({})
 
     const isUnauthorized = () => {
         return authorized === false
@@ -179,7 +181,7 @@ export const EntityProvider = ({ children }) => {
             const verb = isEditMode() ? 'Updated' : 'Registered'
             setHasSubmissionError(false)
             let body = []
-            setModalTitle(<span><TaskAltIcon color={'success'} /><span className={'title-text'} > {entity} {verb}</span></span>)
+            setModalTitle(<span>{successIcon()}<span className={'title-text'} > {entity} {verb}</span></span>)
             body.push(<span key='bdy-1'>{_t(`Your ${entity} was ${verb.toLocaleLowerCase()}`)}. <br /></span>)
             body.push(<span key='bdy-2'><strong>{_t(typeHeader)}:</strong> {type}<br /></span>)
             body.push(<span key='bdy-3'><strong>{_t('Group Name')}:</strong> {response.group_name}<br /></span>)
@@ -189,7 +191,7 @@ export const EntityProvider = ({ children }) => {
         } else {
             const verb = isEditMode() ? 'Updating' : 'Registering'
             setHasSubmissionError(true)
-            setModalTitle(<span><WarningAmberIcon sx={{color: '#842029'}} /><span className={'title-text'}>Error {verb} {entity}</span></span>)
+            setModalTitle(<span>{errIcon()}<span className={'title-text'}>Error {verb} {entity}</span></span>)
             let responseText = ""
             if ("error" in response) {
                 responseText = response.error
@@ -197,15 +199,43 @@ export const EntityProvider = ({ children }) => {
                 responseText = response.statusText
             }
             setModalBody(responseText)
-
         }
     }
+
+    const successIcon = () => <TaskAltIcon color={'success'} />
+
+    const errIcon = () => <WarningAmberIcon sx={{color: '#842029'}} />
+
+    const setCheckDoiModal = (body) => {
+        setHasSubmissionError(false)
+        setShowModal(true)
+        setModalTitle(<span><span className={'title-text'}>Validating DOI URLs of ancestor entities ...</span></span>)
+        setModalBody(body)
+    }
     
-    const setSubmissionModal = (body) => {
+    const setSubmissionModal = (body, hasError) => {
+        const icon = hasError ? errIcon() : successIcon()
+        setHasSubmissionError(hasError)
         setShowModal(true)
         setDisableSubmit(false)
-        setModalTitle('Submitted dataset for processing')
+        setModalTitle(<span>{icon}<span className={'title-text'} >Submitted dataset for processing</span></span>)
         setModalBody(body)
+    }
+
+    const checkProtocolUrl = async (value) => {
+        let values = {...warningClasses}
+        if (!value) {
+            delete values.protocol_url
+            setWarningClasses(values)
+            return
+        }
+        let protocolCheck = await fetchProtocolView(value)
+        if (!protocolCheck.ok) {
+            values.protocol_url = 'has-warning'
+        } else {
+            delete values.protocol_url
+        }
+        setWarningClasses(values)
     }
 
     const getModal = () => {
@@ -213,7 +243,7 @@ export const EntityProvider = ({ children }) => {
             className={`modal--ctaConfirm ${hasSubmissionError ? 'is-error' : ''}`}
             showModal={showModal}
             modalTitle={modalTitle}
-            modalBody={<p>{modalBody}</p>}
+            modalBody={<div>{modalBody}</div>}
             handleClose={isEditMode() ? handleClose : goToEntity}
             handleHome={handleHome}
             showCloseButton={showCloseButton}
@@ -227,6 +257,7 @@ export const EntityProvider = ({ children }) => {
                 isUnauthorized, isAuthorizing,
                 getModal, setModalDetails,
                 setSubmissionModal,
+                setCheckDoiModal,
                 isEditMode,
                 data, setData,
                 error, setError,
@@ -241,8 +272,10 @@ export const EntityProvider = ({ children }) => {
                 selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid,
                 disableSubmit, setDisableSubmit,
                 metadata, setMetadata,
+                dataAccessPublic, setDataAccessPublic,
                 getEntityConstraints, getSampleEntityConstraints, buildConstraint,
-                checkMetadata, getMetadataNote
+                checkMetadata, getMetadataNote, successIcon, errIcon, checkProtocolUrl,
+                warningClasses, setWarningClasses
             }}
         >
             {children}

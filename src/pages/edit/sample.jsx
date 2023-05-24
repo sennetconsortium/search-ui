@@ -8,7 +8,7 @@ import AncestorInformationBox from "../../components/custom/entities/sample/Ance
 import log from "loglevel";
 import {
     cleanJson, equals,
-    fetchEntity,
+    fetchEntity, fetchProtocolView,
     getDOIPattern,
     getHeaders,
     getRequestHeaders
@@ -51,8 +51,10 @@ function EditSample() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         metadata, setMetadata,
+        dataAccessPublic, setDataAccessPublic,
         getSampleEntityConstraints,
-        checkMetadata, getMetadataNote
+        checkMetadata, getMetadataNote, checkProtocolUrl,
+        warningClasses
     } = useContext(EntityContext)
     const {_t, cache, filterImageFilesToAdd} = useContext(AppContext)
     const router = useRouter()
@@ -98,6 +100,18 @@ function EditSample() {
         fetchSampleCategories()
     }, [source])
 
+    // Disable all form elements if data_access_level is "public"
+    // Wait until "sampleCategories" and "editMode" are set prior to running this
+    useEffect(() => {
+        if (dataAccessPublic === true) {
+            const form = document.getElementById("sample-form");
+            const elements = form.elements;
+            for (let i = 0, len = elements.length; i < len; ++i) {
+                elements[i].setAttribute('disabled', true);
+            }
+        }
+    }, [dataAccessPublic, sampleCategories, editMode])
+
     // only executed on init rendering, see the []
     useEffect(() => {
 
@@ -115,6 +129,8 @@ function EditSample() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data);
+
+                checkProtocolUrl(data.protocol_url)
 
                 // Show organ input group if sample category is 'organ'
                 if (equals(data.sample_category, cache.sampleCategories.Organ)) {
@@ -141,6 +157,7 @@ function EditSample() {
                 setImageFilesToAdd(data.image_files)
                 setThumbnailFileToAdd(data.thumbnail_file)
                 setEditMode("Edit")
+                setDataAccessPublic(data.data_access_level === 'public')
 
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     await fetchSource(data.immediate_ancestors[0].uuid);
@@ -184,6 +201,10 @@ function EditSample() {
         // log.debug('onChange', fieldId, value)
         // use a callback to find the field in the value list and update it
         onChange(e, fieldId, value)
+
+        if (fieldId === 'protocol_url') {
+            checkProtocolUrl(value)
+        }
 
         if (fieldId === 'direct_ancestor_uuid') {
             resetSampleCategory(e)
@@ -370,7 +391,7 @@ function EditSample() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
+                    <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
                 }
                 {showRui &&
                     <RuiIntegration
@@ -393,7 +414,7 @@ function EditSample() {
                             }
                             bodyContent={
 
-                                <Form noValidate validated={validated}>
+                                <Form noValidate validated={validated} id={"sample-form"}>
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || isEditMode()) &&
@@ -438,6 +459,8 @@ function EditSample() {
                                     <EntityFormGroup label="Preparation Protocol" placeholder='protocols.io DOI'
                                                      controlId='protocol_url' value={data.protocol_url}
                                                      isRequired={true} pattern={getDOIPattern()}
+                                                     className={warningClasses.protocol_url}
+                                                     warningText={<>The supplied protocols.io DOI URL, formatting is correct but does not resolve. This will need to be corrected for any <code>Dataset</code> submission that uses this entity as an ancestor.</>}
                                                      popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                                      onChange={_onChange}
                                                      text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see: <a
@@ -474,7 +497,11 @@ function EditSample() {
 
                                     { values.sample_category && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.sample} subType={values.sample_category}  /> }
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
+                                        <Button variant="outline-primary rounded-0 js-btn--cancel"
+                                                href={`/sample?uuid=${router.query.uuid}`} >
+                                            {_t('Cancel')}
+                                        </Button>
+                                        <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
                                                 disabled={disableSubmit}>
                                             {_t('Save')}
 

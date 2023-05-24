@@ -29,14 +29,16 @@ function EditSource() {
         data, setData,
         error, setError,
         values, setValues,
-        errorMessage, setErrorMessage, 
+        errorMessage, setErrorMessage,
         validated, setValidated,
-        userWriteGroups, onChange, 
+        userWriteGroups, onChange,
         editMode, setEditMode,isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
-        metadata, setMetadata, checkMetadata, getMetadataNote } = useContext(EntityContext)
+        dataAccessPublic, setDataAccessPublic,
+        metadata, setMetadata, checkMetadata, getMetadataNote, checkProtocolUrl,
+        warningClasses } = useContext(EntityContext)
     const { _t, filterImageFilesToAdd, cache } = useContext(AppContext)
 
     const router = useRouter()
@@ -44,6 +46,18 @@ function EditSource() {
     const [imageByteArray, setImageByteArray] = useState([])
     const alertStyle = useRef('info')
 
+
+    // Disable all form elements if data_access_level is "public"
+    // Wait until "sampleCategories" and "editMode" are set prior to running this
+    useEffect(() => {
+        if (dataAccessPublic === true) {
+            const form = document.getElementById("source-form");
+            const elements = form.elements;
+            for (let i = 0, len = elements.length; i < len; ++i) {
+                elements[i].setAttribute('disabled', true);
+            }
+        }
+    }, [dataAccessPublic, editMode])
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -62,6 +76,9 @@ function EditSource() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data);
+
+                checkProtocolUrl(data.protocol_url)
+
                 // Set state with default values that will be PUT to Entity API to update
                 let _values = {
                     'lab_source_id': data.lab_source_id,
@@ -75,6 +92,7 @@ function EditSource() {
                 }
                 setValues(_values)
                 setEditMode("Edit")
+                setDataAccessPublic(data.data_access_level === 'public')
             }
         }
 
@@ -132,7 +150,7 @@ function EditSource() {
                 setImageByteArray([])
             }).catch((e) => log.error(e))
         }
-        
+
         setValidated(true);
     };
 
@@ -166,6 +184,17 @@ function EditSource() {
         }
     }
 
+
+    const _onChange = (e, fieldId, value) => {
+        // log.debug('onChange', fieldId, value)
+        // use a callback to find the field in the value list and update it
+        onChange(e, fieldId, value)
+
+        if (fieldId === 'protocol_url') {
+            checkProtocolUrl(value)
+        }
+    };
+
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized /> : <Spinner />
@@ -181,7 +210,7 @@ function EditSource() {
                 <AppNavbar/>
 
                 {error &&
-                    <Alert variant='warning'>{_t(errorMessage)}</Alert>
+                    <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
                 }
                 {data && !error &&
                     <div className="no_sidebar">
@@ -190,7 +219,7 @@ function EditSource() {
                                 <EntityHeader entity={cache.entities.source} isEditMode={isEditMode()} data={data} />
                             }
                             bodyContent={
-                                <Form noValidate validated={validated} onSubmit={handleSave}>
+                                <Form noValidate validated={validated} onSubmit={handleSave} id={"source-form"}>
                                     {/*Group select*/}
                                     {
                                         !(userWriteGroups.length === 1 || isEditMode()) &&
@@ -217,7 +246,9 @@ function EditSource() {
                                     {/*Case Selection Protocol*/}
                                     <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI' popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                         controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
-                                                     onChange={onChange} text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>} />
+                                                     className={warningClasses.protocol_url}
+                                                     warningText={<>The supplied protocols.io DOI URL, formatting is correct but does not resolve. This will need to be corrected for any <code>Dataset</code> submission that uses this entity as an ancestor.</>}
+                                                     onChange={_onChange} text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>} />
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
@@ -233,7 +264,11 @@ function EditSource() {
 
                                     {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}*/}
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
+                                        <Button variant="outline-primary rounded-0 js-btn--cancel"
+                                                href={`/source?uuid=${router.query.uuid}`}>
+                                            {_t('Cancel')}
+                                        </Button>
+                                        <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
                                                 disabled={disableSubmit}>
                                             {_t('Save')}
                                         </Button>
@@ -248,7 +283,7 @@ function EditSource() {
 
             </>
         )
-    } 
+    }
 }
 
 EditSource.withWrapper = function(page) {
