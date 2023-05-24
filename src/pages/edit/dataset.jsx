@@ -198,6 +198,10 @@ export default function EditDataset() {
         setAncestors(updated_ancestors);
         log.debug(updated_ancestors);
     }
+
+    const handleRevert = async () => {
+
+    }
     
     const handleSubmit = async () => {
         const requestOptions = {
@@ -378,13 +382,22 @@ export default function EditDataset() {
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={cache.entities.dataset} />*/}
                                     
                                     <div className={'d-flex flex-row-reverse'}>
-                                        { editMode === 'Edit' && data['status'] === 'New' &&
-                                            <SenNetPopover text={'Submit this dataset for processing'} className={'submit-dataset'}>
+                                        { isEditMode() && data['status'] === 'Error' && <SenNetPopover text={<>Revert this <code>Dataset</code> to default status.</>} className={'save-button'}>
+                                            <Button variant="outline-primary rounded-0 js-btn--revert"
+                                                    className={'me-2'}
+                                                    onClick={handleRevert}
+                                                    disabled={disableSubmit}>
+                                                {_t('Revert')}
+                                            </Button>
+                                        </SenNetPopover>
+                                        }
+                                        { isEditMode() && data['status'] === 'New' &&
+                                            <SenNetPopover text={<>Submit this <code>Dataset</code> for processing.</>} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton onClick={handleSubmit} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
                                         { data['status'] !== 'Processing' &&
-                                            <SenNetPopover text={'Save changes to this dataset'} className={'save-button'}>
+                                            <SenNetPopover text={<>Save changes to this <code>Dataset</code>.</>} className={'save-button'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--save"
                                                         className={'me-2'}
                                                         onClick={handleSave}
