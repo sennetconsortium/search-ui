@@ -70,7 +70,7 @@ function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
     )
 }
 
-function TableResults({children, filters, onRowClicked, forData = false, rowFn}) {
+function TableResults({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
 
     const {isLoggedIn, cache} = useContext(AppContext)
     let hasMultipleEntityTypes = checkMultipleFilterEntityType(filters);
@@ -129,7 +129,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn})
                 name: 'SenNet ID',
                 selector: row => raw(row.sennet_id),
                 sortable: true,
-                format: column => <a href={getHotLink(column)}>{column.id || column.sennet_id}</a>,
+                format: column => inModal ? column.id || column.sennet_id : <a href={getHotLink(column)}>{column.id || column.sennet_id}</a>,
                 // minWidth: '20%'
 
             },
