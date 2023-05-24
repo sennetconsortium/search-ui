@@ -224,17 +224,18 @@ export default function EditDataset() {
             let i = 0
             let results = []
             let allValid = true
-            let result
+            let apiResult
+            let viewResult
             let uri
             for (const ancestor of data.ancestors) {
                 if (equals(ancestor.entity_type, cache.entities.source) || equals(ancestor.entity_type, cache.entities.sample)) {
                     uri = ancestor.protocol_url
-                    result = await fetchProtocols(uri)
-                    const response = await fetchProtocolView(uri)
-                    if (!result || !response.ok) {
+                    apiResult = await fetchProtocols(uri)
+                    viewResult = await fetchProtocolView(uri)
+                    if (!apiResult || !viewResult.ok) {
                         allValid = false
                     }
-                    let icon = result && response.ok ? successIcon() : errIcon()
+                    let icon = apiResult && viewResult.ok ? successIcon() : errIcon()
                     results.push(<span key={`doi-check-${i}`}>{icon} <a href={getEntityViewUrl(ancestor.entity_type, ancestor.uuid, {isEdit: true})} target='_blank'>{ancestor.sennet_id}</a>  <br /></span>)
                     i++
                 }
