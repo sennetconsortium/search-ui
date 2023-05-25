@@ -75,6 +75,10 @@ p {
   }
 }
 
+.pl-0 {
+  padding-left: 0 !important;
+}
+
 #__next, #__next > div:not(.sui-layout, .footer-wrapper, .spinner-wrapper) {
   display:grid;
   grid-template-rows:auto 1fr auto;
