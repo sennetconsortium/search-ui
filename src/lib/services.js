@@ -31,6 +31,7 @@ export function get_json_header( headers ) {
 
 export function get_auth_header() {
     const headers = new Headers();
+    headers.append('X-SenNet-Application', 'portal-ui')
     headers.append("Authorization", "Bearer " + getAuth())
     return headers;
 }
@@ -95,31 +96,10 @@ export async function get_read_write_privileges() {
     } catch (e) {
         console.error(e)
     }
-
 }
 
-export const write_privilege_for_group_uuid = (group_uuid) => get_write_privilege_for_group_uuid(group_uuid)
-
-export async function get_write_privilege_for_group_uuid(group_uuid) {
-    log.debug('GET WRITE PRIVILEGE FOR GROUP UUID')
-    const url = getIngestEndPoint() + 'privs/' + group_uuid + '/has-write'
-    const request_options = {
-        method: 'GET',
-        headers: get_headers()
-    }
-    const response = await fetch(url, request_options)
-    if (!response.ok) {
-        const message = `An error has occurred: ${response.status}`;
-        throw new Error(message);
-    }
-    let json = response.json()
-    return await json
-}
-
-export async function get_user_write_groups() {
-    log.debug('FETCHING USER WRITE GROUPS')
-
-    const url = getIngestEndPoint() + 'privs/' + 'user-write-groups'
+export async function call_privs_service(path) {
+    const url = getIngestEndPoint() + 'privs/' + path;
     const request_options = {
         method: 'GET',
         headers: get_headers()
@@ -132,6 +112,21 @@ export async function get_user_write_groups() {
     let json = response.json()
     log.debug(json)
     return await json
+}
+
+export async function has_data_admin_privs() {
+    log.debug('FETCHING DATA ADMIN PRIVS')
+    return await call_privs_service('has-data-admin')
+}
+
+export async function get_write_privilege_for_group_uuid(group_uuid) {
+    log.debug('GET WRITE PRIVILEGE FOR GROUP UUID')
+    return await call_privs_service(group_uuid + '/has-write')
+}
+
+export async function get_user_write_groups() {
+    log.debug('FETCHING USER WRITE GROUPS')
+    return await call_privs_service('user-write-groups')
 }
 
 async function call_service(raw, url, method) {
