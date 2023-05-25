@@ -3,7 +3,7 @@ import log from "loglevel";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
-export async function update_create_entity(uuid, body, action = "Edit", entity_type = null, headers = new Headers()) {
+export async function update_create_entity(uuid, body, action = "Edit", entity_type = null, headers) {
     let raw = JSON.stringify(body)
     let url = getEntityEndPoint() + "entities/" + (action === 'Register' ? entity_type : uuid)
     let method = (action === 'Register' ? "POST" : "PUT")
