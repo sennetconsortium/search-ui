@@ -123,7 +123,7 @@ export function getStatusColor(status) {
     if (status) {
         status = status.toUpperCase();
 
-        if (['NEW', 'REOPENED', 'QA', 'LOCKED', 'PROCESSING', 'HOLD'].includes(status)) {
+        if (['NEW', 'REOPENED', 'QA', 'LOCKED', 'PROCESSING', 'HOLD', 'SUBMITTED'].includes(status)) {
             return 'info';
         }
 
@@ -131,7 +131,7 @@ export function getStatusColor(status) {
             return 'danger';
         }
 
-        if (['UNPUBLISHED', 'DEPRECATED', 'SUBMITTED', 'Retracted' /* sub_status gets title caps. */].includes(status)) {
+        if (['UNPUBLISHED', 'DEPRECATED', 'Retracted' /* sub_status gets title caps. */].includes(status)) {
             return 'warning';
         }
 
