@@ -131,7 +131,7 @@ export function getStatusColor(status) {
             return 'danger';
         }
 
-        if (['UNPUBLISHED', 'DEPRECATED', 'Retracted' /* sub_status gets title caps. */].includes(status)) {
+        if (['UNPUBLISHED', 'DEPRECATED', 'SUBMITTED', 'Retracted' /* sub_status gets title caps. */].includes(status)) {
             return 'warning';
         }
 
