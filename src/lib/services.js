@@ -3,22 +3,25 @@ import log from "loglevel";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
-export async function update_create_entity(uuid, body, action = "Edit", entity_type = null) {
+export async function update_create_entity(uuid, body, action = "Edit", entity_type = null, headers) {
     let raw = JSON.stringify(body)
     let url = getEntityEndPoint() + "entities/" + (action === 'Register' ? entity_type : uuid)
     let method = (action === 'Register' ? "POST" : "PUT")
 
-    return call_service(raw, url, method)
+    return call_service(raw, url, method, headers)
 }
 
 export async function update_create_dataset(uuid, body, action = "Edit") {
     if (action === 'Edit') {
-        return update_create_entity(uuid, body, action);
+        let headers = get_headers()
+        headers = get_x_sennet_header(headers)
+        return update_create_entity(uuid, body, action, null, headers);
     } else {
         let raw = JSON.stringify(body)
         let url = getIngestEndPoint() + "datasets" + (action === 'Register' ? '' : "/" + uuid + "/submit")
         let method = (action === 'Register' ? "POST" : "PUT")
         log.debug(url)
+
         return call_service(raw, url, method)
     }
 }
@@ -31,9 +34,14 @@ export function get_json_header( headers ) {
 
 export function get_auth_header() {
     const headers = new Headers();
-    headers.append('X-SenNet-Application', 'portal-ui')
     headers.append("Authorization", "Bearer " + getAuth())
     return headers;
+}
+
+export function get_x_sennet_header(headers) {
+    headers = headers || new Headers();
+    headers.append('X-SenNet-Application', 'portal-ui')
+    return headers
 }
 
 export function get_headers() {
@@ -129,10 +137,11 @@ export async function get_user_write_groups() {
     return await call_privs_service('user-write-groups')
 }
 
-async function call_service(raw, url, method) {
+async function call_service(raw, url, method, headers) {
+    headers = headers ? headers : get_headers()
     return await fetch(url, {
         method: method,
-        headers: get_headers(),
+        headers: headers,
         body: raw,
     }).then(response => response.json())
         .then(result => {
