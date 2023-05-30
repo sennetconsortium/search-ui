@@ -52,7 +52,7 @@ export const handleCheckAll = () => {
 }
 function BulkExport({ data, raw, columns }) {
 
-    const generateTSVData = () => {
+    const generateTSVData = (selected) => {
         let _columns = columns.current
         _columns[0] = {
             name: 'UUID',
@@ -73,13 +73,16 @@ function BulkExport({ data, raw, columns }) {
             }
             let row
             for (let item of data) {
-                for (let col of _columns) {
-                    row = item.props.result
-                    _colName = col.name
-                    colVal = col.selector(row) ? col.selector(row) : ''
-                    tableDataTSV += `${colVal}\t`
+                let id = raw(item.props.result.sennet_id)
+                if (selected[id]) {
+                    for (let col of _columns) {
+                        row = item.props.result
+                        _colName = col.name
+                        colVal = col.selector(row) ? col.selector(row) : ''
+                        tableDataTSV += `${colVal}\t`
+                    }
+                    tableDataTSV += "\n"
                 }
-                tableDataTSV += "\n"
             }
         } catch (e) {
             console.error(e);
@@ -119,7 +122,7 @@ function BulkExport({ data, raw, columns }) {
         const isJson =  kind === 'json'
         const a = document.createElement('a')
         const type = isJson ? 'application/json' : 'text/tab-separated-values'
-        const blob = isJson ? [JSON.stringify(results, null, 2)] : [generateTSVData()]
+        const blob = isJson ? [JSON.stringify(results, null, 2)] : [generateTSVData(selected)]
 
         const url = window.URL.createObjectURL(new Blob(blob,
             {type}))
