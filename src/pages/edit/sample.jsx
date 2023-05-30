@@ -8,7 +8,7 @@ import AncestorInformationBox from "../../components/custom/entities/sample/Ance
 import log from "loglevel";
 import {
     cleanJson, equals,
-    fetchEntity,
+    fetchEntity, fetchProtocolView,
     getDOIPattern,
     getHeaders,
     getRequestHeaders
@@ -53,7 +53,8 @@ function EditSample() {
         metadata, setMetadata,
         dataAccessPublic, setDataAccessPublic,
         getSampleEntityConstraints,
-        checkMetadata, getMetadataNote
+        checkMetadata, getMetadataNote, checkProtocolUrl,
+        warningClasses
     } = useContext(EntityContext)
     const {_t, cache, filterImageFilesToAdd} = useContext(AppContext)
     const router = useRouter()
@@ -129,6 +130,8 @@ function EditSample() {
             } else {
                 setData(data);
 
+                checkProtocolUrl(data.protocol_url)
+
                 // Show organ input group if sample category is 'organ'
                 if (equals(data.sample_category, cache.sampleCategories.Organ)) {
                     set_organ_group_hide('')
@@ -198,6 +201,10 @@ function EditSample() {
         // log.debug('onChange', fieldId, value)
         // use a callback to find the field in the value list and update it
         onChange(e, fieldId, value)
+
+        if (fieldId === 'protocol_url') {
+            checkProtocolUrl(value)
+        }
 
         if (fieldId === 'direct_ancestor_uuid') {
             resetSampleCategory(e)
@@ -452,6 +459,8 @@ function EditSample() {
                                     <EntityFormGroup label="Preparation Protocol" placeholder='protocols.io DOI'
                                                      controlId='protocol_url' value={data.protocol_url}
                                                      isRequired={true} pattern={getDOIPattern()}
+                                                     className={warningClasses.protocol_url}
+                                                     warningText={<>The supplied protocols.io DOI URL, formatting is correct but does not resolve. This will need to be corrected for any <code>Dataset</code> submission that uses this entity as an ancestor.</>}
                                                      popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                                      onChange={_onChange}
                                                      text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see: <a
