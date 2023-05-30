@@ -50,7 +50,7 @@ export const handleCheckAll = () => {
     })
 
 }
-function CheckAll({ data, raw, columns }) {
+function BulkExport({ data, raw, columns }) {
 
     const generateTSVData = () => {
         let _columns = columns.current
@@ -150,4 +150,4 @@ function CheckAll({ data, raw, columns }) {
     )
 }
 
-export default CheckAll
+export default BulkExport

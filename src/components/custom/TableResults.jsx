@@ -17,7 +17,7 @@ import {
     PagingInfo
 } from "@elastic/react-search-ui";
 import ClipboardCopy from "../ClipboardCopy";
-import CheckAll, {handleCheckAll} from "./CheckAll";
+import BulkExport, {handleCheckAll} from "./BulkExport";
 
 
 const handlePagingInfo = (page, resultsPerPage, totalRows) => {
@@ -285,7 +285,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
 
     return (
         <>
-            <CheckAll data={children} raw={raw} columns={currentColumns} />
+            <BulkExport data={children} raw={raw} columns={currentColumns} />
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
