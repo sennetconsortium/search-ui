@@ -456,12 +456,12 @@ export default function EditDataset() {
                                             {_t('Cancel')}
                                         </Button>
 
-                                        { isEditMode() && data['status'] === 'New' &&
+                                        { isEditMode() && equals(data['status'], 'New') &&
                                             <SenNetPopover text={<>Submit this <code>Dataset</code> for processing.</>} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton onClick={handleSubmit} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
-                                        { data['status'] !== 'Processing' &&
+                                        {!equals(data['status'], 'Processing') &&
                                             <SenNetPopover text={<>Save changes to this <code>Dataset</code>.</>} className={'save-button'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--save"
                                                         className={'me-2'}
@@ -472,7 +472,7 @@ export default function EditDataset() {
                                             </SenNetPopover>
                                         }
 
-                                        { adminGroup && isEditMode() && data['status'] === 'Error' && <SenNetPopover
+                                        {adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid')) && <SenNetPopover
                                             text={<>Revert this <code>Dataset</code> back to <Badge pill bg={getStatusColor('New')}>New</Badge> or <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>  status.
                                                </>}
                                             className={'revert-button'}>
