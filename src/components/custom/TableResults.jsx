@@ -16,6 +16,7 @@ import $ from 'jquery'
 import {
     PagingInfo
 } from "@elastic/react-search-ui";
+import ClipboardCopy from "../ClipboardCopy";
 
 
 const handlePagingInfo = (page, resultsPerPage, totalRows) => {
@@ -124,6 +125,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
         }
         return pageData;
     }
+    const getId = (column) => column.id || column.sennet_id
 
     const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn}) => {
         let cols = [
@@ -131,7 +133,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 name: 'SenNet ID',
                 selector: row => raw(row.sennet_id),
                 sortable: true,
-                format: column => inModal ? column.id || column.sennet_id : <a href={getHotLink(column)}>{column.id || column.sennet_id}</a>,
+                format: column => inModal ? getId(column) : <span><a href={getHotLink(column)}>{getId(column)}</a> <ClipboardCopy text={getId(column)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
                 // minWidth: '20%'
 
             },
