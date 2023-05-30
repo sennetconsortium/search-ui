@@ -213,3 +213,19 @@
 
 }
 
+.sui-tbl-actions-wrapper.is-active {
+  #sui-tbl-checkbox-actions {
+    display: inline;
+  }
+
+}
+
+#sui-tbl-checkbox-actions {
+  display: none;
+  position: absolute;
+  left: 100px;
+ .btn {
+   border: none !important;
+ }
+}
+

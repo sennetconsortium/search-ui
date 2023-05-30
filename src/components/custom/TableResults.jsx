@@ -17,6 +17,8 @@ import {
     PagingInfo
 } from "@elastic/react-search-ui";
 import ClipboardCopy from "../ClipboardCopy";
+import {Download} from "react-bootstrap-icons";
+import Dropdown from 'react-bootstrap/Dropdown'
 
 
 const handlePagingInfo = (page, resultsPerPage, totalRows) => {
@@ -106,12 +108,58 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
         setResultsPerPage(currentRowsPerPage)
     }
 
+    const handleCheckAll = () => {
+        const $headers = $('.rdt_TableHeadRow .rdt_TableCol')
+        const $checkboxes = $('.rdt_TableBody [type=checkbox]')
+        const $checkAllHeader = $headers.eq($headers.length - 1)
+        const $checkAll = $checkAllHeader.find('[role="columnheader"] div')
+        $checkAll.attr('role', 'button')
+        $checkAll.parent().addClass('sui-tbl-actions-wrapper')
+        $('#sui-tbl-checkbox-actions').detach().appendTo($checkAll.parent())
+
+        const handleDropdownView = ($el, total) => {
+            const action = total > 0 ? 'addClass' : 'removeClass'
+            $el.parent()[action]('is-active')
+        }
+
+        $checkAll.on('click', (e) => {
+            const $el = $(e.currentTarget)
+            $el.toggleClass('is-all')
+            const checkAll = $el.hasClass('is-all')
+            const txt = checkAll ? 'Uncheck All' : 'Check All'
+            const total = checkAll ? $checkboxes.length : 0
+            $el.attr('data-total', total)
+            handleDropdownView($el, total)
+            $el.html(txt + '<span></span>')
+            $checkboxes.prop('checked', checkAll)
+        })
+
+        $checkboxes.on('click', (e) => {
+            const $el = $(e.currentTarget)
+            const isChecked = $el.is(':checked')
+            let total = $checkAll.attr('data-total')
+            total = total ? Number(total) : 0
+            total = isChecked ? ++total : --total
+            $checkAll.attr('data-total', total)
+            const $span = $checkAll.find('span')
+            handleDropdownView($checkAll, total)
+            if (!$span.length) {
+                $checkAll.append('<span>')
+            }
+            $checkAll.find('span').html(` (${total})`)
+
+
+        })
+
+    }
+
     useEffect(() => {
         hasLoaded.current = true
         if (!forData) {
             log.debug('Results', children)
             handlePageChange(1, children.length)
         }
+        handleCheckAll()
     }, [])
 
 
@@ -162,6 +210,15 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 selector: row => raw(row.group_name),
                 sortable: true,
             })
+        if (!inModal) {
+            cols.push({
+                name: 'Check All',
+                className: 'text-center',
+                selector: row => raw(row.sennet_id),
+                sortable: false,
+                format: column => <input type={'checkbox'} value={getId(column)} name={`check-${getId(column)}`}/>
+            })
+        }
         return cols;
     }
 
@@ -270,6 +327,18 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
 
     return (
         <>
+            <div id='sui-tbl-checkbox-actions'>
+                <Dropdown>
+                    <Dropdown.Toggle  id="dropdown-basic" variant={'secondary-outline'}>
+                        ...
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                        <Dropdown.Item active={''} key={`version-`} href={''}
+                                       title={''}>Export selected items to TSV</Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+            </div>
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
