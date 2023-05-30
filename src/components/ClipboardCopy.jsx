@@ -18,7 +18,7 @@ function ClipboardCopy({children, text, title, className}) {
 
     return (
         <SenNetPopover text={'Copied!'} show={showTooltip} trigger={SenPopoverOptions.triggers.click} className={`${className} popover-clipboard`}>
-            <sup title={title} role={'button'} onClick={copyToClipboard}>
+            <sup title={title.replace('{text}', text)} role={'button'} onClick={copyToClipboard}>
                 {!children && <Clipboard size={12} />}
                 {children}
             </sup>
