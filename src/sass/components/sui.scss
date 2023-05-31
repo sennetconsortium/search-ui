@@ -224,6 +224,9 @@
   display: none;
   position: absolute;
   right: 0;
+  .dropdown * {
+    font-size: 0.8rem;
+  }
  .btn {
    border: none !important;
  }
