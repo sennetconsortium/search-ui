@@ -17,11 +17,12 @@ import {
     PagingInfo
 } from "@elastic/react-search-ui";
 import ClipboardCopy from "../ClipboardCopy";
-import BulkExport, {handleCheckAll, clearCheckAll} from "./BulkExport";
+import BulkExport, {handleCheckAll, handleCheckbox} from "./BulkExport";
 
 
 const handlePagingInfo = (page, resultsPerPage, totalRows) => {
     try {
+        handleCheckAll()
         const $pgInfo = $('.sui-paging-info')
         let from = (page - 1) * resultsPerPage + 1
         let to = page * resultsPerPage
@@ -101,7 +102,6 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
     }
 
     const handlePageChange = (page, totalRows) => {
-        clearCheckAll()
         handlePagingInfo(page, resultsPerPage, totalRows)
     }
     const handleRowsPerPageChange = (currentRowsPerPage, currentPage) => {
@@ -115,7 +115,6 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
             log.debug('Results', children)
             handlePageChange(1, children.length)
         }
-        handleCheckAll()
     }, [])
 
 
@@ -135,12 +134,12 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
         let cols = []
         if (!inModal) {
             cols.push({
-                name: ' ',
+                name: <BulkExport data={children} raw={raw} columns={currentColumns} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => raw(row.sennet_id),
                 sortable: false,
-                format: column => <input type={'checkbox'} value={getId(column)} name={`check-${getId(column)}`}/>
+                format: column => <input type={'checkbox'} onClick={(e) => handleCheckbox(e)} value={getId(column)} name={`check-${getId(column)}`}/>
             })
         }
 
@@ -150,8 +149,6 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 selector: row => raw(row.sennet_id),
                 sortable: true,
                 format: column => inModal ? getId(column) : <span><a href={getHotLink(column)}>{getId(column)}</a> <ClipboardCopy text={getId(column)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
-                // minWidth: '20%'
-
             },
         )
         if (hasMultipleEntityTypes) {
@@ -159,7 +156,6 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 name: 'Entity Type',
                 selector: row => raw(row.entity_type),
                 sortable: true,
-                // maxWidth: '17%'
             })
         }
         if (isLoggedIn || _isLoggedIn) {
@@ -169,7 +165,6 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                     return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
                 },
                 sortable: true,
-                // width: hasMultipleEntityTypes ? '25%' : '20%'
             })
         }
         cols = cols.concat(columns)
@@ -186,7 +181,6 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
             name: 'Type',
             selector: row => raw(row.source_type),
             sortable: true,
-            // width: '15%',
         }
     ]
 
@@ -195,13 +189,11 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
             name: 'Category',
             selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
             sortable: true,
-            // width: '15%',
         },
         {
             name: 'Organ',
             selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-            // width: '15%',
         }
     ]
 
@@ -215,13 +207,11 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 }
             },
             sortable: true,
-            // width: '17%'
         },
         {
             name: 'Organ',
             selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-            // width: '15%'
         },
         {
             name: 'Status',
@@ -286,7 +276,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
 
     return (
         <>
-            <BulkExport data={children} raw={raw} columns={currentColumns} />
+
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />

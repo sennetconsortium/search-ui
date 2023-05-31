@@ -221,7 +221,16 @@
 }
 
 #sui-tbl-checkbox-actions {
-  display: none;
+  code {
+    color: var(--bs-code-color);
+    word-wrap: break-word;
+  }
+  .filetype-group {
+    .dropdown-item {
+      margin-left: inherit !important;
+    }
+  }
+  //display: none;
   position: absolute;
   right: 0;
   .dropdown * {
