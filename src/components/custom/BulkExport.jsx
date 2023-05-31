@@ -43,7 +43,8 @@ export const handleCheckAll = () => {
         const txt = checkAll ? checkAllHtml.replace('/>', `checked />`) : checkAllHtml
         const total = checkAll ? getCheckboxes().length : 0
         handleCheckAllTotal($el, total)
-        $el.html(txt + '<span></span>')
+        const counter = total ? `(${total})` : ''
+        $el.html(txt + `<span>${counter}</span>`)
         getCheckboxes().prop('checked', checkAll)
     })
 
