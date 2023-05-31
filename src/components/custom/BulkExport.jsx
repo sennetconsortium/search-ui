@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import $ from "jquery";
 import Dropdown from 'react-bootstrap/Dropdown'
-import {FormControlLabel, Radio, RadioGroup} from "@mui/material";
+import {FormControlLabel, FormLabel, Radio, RadioGroup} from "@mui/material";
 
 const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
 
@@ -144,7 +144,9 @@ function BulkExport({ data, raw, columns, replaceFirst = 'uuid' }) {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                    <span className={'filetype-group'}><RadioGroup
+                    <span className={'filetype-group'}>
+                        <FormLabel id="filetype-group-label">Export options</FormLabel>
+                        <RadioGroup
                         defaultValue="tsv"
                         name="filetype-group"
                         onChange={(e) => {setFileType(e.currentTarget.value)} }
