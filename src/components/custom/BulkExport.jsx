@@ -1,22 +1,37 @@
 import React, {useContext, useEffect, useState} from 'react'
 import $ from "jquery";
 import Dropdown from 'react-bootstrap/Dropdown'
-import {equals, getUBKGFullName} from "./js/functions";
 
 const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
-export const handleCheckAll = () => {
+
+const getCheckAll = () => {
     const $headers = $('.rdt_TableHeadRow .rdt_TableCol')
-    const $checkboxes = getCheckboxes()
     const $checkAllHeader = $headers.eq(0)
-    const $checkAll = $checkAllHeader.find('[role="columnheader"] div')
+    return $checkAllHeader.find('[role="columnheader"] > div')
+}
+
+const handleDropdownView = ($el, total) => {
+    const action = total > 0 ? 'addClass' : 'removeClass'
+    $el.parent()[action]('is-active')
+}
+
+const handleCheckAllTotal = ($el, total) => {
+    $el.attr('data-total', total)
+    handleDropdownView($el, total)
+}
+
+export const clearCheckAll = () => {
+    const $el = getCheckAll()
+    $el.find('span').html('')
+    $el.find('[type=checkbox]').removeAttr('checked')
+    $el.removeClass('is-all')
+    handleCheckAllTotal($el,0)
+}
+export const handleCheckAll = () => {
+    const $checkAll = getCheckAll()
     $checkAll.attr('role', 'button')
     $checkAll.parent().addClass('sui-tbl-actions-wrapper')
     $('#sui-tbl-checkbox-actions').detach().appendTo($checkAll.parent())
-
-    const handleDropdownView = ($el, total) => {
-        const action = total > 0 ? 'addClass' : 'removeClass'
-        $el.parent()[action]('is-active')
-    }
 
     let checkAllHtml = `<input type="checkbox" name="toggle-checkall" />`
     $checkAll.html(checkAllHtml)
@@ -25,16 +40,14 @@ export const handleCheckAll = () => {
         const $el = $(e.currentTarget)
         $el.toggleClass('is-all')
         const checkAll = $el.hasClass('is-all')
-
         const txt = checkAll ? checkAllHtml.replace('/>', `checked />`) : checkAllHtml
-        const total = checkAll ? $checkboxes.length : 0
-        $el.attr('data-total', total)
-        handleDropdownView($el, total)
+        const total = checkAll ? getCheckboxes().length : 0
+        handleCheckAllTotal($el, total)
         $el.html(txt + '<span></span>')
-        $checkboxes.prop('checked', checkAll)
+        getCheckboxes().prop('checked', checkAll)
     })
 
-    $checkboxes.on('click', (e) => {
+    $('.rdt_TableBody').on('click', '[type=checkbox]', (e) => {
         const $el = $(e.currentTarget)
         const isChecked = $el.is(':checked')
         let total = $checkAll.attr('data-total')
@@ -50,15 +63,18 @@ export const handleCheckAll = () => {
     })
 
 }
-function BulkExport({ data, raw, columns }) {
+function BulkExport({ data, raw, columns, replaceFirst = 'uuid' }) {
 
     const generateTSVData = (selected) => {
         let _columns = columns.current
-        _columns[0] = {
-            name: 'UUID',
-            selector: row => raw(row.uuid),
-            sortable: true,
+        if (replaceFirst) {
+            _columns[0] = {
+                name: replaceFirst.upperCaseFirst(),
+                selector: row => raw(row[replaceFirst]),
+                sortable: true,
+            }
         }
+
 
         let tableDataTSV = ''
         let _colName
@@ -124,8 +140,7 @@ function BulkExport({ data, raw, columns }) {
         const type = isJson ? 'application/json' : 'text/tab-separated-values'
         const blob = isJson ? [JSON.stringify(results, null, 2)] : [generateTSVData(selected)]
 
-        const url = window.URL.createObjectURL(new Blob(blob,
-            {type}))
+        const url = window.URL.createObjectURL(new Blob(blob, {type}))
         a.href = url
         a.download = `${fileName}.${kind}`
         document.body.append(a)
@@ -133,9 +148,6 @@ function BulkExport({ data, raw, columns }) {
         a.remove()
         window.URL.revokeObjectURL(url)
     }
-
-    useEffect(() => {
-    }, [])
 
     return (
         <div id='sui-tbl-checkbox-actions'>

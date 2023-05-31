@@ -17,7 +17,7 @@ import {
     PagingInfo
 } from "@elastic/react-search-ui";
 import ClipboardCopy from "../ClipboardCopy";
-import BulkExport, {handleCheckAll} from "./BulkExport";
+import BulkExport, {handleCheckAll, clearCheckAll} from "./BulkExport";
 
 
 const handlePagingInfo = (page, resultsPerPage, totalRows) => {
@@ -101,6 +101,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
     }
 
     const handlePageChange = (page, totalRows) => {
+        clearCheckAll()
         handlePagingInfo(page, resultsPerPage, totalRows)
     }
     const handleRowsPerPageChange = (currentRowsPerPage, currentPage) => {
