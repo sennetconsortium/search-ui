@@ -149,7 +149,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 name: 'SenNet ID',
                 selector: row => raw(row.sennet_id),
                 sortable: true,
-                format: column => inModal ? getId(column) : <span><a href={getHotLink(column)}>{getId(column)}</a> <ClipboardCopy text={getId(column)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
+                format: column => inModal ? getId(column) : <span data-field='sennet_id'><a href={getHotLink(column)}>{getId(column)}</a> <ClipboardCopy text={getId(column)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
             },
         )
         if (hasMultipleEntityTypes) {
@@ -157,6 +157,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 name: 'Entity Type',
                 selector: row => raw(row.entity_type),
                 sortable: true,
+                format: row => <span data-field='entity_type'>{raw(row.entity_type)}</span>,
             })
         }
         if (isLoggedIn || _isLoggedIn) {
@@ -165,6 +166,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 selector: row => {
                     return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
                 },
+                format: row => <span data-field='lab_id'>{raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)}</span>,
                 sortable: true,
             })
         }
@@ -173,6 +175,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 name: 'Group',
                 selector: row => raw(row.group_name),
                 sortable: true,
+                format: row => <span data-field='group_name'>{raw(row.group_name)}</span>,
             })
         return cols;
     }

@@ -68,17 +68,17 @@ class GoogleTagManager extends Addon {
     }
 
     handleResults(e) {
-        const tr = this.currentTarget(e)
-        const th = ['created_by', 'sennet_id', 'entity', 'lab_id', 'category', 'group']
+        const td = this.currentTarget(e)
+        const th = ['sennet_id', 'entity_type', 'lab_id', 'group_name']
         const data = {}
         for (let i = 0; i < th.length; i++) {
-            data[th[i]] = tr.find('.rdt_TableCell').eq(i).text()
+            data[th[i]] = td.parent().find(`[data-field="${th[i]}"]`).text().trim()
         }
         this.gtm(data)
     }
 
     results() {
-        this.el.on('click', '.rdt_TableBody .rdt_TableRow', ((e) => {
+        this.el.on('click', '.rdt_TableBody .rdt_TableCell:not(div[data-column-id="1"])', ((e) => {
             this.handleResults(e)
         }).bind(this))
     }
