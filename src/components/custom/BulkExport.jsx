@@ -132,7 +132,6 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
             fileName += ` - ${lastSelected}`
         }
 
-
         for (let item of data) {
             let id = raw(item.props.result.sennet_id)
 
@@ -140,7 +139,6 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
                 results.push(item.props.result)
             }
         }
-
 
         const isJson =  fileType === 'json'
         const a = document.createElement('a')
@@ -166,9 +164,12 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <div className={'dropdown-item'} key={`export-to-all`}>Export all to <a onClick={(e) => downloadData(e, 'tsv', true)}><code>TSV</code></a> | <a onClick={(e) => downloadData(e, 'json', true)}><code>JSON</code></a></div>
-                        {totalSelected > 0 && <div className={'dropdown-item'}  key={`export-selected`} >Export selected to <a onClick={(e) => downloadData(e, 'tsv')}><code>TSV</code></a> | <a onClick={(e) => downloadData(e, 'json')}><code>JSON</code></a></div>}
-
+                        <div className={'dropdown-item'} key={`export-all`}>Export all to
+                            <a onClick={(e) => downloadData(e, 'tsv', true)}><code>TSV</code></a> |
+                            <a onClick={(e) => downloadData(e, 'json', true)}><code>JSON</code></a></div>
+                        {totalSelected > 0 && <div className={'dropdown-item'}  key={`export-selected`} >Export selected to
+                            <a onClick={(e) => downloadData(e, 'tsv')}><code>TSV</code></a> |
+                            <a onClick={(e) => downloadData(e, 'json')}><code>JSON</code></a></div>}
                     </Dropdown.Menu>
                 </Dropdown>
             </div>
