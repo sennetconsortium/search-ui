@@ -155,8 +155,8 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
         window.URL.revokeObjectURL(url)
     }
 
-    const jsonPopoverText = <>Exports rows in key/value pair formatting which can be opened for viewing in both plain text software.</>
-    const tsvPopoverText = <>Exports rows in the form of tab-separated values which can be opened for viewing in both plain text and spreadsheet software.</>
+    const jsonPopoverText = <>Exports all properties associated with selected entities in JSON format.</>
+    const tsvPopoverText = <>Exports search result table information for selected entities in tab-separated values format.</>
 
     return (
         <>
