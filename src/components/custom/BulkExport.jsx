@@ -63,8 +63,7 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
 
     const toggleCheckAll = (e, setTotalSelected) => {
         const $el = $(e.currentTarget)
-        $el.toggleClass('is-all')
-        const checkAll = $el.hasClass('is-all')
+        const checkAll = $el.is(':checked')
         const total = checkAll ? getCheckboxes().length : 0
         handleCheckAllTotal($el, total)
         getCheckboxes().prop('checked', checkAll)
