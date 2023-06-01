@@ -456,7 +456,7 @@ export default function EditDataset() {
                                             {_t('Cancel')}
                                         </Button>
 
-                                        { isEditMode() && equals(data['status'], 'New') &&
+                                        { isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Submitted')) &&
                                             <SenNetPopover text={<>Submit this <code>Dataset</code> for processing.</>} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton onClick={handleSubmit} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
