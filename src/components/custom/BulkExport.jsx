@@ -46,6 +46,7 @@ export const handleCheckbox = (e) => {
 
 export const handleCheckAll = (setTotalSelected) => {
     getCheckAll().parent().parent().addClass('sui-tbl-actions-wrapper')
+    handleCheckAllTotal(getCheckAll(), 0)
 }
 
 function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
