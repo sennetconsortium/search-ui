@@ -216,11 +216,21 @@
   code {
     color: var(--bs-code-color);
     word-wrap: break-word;
+    &:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
   position: absolute;
   right: 0;
   .dropdown * {
     font-size: 0.8rem;
+  }
+  .dropdown-item {
+    &:active {
+      background-color: transparent;
+      color: inherit;
+    }
   }
  .btn {
    border: none !important;

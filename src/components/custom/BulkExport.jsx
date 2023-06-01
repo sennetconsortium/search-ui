@@ -167,10 +167,9 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item key={`export-to-all`} onClick={(e) => downloadData(e, 'tsv', true)}>Export all to <code>TSV</code></Dropdown.Item>
-                        {totalSelected > 0 && <Dropdown.Item key={`export-to-tsv`} onClick={(e) => downloadData(e, 'tsv')}>Export selected to <code>TSV</code></Dropdown.Item>}
-                        <Dropdown.Item key={`export-to-all-json`} onClick={(e) => downloadData(e, 'json', true)}>Export all to <code>JSON</code></Dropdown.Item>
-                        {totalSelected > 0 && <Dropdown.Item key={`export-to-json`} onClick={(e) => downloadData(e, 'json')}>Export selected to <code>JSON</code></Dropdown.Item>}
+                        <div className={'dropdown-item'} key={`export-to-all`}>Export all to <a onClick={(e) => downloadData(e, 'tsv', true)}><code>TSV</code></a> | <a onClick={(e) => downloadData(e, 'json', true)}><code>JSON</code></a></div>
+                        {totalSelected > 0 && <div className={'dropdown-item'}  key={`export-selected`} >Export selected to <a onClick={(e) => downloadData(e, 'tsv')}><code>TSV</code></a> | <a onClick={(e) => downloadData(e, 'json')}><code>JSON</code></a></div>}
+
                     </Dropdown.Menu>
                 </Dropdown>
             </div>
