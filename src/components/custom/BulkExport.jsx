@@ -59,6 +59,12 @@ export const handleCheckAll = () => {
 
 function BulkExport({ data, raw, columns, totalSelected, setTotalSelected, replaceFirst = 'uuid' }) {
 
+    useEffect(() => {
+        $('.clear-filter-button').on('click', ()=>{
+            setTotalSelected(0)
+        })
+    })
+
     const generateTSVData = (selected, isAll) => {
         let _columns = columns.current
         if (replaceFirst) {
