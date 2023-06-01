@@ -135,7 +135,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
         let cols = []
         if (!inModal) {
             cols.push({
-                name: <BulkExport data={children} raw={raw} columns={currentColumns} totalSelected={totalSelected} />,
+                name: <BulkExport data={children} raw={raw} columns={currentColumns} totalSelected={totalSelected} setTotalSelected={setTotalSelected} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => raw(row.sennet_id),

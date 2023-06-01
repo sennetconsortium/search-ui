@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import $ from "jquery";
 import Dropdown from 'react-bootstrap/Dropdown'
-import {FormControlLabel, FormLabel, Radio, RadioGroup} from "@mui/material";
+import PropTypes from "prop-types";
 
 const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
 
@@ -22,13 +22,14 @@ const handleCheckAllTotal = ($el, total) => {
     $span($el).html(counter)
 }
 
-const toggleCheckAll = (e) => {
+const toggleCheckAll = (e, setTotalSelected) => {
     const $el = $(e.currentTarget)
     $el.toggleClass('is-all')
     const checkAll = $el.hasClass('is-all')
     const total = checkAll ? getCheckboxes().length : 0
     handleCheckAllTotal($el, total)
     getCheckboxes().prop('checked', checkAll)
+    setTotalSelected(getTotal())
 }
 
 const getTotal = () => {
@@ -56,13 +57,13 @@ export const handleCheckAll = () => {
     getCheckAll().parent().parent().addClass('sui-tbl-actions-wrapper')
 }
 
-function BulkExport({ data, raw, columns, totalSelected, replaceFirst = 'uuid' }) {
+function BulkExport({ data, raw, columns, totalSelected, setTotalSelected, replaceFirst = 'uuid' }) {
 
     const generateTSVData = (selected, isAll) => {
         let _columns = columns.current
         if (replaceFirst) {
             _columns[0] = {
-                name: replaceFirst.upperCaseFirst(),
+                name: replaceFirst.toUpperCase(),
                 selector: row => raw(row[replaceFirst]),
                 sortable: true,
             }
@@ -111,7 +112,7 @@ function BulkExport({ data, raw, columns, totalSelected, replaceFirst = 'uuid' }
                 if ($(el).is(':checked')) {
                     val = $(el).val()
                     if (!Object.values(selected).length) {
-                        fileName += val
+                        fileName = val
                     }
                     selected[val] = true
                     lastSelected = val
@@ -146,7 +147,7 @@ function BulkExport({ data, raw, columns, totalSelected, replaceFirst = 'uuid' }
 
     return (
         <>
-            <div className='sui-check-all'><input type="checkbox" name="toggle-check-all" onClick={(e) => toggleCheckAll(e)} /><span></span></div>
+            <div className='sui-check-all'><input type="checkbox" name="toggle-check-all" onClick={(e) => toggleCheckAll(e, setTotalSelected)} /><span></span></div>
             <div id='sui-tbl-checkbox-actions'>
                 <Dropdown>
                     <Dropdown.Toggle  id="dropdown-basic" variant={'secondary-outline'}>
@@ -163,6 +164,13 @@ function BulkExport({ data, raw, columns, totalSelected, replaceFirst = 'uuid' }
             </div>
         </>
     )
+}
+
+BulkExport.propTypes = {
+    data: PropTypes.array.isRequired,
+    columns: PropTypes.object.isRequired,
+    totalSelected: PropTypes.any.isRequired,
+    setTotalSelected: PropTypes.func.isRequired
 }
 
 export default BulkExport
