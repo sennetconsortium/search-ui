@@ -210,14 +210,6 @@
       transform: translate(50%,-50%);
     }
   }
-
-}
-
-.sui-tbl-actions-wrapper.is-active {
-  #sui-tbl-checkbox-actions {
-    display: inline;
-  }
-
 }
 
 #sui-tbl-checkbox-actions {
@@ -225,18 +217,6 @@
     color: var(--bs-code-color);
     word-wrap: break-word;
   }
-  .filetype-group {
-    .MuiFormLabel-root {
-      padding: 3px 15px;
-      font-size: .9rem;
-      font-weight: bold;
-    }
-    .dropdown-item {
-      margin-left: inherit !important;
-      margin-right: inherit !important;
-    }
-  }
-  //display: none;
   position: absolute;
   right: 0;
   .dropdown * {

@@ -31,7 +31,17 @@ const toggleCheckAll = (e) => {
     getCheckboxes().prop('checked', checkAll)
 }
 
-export const handleCheckbox = (e) => {
+const getTotal = () => {
+    let total = 0
+    getCheckboxes().each((i, el) => {
+        if ($(el).is(':checked')) {
+            total++
+        }
+    })
+    return total
+}
+
+export const handleCheckbox = (e, setTotalSelected) => {
     const $el = $(e.currentTarget)
     const isChecked = $el.is(':checked')
     let total = getCheckAll().attr('data-total')
@@ -39,14 +49,14 @@ export const handleCheckbox = (e) => {
     total = isChecked ? ++total : --total
     getCheckAll().prop('checked', total === getCheckboxes().length)
     handleCheckAllTotal(getCheckAll(), total)
+    setTotalSelected(getTotal())
 }
 
 export const handleCheckAll = () => {
-    getCheckAll().parent().parent().addClass('sui-tbl-actions-wrapper is-active')
+    getCheckAll().parent().parent().addClass('sui-tbl-actions-wrapper')
 }
 
-function BulkExport({ data, raw, columns, replaceFirst = 'uuid' }) {
-    const [fileType, setFileType] = useState('tsv')
+function BulkExport({ data, raw, columns, totalSelected, replaceFirst = 'uuid' }) {
 
     const generateTSVData = (selected, isAll) => {
         let _columns = columns.current
@@ -57,8 +67,7 @@ function BulkExport({ data, raw, columns, replaceFirst = 'uuid' }) {
                 sortable: true,
             }
         }
-
-
+        
         let tableDataTSV = ''
         let _colName
         for (let col of _columns) {
@@ -89,7 +98,8 @@ function BulkExport({ data, raw, columns, replaceFirst = 'uuid' }) {
 
         return tableDataTSV
     }
-    const downloadData = (e, isAll) => {
+
+    const downloadData = (e, fileType, isAll) => {
         const $checkboxes = getCheckboxes()
         let selected = {}
         let results = []
@@ -144,18 +154,10 @@ function BulkExport({ data, raw, columns, replaceFirst = 'uuid' }) {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                    <span className={'filetype-group'}>
-                        <FormLabel id="filetype-group-label">Export options</FormLabel>
-                        <RadioGroup
-                        defaultValue="tsv"
-                        name="filetype-group"
-                        onChange={(e) => {setFileType(e.currentTarget.value)} }
-                    >
-                        <FormControlLabel className={'dropdown-item'} value="tsv" control={<Radio />} label="TSV" />
-                        <FormControlLabel className={'dropdown-item'} value="json" control={<Radio />} label="JSON" />
-                    </RadioGroup></span>
-                        <Dropdown.Item key={`export-to-all`} onClick={(e) => downloadData(e, true)}>Export all to <code>{fileType.toUpperCase()}</code></Dropdown.Item>
-                        <Dropdown.Item key={`export-to-tsv`} onClick={(e) => downloadData(e)}>Export selected to <code>{fileType.toUpperCase()}</code></Dropdown.Item>
+                        <Dropdown.Item key={`export-to-all`} onClick={(e) => downloadData(e, 'tsv', true)}>Export all to <code>TSV</code></Dropdown.Item>
+                        {totalSelected > 0 && <Dropdown.Item key={`export-to-tsv`} onClick={(e) => downloadData(e, 'tsv')}>Export selected to <code>TSV</code></Dropdown.Item>}
+                        <Dropdown.Item key={`export-to-all-json`} onClick={(e) => downloadData(e, 'json', true)}>Export all to <code>JSON</code></Dropdown.Item>
+                        {totalSelected > 0 && <Dropdown.Item key={`export-to-json`} onClick={(e) => downloadData(e, 'json')}>Export selected to <code>JSON</code></Dropdown.Item>}
                     </Dropdown.Menu>
                 </Dropdown>
             </div>
