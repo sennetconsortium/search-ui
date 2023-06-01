@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react'
 import $ from "jquery";
 import Dropdown from 'react-bootstrap/Dropdown'
 import PropTypes from "prop-types";
+import SenNetPopover from "../SenNetPopover";
 
 const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
 
@@ -154,6 +155,9 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
         window.URL.revokeObjectURL(url)
     }
 
+    const jsonPopoverText = <>Exports rows in key/value pair formatting which can be opened for viewing in both plain text software.</>
+    const tsvPopoverText = <>Exports rows in the form of tab-separated values which can be opened for viewing in both plain text and spreadsheet software.</>
+
     return (
         <>
             <div className='sui-check-all'><input type="checkbox" name="toggle-check-all" onClick={(e) => toggleCheckAll(e, setTotalSelected)} /><span></span></div>
@@ -164,12 +168,24 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <div className={'dropdown-item'} key={`export-all`}>Export all to
-                            <a onClick={(e) => downloadData(e, 'tsv', true)}><code>TSV</code></a> |
-                            <a onClick={(e) => downloadData(e, 'json', true)}><code>JSON</code></a></div>
-                        {totalSelected > 0 && <div className={'dropdown-item'}  key={`export-selected`} >Export selected to
-                            <a onClick={(e) => downloadData(e, 'tsv')}><code>TSV</code></a> |
-                            <a onClick={(e) => downloadData(e, 'json')}><code>JSON</code></a></div>}
+                        <div className={'dropdown-item'} key={`export-all`}>Export all to&nbsp;
+                            <SenNetPopover text={tsvPopoverText} className='all-tsv'>
+                                <a onClick={(e) => downloadData(e, 'tsv', true)}><code>TSV</code></a>
+                            </SenNetPopover>
+                            &nbsp;|&nbsp;
+                            <SenNetPopover text={jsonPopoverText} className='all-json'>
+                                <a onClick={(e) => downloadData(e, 'json', true)}><code>JSON</code></a>
+                            </SenNetPopover>
+                            </div>
+                        {totalSelected > 0 && <div className={'dropdown-item'}  key={`export-selected`} >Export selected to&nbsp;
+                            <SenNetPopover text={tsvPopoverText} className='selected-tsv'>
+                                <a onClick={(e) => downloadData(e, 'tsv')}><code>TSV</code></a>
+                            </SenNetPopover>
+                            &nbsp;|&nbsp;
+                            <SenNetPopover text={jsonPopoverText} className='selected-json'>
+                                <a onClick={(e) => downloadData(e, 'json')}><code>JSON</code></a>
+                            </SenNetPopover>
+                        </div>}
                     </Dropdown.Menu>
                 </Dropdown>
             </div>

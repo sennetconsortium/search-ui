@@ -289,7 +289,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
             </div>
 
             {<DataTable key={`results-${new Date().getTime()}`}
-                                               className='rdt_Results'
+                                               className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''}`}
                                                columns={getTableColumns()}
                                                data={getTableData()}
                                                theme={'plain'}
