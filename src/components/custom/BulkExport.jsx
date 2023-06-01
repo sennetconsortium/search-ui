@@ -22,16 +22,6 @@ const handleCheckAllTotal = ($el, total) => {
     $span($el).html(counter)
 }
 
-const toggleCheckAll = (e, setTotalSelected) => {
-    const $el = $(e.currentTarget)
-    $el.toggleClass('is-all')
-    const checkAll = $el.hasClass('is-all')
-    const total = checkAll ? getCheckboxes().length : 0
-    handleCheckAllTotal($el, total)
-    getCheckboxes().prop('checked', checkAll)
-    setTotalSelected(getTotal())
-}
-
 const getTotal = () => {
     let total = 0
     getCheckboxes().each((i, el) => {
@@ -42,7 +32,8 @@ const getTotal = () => {
     return total
 }
 
-export const handleCheckbox = (e, setTotalSelected) => {
+export const handleCheckbox = (e) => {
+    e.stopPropagation()
     const $el = $(e.currentTarget)
     const isChecked = $el.is(':checked')
     let total = getCheckAll().attr('data-total')
@@ -50,20 +41,35 @@ export const handleCheckbox = (e, setTotalSelected) => {
     total = isChecked ? ++total : --total
     getCheckAll().prop('checked', total === getCheckboxes().length)
     handleCheckAllTotal(getCheckAll(), total)
-    setTotalSelected(getTotal())
 }
 
-export const handleCheckAll = () => {
+export const handleCheckAll = (setTotalSelected) => {
     getCheckAll().parent().parent().addClass('sui-tbl-actions-wrapper')
 }
 
-function BulkExport({ data, raw, columns, totalSelected, setTotalSelected, replaceFirst = 'uuid' }) {
+function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
+
+    const [totalSelected, setTotalSelected] = useState(0)
 
     useEffect(() => {
         $('.clear-filter-button').on('click', ()=>{
             setTotalSelected(0)
         })
+
+        $('.sui-check-all').on('DOMSubtreeModified', (e) =>{
+            setTotalSelected(getTotal())
+        })
     })
+
+    const toggleCheckAll = (e, setTotalSelected) => {
+        const $el = $(e.currentTarget)
+        $el.toggleClass('is-all')
+        const checkAll = $el.hasClass('is-all')
+        const total = checkAll ? getCheckboxes().length : 0
+        handleCheckAllTotal($el, total)
+        getCheckboxes().prop('checked', checkAll)
+        setTotalSelected(getTotal())
+    }
 
     const generateTSVData = (selected, isAll) => {
         let _columns = columns.current
@@ -174,9 +180,7 @@ function BulkExport({ data, raw, columns, totalSelected, setTotalSelected, repla
 
 BulkExport.propTypes = {
     data: PropTypes.array.isRequired,
-    columns: PropTypes.object.isRequired,
-    totalSelected: PropTypes.any.isRequired,
-    setTotalSelected: PropTypes.func.isRequired
+    columns: PropTypes.object.isRequired
 }
 
 export default BulkExport

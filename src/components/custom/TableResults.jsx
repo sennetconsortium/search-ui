@@ -81,7 +81,6 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
     let pageData = []
     const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
     const currentColumns = useRef([])
-    const [totalSelected, setTotalSelected] = useState(0)
 
     createTheme('plain', {
         background: {
@@ -93,12 +92,12 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
     const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid), {})
 
 
-    const handleOnRowClicked = (row, event) => {
-        event.stopPropagation()
+    const handleOnRowClicked = (row, e) => {
+        e.stopPropagation()
         if (onRowClicked === undefined) {
             window.location = getHotLink(row)
         } else {
-            onRowClicked(event, row.uuid?.raw)
+            onRowClicked(e, row.uuid?.raw)
         }
     }
 
@@ -135,12 +134,13 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
         let cols = []
         if (!inModal) {
             cols.push({
-                name: <BulkExport data={children} raw={raw} columns={currentColumns} totalSelected={totalSelected} setTotalSelected={setTotalSelected} />,
+                ignoreRowClick: true,
+                name: <BulkExport data={children} raw={raw} columns={currentColumns} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => raw(row.sennet_id),
                 sortable: false,
-                format: column => <input type={'checkbox'} onClick={(e) => handleCheckbox(e, setTotalSelected)} value={getId(column)} name={`check-${getId(column)}`}/>
+                format: column => <input type={'checkbox'} onClick={(e) => handleCheckbox(e)} value={getId(column)} name={`check-${getId(column)}`}/>
             })
         }
 
