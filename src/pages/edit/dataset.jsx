@@ -275,7 +275,7 @@ export default function EditDataset() {
 
     const handleSubmit = async() => {
         const json = {
-            status: 'New',
+            status: 'Submitted'
         }
         await update_create_dataset(data.uuid, json, editMode).then((response) => {
             modalResponse(response)
@@ -481,7 +481,11 @@ export default function EditDataset() {
                                             <SenNetPopover text={<>Mark this <code>Dataset</code> as "Submitted" and ready for processing.</>} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Submit"}
-                                                    modalBody={<div>By clicking "Submit" this <code>Dataset</code> will have its status set to <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>.</div>}
+                                                    modalBody={<div>By clicking "Submit" this <code>Dataset</code> will
+                                                        have its status set to
+                                                        <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>
+                                                        and be ready for processing.
+                                                    </div>}
                                                     onClick={handleSubmit} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
@@ -494,7 +498,9 @@ export default function EditDataset() {
                                             <SenNetPopover text={<>Process this <code>Dataset</code> via the Ingest Pipeline.</>} className={'process-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Process"}
-                                                    modalBody={<div>By clicking "Process" this <code>Dataset</code> will be processed and its status set to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</div>}
+                                                    modalBody={<div>By clicking "Process" this <code>Dataset</code> will
+                                                        be processed via the Ingest Pipeline and its status set
+                                                        to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</div>}
                                                     onClick={hanldeProcessing} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
