@@ -123,7 +123,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
         handlePageChange(1, children.length)
         if (children.length) {
             for (let row of children) {
-                pageData.push({...row.props.result, id: row.props.result.sennet_id.raw})
+                pageData.push({...row.props.result, id: raw(row.props.result.sennet_id)})
             }
         }
         return pageData;
