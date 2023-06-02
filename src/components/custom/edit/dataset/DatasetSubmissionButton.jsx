@@ -24,20 +24,20 @@ export default class DatasetSubmissionButton extends React.Component {
             <>
                 <Button className="me-2" variant="outline-primary rounded-0" disabled={this.props.disableSubmit}
                         onClick={this.showModal}>
-                    Submit
+                    {this.props.btnLabel}
                 </Button>
 
                 <AppModal
                     className={`modal--ctaConfirm`}
                     showModal={this.state.showModal}
                     modalTitle={'Confirm Submission'}
-                    modalBody={<div>By clicking "Submit" this <code>Dataset</code> will be processed and its status set to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</div>}
+                    modalBody={this.props.modalBody}
                     handleClose={this.hideModal}
                     handleHome={() => {
                         this.props.onClick();
                         this.hideModal()
                     }}
-                    actionButtonLabel={'Submit'}
+                    actionButtonLabel={this.props.btnLabel}
                     actionBtnClassName={'js-btn--submit'}
                     showCloseButton={true}
                     closeButtonLabel={'Close'}
