@@ -210,6 +210,37 @@
       transform: translate(50%,-50%);
     }
   }
+}
 
+#sui-tbl-checkbox-actions {
+  code {
+    color: var(--bs-code-color);
+    word-wrap: break-word;
+    &:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+  position: absolute;
+  right: 0;
+  .dropdown {
+    * {
+      font-size: 0.8rem;
+    }
+    &-menu {
+      z-index: 10 !important;
+    }
+    &-item {
+      &:active {
+        background-color: transparent;
+        color: inherit;
+      }
+    }
+  }
+
+
+ .btn {
+   border: none !important;
+ }
 }
 

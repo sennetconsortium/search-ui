@@ -1,5 +1,12 @@
 .rdt {
   &_Results {
+    &--hascheckboxes {
+      @media (max-width: 859px) {
+        [data-column-id="1"] {
+          display: none;
+        }
+      }
+    }
     a {
       color: var(--bs-gray-700);
       &:hover {

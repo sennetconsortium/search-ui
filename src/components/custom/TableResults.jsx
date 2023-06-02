@@ -17,10 +17,12 @@ import {
     PagingInfo
 } from "@elastic/react-search-ui";
 import ClipboardCopy from "../ClipboardCopy";
+import BulkExport, {handleCheckAll, handleCheckbox} from "./BulkExport";
 
 
 const handlePagingInfo = (page, resultsPerPage, totalRows) => {
     try {
+        handleCheckAll()
         const $pgInfo = $('.sui-paging-info')
         let from = (page - 1) * resultsPerPage + 1
         let to = page * resultsPerPage
@@ -78,6 +80,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
     const hasLoaded = useRef(false)
     let pageData = []
     const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
+    const currentColumns = useRef([])
 
     createTheme('plain', {
         background: {
@@ -89,12 +92,12 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
     const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid), {})
 
 
-    const handleOnRowClicked = (row, event) => {
-        event.stopPropagation()
+    const handleOnRowClicked = (row, e) => {
+        e.stopPropagation()
         if (onRowClicked === undefined) {
             window.location = getHotLink(row)
         } else {
-            onRowClicked(event, row.uuid?.raw)
+            onRowClicked(e, row.uuid?.raw)
         }
     }
 
@@ -128,22 +131,33 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
     const getId = (column) => column.id || column.sennet_id
 
     const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn}) => {
-        let cols = [
+        let cols = []
+        if (!inModal) {
+            cols.push({
+                ignoreRowClick: true,
+                name: <BulkExport data={children} raw={raw} columns={currentColumns} />,
+                width: '100px',
+                className: 'text-center',
+                selector: row => raw(row.sennet_id),
+                sortable: false,
+                format: column => <input type={'checkbox'} onClick={(e) => handleCheckbox(e)} value={getId(column)} name={`check-${getId(column)}`}/>
+            })
+        }
+
+        cols.push(
             {
                 name: 'SenNet ID',
                 selector: row => raw(row.sennet_id),
                 sortable: true,
-                format: column => inModal ? getId(column) : <span><a href={getHotLink(column)}>{getId(column)}</a> <ClipboardCopy text={getId(column)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
-                // minWidth: '20%'
-
+                format: column => inModal ? getId(column) : <span data-field='sennet_id'><a href={getHotLink(column)}>{getId(column)}</a> <ClipboardCopy text={getId(column)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
             },
-        ]
+        )
         if (hasMultipleEntityTypes) {
             cols.push({
                 name: 'Entity Type',
                 selector: row => raw(row.entity_type),
                 sortable: true,
-                // maxWidth: '17%'
+                format: row => <span data-field='entity_type'>{raw(row.entity_type)}</span>,
             })
         }
         if (isLoggedIn || _isLoggedIn) {
@@ -152,8 +166,8 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 selector: row => {
                     return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
                 },
+                format: row => <span data-field='lab_id'>{raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)}</span>,
                 sortable: true,
-                // width: hasMultipleEntityTypes ? '25%' : '20%'
             })
         }
         cols = cols.concat(columns)
@@ -161,6 +175,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 name: 'Group',
                 selector: row => raw(row.group_name),
                 sortable: true,
+                format: row => <span data-field='group_name'>{raw(row.group_name)}</span>,
             })
         return cols;
     }
@@ -170,7 +185,6 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
             name: 'Type',
             selector: row => raw(row.source_type),
             sortable: true,
-            // width: '15%',
         }
     ]
 
@@ -179,13 +193,11 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
             name: 'Category',
             selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
             sortable: true,
-            // width: '15%',
         },
         {
             name: 'Organ',
             selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-            // width: '15%',
         }
     ]
 
@@ -199,13 +211,11 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 }
             },
             sortable: true,
-            // width: '17%'
         },
         {
             name: 'Organ',
             selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-            // width: '15%'
         },
         {
             name: 'Status',
@@ -257,7 +267,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
             })
             cols = cols[typeIndex]
         }
-
+        currentColumns.current = cols;
         return cols;
     }
 
@@ -270,6 +280,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
 
     return (
         <>
+
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
@@ -278,7 +289,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
             </div>
 
             {<DataTable key={`results-${new Date().getTime()}`}
-                                               className='rdt_Results'
+                                               className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''}`}
                                                columns={getTableColumns()}
                                                data={getTableData()}
                                                theme={'plain'}
