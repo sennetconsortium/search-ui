@@ -482,9 +482,9 @@ export default function EditDataset() {
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Submit"}
                                                     modalBody={<div>By clicking "Submit" this <code>Dataset</code> will
-                                                        have its status set to
-                                                        <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>
-                                                        and be ready for processing.
+                                                        have its status set to <Badge pill
+                                                                                      bg={getStatusColor('Submitted')}>Submitted</Badge> and
+                                                        be ready for processing.
                                                     </div>}
                                                     onClick={handleSubmit} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
