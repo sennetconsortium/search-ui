@@ -185,10 +185,7 @@ function EditSource() {
     }
 
 
-    const _onChange = (e, fieldId, value) => {
-        // log.debug('onChange', fieldId, value)
-        // use a callback to find the field in the value list and update it
-        onChange(e, fieldId, value)
+    const _onBlur = (e, fieldId, value) => {
 
         if (fieldId === 'protocol_url') {
             checkProtocolUrl(value)
@@ -248,7 +245,7 @@ function EditSource() {
                                         controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
                                                      className={warningClasses.protocol_url}
                                                      warningText={<>The supplied protocols.io DOI URL, formatting is correct but does not resolve. This will need to be corrected for any <code>Dataset</code> submission that uses this entity as an ancestor.</>}
-                                                     onChange={_onChange} text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>} />
+                                                     onChange={onChange} onBlur={_onBlur} text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>} />
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
