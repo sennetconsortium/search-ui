@@ -246,7 +246,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
             //width: hasMultipleEntityTypes ? '10%' : '12%',
         }
     ]
-
+    
     const getTableColumns = () => {
         let cols;
         if (checkFilterEntityType(filters) === false) {

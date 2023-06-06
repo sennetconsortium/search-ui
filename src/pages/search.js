@@ -41,6 +41,17 @@ function Search() {
         value: excludeDataTypes
     });
 
+    const [clearFacetInputs, setClearFacetInputs] = useState(0)
+
+    function handleClearFiltersClick() {
+        setClearFacetInputs(clearFacetInputs + 1)
+    }
+
+    function handleSearchFormSubmit(event, onSubmit) {
+        onSubmit(event)
+        setClearFacetInputs(clearFacetInputs + 1) 
+    }
+
     if (isAuthorizing()) {
         return <Spinner/>
     } else {
@@ -67,7 +78,7 @@ function Search() {
                                                 <div className="search-box-header js-gtm--search">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
-                                                            <Form onSubmit={onSubmit}>
+                                                            <Form onSubmit={e => handleSearchFormSubmit(e, onSubmit)}>
                                                                 <Form.Group controlId="search">
                                                                     <InputGroup>
                                                                         <Form.Control
@@ -75,11 +86,11 @@ function Search() {
                                                                             onChange={(e) => onChange(e.currentTarget.value)}
                                                                             className="form-control form-control-lg rounded-0"
                                                                             placeholder="Search"
-                                                                            autoFocus={true}
+                                                                            autoFocus={false}
                                                                         />
                                                                         <Button variant="outline-primary"
                                                                                 className={"rounded-0"}
-                                                                                onClick={onSubmit}>{_t('Search')}</Button>
+                                                                                onClick={e => handleSearchFormSubmit(e, onSubmit)}>{_t('Search')}</Button>
                                                                     </InputGroup>
                                                                 </Form.Group>
                                                             </Form>
@@ -89,12 +100,14 @@ function Search() {
                                             }
                                             sideContent={
                                                 <div data-js-ada='facets'>
-                                                    <CustomClearSearchBox/>
+                                                    <CustomClearSearchBox clearFiltersClick={handleClearFiltersClick} />
+
                                                     <SelectedFilters/>
 
-                                                    <Facets fields={config.searchQuery} filters={filters}
-                                                            transformFunction={getUBKGFullName}/>
-
+                                                    <Facets fields={config.searchQuery}
+                                                            filters={filters}
+                                                            transformFunction={getUBKGFullName}
+                                                            clearInputs={clearFacetInputs} />
                                                 </div>
 
                                             }
