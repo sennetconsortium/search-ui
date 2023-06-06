@@ -1,5 +1,5 @@
 import React from 'react';
-import {fetchProtocols, getClickableLink} from "../../js/functions";
+import {fetchProtocols, fetchProtocolView, getClickableLink} from "../../js/functions";
 import {Table} from 'react-bootstrap';
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 import SenNetAccordion from "../../layout/SenNetAccordion";
@@ -13,9 +13,12 @@ export default class Protocols extends React.Component {
     }
 
     async componentDidMount() {
-        await fetchProtocols(this.props.protocol_url).then((data) => {
-            this.setState({protocol_data: data})
-        });
+        let doiViewCheck = await fetchProtocolView(this.props.protocol_url)
+        if (doiViewCheck.ok) {
+            await fetchProtocols(this.props.protocol_url).then((data) => {
+                this.setState({protocol_data: data})
+            });
+        }
     }
 
     render() {
@@ -25,7 +28,7 @@ export default class Protocols extends React.Component {
                     {this.state.protocol_data != null &&
                         <thead>
                         <tr>
-                            <th>{this.state.protocol_data.title}</th>
+                            <th dangerouslySetInnerHTML={{__html: this.state.protocol_data.title?.stripTags()}} />
                         </tr>
                         </thead>
                     }

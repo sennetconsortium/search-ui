@@ -122,7 +122,7 @@ export default class AncestorId extends React.Component {
                                             }
                                             bodyContent={
                                                 <div className="js-gtm--results" data-js-ada='.rdt_TableCell'>
-                                                    <Results view={TableResults} filters={filters}
+                                                    <Results view={TableResults} filters={filters} inModal={true}
                                                              onRowClicked={this.changeSource}
                                                     />
                                                 </div>
