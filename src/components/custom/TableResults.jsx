@@ -20,6 +20,7 @@ import ClipboardCopy from "../ClipboardCopy";
 import BulkExport, {handleCheckAll, handleCheckbox} from "./BulkExport";
 
 
+
 const handlePagingInfo = (page, resultsPerPage, totalRows) => {
     try {
         handleCheckAll()
