@@ -236,7 +236,7 @@ export const config = {
                 uiType: 'daterange',
             },
             last_modified_timestamp: {
-                label: 'Last Modified Date',
+                label: 'Modification Date',
                 type: 'range',
                 field: 'last_modified_timestamp',
                 isExpanded: false,
