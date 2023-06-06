@@ -472,6 +472,7 @@ function EditSample() {
                                     {/*/!*Lab Sample ID*!/*/}
                                     <EntityFormGroup label='Lab Sample ID' placeholder='A non-PHI ID or deidentified name used by the lab when referring to the specimen'
                                                      controlId='lab_tissue_sample_id'
+                                                     isRequired={true}
                                                      value={data.lab_tissue_sample_id}
                                                      onChange={_onChange}
                                                      text='An identifier used internally by the lab to identify the specimen. This can be useful for lab members to identify and look-up Samples.'/>
