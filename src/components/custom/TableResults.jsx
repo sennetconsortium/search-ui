@@ -94,7 +94,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                 {isLoggedIn() && !hasSearch() && <span>No results to show.</span>}
                 {hasSearch() && <span>No results to show. Please check search filters/keywords and try again.</span>}
                 {!isLoggedIn() && !hasSearch() && <span>There are currently no published entities available to view.</span>}
-                {!isLoggedIn() && <span><br /> To view non-published data, please <a href={'/login'}>sign-in</a>.</span>}
+                {!isLoggedIn() && <span><br /> To view non-published data, please <a href={'/login'}>log in</a>.</span>}
             </div>
         )
     }
