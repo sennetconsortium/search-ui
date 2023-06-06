@@ -202,12 +202,14 @@ function EditSample() {
         // use a callback to find the field in the value list and update it
         onChange(e, fieldId, value)
 
-        if (fieldId === 'protocol_url') {
-            checkProtocolUrl(value)
-        }
-
         if (fieldId === 'direct_ancestor_uuid') {
             resetSampleCategory(e)
+        }
+    };
+
+    const _onBlur = (e, fieldId, value) => {
+        if (fieldId === 'protocol_url') {
+            checkProtocolUrl(value)
         }
     };
 
@@ -360,8 +362,7 @@ function EditSample() {
     }
 
     const metadataNote = () => {
-        {/*# TODO:  1. Update copy text and mailto, format. 2. Use ontology*/}
-        if (isEditMode() && values.metadata) {
+        if (isEditMode() && (values.metadata && Object.values(values.metadata).length)) {
             let text = []
             text.push(getMetadataNote(cache.entities.sample, 0))
             if (data.sample_category === values.sample_category) {
@@ -463,6 +464,7 @@ function EditSample() {
                                                      warningText={<>The supplied protocols.io DOI URL, formatting is correct but does not resolve. This will need to be corrected for any <code>Dataset</code> submission that uses this entity as an ancestor.</>}
                                                      popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                                      onChange={_onChange}
+                                                     onBlur={_onBlur}
                                                      text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see: <a
                                                          href="https://www.protocols.io/." target='_blank'
                                                          className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>}/>

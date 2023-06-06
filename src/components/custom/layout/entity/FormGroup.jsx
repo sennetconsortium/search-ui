@@ -6,7 +6,7 @@ import AppContext from '../../../../context/AppContext'
 import SenNetPopover from "../../../SenNetPopover";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-function EntityFormGroup({ controlId, label, text, onChange, value, type, placeholder, isRequired, pattern, popoverTrigger, className, warningText }) {
+function EntityFormGroup({ controlId, label, text, onChange, value, type, placeholder, isRequired, pattern, popoverTrigger, className, warningText, onBlur }) {
   const {_t } = useContext(AppContext)
   const isTextarea = (type === 'textarea')
 
@@ -22,9 +22,11 @@ function EntityFormGroup({ controlId, label, text, onChange, value, type, placeh
             </Form.Label>
             {!isTextarea && <Form.Control type={type}  defaultValue={value} placeholder={_t(placeholder)} required={isRequired}
                         pattern={pattern}
+                        onBlur={onBlur ? (e => onBlur(e, e.target.id, e.target.value)) : undefined}
                         onChange={e => onChange(e, e.target.id, e.target.value)} /> }
 
             {isTextarea && <Form.Control as={type} rows={4} defaultValue={value}
+                        onBlur={onBlur ? (e => onBlur(e, e.target.id, e.target.value)) : undefined}
                         onChange={e => onChange(e, e.target.id, e.target.value)} /> }
 
             {(className && className.indexOf('warning') !== -1) && <div className={'warning-icon-trigger'}>
