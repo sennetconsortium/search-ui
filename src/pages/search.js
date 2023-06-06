@@ -107,7 +107,6 @@ function Search() {
                                                     {wasSearched && 
                                                         <Facets fields={config.searchQuery}
                                                             filters={filters}
-                                                            wasSearched={wasSearched}
                                                             transformFunction={getUBKGFullName}
                                                             clearInputs={clearFacetInputs} />
                                                     }
