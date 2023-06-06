@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
-import {Button, Form} from 'react-bootstrap'
+import {Button, Form, Badge} from 'react-bootstrap'
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import {QuestionCircleFill} from 'react-bootstrap-icons'
@@ -12,7 +12,7 @@ import {
     equals,
     fetchEntity, fetchProtocols, fetchProtocolView,
     getDataTypesByProperty, getEntityViewUrl,
-    getRequestHeaders
+    getRequestHeaders, getStatusColor
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
 import DataTypes from '../../components/custom/edit/dataset/DataTypes'
@@ -38,6 +38,7 @@ import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
+import DatasetRevertButton from "../../components/custom/edit/dataset/DatasetRevertButton";
 
 export default function EditDataset() {
     const {
@@ -58,12 +59,11 @@ export default function EditDataset() {
         getSampleEntityConstraints,
         buildConstraint, successIcon, errIcon
     } = useContext(EntityContext)
-    const {_t, cache} = useContext(AppContext)
+    const {_t, cache, adminGroup} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
     const [dataTypes, setDataTypes] = useState(null)
-    const [doiCheckResultBody, setDoiCheckResultBody] = useState([])
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -162,6 +162,7 @@ export default function EditDataset() {
 
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
+                    'status': data.status,
                     'lab_dataset_id': data.lab_dataset_id,
                     'data_types': [data.data_types[0]],
                     'description': data.description,
@@ -217,6 +218,25 @@ export default function EditDataset() {
         log.debug(updated_ancestors);
     }
 
+    const modalResponse = (response) => {
+        setModalDetails({
+            entity: cache.entities.dataset,
+            type: (response.data_types ? response.data_types[0] : null),
+            typeHeader: _t('Data Type'),
+            response
+        })
+    }
+
+    const handleRevert = async () => {
+        const json = {
+            status: values.status,
+            contributors: []
+        }
+        await update_create_dataset(data.uuid, json, editMode).then((response) => {
+            modalResponse(response)
+        }).catch((e) => log.error(e))
+    }
+
     const checkDoi = async () => {
         try {
             setDisableSubmit(true)
@@ -252,8 +272,17 @@ export default function EditDataset() {
             log.error(e)
         }
     }
+
+    const handleSubmit = async() => {
+        const json = {
+            status: 'Submitted'
+        }
+        await update_create_dataset(data.uuid, json, editMode).then((response) => {
+            modalResponse(response)
+        }).catch((e) => log.error(e))
+    }
     
-    const handleSubmit = async () => {
+    const hanldeProcessing = async () => {
         let result = await checkDoi()
         if (result) {
             const requestOptions = {
@@ -301,13 +330,8 @@ export default function EditDataset() {
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
-                await update_create_dataset(uuid, json, editMode, router).then((response) => {
-                    setModalDetails({
-                        entity: cache.entities.dataset,
-                        type: (response.data_types ? response.data_types[0] : null),
-                        typeHeader: _t('Data Type'),
-                        response
-                    })
+                await update_create_dataset(uuid, json, editMode).then((response) => {
+                    modalResponse(response)
                 }).catch((e) => log.error(e))
             }
         }
@@ -345,7 +369,7 @@ export default function EditDataset() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={cache.entities.dataset} isEditMode={isEditMode()} data={data}/>
+                                <EntityHeader entity={cache.entities.dataset} isEditMode={isEditMode()} data={data} values={values} />
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} id="dataset-form">
@@ -435,17 +459,14 @@ export default function EditDataset() {
                                     {/*<MetadataUpload setMetadata={setMetadata} entity={cache.entities.dataset} />*/}
                                     
                                     <div className={'d-flex flex-row-reverse'}>
+
                                         <Button variant="outline-primary rounded-0 js-btn--cancel"
                                                 href={`/dataset?uuid=${router.query.uuid}`} >
                                             {_t('Cancel')}
                                         </Button>
-                                        { editMode === 'Edit' && data['status'] === 'New' &&
-                                            <SenNetPopover text={'Submit this dataset for processing'} className={'submit-dataset'}>
-                                                <DatasetSubmissionButton onClick={handleSubmit} disableSubmit={disableSubmit}/>
-                                            </SenNetPopover>
-                                        }
-                                        { data['status'] !== 'Processing' &&
-                                            <SenNetPopover text={'Save changes to this dataset'} className={'save-button'}>
+
+                                        {!equals(data['status'], 'Processing') &&
+                                            <SenNetPopover text={<>Save changes to this <code>Dataset</code>.</>} className={'save-button'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--save"
                                                         className={'me-2'}
                                                         onClick={handleSave}
@@ -453,6 +474,43 @@ export default function EditDataset() {
                                                     {_t('Save')}
                                                 </Button>
                                             </SenNetPopover>
+                                        }
+
+                                        {/*If the status for the Dataset is 'New' then allow the user to mark this as 'Submitted'*/}
+                                        { isEditMode() && equals(data['status'], 'New') &&
+                                            <SenNetPopover text={<>Mark this <code>Dataset</code> as "Submitted" and ready for processing.</>} className={'submit-dataset'}>
+                                                <DatasetSubmissionButton
+                                                    btnLabel={"Submit"}
+                                                    modalBody={<div>By clicking "Submit" this <code>Dataset</code> will
+                                                        have its status set to <Badge pill
+                                                                                      bg={getStatusColor('Submitted')}>Submitted</Badge> and
+                                                        be ready for processing.
+                                                    </div>}
+                                                    onClick={handleSubmit} disableSubmit={disableSubmit}/>
+                                            </SenNetPopover>
+                                        }
+
+                                        {/*
+                                         If a user is a data admin and the status is either 'New' or 'Submitted' allow this Dataset to be
+                                         processed via the pipeline.
+                                         */}
+                                         { adminGroup && isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Submitted')) &&
+                                            <SenNetPopover text={<>Process this <code>Dataset</code> via the Ingest Pipeline.</>} className={'process-dataset'}>
+                                                <DatasetSubmissionButton
+                                                    btnLabel={"Process"}
+                                                    modalBody={<div>By clicking "Process" this <code>Dataset</code> will
+                                                        be processed via the Ingest Pipeline and its status set
+                                                        to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</div>}
+                                                    onClick={hanldeProcessing} disableSubmit={disableSubmit}/>
+                                            </SenNetPopover>
+                                        }
+
+                                        {adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid')) && <SenNetPopover
+                                            text={<>Revert this <code>Dataset</code> back to <Badge pill bg={getStatusColor('New')}>New</Badge> or <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>  status.
+                                               </>}
+                                            className={'revert-button'}>
+                                                <DatasetRevertButton onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
+                                        </SenNetPopover>
                                         }
                                     </div>
                                     {getModal()}

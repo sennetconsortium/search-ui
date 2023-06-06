@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { goToSearch } from '../components/custom/js/functions'
 import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
-import { get_read_write_privileges } from '../lib/services'
+import {get_read_write_privileges, has_data_admin_privs} from '../lib/services'
 import {deleteCookies} from "../lib/auth";
 import {APP_ROUTES} from "../config/constants";
 import {getUIPassword} from "../config/config";
@@ -15,6 +15,7 @@ export const AppProvider = ({ cache, children }) => {
     const [isBusy, setIsBusy] = useState(false)
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const [authorized, setAuthorized] = useState(null)
+    const [adminGroup, setAdminGroup] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
     const [uiAdminAuthorized, setUIAuthorized] = useState(false)
     const [sidebarVisible, setSidebarVisible] = useState(false)
@@ -36,6 +37,13 @@ export const AppProvider = ({ cache, children }) => {
                     setAuthorized(response.read_privs)
                     setIsRegisterHidden(!response.write_privs)
                 }
+            })
+            .catch((error) => log.error(error))
+
+
+        has_data_admin_privs()
+            .then((response) => {
+                setAdminGroup(response.has_data_admin_privs)
             })
             .catch((error) => log.error(error))
     })
@@ -218,7 +226,8 @@ export const AppProvider = ({ cache, children }) => {
                 checkUIPassword,
                 supportedMetadata,
                 handleSidebar,
-                sidebarVisible
+                sidebarVisible,
+                adminGroup
             }}
         >
             {children}

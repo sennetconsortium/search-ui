@@ -3,22 +3,25 @@ import log from "loglevel";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
-export async function update_create_entity(uuid, body, action = "Edit", entity_type = null) {
+export async function update_create_entity(uuid, body, action = "Edit", entity_type = null, headers) {
     let raw = JSON.stringify(body)
     let url = getEntityEndPoint() + "entities/" + (action === 'Register' ? entity_type : uuid)
     let method = (action === 'Register' ? "POST" : "PUT")
 
-    return call_service(raw, url, method)
+    return call_service(raw, url, method, headers)
 }
 
 export async function update_create_dataset(uuid, body, action = "Edit") {
     if (action === 'Edit') {
-        return update_create_entity(uuid, body, action);
+        let headers = get_headers()
+        headers = get_x_sennet_header(headers)
+        return update_create_entity(uuid, body, action, null, headers);
     } else {
         let raw = JSON.stringify(body)
         let url = getIngestEndPoint() + "datasets" + (action === 'Register' ? '' : "/" + uuid + "/submit")
         let method = (action === 'Register' ? "POST" : "PUT")
         log.debug(url)
+
         return call_service(raw, url, method)
     }
 }
@@ -33,6 +36,12 @@ export function get_auth_header() {
     const headers = new Headers();
     headers.append("Authorization", "Bearer " + getAuth())
     return headers;
+}
+
+export function get_x_sennet_header(headers) {
+    headers = headers || new Headers();
+    headers.append('X-SenNet-Application', 'portal-ui')
+    return headers
 }
 
 export function get_headers() {
@@ -95,31 +104,10 @@ export async function get_read_write_privileges() {
     } catch (e) {
         console.error(e)
     }
-
 }
 
-export const write_privilege_for_group_uuid = (group_uuid) => get_write_privilege_for_group_uuid(group_uuid)
-
-export async function get_write_privilege_for_group_uuid(group_uuid) {
-    log.debug('GET WRITE PRIVILEGE FOR GROUP UUID')
-    const url = getIngestEndPoint() + 'privs/' + group_uuid + '/has-write'
-    const request_options = {
-        method: 'GET',
-        headers: get_headers()
-    }
-    const response = await fetch(url, request_options)
-    if (!response.ok) {
-        const message = `An error has occurred: ${response.status}`;
-        throw new Error(message);
-    }
-    let json = response.json()
-    return await json
-}
-
-export async function get_user_write_groups() {
-    log.debug('FETCHING USER WRITE GROUPS')
-
-    const url = getIngestEndPoint() + 'privs/' + 'user-write-groups'
+export async function call_privs_service(path) {
+    const url = getIngestEndPoint() + 'privs/' + path;
     const request_options = {
         method: 'GET',
         headers: get_headers()
@@ -134,10 +122,26 @@ export async function get_user_write_groups() {
     return await json
 }
 
-async function call_service(raw, url, method) {
+export async function has_data_admin_privs() {
+    log.debug('FETCHING DATA ADMIN PRIVS')
+    return await call_privs_service('has-data-admin')
+}
+
+export async function get_write_privilege_for_group_uuid(group_uuid) {
+    log.debug('GET WRITE PRIVILEGE FOR GROUP UUID')
+    return await call_privs_service(group_uuid + '/has-write')
+}
+
+export async function get_user_write_groups() {
+    log.debug('FETCHING USER WRITE GROUPS')
+    return await call_privs_service('user-write-groups')
+}
+
+async function call_service(raw, url, method, headers) {
+    headers = headers ? headers : get_headers()
     return await fetch(url, {
         method: method,
-        headers: get_headers(),
+        headers: headers,
         body: raw,
     }).then(response => response.json())
         .then(result => {

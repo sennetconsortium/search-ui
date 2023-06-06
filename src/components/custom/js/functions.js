@@ -128,7 +128,7 @@ export function getStatusColor(status) {
     if (status) {
         status = status.toUpperCase();
 
-        if (['NEW', 'REOPENED', 'QA', 'LOCKED', 'PROCESSING', 'HOLD'].includes(status)) {
+        if (['NEW', 'REOPENED', 'QA', 'LOCKED', 'PROCESSING', 'HOLD', 'SUBMITTED'].includes(status)) {
             return 'info';
         }
 
