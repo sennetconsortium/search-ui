@@ -108,7 +108,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                             href='#'
                             onClick={(e) => handleSession(e)}
                         >
-                            {isLoggedIn() ? _t('Sign-out') : _t('Sign-in')}
+                            {isLoggedIn() ? _t('Log out') : _t('Log in')}
                         </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

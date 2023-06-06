@@ -20,6 +20,7 @@ import ClipboardCopy from "../ClipboardCopy";
 import BulkExport, {handleCheckAll, handleCheckbox} from "./BulkExport";
 
 
+
 const handlePagingInfo = (page, resultsPerPage, totalRows) => {
     try {
         handleCheckAll()
@@ -236,7 +237,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
             <div className={'alert alert-warning text-center'} style={{padding: '24px'}}>
                 {hasSearch() && <span>No results to show. Please check search filters/keywords and try again.</span>}
                 {!isLoggedIn() && !hasSearch() && <span>There are currently no published entities available to view.</span>}
-                {!isLoggedIn() && <span><br /> To view non-published data, please <a href={'/login'}>sign-in</a>.</span>}
+                {!isLoggedIn() && <span><br /> To view non-published data, please <a href={'/login'}>log in</a>.</span>}
             </div>
         )
     }
