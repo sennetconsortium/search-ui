@@ -272,8 +272,17 @@ export default function EditDataset() {
             log.error(e)
         }
     }
+
+    const handleSubmit = async() => {
+        const json = {
+            status: 'Submitted'
+        }
+        await update_create_dataset(data.uuid, json, editMode).then((response) => {
+            modalResponse(response)
+        }).catch((e) => log.error(e))
+    }
     
-    const handleSubmit = async () => {
+    const hanldeProcessing = async () => {
         let result = await checkDoi()
         if (result) {
             const requestOptions = {
@@ -456,11 +465,6 @@ export default function EditDataset() {
                                             {_t('Cancel')}
                                         </Button>
 
-                                        { isEditMode() && equals(data['status'], 'New') &&
-                                            <SenNetPopover text={<>Submit this <code>Dataset</code> for processing.</>} className={'submit-dataset'}>
-                                                <DatasetSubmissionButton onClick={handleSubmit} disableSubmit={disableSubmit}/>
-                                            </SenNetPopover>
-                                        }
                                         {!equals(data['status'], 'Processing') &&
                                             <SenNetPopover text={<>Save changes to this <code>Dataset</code>.</>} className={'save-button'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--save"
@@ -469,6 +473,35 @@ export default function EditDataset() {
                                                         disabled={disableSubmit}>
                                                     {_t('Save')}
                                                 </Button>
+                                            </SenNetPopover>
+                                        }
+
+                                        {/*If the status for the Dataset is 'New' then allow the user to mark this as 'Submitted'*/}
+                                        { isEditMode() && equals(data['status'], 'New') &&
+                                            <SenNetPopover text={<>Mark this <code>Dataset</code> as "Submitted" and ready for processing.</>} className={'submit-dataset'}>
+                                                <DatasetSubmissionButton
+                                                    btnLabel={"Submit"}
+                                                    modalBody={<div>By clicking "Submit" this <code>Dataset</code> will
+                                                        have its status set to <Badge pill
+                                                                                      bg={getStatusColor('Submitted')}>Submitted</Badge> and
+                                                        be ready for processing.
+                                                    </div>}
+                                                    onClick={handleSubmit} disableSubmit={disableSubmit}/>
+                                            </SenNetPopover>
+                                        }
+
+                                        {/*
+                                         If a user is a data admin and the status is either 'New' or 'Submitted' allow this Dataset to be
+                                         processed via the pipeline.
+                                         */}
+                                         { adminGroup && isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Submitted')) &&
+                                            <SenNetPopover text={<>Process this <code>Dataset</code> via the Ingest Pipeline.</>} className={'process-dataset'}>
+                                                <DatasetSubmissionButton
+                                                    btnLabel={"Process"}
+                                                    modalBody={<div>By clicking "Process" this <code>Dataset</code> will
+                                                        be processed via the Ingest Pipeline and its status set
+                                                        to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</div>}
+                                                    onClick={hanldeProcessing} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
 

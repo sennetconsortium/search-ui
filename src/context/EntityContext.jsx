@@ -135,16 +135,16 @@ export const EntityProvider = ({ children }) => {
         let note;
         switch (noteKey) {
             case 0:
-                note = <>Metadata for this <code>{entity}</code> exists. </>
+                note = <span key={'md-0'}>Metadata for this <code>{entity}</code> exists. </span>
                 break
             case 1:
-                note = <>You may view it via <a target='_blank' className={'js-btn--json lnk--ic'} href={`/api/json/${entity.toLowerCase()}?uuid=${data.uuid}`}> the full entity JSON  <BoxArrowUpRight/></a>.</>
+                note = <span key={'md-1'}>You may view it via <a target='_blank' className={'js-btn--json lnk--ic'} href={`/api/json/${entity.toLowerCase()}?uuid=${data.uuid}`}> the full entity JSON  <BoxArrowUpRight/></a>.</span>
                 break
             case 2:
                 let prop = `${entity.toLowerCase()}_${field}`
                 let val = data[prop]
                 val = val[0].toUpperCase() + val.slice(1)
-                note =  <>Changing the <code>{entity}</code> {field} will result in loss of this metadata and cannot be undone once submitted. <br /> Please revert back to <span role={'button'} onClick={() => window.location = `#${prop}`}><code>{entity}</code> {field}</span> <code>{val}</code> to keep current metadata.</>
+                note =  <span key={'md-2'}>Changing the <code>{entity}</code> {field} will result in loss of this metadata and cannot be undone once submitted. <br /> Please revert back to <span role={'button'} onClick={() => window.location = `#${prop}`}><code>{entity}</code> {field}</span> <code>{val}</code> to keep current metadata.</span>
                 break
             default:
                 note = <></>
@@ -181,7 +181,7 @@ export const EntityProvider = ({ children }) => {
             const verb = isEditMode() ? 'Updated' : 'Registered'
             setHasSubmissionError(false)
             let body = []
-            setModalTitle(<span>{successIcon()}<span className={'title-text'} > {entity} {verb}</span></span>)
+            setModalTitle(<span key='title-0'>{successIcon()}<span key='title-1' className={'title-text'} > {entity} {verb}</span></span>)
             body.push(<span key='bdy-1'>{_t(`Your ${entity} was ${verb.toLocaleLowerCase()}`)}. <br /></span>)
             body.push(<span key='bdy-2'><strong>{_t(typeHeader)}:</strong> {type}<br /></span>)
             body.push(<span key='bdy-3'><strong>{_t('Group Name')}:</strong> {response.group_name}<br /></span>)

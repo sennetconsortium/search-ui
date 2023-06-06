@@ -50,14 +50,19 @@ export async function fetchProtocol(protocolUrl) {
 export async function fetchProtocolView(protocolUrl) {
     if (!protocolUrl) return null
     let uri = getClickableLink(protocolUrl)
-    let result = await fetchJsonp(uri, {
-        timeout: 2000,
-    }).then(function(json) {
-        return true
-    }).catch(function(resp) {
-        return resp.message.contains('timed out')
-    })
-    return {ok: result}
+    try {
+        let result = await fetchJsonp(uri, {
+            timeout: 2000,
+        }).then(function(json) {
+            return true
+        }).catch(function(resp) {
+            return resp.message.contains('timed out')
+        })
+        return {ok: result}
+    } catch (e) {
+        console.error(e)
+        return {ok: false}
+    }
 }
 
 export async function fetchProtocols(protocolUrl) {
