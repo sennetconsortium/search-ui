@@ -161,18 +161,17 @@ function EditSource() {
     const metadataNote = () => {
         let text = []
         text.push(getMetadataNote(cache.entities.source, 0))
-        if (equals(values.source_type, cache.sourceTypes.Human)) {
-            alertStyle.current = 'info'
-            if (values.metadata) {
-                text.push(getMetadataNote(cache.entities.source, 1))
-                return text
-            } else {
-                return <>Please send the <code>{values.source_type} Source</code> metadata to the <a href={`mailto:help@sennetconsortium.org`}>curator</a>. <br />
-                    <small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;
-                        <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.
-                    </small>
-                </>
-            }
+        const notEq = !equals(data.source_type, values.source_type)
+        alertStyle.current = notEq ? 'warning' : 'info'
+         if (equals(data.source_type, cache.sourceTypes.Human) && (!values.metadata || !Object.values(values.metadata).length) || notEq) {
+            return <>{notEq ? getMetadataNote(cache.entities.source, 0) : (<></>)} Please send the <code>{values.source_type} Source</code> metadata to the <a href={`mailto:help@sennetconsortium.org`}>curator</a>. <br />
+                <small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;
+                    <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.
+                </small>
+            </>
+        } else if (values.metadata) {
+            text.push(getMetadataNote(cache.entities.source, 1))
+            return text
         } else {
             if (isEditMode() && values.metadata && equals(data.source_type, cache.sourceTypes.Human)) {
                 alertStyle.current = 'warning'
