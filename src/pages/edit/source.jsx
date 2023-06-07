@@ -259,7 +259,7 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}*/}
+                                    { values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}
                                     <div className={'d-flex flex-row-reverse'}>
                                         <Button variant="outline-primary rounded-0 js-btn--cancel"
                                                 href={`/source?uuid=${router.query.uuid}`}>
