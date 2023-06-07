@@ -155,19 +155,21 @@ function EditSource() {
     };
 
     const supportsMetadata = () => {
+        //TODO: double check on support for cache.sourceTypes['Mouse Organoid'
         return values.source_type === cache.sourceTypes.Mouse
     }
 
     const metadataNote = () => {
         let text = []
         text.push(getMetadataNote(cache.entities.source, 0))
-        const notEq = !equals(data.source_type, values.source_type)
+        const notEq = !equals(data.source_type, values.source_type) && !equals(values.source_type, cache.sourceTypes['Mouse Organoid'])
         alertStyle.current = notEq ? 'warning' : 'info'
          if (equals(data.source_type, cache.sourceTypes.Human) && (!values.metadata || !Object.values(values.metadata).length) || notEq) {
-            return <>{notEq ? getMetadataNote(cache.entities.source, 0) : (<></>)} Please send the <code>{values.source_type} Source</code> metadata to the <a href={`mailto:help@sennetconsortium.org`}>curator</a>. <br />
-                <small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;
-                    <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.
-                </small>
+            return <>{notEq ? getMetadataNote(cache.entities.source, 0) : (<></>)} Please send the <code>{values.source_type} Source</code> metadata to the <a href={`mailto:help@sennetconsortium.org`}>curator</a>.
+                {/* <br /> //TODO: confirm fields for Human and upload to docs.sennetconsortium.org */}
+                {/*<small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;*/}
+                {/*    <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.*/}
+                {/*</small>*/}
             </>
         } else if (values.metadata) {
             text.push(getMetadataNote(cache.entities.source, 1))
