@@ -158,6 +158,11 @@ function EditSource() {
         return values.source_type === cache.sourceTypes.Mouse
     }
 
+    const curatorHandledMetadata = () => {
+        // TODO: check about Human Organoid
+        return equals(values.source_type, cache.sourceTypes.Human)
+    }
+
     const metadataNote = () => {
         let text = []
 
@@ -173,12 +178,12 @@ function EditSource() {
 
             if (notEq) {
                 text.push(getMetadataNote(cache.entities.source, 2, 'type'))
-                if (!equals(values.source_type, cache.sourceTypes.Human)) {
+                if (!curatorHandledMetadata()) {
                     text.push(noSupportMessage)
                 }
             }
 
-            if (equals(values.source_type, cache.sourceTypes.Human)) {
+            if (curatorHandledMetadata()) {
                 text.push(curatorMessage)
                 {/* text.push(<span>//TODO: confirm fields for Human and upload to docs.sennetconsortium.org */}
                 {/*<small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;*/}
@@ -189,11 +194,11 @@ function EditSource() {
         }  else {
             text = []
 
-            if (!supportsMetadata() && !equals(values.source_type, cache.sourceTypes.Human)) {
+            if (!supportsMetadata() && !curatorHandledMetadata()) {
                 alertStyle.current = 'warning'
                 text.push(noSupportMessage)
             }
-            if (equals(values.source_type, cache.sourceTypes.Human)) {
+            if (curatorHandledMetadata()) {
                 text.push(curatorMessage)
             }
             return text.length ? text : false
