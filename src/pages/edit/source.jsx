@@ -193,10 +193,6 @@ function EditSource() {
             return text
         }  else {
             text = []
-            if (!supportsMetadata() && !curatorHandledMetadata() && values.source_type) {
-                alertStyle.current = 'warning'
-                text.push(noSupportMessage)
-            }
             if (curatorHandledMetadata()) {
                 text.push(curatorMessage)
             }
