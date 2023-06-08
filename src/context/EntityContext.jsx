@@ -138,7 +138,7 @@ export const EntityProvider = ({ children }) => {
                 note = <span key={'md-0'}>Metadata for this <code>{entity}</code> exists. </span>
                 break
             case 1:
-                note = <span key={'md-1'}>You may view it via <a target='_blank' className={'js-btn--json lnk--ic'} href={`/api/json/${entity.toLowerCase()}?uuid=${data.uuid}`}> the full entity JSON  <BoxArrowUpRight/></a>.</span>
+                note = <span key={'md-1'}>You may view it via <a target='_blank' className={'js-btn--json lnk--ic'} href={`/api/json/${entity.toLowerCase()}?uuid=${data.uuid}`}> the full entity JSON  <BoxArrowUpRight/></a>. </span>
                 break
             case 2:
                 let prop = `${entity.toLowerCase()}_${field}`

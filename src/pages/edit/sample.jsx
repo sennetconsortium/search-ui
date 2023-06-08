@@ -365,9 +365,9 @@ function EditSample() {
         if (isEditMode() && (values.metadata && Object.values(values.metadata).length)) {
             let text = []
             text.push(getMetadataNote(cache.entities.sample, 0))
+            text.push(getMetadataNote(cache.entities.sample, 1))
             if (data.sample_category === values.sample_category) {
                 alertStyle.current = 'info'
-                text.push(getMetadataNote(cache.entities.sample, 1))
             } else {
                 alertStyle.current = 'warning'
                 text.push(getMetadataNote(cache.entities.sample, 2))
