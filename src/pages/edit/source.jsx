@@ -160,16 +160,22 @@ function EditSource() {
 
     const metadataNote = () => {
         let text = []
-        text.push(getMetadataNote(cache.entities.source, 0))
+
         const notEq = !equals(data.source_type, values.source_type)
-        const curatorMessage = <span key={'md-curator'}><br /> <br /><code>{values.source_type} Source</code> metadata must be sent through the <a href={`mailto:help@sennetconsortium.org`}>curator</a>. <br /></span>
+        const className = values.metadata ? 'mt-2 d-block' : ''
+        const curatorMessage = <span key={'md-curator'} className={className}><code>{values.source_type} Source</code> metadata must be sent through the <a href={`mailto:help@sennetconsortium.org`}>curator</a>. <br /></span>
+        const noSupportMessage = <span key={'md-no-support'} className={className}>This <code>Source</code> type <code>{values.source_type}</code> does not offer metadata support.</span>
         alertStyle.current = notEq && values.metadata ? 'warning' : 'info'
 
         if (values.metadata) {
+            text.push(getMetadataNote(cache.entities.source, 0))
             text.push(getMetadataNote(cache.entities.source, 1))
 
             if (notEq) {
                 text.push(getMetadataNote(cache.entities.source, 2, 'type'))
+                if (!equals(values.source_type, cache.sourceTypes.Human)) {
+                    text.push(noSupportMessage)
+                }
             }
 
             if (equals(values.source_type, cache.sourceTypes.Human)) {
@@ -181,7 +187,16 @@ function EditSource() {
             }
             return text
         }  else {
-            return false
+            text = []
+
+            if (!supportsMetadata() && !equals(values.source_type, cache.sourceTypes.Human)) {
+                alertStyle.current = 'warning'
+                text.push(noSupportMessage)
+            }
+            if (equals(values.source_type, cache.sourceTypes.Human)) {
+                text.push(curatorMessage)
+            }
+            return text.length ? text : false
         }
     }
 
