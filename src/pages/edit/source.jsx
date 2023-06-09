@@ -39,7 +39,7 @@ function EditSource() {
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
         metadata, setMetadata, checkMetadata, getMetadataNote, checkProtocolUrl,
-        warningClasses } = useContext(EntityContext)
+        warningClasses, getCancelBtn } = useContext(EntityContext)
     const { _t, filterImageFilesToAdd, cache } = useContext(AppContext)
 
     const router = useRouter()
@@ -283,10 +283,7 @@ function EditSource() {
 
                                     { values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--cancel"
-                                                href={`/source?uuid=${router.query.uuid}`}>
-                                            {_t('Cancel')}
-                                        </Button>
+                                        {getCancelBtn('source')}
                                         <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
                                                 disabled={disableSubmit}>
                                             {_t('Save')}

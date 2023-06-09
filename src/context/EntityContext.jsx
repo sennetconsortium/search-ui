@@ -11,6 +11,7 @@ import AppContext from './AppContext'
 import {equals, fetchProtocolView, getHeaders} from "../components/custom/js/functions";
 import {getEntityEndPoint} from "../config/config";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
+import {Button} from 'react-bootstrap'
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import ClipboardCopy from "../components/ClipboardCopy";
@@ -238,6 +239,16 @@ export const EntityProvider = ({ children }) => {
         setWarningClasses(values)
     }
 
+    const getCancelBtn = (entity) => {
+        const isRegister = router.query.uuid === 'register'
+        const url = isRegister ? APP_ROUTES.search : `/${entity}?uuid=${router.query.uuid}`
+        return (
+            <Button variant="outline-primary rounded-0 js-btn--cancel"
+                    href={url} > Cancel
+            </Button>
+        )
+    }
+
     const getModal = () => {
         return <AppModal
             className={`modal--ctaConfirm ${hasSubmissionError ? 'is-error' : ''}`}
@@ -275,7 +286,7 @@ export const EntityProvider = ({ children }) => {
                 dataAccessPublic, setDataAccessPublic,
                 getEntityConstraints, getSampleEntityConstraints, buildConstraint,
                 checkMetadata, getMetadataNote, successIcon, errIcon, checkProtocolUrl,
-                warningClasses, setWarningClasses
+                warningClasses, setWarningClasses, getCancelBtn
             }}
         >
             {children}
