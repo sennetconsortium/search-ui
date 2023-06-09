@@ -172,9 +172,9 @@ function EditSource() {
         const noSupportMessage = <span key={'md-no-support'} className={className}>This <code>Source</code> type <code>{values.source_type}</code> does not offer metadata submission support.</span>
         alertStyle.current = notEq && values.metadata ? 'warning' : 'info'
 
-        if (values.metadata) {
-            text.push(getMetadataNote(cache.entities.source, 0))
-            text.push(getMetadataNote(cache.entities.source, 1))
+        if (isEditMode() && values.metadata) {
+            text.push(getMetadataNote(cache.entities.source, 0, 'type'))
+            text.push(getMetadataNote(cache.entities.source, 1, 'type'))
 
             if (notEq) {
                 text.push(getMetadataNote(cache.entities.source, 2, 'type'))
@@ -193,7 +193,7 @@ function EditSource() {
             return text
         }  else {
             text = []
-            if (curatorHandledMetadata()) {
+            if (isEditMode() && curatorHandledMetadata()) {
                 text.push(curatorMessage)
             }
             return text.length ? text : false
