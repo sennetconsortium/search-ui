@@ -18,6 +18,7 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
 import ImageSelector from "../../components/custom/edit/ImageSelector";
+import SenNetAlert from "../../components/SenNetAlert";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
@@ -268,6 +269,11 @@ function EditSource() {
                                                      onChange={onChange} text={<>Free text field to enter a description of the <code>Source</code>.</>} />
 
                                     {metadataNote() && <Alert variant={alertStyle.current}><span>{metadataNote()}</span></Alert>}
+
+                                    {/* Deidentify images warning */}
+                                    <SenNetAlert className='deidentify-alert'
+                                                 text='Upload de-identified images only' />
+
                                     {/* Images */}
                                     <ImageSelector editMode={editMode}
                                                    values={values}
