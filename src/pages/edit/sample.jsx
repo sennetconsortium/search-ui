@@ -54,7 +54,7 @@ function EditSample() {
         dataAccessPublic, setDataAccessPublic,
         getSampleEntityConstraints,
         checkMetadata, getMetadataNote, checkProtocolUrl,
-        warningClasses
+        warningClasses, getCancelBtn
     } = useContext(EntityContext)
     const {_t, cache, filterImageFilesToAdd} = useContext(AppContext)
     const router = useRouter()
@@ -500,10 +500,7 @@ function EditSample() {
 
                                     { values.sample_category && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.sample} subType={values.sample_category}  /> }
                                     <div className={'d-flex flex-row-reverse'}>
-                                        <Button variant="outline-primary rounded-0 js-btn--cancel"
-                                                href={`/sample?uuid=${router.query.uuid}`} >
-                                            {_t('Cancel')}
-                                        </Button>
+                                        {getCancelBtn('sample')}
                                         <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
                                                 disabled={disableSubmit}>
                                             {_t('Save')}

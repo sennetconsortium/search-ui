@@ -43,7 +43,7 @@ export default function EditPublication() {
         editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
-        disableSubmit, setDisableSubmit,
+        disableSubmit, setDisableSubmit, getCancelBtn
     } = useContext(EntityContext)
     const {_t, cache} = useContext(AppContext)
     const router = useRouter()
@@ -324,6 +324,8 @@ export default function EditPublication() {
 
 
                                     <div className={'d-flex flex-row-reverse'}>
+
+                                        {getCancelBtn('publication')}
 
                                         { data['status'] !== 'Processing' &&
                                             <SenNetPopover text={'Save changes to this publication'} className={'save-button'}>
