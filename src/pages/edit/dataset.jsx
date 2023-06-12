@@ -57,7 +57,7 @@ export default function EditDataset() {
         dataAccessPublic, setDataAccessPublic,
         getEntityConstraints,
         getSampleEntityConstraints,
-        buildConstraint, successIcon, errIcon
+        buildConstraint, successIcon, errIcon, getCancelBtn
     } = useContext(EntityContext)
     const {_t, cache, adminGroup} = useContext(AppContext)
     const router = useRouter()
@@ -460,10 +460,7 @@ export default function EditDataset() {
                                     
                                     <div className={'d-flex flex-row-reverse'}>
 
-                                        <Button variant="outline-primary rounded-0 js-btn--cancel"
-                                                href={`/dataset?uuid=${router.query.uuid}`} >
-                                            {_t('Cancel')}
-                                        </Button>
+                                        {getCancelBtn('dataset')}
 
                                         {!equals(data['status'], 'Processing') &&
                                             <SenNetPopover text={<>Save changes to this <code>Dataset</code>.</>} className={'save-button'}>
