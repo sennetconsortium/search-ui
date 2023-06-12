@@ -1,4 +1,4 @@
-import {get_headers} from "../components/custom/js/functions";
+import {getHeadersWithoutContent} from "../components/custom/js/functions";
 
 export const kuppe2022nature = () => ({
     "version": "1.0.14",

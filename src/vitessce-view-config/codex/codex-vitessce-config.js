@@ -1,4 +1,4 @@
-import {get_headers, getHeaders} from "../../components/custom/js/functions";
+import {getHeadersWithoutContent} from "../../components/custom/js/functions";
 import {getAssetsEndpoint, getAuth} from "../../config/config";
 
 export const codex_config = (dataset_id) => ({
@@ -15,7 +15,7 @@ export const codex_config = (dataset_id) => ({
             "files": [
                 {
                     "requestInit": {
-                        "headers": get_headers()
+                        "headers": getHeadersWithoutContent()
                     },
                     "fileType": "anndata-cells.zarr",
                     "options": {
@@ -45,7 +45,7 @@ export const codex_config = (dataset_id) => ({
                 {
                     "fileType": "anndata-cell-sets.zarr",
                     "requestInit": {
-                        "headers": get_headers()
+                        "headers": getHeadersWithoutContent()
                     },
                     "options": [
                         {
@@ -83,7 +83,7 @@ export const codex_config = (dataset_id) => ({
                 {
                     "fileType": "anndata-expression-matrix.zarr",
                     "requestInit": {
-                        "headers": get_headers()
+                        "headers": getHeadersWithoutContent()
                     },
                     "options": {
                         "matrix": "X"
@@ -94,7 +94,7 @@ export const codex_config = (dataset_id) => ({
                 {
                     "fileType": "raster.json",
                     "requestInit": {
-                        "headers": get_headers()
+                        "headers": getHeadersWithoutContent()
                     },
                     "options": {
                         "images": [

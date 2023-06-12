@@ -12,7 +12,7 @@ export function getHeaders() {
     return myHeaders;
 }
 
-export function get_headers() {
+export function getHeadersWithoutContent() {
     return {
         "Content-Type": "Application/json",
         "Authorization": "Bearer " + getAuth()
