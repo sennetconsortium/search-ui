@@ -31,6 +31,7 @@ import Alert from 'react-bootstrap/Alert';
 import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/config";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
+import SenNetAlert from "../../components/SenNetAlert";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
@@ -485,7 +486,11 @@ function EditSample() {
                                                      text='Free text field to enter a description of the specimen'/>
 
                                     {metadataNote() && <Alert variant={alertStyle.current}><span>{metadataNote()}</span></Alert>}
-                                    
+
+                                    {/* Deidentify images warning */}
+                                    <SenNetAlert className='deidentify-alert'
+                                                 text='Upload de-identified images and thumbnails only' />
+
                                     {/* Images */}
                                     <ImageSelector editMode={editMode} 
                                                    values={values} 
