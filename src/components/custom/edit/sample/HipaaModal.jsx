@@ -1,8 +1,8 @@
 import React from "react";
 import Modal from 'react-bootstrap/Modal';
-import Alert from 'react-bootstrap/Alert';
 import {Button} from 'react-bootstrap';
-import {ShieldShaded} from 'react-bootstrap-icons';
+import SenNetAlert from '../../../SenNetAlert';
+
 
 export default class HipaaModal extends React.Component {
     constructor(props) {
@@ -22,12 +22,11 @@ export default class HipaaModal extends React.Component {
     render() {
         return (
             <>
-                <Alert variant='danger'>
-                    <span className="hipaa-alert">
-                        <ShieldShaded/> - Do not provide any Protected Health Information. This includes the <span
-                        className="link" onClick={this.showModal}>18 identifiers specified by HIPAA</span>
-                    </span>
-                </Alert>
+                <SenNetAlert className="hipaa-alert"
+                             text=<>Do not provide any Protected Health Information. This includes the <span className="link" onClick={this.showModal}>
+                                      18 identifiers specified by HIPAA</span>
+                                  </> />
+
                 <Modal size="xl" show={this.state.showModal} keyboard={false}>
                     <Modal.Body>
                         <ol>

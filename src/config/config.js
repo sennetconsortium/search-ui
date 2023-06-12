@@ -102,6 +102,10 @@ export function getRootURL() {
     return process.env.NEXT_PUBLIC_APP_ROOT_URL
 }
 
+export function getDocsRootURL() {
+    return process.env.NEXT_PUBLIC_DOCS_ROOT_URL
+}
+
 export function getLogoutURL() {
     return getIngestEndPoint() + APP_ROUTES.logout.slice(1)
 }
@@ -225,6 +229,24 @@ export const config = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+            },
+            created_timestamp: {
+                label: 'Creation Date',
+                type: 'range',
+                field: 'created_timestamp',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: true,
+                uiType: 'daterange',
+            },
+            last_modified_timestamp: {
+                label: 'Modification Date',
+                type: 'range',
+                field: 'last_modified_timestamp',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: true,
+                uiType: 'daterange',
             },
         },
         disjunctiveFacets: [],
