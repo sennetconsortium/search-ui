@@ -83,6 +83,25 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
     const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
     const currentColumns = useRef([])
 
+    const hasSearch = () => {
+        return filters.length > 0 || $('#search').val()?.length > 0
+    }
+
+    const getNoDataMessage = () => {
+        if (!hasLoaded.current) return (<></>)
+        return (
+            <div className={'alert alert-warning text-center'} style={{padding: '24px'}}>
+                {isLoggedIn() && !hasSearch() && <span>No results to show.</span>}
+                {hasSearch() && <span>No results to show. Please check search filters/keywords and try again.</span>}
+                {!isLoggedIn() && !hasSearch() && <span>There are currently no published entities available to view.</span>}
+                {!isLoggedIn() && <span><br /> To view non-published data, please <a href={'/login'}>log in</a>.</span>}
+            </div>
+        )
+    }
+
+    const [noResultsMessage, setNoResultsMessage] = useState(getNoDataMessage())
+
+
     createTheme('plain', {
         background: {
             default: 'transparent',
@@ -112,6 +131,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
 
     useEffect(() => {
         hasLoaded.current = true
+        setNoResultsMessage(getNoDataMessage())
         if (!forData) {
             log.debug('Results', children)
             handlePageChange(1, children.length)
@@ -227,21 +247,6 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
         }
     ]
 
-    const hasSearch = () => {
-        return filters.length > 0 || $('#search').val()?.length > 0
-    }
-
-    const getNoDataMessage = () => {
-        if (!hasLoaded.current) return (<></>)
-        return (
-            <div className={'alert alert-warning text-center'} style={{padding: '24px'}}>
-                {hasSearch() && <span>No results to show. Please check search filters/keywords and try again.</span>}
-                {!isLoggedIn() && !hasSearch() && <span>There are currently no published entities available to view.</span>}
-                {!isLoggedIn() && <span><br /> To view non-published data, please <a href={'/login'}>log in</a>.</span>}
-            </div>
-        )
-    }
-
     const getTableColumns = () => {
         let cols;
         if (checkFilterEntityType(filters) === false) {
@@ -297,7 +302,7 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
                                                defaultSortAsc={false}
                                                pointerOnHover={true}
                                                highlightOnHover={true}
-                                               noDataComponent={getNoDataMessage()}
+                                               noDataComponent={noResultsMessage}
                                                onChangePage={handlePageChange}
                                                onChangeRowsPerPage={handleRowsPerPageChange}
                                                onRowClicked={handleOnRowClicked}
