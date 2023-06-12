@@ -116,13 +116,6 @@ function ViewSource() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
-                                                <li className="nav-item">
-                                                    <a href="#Metadta"
-                                                       className="nav-link "
-                                                       data-bs-parent="#sidebar">Metadata</a>
-                                                </li>
-                                            }
                                             {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
                                                 <li className="nav-item">
                                                     <a href="#Derived-Datasets"
@@ -140,6 +133,13 @@ function ViewSource() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Protocols</a>
                                             </li>
+                                            {filteredMetadata &&
+                                                <li className="nav-item">
+                                                    <a href="#Metadata"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Metadata</a>
+                                                </li>
+                                            }
                                             <li className="nav-item">
                                                 <a href="#Attribution"
                                                    className="nav-link"
