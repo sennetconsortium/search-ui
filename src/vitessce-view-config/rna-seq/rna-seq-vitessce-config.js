@@ -1,4 +1,4 @@
-import {getHeaders} from "../../components/custom/js/functions";
+import {get_headers, getHeaders} from "../../components/custom/js/functions";
 import {getAssetsEndpoint} from "../../config/config";
 
 export const rna_seq = (dataset_id) => ({
@@ -34,12 +34,15 @@ export const rna_seq = (dataset_id) => ({
                         }
                     },
                     "requestInit": {
-                        "headers": getHeaders()
+                        "headers": get_headers()
                     },
                     "url": getAssetsEndpoint() + dataset_id + "/hubmap_ui/anndata-zarr/secondary_analysis.zarr"
                 },
                 {
                     "fileType": "anndata-cell-sets.zarr",
+                    "requestInit": {
+                        "headers": get_headers()
+                    },
                     "options": [
                         {
                             "groupName": "Leiden",
@@ -50,6 +53,9 @@ export const rna_seq = (dataset_id) => ({
                 },
                 {
                     "fileType": "anndata-expression-matrix.zarr",
+                    "requestInit": {
+                        "headers": get_headers()
+                    },
                     "options": {
                         "geneAlias": "var/hugo_symbol",
                         "matrix": "X",

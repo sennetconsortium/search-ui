@@ -1,4 +1,4 @@
-import {getHeaders} from "../../components/custom/js/functions";
+import {get_headers, getHeaders} from "../../components/custom/js/functions";
 import {getAssetsEndpoint, getAuth} from "../../config/config";
 
 export const codex_config = (dataset_id) => ({
@@ -15,7 +15,7 @@ export const codex_config = (dataset_id) => ({
             "files": [
                 {
                     "requestInit": {
-                        "headers": getHeaders()
+                        "headers": get_headers()
                     },
                     "fileType": "anndata-cells.zarr",
                     "options": {
@@ -44,6 +44,9 @@ export const codex_config = (dataset_id) => ({
                 },
                 {
                     "fileType": "anndata-cell-sets.zarr",
+                    "requestInit": {
+                        "headers": get_headers()
+                    },
                     "options": [
                         {
                             "groupName": "Cell K-Means [tSNE_All_Features]",
@@ -79,6 +82,9 @@ export const codex_config = (dataset_id) => ({
                 },
                 {
                     "fileType": "anndata-expression-matrix.zarr",
+                    "requestInit": {
+                        "headers": get_headers()
+                    },
                     "options": {
                         "matrix": "X"
                     },
@@ -87,6 +93,9 @@ export const codex_config = (dataset_id) => ({
                 },
                 {
                     "fileType": "raster.json",
+                    "requestInit": {
+                        "headers": get_headers()
+                    },
                     "options": {
                         "images": [
                             {
