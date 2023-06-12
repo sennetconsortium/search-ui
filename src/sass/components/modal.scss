@@ -2,6 +2,12 @@
   &-xxl {
     width: 80%;
     max-width: inherit;
+    margin-left: auto;
+    margin-right: auto;
+
+    @media (max-width: 768px) {
+      width: 98%;
+    }
   }
   &--ctaConfirm {
     .modal-title {

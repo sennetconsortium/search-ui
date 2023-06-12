@@ -104,10 +104,12 @@ function Search() {
 
                                                     <SelectedFilters/>
 
-                                                    <Facets fields={config.searchQuery}
+                                                    {wasSearched && 
+                                                        <Facets fields={config.searchQuery}
                                                             filters={filters}
                                                             transformFunction={getUBKGFullName}
                                                             clearInputs={clearFacetInputs} />
+                                                    }
                                                 </div>
 
                                             }

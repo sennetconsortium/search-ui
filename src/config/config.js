@@ -102,6 +102,10 @@ export function getRootURL() {
     return process.env.NEXT_PUBLIC_APP_ROOT_URL
 }
 
+export function getDocsRootURL() {
+    return process.env.NEXT_PUBLIC_DOCS_ROOT_URL
+}
+
 export function getLogoutURL() {
     return getIngestEndPoint() + APP_ROUTES.logout.slice(1)
 }
@@ -236,7 +240,7 @@ export const config = {
                 uiType: 'daterange',
             },
             last_modified_timestamp: {
-                label: 'Last Modified Date',
+                label: 'Modification Date',
                 type: 'range',
                 field: 'last_modified_timestamp',
                 isExpanded: false,
