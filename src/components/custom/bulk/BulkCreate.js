@@ -14,7 +14,7 @@ import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
 import {Row, Col, Stack} from "react-bootstrap";
 import {Download, ArrowRightSquareFill} from "react-bootstrap-icons";
-import {getIngestEndPoint} from "../../../config/config";
+import {getDocsRootURL, getIngestEndPoint} from "../../../config/config";
 import Spinner from "../Spinner";
 import AppFooter from "../layout/AppFooter";
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -25,6 +25,7 @@ import DataTable from 'react-data-table-component';
 import {createDownloadUrl, equals} from "../js/functions";
 import AppContext from "../../../context/AppContext";
 import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
+import { get } from 'lodash';
 
 
 export default function BulkCreate({
@@ -552,6 +553,23 @@ export default function BulkCreate({
         return isMetadata ? `metadata/${filename}_${subType}_metadata` : `entities/${filename}`
     }
 
+    const getDocsUrl = () => {
+        const url = new URL(getDocsRootURL());
+        url.pathname = isMetadata ? 'libraries/ingest-validation-tools/schemas' : 'bulk-registration' 
+        url.pathname += isMetadata ? `/${entityType}-${subType.toLowerCase()}` : `/${entityType}`
+        return url.href
+    }
+
+    const getDocsText  = () => {
+        const type = isMetadata ? subType : cache.entities[entityType]
+        const action = isMetadata ? 'Upload' : 'Registration'
+        const docsUrl = getDocsUrl()
+
+        return <>
+            See the <a className='link' href={docsUrl}>{type} Bulk {action}</a> page for further details.
+        </>
+    }
+
     return (
         <div className='main-wrapper'>
             <Container sx={{mt: 5}}>
@@ -568,8 +586,9 @@ export default function BulkCreate({
                         <FileDownloadIcon/> {' '} EXAMPLE.TSV
                     </a>
                     <h1 className={'text-center'}>{getTitle()}</h1>
-                    <div className={'p-4 text-center'}>To register multiple items at one time, upload a tsv file in the
-                        format specified by the example file.
+                    <div className={'p-4 text-center'}>
+                        To register multiple items at one time, upload a tsv file in the format specified by the example file.<br/>
+                        {getDocsText()}
                     </div>
                     <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector/>}>
                         {
