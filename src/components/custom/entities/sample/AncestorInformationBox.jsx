@@ -32,6 +32,14 @@ export default class AncestorInformationBox extends React.Component {
                             </Card.Body>
                         </Card>
                     }
+                    {this.props.ancestor.lab_tissue_sample_id &&
+                        <Card border={'0'} className={'pb-3'}>
+                            <Card.Body>
+                                <Card.Subtitle>Lab ID</Card.Subtitle>
+                                <Card.Text>{this.props.ancestor.lab_tissue_sample_id}</Card.Text>
+                            </Card.Body>
+                        </Card>
+                    }
                     {this.props.ancestor.source_type &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
