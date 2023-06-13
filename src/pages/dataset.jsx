@@ -55,11 +55,12 @@ function ViewDataset() {
                     switch (assay) {
                         case 'snRNA-seq':
                         case 'scRNA-seq':
-                        case 'scRNA-seq (10x Genomics) [Salmon]':
-                        case 'snRNA-seq [Salmon]':
+                        case 'salmon_rnaseq_10x':
+                        case 'salmon_sn_rnaseq_10x':
                             setVitessceConfig(rna_seq(dataset_id))
                             break
                         case 'codex_cytokit':
+                        case 'codex_cytokit_v1':
                         case 'CODEX':
                             setVitessceConfig(codex_config(dataset_id))
                             break
