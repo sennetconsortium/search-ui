@@ -571,7 +571,7 @@ export default function BulkCreate({
     }
 
     return (
-        <div className='main-wrapper'>
+        <div className='main-wrapper' data-js-ada='modal'>
             <Container sx={{mt: 5}}>
                 <Box sx={{
                     backgroundColor: 'white',

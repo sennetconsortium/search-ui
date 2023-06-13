@@ -1,6 +1,5 @@
 import Addon from './Addon'
 import GoogleTagManager from './GoogleTagManager'
-import AppModal from './AppModal'
 import Ada from './Ada'
 import Tooltip from './Tooltip'
 
@@ -20,7 +19,6 @@ function addons(source, args= null) {
 
     let apps = {
         gtm: GoogleTagManager,
-        modal: AppModal,
         ada: Ada,
         tooltip: Tooltip
     }

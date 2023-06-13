@@ -159,29 +159,45 @@ function EditSource() {
         return values.source_type === cache.sourceTypes.Mouse
     }
 
+    const curatorHandledMetadata = () => {
+        // TODO: check about Human Organoid
+        return equals(values.source_type, cache.sourceTypes.Human)
+    }
+
     const metadataNote = () => {
         let text = []
-        text.push(getMetadataNote(cache.entities.source, 0))
-        if (equals(values.source_type, cache.sourceTypes.Human)) {
-            alertStyle.current = 'info'
-            if (values.metadata) {
-                text.push(getMetadataNote(cache.entities.source, 1))
-                return text
-            } else {
-                return <>Please send the <code>{values.source_type} Source</code> metadata to the <a href={`mailto:help@sennetconsortium.org`}>curator</a>. <br />
-                    <small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;
-                        <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.
-                    </small>
-                </>
-            }
-        } else {
-            if (isEditMode() && values.metadata && equals(data.source_type, cache.sourceTypes.Human)) {
-                alertStyle.current = 'warning'
+
+        const notEq = !equals(data.source_type, values.source_type)
+        const className = values.metadata ? 'mt-2 d-block' : ''
+        const curatorMessage = <span key={'md-curator'} className={className}><code>{values.source_type} Source</code> metadata must be sent through the <a href={`mailto:help@sennetconsortium.org`}>curator</a>. <br /></span>
+        const noSupportMessage = <span key={'md-no-support'} className={className}>This <code>Source</code> type <code>{values.source_type}</code> does not offer metadata submission support.</span>
+        alertStyle.current = notEq && values.metadata ? 'warning' : 'info'
+
+        if (isEditMode() && values.metadata) {
+            text.push(getMetadataNote(cache.entities.source, 0, 'type'))
+            text.push(getMetadataNote(cache.entities.source, 1, 'type'))
+
+            if (notEq) {
                 text.push(getMetadataNote(cache.entities.source, 2, 'type'))
-                return text
-            } else {
-                return false
+                if (!curatorHandledMetadata()) {
+                    text.push(noSupportMessage)
+                }
             }
+
+            if (curatorHandledMetadata()) {
+                text.push(curatorMessage)
+                {/* text.push(<span>//TODO: confirm fields for Human and upload to docs.sennetconsortium.org */}
+                {/*<small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;*/}
+                {/*    <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.*/}
+                {/*</small><br /></span>)*/}
+            }
+            return text
+        }  else {
+            text = []
+            if (isEditMode() && curatorHandledMetadata()) {
+                text.push(curatorMessage)
+            }
+            return text.length ? text : false
         }
     }
 
@@ -265,7 +281,7 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    {/*{ values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}*/}
+                                    { values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}
                                     <div className={'d-flex flex-row-reverse'}>
                                         {getCancelBtn('source')}
                                         <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
