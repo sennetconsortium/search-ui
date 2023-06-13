@@ -162,6 +162,7 @@ function ViewSource() {
                                                          primaryDate={data.created_timestamp}
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
+                                                         labId={data.lab_source_id}
                                             />
 
                                             {/*Derived Dataset*/}
