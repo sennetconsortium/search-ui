@@ -67,10 +67,10 @@ function Search() {
                 <Header title={APP_TITLE}/>
 
                 <SearchProvider config={config}>
-                    <WithSearch mapContextToProps={({wasSearched, filters, setFilter}) => ({wasSearched, filters, setFilter})}>
-                        {({wasSearched, filters, setFilter}) => {
+                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter}) => ({wasSearched, filters, addFilter, removeFilter})}>
+                        {({wasSearched, filters, addFilter, removeFilter}) => {
                             return (
-                                <div onLoad={(e) => Sui.applyFilters(setFilter)}>
+                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter)}>
                                     <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
