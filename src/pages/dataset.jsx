@@ -197,7 +197,7 @@ function ViewDataset() {
                                                 data={data}/>
 
                                             {/* Vitessce */}
-                                            {/*<SennetVitessce data={data}/>*/}
+                                            <SennetVitessce data={data}/>
 
                                             {/*Provenance*/}
                                             {data &&
