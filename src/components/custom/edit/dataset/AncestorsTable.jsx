@@ -20,7 +20,9 @@ export default class AncestorsTable extends React.Component {
                 <thead>
                 <tr>
                     <th>Ancestor ID</th>
+                    <th>Entity Type</th>
                     <th>Subtype</th>
+                    <th>Lab ID</th>
                     <th>Group Name</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -31,7 +33,9 @@ export default class AncestorsTable extends React.Component {
                     return (
                         <tr key={index}>
                             <td>{ancestor.sennet_id}</td>
+                            <td>{ancestor.entity_type}</td>
                             <td>{ancestor?.display_subtype}</td>
+                            <td>{ancestor?.lab_tissue_sample_id || ancestor?.lab_dataset_id}</td>
                             <td>{ancestor.group_name}</td>
                             <td><Badge pill bg={getStatusColor(ancestor?.status)}>{ancestor?.status}</Badge></td>
                             <td><Button className="pt-0 pb-0" variant="link" onClick={() => this.deleteAncestor(this, ancestor.uuid)}><TrashFill
