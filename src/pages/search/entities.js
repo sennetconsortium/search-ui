@@ -8,7 +8,7 @@ import {
 } from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
 import Facets from "search-ui/components/core/Facets";
-import {TableResults} from '../../components/custom/TableResults'
+import {TableResultsEntities} from '../../components/custom/TableResultsEntities'
 import {APP_TITLE} from "../../config/config";
 import {SEARCH_ENTITIES} from "../../config/search/entities"
 import AppNavbar from "../../components/custom/layout/AppNavbar";
@@ -119,7 +119,7 @@ function SearchEntities() {
                                             bodyContent={
                                                 <div className="js-gtm--results sui-resultsTable" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
                                                     {wasSearched && <Results filters={filters} titleField={filters}
-                                                                             view={TableResults}
+                                                                             view={TableResultsEntities}
                                                     />}
                                                     {!wasSearched && <Spinner /> }
                                                 </div>
