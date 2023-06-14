@@ -8,7 +8,7 @@ import {
 } from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
 import Facets from "search-ui/components/core/Facets";
-import {TableResultsEntities} from '../../components/custom/TableResultsEntities'
+import {TableResultsFiles} from '../../components/custom/TableResultsFiles'
 import {APP_TITLE} from "../../config/config";
 import {SEARCH_FILES} from "../../config/search/files"
 import AppNavbar from "../../components/custom/layout/AppNavbar";
@@ -119,7 +119,7 @@ function SearchFiles() {
                                             bodyContent={
                                                 <div className="js-gtm--results sui-resultsTable" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
                                                     {wasSearched && <Results filters={filters} titleField={filters}
-                                                                             view={TableResultsEntities}
+                                                                             view={TableResultsFiles}
                                                     />}
                                                     {!wasSearched && <Spinner /> }
                                                 </div>

@@ -19,6 +19,9 @@ export const SEARCH_FILES = {
             value: "Publication"
         }
         ],
+        result_fields: {
+          path: {raw: {}}
+        },
         facets: {
             entity_type: {
                 label: 'Entity Type',
@@ -67,19 +70,18 @@ export const SEARCH_FILES = {
 
         },
         search_fields: {
+            path: {type: 'value'},
             description: {type: 'value'},
             group_name: {type: 'value'},
             sennet_id: {type: 'value'},
-            lab_name: {type: 'value'},
             created_by_user_displayname: {type: 'value'},
             created_by_user_email: {type: 'value'}
-            // "mapped_metadata.race": {type: "value"},
-            // "mapped_metadata.sex": {type: "value"},
         },
         source_fields: [
             'sennet_id',
             'entity_type',
             'uuid',
+            'path',
             'created_by_user_displayname',
             'created_by_user_email',
             'lab_tissue_sample_id',
