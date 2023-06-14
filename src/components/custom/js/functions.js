@@ -211,7 +211,7 @@ export function gotToLogin() {
 
 export function getEntityViewUrl(entity, uuid, {isEdit = false}) {
     const pre = isEdit ? '/edit' : ''
-    return pre + "/" + entity.toLowerCase() + "?uuid=" + uuid
+    return pre + "/" + entity?.toLowerCase() + "?uuid=" + uuid
 }
 
 

@@ -9,7 +9,8 @@ import {
 import {Layout} from "@elastic/react-search-ui-views";
 import Facets from "search-ui/components/core/Facets";
 import {TableResults} from '../../components/custom/TableResults'
-import {APP_TITLE, config} from "../../config/config";
+import {APP_TITLE} from "../../config/config";
+import {SEARCH_ENTITIES} from "../../config/search/entities"
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import Header from "../../components/custom/layout/Header";
@@ -37,7 +38,7 @@ function SearchEntities() {
     // Return an array of data types that should be excluded from search
     const excludeDataTypes = getDataTypesByProperty("vis-only", true)
     console.log(excludeDataTypes)
-    config['searchQuery']['excludeFilters'].push({
+    SEARCH_ENTITIES['searchQuery']['excludeFilters'].push({
         keyword: "data_types.keyword",
         value: excludeDataTypes
     });
@@ -66,7 +67,7 @@ function SearchEntities() {
             <>
                 <Header title={APP_TITLE}/>
 
-                <SearchProvider config={config}>
+                <SearchProvider config={SEARCH_ENTITIES}>
                     <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter}) => ({wasSearched, filters, addFilter, removeFilter})}>
                         {({wasSearched, filters, addFilter, removeFilter}) => {
                             return (
@@ -107,7 +108,7 @@ function SearchEntities() {
                                                     <SelectedFilters/>
 
                                                     {wasSearched &&
-                                                        <Facets fields={config.searchQuery}
+                                                        <Facets fields={SEARCH_ENTITIES.searchQuery}
                                                                 filters={filters}
                                                                 transformFunction={getUBKGFullName}
                                                                 clearInputs={clearFacetInputs} />
