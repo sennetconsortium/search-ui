@@ -1,0 +1,2 @@
+source_id	strain	strain_rrid	sex	is_embryo	date_of_birth_or_fertilization	is_deceased	date_of_death	euthanization_method	local_lifespan_data	room_health_status	room_temperature	rack_setup	light_cycle	bedding	diet	water_source	cage_enhancements
+SNT587.FFJH.878	C57BL/6J-Kit<W-39J>	RRID:MGI:3713213	M	FALSE	2020-01-01 12:00	FALSE		Carbon dioxide asphixiation	1	Pathogen free		Biocontainment	Standard/default	Aspen chip	grains	tap	Nestlets

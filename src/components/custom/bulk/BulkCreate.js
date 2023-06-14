@@ -543,7 +543,8 @@ export default function BulkCreate({
         const entity = cache.entities[entityType]
         let title = `${getVerb()} ${entity}s`
         if (isMetadata) {
-            title = `${getVerb()} ${entity} ${subType}s' Metadata`
+            const subTypeText = equals(subType, cache.sourceTypes.Mouse) ? "Mice's" : `${subType}s'`
+            title = `${getVerb()} ${entity} ${subTypeText} Metadata`
         }
         return title
     }
