@@ -8,7 +8,7 @@ const AppModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, sh
     const [size, setSize] = useState(modalSize)
     const {_t} = useContext(AppContext)
     return (
-        <section data-js-modal id='js-modal' >
+        <section data-js-ada='modal' id='js-modal'>
             <Modal
                 className={className}
                     show={showModal}

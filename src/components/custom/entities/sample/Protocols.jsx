@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {fetchProtocols, fetchProtocolView, getClickableLink} from "../../js/functions";
-import {Table} from 'react-bootstrap';
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 import SenNetAccordion from "../../layout/SenNetAccordion";
+import Card from 'react-bootstrap/Card';
 
 export default class Protocols extends React.Component {
     constructor(props) {
@@ -24,33 +24,35 @@ export default class Protocols extends React.Component {
     render() {
         return (
             <SenNetAccordion title={'Protocols'}>
-                <Table borderless>
-                    {this.state.protocol_data != null &&
-                        <thead>
-                        <tr>
-                            <th dangerouslySetInnerHTML={{__html: this.state.protocol_data.title?.stripTags()}} />
-                        </tr>
-                        </thead>
-                    }
-                    <tbody>
-                    <tr>
-                        <td>
-                            <span className={"title"}>DOI</span><br></br>
+                {this.state.protocol_data != null &&
+                    <Card border={'0'} className={'pb-3'}>
+                        <Card.Body>
+                            <Card.Subtitle
+                                dangerouslySetInnerHTML={{__html: this.state.protocol_data.title?.stripTags()}}/>
+                        </Card.Body>
+                    </Card>
+                }
+
+                <Card border={'0'} className={'pb-3'}>
+                    <Card.Body>
+                        <Card.Subtitle className={"title"}>DOI</Card.Subtitle>
+                        <Card.Text>
                             <a href={getClickableLink(this.props.protocol_url)}
                                className="icon_inline" target="_blank"><span
                                 className="me-1">{this.props.protocol_url}</span> <BoxArrowUpRight/></a>
-                        </td>
-                    </tr>
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
 
-                    {this.state.protocol_data != null &&
-                        <>
-                            <tr>
-                                <td>
-                                    <span className={"title"}>Authors</span><br></br>
-                                    <span>
-                            {this.state.protocol_data.authors.map((author, index, array) => {
-                                return (
-                                    <span key={index}>
+                {this.state.protocol_data != null &&
+                    <Fragment>
+                        <Card border={'0'} className={'pb-3'}>
+                            <Card.Body>
+                                <Card.Subtitle className={"title"}>Authors</Card.Subtitle>
+                                <Card.Text>
+                                    {this.state.protocol_data.authors.map((author, index, array) => {
+                                        return (
+                                            <span key={index}>
                                         {author.username != "" ? (
                                                 <a href={`https://www.protocols.io/researchers/${author.username}`}
                                                    className="icon_inline" target="_blank">
@@ -59,16 +61,18 @@ export default class Protocols extends React.Component {
                                             ) :
                                             <>{author.name}</>
                                         }
-                                        {index !== array.length - 1 ? <>, </> : <></>}
+                                                {index !== array.length - 1 ? <>, </> : <></>}
                                     </span>
-                                );
-                            })}
-                        </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span className={"title"}>Abstract</span><br></br>
+                                        );
+                                    })}
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+
+                        <Card border={'0'} className={'pb-3'}>
+                            <Card.Body>
+                                <Card.Subtitle className={"title"}>Abstract</Card.Subtitle>
+                                <Card.Text>
                                     {JSON.parse(this.state.protocol_data.description).blocks.map((block, index, array) => {
                                         return (
                                             <span key={index}>
@@ -79,12 +83,12 @@ export default class Protocols extends React.Component {
                                             </span>
                                         )
                                     })}
-                                </td>
-                            </tr>
-                        </>
-                    }
-                    </tbody>
-                </Table>
+                                </Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </Fragment>
+                }
+
             </SenNetAccordion>
         )
     }

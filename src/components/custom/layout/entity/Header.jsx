@@ -3,6 +3,7 @@ import {Col, Container, Row, Badge} from 'react-bootstrap'
 import AppContext from '../../../../context/AppContext'
 import HipaaModal from "../../edit/sample/HipaaModal";
 import {getStatusColor} from "../../js/functions";
+import ClipboardCopy from "../../../ClipboardCopy";
 
 function EntityHeader({entity, data, isEditMode, values, showGroup = true}) {
   const {_t } = useContext(AppContext)
@@ -14,7 +15,7 @@ function EntityHeader({entity, data, isEditMode, values, showGroup = true}) {
         {isEditMode &&
             <>
                 <Row>
-                    <Col md={6}><h5>{_t('SenNet ID')}: {data.sennet_id}</h5></Col>
+                    <Col md={6}><h5>{_t('SenNet ID')}: {data.sennet_id}<ClipboardCopy text={data.sennet_id} /></h5></Col>
                     {showGroup && <Col md={6}><h5>{_t('Group')}: {data.group_name}</h5></Col> }
                 </Row>
                 <Row>

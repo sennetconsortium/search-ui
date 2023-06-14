@@ -55,10 +55,12 @@ function ViewDataset() {
                     switch (assay) {
                         case 'snRNA-seq':
                         case 'scRNA-seq':
-                        case 'scRNA-seq (10x Genomics) [Salmon]':    
+                        case 'salmon_rnaseq_10x':
+                        case 'salmon_sn_rnaseq_10x':
                             setVitessceConfig(rna_seq(dataset_id))
                             break
                         case 'codex_cytokit':
+                        case 'codex_cytokit_v1':
                         case 'CODEX':
                             setVitessceConfig(codex_config(dataset_id))
                             break
@@ -192,11 +194,13 @@ function ViewDataset() {
                                     <div className="row">
                                         <div className="col-12">
                                             {/*Description*/}
-                                            <Description primaryDateTitle="Publication Date"
-                                                         primaryDate={data.published_timestamp}
-                                                         secondaryDateTitle="Modification Date"
-                                                         secondaryDate={data.last_modified_timestamp}
-                                                         data={data}/>
+                                            <Description
+                                                primaryDateTitle={data.published_timestamp ? ("Publication Date") : ("Creation Date")}
+                                                primaryDate={data.published_timestamp ? (data.published_timestamp) : (data.created_timestamp)}
+                                                labId={data.lab_dataset_id}
+                                                secondaryDateTitle="Modification Date"
+                                                secondaryDate={data.last_modified_timestamp}
+                                                data={data}/>
 
                                             {/* Vitessce */}
                                             <SennetVitessce data={data}/>

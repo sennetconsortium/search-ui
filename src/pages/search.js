@@ -21,6 +21,7 @@ import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import SelectedFilters from "../components/custom/layout/SelectedFilters";
 import {getDataTypesByProperty, getUBKGFullName} from "../components/custom/js/functions";
+import {Sui} from "search-ui/lib/search-tools";
 
 function Search() {
     const {
@@ -44,6 +45,7 @@ function Search() {
     const [clearFacetInputs, setClearFacetInputs] = useState(0)
 
     function handleClearFiltersClick() {
+        Sui.clearFilters()
         setClearFacetInputs(clearFacetInputs + 1)
     }
 
@@ -65,10 +67,10 @@ function Search() {
                 <Header title={APP_TITLE}/>
 
                 <SearchProvider config={config}>
-                    <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
-                        {({wasSearched, filters}) => {
+                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter}) => ({wasSearched, filters, addFilter, removeFilter})}>
+                        {({wasSearched, filters, addFilter, removeFilter}) => {
                             return (
-                                <div>
+                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter)}>
                                     <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
