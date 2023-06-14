@@ -44,20 +44,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                     />{' '}
                     {APP_TITLE}
                 </Navbar.Brand>
-
-
-                {/*<Navbar.Brand*/}
-                {/*    href={APP_ROUTES.search}*/}
-                {/*    className={'d-flex align-items-center'}*/}
-                {/*>*/}
-                {/*    <Image*/}
-                {/*        src={logo}*/}
-                {/*        width="42"*/}
-                {/*        height="42"*/}
-                {/*        alt={_t("SenNet logo")}*/}
-                {/*    />*/}
-                {/*    <div className={'ms-2 fs-3'}>{APP_TITLE}</div>*/}
-                {/*</Navbar.Brand>*/}
+                
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse>
                     <Nav className={'me-auto'}>
