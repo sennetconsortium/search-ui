@@ -138,6 +138,9 @@ function TableResults({children, filters, onRowClicked, forData = false, rowFn, 
         }
     }, [])
 
+    useEffect(() => {
+        setNoResultsMessage(getNoDataMessage())
+    }, [filters])
 
     const getTableData = () => {
         pageData = []
