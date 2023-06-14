@@ -8,22 +8,22 @@ import {
 } from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
 import Facets from "search-ui/components/core/Facets";
-import {TableResults} from '../components/custom/TableResults'
-import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
-import AppNavbar from "../components/custom/layout/AppNavbar";
-import AppFooter from "../components/custom/layout/AppFooter";
-import Header from "../components/custom/layout/Header";
-import CustomClearSearchBox from "../components/custom/layout/CustomClearSearchBox";
+import {TableResults} from '../../components/custom/TableResults'
+import {APP_TITLE, config} from "../../config/config";
+import AppNavbar from "../../components/custom/layout/AppNavbar";
+import AppFooter from "../../components/custom/layout/AppFooter";
+import Header from "../../components/custom/layout/Header";
+import CustomClearSearchBox from "../../components/custom/layout/CustomClearSearchBox";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import Spinner from "../components/custom/Spinner";
-import AppContext from "../context/AppContext";
-import SelectedFilters from "../components/custom/layout/SelectedFilters";
-import {getDataTypesByProperty, getUBKGFullName} from "../components/custom/js/functions";
+import Spinner from "../../components/custom/Spinner";
+import AppContext from "../../context/AppContext";
+import SelectedFilters from "../../components/custom/layout/SelectedFilters";
+import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
 import {Sui} from "search-ui/lib/search-tools";
 
-function Search() {
+function SearchEntities() {
     const {
         _t,
         cache,
@@ -51,7 +51,7 @@ function Search() {
 
     function handleSearchFormSubmit(event, onSubmit) {
         onSubmit(event)
-        setClearFacetInputs(clearFacetInputs + 1) 
+        setClearFacetInputs(clearFacetInputs + 1)
     }
 
     if (isAuthorizing()) {
@@ -106,11 +106,11 @@ function Search() {
 
                                                     <SelectedFilters/>
 
-                                                    {wasSearched && 
+                                                    {wasSearched &&
                                                         <Facets fields={config.searchQuery}
-                                                            filters={filters}
-                                                            transformFunction={getUBKGFullName}
-                                                            clearInputs={clearFacetInputs} />
+                                                                filters={filters}
+                                                                transformFunction={getUBKGFullName}
+                                                                clearInputs={clearFacetInputs} />
                                                     }
                                                 </div>
 
@@ -118,7 +118,7 @@ function Search() {
                                             bodyContent={
                                                 <div className="js-gtm--results sui-resultsTable" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
                                                     {wasSearched && <Results filters={filters} titleField={filters}
-                                                             view={TableResults}
+                                                                             view={TableResults}
                                                     />}
                                                     {!wasSearched && <Spinner /> }
                                                 </div>
@@ -137,4 +137,4 @@ function Search() {
     }
 }
 
-export default Search
+export default SearchEntities

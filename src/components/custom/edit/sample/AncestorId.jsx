@@ -15,7 +15,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
-import {exclude_dataset_config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../../config/config";
+import {exclude_dataset_config} from "../../../../config/config";
 import Facets from "search-ui/components/core/Facets";
 import {TableResults} from '../../TableResults';
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
