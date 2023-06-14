@@ -32,7 +32,7 @@ export const SennetVitessce = ({ data }) => {
                     <div className={'col p-2 m-2'}>
                         <span className={'fw-light fs-6'}>Powered by
                             <a className={'ms-2'} target="_blank" href="http://vitessce.io/" rel="noopener noreferrer" title={'Vitessce.io'}>
-                                Vitessce V1.2.2
+                                Vitessce V3.0.0
                             </a>
                         </span>
                     </div>
