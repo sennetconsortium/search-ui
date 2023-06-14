@@ -35,13 +35,7 @@ function SearchFiles() {
         hasAuthenticationCookie
     } = useContext(AppContext);
 
-    // Return an array of data types that should be excluded from search
-    const excludeDataTypes = getDataTypesByProperty("vis-only", true)
-    console.log(excludeDataTypes)
-    SEARCH_FILES['searchQuery']['excludeFilters'].push({
-        keyword: "data_types.keyword",
-        value: excludeDataTypes
-    });
+
 
     const [clearFacetInputs, setClearFacetInputs] = useState(0)
 

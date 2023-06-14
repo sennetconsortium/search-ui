@@ -43,22 +43,37 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
 
         cols.push(
             {
-                name: 'ID',
+                name: 'Data Types',
                 selector: row => {
-                    return row.id
+                    let val = raw(row.data_types)
+                    if (val) {
+                        return Array.isArray(val) ? getUBKGFullName(val[0]) : val
+                    }
                 },
                 sortable: true,
-            },
+            }
         )
 
         cols.push(
             {
                 name: 'Path',
-                selector: row => raw(row.path),
+                selector: row => raw(row.rel_path),
                 sortable: true,
-                format: column => <span data-field='path'>{column.path}</span>,
-            },
+                format: row => <a data-field='path' href={'#'}>{raw(row.rel_path)}</a>,
+            }
         )
+
+        cols.push(
+            {
+                name: 'Size',
+                selector: row => raw(row.size),
+                sortable: true,
+                format: row => <span>{(raw(row.size)/ 1024).toFixed(2)} mb</span>
+            }
+        )
+
+
+
 
 
         cols = cols.concat(columns)

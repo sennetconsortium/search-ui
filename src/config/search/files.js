@@ -11,54 +11,43 @@ const connector = new SearchAPIConnector({
 export const SEARCH_FILES = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
-        excludeFilters: [{
-            keyword: "entity_type.keyword",
-            value: "Collection"
-        }, {
-            keyword: "entity_type.keyword",
-            value: "Publication"
-        }
-        ],
-        result_fields: {
-          path: {raw: {}}
-        },
+        excludeFilters: [],
         facets: {
-            entity_type: {
-                label: 'Entity Type',
+            file_extension: {
+                label: 'File Type',
                 type: 'value',
-                field: 'entity_type.keyword',
+                field: 'file_extension.keyword',
                 filterType: 'any',
                 isFilterable: false,
             },
-            group_name: {
-                label: 'Data Provider Group',
+            // organs: {
+            //     label: 'Organs',
+            //     type: 'value',
+            //     field: 'organs.keyword',
+            //     isExpanded: false,
+            //     filterType: 'any',
+            //     isFilterable: false,
+            // },
+            sample_category: {
+                label: 'Sample Category',
                 type: 'value',
-                field: 'group_name.keyword',
+                field: 'samples.type.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            created_by_user_displayname: {
-                label: 'Registered By',
+            data_types: {
+                label: 'Data Type',
                 type: 'value',
-                field: 'created_by_user_displayname.keyword',
+                field: 'data_types.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            created_timestamp: {
-                label: 'Creation Date',
-                type: 'range',
-                field: 'created_timestamp',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: true,
-                uiType: 'daterange',
-            },
-            last_modified_timestamp: {
+            file_info_refresh_timestamp: {
                 label: 'Modification Date',
                 type: 'range',
-                field: 'last_modified_timestamp',
+                field: 'file_info_refresh_timestamp',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: true,
@@ -67,34 +56,26 @@ export const SEARCH_FILES = {
         },
         disjunctiveFacets: [],
         conditionalFacets: {
-
         },
         search_fields: {
-            path: {type: 'value'},
-            description: {type: 'value'},
-            group_name: {type: 'value'},
-            sennet_id: {type: 'value'},
-            created_by_user_displayname: {type: 'value'},
-            created_by_user_email: {type: 'value'}
+            rel_path: {type: 'value'}
         },
         source_fields: [
-            'sennet_id',
-            'entity_type',
-            'uuid',
-            'path',
-            'created_by_user_displayname',
-            'created_by_user_email',
-            'lab_tissue_sample_id',
-            'lab_source_id',
-            'lab_dataset_id',
-            'group_name',
-            'last_modified_timestamp'
+            'checksum',
+            'data_types',
+            'donors',
+            'file_extension',
+            'file_info_refresh_timestamp',
+            'organs',
+            'rel_path',
+            'samples',
+            'size'
         ],
     },
     initialState: {
         resultsPerPage: 10000,
         sortList: [{
-            field: "last_modified_timestamp",
+            field: "source.file_info_refresh_timestamp",
             direction: "desc"
         }]
     },
