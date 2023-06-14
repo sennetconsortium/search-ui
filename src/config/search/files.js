@@ -28,7 +28,7 @@ export const SEARCH_FILES = {
             //     filterType: 'any',
             //     isFilterable: false,
             // },
-            sample_category: {
+            'samples.type': {
                 label: 'Sample Category',
                 type: 'value',
                 field: 'samples.type.keyword',
@@ -58,7 +58,8 @@ export const SEARCH_FILES = {
         conditionalFacets: {
         },
         search_fields: {
-            rel_path: {type: 'value'}
+            rel_path: {type: 'value'},
+            'samples.type': {type: 'value'}
         },
         source_fields: [
             'checksum',

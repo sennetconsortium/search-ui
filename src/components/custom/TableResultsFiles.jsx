@@ -43,6 +43,20 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
 
         cols.push(
             {
+                name: 'Sample Type',
+                selector: row => {
+                    let val = raw(row.samples)
+                    if (val) {
+                        return Array.isArray(val) ? val[0].type : val.type
+                    }
+                },
+                sortable: true,
+            }
+        )
+
+
+        cols.push(
+            {
                 name: 'Data Types',
                 selector: row => {
                     let val = raw(row.data_types)
