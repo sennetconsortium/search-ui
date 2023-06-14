@@ -1,5 +1,5 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
-import {APP_TITLE, getLogoutURL} from '../../../config/config'
+import {APP_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
 import {useContext} from 'react'
 import logo from './sennet-logo.png'
@@ -34,18 +34,30 @@ const AppNavbar = ({hidden, signoutHidden}) => {
             className={`sticky-top bg--navBarGrey`}
         >
             <Container fluid={true}>
-                <Navbar.Brand
-                    href={APP_ROUTES.search}
-                    className={'d-flex align-items-center'}
-                >
+                <Navbar.Brand href={APP_ROUTES.search}>
                     <Image
-                        src={logo}
-                        width="42"
-                        height="42"
                         alt={_t("SenNet logo")}
-                    />
-                    <div className={'ms-2 fs-3'}>{APP_TITLE}</div>
+                        src={logo}
+                        width="30"
+                        height="30"
+                        className="d-inline-block align-top"
+                    />{' '}
+                    {APP_TITLE}
                 </Navbar.Brand>
+
+
+                {/*<Navbar.Brand*/}
+                {/*    href={APP_ROUTES.search}*/}
+                {/*    className={'d-flex align-items-center'}*/}
+                {/*>*/}
+                {/*    <Image*/}
+                {/*        src={logo}*/}
+                {/*        width="42"*/}
+                {/*        height="42"*/}
+                {/*        alt={_t("SenNet logo")}*/}
+                {/*    />*/}
+                {/*    <div className={'ms-2 fs-3'}>{APP_TITLE}</div>*/}
+                {/*</Navbar.Brand>*/}
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse>
                     <Nav className={'me-auto'}>
@@ -84,19 +96,22 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                             id="nav-dropdown--bulkMetadata">
                             {Object.keys(supportedMetadata()).map((entity, key) => (
                                 <div key={`dropdownItem-md-${entity}`}>
-                                { key !== 0 && <NavDropdown.Divider  /> }
-                                    <NavDropdown.Item className='dropdown-item is-heading' aria-controls={`submenu-md-${entity}`}>
+                                    {key !== 0 && <NavDropdown.Divider/>}
+                                    <NavDropdown.Item className='dropdown-item is-heading'
+                                                      aria-controls={`submenu-md-${entity}`}>
                                         {entity}s
                                     </NavDropdown.Item>
 
-                                   <div className={'submenu'} id={`submenu-md-${entity}`}>
-                                       {Object.entries(supportedMetadata()[entity].categories).map((type, typekey) => (
-                                           <NavDropdown.Item key={`submenuItem-md-${type[1]}`} href={`/edit/bulk/${entity.toLowerCase()}?action=metadata&category=${type[1]}`} className={'is-subItem'}>
-                                               <span>{type[1]}</span>
-                                           </NavDropdown.Item>
+                                    <div className={'submenu'} id={`submenu-md-${entity}`}>
+                                        {Object.entries(supportedMetadata()[entity].categories).map((type, typekey) => (
+                                            <NavDropdown.Item key={`submenuItem-md-${type[1]}`}
+                                                              href={`/edit/bulk/${entity.toLowerCase()}?action=metadata&category=${type[1]}`}
+                                                              className={'is-subItem'}>
+                                                <span>{type[1]}</span>
+                                            </NavDropdown.Item>
 
-                                       ))}
-                                   </div>
+                                        ))}
+                                    </div>
                                 </div>
                             ))}
                         </NavDropdown>

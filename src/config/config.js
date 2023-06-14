@@ -4,7 +4,7 @@ import {APP_ROUTES} from './constants'
 
 import _ from 'lodash';
 
-export const APP_TITLE = 'SenNet - Data Sharing Portal'
+export const APP_TITLE = 'Data Sharing Portal'
 
 // Set this to be the time in milliseconds
 export const IDLE_TIMEOUT = 1000 * 60 * 60
