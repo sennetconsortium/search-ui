@@ -230,7 +230,10 @@ export default function EditDataset() {
     const handleRevert = async () => {
         const json = {
             status: values.status,
-            contributors: []
+            contributors: [],
+            pipeline_message: "",
+            ingest_id: "",
+            run_id: ""
         }
         await update_create_dataset(data.uuid, json, editMode).then((response) => {
             modalResponse(response)
@@ -369,7 +372,7 @@ export default function EditDataset() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={cache.entities.dataset} isEditMode={isEditMode()} data={data} values={values} />
+                                <EntityHeader entity={cache.entities.dataset} isEditMode={isEditMode()} data={data} values={values} adminGroup={adminGroup} />
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} id="dataset-form">
