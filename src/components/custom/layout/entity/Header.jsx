@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import {Col, Container, Row, Badge} from 'react-bootstrap'
 import AppContext from '../../../../context/AppContext'
 import HipaaModal from "../../edit/sample/HipaaModal";
-import {getStatusColor} from "../../js/functions";
+import {equals, getStatusColor} from "../../js/functions";
 import ClipboardCopy from "../../../ClipboardCopy";
 import SenNetAlert from "../../../SenNetAlert";
 import {ExclamationTriangleFill} from 'react-bootstrap-icons'
@@ -15,7 +15,7 @@ function EntityHeader({entity, data, isEditMode, values, showGroup = true, admin
         <Row md={12}>
             <h4>{_t(`${entity} Information`)} {values && values.status && <Badge pill bg={getStatusColor(values.status)}>{values.status}</Badge>}</h4>
         </Row>
-        {adminGroup && data.pipeline_message &&
+        {adminGroup && data.pipeline_message && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid')) &&
             <SenNetAlert className={"h6"} variant={'warning'} text={data.pipeline_message} icon={<ExclamationTriangleFill/>}/>
         }
         {isEditMode &&
