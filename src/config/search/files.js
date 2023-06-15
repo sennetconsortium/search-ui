@@ -62,6 +62,7 @@ export const SEARCH_FILES = {
             'samples.type': {type: 'value'}
         },
         source_fields: [
+            'sennet_id',
             'checksum',
             'data_types',
             'donors',

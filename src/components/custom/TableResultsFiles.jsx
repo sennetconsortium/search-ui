@@ -3,13 +3,9 @@ import PropTypes from 'prop-types'
 import {
     checkFilterEntityType,
     checkMultipleFilterEntityType,
-    displayBodyHeader, equals, getEntityViewUrl, getUBKGFullName,
-    getStatusColor
+    getEntityViewUrl, getUBKGFullName,
 } from './js/functions'
 import AppContext from "../../context/AppContext"
-import log from 'loglevel'
-import Badge from 'react-bootstrap/Badge'
-import ClipboardCopy from "../ClipboardCopy";
 import BulkExport, {handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
 import ResultsBlock from "./search/ResultsBlock";
@@ -32,7 +28,7 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
         if (!inModal) {
             cols.push({
                 ignoreRowClick: true,
-                name: <BulkExport data={children} raw={raw} columns={currentColumns} />,
+                name: <BulkExport data={children} raw={raw} columns={currentColumns} exportKind={'manifest'} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => row.id,
