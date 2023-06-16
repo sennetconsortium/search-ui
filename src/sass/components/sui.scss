@@ -114,6 +114,9 @@
   padding: 32px 0 32px 32px;
 }
 
+.sui-facet__title--FileType + .sui-facet {
+  text-transform: uppercase;
+}
 // Handle sidebar on smaller screens
 @media (max-width: 859px) {
   .sui-layout-main {
