@@ -107,9 +107,18 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                 </div>
                             ))}
                         </NavDropdown>
-                        <Nav.Link href={equals(window.location.pathname, APP_ROUTES.searchFiles) ? APP_ROUTES.search : APP_ROUTES.searchFiles}>
-                            {equals(window.location.pathname, APP_ROUTES.searchFiles) ? _t('Entity search') : _t('File search')}
-                        </Nav.Link>
+                        <NavDropdown active={false}
+                                     variant={'primary'}
+                                     hidden={hidden}
+                                     title="Search"
+                                     id="nav-dropdown--search">
+                            <NavDropdown.Item key={`dd-search-entity`} href={APP_ROUTES.search}>
+                                <span>Entity</span>
+                            </NavDropdown.Item>
+                            <NavDropdown.Item key={`dd-search-file`} href={APP_ROUTES.searchFiles}>
+                                <span>File</span>
+                            </NavDropdown.Item>
+                        </NavDropdown>
                         <Nav.Link href={'https://docs.sennetconsortium.org/'}>
                             {_t('Documentation')}
                         </Nav.Link>
