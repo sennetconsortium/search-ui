@@ -128,6 +128,7 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
         <>
             <TableResultsProvider getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
+                    disableRowClick={true}
                     getTableColumns={getTableColumns}
                 />
             </TableResultsProvider>

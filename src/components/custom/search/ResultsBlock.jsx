@@ -7,7 +7,7 @@ import {
 } from "@elastic/react-search-ui";
 import TableResultsContext from "../../../context/TableResultsContext";
 
-function ResultsBlock({getTableColumns}) {
+function ResultsBlock({getTableColumns, disableRowClick}) {
 
     const {
         getTableData,
@@ -51,7 +51,7 @@ function ResultsBlock({getTableColumns}) {
                         noDataComponent={noResultsMessage}
                         onChangePage={handlePageChange}
                         onChangeRowsPerPage={handleRowsPerPageChange}
-                        onRowClicked={handleOnRowClicked}
+                        onRowClicked={!disableRowClick ? handleOnRowClicked : undefined}
                         paginationPerPage={resultsPerPage}
                         paginationRowsPerPageOptions={Object.keys(opsDict)}
                         pagination/>}
