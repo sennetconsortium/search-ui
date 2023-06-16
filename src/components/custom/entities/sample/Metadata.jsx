@@ -36,15 +36,22 @@ export default class Metadata extends React.Component {
         const tableDataTSV = tableDataToTSV(this.props.data);
         const downloadURL = createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
         return (
-            <SenNetAccordion title={'Metadata'} afterTitle={<div className="w-100 pe-4">
-                <a href={downloadURL} download={`${this.props.filename}.tsv`}
-                   className="float-end"><span
-                    className="btn btn-primary" role='button' aria-label='Download Metadata' title='Download Metadata'><Download/></span></a>
-            </div>}>
-                <DataTable
-                    columns={this.columns}
-                    data={this.data}
-                    pagination/>
+            <SenNetAccordion title={'Metadata'}>
+                <div className="w-100">
+                    <a href={downloadURL}
+                       download={`${this.props.filename}.tsv`}
+                       className="float-end">
+                        <span className="btn btn-primary"
+                              role='button'
+                              aria-label='Download Metadata'
+                              title='Download Metadata'>
+                            <Download/>
+                        </span>
+                    </a>
+                </div>
+                <DataTable columns={this.columns}
+                           data={this.data}
+                           pagination/>
             </SenNetAccordion>
         )
     }

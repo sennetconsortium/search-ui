@@ -32,6 +32,14 @@ class Ada extends Addon {
         }).bind(this))
     }
 
+    modal() {
+        $(window).on('keydown', ((e) => {
+            Addon.log('Ada > Modal')
+            if (this.isEsc(e)) {
+                $('.modal-footer .btn').eq(0).click()
+            }
+        }).bind(this));
+    }
 
     events(sel, sel2) {
         sel = sel || this._el

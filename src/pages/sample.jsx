@@ -144,6 +144,7 @@ function ViewSample() {
                                                          primaryDate={data.created_timestamp}
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
+                                                         labId={data.lab_tissue_sample_id}
                                             />
 
                                             {/*Derived Dataset*/}

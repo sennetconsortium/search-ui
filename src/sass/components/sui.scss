@@ -229,6 +229,7 @@
     }
     &-menu {
       z-index: 10 !important;
+      min-width: 180px;
     }
     &-item {
       &:active {

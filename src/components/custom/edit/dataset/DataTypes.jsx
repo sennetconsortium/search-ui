@@ -80,7 +80,7 @@ export default class DataTypes extends React.Component {
                                 <option value="">----</option>
                                 {this.props.data_types.map(data_type => {
                                     return (
-                                        <option key={data_type} value={data_type}>
+                                        <option key={data_type} value={data_type.trim()}>
                                             {getUBKGFullName(data_type)}
                                         </option>
                                     );
