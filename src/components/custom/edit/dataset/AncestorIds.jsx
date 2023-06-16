@@ -25,6 +25,7 @@ import $ from 'jquery'
 import SelectedFilters from "../../layout/SelectedFilters";
 import {getDataTypesByProperty, getUBKGFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
+import {Sui} from "search-ui/lib/search-tools";
 
 export default class AncestorIds extends React.Component {
     constructor(props) {
@@ -40,6 +41,11 @@ export default class AncestorIds extends React.Component {
             keyword: "data_types.keyword",
             value: excludeDataTypes
         });
+    }
+
+    handleClearFiltersClick = () => {
+        Sui.clearFilters()
+        //TODO: add setClearFacetInputs(clearFacetInputs + 1) ?
     }
 
     showModal = () => {
@@ -143,7 +149,7 @@ export default class AncestorIds extends React.Component {
                                             }
                                             sideContent={
                                                 <div data-js-ada='facets'>
-                                                    <CustomClearSearchBox/>
+                                                    <CustomClearSearchBox clearFiltersClick={this.handleClearFiltersClick} />
                                                     <SelectedFilters/>
 
                                                     <Facets fields={valid_dataset_ancestor_config.searchQuery}

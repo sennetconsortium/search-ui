@@ -23,6 +23,7 @@ import addons from "../../js/addons/addons";
 import SelectedFilters from "../../layout/SelectedFilters";
 import {getUBKGFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
+import {Sui} from "search-ui/lib/search-tools";
 
 export default class AncestorId extends React.Component {
     constructor(props) {
@@ -30,6 +31,11 @@ export default class AncestorId extends React.Component {
         this.state = {
             showHideModal: false,
         };
+    }
+
+    handleClearFiltersClick = () => {
+        Sui.clearFilters()
+        //TODO: add setClearFacetInputs(clearFacetInputs + 1) ?
     }
 
     showModal = () => {
@@ -110,7 +116,7 @@ export default class AncestorId extends React.Component {
                                             }
                                             sideContent={
                                                 <div data-js-ada='facets'>
-                                                    <CustomClearSearchBox/>
+                                                    <CustomClearSearchBox clearFiltersClick={this.handleClearFiltersClick} />
                                                     <SelectedFilters/>
                                                     <Facets fields={exclude_dataset_config.searchQuery}
                                                             filters={filters}
