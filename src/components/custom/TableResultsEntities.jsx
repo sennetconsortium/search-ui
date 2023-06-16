@@ -1,8 +1,8 @@
 import React, {useContext, useRef} from 'react'
 import PropTypes from 'prop-types'
 import {
-    checkFilterEntityType,
-    checkMultipleFilterEntityType,
+    checkFilterType,
+    checkMultipleFilterType,
     displayBodyHeader, equals, getEntityViewUrl, getUBKGFullName,
     getStatusColor
 } from './js/functions'
@@ -17,7 +17,7 @@ import {TableResultsProvider} from "../../context/TableResultsContext";
 
 function TableResultsEntities({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
 
-    let hasMultipleEntityTypes = checkMultipleFilterEntityType(filters);
+    let hasMultipleEntityTypes = checkMultipleFilterType(filters);
     const {isLoggedIn, cache} = useContext(AppContext)
     const currentColumns = useRef([])
 
@@ -124,7 +124,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
 
     const getTableColumns = () => {
         let cols;
-        if (checkFilterEntityType(filters) === false) {
+        if (checkFilterType(filters) === false) {
             cols = defaultColumns({});
         } else {
             let typeIndex = 0;

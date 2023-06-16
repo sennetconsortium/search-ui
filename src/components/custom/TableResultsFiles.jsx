@@ -1,8 +1,8 @@
 import React, {useContext, useRef} from 'react'
 import PropTypes from 'prop-types'
 import {
-    checkFilterEntityType,
-    checkMultipleFilterEntityType,
+    checkFilterType,
+    checkMultipleFilterType,
     getEntityViewUrl, getUBKGFullName,
 } from './js/functions'
 import AppContext from "../../context/AppContext"
@@ -13,7 +13,7 @@ import {TableResultsProvider} from "../../context/TableResultsContext";
 
 function TableResultsFiles({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
     const fileTypeField = 'file_extension'
-    let hasMultipleFileTypes = checkMultipleFilterEntityType(filters, fileTypeField);
+    let hasMultipleFileTypes = checkMultipleFilterType(filters, fileTypeField);
     const currentColumns = useRef([])
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
@@ -99,7 +99,7 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
 
     const getTableColumns = () => {
         let cols;
-        if (checkFilterEntityType(filters, fileTypeField) === false) {
+        if (checkFilterType(filters, fileTypeField) === false) {
             cols = defaultColumns({});
         } else {
             let typeIndex = 0;

@@ -158,31 +158,31 @@ export function getStatusColor(status) {
 
 }
 
-export function checkFilterEntityType(filters, field = 'entity_type') {
-    let hasEntityType = false;
+export function checkFilterType(filters, field = 'entity_type') {
+    let hasType = false;
     filters.map((filter, index) => {
         if (filter.field === field) {
-            hasEntityType = true;
+            hasType = true;
         }
     });
 
-    return hasEntityType;
+    return hasType;
 }
 
-export function checkMultipleFilterEntityType(filters, field = 'entity_type') {
-    let hasMultipleEntityType = false;
+export function checkMultipleFilterType(filters, field = 'entity_type') {
+    let hasMultipleType = false;
     try {
         filters.map((filter, index) => {
             if (filter.field === field) {
                 if (filter.values.length > 1)
-                    hasMultipleEntityType = true;
+                    hasMultipleType = true;
             }
         });
     } catch (e) {
-        return hasMultipleEntityType;
+        return hasMultipleType;
     }
 
-    return hasMultipleEntityType;
+    return hasMultipleType;
 }
 
 export function cleanJson(json) {
