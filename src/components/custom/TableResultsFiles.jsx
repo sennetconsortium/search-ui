@@ -12,9 +12,8 @@ import ResultsBlock from "./search/ResultsBlock";
 import {TableResultsProvider} from "../../context/TableResultsContext";
 
 function TableResultsFiles({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
-
-    let hasMultipleEntityTypes = checkMultipleFilterEntityType(filters);
-    const {isLoggedIn, cache} = useContext(AppContext)
+    const fileTypeField = 'file_extension'
+    let hasMultipleFileTypes = checkMultipleFilterEntityType(filters, fileTypeField);
     const currentColumns = useRef([])
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
@@ -23,7 +22,7 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
 
     const getId = (column) => column.id || column.sennet_id
 
-    const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn}) => {
+    const defaultColumns = ({hasMultipleFileTypes = true, columns = [], _isLoggedIn}) => {
         let cols = []
         if (!inModal) {
             cols.push({
@@ -34,6 +33,24 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
                 selector: row => row.id,
                 sortable: false,
                 format: column => <input type={'checkbox'} onClick={(e) => handleCheckbox(e)} value={getId(column)} name={`check-${getId(column)}`}/>
+            })
+        }
+
+        cols.push(
+            {
+                name: 'Path',
+                selector: row => raw(row.rel_path),
+                sortable: true,
+                format: row => <a data-field='rel_path' href={'#'}>{raw(row.rel_path)}</a>,
+            }
+        )
+
+        if (hasMultipleFileTypes) {
+            cols.push({
+                name: 'File Type',
+                selector: row => raw(row.file_extension),
+                sortable: true,
+                format: row => <span data-field={fileTypeField}>{raw(row.file_extension)?.toUpperCase()}</span>,
             })
         }
 
@@ -66,24 +83,12 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
 
         cols.push(
             {
-                name: 'Path',
-                selector: row => raw(row.rel_path),
-                sortable: true,
-                format: row => <a data-field='path' href={'#'}>{raw(row.rel_path)}</a>,
-            }
-        )
-
-        cols.push(
-            {
                 name: 'Size',
                 selector: row => raw(row.size),
                 sortable: true,
                 format: row => <span>{(raw(row.size)/ 1024).toFixed(2)} mb</span>
             }
         )
-
-
-
 
 
         cols = cols.concat(columns)
@@ -94,16 +99,16 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
 
     const getTableColumns = () => {
         let cols;
-        if (checkFilterEntityType(filters) === false) {
+        if (checkFilterEntityType(filters, fileTypeField) === false) {
             cols = defaultColumns({});
         } else {
             let typeIndex = 0;
             cols = filters.map((filter, index) => {
                 let columns = []
-                if (filter.field === 'entity_type') {
+                if (filter.field === fileTypeField) {
                     typeIndex = index
 
-                    return defaultColumns({hasMultipleEntityTypes, columns});
+                    return defaultColumns({hasMultipleFileTypes: hasMultipleFileTypes, columns});
                 }
             })
             cols = cols[typeIndex]
