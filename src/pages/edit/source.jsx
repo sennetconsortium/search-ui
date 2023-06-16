@@ -281,7 +281,7 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    { values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} />}
+                                    { values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} subType={equals(values.source_type, cache.sourceTypes.Mouse) ? "murine" :   values.source_type} />}
                                     <div className={'d-flex flex-row-reverse'}>
                                         {getCancelBtn('source')}
                                         <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}

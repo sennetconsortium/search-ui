@@ -1,5 +1,5 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
-import {APP_TITLE} from '../../../config/config'
+import {NAVBAR_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
 import {useContext} from 'react'
 import logo from './sennet-logo.png'
@@ -43,7 +43,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                         height="30"
                         className="d-inline-block align-top"
                     />{' '}
-                    {APP_TITLE}
+                    {NAVBAR_TITLE}
                 </Navbar.Brand>
                 
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>

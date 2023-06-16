@@ -5,6 +5,7 @@ import _ from 'lodash';
 import {SEARCH_ENTITIES} from "./search/entities";
 
 export const APP_TITLE = 'Data Sharing Portal'
+export const NAVBAR_TITLE = 'SenNet'
 
 // Set this to be the time in milliseconds
 export const IDLE_TIMEOUT = 1000 * 60 * 60
