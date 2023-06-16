@@ -158,10 +158,10 @@ export function getStatusColor(status) {
 
 }
 
-export function checkFilterEntityType(filters) {
+export function checkFilterEntityType(filters, field = 'entity_type') {
     let hasEntityType = false;
     filters.map((filter, index) => {
-        if (filter.field === 'entity_type') {
+        if (filter.field === field) {
             hasEntityType = true;
         }
     });
@@ -169,11 +169,11 @@ export function checkFilterEntityType(filters) {
     return hasEntityType;
 }
 
-export function checkMultipleFilterEntityType(filters) {
+export function checkMultipleFilterEntityType(filters, field = 'entity_type') {
     let hasMultipleEntityType = false;
     try {
         filters.map((filter, index) => {
-            if (filter.field === 'entity_type') {
+            if (filter.field === field) {
                 if (filter.values.length > 1)
                     hasMultipleEntityType = true;
             }
