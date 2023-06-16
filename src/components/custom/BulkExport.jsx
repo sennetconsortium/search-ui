@@ -126,7 +126,7 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
                 let id = raw(item.props.result.id)
                 if (isAll || selected[id]) {
 
-                    manifestData += `${id} ${raw(item.props.result.rel_path)}\n`
+                    manifestData += `${id} /${raw(item.props.result.rel_path)}\n`
                 }
             }
         } catch (e) {
