@@ -1,15 +1,6 @@
 import React from 'react';
 import {Form} from 'react-bootstrap';
-import {
-    Paging,
-    PagingInfo,
-    Results,
-    ResultsPerPage,
-    SearchBox,
-    SearchProvider,
-    Sorting,
-    WithSearch
-} from "@elastic/react-search-ui";
+import {Results, SearchBox, SearchProvider, WithSearch} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
@@ -32,6 +23,7 @@ export default class AncestorIds extends React.Component {
         super(props);
         this.state = {
             showHideModal: false,
+            clearFacetInputs: 0
         };
 
         // Return an array of data types that should be excluded from search
@@ -45,10 +37,16 @@ export default class AncestorIds extends React.Component {
 
     handleClearFiltersClick = () => {
         Sui.clearFilters()
-        //TODO: add setClearFacetInputs(clearFacetInputs + 1) ?
+        this.setState(({clearFacetInputs: this.state.clearFacetInputs + 1}))
+    }
+
+    handleSearchFormSubmit(event, onSubmit) {
+        onSubmit(event)
+        this.setState(({clearFacetInputs: this.state.clearFacetInputs + 1}))
     }
 
     showModal = () => {
+        this.handleClearFiltersClick()
         this.setState({showHideModal: true})
         // Enable addons for facets
         addons('dataset')
@@ -119,58 +117,70 @@ export default class AncestorIds extends React.Component {
                 >
                     <Modal.Body>
                         <SearchProvider config={valid_dataset_ancestor_config}>
-                            <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
-                                {({wasSearched, filters}) => {
+                            <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter}) => ({
+                                wasSearched,
+                                filters,
+                                addFilter,
+                                removeFilter
+                            })}>
+                                {({wasSearched, filters, addFilter, removeFilter}) => {
                                     return (
-                                        <Layout
-                                            header={
-                                                <div className="search-box-header js-gtm--search">
-                                                    <SearchBox
-                                                        view={({onChange, value, onSubmit}) => (
-                                                            <Form onSubmit={onSubmit}>
-                                                                <Form.Group controlId="search">
-                                                                    <InputGroup>
-                                                                        <Form.Control
-                                                                            value={value}
-                                                                            onChange={(e) => onChange(e.currentTarget.value)}
-                                                                            className="form-control form-control-lg rounded-0"
-                                                                            placeholder="Search"
-                                                                            autoFocus={true}
-                                                                        />
-                                                                        <Button variant="outline-primary"
-                                                                                className={"rounded-0"}
-                                                                                onClick={onSubmit}>Search</Button>
-                                                                    </InputGroup>
-                                                                </Form.Group>
-                                                            </Form>
-                                                        )}
-                                                    />
-                                                </div>
-                                            }
-                                            sideContent={
-                                                <div data-js-ada='facets'>
-                                                    <CustomClearSearchBox clearFiltersClick={this.handleClearFiltersClick} />
-                                                    <SelectedFilters/>
+                                        <div onLoad={() => Sui.applyFilters(addFilter, removeFilter)}>
+                                            <Layout
+                                                header={
+                                                    <div className="search-box-header js-gtm--search">
+                                                        <SearchBox
+                                                            view={({onChange, value, onSubmit}) => (
+                                                                <Form
+                                                                    onSubmit={e => this.handleSearchFormSubmit(e, onSubmit)}>
+                                                                    <Form.Group controlId="search">
+                                                                        <InputGroup>
+                                                                            <Form.Control
+                                                                                value={value}
+                                                                                onChange={(e) => onChange(e.currentTarget.value)}
+                                                                                className="form-control form-control-lg rounded-0"
+                                                                                placeholder="Search"
+                                                                                autoFocus={true}
+                                                                            />
+                                                                            <Button variant="outline-primary"
+                                                                                    className={"rounded-0"}
+                                                                                    onClick={e => this.handleSearchFormSubmit(e, onSubmit)}>Search</Button>
+                                                                        </InputGroup>
+                                                                    </Form.Group>
+                                                                </Form>
+                                                            )}
+                                                        />
+                                                    </div>
+                                                }
+                                                sideContent={
+                                                    <div data-js-ada='facets'>
+                                                        <CustomClearSearchBox
+                                                            clearFiltersClick={this.handleClearFiltersClick}/>
+                                                        <SelectedFilters/>
 
-                                                    <Facets fields={valid_dataset_ancestor_config.searchQuery}
-                                                            filters={filters}
-                                                            transformFunction={getUBKGFullName}
-                                                    />
+                                                        {wasSearched &&
+                                                            <Facets fields={valid_dataset_ancestor_config.searchQuery}
+                                                                    filters={filters}
+                                                                    transformFunction={getUBKGFullName}
+                                                                    clearInputs={this.state.clearFacetInputs}/>
+                                                        }
 
-                                                </div>
+                                                    </div>
 
-                                            }
-                                            bodyContent={
-                                                <div className="js-gtm--results" data-js-ada='.rdt_TableCell'
-                                                     data-js-tooltip='{"trigger":".rdt_TableBody [role=\"row\"]", "diffY": -80, "data":".modal-content .rdt_Table", "class": "is-error"}'>
+                                                }
+                                                bodyContent={
+                                                    <div className="js-gtm--results" data-js-ada='.rdt_TableCell'
+                                                         data-js-tooltip='{"trigger":".rdt_TableBody [role=\"row\"]", "diffY": -80, "data":".modal-content .rdt_Table", "class": "is-error"}'>
 
 
-                                                    {wasSearched && <Results filters={filters}
-                                                                             view={TableResults} inModal={true} onRowClicked={this.changeAncestor}
-                                                    />}
-                                                </div>
-                                            }
-                                        />
+                                                        {wasSearched && <Results filters={filters}
+                                                                                 view={TableResults} inModal={true}
+                                                                                 onRowClicked={this.changeAncestor}
+                                                        />}
+                                                    </div>
+                                                }
+                                            />
+                                        </div>
                                     );
                                 }}
                             </WithSearch>
