@@ -119,7 +119,8 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                         {/*        <span>File</span>*/}
                         {/*    </NavDropdown.Item>*/}
                         {/*</NavDropdown>*/}
-                        <Nav.Link href={'https://docs.sennetconsortium.org/'}>
+                        <Nav.Link href={'https://docs.sennetconsortium.org/'}
+                                  hidden={hidden}>
                             {_t('Documentation')}
                         </Nav.Link>
                     </Nav>
