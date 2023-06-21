@@ -32,13 +32,13 @@ export const VisualizationProvider = ({ children }) => {
 
     const expandVitessceToFullscreen = () => {
         document.addEventListener("keydown", collapseVitessceOnEsc, false);
-        $('#sennet-vitessce-view-config').toggleClass('vitessce_fullscreen');
+        $('.vitessce-container').toggleClass('vitessce_fullscreen');
         setShowExitFullscreenMessage(true)
     }
 
     const collapseVitessceOnEsc = useCallback((event) => {
         if (event.key === "Escape") {
-            $('#sennet-vitessce-view-config').toggleClass('vitessce_fullscreen');
+            $('.vitessce-container').toggleClass('vitessce_fullscreen');
             setIsFullscreen(false)
             setShowExitFullscreenMessage(false)
             document.removeEventListener("keydown", collapseVitessceOnEsc, false);
