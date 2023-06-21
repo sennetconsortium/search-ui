@@ -8,7 +8,7 @@ import Modal from 'react-bootstrap/Modal';
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import {exclude_dataset_config} from "../../../../config/config";
 import Facets from "search-ui/components/core/Facets";
-import {TableResults} from '../../TableResults';
+import {TableResultsEntities} from '../../TableResultsEntities';
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import SelectedFilters from "../../layout/SelectedFilters";
@@ -129,7 +129,7 @@ export default class AncestorId extends React.Component {
                                             }
                                             bodyContent={
                                                 <div className="js-gtm--results" data-js-ada='.rdt_TableCell'>
-                                                    <Results view={TableResults} filters={filters} inModal={true}
+                                                    <Results view={TableResultsEntities} filters={filters} inModal={true}
                                                              onRowClicked={this.changeSource}
                                                     />
                                                 </div>

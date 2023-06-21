@@ -8,22 +8,23 @@ import {
 } from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
 import Facets from "search-ui/components/core/Facets";
-import {TableResults} from '../components/custom/TableResults'
-import {APP_TITLE, config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../config/config";
-import AppNavbar from "../components/custom/layout/AppNavbar";
-import AppFooter from "../components/custom/layout/AppFooter";
-import Header from "../components/custom/layout/Header";
-import CustomClearSearchBox from "../components/custom/layout/CustomClearSearchBox";
+import {TableResultsFiles} from '../../components/custom/TableResultsFiles'
+import {APP_TITLE} from "../../config/config";
+import {SEARCH_FILES} from "../../config/search/files"
+import AppNavbar from "../../components/custom/layout/AppNavbar";
+import AppFooter from "../../components/custom/layout/AppFooter";
+import Header from "../../components/custom/layout/Header";
+import CustomClearSearchBox from "../../components/custom/layout/CustomClearSearchBox";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import Spinner from "../components/custom/Spinner";
-import AppContext from "../context/AppContext";
-import SelectedFilters from "../components/custom/layout/SelectedFilters";
-import {getDataTypesByProperty, getUBKGFullName} from "../components/custom/js/functions";
+import Spinner from "../../components/custom/Spinner";
+import AppContext from "../../context/AppContext";
+import SelectedFilters from "../../components/custom/layout/SelectedFilters";
+import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
 import {Sui} from "search-ui/lib/search-tools";
 
-function Search() {
+function SearchFiles() {
     const {
         _t,
         cache,
@@ -34,13 +35,7 @@ function Search() {
         hasAuthenticationCookie
     } = useContext(AppContext);
 
-    // Return an array of data types that should be excluded from search
-    const excludeDataTypes = getDataTypesByProperty("vis-only", true)
-    console.log(excludeDataTypes)
-    config['searchQuery']['excludeFilters'].push({
-        keyword: "data_types.keyword",
-        value: excludeDataTypes
-    });
+
 
     const [clearFacetInputs, setClearFacetInputs] = useState(0)
 
@@ -51,7 +46,7 @@ function Search() {
 
     function handleSearchFormSubmit(event, onSubmit) {
         onSubmit(event)
-        setClearFacetInputs(clearFacetInputs + 1) 
+        setClearFacetInputs(clearFacetInputs + 1)
     }
 
     if (isAuthorizing()) {
@@ -66,11 +61,11 @@ function Search() {
             <>
                 <Header title={APP_TITLE}/>
 
-                <SearchProvider config={config}>
+                <SearchProvider config={SEARCH_FILES}>
                     <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter}) => ({wasSearched, filters, addFilter, removeFilter})}>
                         {({wasSearched, filters, addFilter, removeFilter}) => {
                             return (
-                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter)}>
+                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, 'files')}>
                                     <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
@@ -106,11 +101,11 @@ function Search() {
 
                                                     <SelectedFilters/>
 
-                                                    {wasSearched && 
-                                                        <Facets fields={config.searchQuery}
-                                                            filters={filters}
-                                                            transformFunction={getUBKGFullName}
-                                                            clearInputs={clearFacetInputs} />
+                                                    {wasSearched &&
+                                                        <Facets fields={SEARCH_FILES.searchQuery}
+                                                                filters={filters}
+                                                                transformFunction={getUBKGFullName}
+                                                                clearInputs={clearFacetInputs} />
                                                     }
                                                 </div>
 
@@ -118,7 +113,7 @@ function Search() {
                                             bodyContent={
                                                 <div className="js-gtm--results sui-resultsTable" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
                                                     {wasSearched && <Results filters={filters} titleField={filters}
-                                                             view={TableResults}
+                                                                             view={TableResultsFiles}
                                                     />}
                                                     {!wasSearched && <Spinner /> }
                                                 </div>
@@ -137,4 +132,4 @@ function Search() {
     }
 }
 
-export default Search
+export default SearchFiles

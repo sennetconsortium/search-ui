@@ -2,7 +2,8 @@ import React, {useContext, useEffect, useState} from 'react'
 import $ from "jquery";
 import Dropdown from 'react-bootstrap/Dropdown'
 import PropTypes from "prop-types";
-import SenNetPopover from "../SenNetPopover";
+import SenNetPopover, {SenPopoverOptions} from "../SenNetPopover";
+import {equals} from "./js/functions";
 
 const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
 
@@ -49,7 +50,7 @@ export const handleCheckAll = (setTotalSelected) => {
     handleCheckAllTotal(getCheckAll(), 0)
 }
 
-function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
+function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
 
     const [totalSelected, setTotalSelected] = useState(0)
 
@@ -113,11 +114,33 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
         return tableDataTSV
     }
 
+    const generateManifestData = (selected, isAll) => {
+        let manifestData  = ''
+        let colVal;
+        try {
+            if (!Array.isArray(data)) {
+                data = Object.values(data)
+            }
+            let row
+            for (let item of data) {
+                let id = raw(item.props.result.id)
+                if (isAll || selected[id]) {
+
+                    manifestData += `${id} /${raw(item.props.result.rel_path)}\n`
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+
+        return manifestData
+    }
+
     const downloadData = (e, fileType, isAll) => {
         const $checkboxes = getCheckboxes()
         let selected = {}
         let results = []
-        let fileName = raw(data[0].props.result.sennet_id) + ' - ' + raw(data[data.length - 1].props.result.sennet_id)
+        let fileName = raw(data[0].props.result.id) + ' - ' + raw(data[data.length - 1].props.result.id)
         let lastSelected, val
 
         if (!isAll) {
@@ -142,10 +165,22 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
             }
         }
 
-        const isJson =  fileType === 'json'
+        let type = 'text/tab-separated-values'
+        let blob = [generateTSVData(selected, isAll)]
+        switch(fileType) {
+            case 'json':
+                type = 'application/json'
+                blob = [JSON.stringify(results, null, 2)]
+                break;
+            case 'manifest':
+                type = 'text/plain'
+                blob = [generateManifestData(selected, isAll)]
+                break;
+            default:
+            // code block
+        }
+
         const a = document.createElement('a')
-        const type = isJson ? 'application/json' : 'text/tab-separated-values'
-        const blob = isJson ? [JSON.stringify(results, null, 2)] : [generateTSVData(selected, isAll)]
 
         const url = window.URL.createObjectURL(new Blob(blob, {type}))
         a.href = url
@@ -156,8 +191,49 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
         window.URL.revokeObjectURL(url)
     }
 
-    const jsonPopoverText = <>Exports all properties associated with selected entities in JSON format.</>
-    const tsvPopoverText = <>Exports search result table information for selected entities in tab-separated values format.</>
+    const getActions = () => {
+        let actions = {
+            json: 'JSON',
+            tsv: 'TSV'
+        }
+        if (equals(exportKind, 'manifest')) {
+            actions = {
+                manifest: 'Manifest TXT'
+            }
+        }
+
+        return actions
+    }
+
+    const popoverText = (fileType) => {
+        if (equals(fileType, 'json')) {
+            return <>Exports all properties associated with selected entities in JSON format.</>
+        } else if (equals(fileType, 'tsv')) {
+            return <>Exports search result table information for selected entities in tab-separated values format.</>
+        } else {
+            return <>Exports to HuBMAP CLT manifest format.</>
+        }
+    }
+
+    const getMenuItems = (range) => {
+        let results = []
+        const isAll = range === 'all'
+        const exportActions = getActions()
+        let i = 1
+
+        for (let action in exportActions) {
+            results.push(
+                <SenNetPopover key={`${range}-${action}`} text={popoverText(action)} className={`${range}-${action}`}>
+                    <a onClick={(e) => downloadData(e, action, isAll)}><code>{exportActions[action]}</code></a>
+                </SenNetPopover>
+            )
+            if (i !== Object.keys(exportActions).length) {
+                results.push(<span key={`${range}-${action}-sep`}>&nbsp;|&nbsp;</span>)
+            }
+            i++
+        }
+        return results
+    }
 
     return (
         <>
@@ -170,22 +246,10 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
 
                     <Dropdown.Menu>
                         <div className={'dropdown-item'} key={`export-all`}>Export all to&nbsp;
-                            <SenNetPopover text={tsvPopoverText} className='all-tsv'>
-                                <a onClick={(e) => downloadData(e, 'tsv', true)}><code>TSV</code></a>
-                            </SenNetPopover>
-                            &nbsp;|&nbsp;
-                            <SenNetPopover text={jsonPopoverText} className='all-json'>
-                                <a onClick={(e) => downloadData(e, 'json', true)}><code>JSON</code></a>
-                            </SenNetPopover>
+                            {getMenuItems('all')}
                             </div>
                         {totalSelected > 0 && <div className={'dropdown-item'}  key={`export-selected`} >Export selected to&nbsp;
-                            <SenNetPopover text={tsvPopoverText} className='selected-tsv'>
-                                <a onClick={(e) => downloadData(e, 'tsv')}><code>TSV</code></a>
-                            </SenNetPopover>
-                            &nbsp;|&nbsp;
-                            <SenNetPopover text={jsonPopoverText} className='selected-json'>
-                                <a onClick={(e) => downloadData(e, 'json')}><code>JSON</code></a>
-                            </SenNetPopover>
+                            {getMenuItems()}
                         </div>}
                     </Dropdown.Menu>
                 </Dropdown>
@@ -196,7 +260,8 @@ function BulkExport({ data, raw, columns,  replaceFirst = 'uuid' }) {
 
 BulkExport.propTypes = {
     data: PropTypes.array.isRequired,
-    columns: PropTypes.object.isRequired
+    columns: PropTypes.object.isRequired,
+    exportKind: PropTypes.string
 }
 
 export default BulkExport
