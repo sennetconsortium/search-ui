@@ -119,10 +119,20 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                         {/*        <span>File</span>*/}
                         {/*    </NavDropdown.Item>*/}
                         {/*</NavDropdown>*/}
-                        <Nav.Link href={'https://docs.sennetconsortium.org/'}
-                                  hidden={hidden}>
-                            {_t('Documentation')}
-                        </Nav.Link>
+                        <NavDropdown active={false}
+                                     variant={'primary'}
+                                     title="Documentation"
+                                     id="nav-dropdown--docs">
+                            <NavDropdown.Item key={`dd-search-md-schema`} href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/'>
+                                <span>Metadata schemas & upload guidelines</span>
+                            </NavDropdown.Item>
+                            <NavDropdown.Item key={`dd-prov-ui`} href='https://docs.sennetconsortium.org/libraries/provenance-ui/'>
+                                <span>Provenance UI</span>
+                            </NavDropdown.Item>
+                            <NavDropdown.Item key={`dd-apis`} href='https://docs.sennetconsortium.org/apis/'>
+                                <span>APIs</span>
+                            </NavDropdown.Item>
+                        </NavDropdown>
                     </Nav>
                     <Nav>
                         <Nav.Link
