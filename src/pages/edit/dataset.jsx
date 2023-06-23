@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
 import {Button, Form, Badge} from 'react-bootstrap'
@@ -12,7 +12,7 @@ import {
     equals,
     fetchEntity, fetchProtocols, fetchProtocolView,
     getDataTypesByProperty, getEntityViewUrl,
-    getRequestHeaders, getStatusColor
+    getRequestHeaders, getStatusColor, isPrimaryAssay
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
 import DataTypes from '../../components/custom/edit/dataset/DataTypes'
@@ -64,6 +64,7 @@ export default function EditDataset() {
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
     const [dataTypes, setDataTypes] = useState(null)
+    const isPrimary = useRef(false)
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -107,7 +108,7 @@ export default function EditDataset() {
                             }
                         })
                         if (sub_types.length) {
-                            constraintsDataTypes = cache.dataTypeObj.filter(data_type => sub_types.includes(data_type["data_type"])).map(data_type => data_type.data_type);
+                            constraintsDataTypes = cache.dataTypesObj.filter(data_type => sub_types.includes(data_type["data_type"])).map(data_type => data_type.data_type);
                             // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
                             // $.extend(constraintsDataTypes, data_types)
                         }
@@ -151,7 +152,8 @@ export default function EditDataset() {
                 setError(true)
                 setErrorMessage(data["error"])
             } else {
-                setData(data);
+                setData(data)
+                isPrimary.current = isPrimaryAssay(data)
                 let immediate_ancestors = []
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     for (const ancestor of data.immediate_ancestors) {
@@ -351,6 +353,8 @@ export default function EditDataset() {
         setContainsHumanGeneticSequences(false)
     }
 
+
+
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
@@ -477,7 +481,7 @@ export default function EditDataset() {
                                         }
 
                                         {/*If the status for the Dataset is 'New' then allow the user to mark this as 'Submitted'*/}
-                                        { isEditMode() && equals(data['status'], 'New') &&
+                                        {isPrimary.current && isEditMode() && equals(data['status'], 'New') &&
                                             <SenNetPopover text={<>Mark this <code>Dataset</code> as "Submitted" and ready for processing.</>} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Submit"}
@@ -494,7 +498,7 @@ export default function EditDataset() {
                                          If a user is a data admin and the status is either 'New' or 'Submitted' allow this Dataset to be
                                          processed via the pipeline.
                                          */}
-                                         { adminGroup && isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Submitted')) &&
+                                         {isPrimary.current && adminGroup && isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Submitted')) &&
                                             <SenNetPopover text={<>Process this <code>Dataset</code> via the Ingest Pipeline.</>} className={'process-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Process"}
@@ -505,7 +509,7 @@ export default function EditDataset() {
                                             </SenNetPopover>
                                         }
 
-                                        {adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid')) && <SenNetPopover
+                                        {isPrimary.current && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid')) && <SenNetPopover
                                             text={<>Revert this <code>Dataset</code> back to <Badge pill bg={getStatusColor('New')}>New</Badge> or <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>  status.
                                                </>}
                                             className={'revert-button'}>

@@ -1,38 +1,42 @@
 import React from 'react';
 import {Form} from 'react-bootstrap';
-import {
-    Paging,
-    PagingInfo,
-    Results,
-    ResultsPerPage,
-    SearchBox,
-    SearchProvider,
-    Sorting,
-    WithSearch
-} from "@elastic/react-search-ui";
+import {Results, SearchBox, SearchProvider, WithSearch} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
-import {exclude_dataset_config, RESULTS_PER_PAGE, SORT_OPTIONS} from "../../../../config/config";
+import {exclude_dataset_config} from "../../../../config/config";
 import Facets from "search-ui/components/core/Facets";
-import {TableResults} from '../../TableResults';
+import {TableResultsEntities} from '../../TableResultsEntities';
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import SelectedFilters from "../../layout/SelectedFilters";
 import {getUBKGFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
+import {Sui} from "search-ui/lib/search-tools";
 
 export default class AncestorId extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             showHideModal: false,
+            clearFacetInputs: 0
         };
     }
 
+    handleClearFiltersClick = () => {
+        Sui.clearFilters()
+        this.setState(({clearFacetInputs: this.state.clearFacetInputs + 1}))
+    }
+
+    handleSearchFormSubmit(event, onSubmit) {
+        onSubmit(event)
+        this.setState(({clearFacetInputs: this.state.clearFacetInputs + 1}))
+    }
+
     showModal = () => {
+        this.handleClearFiltersClick()
         this.setState({showHideModal: true})
         // Enable addons for facets
         addons('sample')
@@ -88,7 +92,7 @@ export default class AncestorId extends React.Component {
                                                 <div className="search-box-header js-gtm--search">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
-                                                            <Form onSubmit={onSubmit}>
+                                                            <Form onSubmit={e => this.handleSearchFormSubmit(e, onSubmit)}>
                                                                 <Form.Group controlId="search">
                                                                     <InputGroup>
                                                                         <Form.Control
@@ -100,7 +104,7 @@ export default class AncestorId extends React.Component {
                                                                         />
                                                                         <Button variant="outline-primary"
                                                                                 className={"rounded-0"}
-                                                                                onClick={onSubmit}>Search</Button>
+                                                                                onClick={e => this.handleSearchFormSubmit(e, onSubmit)}>Search</Button>
                                                                     </InputGroup>
                                                                 </Form.Group>
                                                             </Form>
@@ -110,19 +114,22 @@ export default class AncestorId extends React.Component {
                                             }
                                             sideContent={
                                                 <div data-js-ada='facets'>
-                                                    <CustomClearSearchBox/>
+                                                    <CustomClearSearchBox
+                                                        clearFiltersClick={this.handleClearFiltersClick}/>
                                                     <SelectedFilters/>
-                                                    <Facets fields={exclude_dataset_config.searchQuery}
-                                                            filters={filters}
-                                                            transformFunction={getUBKGFullName}
-                                                    />
+                                                    {wasSearched &&
+                                                        <Facets fields={exclude_dataset_config.searchQuery}
+                                                                filters={filters}
+                                                                transformFunction={getUBKGFullName}
+                                                                clearInputs={this.state.clearFacetInputs}/>
+                                                    }
 
                                                 </div>
 
                                             }
                                             bodyContent={
                                                 <div className="js-gtm--results" data-js-ada='.rdt_TableCell'>
-                                                    <Results view={TableResults} filters={filters} inModal={true}
+                                                    <Results view={TableResultsEntities} filters={filters} inModal={true}
                                                              onRowClicked={this.changeSource}
                                                     />
                                                 </div>
