@@ -1,5 +1,5 @@
 import {simple_query_builder} from "search-ui/lib/search-tools";
-import {getIndex, getSearchEndPoint} from "../../config/config";
+import {getEntitiesIndex, getSearchEndPoint} from "../../config/config";
 import log from "loglevel";
 
 // a mock service to return some data
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
             //       console.log(json)
             //       //res.status(200).json(json)
             //     )
-            await fetch(getSearchEndPoint() + getIndex() + "/search", requestOptions)
+            await fetch(getSearchEndPoint() + getEntitiesIndex() + "/search", requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     log.debug('SEARCH API RESPONSE BODY', formatMessageForCloudwatch(result))

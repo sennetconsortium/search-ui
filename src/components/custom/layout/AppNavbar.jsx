@@ -5,6 +5,7 @@ import {useContext} from 'react'
 import logo from './sennet-logo.png'
 import Image from 'next/image'
 import AppContext from '../../../context/AppContext'
+import {equals} from "../js/functions";
 
 const AppNavbar = ({hidden, signoutHidden}) => {
     const {_t, isLoggedIn, logout, cache, supportedMetadata} = useContext(AppContext)
@@ -55,31 +56,36 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                             title={_t("Register entity")}
                             id="nav-dropdown"
                         >
-                            {Object.keys(cache.entities).map((entity) => (
-                                <NavDropdown.Item key={entity} href={`/edit/${entity}?uuid=register`}>
-                                    {_t(entity)}
-                                </NavDropdown.Item>
-                            ))}
+                            {['Single', 'Bulk'].map((range, key) => (
+                                <div key={`dropdownItem-register-${range}`} id={`dropdownItem-register-${range}`}>
+                                    {key !== 0 && <NavDropdown.Divider/>}
+                                    <NavDropdown.Item className='dropdown-item is-heading'
+                                                      aria-controls={`submenu-md-${range}`}>
+                                        {range}
+                                    </NavDropdown.Item>
 
+                                    <div className={'submenu'} id={`submenu-md-${range}`}>
+                                        {equals(range, 'single') && Object.keys(cache.entities).map((entity) => (
+                                            <NavDropdown.Item key={entity} href={`/edit/${entity}?uuid=register`}>
+                                                {_t(entity)}
+                                            </NavDropdown.Item>
+                                        ))}
+
+                                        {equals(range, 'bulk') && supportedBulkRegister().map((entity) => (
+                                            <NavDropdown.Item key={entity} href={`/edit/bulk/${entity}?action=register`}>
+                                                {entity}s
+                                            </NavDropdown.Item>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
                         </NavDropdown>
+
                         <NavDropdown
                             active={false}
                             variant={'primary'}
                             hidden={hidden}
-                            title="Bulk register entities"
-                            id="nav-dropdown--bulkCreate">
-                            {supportedBulkRegister().map((entity) => (
-                                <NavDropdown.Item key={entity} href={`/edit/bulk/${entity}?action=register`}>
-                                    {entity}s
-                                </NavDropdown.Item>
-                            ))}
-
-                        </NavDropdown>
-                        <NavDropdown
-                            active={false}
-                            variant={'primary'}
-                            hidden={hidden}
-                            title="Bulk upload metadata"
+                            title="Upload metadata"
                             id="nav-dropdown--bulkMetadata">
                             {Object.keys(supportedMetadata()).map((entity, key) => (
                                 <div key={`dropdownItem-md-${entity}`}>
@@ -96,11 +102,36 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                                               className={'is-subItem'}>
                                                 <span>{type[1]}</span>
                                             </NavDropdown.Item>
-
                                         ))}
                                     </div>
                                 </div>
                             ))}
+                        </NavDropdown>
+                        {/*<NavDropdown active={false}*/}
+                        {/*             variant={'primary'}*/}
+                        {/*             hidden={hidden}*/}
+                        {/*             title="Search"*/}
+                        {/*             id="nav-dropdown--search">*/}
+                        {/*    <NavDropdown.Item key={`dd-search-entity`} href={APP_ROUTES.search}>*/}
+                        {/*        <span>Entity</span>*/}
+                        {/*    </NavDropdown.Item>*/}
+                        {/*    <NavDropdown.Item key={`dd-search-file`} href={APP_ROUTES.searchFiles}>*/}
+                        {/*        <span>File</span>*/}
+                        {/*    </NavDropdown.Item>*/}
+                        {/*</NavDropdown>*/}
+                        <NavDropdown active={false}
+                                     variant={'primary'}
+                                     title="Documentation"
+                                     id="nav-dropdown--docs">
+                            <NavDropdown.Item key={`dd-search-md-schema`} href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/'>
+                                <span>Metadata schemas & upload guidelines</span>
+                            </NavDropdown.Item>
+                            <NavDropdown.Item key={`dd-prov-ui`} href='https://docs.sennetconsortium.org/libraries/provenance-ui/'>
+                                <span>Provenance UI</span>
+                            </NavDropdown.Item>
+                            <NavDropdown.Item key={`dd-apis`} href='https://docs.sennetconsortium.org/apis/'>
+                                <span>APIs</span>
+                            </NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                     <Nav>

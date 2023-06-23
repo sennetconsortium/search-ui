@@ -12,7 +12,7 @@ function useCache() {
 
     const fetchData = async () => {
         const dataTypes = await get_data_assays()
-        const dataTypeObj = await get_data_assays_obj()
+        const dataTypesObj = await get_data_assays_obj()
         const sampleCategories = await get_sample_categories()
         const organTypes = await get_organ_types()
         const entities = await get_entities()
@@ -21,7 +21,7 @@ function useCache() {
 
         //TODO Remove in the future
         // entities.publication = 'Publication'
-        const cache = {cache: {dataTypes, dataTypeObj, sampleCategories, organTypes, entities, sourceTypes, organTypesCodes}}
+        const cache = {cache: {dataTypes, dataTypesObj, sampleCategories, organTypes, entities, sourceTypes, organTypesCodes}}
         window.UBKG_CACHE = cache.cache
         return cache
     }
