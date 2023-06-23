@@ -14,7 +14,7 @@ import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
 import Metadata from "../components/custom/entities/sample/Metadata";
-import Contributors from "../components/custom/entities/Contributors";
+import ContributorsContacts from "../components/custom/entities/ContributorsContacts";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
@@ -22,7 +22,6 @@ import VisualizationContext, {VisualizationProvider} from "../context/Visualizat
 import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
 import SidebarBtn from "../components/SidebarBtn";
 import {kuppe2022nature} from "../vitessce-view-config/kuppe_2022_nature";
-
 
 
 function ViewDataset() {
@@ -167,6 +166,14 @@ function ViewDataset() {
                                                 </li>
                                             }
 
+                                            {!!(data.contacts && Object.keys(data.contacts).length) &&
+                                                <li className="nav-item">
+                                                    <a href="#Contacts"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Contacts</a>
+                                                </li>
+                                            }
+
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&
                                                 <li className="nav-item">
                                                     <a href="#Contributors"
@@ -184,7 +191,7 @@ function ViewDataset() {
                                 </div>
 
                                 <main className="col m-md-3 entity_details">
-                                    <SidebarBtn />
+                                    <SidebarBtn/>
 
                                     <EntityViewHeader data={data}
                                                       uniqueHeader={data.data_types[0]}
@@ -216,12 +223,18 @@ function ViewDataset() {
 
                                             {/*Metadata*/}
                                             {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                                <Metadata metadataKey={""} data={data.metadata.metadata} filename={data.sennet_id}/>
+                                                <Metadata metadataKey={""} data={data.metadata.metadata}
+                                                          filename={data.sennet_id}/>
+                                            }
+
+                                            {/*Contacts*/}
+                                            {!!(data.contacts && Object.keys(data.contacts).length) &&
+                                                <ContributorsContacts title={'Contacts'} data={data.contacts}/>
                                             }
 
                                             {/*Contributors*/}
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                                <Contributors title={'Contributors'} data={data.contributors}/>
+                                                <ContributorsContacts title={'Contributors'} data={data.contributors}/>
                                             }
 
                                             {/*Attribution*/}
@@ -240,6 +253,8 @@ function ViewDataset() {
     }
 }
 
-ViewDataset.withWrapper = function(page) { return <VisualizationProvider>{ page }</VisualizationProvider> }
+ViewDataset.withWrapper = function (page) {
+    return <VisualizationProvider>{page}</VisualizationProvider>
+}
 
 export default ViewDataset
