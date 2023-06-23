@@ -89,7 +89,6 @@ export const SennetVitessce = ({ data }) => {
                         </OverlayTrigger>
                     </div>
                 </div>
-                <div id={'sennet-vitessce-view-config'}>
                     <Snackbar open={ showExitFullscreenMessage } autoHideDuration={ 8000 } anchorOrigin={{ vertical: 'top', horizontal: 'center' }} onClose={() => setShowExitFullscreenMessage(false)}>
                         <MuiAlert onClose={() => setShowExitFullscreenMessage(false)} severity="info" sx={{ width: '100%' }}>
                             Pres ESC to exit fullscreen
@@ -98,7 +97,6 @@ export const SennetVitessce = ({ data }) => {
                     <Suspense fallback={<div>Loading...</div>}>
                         <Vitessce config={ vitessceConfig } theme={ vitessceTheme } height={ isFullscreen ? null : 800 }/>
                     </Suspense>
-                </div>
             </SenNetAccordion>
         }
     </>
