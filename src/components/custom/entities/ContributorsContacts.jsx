@@ -4,7 +4,7 @@ import DataTable, { createTheme } from 'react-data-table-component'
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 import SenNetAccordion from "../layout/SenNetAccordion";
 
-function Contributors({data, title}) {
+function ContributorsContacts({data, title}) {
     const getColumns = () => {
         return [
             {
@@ -34,10 +34,10 @@ function Contributors({data, title}) {
     )
 }
 
-Contributors.defaultProps = {}
+ContributorsContacts.defaultProps = {}
 
-Contributors.propTypes = {
+ContributorsContacts.propTypes = {
     data: PropTypes.array
 }
 
-export default Contributors
+export default ContributorsContacts

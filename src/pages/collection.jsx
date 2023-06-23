@@ -10,7 +10,7 @@ import Header from "../components/custom/layout/Header";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import Contributors from "../components/custom/entities/Contributors";
+import ContributorsContacts from "../components/custom/entities/ContributorsContacts";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {VisualizationProvider} from "../context/VisualizationContext";
 import SidebarBtn from "../components/SidebarBtn";
@@ -137,7 +137,7 @@ function ViewCollection() {
                                             />
 
                                             {/*Contacts*/}
-                                            <Contributors title={'Contacts'} data={data.contacts} />
+                                            <ContributorsContacts title={'Contacts'} data={data.contacts} />
 
                                             {/*Datasets*/}
                                             <Datasets data={data.datasets} />
@@ -148,7 +148,7 @@ function ViewCollection() {
                                             }
 
                                             {/*Creators*/}
-                                            <Contributors title={'Creators'} data={data.creators} />
+                                            <ContributorsContacts title={'Creators'} data={data.creators} />
                                         </div>
                                     </div>
                                 </main>
