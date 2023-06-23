@@ -45,7 +45,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                     />{' '}
                     {NAVBAR_TITLE}
                 </Navbar.Brand>
-                
+
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse>
                     <Nav className={'me-auto'}>
@@ -123,6 +123,10 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                      variant={'primary'}
                                      title="Documentation"
                                      id="nav-dropdown--docs">
+                            <NavDropdown.Item key={`dd-getting-started`}
+                                              href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/upload-guidelines/getting-started/'>
+                                <span>Getting started</span>
+                            </NavDropdown.Item>
                             <NavDropdown.Item key={`dd-search-md-schema`} href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/'>
                                 <span>Metadata schemas & upload guidelines</span>
                             </NavDropdown.Item>
