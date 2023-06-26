@@ -57,7 +57,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 format: row => <span data-field='entity_type'>{raw(row.entity_type)}</span>,
             })
         }
-        if (isLoggedIn || _isLoggedIn) {
+        if (isLoggedIn() || _isLoggedIn) {
             cols.push({
                 name: 'Lab ID',
                 selector: row => {
