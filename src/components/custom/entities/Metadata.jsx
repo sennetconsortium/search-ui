@@ -63,7 +63,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                         }
                                         // The dataset nav link
                                     } else if (equals(ancestor.entity_type, cache.entities.dataset)) {
-                                        if (ancestor.metadata && ancestor.metadata.metadata && Object.keys(ancestor.metadata.metadata).length > 0) {
+                                        if (ancestor.metadata && Object.keys(ancestor.metadata).length && 'metadata' in ancestor.metadata) {
                                             return (
                                                 <SenNetPopover className={`${index}-dataset-metadata`}
                                                                text={<>View the metadata for the
@@ -105,7 +105,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                             </Tab.Pane>
                                         )
                                     }
-                                } else if (ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
+                                } else if (!equals(ancestor.entity_type, cache.entities.dataset) && ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
                                     // Handle mouse source and sample table
                                     // Mice sources and all samples have their metadata inside "metadata"
                                     return (
@@ -115,7 +115,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                                            filename={ancestor.sennet_id}/>
                                         </Tab.Pane>
                                     )
-                                } else if (ancestor.metadata && Object.keys(ancestor.metadata).length > 0 && 'metadata' in data.metadata) {
+                                } else if (ancestor.metadata && Object.keys(ancestor.metadata).length && 'metadata' in ancestor.metadata) {
                                     // Handle dataset table
                                     // Datasets have their metadata inside "metadata.metadata"
                                     return (
