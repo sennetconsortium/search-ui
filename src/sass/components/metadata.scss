@@ -1,4 +1,10 @@
 // Custom button for Sources
+.bg-source {
+  background-color: #FFC255;
+  text-decoration: none;
+  color: rgba(var(--bs-dark-rgb), var(--bs-text-opacity)) !important;
+}
+
 .btn-source {
   color: #000000;
   background-color: #FFFFFF;
@@ -47,6 +53,12 @@ fieldset[disabled] .btn-source.active {
 
 
 //Custom button for Samples
+.bg-sample {
+  background-color: #EBB5C8;
+  text-decoration: none;
+  color: rgba(var(--bs-dark-rgb), var(--bs-text-opacity)) !important;
+}
+
 .btn-sample {
   color: #000000;
   background-color: #FFFFFF;
@@ -94,6 +106,12 @@ fieldset[disabled] .btn-sample.active {
 }
 
 //Custom button for Datasets
+.bg-dataset {
+  background-color: #8ECB93;
+  text-decoration: none;
+  color: rgba(var(--bs-dark-rgb), var(--bs-text-opacity)) !important;
+}
+
 .btn-dataset {
   color: #000000;
   background-color: #FFFFFF;

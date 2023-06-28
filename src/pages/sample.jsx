@@ -101,18 +101,18 @@ function ViewSample() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            {!!(data.mapped_metadata && Object.keys(data.mapped_metadata).length) &&
+                                            <li className="nav-item">
+                                                <a href="#Provenance"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Provenance</a>
+                                            </li>
+                                             {!!((data.metadata && Object.keys(data.metadata).length) || ancestorHasMetadata) &&
                                                 <li className="nav-item">
                                                     <a href="#Metadata"
                                                        className="nav-link "
                                                        data-bs-parent="#sidebar">Metadata</a>
                                                 </li>
                                             }
-                                            <li className="nav-item">
-                                                <a href="#Provenance"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Provenance</a>
-                                            </li>
                                             <li className="nav-item">
                                                 <a href="#Protocols"
                                                    className="nav-link"
@@ -149,16 +149,16 @@ function ViewSample() {
                                                 <Provenance nodeData={data}/>
                                             }
 
-                                            {/*Protocols*/}
-                                            {data.protocol_url &&
-                                                <Protocols protocol_url={data.protocol_url}/>
-                                            }
-
                                             {/*Metadata*/}
                                             {/*Samples have their metadata inside "metadata"*/}
                                             {!!((data.metadata && Object.keys(data.metadata).length) || ancestorHasMetadata) &&
                                                 <Metadata data={data} metadata={data?.metadata}
                                                           hasLineageMetadata={true}/>
+                                            }
+
+                                            {/*Protocols*/}
+                                            {data.protocol_url &&
+                                                <Protocols protocol_url={data.protocol_url}/>
                                             }
 
                                             {/*Attribution*/}

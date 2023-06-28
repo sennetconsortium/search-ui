@@ -7,12 +7,16 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
         <Fragment>
             {isMetadataHeader &&
                 <Fragment>
-                    {data.entity_type &&
-                        <h5><span className="badge bg-secondary mx-2">
+                    <h5>
+                        <a className={`badge bg-${data.entity_type.toLowerCase()}`}
+                           href={`/${data.entity_type.toLowerCase()}?uuid=${data.uuid}`}>{displayBodyHeader(data.sennet_id)}</a>
+                    </h5>
+
+                    <h5><span className="badge bg-secondary mx-2">
                             {displayBodyHeader(data.entity_type)}
                         </span>
-                        </h5>
-                    }
+                    </h5>
+
                     {data.sample_category &&
                         <h5><span className="badge bg-secondary">
                             {displayBodyHeader(data.sample_category)}

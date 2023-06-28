@@ -98,11 +98,6 @@ function ViewSource() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
-                                            <li className="nav-item">
-                                                <a href="#Protocols"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Protocols</a>
-                                            </li>
                                             {!!((equals(data.source_type, cache.sourceTypes.Mouse) && data.metadata && Object.keys(data.metadata).length) ||
                                                     (equals(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata && Object.keys(data.source_mapped_metadata).length)) &&
                                                 <li className="nav-item">
@@ -111,6 +106,11 @@ function ViewSource() {
                                                        data-bs-parent="#sidebar">Metadata</a>
                                                 </li>
                                             }
+                                            <li className="nav-item">
+                                                <a href="#Protocols"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Protocols</a>
+                                            </li>
                                             <li className="nav-item">
                                                 <a href="#Attribution"
                                                    className="nav-link"
@@ -141,11 +141,6 @@ function ViewSource() {
                                                 <Provenance nodeData={data}/>
                                             }
 
-                                            {/*Protocols*/}
-                                            {data.protocol_url &&
-                                                <Protocols protocol_url={data.protocol_url}/>
-                                            }
-
                                             {/*Metadata*/}
                                             {/*Humans have their metadata inside "source_mapped_metadata" while mice have theirs inside "metadata"*/}
                                             {!!((equals(data.source_type, cache.sourceTypes.Mouse) && data.metadata && Object.keys(data.metadata).length) ||
@@ -157,6 +152,11 @@ function ViewSource() {
                                                         <Metadata data={data} metadata={data.source_mapped_metadata}/>
                                                     )}
                                                 </Fragment>
+                                            }
+
+                                            {/*Protocols*/}
+                                            {data.protocol_url &&
+                                                <Protocols protocol_url={data.protocol_url}/>
                                             }
 
                                             {/*Attribution*/}
