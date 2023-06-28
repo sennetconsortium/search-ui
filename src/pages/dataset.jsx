@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getDataTypesByProperty, getRequestHeaders} from "../components/custom/js/functions";
+import {fetchEntity, getDataTypesByProperty, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -13,7 +13,6 @@ import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
-import Metadata from "../components/custom/entities/sample/Metadata";
 import ContributorsContacts from "../components/custom/entities/ContributorsContacts";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
@@ -22,10 +21,11 @@ import VisualizationContext, {VisualizationProvider} from "../context/Visualizat
 import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
 import SidebarBtn from "../components/SidebarBtn";
 import {kuppe2022nature} from "../vitessce-view-config/kuppe_2022_nature";
-
+import Metadata from "../components/custom/entities/Metadata";
 
 function ViewDataset() {
     const [data, setData] = useState(null)
+    const [ancestorHasMetadata, setAncestorHasMetadata] = useState(false)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -95,6 +95,14 @@ function ViewDataset() {
             } else {
                 // set state with the result
                 setData(data);
+                for (const ancestor of data.ancestors) {
+                    console.log(ancestor)
+                    if (ancestor.metadata && Object.keys(ancestor.metadata).length) {
+                        setAncestorHasMetadata(true)
+                        break
+                    }
+                }
+
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
@@ -222,9 +230,9 @@ function ViewDataset() {
 
 
                                             {/*Metadata*/}
-                                            {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
-                                                <Metadata metadataKey={""} data={data.metadata.metadata}
-                                                          filename={data.sennet_id}/>
+                                            {/*Datasets have their metadata inside "metadata.metadata"*/}
+                                            {!!((data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) || ancestorHasMetadata) &&
+                                                <Metadata data={data} metadata={data?.metadata?.metadata} hasLineageMetadata={true}/>
                                             }
 
                                             {/*Contacts*/}

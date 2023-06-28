@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import Description from "../components/custom/entities/sample/Description";
-import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {getRequestHeaders} from "../components/custom/js/functions";
@@ -16,15 +15,13 @@ import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import {List, ChevronRight, ChevronLeft} from "react-bootstrap-icons";
 import SidebarBtn from "../components/SidebarBtn";
-
+import Metadata from "../components/custom/entities/Metadata";
 
 function ViewSample() {
     const router = useRouter()
     const [data, setData] = useState(null)
-    const [ancestors, setAncestors] = useState(null)
-    const [descendants, setDescendants] = useState(null)
+    const [ancestorHasMetadata, setAncestorHasMetadata] = useState(false)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -51,6 +48,13 @@ function ViewSample() {
             } else {
                 // set state with the result
                 setData(data);
+                for (const ancestor of data.ancestors) {
+                    console.log(ancestor)
+                    if (ancestor.metadata && Object.keys(ancestor.metadata).length) {
+                        setAncestorHasMetadata(true)
+                        break
+                    }
+                }
 
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
@@ -104,13 +108,6 @@ function ViewSample() {
                                                        data-bs-parent="#sidebar">Metadata</a>
                                                 </li>
                                             }
-                                            {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
-                                                <li className="nav-item">
-                                                    <a href="#Derived-Datasets"
-                                                       className="nav-link "
-                                                       data-bs-parent="#sidebar">Derived</a>
-                                                </li>
-                                            }
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
@@ -131,7 +128,7 @@ function ViewSample() {
                                 </div>
 
                                 <main className="col m-md-3 entity_details">
-                                    <SidebarBtn />
+                                    <SidebarBtn/>
 
                                     <EntityViewHeader data={data} entity={cache.entities.sample.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}
@@ -147,12 +144,6 @@ function ViewSample() {
                                                          labId={data.lab_tissue_sample_id}
                                             />
 
-                                            {/*Derived Dataset*/}
-                                            {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
-                                                <DerivedDataset data={data}/>
-                                            }
-
-
                                             {/*Provenance*/}
                                             {data &&
                                                 <Provenance nodeData={data}/>
@@ -164,10 +155,11 @@ function ViewSample() {
                                             }
 
                                             {/*Metadata*/}
-                                            {/*{!!(data.source && Object.keys(data.source).length && 'mapped_metadata' in data.source) &&*/}
-                                            {/*    <Metadata metadataKey='source.' data={data.source.mapped_metadata}*/}
-                                            {/*              filename={data.sennet_id}/>*/}
-                                            {/*}*/}
+                                            {/*Samples have their metadata inside "metadata"*/}
+                                            {!!((data.metadata && Object.keys(data.metadata).length) || ancestorHasMetadata) &&
+                                                <Metadata data={data} metadata={data?.metadata}
+                                                          hasLineageMetadata={true}/>
+                                            }
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>
