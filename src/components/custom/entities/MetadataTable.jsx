@@ -1,11 +1,11 @@
 import React from 'react';
-import {Button} from 'react-bootstrap';
+import {Container, Row,} from 'react-bootstrap'
 import {Download} from "react-bootstrap-icons";
-import {createDownloadUrl, tableDataToTSV} from "../../js/functions";
+import {createDownloadUrl, tableDataToTSV} from "../js/functions";
 import DataTable from "react-data-table-component";
-import SenNetAccordion from "../../layout/SenNetAccordion";
+import {ViewHeaderBadges} from "../layout/entity/ViewHeaderBadges";
 
-export default class Metadata extends React.Component {
+export default class MetadataTable extends React.Component {
     constructor(props) {
         super(props);
         this.columns = [
@@ -23,7 +23,7 @@ export default class Metadata extends React.Component {
 
         this.data = [];
         {
-            Object.entries(this.props.data).map(([key, value]) => {
+            Object.entries(this.props.metadata).map(([key, value]) => {
                 this.data.push({
                     key: this.props.metadataKey + key,
                     value: Array.isArray(value) ? value.join(', ') : value
@@ -33,26 +33,36 @@ export default class Metadata extends React.Component {
     }
 
     render() {
-        const tableDataTSV = tableDataToTSV(this.props.data);
+        const tableDataTSV = tableDataToTSV(this.props.metadata);
         const downloadURL = createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
         return (
-            <SenNetAccordion title={'Metadata'}>
-                <div className="w-100">
-                    <a href={downloadURL}
-                       download={`${this.props.filename}.tsv`}
-                       className="float-end">
+            <Container fluid={true}>
+                <Row className="mb-2">
+                    <div className="col-md-6 col-sm-12 entity_subtitle icon_inline">
+                        {this.props.data &&
+                            <ViewHeaderBadges data={this.props.data} isMetadataHeader={true}/>
+                        }
+                    </div>
+
+                    <div className="col-md-6 col-sm-12">
+                        <div className="entity_subtitle icon_inline float-md-end">
+                            <a href={downloadURL}
+                               download={`${this.props.filename}.tsv`}
+                               className="float-end">
                         <span className="btn btn-primary"
                               role='button'
                               aria-label='Download Metadata'
                               title='Download Metadata'>
                             <Download/>
                         </span>
-                    </a>
-                </div>
+                            </a>
+                        </div>
+                    </div>
+                </Row>
                 <DataTable columns={this.columns}
                            data={this.data}
                            pagination/>
-            </SenNetAccordion>
+            </Container>
         )
     }
 }
