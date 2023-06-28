@@ -160,19 +160,20 @@ function ViewDataset() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
-                                            <li className="nav-item">
-                                                <a href="#Files"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Files</a>
-                                            </li>
 
-                                            {!!(data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) &&
+                                            {!!((data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) || ancestorHasMetadata) &&
                                                 <li className="nav-item">
                                                     <a href="#Metadata"
                                                        className="nav-link"
                                                        data-bs-parent="#sidebar">Metadata</a>
                                                 </li>
                                             }
+
+                                            <li className="nav-item">
+                                                <a href="#Files"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Files</a>
+                                            </li>
 
                                             {!!(data.contacts && Object.keys(data.contacts).length) &&
                                                 <li className="nav-item">
@@ -225,15 +226,15 @@ function ViewDataset() {
                                                 <Provenance nodeData={data}/>
                                             }
 
-                                            {/*Files*/}
-                                            <Files sennet_id={data.sennet_id}/>
-
-
                                             {/*Metadata*/}
                                             {/*Datasets have their metadata inside "metadata.metadata"*/}
                                             {!!((data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) || ancestorHasMetadata) &&
-                                                <Metadata data={data} metadata={data?.metadata?.metadata} hasLineageMetadata={true}/>
+                                                <Metadata data={data} metadata={data?.metadata?.metadata}
+                                                          hasLineageMetadata={true}/>
                                             }
+
+                                            {/*Files*/}
+                                            <Files sennet_id={data.sennet_id}/>
 
                                             {/*Contacts*/}
                                             {!!(data.contacts && Object.keys(data.contacts).length) &&
