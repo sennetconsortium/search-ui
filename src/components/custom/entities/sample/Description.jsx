@@ -1,55 +1,58 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
+import AppContext from "../../../../context/AppContext";
 
-export default class Description extends React.Component {
-    render() {
+export default function Description({data, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate}) {
+
+    const {isLoggedIn} = useContext(AppContext)
+
         return (
             <SenNetAccordion title={'Summary'}>
-                {this.props?.data?.description &&
+                {data?.description &&
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
                             <Card.Subtitle>DOI Abstract</Card.Subtitle>
-                            <Card.Text>{this.props.data.description}</Card.Text>
+                            <Card.Text>{data.description}</Card.Text>
                         </Card.Body>
                     </Card>
                 }
                 <CardGroup>
-                    {this.props.labId &&
+                    {isLoggedIn() && labId &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
                                 <Card.Subtitle>Lab ID</Card.Subtitle>
-                                <Card.Text>{this.props.labId}</Card.Text>
+                                <Card.Text>{labId}</Card.Text>
                             </Card.Body>
                         </Card>
                     }
 
-                    {this.props.primaryDate &&
+                    {primaryDate &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
-                                <Card.Subtitle>{this.props.primaryDateTitle}</Card.Subtitle>
+                                <Card.Subtitle>{primaryDateTitle}</Card.Subtitle>
                                 <Card.Text>
                                     {new Intl.DateTimeFormat('en-US', {
                                         year: 'numeric',
                                         month: '2-digit',
                                         day: '2-digit'
-                                    }).format(this.props.primaryDate)}
+                                    }).format(primaryDate)}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
                     }
 
-                    {this.props.secondaryDate &&
+                    {secondaryDate &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
-                                <Card.Subtitle>{this.props.secondaryDateTitle}</Card.Subtitle>
+                                <Card.Subtitle>{secondaryDateTitle}</Card.Subtitle>
                                 <Card.Text>
                                     {new Intl.DateTimeFormat('en-US', {
                                         year: 'numeric',
                                         month: '2-digit',
                                         day: '2-digit'
-                                    }).format(this.props.secondaryDate)}
+                                    }).format(secondaryDate)}
                                 </Card.Text>
                             </Card.Body>
                         </Card>
@@ -57,5 +60,4 @@ export default class Description extends React.Component {
                 </CardGroup>
             </SenNetAccordion>
         )
-    }
 }
