@@ -89,7 +89,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                                    filename={data.sennet_id}/>
                                 </Tab.Pane>
                             }
-                            {data.ancestors.map((ancestor, index, array) => {
+                            {data.ancestors.reverse().map((ancestor, index, array) => {
                                 // Handle human source table
                                 // Human sources have their metadata inside "source_mapped_metadata"
                                 if (equals(ancestor.entity_type, cache.entities.source) && equals(ancestor.source_type, cache.sourceTypes.Human)) {
