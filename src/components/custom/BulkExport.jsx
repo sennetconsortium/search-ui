@@ -116,17 +116,14 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
 
     const generateManifestData = (selected, isAll) => {
         let manifestData  = ''
-        let colVal;
         try {
             if (!Array.isArray(data)) {
                 data = Object.values(data)
             }
-            let row
             for (let item of data) {
                 let id = raw(item.props.result.id)
                 if (isAll || selected[id]) {
-
-                    manifestData += `${id} /${raw(item.props.result.rel_path)}\n`
+                    manifestData += `${raw(item.props.result.dataset_uuid)} /${raw(item.props.result.rel_path)}\n`
                 }
             }
         } catch (e) {
