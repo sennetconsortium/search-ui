@@ -36,11 +36,11 @@ function SearchEntities() {
     } = useContext(AppContext);
 
     // Return an array of data types that should be excluded from search
-    const excludeDataTypes = getDataTypesByProperty("vis-only", true)
-    console.log(excludeDataTypes)
+    // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
+    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false)
     SEARCH_ENTITIES['searchQuery']['excludeFilters'].push({
         keyword: "data_types.keyword",
-        value: excludeDataTypes
+        value: excludeNonPrimaryTypes
     });
 
     const [clearFacetInputs, setClearFacetInputs] = useState(0)
