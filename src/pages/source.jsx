@@ -1,11 +1,10 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {Fragment, useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import Description from "../components/custom/entities/sample/Description";
-import Metadata from "../components/custom/entities/sample/Metadata";
+import MetadataTable from "../components/custom/entities/MetadataTable";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestHeaders} from "../components/custom/js/functions";
-import DerivedDataset from "../components/custom/entities/sample/DerivedDataset";
+import {equals, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -17,13 +16,12 @@ import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import {List} from 'react-bootstrap-icons';
 import SidebarBtn from "../components/SidebarBtn";
+import Metadata from "../components/custom/entities/Metadata";
 
 function ViewSource() {
     const router = useRouter()
     const [data, setData] = useState(null)
-    const [filteredMetadata, setFilteredMetadata] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -45,11 +43,9 @@ function ViewSource() {
                 setError(true)
                 setErrorMessage(data["error"])
                 setData(false)
-                setFilteredMetadata(null)
             } else {
                 // set state with the result
                 setData(data);
-                setFilteredMetadata(getFilteredMetadata(data))
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
@@ -68,25 +64,6 @@ function ViewSource() {
     }, [router]);
 
     console.log("Test cache in source: ", cache)
-    
-    const metadataFilters = {
-        // source_type: accepted metadata fields
-        Mouse: ['strain', 'sex', 'is_embryo']
-    }
-
-    const getFilteredMetadata = (data) => {
-        if (metadataFilters.hasOwnProperty(data.source_type)) {
-            const acceptedFields = metadataFilters[data.source_type]
-            const metadata = {}
-            acceptedFields.forEach(field => {
-                if (data.metadata.hasOwnProperty(field)) {
-                    metadata[field] = data.metadata[field]
-                }
-            })
-            return metadata
-        }
-        return null
-    }
 
     if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (
@@ -116,30 +93,24 @@ function ViewSource() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            {!!(data.descendant_counts && Object.keys(data.descendant_counts).length && data.descendant_counts.entity_type.Dataset) &&
-                                                <li className="nav-item">
-                                                    <a href="#Derived-Datasets"
-                                                       className="nav-link "
-                                                       data-bs-parent="#sidebar">Derived</a>
-                                                </li>
-                                            }
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
-                                            <li className="nav-item">
-                                                <a href="#Protocols"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Protocols</a>
-                                            </li>
-                                            {filteredMetadata &&
+                                            {!!((equals(data.source_type, cache.sourceTypes.Mouse) && data.metadata && Object.keys(data.metadata).length) ||
+                                                    (equals(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata && Object.keys(data.source_mapped_metadata).length)) &&
                                                 <li className="nav-item">
                                                     <a href="#Metadata"
                                                        className="nav-link"
                                                        data-bs-parent="#sidebar">Metadata</a>
                                                 </li>
                                             }
+                                            <li className="nav-item">
+                                                <a href="#Protocols"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Protocols</a>
+                                            </li>
                                             <li className="nav-item">
                                                 <a href="#Attribution"
                                                    className="nav-link"
@@ -150,7 +121,7 @@ function ViewSource() {
                                 </div>
 
                                 <main className="col m-md-3 entity_details">
-                                    <SidebarBtn />
+                                    <SidebarBtn/>
 
                                     <EntityViewHeader data={data} entity={cache.entities.source.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}/>
@@ -165,27 +136,28 @@ function ViewSource() {
                                                          labId={data.lab_source_id}
                                             />
 
-                                            {/*Derived Dataset*/}
-                                            {!!(data.descendant_counts && Object.keys(data.descendant_counts).length) &&
-                                                <DerivedDataset includeSample={true} data={data}/>
-                                            }
-
                                             {/*Provenance*/}
                                             {data &&
                                                 <Provenance nodeData={data}/>
+                                            }
+
+                                            {/*Metadata*/}
+                                            {/*Humans have their metadata inside "source_mapped_metadata" while mice have theirs inside "metadata"*/}
+                                            {!!((equals(data.source_type, cache.sourceTypes.Mouse) && data.metadata && Object.keys(data.metadata).length) ||
+                                                    (equals(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata && Object.keys(data.source_mapped_metadata).length)) &&
+                                                <Fragment>
+                                                    {equals(data.source_type, cache.sourceTypes.Mouse) ? (
+                                                        <Metadata data={data} metadata={data.metadata}/>
+                                                    ) : (
+                                                        <Metadata data={data} metadata={data.source_mapped_metadata}/>
+                                                    )}
+                                                </Fragment>
                                             }
 
                                             {/*Protocols*/}
                                             {data.protocol_url &&
                                                 <Protocols protocol_url={data.protocol_url}/>
                                             }
-
-                                            {/*Metadata*/}
-                                            {filteredMetadata && 
-                                                <Metadata data={filteredMetadata}
-                                                          metadataKey=""
-                                                          filename={data.sennet_id}/>
-                                            } 
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>
