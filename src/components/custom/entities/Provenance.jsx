@@ -104,11 +104,11 @@ function Provenance({nodeData}) {
     const onNodeClick = (ops) => {
         const id = ops.args.node.data['sennet:sennet_id']
         const $el = document.querySelector(`[data-rr-ui-event-key="${id.trim()}"]`)
-        if ($el) {
+
+        //Don't re-trigger another click if this click came from metadata btn click
+        if ($el && !ops.args.event.detail?.metadata) {
             $el.click()
         }
-
-        console.log('Node clicked', ops, id)
     }
 
     const graphOptions = {

@@ -7,17 +7,22 @@ import Nav from 'react-bootstrap/Nav';
 import AppContext from "../../../context/AppContext";
 import MetadataTable from "./MetadataTable";
 import PropTypes from "prop-types";
+import * as d3 from "d3";
 
 function Metadata({data, metadata, hasLineageMetadata = false}) {
     const {cache} = useContext(AppContext)
-    const popoverCommon = (index, entity, label) => {
+
+    const triggerNode = (e, uuid) => {
+        d3.select(`#node--${uuid}`).dispatch('click', {detail: {metadata: true}})
+    }
+    const popoverCommon = (index, entity, data) => {
         return (
             <SenNetPopover key={`sennet-popover-${entity}-${index}`} className={`${index}-${entity}-metadata`}
                            text={<>View the metadata for the ancestor <code>{cache.entities[entity]}</code> of this
                                entity.</>}>
                 <Nav.Item>
-                    <Nav.Link eventKey={label}
-                              bsPrefix={`btn btn-${entity} rounded-0`}>{label}</Nav.Link>
+                    <Nav.Link onClick={(e) => triggerNode(e, data.uuid)} eventKey={data.sennet_id}
+                              bsPrefix={`btn btn-${entity} rounded-0`}>{data.sennet_id}</Nav.Link>
                 </Nav.Item>
             </SenNetPopover>
         )
@@ -44,7 +49,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                 <SenNetPopover className={"current-metadata"}
                                                text={<>View the metadata for this entity.</>}>
                                     <Nav.Item>
-                                        <Nav.Link eventKey={data.sennet_id}>
+                                        <Nav.Link onClick={(e) => triggerNode(e, data.uuid)} eventKey={data.sennet_id}>
                                             {data.sennet_id}*
                                         </Nav.Link>
                                     </Nav.Item>
@@ -59,21 +64,21 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                         if ((ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) ||
                                             (ancestor.metadata && Object.keys(ancestor.metadata).length)) {
                                             return (
-                                                popoverCommon(index, 'source', ancestor.sennet_id)
+                                                popoverCommon(index, 'source', ancestor)
                                             )
                                         }
                                         // the sample nav link
                                     } else if (equals(ancestor.entity_type, cache.entities.sample)) {
                                         if (ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
                                             return (
-                                                popoverCommon(index, 'sample', ancestor.sennet_id)
+                                                popoverCommon(index, 'sample', ancestor)
                                             )
                                         }
                                         // The dataset nav link
                                     } else if (equals(ancestor.entity_type, cache.entities.dataset)) {
                                         if (ancestor.metadata && Object.keys(ancestor.metadata).length && 'metadata' in ancestor.metadata) {
                                             return (
-                                                popoverCommon(index, 'dataset', ancestor.sennet_id)
+                                                popoverCommon(index, 'dataset', ancestor)
                                             )
                                         }
                                     }
