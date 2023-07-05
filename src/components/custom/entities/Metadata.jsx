@@ -96,9 +96,6 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                     if (ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) {
                                         return (
                                             <Tab.Pane eventKey={ancestor.sennet_id}>
-                                                <h5><span
-                                                    className="badge bg-secondary">{displayBodyHeader(ancestor.source_type)}
-                                                    </span></h5>
                                                 <MetadataTable metadataKey={""} data={ancestor}
                                                                metadata={ancestor.source_mapped_metadata}
                                                                filename={ancestor.sennet_id}/>
