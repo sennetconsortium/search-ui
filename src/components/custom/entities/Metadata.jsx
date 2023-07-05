@@ -10,6 +10,29 @@ import PropTypes from "prop-types";
 
 function Metadata({data, metadata, hasLineageMetadata = false}) {
     const {cache} = useContext(AppContext)
+    const popoverCommon = (index, entity, label) => {
+        return (
+            <SenNetPopover key={`sennet-popover-${entity}-${index}`} className={`${index}-${entity}-metadata`}
+                           text={<>View the metadata for the ancestor <code>{cache.entities[entity]}</code> of this
+                               entity.</>}>
+                <Nav.Item>
+                    <Nav.Link eventKey={label}
+                              bsPrefix={`btn btn-${entity} rounded-0`}>{label}</Nav.Link>
+                </Nav.Item>
+            </SenNetPopover>
+        )
+    }
+
+    const tabPaneCommon = (pre, index, data, metadata, children = (<></>)) => {
+        return (
+            <Tab.Pane key={`tabpane-${pre}-${index}`} eventKey={data.sennet_id}>
+                {children}
+                <MetadataTable metadataKey={""} data={data}
+                               metadata={metadata}
+                               filename={data.sennet_id}/>
+            </Tab.Pane>
+        )
+    }
 
     return (
         <SenNetAccordion title={'Metadata'}>
@@ -36,44 +59,21 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                         if ((ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) ||
                                             (ancestor.metadata && Object.keys(ancestor.metadata).length)) {
                                             return (
-                                                <SenNetPopover className={`${index}-source-metadata`}
-                                                    text={<>View the metadata for the ancestor <code>Source</code> of this
-                                                        entity.</>}>
-                                                    <Nav.Item>
-                                                        <Nav.Link eventKey={ancestor.sennet_id}
-                                                                  bsPrefix="btn btn-source rounded-0">{ancestor.sennet_id}</Nav.Link>
-                                                    </Nav.Item>
-                                                </SenNetPopover>
+                                                popoverCommon(index, 'source', ancestor.sennet_id)
                                             )
                                         }
                                         // the sample nav link
                                     } else if (equals(ancestor.entity_type, cache.entities.sample)) {
                                         if (ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
                                             return (
-                                                <SenNetPopover className={`${index}-sample-metadata`}
-                                                    text={<>View the metadata for the ancestor <code>Sample</code> of this
-                                                        entity.</>}>
-                                                    <Nav.Item>
-                                                        <Nav.Link eventKey={ancestor.sennet_id}
-                                                                  bsPrefix="btn btn-sample rounded-0">
-                                                            {ancestor.sennet_id}</Nav.Link>
-                                                    </Nav.Item>
-                                                </SenNetPopover>
+                                                popoverCommon(index, 'sample', ancestor.sennet_id)
                                             )
                                         }
                                         // The dataset nav link
                                     } else if (equals(ancestor.entity_type, cache.entities.dataset)) {
                                         if (ancestor.metadata && Object.keys(ancestor.metadata).length && 'metadata' in ancestor.metadata) {
                                             return (
-                                                <SenNetPopover className={`${index}-dataset-metadata`}
-                                                               text={<>View the metadata for the
-                                                                   ancestor <code>Dataset</code> of this entity.</>}>
-                                                    <Nav.Item>
-                                                        <Nav.Link eventKey={ancestor.sennet_id}
-                                                                  bsPrefix="btn btn-dataset rounded-0">
-                                                            {ancestor.sennet_id}</Nav.Link>
-                                                    </Nav.Item>
-                                                </SenNetPopover>
+                                                popoverCommon(index, 'dataset', ancestor.sennet_id)
                                             )
                                         }
                                     }
@@ -95,35 +95,22 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                 if (equals(ancestor.entity_type, cache.entities.source) && equals(ancestor.source_type, cache.sourceTypes.Human)) {
                                     if (ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) {
                                         return (
-                                            <Tab.Pane eventKey={ancestor.sennet_id}>
-                                                <h5><span
-                                                    className="badge bg-secondary">{displayBodyHeader(ancestor.source_type)}
-                                                    </span></h5>
-                                                <MetadataTable metadataKey={""} data={ancestor}
-                                                               metadata={ancestor.source_mapped_metadata}
-                                                               filename={ancestor.sennet_id}/>
-                                            </Tab.Pane>
+                                            tabPaneCommon('0', index, ancestor, ancestor.source_mapped_metadata, (<h5><span
+                                                className="badge bg-secondary">{displayBodyHeader(ancestor.source_type)}
+                                                    </span></h5>))
                                         )
                                     }
                                 } else if (!equals(ancestor.entity_type, cache.entities.dataset) && ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
                                     // Handle mouse source and sample table
                                     // Mice sources and all samples have their metadata inside "metadata"
                                     return (
-                                        <Tab.Pane eventKey={ancestor.sennet_id}>
-                                            <MetadataTable metadataKey={""} data={ancestor}
-                                                           metadata={ancestor.metadata}
-                                                           filename={ancestor.sennet_id}/>
-                                        </Tab.Pane>
+                                        tabPaneCommon('1', index, ancestor, ancestor.metadata)
                                     )
                                 } else if (ancestor.metadata && Object.keys(ancestor.metadata).length && 'metadata' in ancestor.metadata) {
                                     // Handle dataset table
                                     // Datasets have their metadata inside "metadata.metadata"
                                     return (
-                                        <Tab.Pane eventKey={ancestor.sennet_id}>
-                                            <MetadataTable metadataKey={""} data={ancestor}
-                                                           metadata={ancestor.metadata.metadata}
-                                                           filename={ancestor.sennet_id}/>
-                                        </Tab.Pane>
+                                        tabPaneCommon('2', index, ancestor, ancestor.metadata.metadata)
                                     )
                                 }
                             })}
