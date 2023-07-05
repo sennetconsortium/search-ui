@@ -101,6 +101,16 @@ function Provenance({nodeData}) {
         }, 1000)
     }
 
+    const onNodeClick = (ops) => {
+        const id = ops.args.node.data['sennet:sennet_id']
+        const $el = document.querySelector(`[data-rr-ui-event-key="${id.trim()}"]`)
+        if ($el) {
+            $el.click()
+        }
+
+        console.log('Node clicked', ops, id)
+    }
+
     const graphOptions = {
         idNavigate: {
             props: ['sennet:sennet_id', 'sennet:protocol_url'],
@@ -156,7 +166,8 @@ function Provenance({nodeData}) {
             onCenterX,
             onInitializationComplete,
             onAfterBuild,
-            onSvgSizing
+            onSvgSizing,
+            onNodeClick
         }
     }
 
