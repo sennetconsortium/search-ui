@@ -28,10 +28,9 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
         )
     }
 
-    const tabPaneCommon = (pre, index, data, metadata, children = (<></>)) => {
+    const tabPaneCommon = (pre, index, data, metadata) => {
         return (
             <Tab.Pane key={`tabpane-${pre}-${index}`} eventKey={data.sennet_id}>
-                {children}
                 <MetadataTable metadataKey={""} data={data}
                                metadata={metadata}
                                filename={data.sennet_id}/>
@@ -100,9 +99,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                 if (equals(ancestor.entity_type, cache.entities.source) && equals(ancestor.source_type, cache.sourceTypes.Human)) {
                                     if (ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) {
                                         return (
-                                            tabPaneCommon('0', index, ancestor, ancestor.source_mapped_metadata, (<h5><span
-                                                className="badge bg-secondary">{displayBodyHeader(ancestor.source_type)}
-                                                    </span></h5>))
+                                            tabPaneCommon('0', index, ancestor, ancestor.source_mapped_metadata)
                                         )
                                     }
                                 } else if (!equals(ancestor.entity_type, cache.entities.dataset) && ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
