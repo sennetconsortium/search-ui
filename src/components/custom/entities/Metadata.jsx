@@ -8,12 +8,16 @@ import AppContext from "../../../context/AppContext";
 import MetadataTable from "./MetadataTable";
 import PropTypes from "prop-types";
 import * as d3 from "d3";
+import $ from 'jquery'
 
 function Metadata({data, metadata, hasLineageMetadata = false}) {
     const {cache} = useContext(AppContext)
 
     const triggerNode = (e, uuid) => {
-        d3.select(`#node--${uuid}`).dispatch('click', {detail: {metadata: true}})
+        $('.node').removeClass('is-active')
+        const id = `#node--${uuid}`
+        $(id).addClass('is-active')
+        d3.select(id).dispatch('click', {detail: {metadata: true}})
     }
     const popoverCommon = (index, entity, data) => {
         return (
@@ -21,7 +25,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                            text={<>View the metadata for the ancestor <code>{cache.entities[entity]}</code> of this
                                entity.</>}>
                 <Nav.Item>
-                    <Nav.Link onClick={(e) => triggerNode(e, data.uuid)} eventKey={data.sennet_id}
+                    <Nav.Link onClick={(e) => triggerNode(e, data.uuid)} data-uuid={data.uuid} eventKey={data.sennet_id}
                               bsPrefix={`btn btn-${entity} rounded-0`}>{data.sennet_id}</Nav.Link>
                 </Nav.Item>
             </SenNetPopover>
@@ -48,7 +52,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                 <SenNetPopover className={"current-metadata"}
                                                text={<>View the metadata for this entity.</>}>
                                     <Nav.Item>
-                                        <Nav.Link onClick={(e) => triggerNode(e, data.uuid)} eventKey={data.sennet_id}>
+                                        <Nav.Link onClick={(e) => triggerNode(e, data.uuid)} data-uuid={data.uuid} eventKey={data.sennet_id}>
                                             {data.sennet_id}*
                                         </Nav.Link>
                                     </Nav.Item>

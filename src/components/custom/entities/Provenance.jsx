@@ -111,6 +111,14 @@ function Provenance({nodeData}) {
         }
     }
 
+    const onInfoCloseClick = (ops) => {
+        const uuid = $('#Metadata-collapse .nav-item .active').data('uuid')
+        const $el = $(`#node--${uuid}`)
+        if (!$el.hasClass('is-active')) {
+            $el.removeClass('is-active')
+        }
+    }
+
     const graphOptions = {
         idNavigate: {
             props: ['sennet:sennet_id', 'sennet:protocol_url'],
@@ -167,7 +175,8 @@ function Provenance({nodeData}) {
             onInitializationComplete,
             onAfterBuild,
             onSvgSizing,
-            onNodeClick
+            onNodeClick,
+            onInfoCloseClick
         }
     }
 
