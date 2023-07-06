@@ -101,6 +101,24 @@ function Provenance({nodeData}) {
         }, 1000)
     }
 
+    const onNodeClick = (ops) => {
+        const id = ops.args.node.data['sennet:sennet_id']
+        const $el = document.querySelector(`[data-rr-ui-event-key="${id.trim()}"]`)
+
+        //Don't re-trigger another click if this click came from metadata btn click
+        if ($el && !ops.args.event.detail?.metadata) {
+            $el.click()
+        }
+    }
+
+    const onInfoCloseClick = (ops) => {
+        const uuid = $('#Metadata-collapse .nav-item .active').data('uuid')
+        const $el = $(`#node--${uuid}`)
+        if (!$el.hasClass('is-active')) {
+            $el.removeClass('is-active')
+        }
+    }
+
     const graphOptions = {
         idNavigate: {
             props: ['sennet:sennet_id', 'sennet:protocol_url'],
@@ -156,7 +174,9 @@ function Provenance({nodeData}) {
             onCenterX,
             onInitializationComplete,
             onAfterBuild,
-            onSvgSizing
+            onSvgSizing,
+            onNodeClick,
+            onInfoCloseClick
         }
     }
 
