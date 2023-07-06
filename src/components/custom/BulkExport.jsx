@@ -7,7 +7,7 @@ import {equals} from "./js/functions";
 
 const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
 
-const getCheckAll = () => {
+export const getCheckAll = () => {
     const $headers = $('.rdt_TableHeadRow .rdt_TableCol')
     const $checkAllHeader = $headers.eq(0)
     return $checkAllHeader.find('.sui-check-all input')
