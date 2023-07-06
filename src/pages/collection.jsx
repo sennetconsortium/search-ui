@@ -12,7 +12,7 @@ import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import ContributorsContacts from "../components/custom/entities/ContributorsContacts";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import {VisualizationProvider} from "../context/VisualizationContext";
+import {DerivedProvider} from "../context/DerivedContext";
 import SidebarBtn from "../components/SidebarBtn";
 import {useRouter} from "next/router";
 import Protocols from "../components/custom/entities/sample/Protocols";
@@ -162,6 +162,6 @@ function ViewCollection() {
     }
 }
 
-ViewCollection.withWrapper = function(page) { return <VisualizationProvider>{ page }</VisualizationProvider> }
+ViewCollection.withWrapper = function(page) { return <DerivedProvider>{ page }</DerivedProvider> }
 
 export default ViewCollection

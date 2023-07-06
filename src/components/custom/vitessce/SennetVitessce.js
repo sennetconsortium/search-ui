@@ -1,5 +1,5 @@
 import React, {useContext, Suspense} from "react";
-import VisualizationContext from "../../../context/VisualizationContext";
+import DerivedContext from "../../../context/DerivedContext";
 import Link from "next/link";
 import {Fullscreen, Moon, MoonFill, Share, Sun, SunFill} from "react-bootstrap-icons";
 import {Snackbar} from "@mui/material";
@@ -22,8 +22,9 @@ export const SennetVitessce = ({ data }) => {
         isFullscreen,
         setIsFullscreen,
         expandVitessceToFullscreen,
-        isPrimaryDataset
-    } = useContext(VisualizationContext)
+        isPrimaryDataset,
+        derivedDataset
+    } = useContext(DerivedContext)
     
     return <>
         {showVitessce(isPrimaryDataset, data) &&
@@ -37,11 +38,11 @@ export const SennetVitessce = ({ data }) => {
                         </span>
                     </div>
                     <div className={'col p-2 m-2'}>
-                        {isPrimaryDataset && data.immediate_descendants.length !== 0 &&
+                        {isPrimaryDataset && derivedDataset &&
                             <span className={'fw-light fs-6 m-2 p-2'}>
                                 Derived from
-                                <Link target="_blank" href={{ pathname: '/dataset', query: { uuid: data.immediate_descendants[0].uuid } }}>
-                                    <span className={'ms-2 me-2'}>{data.immediate_descendants[0].sennet_id}</span>
+                                <Link target="_blank" href={{ pathname: '/dataset', query: { uuid: derivedDataset.uuid } }}>
+                                    <span className={'ms-2 me-2'}>{derivedDataset.sennet_id}</span>
                                 </Link>
                             </span>
                         }
