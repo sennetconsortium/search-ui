@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {fetchEntity, getDataTypesByProperty, getRequestHeaders} from "../components/custom/js/functions";
+import {getDataTypesByProperty, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -17,7 +17,7 @@ import ContributorsContacts from "../components/custom/entities/ContributorsCont
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
-import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
+import DerivedContext, {DerivedProvider} from "../context/DerivedContext";
 import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
 import SidebarBtn from "../components/SidebarBtn";
 import {kuppe2022nature} from "../vitessce-view-config/kuppe_2022_nature";
@@ -34,42 +34,49 @@ function ViewDataset() {
         showVitessce,
         setVitessceConfig,
         setIsPrimaryDataset,
-        isPrimaryDataset
-    } = useContext(VisualizationContext)
+        isPrimaryDataset,
+        setDerived
+    } = useContext(DerivedContext)
 
     // Load the correct Vitessce view config
+    const vitessceConfig = (data, dataset_id) => {
+        data.data_types.forEach(assay => {
+            switch (assay) {
+                case 'snRNA-seq':
+                case 'scRNA-seq':
+                case 'salmon_rnaseq_10x':
+                case 'salmon_sn_rnaseq_10x':
+                    setVitessceConfig(rna_seq(dataset_id))
+                    break
+                case 'codex_cytokit':
+                case 'codex_cytokit_v1':
+                case 'CODEX':
+                    setVitessceConfig(codex_config(dataset_id))
+                    break
+                case 'Visium':
+                    setVitessceConfig(kuppe2022nature())
+                    break
+                default:
+                    console.log(`No Vitessce config found for assay type: ${assay}`)
+            }
+        })
+    }
+
     useEffect(() => {
         const initVitessceConfig = async () => {
             if (data) {
-                let dataset_id = data.uuid
                 const primary_assays = getDataTypesByProperty("primary", true)
-                // TODO: Check each data_type in the list instead of the first item
                 let is_primary_dataset = primary_assays.includes(data.data_types[0]);
                 setIsPrimaryDataset(is_primary_dataset)
-                if (is_primary_dataset && data.immediate_descendants.length !== 0) {
-                    let immediate_descendant = data.immediate_descendants[0];
-                    dataset_id = immediate_descendant.uuid
-                }
-                data.data_types.forEach(assay => {
-                    switch (assay) {
-                        case 'snRNA-seq':
-                        case 'scRNA-seq':
-                        case 'salmon_rnaseq_10x':
-                        case 'salmon_sn_rnaseq_10x':
-                            setVitessceConfig(rna_seq(dataset_id))
-                            break
-                        case 'codex_cytokit':
-                        case 'codex_cytokit_v1':
-                        case 'CODEX':
-                            setVitessceConfig(codex_config(dataset_id))
-                            break
-                        case 'Visium':
-                            setVitessceConfig(kuppe2022nature())
-                            break
-                        default:
-                            console.log(`No Vitessce config found for assay type: ${assay}`)
+                if (showVitessce(is_primary_dataset, data)) {
+                    if (is_primary_dataset) {
+                        setDerived(data).then(derived => {
+                            vitessceConfig(data, derived.uuid)
+                        })
+                    } else {
+                        vitessceConfig(data, data.uuid)
                     }
-                })
+                }
             }
         }
         initVitessceConfig()
@@ -234,7 +241,8 @@ function ViewDataset() {
                                             }
 
                                             {/*Files*/}
-                                            <Files sennet_id={data.sennet_id}/>
+                                            <Files data={data}/>
+
 
                                             {/*Contacts*/}
                                             {!!(data.contacts && Object.keys(data.contacts).length) &&
@@ -263,7 +271,7 @@ function ViewDataset() {
 }
 
 ViewDataset.withWrapper = function (page) {
-    return <VisualizationProvider>{page}</VisualizationProvider>
+    return <DerivedProvider>{page}</DerivedProvider>
 }
 
 export default ViewDataset

@@ -60,7 +60,7 @@ export async function fetchGlobusFilepath(sennet_id) {
     const response = await fetch(url, request_options)
     const filepath = await response.text();
     log.error(filepath)
-    return {status: response.status, filepath};
+    return {status: response.status, filepath: filepath};
 }
 
 // This function requires the bearer token passed to it as the middleware can't access "getAuth()"
