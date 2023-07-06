@@ -20,25 +20,7 @@ export const Files = ({data}) => {
         derivedDataset
     } = useContext(DerivedContext)
 
-    const setTableDataConfig = (filesToIterate) => {
-        let rows = []
-        filesToIterate.map(file => {
-            rows.push({
-                rel_path: file.rel_path,
-                description: file.description,
-                is_qa_qc: file.is_qa_qc,
-                size: file.size
-            })
-        });
-        setTableData(rows);
-    }
-
-    useEffect(async () => {
-        await fetchGlobusFilepath(data.uuid).then((globusData) => {
-            setStatus(globusData.status);
-            setFilepath(globusData.filepath);
-        });
-
+    const setTableDataConfig = (uuid, filesToIterate) => {
         setTableColumns([
             {
                 name: 'File Name',
@@ -49,7 +31,7 @@ export const Files = ({data}) => {
                     <span>
                             <a target="_blank"
                                className={"icon_inline"}
-                               href={`${getAssetsEndpoint()}${data.uuid}/${row.rel_path}?token=${getAuth()}`}><span
+                               href={`${getAssetsEndpoint()}${uuid}/${row.rel_path}?token=${getAuth()}`}><span
                                 className="me-1">{row.rel_path}</span>
                             </a>
                             <SenNetPopover className={`file-${index}`}
@@ -74,15 +56,33 @@ export const Files = ({data}) => {
             }
         ]);
 
+        let rows = []
+        filesToIterate.map(file => {
+            rows.push({
+                rel_path: file.rel_path,
+                description: file.description,
+                is_qa_qc: file.is_qa_qc,
+                size: file.size
+            })
+        });
+        setTableData(rows);
+    }
+
+    useEffect(async () => {
+        await fetchGlobusFilepath(data.uuid).then((globusData) => {
+            setStatus(globusData.status);
+            setFilepath(globusData.filepath);
+        });
+
         //Default to use files, otherwise wait until derivedDataset is populated
-        if(data.files && Object.keys(data.files).length) {
-            setTableDataConfig(data.files)
+        if (data.files && Object.keys(data.files).length) {
+            setTableDataConfig(data.uuid, data.files)
         }
     }, [])
 
     useEffect(() => {
-        if(isPrimaryDataset && derivedDataset.files && Object.keys(derivedDataset.files).length) {
-           setTableDataConfig(derivedDataset.files)
+        if (isPrimaryDataset && derivedDataset.files && Object.keys(derivedDataset.files).length) {
+            setTableDataConfig(derivedDataset.uuid, derivedDataset.files)
         }
     }, [derivedDataset])
 
@@ -93,7 +93,7 @@ export const Files = ({data}) => {
                     {derivedDataset &&
                         <span className={'fw-light fs-6 m-2 p-2'}>
                                 Derived from
-                                <Link target="_blank" href={{ pathname: '/dataset', query: { uuid: derivedDataset.uuid } }}>
+                                <Link target="_blank" href={{pathname: '/dataset', query: {uuid: derivedDataset.uuid}}}>
                                     <span className={'ms-2 me-2'}>{derivedDataset.sennet_id}</span>
                                 </Link>
                             </span>
