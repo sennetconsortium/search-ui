@@ -13,8 +13,8 @@ import Link from "next/link";
 export const Files = ({data}) => {
     const [status, setStatus] = useState(null)
     const [filepath, setFilepath] = useState(null)
-    const [tableColumns, setTableColumns] = useState(null)
-    const [tableData, setTableData] = useState(null)
+    const [tableColumns, setTableColumns] = useState([])
+    const [tableData, setTableData] = useState([])
     const {
         isPrimaryDataset,
         derivedDataset
