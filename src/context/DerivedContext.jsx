@@ -1,6 +1,7 @@
 import {createContext, useCallback, useState} from "react";
 import $ from "jquery";
 import {fetchEntity} from "../components/custom/js/functions";
+import {isAssayVitessceSupport} from "../config/config";
 
 const DerivedContext = createContext({})
 
@@ -39,28 +40,28 @@ export const DerivedProvider = ({children}) => {
     const setDerived = async (data) => {
         let derived = null
         if (data.descendants.length !== 0) {
-            for (let i = 0; i < data.descendants.length; i++) {
+            for (let i = data.descendants.length - 1; i >= 0; i--) {
                 let descendantData = await fetchEntity(data.descendants[i].uuid)
-                if (isDatasetStatusPassed(isDatasetStatusPassed)) {
+                if (isDatasetStatusPassed(descendantData) && vitessceSupportedAssasys.includes(descendantData.data_types[0])) {
                     // If derivedDataset hasn't been set then set it to this descendant
                     if (derivedDataset === null) {
-                        setDerivedDataset(descendantData);
                         derived = descendantData;
                     } else if (descendantData.status === 'Published') {
                         // If we come across a Published descendant then set it to this
-                        setDerivedDataset(descendantData);
                         derived = descendantData;
                         break;
                     }
                 }
             }
         }
+        setDerivedDataset(derived)
         return derived;
     }
 
+    const vitessceSupportedAssasys = ['salmon_rnaseq_10x', 'salmon_sn_rnaseq_10x', 'codex_cytokit', 'codex_cytokit_v1', 'Visium']
 
     const isDatasetStatusPassed = data => {
-        return data.status !== 'Processing' && data.status !== 'Error' && data.status !== 'Invalid'
+        return data.status === "QA" || data.status === 'Published'
     }
 
     const expandVitessceToFullscreen = () => {
