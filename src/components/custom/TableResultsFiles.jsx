@@ -2,7 +2,7 @@ import React, {useRef} from 'react'
 import PropTypes from 'prop-types'
 import {
     checkFilterType,
-    checkMultipleFilterType,
+    checkMultipleFilterType, formatByteSize,
     getUBKGFullName,
 } from './js/functions'
 import BulkExport, {getCheckAll, handleCheckbox} from "./BulkExport";
@@ -18,8 +18,6 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
-    const toMb = (size) => (size / 1024).toFixed(2)
-
     const onRowClicked = (e, uuid, data) => {
         const sel = `[name="check-${data.id}"]`
         const attr = 'data-download-size'
@@ -31,7 +29,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         total = isChecked ? total + raw(data.size) : total - raw(data.size)
         $checkAll.attr(attr, total)
         $('.sui-paging-info .download-size').remove()
-        $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${toMb(total)} mb</span>`)
+        $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${formatByteSize(total)}</span>`)
     }
 
     const getId = (column) => column.id || column.sennet_id
@@ -100,7 +98,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 name: 'Size',
                 selector: row => raw(row.size),
                 sortable: true,
-                format: row => <span>{toMb(raw(row.size))} mb</span>
+                format: row => <span>{formatByteSize(raw(row.size))}</span>
             }
         )
 
