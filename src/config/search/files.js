@@ -66,6 +66,7 @@ export const SEARCH_FILES = {
             'checksum',
             'data_types',
             'description',
+            'dataset_uuid',
             'donors',
             'file_extension',
             'file_info_refresh_timestamp',

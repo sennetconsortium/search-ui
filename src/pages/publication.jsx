@@ -14,7 +14,7 @@ import {Alert, Stack, Table, Badge} from 'react-bootstrap';
 
 import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import VisualizationContext, {VisualizationProvider} from "../context/VisualizationContext";
+import DerivedContext, {DerivedProvider} from "../context/DerivedContext";
 
 import SidebarBtn from "../components/SidebarBtn";
 import SenNetAccordion from "../components/custom/layout/SenNetAccordion";
@@ -33,7 +33,7 @@ function ViewPublication() {
         setVitessceConfig,
         setIsPrimaryDataset,
         isPrimaryDataset
-    } = useContext(VisualizationContext)
+    } = useContext(DerivedContext)
 
 
 
@@ -235,6 +235,6 @@ function ViewPublication() {
     }
 }
 
-ViewPublication.withWrapper = function(page) { return <VisualizationProvider>{ page }</VisualizationProvider> }
+ViewPublication.withWrapper = function(page) { return <DerivedProvider>{ page }</DerivedProvider> }
 
 export default ViewPublication
