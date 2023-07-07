@@ -65,6 +65,7 @@ export const SEARCH_FILES = {
             'sennet_id',
             'checksum',
             'data_types',
+            'description',
             'dataset_uuid',
             'donors',
             'file_extension',

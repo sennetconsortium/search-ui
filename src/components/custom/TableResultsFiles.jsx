@@ -1,24 +1,36 @@
-import React, {useContext, useRef} from 'react'
+import React, {useRef} from 'react'
 import PropTypes from 'prop-types'
 import {
     checkFilterType,
-    checkMultipleFilterType,
-    getEntityViewUrl, getUBKGFullName,
+    checkMultipleFilterType, formatByteSize,
+    getUBKGFullName,
 } from './js/functions'
-import AppContext from "../../context/AppContext"
-import BulkExport, {handleCheckbox} from "./BulkExport";
+import BulkExport, {getCheckAll, handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
 import ResultsBlock from "./search/ResultsBlock";
 import {TableResultsProvider} from "../../context/TableResultsContext";
+import $ from 'jquery'
 
-function TableResultsFiles({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
+function TableResultsFiles({children, filters, forData = false, rowFn, inModal = false}) {
     const fileTypeField = 'file_extension'
     let hasMultipleFileTypes = checkMultipleFilterType(filters, fileTypeField);
     const currentColumns = useRef([])
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
-    const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid), {})
+    const onRowClicked = (e, uuid, data) => {
+        const sel = `[name="check-${data.id}"]`
+        const attr = 'data-download-size'
+        document.querySelector(sel).click()
+        const isChecked = $(sel).is(':checked')
+        const $checkAll = getCheckAll()
+        let total = $checkAll.attr(attr)
+        total = total ? Number(total) : 0
+        total = isChecked ? total + raw(data.size) : total - raw(data.size)
+        $checkAll.attr(attr, total)
+        $('.sui-paging-info .download-size').remove()
+        $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${formatByteSize(total)}</span>`)
+    }
 
     const getId = (column) => column.id || column.sennet_id
 
@@ -38,10 +50,10 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
 
         cols.push(
             {
-                name: 'Path',
-                selector: row => raw(row.rel_path),
+                name: 'File Type Description',
+                selector: row => raw(row.description),
                 sortable: true,
-                format: row => <a data-field='rel_path' href={'#'}>{raw(row.rel_path)}</a>,
+                format: row => <p>{raw(row.description)} {raw(row.description) && <br />} <small><a data-field='rel_path' href={'#'}>{raw(row.rel_path)}</a></small></p>
             }
         )
 
@@ -86,7 +98,7 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
                 name: 'Size',
                 selector: row => raw(row.size),
                 sortable: true,
-                format: row => <span>{(raw(row.size)/ 1024).toFixed(2)} mb</span>
+                format: row => <span>{formatByteSize(raw(row.size))}</span>
             }
         )
 
@@ -126,9 +138,9 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
 
     return (
         <>
-            <TableResultsProvider getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
+            <TableResultsProvider getId={getId} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
-                    disableRowClick={true}
+
                     getTableColumns={getTableColumns}
                 />
             </TableResultsProvider>
