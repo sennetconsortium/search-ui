@@ -151,7 +151,9 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
                     lastSelected = val
                 }
             })
-            fileName += ` - ${lastSelected}`
+            if (fileName !== lastSelected) {
+                fileName += ` - ${lastSelected}`
+            }
         }
 
         for (let item of data) {
@@ -171,6 +173,8 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
                 break;
             case 'manifest':
                 type = 'text/plain'
+                fileName = 'data-manifest-' + fileName
+                fileType = 'txt'
                 blob = [generateManifestData(selected, isAll)]
                 break;
             default:
