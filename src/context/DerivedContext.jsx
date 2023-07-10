@@ -20,7 +20,7 @@ export const DerivedProvider = ({children}) => {
         let show_vitessce = false
 
         //Check first that this dataset has a valid status and has descendants or if we know this isn't a primary dataset
-        if (isDatasetStatusPassed(data) && (is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset) {
+        if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset)) {
             if (!isPrimaryDataset) {
                 return true
             }
