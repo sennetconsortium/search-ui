@@ -13,6 +13,7 @@ export const handlePagingInfo = (page, resultsPerPage, totalRows) => {
         to = to > totalRows ? totalRows : to
         let txt = totalRows > 0 ? `${from} - ${to}` : '0 - 0'
         $pgInfo.find('strong').eq(0).html(`${txt}`)
+        $pgInfo.find('.download-size').remove()
     } catch (e) {
         console.error(e)
     }
