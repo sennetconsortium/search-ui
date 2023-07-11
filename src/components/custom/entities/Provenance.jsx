@@ -119,9 +119,14 @@ function Provenance({nodeData}) {
         }
     }
 
+    const jsonView = (d, property, value) => {
+        console.log(value)
+        return {href: `/api/json?view=${btoa(value.replaceAll("'", '"'))}`, value: `${value.substr(0, 20)}...}`}
+    }
+
     const graphOptions = {
         idNavigate: {
-            props: ['sennet:sennet_id', 'sennet:protocol_url'],
+            props: {'sennet:sennet_id': true, 'sennet:protocol_url': true, 'sennet:processing_information': {callback: jsonView}},
             url: '/{subType}?uuid={id}',
             exclude: {
                 'Activity': ['sennet:sennet_id']
@@ -194,7 +199,7 @@ function Provenance({nodeData}) {
         typeProps: {
             Source: ['sennet:source_type'],
             Sample: ['sennet:sample_category', 'sennet:organ'],
-            Activity: ['sennet:created_timestamp', 'sennet:protocol_url', 'sennet:created_by_user_displayname']
+            Activity: ['sennet:created_timestamp', 'sennet:protocol_url', 'sennet:processing_information', 'sennet:created_by_user_displayname']
         },
         callbacks: {
             'sennet:created_timestamp': 'formatDate',
