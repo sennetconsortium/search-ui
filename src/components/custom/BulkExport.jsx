@@ -55,6 +55,8 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
     const [totalSelected, setTotalSelected] = useState(0)
 
     useEffect(() => {
+        $('.sui-paging-info .download-size').remove()
+
         $('.clear-filter-button').on('click', ()=>{
             setTotalSelected(0)
         })
@@ -151,7 +153,9 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
                     lastSelected = val
                 }
             })
-            fileName += ` - ${lastSelected}`
+            if (fileName !== lastSelected) {
+                fileName += ` - ${lastSelected}`
+            }
         }
 
         for (let item of data) {
@@ -171,6 +175,8 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
                 break;
             case 'manifest':
                 type = 'text/plain'
+                fileName = 'data-manifest-' + fileName
+                fileType = 'txt'
                 blob = [generateManifestData(selected, isAll)]
                 break;
             default:
