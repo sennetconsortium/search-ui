@@ -2,7 +2,7 @@ import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
 import {NAVBAR_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
 import {useContext} from 'react'
-import logo from './sennet-logo.png'
+import logo from '../../../public/static/sennet-logo.png'
 import Image from 'next/image'
 import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
