@@ -55,6 +55,8 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
     const [totalSelected, setTotalSelected] = useState(0)
 
     useEffect(() => {
+        $('.sui-paging-info .download-size').remove()
+
         $('.clear-filter-button').on('click', ()=>{
             setTotalSelected(0)
         })
