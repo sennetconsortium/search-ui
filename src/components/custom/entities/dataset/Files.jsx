@@ -88,7 +88,7 @@ export const Files = ({data}) => {
 
     return <Fragment>
         <SenNetAccordion title={'Files'}>
-            {!!(((data.files && Object.keys(data.files).length) || (isPrimaryDataset && derivedDataset?.files && Object.keys(derivedDataset?.files).length)) && status === 200 && filepath) &&
+            {!!((data.files && Object.keys(data.files).length) || (isPrimaryDataset && derivedDataset?.files && Object.keys(derivedDataset?.files).length)) &&
                 <Card border={'0'}>
                     {derivedDataset &&
                         <span className={'fw-light fs-6 m-2 p-2'}>
