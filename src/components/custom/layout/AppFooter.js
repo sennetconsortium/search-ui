@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {Container, Row, Col} from 'react-bootstrap'
-import logo from "./sennet-txt-horizontal-logo.png";
-import nih from "./nih-txt-horizontal-logo.png"
+import logo from "../../../public/static/sennet-txt-horizontal-logo.png";
+import nih from "../../../public/static/nih-txt-horizontal-logo.png"
 import Image from "next/image";
 import AppContext from "../../../context/AppContext";
 import {ToastContainer} from "react-toastify";
