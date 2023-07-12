@@ -55,8 +55,6 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
     const [totalSelected, setTotalSelected] = useState(0)
 
     useEffect(() => {
-        $('.sui-paging-info .download-size').remove()
-
         $('.clear-filter-button').on('click', ()=>{
             setTotalSelected(0)
         })
@@ -175,7 +173,7 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
                 break;
             case 'manifest':
                 type = 'text/plain'
-                fileName = 'data-manifest-' + fileName
+                fileName = 'data-manifest'
                 fileType = 'txt'
                 blob = [generateManifestData(selected, isAll)]
                 break;

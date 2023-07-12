@@ -17,13 +17,18 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const fileTypeField = 'file_extension'
     let hasMultipleFileTypes = checkMultipleFilterType(filters, fileTypeField);
     const currentColumns = useRef([])
+    const hasClicked = useRef(false)
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
-    const onRowClicked = (e, uuid, data) => {
+    const onRowClicked = (e, uuid, data, clicked = false) => {
+        console.log(data)
         const sel = `[name="check-${data.id}"]`
         const attr = 'data-download-size'
-        document.querySelector(sel).click()
+        if (!clicked) {
+            hasClicked.current = true
+            document.querySelector(sel).click()
+        }
         const isChecked = $(sel).is(':checked')
         const $checkAll = getCheckAll()
         let total = $checkAll.attr(attr)
@@ -31,7 +36,17 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         total = isChecked ? total + raw(data.size) : total - raw(data.size)
         $checkAll.attr(attr, total)
         $('.sui-paging-info .download-size').remove()
-        $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${formatByteSize(total)}</span>`)
+        if (total > 0) {
+            $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${formatByteSize(total)}</span>`)
+        }
+        hasClicked.current = false
+    }
+
+    const handleFileCheckbox = (e, data) => {
+        handleCheckbox(e)
+        if (!hasClicked.current) {
+            onRowClicked(e, data.id, data, true)
+        }
     }
 
     const getId = (column) => column.id || column.sennet_id
@@ -46,7 +61,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 className: 'text-center',
                 selector: row => row.id,
                 sortable: false,
-                format: column => <input type={'checkbox'} onClick={(e) => handleCheckbox(e)} value={getId(column)} name={`check-${getId(column)}`}/>
+                format: column => <input type={'checkbox'} onClick={(e) => handleFileCheckbox(e, column)} value={getId(column)} name={`check-${getId(column)}`}/>
             })
         }
 
