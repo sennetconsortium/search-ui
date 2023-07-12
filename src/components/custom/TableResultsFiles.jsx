@@ -48,7 +48,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         let total = $checkAll.attr(downloadSizeAttr)
         total = total ? Number(total) : 0
         total = isChecked ? total + raw(data.size) : total - raw(data.size)
-        removeDownloadSizeLabel()
+        clearDownloadSizeLabel()
         applyDownloadSizeLabel(total)
         hasClicked.current = false
     }
