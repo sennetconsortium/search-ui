@@ -14,12 +14,9 @@ import SenNetAlert from "../SenNetAlert";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 
 const downloadSizeAttr = 'data-download-size'
-const removeDownloadSizeLabel = () => {
-    $('.sui-paging-info .download-size').remove()
-}
 export const clearDownloadSizeLabel = () => {
     getCheckAll().removeAttr(downloadSizeAttr)
-    removeDownloadSizeLabel()
+    $('.sui-paging-info .download-size').remove()
 }
 
 function TableResultsFiles({children, filters, forData = false, rowFn, inModal = false}) {
