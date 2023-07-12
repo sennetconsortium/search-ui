@@ -5,13 +5,19 @@ import {
     checkMultipleFilterType, formatByteSize,
     getUBKGFullName,
 } from './js/functions'
-import BulkExport, {getCheckAll, handleCheckbox} from "./BulkExport";
+import BulkExport, {getCheckAll, getCheckboxes, handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
 import ResultsBlock from "./search/ResultsBlock";
 import {TableResultsProvider} from "../../context/TableResultsContext";
 import $ from 'jquery'
 import SenNetAlert from "../SenNetAlert";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
+
+const removeDownloadSizeLabel = () => $('.sui-paging-info .download-size').remove()
+export const clearDownloadSizeDetails = () => {
+    getCheckAll().removeAttr('data-download-size')
+    removeDownloadSizeLabel()
+}
 
 function TableResultsFiles({children, filters, forData = false, rowFn, inModal = false}) {
     const fileTypeField = 'file_extension'
@@ -20,9 +26,13 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const hasClicked = useRef(false)
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
+    const applyDownloadSizeLabel = (total) => {
+        if (total > 0) {
+            $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${formatByteSize(total)}</span>`)
+        }
+    }
 
     const onRowClicked = (e, uuid, data, clicked = false) => {
-        console.log(data)
         const sel = `[name="check-${data.id}"]`
         const attr = 'data-download-size'
         if (!clicked) {
@@ -35,10 +45,8 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         total = total ? Number(total) : 0
         total = isChecked ? total + raw(data.size) : total - raw(data.size)
         $checkAll.attr(attr, total)
-        $('.sui-paging-info .download-size').remove()
-        if (total > 0) {
-            $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${formatByteSize(total)}</span>`)
-        }
+        removeDownloadSizeLabel()
+        applyDownloadSizeLabel(total)
         hasClicked.current = false
     }
 
@@ -51,17 +59,30 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
 
     const getId = (column) => column.id || column.sennet_id
 
+    const onCheckAll = () => {
+        let total = 0
+        getCheckboxes().each((i, el) => {
+            if ($(el).is(':checked')) {
+                console.log($(el).attr('data-size'))
+                total += Number($(el).attr('data-size'))
+            }
+        })
+        console.log('Total', total)
+        removeDownloadSizeLabel()
+        applyDownloadSizeLabel(total)
+    }
+
     const defaultColumns = ({hasMultipleFileTypes = true, columns = [], _isLoggedIn}) => {
         let cols = []
         if (!inModal) {
             cols.push({
                 ignoreRowClick: true,
-                name: <BulkExport data={children} raw={raw} columns={currentColumns} exportKind={'manifest'} />,
+                name: <BulkExport onCheckAll={onCheckAll} data={children} raw={raw} columns={currentColumns} exportKind={'manifest'} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => row.id,
                 sortable: false,
-                format: column => <input type={'checkbox'} onClick={(e) => handleFileCheckbox(e, column)} value={getId(column)} name={`check-${getId(column)}`}/>
+                format: column => <input type={'checkbox'} data-size={raw(column.size)} onClick={(e) => handleFileCheckbox(e, column)} value={getId(column)} name={`check-${getId(column)}`}/>
             })
         }
 
