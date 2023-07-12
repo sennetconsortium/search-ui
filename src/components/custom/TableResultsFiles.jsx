@@ -13,9 +13,12 @@ import $ from 'jquery'
 import SenNetAlert from "../SenNetAlert";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 
-const removeDownloadSizeLabel = () => $('.sui-paging-info .download-size').remove()
+const downloadSizeAttr = 'data-download-size'
+const removeDownloadSizeLabel = () => {
+    $('.sui-paging-info .download-size').remove()
+}
 export const clearDownloadSizeDetails = () => {
-    getCheckAll().removeAttr('data-download-size')
+    getCheckAll().removeAttr(downloadSizeAttr)
     removeDownloadSizeLabel()
 }
 
@@ -28,23 +31,23 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
     const applyDownloadSizeLabel = (total) => {
         if (total > 0) {
+            getCheckAll().attr(downloadSizeAttr, total)
             $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${formatByteSize(total)}</span>`)
         }
     }
 
     const onRowClicked = (e, uuid, data, clicked = false) => {
         const sel = `[name="check-${data.id}"]`
-        const attr = 'data-download-size'
+
         if (!clicked) {
             hasClicked.current = true
             document.querySelector(sel).click()
         }
         const isChecked = $(sel).is(':checked')
         const $checkAll = getCheckAll()
-        let total = $checkAll.attr(attr)
+        let total = $checkAll.attr(downloadSizeAttr)
         total = total ? Number(total) : 0
         total = isChecked ? total + raw(data.size) : total - raw(data.size)
-        $checkAll.attr(attr, total)
         removeDownloadSizeLabel()
         applyDownloadSizeLabel(total)
         hasClicked.current = false
@@ -59,15 +62,15 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
 
     const getId = (column) => column.id || column.sennet_id
 
-    const onCheckAll = () => {
+    const onCheckAll = (e, checkAll) => {
         let total = 0
-        getCheckboxes().each((i, el) => {
-            if ($(el).is(':checked')) {
-                console.log($(el).attr('data-size'))
-                total += Number($(el).attr('data-size'))
-            }
-        })
-        console.log('Total', total)
+        if (checkAll) {
+            getCheckboxes().each((i, el) => {
+                if ($(el).is(':checked')) {
+                    total += Number($(el).attr('data-size'))
+                }
+            })
+        }
         removeDownloadSizeLabel()
         applyDownloadSizeLabel(total)
     }
