@@ -17,7 +17,7 @@ const downloadSizeAttr = 'data-download-size'
 const removeDownloadSizeLabel = () => {
     $('.sui-paging-info .download-size').remove()
 }
-export const clearDownloadSizeDetails = () => {
+export const clearDownloadSizeLabel = () => {
     getCheckAll().removeAttr(downloadSizeAttr)
     removeDownloadSizeLabel()
 }
