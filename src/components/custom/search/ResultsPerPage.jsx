@@ -3,6 +3,7 @@ import $ from "jquery";
 import {RESULTS_PER_PAGE} from "../../../config/config";
 import React, {useState} from "react";
 import Select from 'react-select'
+import {clearDownloadSizeLabel} from "../TableResultsFiles";
 
 export const handlePagingInfo = (page, resultsPerPage, totalRows) => {
     try {
@@ -13,9 +14,7 @@ export const handlePagingInfo = (page, resultsPerPage, totalRows) => {
         to = to > totalRows ? totalRows : to
         let txt = totalRows > 0 ? `${from} - ${to}` : '0 - 0'
         $pgInfo.find('strong').eq(0).html(`${txt}`)
-        const $checkAll = getCheckAll()
-        $checkAll.removeAttr('data-download-size')
-        $pgInfo.find('.download-size').remove()
+        clearDownloadSizeLabel()
     } catch (e) {
         console.error(e)
     }
