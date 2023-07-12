@@ -7,7 +7,7 @@ import {equals} from "./js/functions";
 
 const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
 
-const getCheckAll = () => {
+export const getCheckAll = () => {
     const $headers = $('.rdt_TableHeadRow .rdt_TableCol')
     const $checkAllHeader = $headers.eq(0)
     return $checkAllHeader.find('.sui-check-all input')
@@ -151,7 +151,9 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
                     lastSelected = val
                 }
             })
-            fileName += ` - ${lastSelected}`
+            if (fileName !== lastSelected) {
+                fileName += ` - ${lastSelected}`
+            }
         }
 
         for (let item of data) {
@@ -171,6 +173,8 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
                 break;
             case 'manifest':
                 type = 'text/plain'
+                fileName = 'data-manifest'
+                fileType = 'txt'
                 blob = [generateManifestData(selected, isAll)]
                 break;
             default:

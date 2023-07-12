@@ -44,7 +44,7 @@ export const TableResultsProvider = ({ children, getHotLink, rows, filters, onRo
         if (onRowClicked === undefined) {
             window.location = getHotLink(row)
         } else {
-            onRowClicked(e, row.uuid?.raw)
+            onRowClicked(e, row.uuid?.raw, row)
         }
     }
 

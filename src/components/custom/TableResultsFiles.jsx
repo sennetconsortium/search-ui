@@ -1,24 +1,53 @@
-import React, {useContext, useRef} from 'react'
+import React, {useRef} from 'react'
 import PropTypes from 'prop-types'
 import {
     checkFilterType,
-    checkMultipleFilterType,
-    getEntityViewUrl, getUBKGFullName,
+    checkMultipleFilterType, formatByteSize,
+    getUBKGFullName,
 } from './js/functions'
-import AppContext from "../../context/AppContext"
-import BulkExport, {handleCheckbox} from "./BulkExport";
+import BulkExport, {getCheckAll, handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
 import ResultsBlock from "./search/ResultsBlock";
 import {TableResultsProvider} from "../../context/TableResultsContext";
+import $ from 'jquery'
+import SenNetAlert from "../SenNetAlert";
+import {BoxArrowUpRight} from "react-bootstrap-icons";
 
-function TableResultsFiles({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
+function TableResultsFiles({children, filters, forData = false, rowFn, inModal = false}) {
     const fileTypeField = 'file_extension'
     let hasMultipleFileTypes = checkMultipleFilterType(filters, fileTypeField);
     const currentColumns = useRef([])
+    const hasClicked = useRef(false)
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
-    const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid), {})
+    const onRowClicked = (e, uuid, data, clicked = false) => {
+        console.log(data)
+        const sel = `[name="check-${data.id}"]`
+        const attr = 'data-download-size'
+        if (!clicked) {
+            hasClicked.current = true
+            document.querySelector(sel).click()
+        }
+        const isChecked = $(sel).is(':checked')
+        const $checkAll = getCheckAll()
+        let total = $checkAll.attr(attr)
+        total = total ? Number(total) : 0
+        total = isChecked ? total + raw(data.size) : total - raw(data.size)
+        $checkAll.attr(attr, total)
+        $('.sui-paging-info .download-size').remove()
+        if (total > 0) {
+            $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${formatByteSize(total)}</span>`)
+        }
+        hasClicked.current = false
+    }
+
+    const handleFileCheckbox = (e, data) => {
+        handleCheckbox(e)
+        if (!hasClicked.current) {
+            onRowClicked(e, data.id, data, true)
+        }
+    }
 
     const getId = (column) => column.id || column.sennet_id
 
@@ -32,16 +61,16 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
                 className: 'text-center',
                 selector: row => row.id,
                 sortable: false,
-                format: column => <input type={'checkbox'} onClick={(e) => handleCheckbox(e)} value={getId(column)} name={`check-${getId(column)}`}/>
+                format: column => <input type={'checkbox'} onClick={(e) => handleFileCheckbox(e, column)} value={getId(column)} name={`check-${getId(column)}`}/>
             })
         }
 
         cols.push(
             {
-                name: 'Path',
-                selector: row => raw(row.rel_path),
+                name: 'File Type Description',
+                selector: row => raw(row.description),
                 sortable: true,
-                format: row => <a data-field='rel_path' href={'#'}>{raw(row.rel_path)}</a>,
+                format: row => <p>{raw(row.description)} {raw(row.description) && <br />} <small><a data-field='rel_path' href={'#'}>{raw(row.rel_path)}</a></small></p>
             }
         )
 
@@ -86,7 +115,7 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
                 name: 'Size',
                 selector: row => raw(row.size),
                 sortable: true,
-                format: row => <span>{(raw(row.size)/ 1024).toFixed(2)} mb</span>
+                format: row => <span>{formatByteSize(raw(row.size))}</span>
             }
         )
 
@@ -126,9 +155,14 @@ function TableResultsFiles({children, filters, onRowClicked, forData = false, ro
 
     return (
         <>
-            <TableResultsProvider getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
+            <TableResultsProvider getId={getId} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
+                <SenNetAlert variant={'warning'} className="clt-alert"
+                             text=<>In order to download the files that are included in the manifest file,&nbsp;
+                    <a href="https://github.com/x-atlas-consortia/clt" target='_blank' className={'lnk--ic'}>install <BoxArrowUpRight/></a> the CLT and <a href="https://docs.sennetconsortium.org/libraries/clt/">follow the instructions</a> for how to use it with the manifest file.
+                <br /><small className={'text-muted'}>Note: For transferring data to the local machine, the <a href={'https://www.globus.org/globus-connect-personal'} target='_blank' className={'lnk--ic'}>Globus Connect Personal (GCP)<BoxArrowUpRight/></a> endpoint must also be up and running.</small>
+                </> />
                 <ResultsBlock
-                    disableRowClick={true}
+
                     getTableColumns={getTableColumns}
                 />
             </TableResultsProvider>
