@@ -71,7 +71,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 }
             })
         }
-        removeDownloadSizeLabel()
+        clearDownloadSizeLabel()
         applyDownloadSizeLabel(total)
     }
 
