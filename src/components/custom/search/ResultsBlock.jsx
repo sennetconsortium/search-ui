@@ -44,6 +44,9 @@ function ResultsBlock({getTableColumns, disableRowClick}) {
                         className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''}`}
                         columns={getTableColumns()}
                         data={getTableData()}
+                        responsive={true}
+                        fixedHeader
+                        fixedHeaderScrollHeight="700px"
                         theme={'plain'}
                         defaultSortAsc={false}
                         pointerOnHover={true}

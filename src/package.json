@@ -23,6 +23,7 @@
     "next": "^13.0.3",
     "npm-run-all": "^4.1.5",
     "provenance-ui": "github:sennetconsortium/provenance-ui#main",
+    "react-arborist": "^3.1.0",
     "react-bootstrap-icons": "^1.8.4",
     "react-data-table-component": "^7.5.3",
     "react-idle-timer": "^5.4.2",
