@@ -8,7 +8,6 @@ import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
-import Files from "../components/custom/entities/dataset/Files";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
@@ -22,6 +21,7 @@ import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
 import SidebarBtn from "../components/SidebarBtn";
 import {kuppe2022nature} from "../vitessce-view-config/kuppe_2022_nature";
 import Metadata from "../components/custom/entities/Metadata";
+import FileTreeView from "../components/custom/entities/dataset/FileTreeView";
 
 function ViewDataset() {
     const [data, setData] = useState(null)
@@ -241,8 +241,7 @@ function ViewDataset() {
                                             }
 
                                             {/*Files*/}
-                                            <Files data={data}/>
-
+                                            <FileTreeView data={data}/>
 
                                             {/*Contacts*/}
                                             {!!(data.contacts && Object.keys(data.contacts).length) &&
