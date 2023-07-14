@@ -1,0 +1,9 @@
+div.tree_container div {
+  // Remove outline created by `mixins.scss` for child of tree_container
+  outline: none !important;
+
+  [role=treeitem] {
+    cursor: default;
+  }
+}
+

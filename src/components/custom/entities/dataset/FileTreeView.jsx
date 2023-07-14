@@ -14,7 +14,6 @@ import SenNetAccordion from "../../layout/SenNetAccordion";
 import Link from "next/link";
 import DerivedContext from "../../../../context/DerivedContext";
 import {fetchGlobusFilepath} from "../../../../lib/services";
-import {Tree} from "react-arborist";
 import {getAssetsEndpoint, getAuth} from "../../../../config/config";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 import {formatByteSize} from "../../js/functions";
@@ -22,6 +21,7 @@ import {Row, Table} from 'react-bootstrap';
 import Col from 'react-bootstrap/Col';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
+import {Tree} from "react-arborist";
 
 export const FileTreeView = ({data}) => {
     const [status, setStatus] = useState(null)
@@ -205,24 +205,26 @@ export const FileTreeView = ({data}) => {
                         </Form.Group>
                     </Row>
                     {treeData &&
-                        <Tree
-                            data={treeData}
-                            openByDefault={false}
-                            disableDrag={true}
-                            disableDrop={true}
-                            disableEdit={true}
-                            width={"max"}
-                            height={250}
-                            indent={24}
-                            rowHeight={36}
-                            overscanCount={1}
-                            paddingTop={30}
-                            paddingBottom={10}
-                            padding={0 /* sets both */}
-                            searchTerm={searchTerm}
-                        >
-                            {Node}
-                        </Tree>
+                        <div className={"tree_container"}>
+                            <Tree
+                                data={treeData}
+                                openByDefault={false}
+                                disableDrag={true}
+                                disableDrop={true}
+                                disableEdit={true}
+                                width={"max"}
+                                height={250}
+                                indent={24}
+                                rowHeight={36}
+                                overscanCount={1}
+                                paddingTop={30}
+                                paddingBottom={10}
+                                padding={0 /* sets both */}
+                                searchTerm={searchTerm}
+                            >
+                                {Node}
+                            </Tree>
+                        </div>
                     }
                 </Card>
             }
