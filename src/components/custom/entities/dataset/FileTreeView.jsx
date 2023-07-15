@@ -80,7 +80,7 @@ export const FileTreeView = ({data}) => {
                             <FileEarmark/> <a target="_blank"
                                               className={"icon_inline"}
                                               href={`${getAssetsEndpoint()}${node.data.uuid}/${node.data.rel_path}?token=${getAuth()}`}><span
-                            className="me-1">{node.data.rel_path}</span>
+                            className="me-1">{node.data.name}</span>
                         </a>
                             <SenNetPopover className={`file-${node.data.name}`}
                                            trigger={SenPopoverOptions.triggers.hover}
@@ -116,7 +116,7 @@ export const FileTreeView = ({data}) => {
         directories.shift()
 
         //Check if directory has already been added to `data`
-        if (data.filter(e => e.name === directory_name).length > 0) {
+        if (data.length>0 && data.filter(e => e.name === directory_name).length > 0) {
             let alter_data = data.filter(e => e.name === directory_name)[0]
             if (alter_data.hasOwnProperty("children")) {
                 let new_child = buildSubDirectory(uuid, file, alter_data.children, directories, directories[0], id)
@@ -126,8 +126,10 @@ export const FileTreeView = ({data}) => {
                 }
                 return
             } else {
-                sub_directory_children.push(buildSubDirectory(uuid, file, data, directories, directories[0], id))
-                sub_directory.children = sub_directory_children
+                if (directories.length > 0) {
+                    alter_data.children = (buildSubDirectory(uuid, file, data, directories, directories[0], id))
+                    return
+                }
             }
         }
         if (directories.length > 0) {
@@ -155,7 +157,7 @@ export const FileTreeView = ({data}) => {
                 })
                 id++
             } else {
-                let sub_directory = buildSubDirectory(uuid, file, data, directories, directories[0], directories[0])
+                let sub_directory = buildSubDirectory(uuid, file, data, directories, directories[0], "")
                 // If sub_directory is `undefined` then data was modified during the recursive call
                 if (sub_directory) {
                     id++
