@@ -29,6 +29,29 @@ export const FileTreeView = ({data}) => {
     const [treeData, setTreeData] = useState(null)
     const [searchTerm, setSearchTerm] = useState(null)
     const [checked, setChecked] = useState(false);
+    const new_files = [
+        {id: "1", name: "Unread"},
+        {id: "2", name: "Threads"},
+        {
+            id: "3",
+            name: "Chat Rooms",
+            children: [
+                {id: "c1", name: "General"},
+                {id: "c2", name: "Random"},
+                {id: "c3", name: "Open Source Projects"},
+            ],
+        },
+        {
+            id: "4",
+            name: "Direct Messages",
+            children: [
+                {id: "d1", name: "Alice"},
+                {id: "d2", name: "Bob"},
+                {id: "d3", name: "Charlie"},
+            ],
+        },
+    ];
+
     const {
         isPrimaryDataset,
         derivedDataset
@@ -209,7 +232,7 @@ export const FileTreeView = ({data}) => {
                     {treeData &&
                         <div className={"tree_container"}>
                             <Tree
-                                data={treeData}
+                                initialData={new_files}
                                 openByDefault={false}
                                 disableDrag={true}
                                 disableDrop={true}
