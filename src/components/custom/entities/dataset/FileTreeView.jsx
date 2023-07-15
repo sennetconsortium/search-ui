@@ -102,9 +102,6 @@ export const FileTreeView = ({data}) => {
     }
 
     function buildSubDirectory(uuid, file, data, directories, directory_name, id) {
-        if(directory_name==="TWKB-SN001H1-Md1A3Y1K2N1Z1_1Bmn1_1_S1_L004_R1_001_fastqc.html" ) {
-            console.log("here")
-        }
         id = id + directory_name
         let sub_directory = {
             id: id,
