@@ -5,7 +5,7 @@ import {Layout} from "@elastic/react-search-ui-views";
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {PlusLg, QuestionCircleFill} from "react-bootstrap-icons";
+import {PlusLg, QuestionCircleFill, Search} from "react-bootstrap-icons";
 import {valid_dataset_ancestor_config} from "../../../../config/config";
 import Facets from "search-ui/components/core/Facets";
 import {TableResultsEntities} from '../../TableResultsEntities'
@@ -138,10 +138,12 @@ export default class AncestorIds extends React.Component {
                                                                             <Form.Control
                                                                                 value={value}
                                                                                 onChange={(e) => onChange(e.currentTarget.value)}
-                                                                                className="form-control form-control-lg rounded-0"
+                                                                                className="right-border-none form-control form-control-lg rounded-0"
                                                                                 placeholder="Search"
                                                                                 autoFocus={true}
                                                                             />
+                                                                            <InputGroup.Text
+                                                                                className={"transparent"}><Search/></InputGroup.Text>
                                                                             <Button variant="outline-primary"
                                                                                     className={"rounded-0"}
                                                                                     onClick={e => this.handleSearchFormSubmit(e, onSubmit)}>Search</Button>
