@@ -237,7 +237,6 @@ export const FileTreeView = ({data}) => {
                             <Tree
                                 value={treeData}
                                 nodeTemplate={nodeTemplate}
-                                className="w-full md:w-30rem"
                                 filter={true}
                                 filterBy={"label,data.is_qa_qc"}
                                 filterTemplate={filterTemplate}
