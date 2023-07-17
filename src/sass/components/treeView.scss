@@ -6217,11 +6217,11 @@ input.p-dropdown-label {
 
 .p-tree-container {
   max-height: 350px;
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: scroll;
   margin: 0;
   padding: 0;
   list-style-type: none;
-  overflow: auto;
 }
 
 .p-treenode-children {
