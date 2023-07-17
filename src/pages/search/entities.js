@@ -23,6 +23,7 @@ import AppContext from "../../context/AppContext";
 import SelectedFilters from "../../components/custom/layout/SelectedFilters";
 import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
 import {Sui} from "search-ui/lib/search-tools";
+import {Search} from "react-bootstrap-icons";
 
 function SearchEntities() {
     const {
@@ -87,10 +88,12 @@ function SearchEntities() {
                                                                         <Form.Control
                                                                             value={value}
                                                                             onChange={(e) => onChange(e.currentTarget.value)}
-                                                                            className="form-control form-control-lg rounded-0"
+                                                                            className="right-border-none form-control form-control-lg rounded-0"
                                                                             placeholder="Search"
                                                                             autoFocus={false}
                                                                         />
+                                                                        <InputGroup.Text
+                                                                            className={"transparent"}><Search/></InputGroup.Text>
                                                                         <Button variant="outline-primary"
                                                                                 className={"rounded-0"}
                                                                                 onClick={e => handleSearchFormSubmit(e, onSubmit)}>{_t('Search')}</Button>
