@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import SenNetPopover, {SenPopoverOptions} from "../SenNetPopover";
 import {equals} from "./js/functions";
 
-const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
+export const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
 
 export const getCheckAll = () => {
     const $headers = $('.rdt_TableHeadRow .rdt_TableCol')
@@ -48,9 +48,10 @@ export const handleCheckbox = (e) => {
 export const handleCheckAll = (setTotalSelected) => {
     getCheckAll().parent().parent().addClass('sui-tbl-actions-wrapper')
     handleCheckAllTotal(getCheckAll(), 0)
+    getCheckAll().prop('checked', false)
 }
 
-function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
+function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst = 'uuid' }) {
 
     const [totalSelected, setTotalSelected] = useState(0)
 
@@ -71,6 +72,9 @@ function BulkExport({ data, raw, columns, exportKind, replaceFirst = 'uuid' }) {
         handleCheckAllTotal($el, total)
         getCheckboxes().prop('checked', checkAll)
         setTotalSelected(getTotal())
+        if (onCheckAll) {
+            onCheckAll(e, checkAll)
+        }
     }
 
     const generateTSVData = (selected, isAll) => {
