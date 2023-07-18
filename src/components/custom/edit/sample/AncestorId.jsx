@@ -92,16 +92,19 @@ export default class AncestorId extends React.Component {
                                                 <div className="search-box-header js-gtm--search">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
-                                                            <Form onSubmit={e => this.handleSearchFormSubmit(e, onSubmit)}>
+                                                            <Form
+                                                                onSubmit={e => this.handleSearchFormSubmit(e, onSubmit)}>
                                                                 <Form.Group controlId="search">
                                                                     <InputGroup>
                                                                         <Form.Control
                                                                             value={value}
                                                                             onChange={(e) => onChange(e.currentTarget.value)}
-                                                                            className="form-control form-control-lg rounded-0"
+                                                                            className="right-border-none form-control form-control-lg rounded-0"
                                                                             placeholder="Search"
                                                                             autoFocus={true}
                                                                         />
+                                                                        <InputGroup.Text
+                                                                            className={"transparent"}><Search/></InputGroup.Text>
                                                                         <Button variant="outline-primary"
                                                                                 className={"rounded-0"}
                                                                                 onClick={e => this.handleSearchFormSubmit(e, onSubmit)}>Search</Button>
@@ -129,7 +132,8 @@ export default class AncestorId extends React.Component {
                                             }
                                             bodyContent={
                                                 <div className="js-gtm--results" data-js-ada='.rdt_TableCell'>
-                                                    <Results view={TableResultsEntities} filters={filters} inModal={true}
+                                                    <Results view={TableResultsEntities} filters={filters}
+                                                             inModal={true}
                                                              onRowClicked={this.changeSource}
                                                     />
                                                 </div>
