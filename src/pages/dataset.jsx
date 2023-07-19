@@ -71,7 +71,9 @@ function ViewDataset() {
                 if (showVitessce(is_primary_dataset, data)) {
                     if (is_primary_dataset) {
                         setDerived(data).then(derived => {
-                            vitessceConfig(derived, derived.uuid)
+                            if(derived) {
+                                vitessceConfig(derived, derived.uuid)
+                            }
                         })
                     } else {
                         vitessceConfig(data, data.uuid)
