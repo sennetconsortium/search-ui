@@ -92,7 +92,7 @@ export const Files = ({data}) => {
                 <Card border={'0'}>
                     {derivedDataset &&
                         <span className={'fw-light fs-6 m-2 p-2'}>
-                                Derived from
+                                From descendant
                                 <Link target="_blank" href={{pathname: '/dataset', query: {uuid: derivedDataset.uuid}}}>
                                     <span className={'ms-2 me-2'}>{derivedDataset.sennet_id}</span>
                                 </Link>
