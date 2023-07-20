@@ -12,22 +12,12 @@ function SelectedFacets({ filters }) {
 
     const isTimestamp = (val) => (val.indexOf('timestamp') > -1)
     const convertToVal = (val) => {
-        // if (typeof val !== 'string') {
-        //     if (isTimestamp(val.name)) {
-        //         return val[key] ? 'Start Date' : 'End Date'
-        //     } else {
-        //         return val.name
-        //     }
-        // }
         const labels = {from: 'Start Date', to: 'End Date'}
         return labels[val] || val
     }
 
     const formatVal = (id) => {
         id = convertToVal(id)
-        // if (typeof id !== 'string') {
-        //     id = id.name
-        // }
         return id.replace(/\W+/g, "")
     }
 
