@@ -81,7 +81,7 @@ function SelectedFacets({ filters }) {
                 if (dict[key] === undefined) {
                     dict[key] = true
                     results.push(<Chip key={key} className={`${getSelector('chipToggle', f.field, val)}`}
-                                       label={`${convertToLabel(f.field)}: ${val}`}
+                                       label={<><span className='chip-title'>{convertToLabel(f.field)}</span>: {val}</>}
                                        variant="outlined" onDelete={(e) => handleDelete(e, {filter: f, value})} />)
                 }
 
