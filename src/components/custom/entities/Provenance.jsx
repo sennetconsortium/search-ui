@@ -199,6 +199,7 @@ function Provenance({nodeData}) {
         typeProps: {
             Source: ['sennet:source_type'],
             Sample: ['sennet:sample_category', 'sennet:organ'],
+            Dataset: ['sennet:title'],
             Activity: ['sennet:created_timestamp', 'sennet:protocol_url', 'sennet:processing_information', 'sennet:created_by_user_displayname']
         },
         callbacks: {
