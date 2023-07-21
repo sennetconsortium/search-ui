@@ -319,7 +319,7 @@ export default function EditPublication() {
                                     <EntityFormGroup label='DOI Abstract' type='textarea' controlId='description'
                                                      value={data.description}
                                                      onChange={onChange}
-                                                     text={<>An abstract publicly published when the <code>Publication</code> is published.  This will be included with the DOI information of the published <code>Publication</code>.</>}/>
+                                                     text={<>An abstract publicly available when the <code>Publication</code> is published.  This will be included with the DOI information of the published <code>Publication</code>.</>}/>
 
 
 
