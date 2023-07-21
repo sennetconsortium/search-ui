@@ -34,7 +34,6 @@ function ResultsBlock({getTableColumns, disableRowClick}) {
 
     return (
         <>
-            <div className='sui-filters-summary'><SelectedFacets filters={filters} /></div>
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />

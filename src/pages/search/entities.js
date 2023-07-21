@@ -24,6 +24,7 @@ import SelectedFilters from "../../components/custom/layout/SelectedFilters";
 import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
 import {Sui} from "search-ui/lib/search-tools";
 import {Search} from "react-bootstrap-icons";
+import SelectedFacets from "../../components/custom/search/SelectedFacets";
 
 function SearchEntities() {
     const {
@@ -79,7 +80,7 @@ function SearchEntities() {
 
                                         <Layout
                                             header={
-                                                <div className="search-box-header js-gtm--search">
+                                                <><div className="search-box-header js-gtm--search">
                                                     <SearchBox
                                                         view={({onChange, value, onSubmit}) => (
                                                             <Form onSubmit={e => handleSearchFormSubmit(e, onSubmit)}>
@@ -102,7 +103,11 @@ function SearchEntities() {
                                                             </Form>
                                                         )}
                                                     />
+
                                                 </div>
+                                                    <div className='sui-filters-summary'><SelectedFacets filters={filters} /></div>
+                                                </>
+
                                             }
                                             sideContent={
                                                 <div data-js-ada='facets'>
