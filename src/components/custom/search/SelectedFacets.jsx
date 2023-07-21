@@ -3,6 +3,7 @@ import {SEARCH_ENTITIES} from "../../../config/search/entities";
 import {SEARCH_FILES} from "../../../config/search/files";
 import $ from 'jquery'
 import {Chip} from "@mui/material";
+import {getUBKGFullName} from "../js/functions";
 
 function SelectedFacets({ filters }) {
     const exclude = ['name']
@@ -13,7 +14,7 @@ function SelectedFacets({ filters }) {
     const isTimestamp = (val) => (val.indexOf('timestamp') > -1)
     const convertToVal = (val) => {
         const labels = {from: 'Start Date', to: 'End Date'}
-        return labels[val] || val
+        return (typeof val !== 'string') ? (labels[val.key] || val.key) : val
     }
 
     const formatVal = (id) => {
@@ -53,9 +54,9 @@ function SelectedFacets({ filters }) {
             let values = []
             for (let value of f.values) {
                 if (typeof value !== 'string') {
-                    for (let item in value) {
-                        if (exclude.indexOf(item) === -1) {
-                            values.push(item)
+                    for (let k in value) {
+                        if (exclude.indexOf(k) === -1) {
+                            values.push({key: k, value: value[k]})
                         }
                     }
                 } else {
@@ -67,6 +68,15 @@ function SelectedFacets({ filters }) {
         return _filters
     }
 
+    const convertToDisplayVal = (obj) => {
+        if (isTimestamp(obj.filter.field)) {
+            // Add 24 hours minus 1 ms to the end date so inclusive of the end date
+            let val = obj.value.key === 'from' ? (obj.value.value + 24 * 60 * 60 * 1000 - 1) : obj.value.value
+            return (new Date(val).toLocaleDateString('en-US'))
+        } else {
+            return getUBKGFullName(convertToVal(obj.value))
+        }
+    }
 
     const buildFilters = () => {
         let dict = {}
@@ -81,10 +91,9 @@ function SelectedFacets({ filters }) {
                 if (dict[key] === undefined) {
                     dict[key] = true
                     results.push(<Chip key={key} className={`${getSelector('chipToggle', f.field, val)}`}
-                                       label={<><span className='chip-title'>{convertToLabel(f.field)}</span>: {val}</>}
+                                       label={<><span className='chip-title'>{convertToLabel(f.field)}</span>: {convertToDisplayVal({filter: f, value})}</>}
                                        variant="outlined" onDelete={(e) => handleDelete(e, {filter: f, value})} />)
                 }
-
             }
         }
         return results
