@@ -10,7 +10,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
 import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
-import {fetchEntity, getUBKGFullName} from "../js/functions";
+import {fetchEntity, fetchProtocols, fetchProtocolView, getUBKGFullName} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 
 
@@ -25,6 +25,7 @@ function Provenance({nodeData}) {
     const initialized = useRef(false)
     const activityHidden = useRef(true)
     const svgTranslate = useRef({})
+    const protocolsData = {}
     const { _t } = useContext(AppContext)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
@@ -119,14 +120,34 @@ function Provenance({nodeData}) {
         }
     }
 
+    const buildProtocolData = async (data) => {
+        for (let current in data.activity) {
+            let d = data.activity[current]
+            let url = d['sennet:protocol_url']
+            const uuid = d['sennet:uuid']
+            if (url) {
+                let doiViewCheck = await fetchProtocolView(url)
+                if (doiViewCheck.ok) {
+                    protocolsData[url] =  await fetchProtocols(url)
+                    $(`[data-id="${uuid}"] .protocol_url a`).html(protocolsData[url].title)
+                }
+            }
+        }
+    }
+
     const jsonView = (d, property, value) => {
-        console.log(value)
         return {href: `/api/json?view=${btoa(value.replaceAll("'", '"'))}`, value: `${value.substr(0, 20)}...}`}
+    }
+
+    const protocolUrl = (d, property, value) => {
+        let data = protocolsData[value]
+        let title = data ? data.title : value
+        return {href: value, value: title}
     }
 
     const graphOptions = {
         idNavigate: {
-            props: {'sennet:sennet_id': true, 'sennet:protocol_url': true, 'sennet:processing_information': {callback: jsonView}},
+            props: {'sennet:sennet_id': true, 'sennet:protocol_url': {callback: protocolUrl}, 'sennet:processing_information': {callback: jsonView}},
             url: '/{subType}?uuid={id}',
             exclude: {
                 'Activity': ['sennet:sennet_id']
@@ -258,6 +279,8 @@ function Provenance({nodeData}) {
                 $.extend(result.entity, result.descendants.entity)
                 log.debug(`Result width appended descendants...`, result)
             }
+
+            buildProtocolData(result)
 
             const converter = new DataConverterNeo4J(result, dataMap)
             converter.buildAdjacencyList(itemId)
