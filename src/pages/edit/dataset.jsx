@@ -10,7 +10,7 @@ import {get_headers, update_create_dataset} from '../../lib/services'
 import {
     cleanJson,
     equals,
-    fetchEntity, fetchProtocols, fetchProtocolView,
+    fetchEntity, fetchProtocols,
     getDataTypesByProperty, getEntityViewUrl,
     getRequestHeaders, getStatusColor, isPrimaryAssay
 } from '../../components/custom/js/functions'
@@ -256,11 +256,10 @@ export default function EditDataset() {
                 if (equals(ancestor.entity_type, cache.entities.source) || equals(ancestor.entity_type, cache.entities.sample)) {
                     uri = ancestor.protocol_url
                     apiResult = await fetchProtocols(uri)
-                    viewResult = await fetchProtocolView(uri)
-                    if (!apiResult || !viewResult.ok) {
+                    if (!apiResult) {
                         allValid = false
                     }
-                    let icon = apiResult && viewResult.ok ? successIcon() : errIcon()
+                    let icon = apiResult ? successIcon() : errIcon()
                     results.push(<span key={`doi-check-${i}`}>{icon} <a href={getEntityViewUrl(ancestor.entity_type, ancestor.uuid, {isEdit: true})} target='_blank'>{ancestor.sennet_id}</a>  <br /></span>)
                     i++
                 }

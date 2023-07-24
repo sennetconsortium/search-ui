@@ -8,7 +8,7 @@ import log from 'loglevel'
 import {APP_ROUTES} from '../config/constants'
 import AppModal from '../components/AppModal'
 import AppContext from './AppContext'
-import {equals, fetchProtocolView, getHeaders} from "../components/custom/js/functions";
+import {equals, fetchProtocols, getHeaders} from "../components/custom/js/functions";
 import {getEntityEndPoint} from "../config/config";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 import {Button} from 'react-bootstrap'
@@ -230,8 +230,9 @@ export const EntityProvider = ({ children }) => {
             setWarningClasses(values)
             return
         }
-        let protocolCheck = await fetchProtocolView(value)
-        if (!protocolCheck.ok) {
+        let protocolCheck = await fetchProtocols(value)
+
+        if (!protocolCheck) {
             values.protocol_url = 'has-warning'
         } else {
             delete values.protocol_url
