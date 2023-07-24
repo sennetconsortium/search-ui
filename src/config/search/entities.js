@@ -26,20 +26,10 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            // Used for when "Dataset" is selected to show related organs
-            "origin_sample.organ": {
-                label: 'Organ',
+            data_types: {
+                label: 'Data Type',
                 type: 'value',
-                field: 'origin_sample.organ.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            // Used for when "Sample" is selected to show organs
-            organ: {
-                label: 'Organ',
-                type: 'value',
-                field: 'organ.keyword',
+                field: 'data_types.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -61,7 +51,7 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 isFilterable: false,
             },
-            sample_category: {
+            "sample_category": {
                 label: 'Sample Category',
                 type: 'value',
                 field: 'sample_category.keyword',
@@ -77,10 +67,20 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            data_types: {
-                label: 'Data Type',
+            // Used for when "Dataset" is selected to show related organs
+            "origin_sample.organ": {
+                label: 'Organ',
                 type: 'value',
-                field: 'data_types.keyword',
+                field: 'origin_sample.organ.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            // Used for when "Sample" is selected to show organs
+            organ: {
+                label: 'Organ',
+                type: 'value',
+                field: 'organ.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
