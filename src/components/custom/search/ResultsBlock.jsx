@@ -6,6 +6,7 @@ import {
     PagingInfo
 } from "@elastic/react-search-ui";
 import TableResultsContext from "../../../context/TableResultsContext";
+import SelectedFacets from "./SelectedFacets";
 
 function ResultsBlock({getTableColumns, disableRowClick}) {
 
@@ -22,6 +23,7 @@ function ResultsBlock({getTableColumns, disableRowClick}) {
         setResultsPerPage,
         currentColumns,
         getId,
+        filters,
         handleRowsPerPageChange,
         handleOnRowClicked,
         handlePageChange,
@@ -32,7 +34,6 @@ function ResultsBlock({getTableColumns, disableRowClick}) {
 
     return (
         <>
-
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
