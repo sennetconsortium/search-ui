@@ -10,7 +10,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
 import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
-import {fetchEntity, fetchProtocols, fetchProtocolView, getUBKGFullName} from "../js/functions";
+import {fetchEntity, fetchProtocols, getUBKGFullName} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 
 
@@ -126,10 +126,9 @@ function Provenance({nodeData}) {
             let url = d['sennet:protocol_url']
             const uuid = d['sennet:uuid']
             if (url) {
-                let doiViewCheck = await fetchProtocolView(url)
-                if (doiViewCheck.ok) {
-                    protocolsData[url] =  await fetchProtocols(url)
-                    $(`[data-id="${uuid}"] .protocol_url a`).html(protocolsData[url].title)
+                protocolsData[url] =  await fetchProtocols(url)
+                if (protocolsData[url]?.title) {
+                    $(`[data-id="${uuid}"] .protocol_url a`).html(protocolsData[url]?.title)
                 }
             }
         }
