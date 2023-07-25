@@ -15,7 +15,7 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
                            href={`/${data.entity_type.toLowerCase()}?uuid=${data.uuid}`}>{displayBodyHeader(data.sennet_id)}</a>
                     </h5>
 
-                    {!equals(data.entity_type, cache.entities.dataset) &&
+                    {!equals(data.entity_type, cache.entities.dataset) ? (
                         <Fragment>
                             <h5 className={"title_badge"}>
                                 <span className="badge bg-secondary mx-2">
@@ -39,6 +39,13 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
                                 </h5>
                             }
                         </Fragment>
+                    ) : (
+                        <h5 className={"title_badge"}>
+                            <span className="badge bg-secondary mx-2">
+                                    {getUBKGFullName(data.data_types[0])}
+                            </span>
+                        </h5>
+                    )
                     }
                 </Fragment>) : (
                 <Fragment>
