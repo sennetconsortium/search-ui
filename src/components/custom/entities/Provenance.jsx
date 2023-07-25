@@ -101,15 +101,32 @@ function Provenance({nodeData}) {
         }, 1000)
     }
 
+    const removeActiveOnContextNode = (ops) => $(`#${ops.options.selectorId} .node`).removeClass('is-active')
+
     const onNodeClick = (ops) => {
+        // Coupled with Metadata.triggerNode
         const id = ops.args.node.data['sennet:sennet_id']
         const $el = document.querySelector(`[data-rr-ui-event-key="${id.trim()}"]`)
-        $(`.node`).removeClass('is-active')
-        $(`#node--${ops.args.node.data.id}`).addClass('is-active')
 
+        if (!ops.args.event.detail?.metadata) {
+            removeActiveOnContextNode(ops)
+        }
+        canvas(ops).find(`#node--${ops.args.node.data.id}`).addClass('is-active')
         //Only re-trigger another click if this click wasn't from a metadata btn click
         if ($el && !ops.args.event.detail?.metadata) {
             $el.click()
+        }
+    }
+    const onInfoCloseClick = (ops) => {
+        const treeId = ops.options.selectorId
+        const uuid = $('#Metadata-collapse .nav-item .active').attr('data-uuid')
+        const $el = $(`#${treeId} #node--${uuid}`)
+        const nodeActiveUuid = $(`#${treeId} .node.is-active`).attr('id').split('--')[1]
+        if (uuid !== nodeActiveUuid) {
+            removeActiveOnContextNode(ops)
+        }
+        if (!$el.hasClass('is-active')) {
+            $el.removeClass('is-active')
         }
     }
 
@@ -174,7 +191,8 @@ function Provenance({nodeData}) {
             onInitializationComplete,
             onAfterBuild,
             onSvgSizing,
-            onNodeClick
+            onNodeClick,
+            onInfoCloseClick
         }
     }
 
