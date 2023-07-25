@@ -511,7 +511,7 @@ export default function EditDataset() {
                                             </SenNetPopover>
                                         }
 
-                                        {isPrimary.current && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid')) && <SenNetPopover
+                                        {isPrimary.current && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) && <SenNetPopover
                                             text={<>Revert this <code>Dataset</code> back to <Badge pill bg={getStatusColor('New')}>New</Badge> or <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>  status.
                                                </>}
                                             className={'revert-button'}>
