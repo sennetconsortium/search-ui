@@ -1,6 +1,6 @@
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import SenNetPopover from "../../SenNetPopover";
-import {displayBodyHeader, equals} from "../js/functions";
+import {equals} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import Tab from 'react-bootstrap/Tab';
 import Nav from 'react-bootstrap/Nav';
@@ -9,9 +9,11 @@ import MetadataTable from "./MetadataTable";
 import PropTypes from "prop-types";
 import * as d3 from "d3";
 import $ from 'jquery'
+import {ViewHeaderBadges} from "../layout/entity/ViewHeaderBadges";
 
 function Metadata({data, metadata, hasLineageMetadata = false}) {
     const {cache} = useContext(AppContext)
+    const [headerBadges, setHeaderBadges] = useState(<ViewHeaderBadges data={data} isMetadataHeader={true}/>)
 
     const triggerNode = (e, uuid) => {
         $('.node').removeClass('is-active')
@@ -19,13 +21,21 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
         $(id).addClass('is-active')
         d3.select(id).dispatch('click', {detail: {metadata: true}})
     }
+
+    const updateHeader = (data) => {
+        setHeaderBadges(<ViewHeaderBadges data={data} isMetadataHeader={true}/>)
+    }
+
     const popoverCommon = (index, entity, data) => {
         return (
             <SenNetPopover key={`sennet-popover-${entity}-${index}`} className={`${index}-${entity}-metadata`}
                            text={<>View the metadata for the ancestor <code>{cache.entities[entity]}</code> of this
                                entity.</>}>
                 <Nav.Item>
-                    <Nav.Link onClick={(e) => triggerNode(e, data.uuid)} data-uuid={data.uuid} eventKey={data.sennet_id}
+                    <Nav.Link onClick={(e) => {
+                        triggerNode(e, data.uuid);
+                        updateHeader(data)
+                    }} data-uuid={data.uuid} eventKey={data.sennet_id}
                               bsPrefix={`btn btn-${entity} rounded-0`}>{data.sennet_id}</Nav.Link>
                 </Nav.Item>
             </SenNetPopover>
@@ -37,13 +47,15 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
             <Tab.Pane key={`tabpane-${pre}-${index}`} eventKey={data.sennet_id}>
                 <MetadataTable metadataKey={""} data={data}
                                metadata={metadata}
-                               filename={data.sennet_id}/>
+                               filename={data.sennet_id}
+                               setHeaderBadges={setHeaderBadges}
+                />
             </Tab.Pane>
         )
     }
 
     return (
-        <SenNetAccordion title={'Metadata'}>
+        <SenNetAccordion title={'Metadata'} afterTitle={headerBadges}>
             {hasLineageMetadata ? (
                     <Tab.Container defaultActiveKey={data.sennet_id}>
                         <Nav variant="pills" className={"mb-3 flex-nowrap overflow-auto"}>
@@ -52,7 +64,8 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                 <SenNetPopover className={"current-metadata"}
                                                text={<>View the metadata for this entity.</>}>
                                     <Nav.Item>
-                                        <Nav.Link onClick={(e) => triggerNode(e, data.uuid)} data-uuid={data.uuid} eventKey={data.sennet_id}>
+                                        <Nav.Link onClick={(e) => {triggerNode(e, data.uuid); updateHeader(data)}} data-uuid={data.uuid}
+                                                  eventKey={data.sennet_id}>
                                             {data.sennet_id}*
                                         </Nav.Link>
                                     </Nav.Item>
@@ -94,7 +107,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                 // The metatable table for the current entity
                                 <Tab.Pane eventKey={data.sennet_id}>
                                     <MetadataTable metadataKey={""} metadata={metadata}
-                                                   filename={data.sennet_id}/>
+                                                   filename={data.sennet_id} setHeaderBadges={setHeaderBadges}/>
                                 </Tab.Pane>
                             }
                             {data.ancestors.reverse().map((ancestor, index, array) => {
@@ -124,7 +137,8 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                     </Tab.Container>
                 ) :
                 (
-                    <MetadataTable metadata={metadata} metadataKey="" filename={data.sennet_id}/>
+                    <MetadataTable metadata={metadata} metadataKey="" filename={data.sennet_id}
+                                   setHeaderBadges={setHeaderBadges}/>
                 )
             }
 

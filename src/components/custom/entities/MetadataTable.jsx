@@ -38,13 +38,7 @@ export default class MetadataTable extends React.Component {
         return (
             <Container fluid={true}>
                 <Row className="mb-2">
-                    <div className="col-md-6 col-sm-12 entity_subtitle icon_inline">
-                        {this.props.data &&
-                            <ViewHeaderBadges data={this.props.data} isMetadataHeader={true}/>
-                        }
-                    </div>
-
-                    <div className="col-md-6 col-sm-12">
+                    <div className="col-sm-12">
                         <div className="entity_subtitle icon_inline float-md-end">
                             <a href={downloadURL}
                                download={`${this.props.filename}.tsv`}
