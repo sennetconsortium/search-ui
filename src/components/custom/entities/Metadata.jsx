@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import SenNetPopover from "../../SenNetPopover";
 import {equals} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
@@ -13,7 +13,15 @@ import {ViewHeaderBadges} from "../layout/entity/ViewHeaderBadges";
 
 function Metadata({data, metadata, hasLineageMetadata = false}) {
     const {cache} = useContext(AppContext)
-    const [headerBadges, setHeaderBadges] = useState(<ViewHeaderBadges data={data} isMetadataHeader={true}/>)
+    const [headerBadges, setHeaderBadges] = useState(null)
+
+    useEffect(() => {
+        // Trigger the default node to be clicked
+        const $el = document.querySelector(`[data-rr-ui-event-key="${data.sennet_id}"]`)
+        if ($el) {
+            $el.click();
+        }
+    }, [data]);
 
     const triggerNode = (e, uuid) => {
         $('.node').removeClass('is-active')
