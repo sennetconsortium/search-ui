@@ -127,7 +127,9 @@ function Provenance({nodeData}) {
             const uuid = d['sennet:uuid']
             if (url) {
                 protocolsData[url] =  await fetchProtocols(url)
-                $(`[data-id="${uuid}"] .protocol_url a`).html(protocolsData[url].title)
+                if (protocolsData[url]?.title) {
+                    $(`[data-id="${uuid}"] .protocol_url a`).html(protocolsData[url]?.title)
+                }
             }
         }
     }
