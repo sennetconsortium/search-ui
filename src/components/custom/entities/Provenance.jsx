@@ -104,18 +104,12 @@ function Provenance({nodeData}) {
     const onNodeClick = (ops) => {
         const id = ops.args.node.data['sennet:sennet_id']
         const $el = document.querySelector(`[data-rr-ui-event-key="${id.trim()}"]`)
+        $(`.node`).removeClass('is-active')
+        $(`#node--${ops.args.node.data.id}`).addClass('is-active')
 
-        //Don't re-trigger another click if this click came from metadata btn click
+        //Only re-trigger another click if this click wasn't from a metadata btn click
         if ($el && !ops.args.event.detail?.metadata) {
             $el.click()
-        }
-    }
-
-    const onInfoCloseClick = (ops) => {
-        const uuid = $('#Metadata-collapse .nav-item .active').data('uuid')
-        const $el = $(`#node--${uuid}`)
-        if (!$el.hasClass('is-active')) {
-            $el.removeClass('is-active')
         }
     }
 
@@ -180,8 +174,7 @@ function Provenance({nodeData}) {
             onInitializationComplete,
             onAfterBuild,
             onSvgSizing,
-            onNodeClick,
-            onInfoCloseClick
+            onNodeClick
         }
     }
 
