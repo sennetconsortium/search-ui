@@ -484,10 +484,13 @@ export default function EditDataset() {
                                             <SenNetPopover text={<>Mark this <code>Dataset</code> as "Submitted" and ready for processing.</>} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Submit"}
-                                                    modalBody={<div>By clicking "Submit" this <code>Dataset</code> will
+                                                    modalBody={<div><p>By clicking "Submit" this <code>Dataset</code> will
                                                         have its status set to <Badge pill
                                                                                       bg={getStatusColor('Submitted')}>Submitted</Badge> and
-                                                        be ready for processing.
+                                                        be ready for processing.</p>
+                                                        <p>
+                                                            Before submitting your Dataset please confirm that all files (including metadata/contributors TSVs) have been uploaded in Globus.
+                                                        </p>
                                                     </div>}
                                                     onClick={handleSubmit} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
@@ -501,9 +504,9 @@ export default function EditDataset() {
                                             <SenNetPopover text={<>Process this <code>Dataset</code> via the Ingest Pipeline.</>} className={'process-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Process"}
-                                                    modalBody={<div>By clicking "Process" this <code>Dataset</code> will
+                                                    modalBody={<div><p>By clicking "Process" this <code>Dataset</code> will
                                                         be processed via the Ingest Pipeline and its status set
-                                                        to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</div>}
+                                                        to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</p></div>}
                                                     onClick={hanldeProcessing} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
