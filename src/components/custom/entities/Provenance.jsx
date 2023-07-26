@@ -12,6 +12,7 @@ import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
 import {fetchEntity, getUBKGFullName} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
+import * as d3 from "d3";
 
 
 function Provenance({nodeData}) {
@@ -97,6 +98,7 @@ function Provenance({nodeData}) {
         clearTimeout(cbTimeout)
         cbTimeout = setTimeout(()=>{
             const ui = window.ProvenanceTreeD3[selectorId]
+            d3.select(`#${selectorId} #node--${data.uuid}`).dispatch('click')
             ui.disableZoom()
         }, 1000)
     }
