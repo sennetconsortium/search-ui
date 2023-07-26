@@ -2,7 +2,7 @@ import React, {useRef} from 'react'
 import PropTypes from 'prop-types'
 import {
     checkFilterType,
-    checkMultipleFilterType, formatByteSize,
+    checkMultipleFilterType, formatByteSize, getEntityViewUrl,
     getUBKGFullName,
 } from './js/functions'
 import BulkExport, {getCheckAll, getCheckboxes, handleCheckbox} from "./BulkExport";
@@ -12,6 +12,7 @@ import {TableResultsProvider} from "../../context/TableResultsContext";
 import $ from 'jquery'
 import SenNetAlert from "../SenNetAlert";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
+import ClipboardCopy from "../ClipboardCopy";
 
 const downloadSizeAttr = 'data-download-size'
 export const clearDownloadSizeLabel = () => {
@@ -50,6 +51,8 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         hasClicked.current = false
     }
 
+    const getHotLink = (row) => getEntityViewUrl('dataset', raw(row.dataset_uuid), {})
+
     const handleFileCheckbox = (e, data) => {
         handleCheckbox(e)
         if (!hasClicked.current) {
@@ -85,6 +88,15 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 format: column => <input type={'checkbox'} data-size={raw(column.size)} onClick={(e) => handleFileCheckbox(e, column)} value={getId(column)} name={`check-${getId(column)}`}/>
             })
         }
+
+        cols.push(
+            {
+                name: 'Dataset SenNet ID',
+                selector: row => raw(row.dataset_sennet_id),
+                sortable: true,
+                format: column => inModal ? raw(column.dataset_sennet_id) : <span data-field='dataset_sennet_id'><a href={getHotLink(column)}>{raw(column.dataset_sennet_id)}</a> <ClipboardCopy text={raw(column.dataset_sennet_id)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
+            }
+        )
 
         cols.push(
             {
@@ -139,7 +151,6 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 format: row => <span>{formatByteSize(raw(row.size))}</span>
             }
         )
-
 
         cols = cols.concat(columns)
 

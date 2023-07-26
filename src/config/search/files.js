@@ -20,14 +20,14 @@ export const SEARCH_FILES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            // organs: {
-            //     label: 'Organs',
-            //     type: 'value',
-            //     field: 'organs.keyword',
-            //     isExpanded: false,
-            //     filterType: 'any',
-            //     isFilterable: false,
-            // },
+            'organs.type': {
+                label: 'Organs',
+                type: 'value',
+                field: 'organs.type.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
             'samples.type': {
                 label: 'Sample Category',
                 type: 'value',
@@ -63,6 +63,7 @@ export const SEARCH_FILES = {
         },
         source_fields: [
             'sennet_id',
+            'dataset_sennet_id',
             'checksum',
             'data_types',
             'description',
