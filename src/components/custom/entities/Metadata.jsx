@@ -24,10 +24,14 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
     }, [data]);
 
     const triggerNode = (e, uuid) => {
-        $('.node').removeClass('is-active')
-        const id = `#node--${uuid}`
-        $(id).addClass('is-active')
-        d3.select(id).dispatch('click', {detail: {metadata: true}})
+        // Coupled with Provenance.onNodeClick
+        const sel = `node--${uuid}`
+        const $list = $(`[id="${sel}"]`)
+        const $target = $list.eq($list.length - 1)
+        const treeId = $target.parents('.c-provenance--Tree').attr('id')
+        $(`#${treeId} .node`).removeClass('is-active')
+        $target.addClass('is-active')
+        d3.select(`#${treeId} #${sel}`).dispatch('click', {detail: {metadata: true}})
     }
 
     const updateHeader = (data) => {

@@ -20,8 +20,14 @@
 }
 
 #Provenance {
-    .c-provenance__info .cell.link a:hover {
-        color: var(--bs-link-hover-color);
+    .c-provenance__info {
+        .cell.link a:hover {
+            color: var(--bs-link-hover-color);
+        }
+
+        .property strong {
+            text-transform: uppercase;
+        }
     }
 
     .c-legend {

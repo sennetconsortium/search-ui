@@ -12,6 +12,7 @@ import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
 import {fetchEntity, fetchProtocols, getUBKGFullName} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
+import * as d3 from "d3";
 
 
 function Provenance({nodeData}) {
@@ -98,23 +99,35 @@ function Provenance({nodeData}) {
         clearTimeout(cbTimeout)
         cbTimeout = setTimeout(()=>{
             const ui = window.ProvenanceTreeD3[selectorId]
+            d3.select(`#${selectorId} #node--${data.uuid}`).dispatch('click')
             ui.disableZoom()
         }, 1000)
     }
 
+    const removeActiveOnContextNode = (ops) => $(`#${ops.options.selectorId} .node`).removeClass('is-active')
+
     const onNodeClick = (ops) => {
+        // Coupled with Metadata.triggerNode
         const id = ops.args.node.data['sennet:sennet_id']
         const $el = document.querySelector(`[data-rr-ui-event-key="${id.trim()}"]`)
 
-        //Don't re-trigger another click if this click came from metadata btn click
+        if (!ops.args.event.detail?.metadata) {
+            removeActiveOnContextNode(ops)
+        }
+        canvas(ops).find(`#node--${ops.args.node.data.id}`).addClass('is-active')
+        //Only re-trigger another click if this click wasn't from a metadata btn click
         if ($el && !ops.args.event.detail?.metadata) {
             $el.click()
         }
     }
-
     const onInfoCloseClick = (ops) => {
-        const uuid = $('#Metadata-collapse .nav-item .active').data('uuid')
-        const $el = $(`#node--${uuid}`)
+        const treeId = ops.options.selectorId
+        const uuid = $('#Metadata-collapse .nav-item .active').attr('data-uuid')
+        const $el = $(`#${treeId} #node--${uuid}`)
+        const nodeActiveUuid = $(`#${treeId} .node.is-active`).attr('id').split('--')[1]
+        if (uuid !== nodeActiveUuid) {
+            removeActiveOnContextNode(ops)
+        }
         if (!$el.hasClass('is-active')) {
             $el.removeClass('is-active')
         }
