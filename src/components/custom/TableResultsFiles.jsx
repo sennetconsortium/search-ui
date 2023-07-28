@@ -66,7 +66,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     }
 
     const onRowClicked = (e, uuid, data, clicked = false) => {
-        const sel = `[name="check-${data.id}"]`
+        const sel = `[name="check-${getId(data)}"]`
 
         if (!clicked) {
             hasClicked.current = true
@@ -75,6 +75,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         const isChecked = $(sel).is(':checked')
         const $checkAll = getCheckAll()
         let total = $checkAll.attr(downloadSizeAttr)
+        console.log('Total', total, isChecked)
         total = total ? Number(total) : 0
         total = isChecked ? total + raw(data.size) : total - raw(data.size)
         clearDownloadSizeLabel()
