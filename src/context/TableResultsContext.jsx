@@ -74,7 +74,8 @@ export const TableResultsProvider = ({ children, getHotLink, rows, filters, onRo
         handlePageChange(1, rows.length)
         if (rows.length) {
             for (let row of rows) {
-                pageData.push({...row.props.result, id: raw(row.props.result.id || row.props.result.sennet_id)})
+                let _row = row.props ? row.props.result : row
+                pageData.push({..._row, id: raw(_row.id || _row.sennet_id)})
             }
         }
         return pageData;

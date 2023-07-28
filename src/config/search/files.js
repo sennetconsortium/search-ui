@@ -8,9 +8,42 @@ const connector = new SearchAPIConnector({
     accessToken: getAuth(),
 })
 
+const sourceItems = [
+    'sennet_id',
+    'dataset_sennet_id',
+    'checksum',
+    'data_types',
+    'description',
+    'dataset_uuid',
+    'donors',
+    'file_extension',
+    'file_info_refresh_timestamp',
+    'organs',
+    'rel_path',
+    'samples',
+    'size'
+]
+
 export const SEARCH_FILES = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
+        raw: {
+            key: 'aggs',
+            subKey: 'group_by_dataset_uuid',
+            query: {
+                terms: {
+                    field: "dataset_uuid.keyword"
+                },
+                aggs:{
+                    hits: {
+                        top_hits: {
+                            _source: sourceItems,
+                            size: 100
+                        }
+                    }
+                }
+            }
+        },
         excludeFilters: [],
         facets: {
             file_extension: {
@@ -61,24 +94,10 @@ export const SEARCH_FILES = {
             rel_path: {type: 'value'},
             'samples.type': {type: 'value'}
         },
-        source_fields: [
-            'sennet_id',
-            'dataset_sennet_id',
-            'checksum',
-            'data_types',
-            'description',
-            'dataset_uuid',
-            'donors',
-            'file_extension',
-            'file_info_refresh_timestamp',
-            'organs',
-            'rel_path',
-            'samples',
-            'size'
-        ],
+        source_fields: sourceItems,
     },
     initialState: {
-        resultsPerPage: 10000,
+        resultsPerPage: 0,
         sortList: [{
             field: "source.file_info_refresh_timestamp",
             direction: "desc"

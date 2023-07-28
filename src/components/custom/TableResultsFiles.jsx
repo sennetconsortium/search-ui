@@ -13,6 +13,7 @@ import $ from 'jquery'
 import SenNetAlert from "../SenNetAlert";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 import ClipboardCopy from "../ClipboardCopy";
+import 'primeicons/primeicons.css';
 
 const downloadSizeAttr = 'data-download-size'
 export const clearDownloadSizeLabel = () => {
@@ -20,18 +21,38 @@ export const clearDownloadSizeLabel = () => {
     $('.sui-paging-info .download-size').remove()
 }
 
-function TableResultsFiles({children, filters, forData = false, rowFn, inModal = false}) {
+function TableResultsFiles({children, filters, forData = false, rowFn, inModal = false, rawResponse}) {
     const fileTypeField = 'file_extension'
     let hasMultipleFileTypes = checkMultipleFilterType(filters, fileTypeField);
     const currentColumns = useRef([])
     const hasClicked = useRef(false)
 
-    const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
+    const raw = rowFn ? rowFn : ((obj) => obj ? (obj.raw || obj) : null)
     const applyDownloadSizeLabel = (total) => {
         if (total > 0) {
             getCheckAll().attr(downloadSizeAttr, total)
             $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${formatByteSize(total)}</span>`)
         }
+    }
+
+    const transformResults = () => {
+        let results = []
+
+        for (let bucket of rawResponse.aggregations?.group_by_dataset_uuid?.buckets) {
+            let _bucket = []
+            let hits = bucket.hits.hits.hits
+            let size = 0
+            for (let hit of hits) {
+                size += hit['_source'].size
+                _bucket.push(hit['_source'])
+            }
+            results.push({
+                ...hits[0]['_source'],
+                size,
+                list: _bucket
+            })
+        }
+        return results
     }
 
     const onRowClicked = (e, uuid, data, clicked = false) => {
@@ -101,20 +122,33 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         cols.push(
             {
                 name: 'File Type Description',
+                minWidth: '25%',
                 selector: row => raw(row.description),
                 sortable: true,
-                format: row => <p>{raw(row.description)} {raw(row.description) && <br />} <small><a data-field='rel_path' href={'#'}>{raw(row.rel_path)}</a></small></p>
+                format: (row) => {
+                    let paths = []
+                    let i = 0
+                    for (let item of row.list) {
+                        paths.push(
+                            <span key={`rel_path_${i}`}><span className={'pi pi-fw pi-file'} role={'presentation'}></span><small><a data-field='rel_path' href={'#'}>{raw(item.rel_path)}</a></small><br /></span>
+                        )
+                        i++
+                    }
+                    return (<p>{raw(row.description)} {raw(row.description) && <br />}
+                        {paths}
+                    </p>)
+                }
             }
         )
 
-        if (hasMultipleFileTypes) {
-            cols.push({
-                name: 'File Type',
-                selector: row => raw(row.file_extension),
-                sortable: true,
-                format: row => <span data-field={fileTypeField}>{raw(row.file_extension)?.toUpperCase()}</span>,
-            })
-        }
+        // if (hasMultipleFileTypes) {
+        //     cols.push({
+        //         name: 'File Type',
+        //         selector: row => raw(row.file_extension),
+        //         sortable: true,
+        //         format: row => <span data-field={fileTypeField}>{raw(row.file_extension)?.toUpperCase()}</span>,
+        //     })
+        // }
 
         cols.push(
             {
@@ -187,7 +221,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
 
     return (
         <>
-            <TableResultsProvider getId={getId} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
+            <TableResultsProvider getId={getId} rows={transformResults()} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <SenNetAlert variant={'warning'} className="clt-alert"
                              text=<>In order to download the files that are included in the manifest file,&nbsp;
                     <a href="https://github.com/x-atlas-consortia/clt" target='_blank' className={'lnk--ic'}>install <BoxArrowUpRight/></a> the CLT and <a href="https://docs.sennetconsortium.org/libraries/clt/">follow the instructions</a> for how to use it with the manifest file.
