@@ -27,23 +27,7 @@ const sourceItems = [
 export const SEARCH_FILES = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
-        raw: {
-            key: 'aggs',
-            subKey: 'group_by_dataset_uuid',
-            query: {
-                terms: {
-                    field: "dataset_uuid.keyword"
-                },
-                aggs:{
-                    hits: {
-                        top_hits: {
-                            _source: sourceItems,
-                            size: 100
-                        }
-                    }
-                }
-            }
-        },
+        groupBy: 'dataset_uuid.keyword',
         excludeFilters: [],
         facets: {
             file_extension: {

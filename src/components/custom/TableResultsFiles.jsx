@@ -47,7 +47,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const transformResults = () => {
         let results = []
 
-        for (let bucket of rawResponse.aggregations?.group_by_dataset_uuid?.buckets) {
+        for (let bucket of rawResponse.aggregations?.["dataset_uuid.keyword"]?.buckets) {
             let _bucket = []
             let hits = bucket.hits.hits.hits
             let size = 0
