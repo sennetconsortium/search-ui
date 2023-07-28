@@ -1,4 +1,4 @@
-import React, {useRef} from 'react'
+import React, {useRef, useState} from 'react'
 import PropTypes from 'prop-types'
 import {
     checkFilterType,
@@ -14,6 +14,11 @@ import SenNetAlert from "../SenNetAlert";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 import ClipboardCopy from "../ClipboardCopy";
 import 'primeicons/primeicons.css';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import {Chip} from "@mui/material";
+import SenNetPopover from "../SenNetPopover";
+import DataTable from "react-data-table-component";
+import AppModal from "../AppModal";
 
 const downloadSizeAttr = 'data-download-size'
 export const clearDownloadSizeLabel = () => {
@@ -26,6 +31,10 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     let hasMultipleFileTypes = checkMultipleFilterType(filters, fileTypeField);
     const currentColumns = useRef([])
     const hasClicked = useRef(false)
+    const [showModal, setShowModal] = useState(false)
+    let dict = {}
+
+    const [modalData, setModalData] = useState([])
 
     const raw = rowFn ? rowFn : ((obj) => obj ? (obj.raw || obj) : null)
     const applyDownloadSizeLabel = (total) => {
@@ -46,6 +55,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 size += hit['_source'].size
                 _bucket.push(hit['_source'])
             }
+            dict[hits[0]['_source']['dataset_uuid']] = _bucket
             results.push({
                 ...hits[0]['_source'],
                 size,
@@ -81,7 +91,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         }
     }
 
-    const getId = (column) => column.id || column.sennet_id
+    const getId = (column) => column.id || column.dataset_uuid
 
     const onCheckAll = (e, checkAll) => {
         let total = 0
@@ -94,6 +104,37 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         }
         clearDownloadSizeLabel()
         applyDownloadSizeLabel(total)
+    }
+
+    const hideModal = () => {
+        setShowModal(false)
+    }
+
+    const getModalColumns = () => {
+        let cols = []
+        cols.push(
+            {
+                name: 'File Path',
+                selector: row => raw(row.size),
+                sortable: true,
+                format: row => <span data-field='rel_path'>{raw(row.description)} {raw(row.rel_path)}</span>
+            }
+        )
+
+        cols.push(
+            {
+                name: 'Size',
+                selector: row => raw(row.size),
+                sortable: true,
+                format: row => <span>{formatByteSize(raw(row.size))}</span>
+            }
+        )
+        return cols
+    }
+
+    const filesModal = (row) => {
+        setShowModal(true)
+        setModalData(dict[row.dataset_uuid])
     }
 
     const defaultColumns = ({hasMultipleFileTypes = true, columns = [], _isLoggedIn}) => {
@@ -121,7 +162,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
 
         cols.push(
             {
-                name: 'File Type Description',
+                name: 'Files',
                 minWidth: '25%',
                 selector: row => raw(row.description),
                 sortable: true,
@@ -134,9 +175,12 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                         )
                         i++
                     }
-                    return (<p>{raw(row.description)} {raw(row.description) && <br />}
-                        {paths}
-                    </p>)
+                    return (<div>{raw(row.description)} {raw(row.description) && <br />}
+                        {paths.length > 2 ? paths.slice(0, 2) : paths}
+                        {paths.length > 2 && <SenNetPopover text={'View more files details'} className={`popover-${getId(row)}`}>
+                            <Chip label={<MoreHorizIcon />} size="small" onClick={()=> filesModal(row)} />
+                        </SenNetPopover>}
+                    </div>)
                 }
             }
         )
@@ -230,6 +274,16 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 <ResultsBlock
 
                     getTableColumns={getTableColumns}
+                />
+                <AppModal
+                    className={`modal--filesView`}
+                    showModal={showModal}
+                    modalTitle={'Files Details'}
+                    modalBody={<DataTable columns={getModalColumns()} data={modalData} />}
+                    handleClose={hideModal}
+                    showHomeButton={false}
+                    showCloseButton={true}
+                    closeButtonLabel={'Close'}
                 />
             </TableResultsProvider>
         </>

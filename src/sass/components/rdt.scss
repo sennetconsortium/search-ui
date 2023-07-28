@@ -1,5 +1,13 @@
 .rdt {
   &_Results {
+    .MuiChip-sizeSmall {
+      height: 16px;
+      &:hover {
+        background-color: #999797;
+        color: white;
+        cursor: pointer;
+      }
+    }
     &--hascheckboxes {
       @media (max-width: 859px) {
         [data-column-id="1"] {
