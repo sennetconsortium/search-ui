@@ -176,7 +176,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
         }
 
         let type = 'text/tab-separated-values'
-        let blob = [generateTSVData(selected, isAll)]
+        let blob
         switch(fileType) {
             case 'json':
                 type = 'application/json'
@@ -189,6 +189,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
                 blob = [generateManifestData(selected, isAll)]
                 break;
             default:
+                blob = [generateTSVData(selected, isAll)]
             // code block
         }
 
