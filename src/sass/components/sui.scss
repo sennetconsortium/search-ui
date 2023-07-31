@@ -43,6 +43,8 @@
     .accordion-header {
       .accordion-button {
         padding-left: 28px;
+        display: inline-flex !important;
+        align-items: center;
       }
     }
 
