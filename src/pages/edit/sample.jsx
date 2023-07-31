@@ -8,9 +8,8 @@ import AncestorInformationBox from "../../components/custom/entities/sample/Ance
 import log from "loglevel";
 import {
     cleanJson, equals,
-    fetchEntity, fetchProtocolView,
+    fetchEntity,
     getDOIPattern,
-    getHeaders,
     getRequestHeaders
 } from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";

@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {fetchProtocols, fetchProtocolView, getClickableLink} from "../../js/functions";
+import {fetchProtocols,  getClickableLink} from "../../js/functions";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
@@ -13,12 +13,9 @@ export default class Protocols extends React.Component {
     }
 
     async componentDidMount() {
-        let doiViewCheck = await fetchProtocolView(this.props.protocol_url)
-        if (doiViewCheck.ok) {
-            await fetchProtocols(this.props.protocol_url).then((data) => {
-                this.setState({protocol_data: data})
-            });
-        }
+        await fetchProtocols(this.props.protocol_url).then((data) => {
+            this.setState({protocol_data: data})
+        });
     }
 
     render() {
