@@ -124,11 +124,9 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
             if (!Array.isArray(data)) {
                 data = Object.values(data)
             }
-            debugger
             for (let item of data) {
                 let id = raw(item.id)
                 if (isAll || selected[id]) {
-                    debugger
                     for (let subItem of item.list) {
                         manifestData += `${raw(subItem.dataset_uuid)} /${raw(subItem.rel_path)}\n`
                     }
