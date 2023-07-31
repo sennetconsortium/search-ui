@@ -93,6 +93,7 @@ export const TableResultsProvider = ({ children, getHotLink, rows, filters, onRo
         currentColumns,
         getId,
         rows,
+        filters,
         handleRowsPerPageChange,
         handleOnRowClicked,
         handlePageChange,
