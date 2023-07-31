@@ -55,9 +55,12 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 size += hit['_source'].size
                 _bucket.push(hit['_source'])
             }
-            dict[hits[0]['_source']['dataset_uuid']] = _bucket
+            let id = hits[0]['_source']['dataset_uuid']
+            //Store in dict for constant time access. modal feature
+            dict[id] = _bucket
             results.push({
                 ...hits[0]['_source'],
+                id,
                 size,
                 list: _bucket
             })
@@ -154,7 +157,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         if (!inModal) {
             cols.push({
                 ignoreRowClick: true,
-                name: <BulkExport onCheckAll={onCheckAll} data={children} raw={raw} columns={currentColumns} exportKind={'manifest'} />,
+                name: <BulkExport onCheckAll={onCheckAll} data={transformResults()} raw={raw} columns={currentColumns} exportKind={'manifest'} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => row.id,

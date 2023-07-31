@@ -124,10 +124,15 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
             if (!Array.isArray(data)) {
                 data = Object.values(data)
             }
+            debugger
             for (let item of data) {
-                let id = raw(item.props.result.id)
+                let id = raw(item.id)
                 if (isAll || selected[id]) {
-                    manifestData += `${raw(item.props.result.dataset_uuid)} /${raw(item.props.result.rel_path)}\n`
+                    debugger
+                    for (let subItem of item.list) {
+                        manifestData += `${raw(subItem.dataset_uuid)} /${raw(subItem.rel_path)}\n`
+                    }
+
                 }
             }
         } catch (e) {
@@ -137,11 +142,15 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
         return manifestData
     }
 
+    const atIndex = (index) => {
+        return (data[index].props)  ? data[index].props.result : data[index]
+    }
+
     const downloadData = (e, fileType, isAll) => {
         const $checkboxes = getCheckboxes()
         let selected = {}
         let results = []
-        let fileName = raw(data[0].props.result.id) + ' - ' + raw(data[data.length - 1].props.result.id)
+        let fileName = raw(atIndex(0).id) + ' - ' + raw(atIndex(data.length - 1).id)
         let lastSelected, val
 
         if (!isAll) {
@@ -160,11 +169,11 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
             }
         }
 
-        for (let item of data) {
-            let id = raw(item.props.result.sennet_id)
+        for (let i = 0; i < data.length; i++) {
+            let id = raw(atIndex(i).id)
 
             if (isAll || selected[id]) {
-                results.push(item.props.result)
+                results.push(atIndex(i))
             }
         }
 
