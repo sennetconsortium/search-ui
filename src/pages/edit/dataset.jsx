@@ -409,7 +409,7 @@ export default function EditDataset() {
                                     <EntityFormGroup label='DOI Abstract' type='textarea' controlId='description'
                                                      value={data.description}
                                                      onChange={onChange}
-                                                     text={<>An abstract publicly published when the <code>Dataset</code> is published.  This will be included with the DOI information of the published <code>Dataset</code>.</>}/>
+                                                     text={<>An abstract publicly available when the <code>Dataset</code> is published.  This will be included with the DOI information of the published <code>Dataset</code>.</>}/>
 
                                     {/*/!*Additional Information*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea'

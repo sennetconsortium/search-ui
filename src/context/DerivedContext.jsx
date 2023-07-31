@@ -1,6 +1,6 @@
 import {createContext, useCallback, useState} from "react";
 import $ from "jquery";
-import {fetchEntity} from "../components/custom/js/functions";
+import {fetchEntity, getDataTypesByProperty} from "../components/custom/js/functions";
 import {isAssayVitessceSupport} from "../config/config";
 
 const DerivedContext = createContext({})
@@ -18,6 +18,7 @@ export const DerivedProvider = ({children}) => {
 
     const showVitessce = (is_primary_dataset, data) => {
         let show_vitessce = false
+        const nonPrimaryTypes = getDataTypesByProperty("primary", false)
 
         //Check first that this dataset has a valid status and has descendants or if we know this isn't a primary dataset
         if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset)) {
@@ -28,7 +29,8 @@ export const DerivedProvider = ({children}) => {
             // Iterate over all descendants
             for (let i = 0; i < data.descendants.length; i++) {
                 let descendantData = data.descendants[i]
-                if (isDatasetStatusPassed(descendantData)) {
+                // Check that the descendant is a derived type and has a valid status
+                if (nonPrimaryTypes.includes(descendantData.data_types[0]) && isDatasetStatusPassed(descendantData)) {
                     show_vitessce = true
                     break;
                 }
