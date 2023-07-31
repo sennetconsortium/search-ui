@@ -7,7 +7,7 @@ import {
 } from "@elastic/react-search-ui";
 import TableResultsContext from "../../../context/TableResultsContext";
 
-function ResultsBlock({getTableColumns, disableRowClick}) {
+function ResultsBlock({getTableColumns, disableRowClick, tableClassName}) {
 
     const {
         getTableData,
@@ -41,7 +41,7 @@ function ResultsBlock({getTableColumns, disableRowClick}) {
             </div>
 
             {<DataTable key={`results-${new Date().getTime()}`}
-                        className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''}`}
+                        className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''} ${tableClassName}`}
                         columns={getTableColumns()}
                         data={getTableData()}
                         theme={'plain'}
@@ -59,10 +59,12 @@ function ResultsBlock({getTableColumns, disableRowClick}) {
     )
 }
 
-ResultsBlock.defaultProps = {}
+ResultsBlock.defaultProps = {
+    tableClassName: ''
+}
 
 ResultsBlock.propTypes = {
-    children: PropTypes.node
+    tableClassName: PropTypes.string
 }
 
 export default ResultsBlock

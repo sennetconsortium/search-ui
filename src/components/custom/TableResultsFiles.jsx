@@ -116,9 +116,20 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         cols.push(
             {
                 name: 'File Path',
+                width: '30%',
                 selector: row => raw(row.size),
                 sortable: true,
-                format: row => <span data-field='rel_path'>{raw(row.description)} {raw(row.rel_path)}</span>
+                format: row => <span data-field='rel_path' className='cell-wrap'>{raw(row.rel_path)}</span>
+            }
+        )
+
+        cols.push(
+            {
+                name: 'File Description',
+                width: '60%',
+                selector: row => raw(row.description),
+                sortable: true,
+                format: row => <span data-field='description' className='cell-wrap cell-pd'>{raw(row.description)}</span>
             }
         )
 
@@ -172,7 +183,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     let i = 0
                     for (let item of row.list) {
                         paths.push(
-                            <span key={`rel_path_${i}`}><span className={'pi pi-fw pi-file'} role={'presentation'}></span><small><a data-field='rel_path' href={'#'}>{raw(item.rel_path)}</a></small><br /></span>
+                            <span key={`rel_path_${i}`} className={'cell-nowrap'}><span className={'pi pi-fw pi-file'} role={'presentation'}></span><small><a data-field='rel_path' href={'#'}>{raw(item.rel_path)}</a></small><br /></span>
                         )
                         i++
                     }
@@ -273,14 +284,15 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 <br /><small className={'text-muted'}>Note: For transferring data to the local machine, the <a href={'https://www.globus.org/globus-connect-personal'} target='_blank' className={'lnk--ic'}>Globus Connect Personal (GCP)<BoxArrowUpRight/></a> endpoint must also be up and running.</small>
                 </> />
                 <ResultsBlock
-
+                    tableClassName={'rdt_Results--Files'}
                     getTableColumns={getTableColumns}
                 />
                 <AppModal
                     className={`modal--filesView`}
+                    modalSize={'xl'}
                     showModal={showModal}
                     modalTitle={'Files Details'}
-                    modalBody={<DataTable columns={getModalColumns()} data={modalData} />}
+                    modalBody={<DataTable columns={getModalColumns()} data={modalData} className={'rdt_Results--Files'} />}
                     handleClose={hideModal}
                     showHomeButton={false}
                     showCloseButton={true}

@@ -8,6 +8,22 @@
         cursor: pointer;
       }
     }
+    &--Files {
+      .cell {
+        &-nowrap {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        &-wrap {
+          white-space: normal;
+        }
+        &-pd {
+          display: inline-block;
+          padding: .4em 0;
+        }
+      }
+    }
     &--hascheckboxes {
       @media (max-width: 859px) {
         [data-column-id="1"] {
