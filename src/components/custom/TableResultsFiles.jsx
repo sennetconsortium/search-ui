@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react'
+import React, {useRef, useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {
     checkFilterType,
@@ -34,7 +34,13 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const [showModal, setShowModal] = useState(false)
     let dict = {}
 
+    const getBuckets = ()=> rawResponse.aggregations?.["dataset_uuid.keyword"]?.buckets
+
     const [modalData, setModalData] = useState([])
+
+    useEffect(()=> {
+        $('.sui-paging-info strong').eq(1).text(getBuckets().length)
+    })
 
     const raw = rowFn ? rowFn : ((obj) => obj ? (obj.raw || obj) : null)
     const applyDownloadSizeLabel = (total) => {
@@ -47,7 +53,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const transformResults = () => {
         let results = []
 
-        for (let bucket of rawResponse.aggregations?.["dataset_uuid.keyword"]?.buckets) {
+        for (let bucket of getBuckets()) {
             let _bucket = []
             let hits = bucket.hits.hits.hits
             let size = 0
