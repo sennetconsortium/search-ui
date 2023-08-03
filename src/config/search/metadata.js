@@ -361,14 +361,12 @@ export const SEARCH_METADATA = {
             "metadata.metadata.acquisition_instrument_vendor": FilterIsSelected('entity_type', 'Dataset'),
         },
         search_fields: {
+            // Do not put any fields that elastic search categorizes as a number. This will cause the search to fail.
             sennet_id: {type: 'value'},
             source_type: {type: 'value'},
             data_types: {type: 'value'},
             "source_mapped_metadata.sex": {type: 'value'},
             "source_mapped_metadata.race": {type: 'value'},
-
-            "source_mapped_metadata.age_value": {type: 'value'},
-            "source_mapped_metadata.body_mass_index_value": {type: 'value'},
 
             "metadata.metadata.assay_category": {type: 'value'},
             "metadata.metadata.analyte_class": {type: 'value'},
