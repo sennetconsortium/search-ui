@@ -53,7 +53,7 @@ export default function EditBulk() {
                 <AppNavbar/>
                 <BulkCreate
                     entityType={entityType}
-                    subType={equals(subType, cache.sourceTypes.Mouse) ? 'Murine' : subType}
+                    subType={subType}
                     userWriteGroups={userWriteGroups}
                     handleHome={handleHome}
                     isMetadata={isMetadata}
