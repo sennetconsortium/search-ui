@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {Fragment, useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 
 function SenNetAccordion({children, title, id, afterTitle, className}) {
@@ -15,7 +15,7 @@ function SenNetAccordion({children, title, id, afterTitle, className}) {
                 <div className="accordion-header">
                     <button className="accordion-button" type="button" data-bs-toggle="collapse"
                             data-bs-target={`#${refId}-collapse`} aria-expanded="true"
-                            aria-controls={`${refId}-collapse`}>{title}{afterTitle}
+                            aria-controls={`${refId}-collapse`}><span className={"me-2"}>{title}</span>{afterTitle}
                     </button>
                 </div>
                 <div id={`${refId}-collapse`} className="accordion-collapse collapse show">
