@@ -69,8 +69,8 @@ function SearchMetadata() {
                 <Header title={APP_TITLE}/>
 
                 <SearchProvider config={SEARCH_METADATA}>
-                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter}) => ({wasSearched, filters, addFilter, removeFilter})}>
-                        {({wasSearched, filters, addFilter, removeFilter}) => {
+                    <WithSearch mapContextToProps={({wasSearched, rawResponse, filters, addFilter, removeFilter}) => ({wasSearched, rawResponse, filters, addFilter, removeFilter})}>
+                        {({wasSearched, rawResponse, filters, addFilter, removeFilter}) => {
                             return (
                                 <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, 'metadata')}>
                                     <AppNavbar hidden={isRegisterHidden}/>
@@ -113,6 +113,7 @@ function SearchMetadata() {
                                                     {wasSearched &&
                                                         <Facets fields={SEARCH_METADATA.searchQuery}
                                                                 filters={filters}
+                                                                rawResponse={rawResponse}
                                                                 transformFunction={getUBKGFullName}
                                                                 clearInputs={clearFacetInputs} />
                                                     }
