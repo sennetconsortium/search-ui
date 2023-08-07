@@ -72,7 +72,7 @@ function SearchEntities() {
                     <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter}) => ({wasSearched, filters, addFilter, removeFilter})}>
                         {({wasSearched, filters, addFilter, removeFilter}) => {
                             return (
-                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter)}>
+                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters)}>
                                     <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
