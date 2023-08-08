@@ -27,11 +27,11 @@ function Metadata() {
             <>
                 <Header title={APP_TITLE} />
                 <AppNavbar hidden={isRegisterHidden} />
-                <Container>
+                <Container className="mb-5">
                     <Row>
-                        <div class="py-5 d-flex bd-highlight align-items-center">
-                            <h1 class="m-0 flex-grow-1 bd-highlight">Browse by Popular Searches</h1>
-                            <div class="bd-highlight">
+                        <div className="py-5 d-flex bd-highlight align-items-center">
+                            <h1 className="m-0 flex-grow-1 bd-highlight">Browse by Popular Searches</h1>
+                            <div className="bd-highlight">
                                 <Link target="_blank" href={{ pathname: "/search/metadata" }}>
                                     <button className="btn btn-outline-primary rounded-0 clear-filter-button">
                                         Browse All Metadata
@@ -42,9 +42,9 @@ function Metadata() {
                     </Row>
 
                     <Row xs={1} s={2} md={3} className="gy-4">
-                        {SEARCH_METADATA.discover.map((item, index) => {
+                        {SEARCH_METADATA.discover.map((item) => {
                             return (
-                                <Col style={{ maxHeight: "350px" }}>
+                                <Col key={item.title} style={{ maxHeight: "350px" }}>
                                     <Card className="p-5 rounded-0 h-100">
                                         <Card.Body className="d-flex flex-column justify-content-between">
                                             <div>
