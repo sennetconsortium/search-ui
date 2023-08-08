@@ -63,8 +63,8 @@ function SearchFiles() {
                 <Header title={APP_TITLE}/>
 
                 <SearchProvider config={SEARCH_FILES}>
-                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter}) => ({wasSearched, filters, addFilter, removeFilter})}>
-                        {({wasSearched, filters, addFilter, removeFilter}) => {
+                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter, rawResponse}) => ({wasSearched, filters, addFilter, removeFilter, rawResponse})}>
+                        {({wasSearched, filters, addFilter, removeFilter, rawResponse}) => {
                             return (
                                 <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters, 'files')}>
                                     <AppNavbar hidden={isRegisterHidden}/>
@@ -116,7 +116,7 @@ function SearchFiles() {
                                             }
                                             bodyContent={
                                                 <div className="js-gtm--results sui-resultsTable" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
-                                                    {wasSearched && <Results filters={filters} titleField={filters}
+                                                    {wasSearched && <Results filters={filters} titleField={filters} rawResponse={rawResponse}
                                                                              view={TableResultsFiles}
                                                     />}
                                                     {!wasSearched && <Spinner /> }
