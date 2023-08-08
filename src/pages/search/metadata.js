@@ -72,7 +72,7 @@ function SearchMetadata() {
                     <WithSearch mapContextToProps={({wasSearched, rawResponse, filters, addFilter, removeFilter}) => ({wasSearched, rawResponse, filters, addFilter, removeFilter})}>
                         {({wasSearched, rawResponse, filters, addFilter, removeFilter}) => {
                             return (
-                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, 'metadata')}>
+                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters, 'metadata')}>
                                     <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
