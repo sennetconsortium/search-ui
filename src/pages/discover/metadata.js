@@ -1,4 +1,5 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
+import { useRouter } from "next/router"
 import Header from "../../components/custom/layout/Header"
 import { APP_TITLE } from "../../config/config"
 import { SEARCH_METADATA } from "../../config/search/metadata"
@@ -10,10 +11,23 @@ import Container from "react-bootstrap/Container"
 import Row from "react-bootstrap/Row"
 import Col from "react-bootstrap/Col"
 import Button from "react-bootstrap/Button"
-import Link from "next/link"
+import { Sui } from "search-ui/lib/search-tools"
 
 function Metadata() {
     const { logout, isRegisterHidden, isAuthorizing, isUnauthorized, hasAuthenticationCookie } = useContext(AppContext)
+    const router = useRouter()
+
+    useEffect(() => {
+        Sui.keyPrefix = "metadata"
+    }, [])
+
+    function handleBrowseButtonClicked(event, filters) {
+        event.preventDefault()
+        Sui.saveFilters(filters)
+        router.push({
+            pathname: "/search/metadata"
+        })
+    }
 
     if (isAuthorizing()) {
         return <Spinner />
@@ -32,11 +46,10 @@ function Metadata() {
                         <div className="py-5 d-flex bd-highlight align-items-center">
                             <h1 className="m-0 flex-grow-1 bd-highlight">Browse by Popular Searches</h1>
                             <div className="bd-highlight">
-                                <Link target="_blank" href={{ pathname: "/search/metadata" }}>
-                                    <button className="btn btn-outline-primary rounded-0 clear-filter-button">
-                                        Browse All Metadata
-                                    </button>
-                                </Link>
+                                <button className="btn btn-outline-primary rounded-0 clear-filter-button"
+                                        onClick={(e) => handleBrowseButtonClicked(e, {})}>
+                                    Browse All Metadata
+                                </button>
                             </div>
                         </div>
                     </Row>
@@ -52,12 +65,10 @@ function Metadata() {
                                                 <Card.Title className="mb-3">{item.title}</Card.Title>
                                                 <Card.Text className="mb-4">{item.description}</Card.Text>
                                             </div>
-                                            <Link
-                                                target="_blank"
-                                                href={{ pathname: "/search/metadata", query: item.queryParams }}
-                                            >
-                                                <Button variant="primary rounded-0">Browse</Button>
-                                            </Link>
+                                            <Button variant="primary rounded-0"
+                                                    onClick={(e) => handleBrowseButtonClicked(e, item.filters)}>
+                                                Browse
+                                            </Button>
                                         </Card.Body>
                                     </Card>
                                 </Col>
