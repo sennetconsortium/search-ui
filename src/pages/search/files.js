@@ -66,7 +66,7 @@ function SearchFiles() {
                     <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter, rawResponse}) => ({wasSearched, filters, addFilter, removeFilter, rawResponse})}>
                         {({wasSearched, filters, addFilter, removeFilter, rawResponse}) => {
                             return (
-                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, 'files')}>
+                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters, 'files')}>
                                     <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
