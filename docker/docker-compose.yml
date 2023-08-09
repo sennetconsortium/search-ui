@@ -7,9 +7,9 @@ services:
     hostname: portal-ui
     container_name: portal-ui
     ports:
-      - "8888:8080"
+      - "3000:3000"
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080"]
+      test: ["CMD", "curl", "--fail", "http://localhost:3000"]
       interval: 1m30s
       timeout: 10s
       retries: 3
@@ -20,8 +20,6 @@ services:
     init: true
     restart: always
     volumes:
-      # Mount conf.d on host machine to the nginx conf.d on container
-      - "./portal-ui/nginx/conf.d:/etc/nginx/conf.d"
       # Mount the logging to container
       - "../log:/usr/src/app/log"
     networks:
