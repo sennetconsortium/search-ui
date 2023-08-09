@@ -17,15 +17,6 @@ if [ $? -ne 0 ]; then
     useradd -r -u $HOST_UID -g $HOST_GID -m codcc
 fi
 
-# When running Nginx as a non-root user, we need to create the pid file
-# and give read and write access to /var/run/nginx.pid, /var/cache/nginx, and /var/log/nginx
-# In individual nginx *.conf, also don't listen on ports 80 or 443 because 
-# only root processes can listen to ports below 1024
-touch /var/run/nginx.pid
-chown -R codcc:codcc /var/run/nginx.pid
-chown -R codcc:codcc /var/cache/nginx
-chown -R codcc:codcc /var/log/nginx
-
 # Needed to allow for read/write access of UBKG Ontology API Cache
 chown -R codcc:codcc /usr/src/app/src/cache
 
