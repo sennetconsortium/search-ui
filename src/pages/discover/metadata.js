@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react"
 import { useRouter } from "next/router"
+import Link from "next/link"
 import Header from "../../components/custom/layout/Header"
 import { APP_TITLE } from "../../config/config"
 import { SEARCH_METADATA } from "../../config/search/metadata"
@@ -17,15 +18,17 @@ function Metadata() {
     const { logout, isRegisterHidden, isAuthorizing, isUnauthorized, hasAuthenticationCookie } = useContext(AppContext)
     const router = useRouter()
 
+    const METADATA_SEARCH = "/search/metadata" 
+
     useEffect(() => {
         Sui.keyPrefix = "metadata"
     }, [])
 
-    function handleBrowseButtonClicked(event, filters) {
+    function handleBrowseAllMetadataClicked(event) {
         event.preventDefault()
-        Sui.saveFilters(filters)
+        Sui.saveFilters({})
         router.push({
-            pathname: "/search/metadata"
+            pathname: METADATA_SEARCH,
         })
     }
 
@@ -47,7 +50,7 @@ function Metadata() {
                             <h1 className="m-0 flex-grow-1 bd-highlight">Browse by Popular Searches</h1>
                             <div className="bd-highlight">
                                 <button className="btn btn-outline-primary rounded-0 clear-filter-button"
-                                        onClick={(e) => handleBrowseButtonClicked(e, {})}>
+                                        onClick={handleBrowseAllMetadataClicked}>
                                     Browse All Metadata
                                 </button>
                             </div>
@@ -65,10 +68,9 @@ function Metadata() {
                                                 <Card.Title className="mb-3">{item.title}</Card.Title>
                                                 <Card.Text className="mb-4">{item.description}</Card.Text>
                                             </div>
-                                            <Button variant="primary rounded-0"
-                                                    onClick={(e) => handleBrowseButtonClicked(e, item.filters)}>
-                                                Browse
-                                            </Button>
+                                            <Link href={{ pathname: METADATA_SEARCH, query: item.queryString }}>
+                                                <Button variant="primary rounded-0">Browse</Button>
+                                            </Link>
                                         </Card.Body>
                                     </Card>
                                 </Col>
