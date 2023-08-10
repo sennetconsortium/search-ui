@@ -68,7 +68,9 @@ export const SEARCH_FILES = {
         },
         search_fields: {
             rel_path: {type: 'value'},
-            'samples.type': {type: 'value'}
+            'samples.type': {type: 'value'},
+            dataset_sennet_id: {type: 'value'},
+            data_types: {type: 'value'}
         },
         source_fields: sourceItems,
     },
