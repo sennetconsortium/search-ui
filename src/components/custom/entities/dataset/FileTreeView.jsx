@@ -8,7 +8,7 @@ import {fetchGlobusFilepath} from "../../../../lib/services";
 import {getAssetsEndpoint, getAuth} from "../../../../config/config";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 import {formatByteSize} from "../../js/functions";
-import {Button, Row, Table} from 'react-bootstrap';
+import {Button, Row} from 'react-bootstrap';
 import Col from 'react-bootstrap/Col';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
@@ -222,11 +222,33 @@ export const FileTreeView = ({data}) => {
 
     return <Fragment>
         <SenNetAccordion title={'Files'}>
+            <Card border={'0'} className={"m-2 p-2"}>
+                {status === 200 && filepath &&
+                    <p className={'fw-light fs-6 mb-2'}>Files for this dataset are available through the Globus Research Data Management System.
+                        Access <a
+                            target="_blank"
+                            href={filepath}
+                            className="icon_inline"><span
+                            className="me-1">{data.sennet_id} Globus</span> <BoxArrowUpRight/></a></p>}
+
+                {status > 200 &&
+                    <p className={'fw-light fs-6 mb-2'}>Access to the files on the Globus Research Management system is restricted. You may
+                        not have
+                        access to these files because the Consortium
+                        is still curating data and/or the data is protected data that requires you to be a
+                        member of the
+                        Consortium "Protected Data Group".
+                        Such protected data will be available via dbGaP in the future.
+                        If you believe this to be an error, please contact <a className={'lnk--ic'}
+                                                                              href={'mailto:help@sennetconsortium.org'}>help@sennetconsortium.org <EnvelopeFill/></a>
+                    </p>}
+            </Card>
+
             {!!((data.files && Object.keys(data.files).length) || (isPrimaryDataset && derivedDataset?.files && Object.keys(derivedDataset?.files).length)) &&
                 <Card border={'0'} className={"m-2 p-2"}>
                     {derivedDataset &&
                         <span className={'fw-light fs-6 mb-2'}>
-                                Derived from
+                                Files from descendant
                                 <Link target="_blank" href={{pathname: '/dataset', query: {uuid: derivedDataset.uuid}}}>
                                     <span className={'ms-2 me-2'}>{derivedDataset.sennet_id}</span>
                                 </Link>
@@ -247,29 +269,6 @@ export const FileTreeView = ({data}) => {
                     }
                 </Card>
             }
-            <Card border={'0'}>
-                <Card.Body>
-                    {status === 200 && filepath &&
-                        <p>Files are available through the Globus Research Data Management System. Access
-                            dataset <a
-                                target="_blank"
-                                href={filepath}
-                                className="icon_inline"><span
-                                className="me-1">{data.sennet_id}</span> <BoxArrowUpRight/></a></p>}
-
-                    {status > 200 &&
-                        <p>Access to the files on the Globus Research Management system is restricted. You may
-                            not have
-                            access to these files because the Consortium
-                            is still curating data and/or the data is protected data that requires you to be a
-                            member of the
-                            Consortium "Protected Data Group".
-                            Such protected data will be available via dbGaP in the future.
-                            If you believe this to be an error, please contact <a className={'lnk--ic'}
-                                                                                  href={'mailto:help@sennetconsortium.org'}>help@sennetconsortium.org <EnvelopeFill/></a>
-                        </p>}
-                </Card.Body>
-            </Card>
         </SenNetAccordion>
     </Fragment>
 }

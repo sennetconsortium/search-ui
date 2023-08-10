@@ -29,16 +29,18 @@ export default class DataTypes extends React.Component {
         // old_data_types.push(e.target.value);
         this.props.onChange(e, 'data_types', [e.target.value]);
 
-        // If data type is 'Other' then display the 'data_other' input group
-        if (e.target.value === 'Other') {
-            //data Type Other set display and require
-            this.setState({data_types_other_group_hide: ''})
-            document.getElementById("data_types_other").setAttribute("required", "")
+        //We are removing the ability to specify an "Other" data type
 
-        } else {
-            this.resetDataTypesOther(e, onChange);
-
-        }
+        // // If data type is 'Other' then display the 'data_other' input group
+        // if (e.target.value === 'Other') {
+        //     //data Type Other set display and require
+        //     this.setState({data_types_other_group_hide: ''})
+        //     document.getElementById("data_types_other").setAttribute("required", "")
+        //
+        // } else {
+        //     this.resetDataTypesOther(e, onChange);
+        //
+        // }
     }
 
     // Reset forms fields

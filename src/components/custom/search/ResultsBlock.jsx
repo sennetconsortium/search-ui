@@ -6,8 +6,9 @@ import {
     PagingInfo
 } from "@elastic/react-search-ui";
 import TableResultsContext from "../../../context/TableResultsContext";
+import SelectedFacets from "./SelectedFacets";
 
-function ResultsBlock({getTableColumns, disableRowClick}) {
+function ResultsBlock({getTableColumns, disableRowClick, tableClassName}) {
 
     const {
         getTableData,
@@ -22,6 +23,7 @@ function ResultsBlock({getTableColumns, disableRowClick}) {
         setResultsPerPage,
         currentColumns,
         getId,
+        filters,
         handleRowsPerPageChange,
         handleOnRowClicked,
         handlePageChange,
@@ -32,7 +34,6 @@ function ResultsBlock({getTableColumns, disableRowClick}) {
 
     return (
         <>
-
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
@@ -41,7 +42,7 @@ function ResultsBlock({getTableColumns, disableRowClick}) {
             </div>
 
             {<DataTable key={`results-${new Date().getTime()}`}
-                        className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''}`}
+                        className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''} ${tableClassName}`}
                         columns={getTableColumns()}
                         data={getTableData()}
                         theme={'plain'}
@@ -59,10 +60,12 @@ function ResultsBlock({getTableColumns, disableRowClick}) {
     )
 }
 
-ResultsBlock.defaultProps = {}
+ResultsBlock.defaultProps = {
+    tableClassName: ''
+}
 
 ResultsBlock.propTypes = {
-    children: PropTypes.node
+    tableClassName: PropTypes.string
 }
 
 export default ResultsBlock

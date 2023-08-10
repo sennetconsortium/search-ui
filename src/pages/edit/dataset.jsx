@@ -10,7 +10,7 @@ import {get_headers, update_create_dataset} from '../../lib/services'
 import {
     cleanJson,
     equals,
-    fetchEntity, fetchProtocols, fetchProtocolView,
+    fetchEntity, fetchProtocols,
     getDataTypesByProperty, getEntityViewUrl,
     getRequestHeaders, getStatusColor, isPrimaryAssay
 } from '../../components/custom/js/functions'
@@ -256,11 +256,10 @@ export default function EditDataset() {
                 if (equals(ancestor.entity_type, cache.entities.source) || equals(ancestor.entity_type, cache.entities.sample)) {
                     uri = ancestor.protocol_url
                     apiResult = await fetchProtocols(uri)
-                    viewResult = await fetchProtocolView(uri)
-                    if (!apiResult || !viewResult.ok) {
+                    if (!apiResult) {
                         allValid = false
                     }
-                    let icon = apiResult && viewResult.ok ? successIcon() : errIcon()
+                    let icon = apiResult ? successIcon() : errIcon()
                     results.push(<span key={`doi-check-${i}`}>{icon} <a href={getEntityViewUrl(ancestor.entity_type, ancestor.uuid, {isEdit: true})} target='_blank'>{ancestor.sennet_id}</a>  <br /></span>)
                     i++
                 }
@@ -409,7 +408,7 @@ export default function EditDataset() {
                                     <EntityFormGroup label='DOI Abstract' type='textarea' controlId='description'
                                                      value={data.description}
                                                      onChange={onChange}
-                                                     text={<>An abstract publicly published when the <code>Dataset</code> is published.  This will be included with the DOI information of the published <code>Dataset</code>.</>}/>
+                                                     text={<>An abstract publicly available when the <code>Dataset</code> is published.  This will be included with the DOI information of the published <code>Dataset</code>.</>}/>
 
                                     {/*/!*Additional Information*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea'
@@ -485,10 +484,13 @@ export default function EditDataset() {
                                             <SenNetPopover text={<>Mark this <code>Dataset</code> as "Submitted" and ready for processing.</>} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Submit"}
-                                                    modalBody={<div>By clicking "Submit" this <code>Dataset</code> will
+                                                    modalBody={<div><p>By clicking "Submit" this <code>Dataset</code> will
                                                         have its status set to <Badge pill
                                                                                       bg={getStatusColor('Submitted')}>Submitted</Badge> and
-                                                        be ready for processing.
+                                                        be ready for processing.</p>
+                                                        <p>
+                                                            Before submitting your Dataset please confirm that all files (including metadata/contributors TSVs) have been uploaded in Globus.
+                                                        </p>
                                                     </div>}
                                                     onClick={handleSubmit} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
@@ -502,14 +504,14 @@ export default function EditDataset() {
                                             <SenNetPopover text={<>Process this <code>Dataset</code> via the Ingest Pipeline.</>} className={'process-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Process"}
-                                                    modalBody={<div>By clicking "Process" this <code>Dataset</code> will
+                                                    modalBody={<div><p>By clicking "Process" this <code>Dataset</code> will
                                                         be processed via the Ingest Pipeline and its status set
-                                                        to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</div>}
+                                                        to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</p></div>}
                                                     onClick={hanldeProcessing} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
 
-                                        {isPrimary.current && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid')) && <SenNetPopover
+                                        {isPrimary.current && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) && <SenNetPopover
                                             text={<>Revert this <code>Dataset</code> back to <Badge pill bg={getStatusColor('New')}>New</Badge> or <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>  status.
                                                </>}
                                             className={'revert-button'}>
