@@ -24,6 +24,7 @@ import SelectedFilters from "../../components/custom/layout/SelectedFilters";
 import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
 import {Sui} from "search-ui/lib/search-tools";
 import {Search} from "react-bootstrap-icons";
+import SelectedFacets from "../../components/custom/search/SelectedFacets";
 
 function SearchMetadata() {
     const {
@@ -79,30 +80,35 @@ function SearchMetadata() {
 
                                         <Layout
                                             header={
-                                                <div className="search-box-header js-gtm--search">
-                                                    <SearchBox
-                                                        view={({onChange, value, onSubmit}) => (
-                                                            <Form onSubmit={e => handleSearchFormSubmit(e, onSubmit)}>
-                                                                <Form.Group controlId="search">
-                                                                    <InputGroup>
-                                                                        <Form.Control
-                                                                            value={value}
-                                                                            onChange={(e) => onChange(e.currentTarget.value)}
-                                                                            className="right-border-none form-control form-control-lg rounded-0"
-                                                                            placeholder="Search"
-                                                                            autoFocus={false}
-                                                                        />
-                                                                        <InputGroup.Text
-                                                                            className={"transparent"}><Search/></InputGroup.Text>
-                                                                        <Button variant="outline-primary"
-                                                                                className={"rounded-0"}
-                                                                                onClick={e => handleSearchFormSubmit(e, onSubmit)}>{_t('Search')}</Button>
-                                                                    </InputGroup>
-                                                                </Form.Group>
-                                                            </Form>
-                                                        )}
-                                                    />
-                                                </div>
+                                                <>
+                                                    <div className="search-box-header js-gtm--search">
+                                                        <SearchBox
+                                                            view={({onChange, value, onSubmit}) => (
+                                                                <Form onSubmit={e => handleSearchFormSubmit(e, onSubmit)}>
+                                                                    <Form.Group controlId="search">
+                                                                        <InputGroup>
+                                                                            <Form.Control
+                                                                                value={value}
+                                                                                onChange={(e) => onChange(e.currentTarget.value)}
+                                                                                className="right-border-none form-control form-control-lg rounded-1"
+                                                                                placeholder="Search"
+                                                                                autoFocus={false}
+                                                                            />
+                                                                            <InputGroup.Text
+                                                                                className={"transparent"}><Search/></InputGroup.Text>
+                                                                            <Button variant="outline-primary"
+                                                                                    className={"rounded-1"}
+                                                                                    onClick={e => handleSearchFormSubmit(e, onSubmit)}>{_t('Search')}</Button>
+                                                                        </InputGroup>
+                                                                    </Form.Group>
+                                                                </Form>
+                                                            )}
+                                                        />
+                                                    </div>
+                                                    <div className='sui-filters-summary'>
+                                                        <SelectedFacets filters={filters} />
+                                                    </div>
+                                                 </>
                                             }
                                             sideContent={
                                                 <div data-js-ada='facets'>
