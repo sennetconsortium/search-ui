@@ -45,14 +45,6 @@ export const SEARCH_FILES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            'samples.type': {
-                label: 'Sample Category',
-                type: 'value',
-                field: 'samples.type.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
             data_types: {
                 label: 'Data Type',
                 type: 'value',
