@@ -62,7 +62,7 @@ function Metadata() {
                             return (
                                 <Col key={item.title} style={{ maxHeight: "350px" }}>
                                     <Card className="p-5 rounded-0 h-100">
-                                        <Card.Body className="d-flex flex-column justify-content-between">
+                                        <Card.Body className="d-flex flex-column justify-content-between align-items-start">
                                             <div>
                                                 <div className={`mb-4 circle ${item.entityType}-background`} />
                                                 <Card.Title className="mb-3">{item.title}</Card.Title>
