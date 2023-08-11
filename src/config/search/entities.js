@@ -26,26 +26,20 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            sample_category: {
-                label: 'Sample Category',
+            // Used for when "Dataset" is selected to show related organs
+            "origin_sample.organ": {
+                label: 'Organ',
                 type: 'value',
-                field: 'sample_category.keyword',
+                field: 'origin_sample.organ.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            data_types: {
-                label: 'Data Type',
+            // Used for when "Sample" is selected to show organs
+            organ: {
+                label: 'Organ',
                 type: 'value',
-                field: 'data_types.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            status: {
-                label: 'Status',
-                type: 'value',
-                field: 'status.keyword',
+                field: 'organ.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -67,28 +61,26 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 isFilterable: false,
             },
-            "ancestors.sample_category": {
+            sample_category: {
                 label: 'Sample Category',
                 type: 'value',
-                field: 'ancestors.sample_category.keyword',
+                field: 'sample_category.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            // Used for when "Dataset" is selected to show related organs
-            "origin_sample.organ": {
-                label: 'Organ',
+            data_types: {
+                label: 'Data Type',
                 type: 'value',
-                field: 'origin_sample.organ.keyword',
+                field: 'data_types.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            // Used for when "Sample" is selected to show organs
-            organ: {
-                label: 'Organ',
+            status: {
+                label: 'Status',
                 type: 'value',
-                field: 'organ.keyword',
+                field: 'status.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -135,7 +127,6 @@ export const SEARCH_ENTITIES = {
             // Only show 'organ' facet if 'Sample' is selected from the entity type facet
             organ: FilterIsSelected('entity_type', 'Sample'),
 
-            "ancestors.sample_category": FilterIsSelected('entity_type', 'Dataset'),
             sample_category: FilterIsSelected('entity_type', 'Sample'),
 
             // Only show 'source.source_type' facet if 'Dataset' or 'Sample' is selected from the entity type facet
@@ -181,7 +172,6 @@ export const SEARCH_ENTITIES = {
             'lab_source_id',
             'lab_dataset_id',
             'sample_category',
-            'ancestors.sample_category',
             'group_name',
             'source_type',
             'source.source_type',
