@@ -119,8 +119,22 @@ export function getUBKGFullName(term) {
     } else if (window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type['data_type'] === term).length > 0) {
         return window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type['data_type'] === term).map(data_type => data_type.description)[0];
     }
-    else
-        return term
+    else {
+        return getNormalizedName(term)
+    }
+}
+
+function getNormalizedName(term) {
+    if (term.toLowerCase() === "true" || term.toLowerCase() === "false") {
+        return (term.charAt(0).toUpperCase() + term.slice(1).toLowerCase());
+    }
+    if (term.toLowerCase() === "m") {
+        return "Male"
+    }
+    if (term.toLowerCase() === "f") {
+        return "Female"
+    }
+    return term
 }
 
 export function getDataTypesByProperty(property, value) {
