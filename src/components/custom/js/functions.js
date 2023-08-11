@@ -125,6 +125,7 @@ export function getUBKGFullName(term) {
 }
 
 function getNormalizedName(term) {
+    if (!term) return term
     if (term.toLowerCase() === "true" || term.toLowerCase() === "false") {
         return (term.charAt(0).toUpperCase() + term.slice(1).toLowerCase());
     }
