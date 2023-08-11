@@ -363,16 +363,36 @@ export const SEARCH_METADATA = {
         search_fields: {
             // Do not put any fields that elastic search categorizes as a number. This will cause the search to fail.
             sennet_id: {type: 'value'},
-            source_type: {type: 'value'},
-            data_types: {type: 'value'},
-            "source_mapped_metadata.sex": {type: 'value'},
-            "source_mapped_metadata.race": {type: 'value'},
 
-            "metadata.metadata.assay_category": {type: 'value'},
-            "metadata.metadata.analyte_class": {type: 'value'},
-            "metadata.metadata.operator": {type: 'value'},
-            "metadata.metadata.acquisition_instrument_model": {type: 'value'},
-            "metadata.metadata.acquisition_instrument_vendor": {type: 'value'},
+            entity_type: { type: 'value' },
+            source_type: { type: 'value' },
+            sample_category: { type: 'value' },
+            data_types: { type: 'value' },
+
+            // Source Human
+            "source_mapped_metadata.sex": { type: 'value' },
+            "source_mapped_metadata.race": { type: 'value' },
+
+            // Source Mouse
+            "metadata.strain": { type: 'value' },
+            "metadata.sex": { type: 'value' },
+            "metadata.euthanization_method": { type: 'value' },
+
+            // Sample Suspension
+            "metadata.suspension_entity": { type: 'value' },
+
+            // Sample General
+            "metadata.preparation_media": { type: 'value' },
+            "metadata.preparation_condition": { type: 'value' },
+            "metadata.storage_media": { type: 'value' },
+            "metadata.storage_method": { type: 'value' },
+
+            // Dataset
+            "metadata.metadata.assay_category": { type: 'value' },
+            "metadata.metadata.analyte_class": { type: 'value' },
+            "metadata.metadata.operator": { type: 'value' },
+            "metadata.metadata.acquisition_instrument_model": { type: 'value' },
+            "metadata.metadata.acquisition_instrument_vendor": { type: 'value' },
         },
         source_fields: [
             'sennet_id',
