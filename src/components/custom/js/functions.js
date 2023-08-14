@@ -144,7 +144,7 @@ export function formatByteSize(bytes, decimals = 2) {
 }
 
 export function getStatusDefinition(status) {
-    let msg = <></>
+    let msg
     if (status) {
         status = status.toUpperCase();
         switch(status) {
@@ -170,6 +170,7 @@ export function getStatusDefinition(status) {
                 msg = <span>The data has been successfully curated and released for public use.</span>
                 break;
             default:
+                msg = <span>The <code>Dataset</code> has been {status}.</span>
                 break;
         }
     }
