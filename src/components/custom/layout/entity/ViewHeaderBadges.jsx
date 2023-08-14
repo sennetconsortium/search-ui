@@ -18,14 +18,14 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
                     {!equals(data.entity_type, cache.entities.dataset) ? (
                         <Fragment>
                             <h5 className={"title_badge"}>
-                                <span className="badge bg-secondary mx-2">
+                                <span className="badge bg-secondary ms-2">
                                     {displayBodyHeader(data.entity_type)}
                                 </span>
                             </h5>
 
                             {data.sample_category &&
                                 <h5 className={"title_badge"}>
-                                    <span className="badge bg-secondary">
+                                    <span className="badge bg-secondary ms-2">
                                         {displayBodyHeader(data.sample_category)}
                                     </span>
                                 </h5>
@@ -33,7 +33,7 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
 
                             {data.source_type &&
                                 <h5 className={"title_badge"}>
-                                    <span className="badge bg-secondary">
+                                    <span className="badge bg-secondary ms-2">
                                         {displayBodyHeader(data.source_type)}
                                     </span>
                                 </h5>
@@ -41,7 +41,7 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
                         </Fragment>
                     ) : (
                         <h5 className={"title_badge"}>
-                            <span className="badge bg-secondary mx-2">
+                            <span className="badge bg-secondary ms-2">
                                     {getUBKGFullName(data.data_types[0])}
                             </span>
                         </h5>
@@ -58,7 +58,7 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
                     }
                     {data.source_type &&
                         <h5 className={"title_badge"}>
-                            <span className="badge bg-secondary">
+                            <span className="badge bg-secondary ms-2">
                                 {displayBodyHeader(data.source_type)}
                             </span>
                         </h5>
@@ -66,14 +66,14 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
                     }
                     {uniqueHeader &&
                         <h5 className={"title_badge"}>
-                            <span className="badge bg-secondary mx-2">
+                            <span className="badge bg-secondary ms-2">
                                     {getUBKGFullName(uniqueHeader)}
                             </span>
                         </h5>
                     }
                     {data.status &&
                         <h5 className={"title_badge"}>
-                            <span className={`badge bg-${getStatusColor(data.status)}`}>
+                            <span className={`badge bg-${getStatusColor(data.status)} ms-2`}>
                                 {displayBodyHeader(data.status)}
                             </span>
                         </h5>
@@ -84,7 +84,7 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
 
             {data?.doi_url &&
                 <h5 className={"title_badge"}>
-                            <span className={"badge bg-success mx-2"}>
+                            <span className={"badge bg-success ms-2"}>
                                 DOI: <a href={data.doi_url} className={"icon_inline"} style={{color: 'white'}}>{data.registered_doi}</a>
                             </span>
                 </h5>
