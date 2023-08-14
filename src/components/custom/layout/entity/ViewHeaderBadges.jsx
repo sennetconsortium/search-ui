@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
-import {displayBodyHeader, equals, getStatusColor, getUBKGFullName} from "../../js/functions";
+import {displayBodyHeader, equals, getStatusColor, getStatusDefinition, getUBKGFullName} from "../../js/functions";
 import React, {Fragment, useContext} from "react";
 import AppContext from "../../../../context/AppContext";
+import SenNetPopover from "../../../SenNetPopover";
 
 function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
     const {cache} = useContext(AppContext)
@@ -74,7 +75,10 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
                     {data.status &&
                         <h5 className={"title_badge"}>
                             <span className={`badge bg-${getStatusColor(data.status)}`}>
-                                {displayBodyHeader(data.status)}
+                                <SenNetPopover text={getStatusDefinition(data.status)} className={'status-info'}>
+                                     {displayBodyHeader(data.status)}
+                                </SenNetPopover>
+
                             </span>
                         </h5>
                     }
