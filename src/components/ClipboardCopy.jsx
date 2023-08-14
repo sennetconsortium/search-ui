@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import SenNetPopover, {SenPopoverOptions} from "./SenNetPopover";
 import {Clipboard} from "react-bootstrap-icons";
 
-function ClipboardCopy({children, text, title, className}) {
+function ClipboardCopy({children, text, title, className, size= 12}) {
 
     const [showTooltip, setShowTooltip] = useState(false)
     const copyToClipboard = () => {
@@ -19,7 +19,7 @@ function ClipboardCopy({children, text, title, className}) {
     return (
         <SenNetPopover text={'Copied!'} show={showTooltip} trigger={SenPopoverOptions.triggers.click} className={`${className} popover-clipboard`}>
             <sup title={title.replace('{text}', text)} role={'button'} onClick={copyToClipboard}>
-                {!children && <Clipboard size={12} />}
+                {!children && <Clipboard size={size} />}
                 {children}
             </sup>
         </SenNetPopover>
