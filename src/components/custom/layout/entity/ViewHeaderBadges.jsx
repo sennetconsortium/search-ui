@@ -85,7 +85,7 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
             {data?.doi_url &&
                 <h5 className={"title_badge"}>
                             <span className={"badge bg-success mx-2"}>
-                                DOI: <a href={data.doi_url} className={"icon_inline"}>{data.registered_doi}</a>
+                                DOI: <a href={data.doi_url} className={"icon_inline"} style={{color: 'white'}}>{data.registered_doi}</a>
                             </span>
                 </h5>
             }
