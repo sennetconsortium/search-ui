@@ -124,16 +124,22 @@ export function getUBKGFullName(term) {
     }
 }
 
+const normalizedNames = {
+    true: "True",
+    false: "False",
+    m: "Male",
+    f: "Female",
+    imaging: "Imaging",
+    sequence: "Sequence",
+    protein: "Protein",
+    "ambient temperature": "Ambient Temperature",
+    "carbon dioxide asphixiation": "Carbon Dioxide Asphixiation",
+    "frozen in liquid nitrogen": "Frozen in Liquid Nitrogen",
+}
+
 function getNormalizedName(term) {
-    if (!term) return term
-    if (term.toLowerCase() === "true" || term.toLowerCase() === "false") {
-        return (term.charAt(0).toUpperCase() + term.slice(1).toLowerCase());
-    }
-    if (term.toLowerCase() === "m") {
-        return "Male"
-    }
-    if (term.toLowerCase() === "f") {
-        return "Female"
+    if (term && normalizedNames.hasOwnProperty(term.toLowerCase())) {
+        return normalizedNames[term.toLowerCase()]
     }
     return term
 }
