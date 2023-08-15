@@ -1,6 +1,7 @@
-import {useEffect, useRef, useState} from 'react'
+import {useEffect} from 'react'
 import {SEARCH_ENTITIES} from "../../../config/search/entities";
 import {SEARCH_FILES} from "../../../config/search/files";
+import {SEARCH_METADATA} from '../../../config/search/metadata';
 import $ from 'jquery'
 import {Chip} from "@mui/material";
 import {getUBKGFullName} from "../js/functions";
@@ -25,6 +26,7 @@ function SelectedFacets({ filters }) {
     const convertToLabel = (filter) => {
         let facets = JSON.parse(JSON.stringify(SEARCH_ENTITIES.searchQuery.facets))
         $.extend(facets, SEARCH_FILES.searchQuery.facets)
+        $.extend(facets, SEARCH_METADATA.searchQuery.facets)
         return facets[filter]?.label || filter
     }
 
