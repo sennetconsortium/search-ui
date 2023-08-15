@@ -44,10 +44,10 @@ function Metadata() {
             <>
                 <Header title={APP_TITLE} />
                 <AppNavbar hidden={isRegisterHidden} />
-                <Container className="mb-5">
+                <Container className="mb-5 d-block">
                     <Row>
-                        <div className="py-5 d-flex bd-highlight align-items-center">
-                            <h1 className="m-0 flex-grow-1 bd-highlight">Browse by Popular Searches</h1>
+                        <div className="py-4 d-flex bd-highlight align-items-center">
+                            <h2 className="m-0 flex-grow-1 bd-highlight">Browse by Popular Searches</h2>
                             <div className="bd-highlight">
                                 <button className="btn btn-outline-primary rounded-0 clear-filter-button"
                                         onClick={handleBrowseAllMetadataClicked}>
@@ -57,16 +57,16 @@ function Metadata() {
                         </div>
                     </Row>
 
-                    <Row xs={1} s={2} md={3} className="gy-4">
+                    <Row xs={1} s={2} md={3} className="gy-2">
                         {SEARCH_METADATA.discover.map((item) => {
                             return (
-                                <Col key={item.title} style={{ maxHeight: "350px" }}>
-                                    <Card className="p-5 rounded-0 h-100">
+                                <Col key={item.title} >
+                                    <Card className="p-4 rounded-0 h-100">
                                         <Card.Body className="d-flex flex-column justify-content-between align-items-start">
-                                            <div>
-                                                <div className={`mb-4 circle ${item.entityType}-background`} />
-                                                <Card.Title className="mb-3">{item.title}</Card.Title>
-                                                <Card.Text className="mb-4">{item.description}</Card.Text>
+                                            <div className="mb-2">
+                                                <div className={`mb-2 circle ${item.entityType}-background`} />
+                                                <Card.Title className="mb-2">{item.title}</Card.Title>
+                                                <Card.Text className="mb-2">{item.description}</Card.Text>
                                             </div>
                                             <Link href={{ pathname: METADATA_SEARCH, query: item.queryString }}>
                                                 <Button variant="primary rounded-0">Browse</Button>

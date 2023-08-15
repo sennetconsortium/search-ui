@@ -119,8 +119,29 @@ export function getUBKGFullName(term) {
     } else if (window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type['data_type'] === term).length > 0) {
         return window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type['data_type'] === term).map(data_type => data_type.description)[0];
     }
-    else
-        return term
+    else {
+        return getNormalizedName(term)
+    }
+}
+
+const normalizedNames = {
+    true: "True",
+    false: "False",
+    m: "Male",
+    f: "Female",
+    imaging: "Imaging",
+    sequence: "Sequence",
+    protein: "Protein",
+    "ambient temperature": "Ambient Temperature",
+    "carbon dioxide asphixiation": "Carbon Dioxide Asphixiation",
+    "frozen in liquid nitrogen": "Frozen in Liquid Nitrogen",
+}
+
+function getNormalizedName(term) {
+    if (term && normalizedNames.hasOwnProperty(term.toLowerCase())) {
+        return normalizedNames[term.toLowerCase()]
+    }
+    return term
 }
 
 export function getDataTypesByProperty(property, value) {
