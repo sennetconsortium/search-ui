@@ -13,6 +13,8 @@ function SelectedFacets({ filters }) {
     }
 
     const isTimestamp = (val) => (val.indexOf('timestamp') > -1)
+    const isNumeric = (val) => (val.endsWith("value" || val.endsWith("number")))
+
     const convertToVal = (val) => {
         const labels = {from: 'Start Date', to: 'End Date'}
         return (typeof val !== 'string') ? (labels[val.key] || val.key) : val
@@ -75,6 +77,8 @@ function SelectedFacets({ filters }) {
             // Add 24 hours minus 1 ms to the end date so inclusive of the end date
             let val = obj.value.key === 'from' ? (obj.value.value + 24 * 60 * 60 * 1000 - 1) : obj.value.value
             return (new Date(val).toLocaleDateString('en-US'))
+        } else if (isNumeric(obj.filter.field)) {
+            return obj.value.value
         } else {
             return getUBKGFullName(convertToVal(obj.value))
         }
