@@ -4,7 +4,7 @@ import {
     checkFilterType,
     checkMultipleFilterType,
     displayBodyHeader, equals, getEntityViewUrl, getUBKGFullName,
-    getStatusColor
+    getStatusColor, getStatusDefinition
 } from './js/functions'
 import AppContext from "../../context/AppContext"
 import log from 'loglevel'
@@ -14,6 +14,7 @@ import BulkExport, {handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
 import ResultsBlock from "./search/ResultsBlock";
 import {TableResultsProvider} from "../../context/TableResultsContext";
+import SenNetPopover from "../SenNetPopover";
 
 function TableResultsEntities({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
 
@@ -117,7 +118,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         {
             name: 'Status',
             selector: row => raw(row.status),
-            format: (row) => <Badge pill bg={getStatusColor(raw(row.status))}>{raw(row.status)}</Badge>,
+            format: (row) => <Badge pill bg={getStatusColor(raw(row.status))}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></Badge>,
             sortable: true
         }
     ]
