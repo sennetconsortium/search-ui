@@ -1,6 +1,6 @@
 .popover {
+  z-index: 10000 !important;
   &-clipboard {
-    z-index: 10000;
     &-pc {
       &:hover {
         svg {

@@ -1,9 +1,11 @@
 import React from 'react';
 import {Table} from 'react-bootstrap';
-import {getStatusColor} from "../../js/functions";
+import {getStatusColor, getStatusDefinition} from "../../js/functions";
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import {TrashFill} from "react-bootstrap-icons";
+import SenNetPopover from "../../../SenNetPopover";
+import ClipboardCopy from "../../../ClipboardCopy";
 
 export default class AncestorsTable extends React.Component {
     deleteAncestor = async (e, ancestorId) => {
@@ -32,12 +34,15 @@ export default class AncestorsTable extends React.Component {
                 {this.props.ancestors.map((ancestor, index) => {
                     return (
                         <tr key={index}>
-                            <td>{ancestor.sennet_id}</td>
+                            <td>{ancestor.sennet_id}<ClipboardCopy text={ancestor.sennet_id} title={'Copy SenNet ID {text} to clipboard'} /></td>
                             <td>{ancestor.entity_type}</td>
                             <td>{ancestor?.display_subtype}</td>
                             <td>{ancestor?.lab_tissue_sample_id || ancestor?.lab_dataset_id}</td>
                             <td>{ancestor.group_name}</td>
-                            <td><Badge pill bg={getStatusColor(ancestor?.status)}>{ancestor?.status}</Badge></td>
+                            <td><Badge pill bg={getStatusColor(ancestor?.status)}>
+                                    <SenNetPopover text={getStatusDefinition(ancestor?.status)} className={`status-info-${ancestor.uuid}`}>{ancestor?.status}</SenNetPopover>
+                                </Badge>
+                            </td>
                             <td><Button className="pt-0 pb-0" variant="link" onClick={() => this.deleteAncestor(this, ancestor.uuid)}><TrashFill
                                 color="red"/></Button></td>
                         </tr>

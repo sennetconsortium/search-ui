@@ -1,6 +1,7 @@
 import React from 'react';
 import DataTable from 'react-data-table-component';
 import {getUBKGFullName} from "../../js/functions";
+import ClipboardCopy from "../../../ClipboardCopy";
 
 export default class Lineage extends React.Component {
     constructor(props) {
@@ -42,8 +43,8 @@ export default class Lineage extends React.Component {
         {
             this.props.lineage.map((lineage_data, index) => {
                 this.data.push({
-                    sennet_id: <a href={'/' + lineage_data.entity_type.toLowerCase() + '?uuid=' + lineage_data.uuid}
-                                  className="icon_inline">{lineage_data.sennet_id}</a>,
+                    sennet_id: <span><a href={'/' + lineage_data.entity_type.toLowerCase() + '?uuid=' + lineage_data.uuid}
+                                        className="icon_inline">{lineage_data.sennet_id}</a><ClipboardCopy text={lineage_data.sennet_id} size={10} title={'Copy SenNet ID {text} to clipboard'} /></span>,
                     entity_type: lineage_data.entity_type,
                     lab_id: lineage_data.lab_tissue_sample_id ? lineage_data.lab_tissue_sample_id
                         : lineage_data.lab_source_id ? lineage_data.lab_source_id

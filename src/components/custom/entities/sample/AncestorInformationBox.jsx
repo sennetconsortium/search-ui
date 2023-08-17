@@ -2,6 +2,7 @@ import React from 'react';
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import SenNetAccordion from "../../layout/SenNetAccordion";
+import ClipboardCopy from "../../../ClipboardCopy";
 
 export default class AncestorInformationBox extends React.Component {
     render() {
@@ -11,7 +12,7 @@ export default class AncestorInformationBox extends React.Component {
                     <Card.Body>
                         <Card.Subtitle>
                             <a href={'/' + this.props.ancestor.entity_type.toLowerCase() + '?uuid=' + this.props.ancestor.uuid}
-                               className="icon_inline">{this.props.ancestor.sennet_id}</a>
+                               className="icon_inline mt-1">{this.props.ancestor.sennet_id}</a><ClipboardCopy text={this.props.ancestor.sennet_id} title={'Copy SenNet ID {text} to clipboard'} />
                         </Card.Subtitle>
                     </Card.Body>
                 </Card>
