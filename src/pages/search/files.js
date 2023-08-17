@@ -36,18 +36,12 @@ function SearchFiles() {
         hasAuthenticationCookie
     } = useContext(AppContext);
 
-
-
-    const [clearFacetInputs, setClearFacetInputs] = useState(0)
-
     function handleClearFiltersClick() {
         Sui.clearFilters()
-        setClearFacetInputs(clearFacetInputs + 1)
     }
 
     function handleSearchFormSubmit(event, onSubmit) {
         onSubmit(event)
-        setClearFacetInputs(clearFacetInputs + 1)
     }
 
     if (isAuthorizing()) {
@@ -63,8 +57,8 @@ function SearchFiles() {
                 <Header title={APP_TITLE}/>
 
                 <SearchProvider config={SEARCH_FILES}>
-                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter, rawResponse}) => ({wasSearched, filters, addFilter, removeFilter, rawResponse})}>
-                        {({wasSearched, filters, addFilter, removeFilter, rawResponse}) => {
+                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter, setFilter, rawResponse}) => ({wasSearched, filters, addFilter, removeFilter, setFilter, rawResponse})}>
+                        {({wasSearched, filters, addFilter, removeFilter, setFilter, rawResponse}) => {
                             return (
                                 <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters, 'files')}>
                                     <AppNavbar hidden={isRegisterHidden}/>
@@ -96,7 +90,9 @@ function SearchFiles() {
                                                             )}
                                                         />
                                                     </div>
-                                                    <div className='sui-filters-summary'><SelectedFacets filters={filters} /></div>
+                                                    <div className='sui-filters-summary'>
+                                                        <SelectedFacets filters={filters} addFilter={addFilter} removeFilter={removeFilter} setFilter={setFilter} />
+                                                    </div>
                                                 </>
                                             }
                                             sideContent={
@@ -108,8 +104,7 @@ function SearchFiles() {
                                                     {wasSearched &&
                                                         <Facets fields={SEARCH_FILES.searchQuery}
                                                                 filters={filters}
-                                                                transformFunction={getUBKGFullName}
-                                                                clearInputs={clearFacetInputs} />
+                                                                transformFunction={getUBKGFullName} />
                                                     }
                                                 </div>
 

@@ -45,16 +45,12 @@ function SearchEntities() {
         value: excludeNonPrimaryTypes
     });
 
-    const [clearFacetInputs, setClearFacetInputs] = useState(0)
-
     function handleClearFiltersClick() {
         Sui.clearFilters()
-        setClearFacetInputs(clearFacetInputs + 1)
     }
 
     function handleSearchFormSubmit(event, onSubmit) {
         onSubmit(event)
-        setClearFacetInputs(clearFacetInputs + 1)
     }
 
     if (isAuthorizing()) {
@@ -70,8 +66,8 @@ function SearchEntities() {
                 <Header title={APP_TITLE}/>
 
                 <SearchProvider config={SEARCH_ENTITIES}>
-                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter}) => ({wasSearched, filters, addFilter, removeFilter})}>
-                        {({wasSearched, filters, addFilter, removeFilter}) => {
+                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter, setFilter}) => ({wasSearched, filters, addFilter, removeFilter, setFilter})}>
+                        {({wasSearched, filters, addFilter, removeFilter, setFilter}) => {
                             return (
                                 <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters)}>
                                     <AppNavbar hidden={isRegisterHidden}/>
@@ -105,7 +101,9 @@ function SearchEntities() {
                                                     />
 
                                                 </div>
-                                                    <div className='sui-filters-summary'><SelectedFacets filters={filters} /></div>
+                                                    <div className='sui-filters-summary'>
+                                                        <SelectedFacets filters={filters} addFilter={addFilter} removeFilter={removeFilter} setFilter={setFilter} />
+                                                    </div>
                                                 </>
 
                                             }
@@ -118,8 +116,7 @@ function SearchEntities() {
                                                     {wasSearched &&
                                                         <Facets fields={SEARCH_ENTITIES.searchQuery}
                                                                 filters={filters}
-                                                                transformFunction={getUBKGFullName}
-                                                                clearInputs={clearFacetInputs} />
+                                                                transformFunction={getUBKGFullName} />
                                                     }
                                                 </div>
 
