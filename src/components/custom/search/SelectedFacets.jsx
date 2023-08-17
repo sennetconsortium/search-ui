@@ -46,8 +46,9 @@ function SelectedFacets({ filters, setFilter, removeFilter }) {
     const handleNumericOrDateDelete = (data) => {
         const idx = data.filter.values.findIndex(v => v === data.value)
         const removed = data.filter.values.splice(idx, 1)
-        const newFilterValue = data.filter.values.reduce((obj, item) => ({...obj, [item.key]: item.value}), {name: data.filter.field}); 
+        const newFilterValue = data.filter.values.reduce((obj, item) => ({...obj, [item.key]: item.value}), {}); 
         if (Object.keys(newFilterValue).length > 0) {
+            newFilterValue.name = data.filter.field
             setFilter(data.filter.field, newFilterValue, 'any')
         } else {
             const removedValue = removed.reduce((obj, item) => ({...obj, [item.key]: item.value}), {name: data.filter.field});
