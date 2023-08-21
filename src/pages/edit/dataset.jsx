@@ -127,14 +127,16 @@ export default function EditDataset() {
     // Disable all form elements if data_access_level is "public"
     // Wait until "dataTypes" and "editMode" are set prior to running this
     useEffect(() => {
-        if (dataAccessPublic === true) {
-            const form = document.getElementById("dataset-form");
-            const elements = form.elements;
-            for (let i = 0, len = elements.length; i < len; ++i) {
-                elements[i].setAttribute('disabled', true);
+        if(data != null) {
+            if (dataAccessPublic === true || data.status === 'Published') {
+                const form = document.getElementById("dataset-form");
+                const elements = form.elements;
+                for (let i = 0, len = elements.length; i < len; ++i) {
+                    elements[i].setAttribute('disabled', true);
+                }
             }
         }
-    }, [dataAccessPublic, dataTypes, editMode])
+    }, [dataAccessPublic, data, dataTypes, editMode])
 
     // only executed on init rendering, see the []
     useEffect(() => {
