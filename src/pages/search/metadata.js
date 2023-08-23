@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext} from "react";
 import {
     ErrorBoundary,
     Results,
@@ -45,16 +45,12 @@ function SearchMetadata() {
         value: excludeNonPrimaryTypes
     });
 
-    const [clearFacetInputs, setClearFacetInputs] = useState(0)
-
     function handleClearFiltersClick() {
         Sui.clearFilters()
-        setClearFacetInputs(clearFacetInputs + 1)
     }
 
     function handleSearchFormSubmit(event, onSubmit) {
         onSubmit(event)
-        setClearFacetInputs(clearFacetInputs + 1)
     }
 
     if (isAuthorizing()) {
@@ -70,8 +66,8 @@ function SearchMetadata() {
                 <Header title={APP_TITLE}/>
 
                 <SearchProvider config={SEARCH_METADATA}>
-                    <WithSearch mapContextToProps={({wasSearched, rawResponse, filters, addFilter, removeFilter}) => ({wasSearched, rawResponse, filters, addFilter, removeFilter})}>
-                        {({wasSearched, rawResponse, filters, addFilter, removeFilter}) => {
+                    <WithSearch mapContextToProps={({wasSearched, rawResponse, filters, addFilter, removeFilter, setFilter}) => ({wasSearched, rawResponse, filters, addFilter, removeFilter, setFilter})}>
+                        {({wasSearched, rawResponse, filters, addFilter, removeFilter, setFilter}) => {
                             return (
                                 <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters, 'metadata')}>
                                     <AppNavbar hidden={isRegisterHidden}/>
@@ -106,7 +102,7 @@ function SearchMetadata() {
                                                         />
                                                     </div>
                                                     <div className='sui-filters-summary'>
-                                                        <SelectedFacets filters={filters} />
+                                                        <SelectedFacets filters={filters} addFilter={addFilter} removeFilter={removeFilter} setFilter={setFilter} />
                                                     </div>
                                                  </>
                                             }
@@ -120,8 +116,7 @@ function SearchMetadata() {
                                                         <Facets fields={SEARCH_METADATA.searchQuery}
                                                                 filters={filters}
                                                                 rawResponse={rawResponse}
-                                                                transformFunction={getUBKGFullName}
-                                                                clearInputs={clearFacetInputs} />
+                                                                transformFunction={getUBKGFullName} />
                                                     }
                                                 </div>
 
