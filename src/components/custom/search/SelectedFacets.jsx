@@ -48,8 +48,7 @@ function SelectedFacets({ filters, setFilter, removeFilter }) {
         const removed = data.filter.values.splice(idx, 1)
         const newFilterValue = data.filter.values.reduce((obj, item) => ({...obj, [item.key]: item.value}), {}); 
         if (Object.keys(newFilterValue).length > 0) {
-            newFilterValue.name = data.filter.field
-            setFilter(data.filter.field, newFilterValue, 'any')
+            setFilter(data.filter.field, {...newFilterValue, name: data.filter.field}, 'any')
         } else {
             const removedValue = removed.reduce((obj, item) => ({...obj, [item.key]: item.value}), {name: data.filter.field});
             removeFilter(data.filter.field, removedValue, 'any')
@@ -59,7 +58,6 @@ function SelectedFacets({ filters, setFilter, removeFilter }) {
         if (suis[data.filter.field]) {
             delete suis[data.filter.field].from
             delete suis[data.filter.field].to
-            delete newFilterValue.name
             suis[data.filter.field] = {...suis[data.filter.field], ...newFilterValue}
             Sui.saveFilters(suis)
         }
