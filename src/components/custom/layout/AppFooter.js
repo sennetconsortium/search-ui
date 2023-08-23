@@ -35,16 +35,6 @@ const AppFooter = () => {
                                             />
                                         </a>
                                     </li>
-                                    <li className="nav-item mt-3">
-                                        <a className="navbar-brand" href="https://commonfund.nih.gov/senescence">
-                                            <Image
-                                                className="d-inline-block align-text-top nih-logo"
-                                                title='National Institute of Health'
-                                                src={nih}
-                                                alt={_t("NIH logo")}
-                                            />
-                                        </a>
-                                    </li>
                                 </ul>
                             </Col>
                             <Col sm={2}>
