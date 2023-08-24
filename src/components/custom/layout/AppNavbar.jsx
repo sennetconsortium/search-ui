@@ -115,7 +115,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                         {/*    <NavDropdown.Item key={`dd-search-entity`} href={APP_ROUTES.search}>*/}
                         {/*        <span>Entity</span>*/}
                         {/*    </NavDropdown.Item>*/}
-                        {/*    <NavDropdown.Item key={`dd-search-file`} href={APP_ROUTES.searchFiles}>*/}
+                        {/*    <NavDropdown.Item key={`dd-search-file`} href={`${APP_ROUTES.search}/files`}>*/}
                         {/*        <span>File</span>*/}
                         {/*    </NavDropdown.Item>*/}
                         {/*</NavDropdown>*/}
