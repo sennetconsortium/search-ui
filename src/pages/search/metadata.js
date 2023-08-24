@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext} from "react";
 import {
     ErrorBoundary,
     Results,
@@ -8,9 +8,9 @@ import {
 } from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
 import Facets from "search-ui/components/core/Facets";
-import {TableResultsFiles} from '../../components/custom/TableResultsFiles'
+import {TableResultsEntities} from '../../components/custom/TableResultsEntities'
 import {APP_TITLE} from "../../config/config";
-import {SEARCH_FILES} from "../../config/search/files"
+import {SEARCH_METADATA} from "../../config/search/metadata"
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import Header from "../../components/custom/layout/Header";
@@ -23,9 +23,10 @@ import AppContext from "../../context/AppContext";
 import SelectedFilters from "../../components/custom/layout/SelectedFilters";
 import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
 import {Sui} from "search-ui/lib/search-tools";
+import {Search} from "react-bootstrap-icons";
 import SelectedFacets from "../../components/custom/search/SelectedFacets";
 
-function SearchFiles() {
+function SearchMetadata() {
     const {
         _t,
         cache,
@@ -35,6 +36,14 @@ function SearchFiles() {
         isUnauthorized,
         hasAuthenticationCookie
     } = useContext(AppContext);
+
+    // Return an array of data types that should be excluded from search
+    // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
+    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false)
+    SEARCH_METADATA['searchQuery']['excludeFilters'].push({
+        keyword: "data_types.keyword",
+        value: excludeNonPrimaryTypes
+    });
 
     function handleClearFiltersClick() {
         Sui.clearFilters()
@@ -56,11 +65,11 @@ function SearchFiles() {
             <>
                 <Header title={APP_TITLE}/>
 
-                <SearchProvider config={SEARCH_FILES}>
-                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter, setFilter, rawResponse}) => ({wasSearched, filters, addFilter, removeFilter, setFilter, rawResponse})}>
-                        {({wasSearched, filters, addFilter, removeFilter, setFilter, rawResponse}) => {
+                <SearchProvider config={SEARCH_METADATA}>
+                    <WithSearch mapContextToProps={({wasSearched, rawResponse, filters, addFilter, removeFilter, setFilter}) => ({wasSearched, rawResponse, filters, addFilter, removeFilter, setFilter})}>
+                        {({wasSearched, rawResponse, filters, addFilter, removeFilter, setFilter}) => {
                             return (
-                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters, 'files')}>
+                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters, 'metadata')}>
                                     <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
@@ -77,12 +86,14 @@ function SearchFiles() {
                                                                             <Form.Control
                                                                                 value={value}
                                                                                 onChange={(e) => onChange(e.currentTarget.value)}
-                                                                                className="form-control form-control-lg rounded-0"
+                                                                                className="right-border-none form-control form-control-lg rounded-1"
                                                                                 placeholder="Search"
                                                                                 autoFocus={false}
                                                                             />
+                                                                            <InputGroup.Text
+                                                                                className={"transparent"}><Search/></InputGroup.Text>
                                                                             <Button variant="outline-primary"
-                                                                                    className={"rounded-0"}
+                                                                                    className={"rounded-1"}
                                                                                     onClick={e => handleSearchFormSubmit(e, onSubmit)}>{_t('Search')}</Button>
                                                                         </InputGroup>
                                                                     </Form.Group>
@@ -93,7 +104,7 @@ function SearchFiles() {
                                                     <div className='sui-filters-summary'>
                                                         <SelectedFacets filters={filters} addFilter={addFilter} removeFilter={removeFilter} setFilter={setFilter} />
                                                     </div>
-                                                </>
+                                                 </>
                                             }
                                             sideContent={
                                                 <div data-js-ada='facets'>
@@ -102,8 +113,9 @@ function SearchFiles() {
                                                     <SelectedFilters/>
 
                                                     {wasSearched &&
-                                                        <Facets fields={SEARCH_FILES.searchQuery}
+                                                        <Facets fields={SEARCH_METADATA.searchQuery}
                                                                 filters={filters}
+                                                                rawResponse={rawResponse}
                                                                 transformFunction={getUBKGFullName} />
                                                     }
                                                 </div>
@@ -111,8 +123,8 @@ function SearchFiles() {
                                             }
                                             bodyContent={
                                                 <div className="js-gtm--results sui-resultsTable" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
-                                                    {wasSearched && <Results filters={filters} titleField={filters} rawResponse={rawResponse}
-                                                                             view={TableResultsFiles}
+                                                    {wasSearched && <Results filters={filters} titleField={filters}
+                                                                             view={TableResultsEntities}
                                                     />}
                                                     {!wasSearched && <Spinner /> }
                                                 </div>
@@ -131,4 +143,4 @@ function SearchFiles() {
     }
 }
 
-export default SearchFiles
+export default SearchMetadata

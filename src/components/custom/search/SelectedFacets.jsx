@@ -1,17 +1,21 @@
-import {useEffect, useRef, useState} from 'react'
+import {useEffect} from 'react'
 import {SEARCH_ENTITIES} from "../../../config/search/entities";
 import {SEARCH_FILES} from "../../../config/search/files";
+import {SEARCH_METADATA} from '../../../config/search/metadata';
 import $ from 'jquery'
 import {Chip} from "@mui/material";
 import {getUBKGFullName} from "../js/functions";
+import { Sui } from 'search-ui/lib/search-tools';
 
-function SelectedFacets({ filters }) {
+function SelectedFacets({ filters, setFilter, removeFilter }) {
     const exclude = ['name']
     const getSelector = (pre, label, value) => {
         return `sui-${pre}--${formatVal(label)}-${formatVal(value)}`
     }
 
     const isTimestamp = (val) => (val.indexOf('timestamp') > -1)
+    const isNumeric = (val) => (val.endsWith("value" || val.endsWith("number")))
+
     const convertToVal = (val) => {
         const labels = {from: 'Start Date', to: 'End Date'}
         return (typeof val !== 'string') ? (labels[val.key] || val.key) : val
@@ -25,26 +29,46 @@ function SelectedFacets({ filters }) {
     const convertToLabel = (filter) => {
         let facets = JSON.parse(JSON.stringify(SEARCH_ENTITIES.searchQuery.facets))
         $.extend(facets, SEARCH_FILES.searchQuery.facets)
+        $.extend(facets, SEARCH_METADATA.searchQuery.facets)
         return facets[filter]?.label || filter
+    }
+
+    const handleCheckboxDelete = (data) => {
+        removeFilter(data.filter.field, data.value, 'any')
+        const suis = Sui.getFilters()
+        const key = `${data.filter.field}.${data.value}`
+        if (suis[key]) {
+            delete suis[key]
+            Sui.saveFilters(suis)
+        }
+    }
+
+    const handleNumericOrDateDelete = (data) => {
+        const idx = data.filter.values.findIndex(v => v === data.value)
+        const removed = data.filter.values.splice(idx, 1)
+        const newFilterValue = data.filter.values.reduce((obj, item) => ({...obj, [item.key]: item.value}), {}); 
+        if (Object.keys(newFilterValue).length > 0) {
+            setFilter(data.filter.field, {...newFilterValue, name: data.filter.field}, 'any')
+        } else {
+            const removedValue = removed.reduce((obj, item) => ({...obj, [item.key]: item.value}), {name: data.filter.field});
+            removeFilter(data.filter.field, removedValue, 'any')
+        }
+        
+        const suis = Sui.getFilters()
+        if (suis[data.filter.field]) {
+            delete suis[data.filter.field].from
+            delete suis[data.filter.field].to
+            suis[data.filter.field] = {...suis[data.filter.field], ...newFilterValue}
+            Sui.saveFilters(suis)
+        }
     }
 
     const handleDelete = (e, data) => {
         e.stopPropagation()
-        const label = convertToLabel(data.filter.field)
-        const value = convertToVal(data.value)
-        let id = getSelector('facet', label, value)
-        if (isTimestamp(data.filter.field)) {
-            let targetName = value.toLowerCase().replaceAll(' ', '')
-            id = `sui-facet--${formatVal(label)}-${targetName}`
-            const $date = document.getElementById(id)
-            if ($date) {
-                $date.valueAsDate = null
-                const event = new Event('change', { bubbles: true });
-                $date.dispatchEvent(event);
-            }
-             //.showPicker()
+        if (isTimestamp(data.filter.field) || isNumeric(data.filter.field)) {
+            handleNumericOrDateDelete(data)
         } else {
-            $(`[for="${id}"]`).trigger('click')
+            handleCheckboxDelete(data)
         }
     }
 
@@ -73,6 +97,8 @@ function SelectedFacets({ filters }) {
             // Add 24 hours minus 1 ms to the end date so inclusive of the end date
             let val = obj.value.key === 'from' ? (obj.value.value + 24 * 60 * 60 * 1000 - 1) : obj.value.value
             return (new Date(val).toLocaleDateString('en-US'))
+        } else if (isNumeric(obj.filter.field)) {
+            return obj.value.value
         } else {
             return getUBKGFullName(convertToVal(obj.value))
         }

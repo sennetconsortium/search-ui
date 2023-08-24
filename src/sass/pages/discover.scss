@@ -1,0 +1,17 @@
+.circle {
+    width: 3em;
+    height: 3em;
+    border-radius: 1.5em;
+}
+
+.source-background {
+    background-color: $col-source-type;
+}
+
+.sample-background {
+    background-color: $col-sample-type;
+}
+
+.dataset-background {
+    background-color: $col-dataset-type;
+}
