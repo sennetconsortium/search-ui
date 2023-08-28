@@ -99,8 +99,10 @@ export const AppProvider = ({ cache, children }) => {
             .then((read_write_privileges) => {
                 if (read_write_privileges.read_privs === true) {
                     setCookie(authKey, true)
-                    if (router.query.info) {
-                        const {email, globus_id} = JSON.parse(router.query.info)
+                    let info = getCookie('info')
+                    if (info) {
+                        info = atob(info)
+                        const {email, globus_id} = JSON.parse(info)
                         setCookie('user', {email, globus_id})
                     }
                     // Redirect to home page without query string
