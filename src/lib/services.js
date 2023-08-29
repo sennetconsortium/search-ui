@@ -112,14 +112,19 @@ export async function call_privs_service(path) {
         method: 'GET',
         headers: get_headers()
     }
-    const response = await fetch(url, request_options)
-    if (!response.ok) {
-        const message = `An error has occurred: ${response.status}`;
-        throw new Error(message);
+    try {
+        const response = await fetch(url, request_options)
+        if (!response.ok) {
+            return {status: response.status, statusText: response.statusText}
+        } else {
+            let json = response.json()
+            log.debug(json)
+            return await json
+        }
+
+    } catch (e) {
+        console.error(e)
     }
-    let json = response.json()
-    log.debug(json)
-    return await json
 }
 
 export async function has_data_admin_privs() {
