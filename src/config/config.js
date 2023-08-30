@@ -128,7 +128,7 @@ export function getUIPassword() {
 }
 
 export function getCookieDomain() {
-    return process.env.NEXT_PUBLIC_COOKIE_DOMAI
+    return process.env.NEXT_PUBLIC_COOKIE_DOMAIN
 }
 
 export const RESULTS_PER_PAGE = [10, 20, 30, 50, 100]
