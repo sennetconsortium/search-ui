@@ -127,6 +127,10 @@ export function getUIPassword() {
     return process.env.NEXT_PUBLIC_UI_PSWD
 }
 
+export function getCookieDomain() {
+    return process.env.NEXT_PUBLIC_COOKIE_DOMAI
+}
+
 export const RESULTS_PER_PAGE = [10, 20, 30, 50, 100]
 
 //Config options to exclude datasets from results
