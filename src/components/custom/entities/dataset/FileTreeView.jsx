@@ -15,38 +15,50 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import {Tree} from 'primereact/tree';
 import $ from 'jquery'
+import log from 'loglevel'
 
 import 'primeicons/primeicons.css';
 
-export const FileTreeView = ({data, keys = {files: 'files', uuid: 'uuid'}, loadDerived = true}) => {
+export const FileTreeView = ({data, keys = {files: 'files', uuid: 'uuid'},
+                                 loadDerived = true, treeViewOnly = false, className = ''}) => {
     const [status, setStatus] = useState(null)
     const [filepath, setFilepath] = useState(null)
     const [treeData, setTreeData] = useState(null)
-    const [filterValue, setFilterValue] = useState('');
-    const [checked, setChecked] = useState(false);
+    const [filterValue, setFilterValue] = useState('')
+    const [checked, setChecked] = useState(false)
+    const [hasData, setHasData] = useState(false)
 
     const {
         isPrimaryDataset,
         derivedDataset
     } = useContext(DerivedContext)
 
-    useEffect(async () => {
-        await fetchGlobusFilepath(data[keys.uuid]).then((globusData) => {
-            setStatus(globusData.status);
-            setFilepath(globusData.filepath);
-        });
+    const getLength = (obj) => {
+        if (!obj) return 0
+        return Array.isArray(obj) ? obj.length : Object.keys(obj).length
+    }
+
+    useEffect( () => {
+        async function fetchData() {
+            await fetchGlobusFilepath(data[keys.uuid]).then((globusData) => {
+                setStatus(globusData.status);
+                setFilepath(globusData.filepath);
+            });
+        }
+
+        fetchData()
 
         //Default to use files, otherwise wait until derivedDataset is populated
-        let length = Array.isArray(data[keys.files]) ? data[keys.files].length : Object.keys(data[keys.files]).length
-        if (data[keys.files] && length) {
+        if (data[keys.files] && getLength(data[keys.files])) {
+            setHasData(true)
             buildTree(data[keys.uuid], data[keys.files])
         }
     }, [])
 
     useEffect(() => {
         if (loadDerived) {
-            let length = Array.isArray(derivedDataset[keys.files]) ? derivedDataset[keys.files].length : Object.keys(derivedDataset[keys.files]).length
-            if (isPrimaryDataset && derivedDataset[keys.files] && length) {
+            if (isPrimaryDataset && derivedDataset[keys.files] && getLength(derivedDataset[keys.files])) {
+                setHasData(true)
                 buildTree(derivedDataset[keys.uuid], derivedDataset[keys.files])
             }
         }
@@ -191,41 +203,60 @@ export const FileTreeView = ({data, keys = {files: 'files', uuid: 'uuid'}, loadD
     }
 
     const buildTree = (uuid, files) => {
-        let id = 1
-        let data = [];
+        try {
+            let id = 1
+            let data = [];
 
-        files.forEach(file => {
-            let directories = file.rel_path.split("/")
-            if (directories.length === 0) {
-                data.push({
-                    key: id,
-                    label: file.rel_path,
-                    icon: "pi pi-fw pi-file",
-                    data: {
-                        uuid: uuid,
-                        rel_path: file.rel_path,
-                        description: file.description,
-                        is_qa_qc: file.is_qa_qc,
-                        size: file.size
-                    }
-                })
-                id++
-            } else {
-                let sub_directory = buildSubDirectory(uuid, file, data, directories, directories[0], "")
-                // If sub_directory is `undefined` then data was modified during the recursive call
-                if (sub_directory) {
+            files.forEach(file => {
+                let directories = file.rel_path.split("/")
+                if (directories.length === 0) {
+                    data.push({
+                        key: id,
+                        label: file.rel_path,
+                        icon: "pi pi-fw pi-file",
+                        data: {
+                            uuid: uuid,
+                            rel_path: file.rel_path,
+                            description: file.description,
+                            is_qa_qc: file?.is_qa_qc,
+                            size: file.size
+                        }
+                    })
                     id++
-                    data.push(sub_directory)
+                } else {
+                    let sub_directory = buildSubDirectory(uuid, file, data, directories, directories[0], id) //use id to allow unique key name if files have same name
+                    // If sub_directory is `undefined` then data was modified during the recursive call
+                    if (sub_directory) {
+                        id++
+                        data.push(sub_directory)
+                    }
                 }
-            }
-        });
-
-        console.log(data)
-
-        setTreeData(data)
+            });
+            log.debug(data)
+            setTreeData(data)
+        } catch (e) {
+            console.error(e)
+        }
     }
 
-    return <Fragment>
+    const treeView = (
+        <Tree
+            className={`c-treeView__main ${className}`}
+            value={treeData}
+            nodeTemplate={nodeTemplate}
+            filter={true}
+            filterBy={"label,data.is_qa_qc"}
+            filterTemplate={filterTemplate}
+            onExpand={onExpand}
+            onCollapse={onCollapse}
+        />
+    )
+
+    if (treeViewOnly) {
+        return treeView
+    }
+
+    return (<Fragment>
         <SenNetAccordion title={'Files'}>
             <Card border={'0'} className={"m-2 p-2"}>
                 {status === 200 && filepath &&
@@ -249,7 +280,7 @@ export const FileTreeView = ({data, keys = {files: 'files', uuid: 'uuid'}, loadD
                     </p>}
             </Card>
 
-            {!!((data.files && Object.keys(data.files).length) || (isPrimaryDataset && derivedDataset?.files && Object.keys(derivedDataset?.files).length)) &&
+            {hasData &&
                 <Card border={'0'} className={"m-2 p-2"}>
                     {derivedDataset &&
                         <span className={'fw-light fs-6 mb-2'}>
@@ -260,22 +291,14 @@ export const FileTreeView = ({data, keys = {files: 'files', uuid: 'uuid'}, loadD
                             </span>
                     }
                     {treeData &&
-                        <div className={"tree_container"}>
-                            <Tree
-                                value={treeData}
-                                nodeTemplate={nodeTemplate}
-                                filter={true}
-                                filterBy={"label,data.is_qa_qc"}
-                                filterTemplate={filterTemplate}
-                                onExpand={onExpand}
-                                onCollapse={onCollapse}
-                            />
+                        <div className={"c-treeView"}>
+                            {treeView}
                         </div>
                     }
                 </Card>
             }
         </SenNetAccordion>
-    </Fragment>
+    </Fragment>)
 }
 
 export default FileTreeView

@@ -176,6 +176,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         cols.push(
             {
                 name: 'Dataset SenNet ID',
+                width: '200px',
                 selector: row => raw(row.dataset_sennet_id),
                 sortable: true,
                 format: column => inModal ? raw(column.dataset_sennet_id) : <span data-field='dataset_sennet_id'><a href={getHotLink(column)}>{raw(column.dataset_sennet_id)}</a> <ClipboardCopy text={raw(column.dataset_sennet_id)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
@@ -185,11 +186,12 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         cols.push(
             {
                 name: 'Files',
-                minWidth: '25%',
+                minWidth: '50%',
                 selector: row => raw(row.description),
                 sortable: true,
                 format: (row) => {
-                    return <FileTreeView data={row} keys={{files: 'list', uuid: 'dataset_uuid'}} loadDerived={false} />
+                    //return <></>
+                    return (<FileTreeView data={row} keys={{files: 'list', uuid: 'dataset_uuid'}} loadDerived={false} treeViewOnly={true} className={'c-treeView__main--inTable'} />)
                     // let paths = []
                     // let i = 0
                     // for (let item of row.list) {

@@ -1,9 +1,27 @@
-div.tree_container div {
-  // Remove outline created by `mixins.scss` for child of tree_container
+div.c-treeView div {
+  // Remove outline created by `mixins.scss` for child of c-treeView
   outline: none !important;
 
   [role=treeitem] {
     cursor: default;
+  }
+}
+
+.c-treeView {
+  &__main {
+    &--inTable {
+      .p-treenode-content {
+        font-size: 13px;
+      }
+      .p-tree-header {
+        .col-md-6 {
+          width: 70%;
+        }
+        .col-md-2 {
+          width: 30%;
+        }
+      }
+    }
   }
 }
 
