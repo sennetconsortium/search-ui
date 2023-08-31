@@ -18,7 +18,7 @@ import $ from 'jquery'
 
 import 'primeicons/primeicons.css';
 
-export const FileTreeView = ({data}) => {
+export const FileTreeView = ({data, keys = {files: 'files', uuid: 'uuid'}, loadDerived = true}) => {
     const [status, setStatus] = useState(null)
     const [filepath, setFilepath] = useState(null)
     const [treeData, setTreeData] = useState(null)
@@ -31,21 +31,26 @@ export const FileTreeView = ({data}) => {
     } = useContext(DerivedContext)
 
     useEffect(async () => {
-        await fetchGlobusFilepath(data.uuid).then((globusData) => {
+        await fetchGlobusFilepath(data[keys.uuid]).then((globusData) => {
             setStatus(globusData.status);
             setFilepath(globusData.filepath);
         });
 
         //Default to use files, otherwise wait until derivedDataset is populated
-        if (data.files && Object.keys(data.files).length) {
-            buildTree(data.uuid, data.files)
+        let length = Array.isArray(data[keys.files]) ? data[keys.files].length : Object.keys(data[keys.files]).length
+        if (data[keys.files] && length) {
+            buildTree(data[keys.uuid], data[keys.files])
         }
     }, [])
 
     useEffect(() => {
-        if (isPrimaryDataset && derivedDataset.files && Object.keys(derivedDataset.files).length) {
-            buildTree(derivedDataset.uuid, derivedDataset.files)
+        if (loadDerived) {
+            let length = Array.isArray(derivedDataset[keys.files]) ? derivedDataset[keys.files].length : Object.keys(derivedDataset[keys.files]).length
+            if (isPrimaryDataset && derivedDataset[keys.files] && length) {
+                buildTree(derivedDataset[keys.uuid], derivedDataset[keys.files])
+            }
         }
+
     }, [derivedDataset])
 
     const onExpand = (event) => {
@@ -152,7 +157,7 @@ export const FileTreeView = ({data}) => {
                 uuid: uuid,
                 rel_path: file.rel_path,
                 description: file.description,
-                is_qa_qc: file.is_qa_qc.toString(),
+                is_qa_qc: file?.is_qa_qc?.toString(),
                 size: file.size
             }
         };

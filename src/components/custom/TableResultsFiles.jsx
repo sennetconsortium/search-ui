@@ -19,6 +19,7 @@ import {Chip} from "@mui/material";
 import SenNetPopover from "../SenNetPopover";
 import DataTable from "react-data-table-component";
 import AppModal from "../AppModal";
+import FileTreeView from "./entities/dataset/FileTreeView";
 
 const downloadSizeAttr = 'data-download-size'
 export const clearDownloadSizeLabel = () => {
@@ -188,20 +189,21 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 selector: row => raw(row.description),
                 sortable: true,
                 format: (row) => {
-                    let paths = []
-                    let i = 0
-                    for (let item of row.list) {
-                        paths.push(
-                            <span key={`rel_path_${i}`} className={'cell-nowrap'}><span className={'pi pi-fw pi-file'} role={'presentation'}></span><small><a data-field='rel_path' href={'#'}>{raw(item.rel_path)}</a></small><br /></span>
-                        )
-                        i++
-                    }
-                    return (<div>{raw(row.description)} {raw(row.description) && <br />}
-                        {paths.length > 2 ? paths.slice(0, 2) : paths}
-                        {paths.length > 2 && <SenNetPopover text={'View more files details'} className={`popover-${getId(row)}`}>
-                            <Chip label={<MoreHorizIcon />} size="small" onClick={()=> filesModal(row)} />
-                        </SenNetPopover>}
-                    </div>)
+                    return <FileTreeView data={row} keys={{files: 'list', uuid: 'dataset_uuid'}} loadDerived={false} />
+                    // let paths = []
+                    // let i = 0
+                    // for (let item of row.list) {
+                    //     paths.push(
+                    //         <span key={`rel_path_${i}`} className={'cell-nowrap'}><span className={'pi pi-fw pi-file'} role={'presentation'}></span><small><a data-field='rel_path' href={'#'}>{raw(item.rel_path)}</a></small><br /></span>
+                    //     )
+                    //     i++
+                    // }
+                    // return (<div>{raw(row.description)} {raw(row.description) && <br />}
+                    //     {paths.length > 2 ? paths.slice(0, 2) : paths}
+                    //     {paths.length > 2 && <SenNetPopover text={'View more files details'} className={`popover-${getId(row)}`}>
+                    //         <Chip label={<MoreHorizIcon />} size="small" onClick={()=> filesModal(row)} />
+                    //     </SenNetPopover>}
+                    // </div>)
                 }
             }
         )
