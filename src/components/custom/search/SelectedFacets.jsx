@@ -17,9 +17,7 @@ function SelectedFacets() {
     const convertToDisplayValue = (filter, value, key) => {
         switch (filter.uiType) {
             case 'daterange':
-                // Add 24 hours minus 1 ms to the end date so inclusive of the end date
-                const val = key === 'from' ? value + 24 * 60 * 60 * 1000 - 1 : value
-                return new Date(val).toLocaleDateString('en-US')
+                return new Date(value).toLocaleDateString('en-US', { timeZone: 'UTC' })
             case 'numrange':
                 return value
             default:
