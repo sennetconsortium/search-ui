@@ -22,14 +22,13 @@ import Spinner from "../../components/custom/Spinner";
 import AppContext from "../../context/AppContext";
 import SelectedFilters from "../../components/custom/layout/SelectedFilters";
 import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
-import {Sui} from "search-ui/lib/search-tools";
 import {Search} from "react-bootstrap-icons";
 import SelectedFacets from "../../components/custom/search/SelectedFacets";
+import {SearchUIProvider} from "search-ui/components/core/SearchUIContext";
 
 function SearchMetadata() {
     const {
         _t,
-        cache,
         logout,
         isRegisterHidden,
         isAuthorizing,
@@ -44,10 +43,6 @@ function SearchMetadata() {
         keyword: "data_types.keyword",
         value: excludeNonPrimaryTypes
     });
-
-    function handleClearFiltersClick() {
-        Sui.clearFilters()
-    }
 
     function handleSearchFormSubmit(event, onSubmit) {
         onSubmit(event)
@@ -66,10 +61,10 @@ function SearchMetadata() {
                 <Header title={APP_TITLE}/>
 
                 <SearchProvider config={SEARCH_METADATA}>
-                    <WithSearch mapContextToProps={({wasSearched, rawResponse, filters, addFilter, removeFilter, setFilter}) => ({wasSearched, rawResponse, filters, addFilter, removeFilter, setFilter})}>
-                        {({wasSearched, rawResponse, filters, addFilter, removeFilter, setFilter}) => {
+                    <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
+                        {({wasSearched, filters}) => {
                             return (
-                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters, 'metadata')}>
+                                <SearchUIProvider name='metadata'>
                                     <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
@@ -102,37 +97,34 @@ function SearchMetadata() {
                                                         />
                                                     </div>
                                                     <div className='sui-filters-summary'>
-                                                        <SelectedFacets filters={filters} addFilter={addFilter} removeFilter={removeFilter} setFilter={setFilter} />
+                                                        <SelectedFacets />
                                                     </div>
                                                  </>
                                             }
                                             sideContent={
                                                 <div data-js-ada='facets'>
-                                                    <CustomClearSearchBox clearFiltersClick={handleClearFiltersClick} />
+                                                    <CustomClearSearchBox />
 
                                                     <SelectedFilters/>
 
                                                     {wasSearched &&
-                                                        <Facets fields={SEARCH_METADATA.searchQuery}
-                                                                filters={filters}
-                                                                rawResponse={rawResponse}
-                                                                transformFunction={getUBKGFullName} />
+                                                        <Facets transformFunction={getUBKGFullName} />
                                                     }
                                                 </div>
 
                                             }
                                             bodyContent={
                                                 <div className="js-gtm--results sui-resultsTable" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
-                                                    {wasSearched && <Results filters={filters} titleField={filters}
-                                                                             view={TableResultsEntities}
-                                                    />}
+                                                    {wasSearched && <Results filters={filters} 
+                                                                             titleField={filters}
+                                                                             view={TableResultsEntities} />}
                                                     {!wasSearched && <Spinner /> }
                                                 </div>
 
                                             }
                                         />
                                     </ErrorBoundary>
-                                </div>
+                                </SearchUIProvider>
                             );
                         }}
                     </WithSearch>
