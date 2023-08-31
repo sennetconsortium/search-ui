@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext} from "react";
 import {
     ErrorBoundary,
     Results,
@@ -21,24 +21,19 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from "../../components/custom/Spinner";
 import AppContext from "../../context/AppContext";
 import SelectedFilters from "../../components/custom/layout/SelectedFilters";
-import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
-import {Sui} from "search-ui/lib/search-tools";
+import {getUBKGFullName} from "../../components/custom/js/functions";
 import SelectedFacets from "../../components/custom/search/SelectedFacets";
+import {SearchUIProvider} from "search-ui/components/core/SearchUIContext";
 
 function SearchFiles() {
     const {
         _t,
-        cache,
         logout,
         isRegisterHidden,
         isAuthorizing,
         isUnauthorized,
         hasAuthenticationCookie
     } = useContext(AppContext);
-
-    function handleClearFiltersClick() {
-        Sui.clearFilters()
-    }
 
     function handleSearchFormSubmit(event, onSubmit) {
         onSubmit(event)
@@ -57,10 +52,10 @@ function SearchFiles() {
                 <Header title={APP_TITLE}/>
 
                 <SearchProvider config={SEARCH_FILES}>
-                    <WithSearch mapContextToProps={({wasSearched, filters, addFilter, removeFilter, setFilter, rawResponse}) => ({wasSearched, filters, addFilter, removeFilter, setFilter, rawResponse})}>
-                        {({wasSearched, filters, addFilter, removeFilter, setFilter, rawResponse}) => {
+                    <WithSearch mapContextToProps={({wasSearched, filters, rawResponse}) => ({wasSearched, filters, rawResponse})}>
+                        {({wasSearched, filters, rawResponse}) => {
                             return (
-                                <div onLoad={() => Sui.applyFilters(addFilter, removeFilter, filters, 'files')}>
+                                <SearchUIProvider name='files'>
                                     <AppNavbar hidden={isRegisterHidden}/>
 
                                     <ErrorBoundary>
@@ -91,36 +86,35 @@ function SearchFiles() {
                                                         />
                                                     </div>
                                                     <div className='sui-filters-summary'>
-                                                        <SelectedFacets filters={filters} addFilter={addFilter} removeFilter={removeFilter} setFilter={setFilter} />
+                                                        <SelectedFacets />
                                                     </div>
                                                 </>
                                             }
                                             sideContent={
                                                 <div data-js-ada='facets'>
-                                                    <CustomClearSearchBox clearFiltersClick={handleClearFiltersClick} />
+                                                    <CustomClearSearchBox />
 
-                                                    <SelectedFilters/>
+                                                    <SelectedFilters />
 
                                                     {wasSearched &&
-                                                        <Facets fields={SEARCH_FILES.searchQuery}
-                                                                filters={filters}
-                                                                transformFunction={getUBKGFullName} />
+                                                        <Facets transformFunction={getUBKGFullName} />
                                                     }
                                                 </div>
 
                                             }
                                             bodyContent={
                                                 <div className="js-gtm--results sui-resultsTable" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
-                                                    {wasSearched && <Results filters={filters} titleField={filters} rawResponse={rawResponse}
-                                                                             view={TableResultsFiles}
-                                                    />}
+                                                    {wasSearched && <Results filters={filters}
+                                                                             titleField={filters}
+                                                                             rawResponse={rawResponse}
+                                                                             view={TableResultsFiles} />}
                                                     {!wasSearched && <Spinner /> }
                                                 </div>
 
                                             }
                                         />
                                     </ErrorBoundary>
-                                </div>
+                                </SearchUIProvider>
                             );
                         }}
                     </WithSearch>
