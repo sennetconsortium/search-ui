@@ -100,7 +100,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
             }
             let row
             for (let item of data) {
-                let id = raw(item.props.result.sennet_id)
+                let id = raw(item.props.result.uuid)
                 if (isAll || selected[id]) {
                     for (let col of _columns) {
                         row = item.props.result
