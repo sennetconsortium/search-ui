@@ -18,7 +18,6 @@ import 'primeicons/primeicons.css';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import {Chip} from "@mui/material";
 import SenNetPopover from "../SenNetPopover";
-import DataTable from "react-data-table-component";
 import AppModal from "../AppModal";
 import FileTreeView from "./entities/dataset/FileTreeView";
 import {FILE_KEY_SEPARATOR} from "../../config/config";
@@ -128,39 +127,6 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         setShowModal(false)
     }
 
-    const getModalColumns = () => {
-        let cols = []
-        cols.push(
-            {
-                name: 'File Path',
-                width: '30%',
-                selector: row => raw(row.size),
-                sortable: true,
-                format: row => <span data-field='rel_path' className='cell-wrap'>{raw(row.rel_path)}</span>
-            }
-        )
-
-        cols.push(
-            {
-                name: 'File Description',
-                width: '60%',
-                selector: row => raw(row.description),
-                sortable: true,
-                format: row => <span data-field='description' className='cell-wrap cell-pd'>{raw(row.description)}</span>
-            }
-        )
-
-        cols.push(
-            {
-                name: 'Size',
-                selector: row => raw(row.size),
-                sortable: true,
-                format: row => <span>{formatByteSize(raw(row.size))}</span>
-            }
-        )
-        return cols
-    }
-
     const downloadManifest = () => {
         let manifestData  = ''
 
@@ -175,8 +141,6 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const filesModal = (row) => {
         setShowModal(true)
         currentDatasetUuid.current = row.dataset_uuid
-        console.log('Files, dataset', row.dataset_uuid)
-        //setModalData(dict[row.dataset_uuid].data)
         setTreeViewData(row)
     }
 
