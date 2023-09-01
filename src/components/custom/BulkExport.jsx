@@ -3,7 +3,7 @@ import $ from "jquery";
 import Dropdown from 'react-bootstrap/Dropdown'
 import PropTypes from "prop-types";
 import SenNetPopover, {SenPopoverOptions} from "../SenNetPopover";
-import {equals} from "./js/functions";
+import {autoBlobDownloader, equals} from "./js/functions";
 
 export const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
 
@@ -193,15 +193,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
             // code block
         }
 
-        const a = document.createElement('a')
-
-        const url = window.URL.createObjectURL(new Blob(blob, {type}))
-        a.href = url
-        a.download = `${fileName}.${fileType}`
-        document.body.append(a)
-        a.click()
-        a.remove()
-        window.URL.revokeObjectURL(url)
+        autoBlobDownloader(blob, type, `${fileName}.${fileType}`)
     }
 
     const getActions = () => {

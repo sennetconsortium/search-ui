@@ -5,7 +5,7 @@ import SenNetAccordion from "../../layout/SenNetAccordion";
 import Link from "next/link";
 import DerivedContext from "../../../../context/DerivedContext";
 import {fetchGlobusFilepath} from "../../../../lib/services";
-import {getAssetsEndpoint, getAuth} from "../../../../config/config";
+import {FILE_KEY_SEPARATOR, getAssetsEndpoint, getAuth} from "../../../../config/config";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 import {formatByteSize} from "../../js/functions";
 import {Button, Row} from 'react-bootstrap';
@@ -19,7 +19,7 @@ import log from 'loglevel'
 
 import 'primeicons/primeicons.css';
 
-export const FileTreeView = ({data, keys = {files: 'files', uuid: 'uuid'},
+export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid: 'uuid'},
                                  loadDerived = true, treeViewOnly = false, className = ''}) => {
     const [status, setStatus] = useState(null)
     const [filepath, setFilepath] = useState(null)
@@ -159,8 +159,10 @@ export const FileTreeView = ({data, keys = {files: 'files', uuid: 'uuid'},
         )
     }
 
+    const formatKeyId = (str, str2) => str + FILE_KEY_SEPARATOR + str2
+
     function buildSubDirectory(uuid, file, data, directories, directory_name, id) {
-        id = id + directory_name
+        id = formatKeyId(id, directory_name)
         let sub_directory = {
             key: id,
             label: directory_name,
@@ -224,7 +226,7 @@ export const FileTreeView = ({data, keys = {files: 'files', uuid: 'uuid'},
                     })
                     id++
                 } else {
-                    let sub_directory = buildSubDirectory(uuid, file, data, directories, directories[0], id) //use id to allow unique key name if files have same name
+                    let sub_directory = buildSubDirectory(uuid, file, data, directories, directories[0], formatKeyId(uuid, id)) //use id to allow unique key name if files have same name
                     // If sub_directory is `undefined` then data was modified during the recursive call
                     if (sub_directory) {
                         id++
@@ -242,6 +244,9 @@ export const FileTreeView = ({data, keys = {files: 'files', uuid: 'uuid'},
     const treeView = (
         <Tree
             className={`c-treeView__main ${className}`}
+            selectionMode={selection.mode}
+            selectionKeys={selection.value}
+            onSelectionChange={selection.setValue ? (e) => selection.setValue(e, selection.args) : undefined}
             value={treeData}
             nodeTemplate={nodeTemplate}
             filter={true}

@@ -1,6 +1,7 @@
 import React, {useRef, useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {
+    autoBlobDownloader,
     checkFilterType,
     checkMultipleFilterType, formatByteSize, getEntityViewUrl,
     getUBKGFullName,
@@ -20,6 +21,7 @@ import SenNetPopover from "../SenNetPopover";
 import DataTable from "react-data-table-component";
 import AppModal from "../AppModal";
 import FileTreeView from "./entities/dataset/FileTreeView";
+import {FILE_KEY_SEPARATOR} from "../../config/config";
 
 const downloadSizeAttr = 'data-download-size'
 export const clearDownloadSizeLabel = () => {
@@ -33,11 +35,16 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const currentColumns = useRef([])
     const hasClicked = useRef(false)
     const [showModal, setShowModal] = useState(false)
+    const [fileSelection, setFileSelection] = useState(null)
     let dict = {}
 
     const getBuckets = ()=> rawResponse.aggregations?.["dataset_uuid.keyword"]?.buckets
 
-    const [modalData, setModalData] = useState([])
+    //const [modalData, setModalData] = useState([])
+    const [treeViewData, setTreeViewData] = useState([])
+    const [showModalDownloadBtn, setShowModalDownloadBtn] = useState(false)
+    const currentDatasetUuid = useRef(null)
+    const selectedFilesModal = useRef({})
 
     useEffect(()=> {
         $('.sui-paging-info strong').eq(1).text(getBuckets().length)
@@ -64,7 +71,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
             }
             let id = hits[0]['_source']['dataset_uuid']
             //Store in dict for constant time access. modal feature
-            dict[id] = _bucket
+            dict[id] = {data: _bucket, select: {}}
             results.push({
                 ...hits[0]['_source'],
                 id,
@@ -154,9 +161,37 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         return cols
     }
 
+    const downloadManifest = () => {
+        let manifestData  = ''
+
+        for (let key in selectedFilesModal.current[currentDatasetUuid.current].selected){
+            let keys = key.split(FILE_KEY_SEPARATOR)
+            manifestData += `${keys[0]} /${keys[keys.length - 1]}\n`
+        }
+
+        autoBlobDownloader([manifestData], 'text/plain', `data-manifest.txt`)
+    }
+
     const filesModal = (row) => {
         setShowModal(true)
-        setModalData(dict[row.dataset_uuid])
+        currentDatasetUuid.current = row.dataset_uuid
+        console.log('Files, dataset', row.dataset_uuid)
+        //setModalData(dict[row.dataset_uuid].data)
+        setTreeViewData(row)
+    }
+
+    const handleFileSelection = (e, row) => {
+        e.originalEvent.preventDefault()
+        e.originalEvent.stopPropagation()
+
+        let _dict = JSON.parse(JSON.stringify(e.value))
+
+        selectedFilesModal.current[row.dataset_uuid] = {row, selected: _dict}
+
+        const show = Object.values(selectedFilesModal.current[row.dataset_uuid].selected).length > 0
+        setShowModalDownloadBtn( show )
+        setFileSelection(e.value)
+
     }
 
     const defaultColumns = ({hasMultipleFileTypes = true, columns = [], _isLoggedIn}) => {
@@ -190,22 +225,20 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 selector: row => raw(row.description),
                 sortable: true,
                 format: (row) => {
-                    //return <></>
-                    return (<FileTreeView data={row} keys={{files: 'list', uuid: 'dataset_uuid'}} loadDerived={false} treeViewOnly={true} className={'c-treeView__main--inTable'} />)
-                    // let paths = []
-                    // let i = 0
-                    // for (let item of row.list) {
-                    //     paths.push(
-                    //         <span key={`rel_path_${i}`} className={'cell-nowrap'}><span className={'pi pi-fw pi-file'} role={'presentation'}></span><small><a data-field='rel_path' href={'#'}>{raw(item.rel_path)}</a></small><br /></span>
-                    //     )
-                    //     i++
-                    // }
-                    // return (<div>{raw(row.description)} {raw(row.description) && <br />}
-                    //     {paths.length > 2 ? paths.slice(0, 2) : paths}
-                    //     {paths.length > 2 && <SenNetPopover text={'View more files details'} className={`popover-${getId(row)}`}>
-                    //         <Chip label={<MoreHorizIcon />} size="small" onClick={()=> filesModal(row)} />
-                    //     </SenNetPopover>}
-                    // </div>)
+                    let paths = []
+                    let i = 0
+                    for (let item of row.list) {
+                        paths.push(
+                            <span key={`rel_path_${i}`} className={'cell-nowrap'}><span className={'pi pi-fw pi-file'} role={'presentation'}></span><small><a data-field='rel_path' href={'#'}>{raw(item.rel_path)}</a></small><br /></span>
+                        )
+                        i++
+                    }
+                    return (<div>{raw(row.description)} {raw(row.description) && <br />}
+                        {paths.length > 2 ? paths.slice(0, 2) : paths}
+                        {paths.length > 2 && <SenNetPopover text={'View more files details'} className={`popover-${getId(row)}`}>
+                            <Chip label={<MoreHorizIcon />} size="small" onClick={()=> filesModal(row)} />
+                        </SenNetPopover>}
+                    </div>)
                 }
             }
         )
@@ -305,9 +338,19 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     modalSize={'xl'}
                     showModal={showModal}
                     modalTitle={'Files Details'}
-                    modalBody={<DataTable columns={getModalColumns()} data={modalData} className={'rdt_Results--Files'} />}
+                    //<DataTable columns={getModalColumns()} data={modalData} className={'rdt_Results--Files'} />
+                    modalBody={
+                        <FileTreeView data={treeViewData}
+                        selection={{mode: 'checkbox', value: fileSelection, setValue: handleFileSelection, args: treeViewData }}
+                        keys={{files: 'list', uuid: 'dataset_uuid'}}
+                        loadDerived={false}
+                        treeViewOnly={true}
+                        className={'c-treeView__main--inTable'} />
+                }
                     handleClose={hideModal}
-                    showHomeButton={false}
+                    handleHome={downloadManifest}
+                    showHomeButton={showModalDownloadBtn}
+                    actionButtonLabel={'Download Manifest'}
                     showCloseButton={true}
                     closeButtonLabel={'Close'}
                 />
