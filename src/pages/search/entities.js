@@ -1,14 +1,6 @@
 import React, {useContext} from "react";
-import {
-    ErrorBoundary,
-    Results,
-    SearchBox,
-    SearchProvider,
-    WithSearch
-} from "@elastic/react-search-ui";
+import {ErrorBoundary, SearchBox} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
-import Facets from "search-ui/components/core/Facets";
-import {TableResultsEntities} from '../../components/custom/TableResultsEntities'
 import {APP_TITLE} from "../../config/config";
 import {SEARCH_ENTITIES} from "../../config/search/entities"
 import AppNavbar from "../../components/custom/layout/AppNavbar";
@@ -24,7 +16,10 @@ import SelectedFilters from "../../components/custom/layout/SelectedFilters";
 import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
 import {Search} from "react-bootstrap-icons";
 import SelectedFacets from "../../components/custom/search/SelectedFacets";
-import {SearchUIProvider} from "search-ui/components/core/SearchUIContext";
+import SearchUIContainer from "search-ui/components/core/SearchUIContainer";
+import FacetsContent from "../../components/custom/search/FacetsContent";
+import BodyContent from "../../components/custom/search/BodyContent";
+import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
 
 function SearchEntities() {
     const {
@@ -60,74 +55,58 @@ function SearchEntities() {
             <>
                 <Header title={APP_TITLE}/>
 
-                <SearchProvider config={SEARCH_ENTITIES}>
-                    <WithSearch mapContextToProps={({wasSearched, filters}) => ({wasSearched, filters})}>
-                        {({wasSearched, filters}) => {
-                            return (
-                                <SearchUIProvider name = 'entities'>
-                                    <AppNavbar hidden={isRegisterHidden}/>
-
-                                    <ErrorBoundary>
-
-                                        <Layout
-                                            header={
-                                                <><div className="search-box-header js-gtm--search">
-                                                    <SearchBox
-                                                        view={({onChange, value, onSubmit}) => (
-                                                            <Form onSubmit={e => handleSearchFormSubmit(e, onSubmit)}>
-                                                                <Form.Group controlId="search">
-                                                                    <InputGroup>
-                                                                        <Form.Control
-                                                                            value={value}
-                                                                            onChange={(e) => onChange(e.currentTarget.value)}
-                                                                            className="right-border-none form-control form-control-lg rounded-0"
-                                                                            placeholder="Search"
-                                                                            autoFocus={false}
-                                                                        />
-                                                                        <InputGroup.Text
-                                                                            className={"transparent"}><Search/></InputGroup.Text>
-                                                                        <Button variant="outline-primary"
-                                                                                className={"rounded-0"}
-                                                                                onClick={e => handleSearchFormSubmit(e, onSubmit)}>{_t('Search')}</Button>
-                                                                    </InputGroup>
-                                                                </Form.Group>
-                                                            </Form>
-                                                        )}
-                                                    />
-
-                                                </div>
-                                                    <div className='sui-filters-summary'>
-                                                        <SelectedFacets />
-                                                    </div>
-                                                </>
-                                            }
-                                            sideContent={
-                                                <div data-js-ada='facets'>
-                                                    <CustomClearSearchBox />
-
-                                                    <SelectedFilters />
-
-                                                    {wasSearched &&
-                                                        <Facets transformFunction={getUBKGFullName} />
-                                                    }
-                                                </div>
-                                            }
-                                            bodyContent={
-                                                <div className="js-gtm--results sui-resultsTable" data-js-ada='tableResults' data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'>
-                                                    {wasSearched && <Results filters={filters} titleField={filters}
-                                                                             view={TableResultsEntities}
-                                                    />}
-                                                    {!wasSearched && <Spinner /> }
-                                                </div>
-                                            }
+                <SearchUIContainer config={SEARCH_ENTITIES} name='entities'>
+                    <AppNavbar hidden={isRegisterHidden}/>
+                    <ErrorBoundary>
+                        <Layout
+                            header={
+                                <>
+                                    <div className="search-box-header js-gtm--search">
+                                        <SearchBox
+                                            view={({onChange, value, onSubmit}) => (
+                                                <Form onSubmit={e => handleSearchFormSubmit(e, onSubmit)}>
+                                                    <Form.Group controlId="search">
+                                                        <InputGroup>
+                                                            <Form.Control
+                                                                value={value}
+                                                                onChange={(e) => onChange(e.currentTarget.value)}
+                                                                className="right-border-none form-control form-control-lg rounded-0"
+                                                                placeholder="Search"
+                                                                autoFocus={false}
+                                                            />
+                                                            <InputGroup.Text
+                                                                className={"transparent"}><Search/></InputGroup.Text>
+                                                            <Button variant="outline-primary"
+                                                                    className={"rounded-0"}
+                                                                    onClick={e => handleSearchFormSubmit(e, onSubmit)}>{_t('Search')}</Button>
+                                                        </InputGroup>
+                                                    </Form.Group>
+                                                </Form>
+                                            )}
                                         />
-                                    </ErrorBoundary>
-                                </SearchUIProvider>
-                            );
-                        }}
-                    </WithSearch>
-                    <AppFooter/>
-                </SearchProvider>
+                                    </div>
+                                    <div className='sui-filters-summary'>
+                                        <SelectedFacets />
+                                    </div>
+                                </>
+                            }
+                            sideContent={
+                                <div data-js-ada='facets'>
+                                    <CustomClearSearchBox />
+
+                                    <SelectedFilters />
+
+                                    <FacetsContent transformFunction={getUBKGFullName}/>
+                                </div>
+                            }
+                            bodyContent={
+                                <BodyContent view={TableResultsEntities} />
+                            }
+                        />
+                    </ErrorBoundary>
+                </SearchUIContainer>
+
+                <AppFooter/>
             </>
         )
     }
