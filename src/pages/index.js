@@ -13,13 +13,15 @@ export default function Home() {
 
     useEffect(() => {
         if (router.isReady) {
-            if (router.query['info']) {
+            let info = getCookie('info')
+            if (info) {
                 setIsBusy(true)
+                info = atob(info)
                 setCookie(
                     'groups_token',
-                    JSON.parse(router.query['info']).groups_token
+                    JSON.parse(info).groups_token
                 )
-                setCookie('info', router.query['info'])
+
                 log.debug(router.query)
                 login()
             } else {
