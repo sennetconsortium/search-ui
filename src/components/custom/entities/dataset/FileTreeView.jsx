@@ -170,7 +170,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
             data: {
                 uuid: uuid,
                 rel_path: file.rel_path,
-                description: file.description,
+                description: file.description || file.rel_path,
                 is_qa_qc: file?.is_qa_qc?.toString(),
                 size: file.size
             }
@@ -219,7 +219,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         data: {
                             uuid: uuid,
                             rel_path: file.rel_path,
-                            description: file.description,
+                            description: file.description || file.rel_path,
                             is_qa_qc: file?.is_qa_qc,
                             size: file.size
                         }
