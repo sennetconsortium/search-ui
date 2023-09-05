@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import {withSearch} from "@elastic/react-search-ui";
+import SearchUIContext from "search-ui/components/core/SearchUIContext";
 
-function CustomClearSearchBox({setSearchTerm, clearFiltersClick}, shouldClearFilters) {
+function CustomClearSearchBox({shouldClearFilters = true}) {
+    const { clearSearchTerm } = useContext(SearchUIContext)
 
     function handleClearFiltersClick() {
-        setSearchTerm("", {shouldClearFilters: true})
-        clearFiltersClick()
+        clearSearchTerm(shouldClearFilters)
     }
 
     return (
