@@ -138,6 +138,7 @@ function Provenance({nodeData}) {
             let d = data.activity[current]
             if (d['sennet:protocol_url']) {
                 let url = getClickableLink(d['sennet:protocol_url'])
+                d['sennet:protocol_url'] = url
                 const uuid = d['sennet:uuid']
 
                 protocolsData[url] =  await fetchProtocols(url)
@@ -293,7 +294,7 @@ function Provenance({nodeData}) {
                 log.debug(`Result width appended descendants...`, result)
             }
 
-            buildProtocolData(result)
+            await buildProtocolData(result)
 
             const converter = new DataConverterNeo4J(result, dataMap)
             converter.buildAdjacencyList(itemId)
