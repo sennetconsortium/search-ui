@@ -51,7 +51,8 @@ export function isRuiSupported(organs, sources) {
 }
 
 export function getUserName() {
-    return JSON.parse(getCookie('info')).name
+    const info = atob(getCookie('info'))
+    return JSON.parse(info).name
 }
 
 export function getEntitiesIndex() {
