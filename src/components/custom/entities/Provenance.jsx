@@ -10,7 +10,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
 import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
-import {fetchEntity, fetchProtocols, getUBKGFullName} from "../js/functions";
+import {fetchEntity, fetchProtocols, getClickableLink, getUBKGFullName} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import * as d3 from "d3";
 
@@ -136,9 +136,10 @@ function Provenance({nodeData}) {
     const buildProtocolData = async (data) => {
         for (let current in data.activity) {
             let d = data.activity[current]
-            let url = d['sennet:protocol_url']
-            const uuid = d['sennet:uuid']
-            if (url) {
+            if (d['sennet:protocol_url']) {
+                let url = getClickableLink(d['sennet:protocol_url'])
+                const uuid = d['sennet:uuid']
+
                 protocolsData[url] =  await fetchProtocols(url)
                 if (protocolsData[url]?.title) {
                     $(`[data-id="${uuid}"] .protocol_url a`).html(protocolsData[url]?.title)
