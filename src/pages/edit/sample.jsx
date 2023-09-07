@@ -56,7 +56,7 @@ function EditSample() {
         checkMetadata, getMetadataNote, checkProtocolUrl,
         warningClasses, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache, filterImageFilesToAdd} = useContext(AppContext)
+    const {_t, cache, filterImageFilesToAdd, isLoggedIn} = useContext(AppContext)
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
@@ -378,9 +378,9 @@ function EditSample() {
         }
     }
 
-    if (isAuthorizing() || isUnauthorized()) {
+    if (isAuthorizing() || isUnauthorized() || !isLoggedIn()) {
         return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
+            isUnauthorized() || !isLoggedIn() ? <Unauthorized/> : <Spinner/>
         )
     } else {
         return (

@@ -40,7 +40,7 @@ function EditSource() {
         dataAccessPublic, setDataAccessPublic,
         metadata, setMetadata, checkMetadata, getMetadataNote, checkProtocolUrl,
         warningClasses, getCancelBtn } = useContext(EntityContext)
-    const { _t, filterImageFilesToAdd, cache } = useContext(AppContext)
+    const { _t, filterImageFilesToAdd, cache, isLoggedIn } = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
@@ -209,9 +209,9 @@ function EditSource() {
         }
     };
 
-    if (isAuthorizing() || isUnauthorized()) {
+    if (isAuthorizing() || isUnauthorized() || !isLoggedIn()) {
         return (
-            isUnauthorized() ? <Unauthorized /> : <Spinner />
+            isUnauthorized() || !isLoggedIn() ? <Unauthorized /> : <Spinner />
         )
     } else {
         console.log(values)
