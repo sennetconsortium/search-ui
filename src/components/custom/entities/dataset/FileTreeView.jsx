@@ -20,7 +20,7 @@ import log from 'loglevel'
 import 'primeicons/primeicons.css';
 
 export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid: 'uuid'},
-                                 loadDerived = true, treeViewOnly = false, className = ''}) => {
+                                 loadDerived = true, treeViewOnly = false, className = '', showQAButton = true}) => {
     const [status, setStatus] = useState(null)
     const [filepath, setFilepath] = useState(null)
     const [treeData, setTreeData] = useState(null)
@@ -141,7 +141,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         </InputGroup>
                     </Form.Group>
 
-                    <Form.Group as={Col} md={2}>
+                    {showQAButton && <Form.Group as={Col} md={2}>
                         <ToggleButton
                             className="rounded-0"
                             id="toggle-check"
@@ -153,7 +153,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         >
                             Show QA files only
                         </ToggleButton>
-                    </Form.Group>
+                    </Form.Group> }
                 </Row>
             </Form>
         )

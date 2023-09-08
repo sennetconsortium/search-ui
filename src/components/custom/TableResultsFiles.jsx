@@ -305,6 +305,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     //<DataTable columns={getModalColumns()} data={modalData} className={'rdt_Results--Files'} />
                     modalBody={
                         <FileTreeView data={treeViewData}
+                        showQAButton={false}
                         selection={{mode: 'checkbox', value: fileSelection, setValue: handleFileSelection, args: treeViewData }}
                         keys={{files: 'list', uuid: 'dataset_uuid'}}
                         loadDerived={false}
