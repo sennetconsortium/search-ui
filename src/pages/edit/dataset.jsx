@@ -59,7 +59,7 @@ export default function EditDataset() {
         getSampleEntityConstraints,
         buildConstraint, successIcon, errIcon, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, isLoggedIn} = useContext(AppContext)
+    const {_t, cache, adminGroup} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
@@ -355,10 +355,9 @@ export default function EditDataset() {
     }
 
 
-
-    if (isAuthorizing() || isUnauthorized() || !isLoggedIn()) {
+    if (isAuthorizing() || isUnauthorized()) {
         return (
-            isUnauthorized() || !isLoggedIn() ? <Unauthorized/> : <Spinner/>
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
 

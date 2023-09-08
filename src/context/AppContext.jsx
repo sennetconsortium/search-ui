@@ -38,6 +38,9 @@ export const AppProvider = ({ cache, children }) => {
                 'groups_token',
                 JSON.parse(info).groups_token
             )
+        } else {
+            // Delete in the event info doesn't exist as might have been logged out the system elsewhere.
+            deleteCookies()
         }
 
         get_read_write_privileges()
