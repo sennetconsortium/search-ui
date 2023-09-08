@@ -45,7 +45,7 @@ export default function EditPublication() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache} = useContext(AppContext)
+    const {_t, cache, isLoggedIn} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [publicationStatus, setPublicationStatus] = useState(null)
@@ -198,9 +198,9 @@ export default function EditPublication() {
         setPublicationStatus(false)
     }
 
-    if (isAuthorizing() || isUnauthorized()) {
+    if (isAuthorizing() || isUnauthorized() || !isLoggedIn()) {
         return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
+            isUnauthorized() || !isLoggedIn() ? <Unauthorized/> : <Spinner/>
         )
     } else {
 
