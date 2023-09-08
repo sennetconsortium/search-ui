@@ -6,7 +6,6 @@ import {
     PagingInfo
 } from "@elastic/react-search-ui";
 import TableResultsContext from "../../../context/TableResultsContext";
-import SelectedFacets from "./SelectedFacets";
 
 function ResultsBlock({getTableColumns, disableRowClick, tableClassName}) {
 
