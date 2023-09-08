@@ -1,7 +1,6 @@
 import {createContext, useCallback, useState} from "react";
 import $ from "jquery";
-import {fetchEntity, getDataTypesByProperty} from "../components/custom/js/functions";
-import {isAssayVitessceSupport} from "../config/config";
+import {fetchEntity, getDataTypes, getDataTypesByProperty} from "../components/custom/js/functions";
 
 const DerivedContext = createContext({})
 
@@ -44,7 +43,7 @@ export const DerivedProvider = ({children}) => {
         if (data.descendants.length !== 0) {
             for (let i = data.descendants.length - 1; i >= 0; i--) {
                 let descendantData = await fetchEntity(data.descendants[i].uuid)
-                if (isDatasetStatusPassed(descendantData) && vitessceSupportedAssasys.includes(descendantData.data_types[0])) {
+                if (isDatasetStatusPassed(descendantData) && vitessceSupportedAssays.includes(descendantData.data_types[0])) {
                     // If derivedDataset hasn't been set then set it to this descendant
                     if (derivedDataset === null) {
                         derived = descendantData;
@@ -60,7 +59,16 @@ export const DerivedProvider = ({children}) => {
         return derived;
     }
 
-    const vitessceSupportedAssasys = ['salmon_rnaseq_10x', 'salmon_sn_rnaseq_10x', 'codex_cytokit', 'codex_cytokit_v1', 'Visium']
+    const vitessceSupportedAssays = (() => {
+        const assayTypes = getDataTypes()
+        return [
+            assayTypes['salmon_rnaseq_10x'],
+            assayTypes['salmon_sn_rnaseq_10x'],
+            assayTypes['codex_cytokit'],
+            assayTypes['codex_cytokit_v1'],
+            assayTypes['Visium'],
+        ]
+    })()
 
     const isDatasetStatusPassed = data => {
         return data.status === "QA" || data.status === 'Published'

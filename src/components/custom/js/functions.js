@@ -144,6 +144,10 @@ function getNormalizedName(term) {
     return term
 }
 
+export function getDataTypes() {
+    return window.UBKG_CACHE.dataTypes
+}
+
 export function getDataTypesByProperty(property, value) {
     return window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type[property] === value).map(data_type => data_type.data_type);
 }
