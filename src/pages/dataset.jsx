@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getDataTypesByProperty, getRequestHeaders} from "../components/custom/js/functions";
+import {getDataTypes, getDataTypesByProperty, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -37,23 +37,24 @@ function ViewDataset() {
         isPrimaryDataset,
         setDerived
     } = useContext(DerivedContext)
-
+    
     // Load the correct Vitessce view config
     const vitessceConfig = (data, dataset_id) => {
+        const assayTypes = getDataTypes()
         data.data_types.forEach(assay => {
             switch (assay) {
-                case 'snRNA-seq':
-                case 'scRNA-seq':
-                case 'salmon_rnaseq_10x':
-                case 'salmon_sn_rnaseq_10x':
+                case assayTypes['snRNA-seq']:
+                case assayTypes['scRNA-seq']:
+                case assayTypes['salmon_rnaseq_10x']:
+                case assayTypes['salmon_sn_rnaseq_10x']:
                     setVitessceConfig(rna_seq(dataset_id))
                     break
-                case 'codex_cytokit':
-                case 'codex_cytokit_v1':
-                case 'CODEX':
+                case assayTypes['codex_cytokit']:
+                case assayTypes['codex_cytokit_v1']:
+                case assayTypes['CODEX']:
                     setVitessceConfig(codex_config(dataset_id))
                     break
-                case 'Visium':
+                case assayTypes['Visium']:
                     setVitessceConfig(kuppe2022nature())
                     break
                 default:
