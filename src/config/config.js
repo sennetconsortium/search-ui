@@ -143,10 +143,16 @@ export let valid_dataset_ancestor_config = _.cloneDeep(ancestor_config)
 valid_dataset_ancestor_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
 export let exclude_dataset_config = _.cloneDeep(ancestor_config);
-exclude_dataset_config['searchQuery']['excludeFilters'].push({
-    keyword: "entity_type.keyword",
-    value: "Dataset"
-});
+exclude_dataset_config['searchQuery']['excludeFilters'].push(
+    {
+        keyword: "entity_type.keyword",
+        value: "Dataset"
+    },
+    {
+        keyword: "entity_type.keyword",
+        value: "Upload"
+    },
+);
 exclude_dataset_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
 
