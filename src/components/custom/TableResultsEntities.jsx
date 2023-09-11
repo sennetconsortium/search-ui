@@ -19,7 +19,7 @@ import SenNetPopover from "../SenNetPopover";
 function TableResultsEntities({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
 
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
-    const {isLoggedIn, cache} = useContext(AppContext)
+    const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
     const currentColumns = useRef([])
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
@@ -73,7 +73,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 name: 'Group',
                 selector: row => raw(row.group_name),
                 sortable: true,
-                format: row => <span data-field='group_name'>{raw(row.group_name)}</span>,
+                format: row => <span data-field='group_name'>{getGroupName({group_name: raw(row.group_name), group_uuid: raw(row.group_uuid)})}</span>,
             })
         return cols;
     }
