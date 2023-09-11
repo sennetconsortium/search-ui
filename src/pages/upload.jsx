@@ -103,6 +103,11 @@ function ViewUpload() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Datasets</a>
                                             </li>
+                                            <li className="nav-item">
+                                                <a href="#Attribution"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Attribution</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -122,6 +127,9 @@ function ViewUpload() {
                                                          secondaryDate={data.last_modified_timestamp}
                                                          labId={data.title}
                                             />
+
+                                            {/*Attribution*/}
+                                            <Attribution data={data}/>
 
 
                                         </div>
