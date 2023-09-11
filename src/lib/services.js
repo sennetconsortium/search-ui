@@ -11,6 +11,15 @@ export async function update_create_entity(uuid, body, action = "Edit", entity_t
     return call_service(raw, url, method, headers)
 }
 
+export async function update_create_upload(uuid, body, action = 'Edit') {
+    let raw = JSON.stringify(body)
+    let url = getIngestEndPoint() + 'uploads' + (action === 'Register' ? '' : "/" + uuid + "/submit")
+    let method = (action === 'Register' ? "POST" : "PUT")
+    log.debug(url)
+
+    return call_service(raw, url, method)
+}
+
 export async function update_create_dataset(uuid, body, action = "Edit") {
     if (action === 'Edit') {
         let headers = get_headers()

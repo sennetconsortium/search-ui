@@ -23,7 +23,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
 
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication']
+        let notSupported = ['publication', 'upload']
         return entities.filter(entity => !notSupported.includes(entity))
     }
 
@@ -67,7 +67,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                     <div className={'submenu'} id={`submenu-md-${range}`}>
                                         {equals(range, 'single') && Object.keys(cache.entities).map((entity) => (
                                             <NavDropdown.Item key={entity} href={`/edit/${entity}?uuid=register`}>
-                                                {_t(entity)}
+                                                {equals(entity, cache.entities.upload) ? 'Data Upload' : _t(entity)}
                                             </NavDropdown.Item>
                                         ))}
 
