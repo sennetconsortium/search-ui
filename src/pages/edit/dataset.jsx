@@ -355,7 +355,6 @@ export default function EditDataset() {
     }
 
 
-
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>

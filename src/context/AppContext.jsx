@@ -31,6 +31,18 @@ export const AppProvider = ({ cache, children }) => {
             setLocalItemWithExpiry(pageKey, router.asPath, 600000)
         }
 
+        let info = getCookie('info')
+        if (info) {
+            info = atob(info)
+            setCookie(
+                'groups_token',
+                JSON.parse(info).groups_token
+            )
+        } else {
+            // Delete in the event info doesn't exist as might have been logged out the system elsewhere.
+            deleteCookies()
+        }
+
         get_read_write_privileges()
             .then((response) => {
                 if (response) {
