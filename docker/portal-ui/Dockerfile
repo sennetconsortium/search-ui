@@ -11,12 +11,12 @@ COPY . .
 
 # Reduce the number of layers in image by minimizing the number of separate RUN commands
 # Add Node.js stable release Yum Repository
-# Install Node.js v18.x (includes npm)
+# Install Node.js v18.x (installation: https://github.com/nodesource/distributions#installation-instructions-1)
 # Update to latest npm
 # Copy the entrypoint script and make it executible
 # Clean all yum cache
-RUN curl -sL https://rpm.nodesource.com/setup_18.x | bash - && \
-    yum install -y nodejs && \
+RUN yum install https://rpm.nodesource.com/pub_18.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y && \
+    yum install nodejs -y --setopt=nodesource-nodejs.module_hotfixes=1 && \
     npm install npm@latest -g && \
     cp /usr/src/app/entrypoint.sh /usr/local/bin/entrypoint.sh && \
     chmod +x /usr/local/bin/entrypoint.sh && \
