@@ -59,7 +59,7 @@ export default function EditDataset() {
         getSampleEntityConstraints,
         buildConstraint, successIcon, errIcon, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup} = useContext(AppContext)
+    const {_t, cache, adminGroup, isLoggedIn} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
