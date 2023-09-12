@@ -74,7 +74,7 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
                     }
                     {data.status &&
                         <h5 className={"title_badge"}>
-                            <span className={`badge bg-${getStatusColor(data.status)} ms-2`}>
+                            <span className={`badge ${getStatusColor(data.status)} ms-2`}>
                                 <SenNetPopover text={getStatusDefinition(data.status)} className={'status-info'}>
                                      {displayBodyHeader(data.status)}
                                 </SenNetPopover>
@@ -88,7 +88,7 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
 
             {data?.doi_url &&
                 <h5 className={"title_badge"}>
-                            <span className={"badge bg-success ms-2"}>
+                            <span className={`${getStatusColor(data.status)} badge ms-2`}>
                                 DOI: <a href={data.doi_url} className={"icon_inline"} style={{color: 'white'}}>{data.registered_doi}</a>
                             </span>
                 </h5>

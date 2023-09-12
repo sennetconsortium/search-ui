@@ -486,8 +486,9 @@ export default function EditDataset() {
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Submit"}
                                                     modalBody={<div><p>By clicking "Submit" this <code>Dataset</code> will
-                                                        have its status set to <Badge pill
-                                                                                      bg={getStatusColor('Submitted')}>Submitted</Badge> and
+                                                        have its status set to
+                                                        <span className={`${getStatusColor('Submitted')} badge`}>
+                                                        Submitted</span> and
                                                         be ready for processing.</p>
                                                         <p>
                                                             Before submitting your Dataset please confirm that all files (including metadata/contributors TSVs) have been uploaded in Globus.
@@ -507,13 +508,13 @@ export default function EditDataset() {
                                                     btnLabel={"Process"}
                                                     modalBody={<div><p>By clicking "Process" this <code>Dataset</code> will
                                                         be processed via the Ingest Pipeline and its status set
-                                                        to <Badge pill bg={getStatusColor('QA')}>QA</Badge>.</p></div>}
+                                                        to <span className={`${getStatusColor('QA')} badge`}>QA</span>.</p></div>}
                                                     onClick={hanldeProcessing} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
 
                                         {isPrimary.current && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) && <SenNetPopover
-                                            text={<>Revert this <code>Dataset</code> back to <Badge pill bg={getStatusColor('New')}>New</Badge> or <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>  status.
+                                            text={<>Revert this <code>Dataset</code> back to <span className={`${getStatusColor('New')} badge`}>New</span> or <span className={`${getStatusColor('Submitted')} badge`}>Submitted</span>  status.
                                                </>}
                                             className={'revert-button'}>
                                                 <DatasetRevertButton onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />

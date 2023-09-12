@@ -157,13 +157,13 @@ function ViewPublication() {
                                                         <thead>
                                                         <tr>
                                                             <th style={{width: '44%'}}>Venue</th>
-                                                            <th>Published?</th>
+                                                            <th>Status</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
                                                         <tr>
                                                             <td>{data.publication_venue}</td>
-                                                            <td><Badge pill bg={data.publication_status ? 'success' : 'secondary'}>{data.publication_status ? 'YES' : 'NO'}</Badge></td>
+                                                            <td><span className={`${getStatusColor(data.status)} badge`}>{data.status}</span></td>
                                                         </tr>
                                                         </tbody>
                                                     </Table>
