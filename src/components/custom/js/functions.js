@@ -175,6 +175,9 @@ export function getStatusDefinition(status) {
             case 'NEW':
                 msg = <span>The data provider has begun to upload data but is not ready for validation or processing via the ingest pipeline.</span>
                 break;
+            case 'VALID':
+                msg = <span>The data passed validation during processing via the ingest pipeline.</span>
+                break;
             case 'INVALID':
                 msg = <span>The data did not pass validation prior to processing via the ingest pipeline.</span>
                 break;
@@ -187,6 +190,9 @@ export function getStatusDefinition(status) {
                 break;
             case 'PROCESSING':
                 msg = <span>The data is currently being processed via the ingest pipeline.</span>
+                break;
+            case 'REORGANIZED':
+                msg = <span>Datasets included in this Upload have been registered and data has been reorganized on the Globus Research Management system.</span>
                 break;
             case 'SUBMITTED':
                 msg = <span>The data provider has finished uploading data and the data is ready for validation.</span>
