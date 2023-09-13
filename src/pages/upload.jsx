@@ -18,6 +18,8 @@ import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import SidebarBtn from "../components/SidebarBtn";
 import Metadata from "../components/custom/entities/Metadata";
+import Datasets from "../components/custom/entities/collection/Datasets";
+import FileTreeView from "../components/custom/entities/dataset/FileTreeView";
 
 function ViewUpload() {
     const router = useRouter()
@@ -127,6 +129,12 @@ function ViewUpload() {
                                                          secondaryDate={data.last_modified_timestamp}
                                                          labId={data.title}
                                             />
+
+                                            {/*Files*/}
+                                            <FileTreeView data={data}/>
+
+                                            {/*Datasets*/}
+                                            <Datasets data={data.datasets} />
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>
