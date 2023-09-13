@@ -35,11 +35,11 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const hasClicked = useRef(false)
     const [showModal, setShowModal] = useState(false)
     const [fileSelection, setFileSelection] = useState(null)
-    let dict = {}
 
     const getBuckets = ()=> rawResponse.aggregations?.["dataset_uuid.keyword"]?.buckets
 
     //const [modalData, setModalData] = useState([])
+    const [results, setResults] = useState(transformResults())
     const [treeViewData, setTreeViewData] = useState([])
     const [showModalDownloadBtn, setShowModalDownloadBtn] = useState(false)
     const currentDatasetUuid = useRef(null)
@@ -47,7 +47,8 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
 
     useEffect(()=> {
         $('.sui-paging-info strong').eq(1).text(getBuckets().length)
-    })
+        setResults(transformResults())
+    }, [rawResponse])
 
     const raw = rowFn ? rowFn : ((obj) => obj ? (obj.raw || obj) : null)
     const applyDownloadSizeLabel = (total) => {
@@ -57,28 +58,30 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         }
     }
 
-    const transformResults = () => {
-        let results = []
+    function transformResults() {
+        const results = {}
 
-        for (let bucket of getBuckets()) {
-            let _bucket = []
-            let hits = bucket.hits.hits.hits
-            let size = 0
-            for (let hit of hits) {
-                size += hit['_source'].size
-                _bucket.push(hit['_source'])
+        // group files by dataset_uuid
+        for (let file of rawResponse.records.files) {
+            if (!results.hasOwnProperty(file.dataset_uuid)) {
+                results[file.dataset_uuid] = {
+                    data_types: file.data_types,
+                    dataset_sennet_id: file.dataset_sennet_id,
+                    dataset_uuid: file.dataset_uuid,
+                    donors: file.donors,
+                    id: file.dataset_uuid,
+                    organs: file.organs,
+                    samples: file.samples,
+                    list: [],
+                    size: 0,
+                }    
             }
-            let id = hits[0]['_source']['dataset_uuid']
-            //Store in dict for constant time access. modal feature
-            dict[id] = {data: _bucket, select: {}}
-            results.push({
-                ...hits[0]['_source'],
-                id,
-                size,
-                list: _bucket
-            })
+
+            results[file.dataset_uuid].list.push(file)
+            results[file.dataset_uuid].size += 1
         }
-        return results
+
+        return Object.values(results)
     }
 
     const onRowClicked = (e, uuid, data, clicked = false) => {
@@ -163,7 +166,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         if (!inModal) {
             cols.push({
                 ignoreRowClick: true,
-                name: <BulkExport onCheckAll={onCheckAll} data={transformResults()} raw={raw} columns={currentColumns} exportKind={'manifest'} />,
+                name: <BulkExport onCheckAll={onCheckAll} data={results} raw={raw} columns={currentColumns} exportKind={'manifest'} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => row.id,
@@ -287,7 +290,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
 
     return (
         <>
-            <TableResultsProvider getId={getId} rows={transformResults()} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
+            <TableResultsProvider getId={getId} rows={results} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <SenNetAlert variant={'warning'} className="clt-alert"
                              text=<>In order to download the files that are included in the manifest file,&nbsp;
                     <a href="https://github.com/x-atlas-consortia/clt" target='_blank' className={'lnk--ic'}>install <BoxArrowUpRight/></a> the CLT and <a href="https://docs.sennetconsortium.org/libraries/clt/">follow the instructions</a> for how to use it with the manifest file.
