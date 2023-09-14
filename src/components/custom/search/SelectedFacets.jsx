@@ -14,7 +14,20 @@ function SelectedFacets() {
         return `${id}`.replace(/\W+/g, '')
     }
 
-    const convertToDisplayValue = (filter, value, key) => {
+    const convertToDisplayLabel = (filter, key) => {
+        switch (filter.uiType) {
+            case 'daterange':
+                const datePrefix = key === 'from' ? 'Start' : 'End'
+                return `${datePrefix} ${filter.label}`
+            case 'numrange':
+                const numPrefix = key === 'from' ? 'Min' : 'Max'
+                return `${numPrefix} ${filter.label}`
+            default:
+                return filter.label
+        }
+    }
+
+    const convertToDisplayValue = (filter, value) => {
         switch (filter.uiType) {
             case 'daterange':
                 return new Date(value).toLocaleDateString('en-US', { timeZone: 'UTC' })
@@ -51,7 +64,7 @@ function SelectedFacets() {
                     label={
                         <>
                             {' '}
-                            <span className='chip-title'>{filter.label}</span>:{' '}
+                            <span className='chip-title'>{convertToDisplayLabel(filter, key)}</span>:{' '}
                             {convertToDisplayValue(filter, value[key])}
                         </>
                     }
@@ -70,7 +83,9 @@ function SelectedFacets() {
                 className={`${getSelector('chipToggle', filter.field, value)}`}
                 label={
                     <>
-                        <span className='chip-title'>{filter.label}</span>: {convertToDisplayValue(filter, value)}
+                        {' '}
+                        <span className='chip-title'>{convertToDisplayLabel(filter)}</span>:{' '}
+                        {convertToDisplayValue(filter, value)}
                     </>
                 }
                 variant='outlined'

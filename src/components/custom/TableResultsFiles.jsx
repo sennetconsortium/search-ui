@@ -36,18 +36,21 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const [showModal, setShowModal] = useState(false)
     const [fileSelection, setFileSelection] = useState(null)
 
-    const getBuckets = ()=> rawResponse.aggregations?.["dataset_uuid.keyword"]?.buckets
-
-    //const [modalData, setModalData] = useState([])
     const [results, setResults] = useState(transformResults())
     const [treeViewData, setTreeViewData] = useState([])
     const [showModalDownloadBtn, setShowModalDownloadBtn] = useState(false)
     const currentDatasetUuid = useRef(null)
     const selectedFilesModal = useRef({})
 
+    useEffect(() => {
+        const totalFileCount = rawResponse.records.files.length
+        $('.sui-paging-info').append(` Datasets (<strong>${totalFileCount}</strong> Total Files)`)
+    }, [])
+
     useEffect(()=> {
-        $('.sui-paging-info strong').eq(1).text(getBuckets().length)
-        setResults(transformResults())
+        const results = transformResults()
+        setResults(results)
+        updatePagingInfo(results.length)
     }, [rawResponse])
 
     const raw = rowFn ? rowFn : ((obj) => obj ? (obj.raw || obj) : null)
@@ -56,6 +59,11 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
             getCheckAll().attr(downloadSizeAttr, total)
             $('.sui-paging-info').append(`<span class="download-size"> | Estimated download ${formatByteSize(total)}</span>`)
         }
+    }
+
+    function updatePagingInfo(resultsCount) {
+        $('.sui-paging-info strong').eq(1).text(resultsCount)
+        $('.sui-paging-info strong').eq(2).text(rawResponse.records.files.length)
     }
 
     function transformResults() {
@@ -74,7 +82,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     samples: file.samples,
                     list: [],
                     size: 0,
-                }    
+                }
             }
 
             results[file.dataset_uuid].list.push(file)
