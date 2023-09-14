@@ -21,10 +21,24 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         window.location.replace(url)
     }
 
+    const supportedSingleRegister = () => {
+        let entities = Object.keys(cache.entities)
+        let notSupported = ['upload']
+        return entities.filter(entity => !notSupported.includes(entity))
+    }
+
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication', 'upload']
+        let notSupported = ['publication']
         return entities.filter(entity => !notSupported.includes(entity))
+    }
+
+    const formatRegisterUrl = (entity, range) => {
+        if (equals(entity, 'upload') || equals(range, 'single')) {
+            return `/edit/${entity}?uuid=register`
+        } else {
+           return `/edit/bulk/${entity}?action=register`
+        }
     }
 
 
@@ -65,15 +79,15 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                     </NavDropdown.Item>
 
                                     <div className={'submenu'} id={`submenu-md-${range}`}>
-                                        {equals(range, 'single') && Object.keys(cache.entities).map((entity) => (
-                                            <NavDropdown.Item key={entity} href={`/edit/${entity}?uuid=register`}>
+                                        {equals(range, 'single') && supportedSingleRegister().map((entity) => (
+                                            <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
                                                 {equals(entity, cache.entities.upload) ? 'Data Upload' : _t(entity)}
                                             </NavDropdown.Item>
                                         ))}
 
                                         {equals(range, 'bulk') && supportedBulkRegister().map((entity) => (
-                                            <NavDropdown.Item key={entity} href={`/edit/bulk/${entity}?action=register`}>
-                                                {entity}s
+                                            <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
+                                                {equals(entity, 'upload') ? 'Data': `${entity}s`}
                                             </NavDropdown.Item>
                                         ))}
                                     </div>

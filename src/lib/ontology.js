@@ -95,5 +95,8 @@ export async function get_entities() {
     });
     // order the list
     list.sort((a, b) => b.code.localeCompare(a.code))
+    let temp = list.pop()
+    list.push({code: 'C05000X', sab: 'SENNET', term: 'Upload'})
+    list.push(temp)
     return to_key_val(list, true)
 }

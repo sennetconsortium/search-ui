@@ -21,7 +21,6 @@ function useCache() {
 
         //TODO Remove in the future
         // entities.publication = 'Publication'
-        entities.upload = 'Upload'
         const cache = {cache: {dataTypes, dataTypesObj, sampleCategories, organTypes, entities, sourceTypes, organTypesCodes}}
         window.UBKG_CACHE = cache.cache
         return cache
