@@ -66,7 +66,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                         <NavDropdown
                             active={false}
                             variant={'primary'}
-                            hidden={hidden}
+                            hidden={hidden || !isLoggedIn()}
                             title={_t("Register entity")}
                             id="nav-dropdown"
                         >
@@ -98,7 +98,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                         <NavDropdown
                             active={false}
                             variant={'primary'}
-                            hidden={hidden}
+                            hidden={hidden || !isLoggedIn()}
                             title="Upload metadata"
                             id="nav-dropdown--bulkMetadata">
                             {Object.keys(supportedMetadata()).map((entity, key) => (

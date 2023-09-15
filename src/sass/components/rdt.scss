@@ -9,6 +9,11 @@
       }
     }
     &--Files {
+      [data-column-id="3"] {
+        [data-tag="allowRowEvents"] {
+          width: 100%;
+        }
+      }
       .cell {
         &-nowrap {
           white-space: nowrap;

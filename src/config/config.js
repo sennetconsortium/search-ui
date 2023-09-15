@@ -7,6 +7,8 @@ import {SEARCH_ENTITIES} from "./search/entities";
 export const APP_TITLE = 'Data Sharing Portal'
 export const NAVBAR_TITLE = 'SenNet'
 
+export const FILE_KEY_SEPARATOR = '_:_'
+
 // Set this to be the time in milliseconds
 export const IDLE_TIMEOUT = 1000 * 60 * 60
 
@@ -143,10 +145,16 @@ export let valid_dataset_ancestor_config = _.cloneDeep(ancestor_config)
 valid_dataset_ancestor_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
 export let exclude_dataset_config = _.cloneDeep(ancestor_config);
-exclude_dataset_config['searchQuery']['excludeFilters'].push({
-    keyword: "entity_type.keyword",
-    value: "Dataset"
-});
+exclude_dataset_config['searchQuery']['excludeFilters'].push(
+    {
+        keyword: "entity_type.keyword",
+        value: "Dataset"
+    },
+    {
+        keyword: "entity_type.keyword",
+        value: "Upload"
+    },
+);
 exclude_dataset_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
 

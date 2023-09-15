@@ -5,7 +5,7 @@ import SenNetAccordion from "../../layout/SenNetAccordion";
 import Link from "next/link";
 import DerivedContext from "../../../../context/DerivedContext";
 import {fetchGlobusFilepath} from "../../../../lib/services";
-import {getAssetsEndpoint, getAuth} from "../../../../config/config";
+import {FILE_KEY_SEPARATOR, getAssetsEndpoint, getAuth} from "../../../../config/config";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 import {formatByteSize} from "../../js/functions";
 import {Button, Row} from 'react-bootstrap';
@@ -15,37 +15,54 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import {Tree} from 'primereact/tree';
 import $ from 'jquery'
+import log from 'loglevel'
 
 import 'primeicons/primeicons.css';
 
-export const FileTreeView = ({data}) => {
+export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid: 'uuid'},
+                                 loadDerived = true, treeViewOnly = false, className = '', showQAButton = true}) => {
     const [status, setStatus] = useState(null)
     const [filepath, setFilepath] = useState(null)
     const [treeData, setTreeData] = useState(null)
-    const [filterValue, setFilterValue] = useState('');
-    const [checked, setChecked] = useState(false);
+    const [filterValue, setFilterValue] = useState('')
+    const [checked, setChecked] = useState(false)
+    const [hasData, setHasData] = useState(false)
 
     const {
         isPrimaryDataset,
         derivedDataset
     } = useContext(DerivedContext)
 
-    useEffect(async () => {
-        await fetchGlobusFilepath(data.uuid).then((globusData) => {
-            setStatus(globusData.status);
-            setFilepath(globusData.filepath);
-        });
+    const getLength = (obj) => {
+        if (!obj) return 0
+        return Array.isArray(obj) ? obj.length : Object.keys(obj).length
+    }
+
+    useEffect( () => {
+        async function fetchData() {
+            await fetchGlobusFilepath(data[keys.uuid]).then((globusData) => {
+                setStatus(globusData.status);
+                setFilepath(globusData.filepath);
+            });
+        }
+
+        fetchData()
 
         //Default to use files, otherwise wait until derivedDataset is populated
-        if (data.files && Object.keys(data.files).length) {
-            buildTree(data.uuid, data.files)
+        if (data[keys.files] && getLength(data[keys.files])) {
+            setHasData(true)
+            buildTree(data[keys.uuid], data[keys.files])
         }
     }, [])
 
     useEffect(() => {
-        if (isPrimaryDataset && derivedDataset.files && Object.keys(derivedDataset.files).length) {
-            buildTree(derivedDataset.uuid, derivedDataset.files)
+        if (loadDerived) {
+            if (isPrimaryDataset && derivedDataset[keys.files] && getLength(derivedDataset[keys.files])) {
+                setHasData(true)
+                buildTree(derivedDataset[keys.uuid], derivedDataset[keys.files])
+            }
         }
+
     }, [derivedDataset])
 
     const onExpand = (event) => {
@@ -124,7 +141,7 @@ export const FileTreeView = ({data}) => {
                         </InputGroup>
                     </Form.Group>
 
-                    <Form.Group as={Col} md={2}>
+                    {showQAButton && <Form.Group as={Col} md={2}>
                         <ToggleButton
                             className="rounded-0"
                             id="toggle-check"
@@ -136,14 +153,16 @@ export const FileTreeView = ({data}) => {
                         >
                             Show QA files only
                         </ToggleButton>
-                    </Form.Group>
+                    </Form.Group> }
                 </Row>
             </Form>
         )
     }
 
+    const formatKeyId = (str, str2) => str + FILE_KEY_SEPARATOR + str2
+
     function buildSubDirectory(uuid, file, data, directories, directory_name, id) {
-        id = id + directory_name
+        id = formatKeyId(id, directory_name)
         let sub_directory = {
             key: id,
             label: directory_name,
@@ -151,8 +170,8 @@ export const FileTreeView = ({data}) => {
             data: {
                 uuid: uuid,
                 rel_path: file.rel_path,
-                description: file.description,
-                is_qa_qc: file.is_qa_qc.toString(),
+                description: file.description || file.rel_path,
+                is_qa_qc: file?.is_qa_qc?.toString(),
                 size: file.size
             }
         };
@@ -186,41 +205,63 @@ export const FileTreeView = ({data}) => {
     }
 
     const buildTree = (uuid, files) => {
-        let id = 1
-        let data = [];
+        try {
+            let id = 1
+            let data = [];
 
-        files.forEach(file => {
-            let directories = file.rel_path.split("/")
-            if (directories.length === 0) {
-                data.push({
-                    key: id,
-                    label: file.rel_path,
-                    icon: "pi pi-fw pi-file",
-                    data: {
-                        uuid: uuid,
-                        rel_path: file.rel_path,
-                        description: file.description,
-                        is_qa_qc: file.is_qa_qc,
-                        size: file.size
-                    }
-                })
-                id++
-            } else {
-                let sub_directory = buildSubDirectory(uuid, file, data, directories, directories[0], "")
-                // If sub_directory is `undefined` then data was modified during the recursive call
-                if (sub_directory) {
+            files.forEach(file => {
+                let directories = file.rel_path.split("/")
+                if (directories.length === 0) {
+                    data.push({
+                        key: id,
+                        label: file.rel_path,
+                        icon: "pi pi-fw pi-file",
+                        data: {
+                            uuid: uuid,
+                            rel_path: file.rel_path,
+                            description: file.description || file.rel_path,
+                            is_qa_qc: file?.is_qa_qc,
+                            size: file.size
+                        }
+                    })
                     id++
-                    data.push(sub_directory)
+                } else {
+                    let sub_directory = buildSubDirectory(uuid, file, data, directories, directories[0], formatKeyId(uuid, id)) //use id to allow unique key name if files have same name
+                    // If sub_directory is `undefined` then data was modified during the recursive call
+                    if (sub_directory) {
+                        id++
+                        data.push(sub_directory)
+                    }
                 }
-            }
-        });
-
-        console.log(data)
-
-        setTreeData(data)
+            });
+            log.debug(data)
+            setTreeData(data)
+        } catch (e) {
+            console.error(e)
+        }
     }
 
-    return <Fragment>
+    const treeView = (
+        <Tree
+            className={`c-treeView__main ${className}`}
+            selectionMode={selection.mode}
+            selectionKeys={selection.value}
+            onSelectionChange={selection.setValue ? (e) => selection.setValue(e, selection.args) : undefined}
+            value={treeData}
+            nodeTemplate={nodeTemplate}
+            filter={true}
+            filterBy={"label,data.is_qa_qc"}
+            filterTemplate={filterTemplate}
+            onExpand={onExpand}
+            onCollapse={onCollapse}
+        />
+    )
+
+    if (treeViewOnly) {
+        return treeView
+    }
+
+    return (<Fragment>
         <SenNetAccordion title={'Files'}>
             <Card border={'0'} className={"m-2 p-2"}>
                 {status === 200 && filepath &&
@@ -244,7 +285,7 @@ export const FileTreeView = ({data}) => {
                     </p>}
             </Card>
 
-            {!!((data.files && Object.keys(data.files).length) || (isPrimaryDataset && derivedDataset?.files && Object.keys(derivedDataset?.files).length)) &&
+            {hasData &&
                 <Card border={'0'} className={"m-2 p-2"}>
                     {derivedDataset &&
                         <span className={'fw-light fs-6 mb-2'}>
@@ -255,22 +296,14 @@ export const FileTreeView = ({data}) => {
                             </span>
                     }
                     {treeData &&
-                        <div className={"tree_container"}>
-                            <Tree
-                                value={treeData}
-                                nodeTemplate={nodeTemplate}
-                                filter={true}
-                                filterBy={"label,data.is_qa_qc"}
-                                filterTemplate={filterTemplate}
-                                onExpand={onExpand}
-                                onCollapse={onCollapse}
-                            />
+                        <div className={"c-treeView"}>
+                            {treeView}
                         </div>
                     }
                 </Card>
             }
         </SenNetAccordion>
-    </Fragment>
+    </Fragment>)
 }
 
 export default FileTreeView
