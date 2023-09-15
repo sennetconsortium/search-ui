@@ -134,6 +134,12 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             selector: row => raw(row.description),
             sortable: true,
         },
+        {
+            name: 'Status',
+            selector: row => raw(row.status),
+            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
+            sortable: true
+        }
     ]
 
     const getTableColumns = () => {
