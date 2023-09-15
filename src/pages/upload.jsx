@@ -100,11 +100,11 @@ function ViewUpload() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Files</a>
                                             </li>
-                                            <li className="nav-item">
+                                            {data.datasets.length > 0 && <li className="nav-item">
                                                 <a href="#Datasets"
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Datasets</a>
-                                            </li>
+                                            </li>}
                                             <li className="nav-item">
                                                 <a href="#Attribution"
                                                    className="nav-link"
@@ -134,7 +134,7 @@ function ViewUpload() {
                                             <FileTreeView data={data}/>
 
                                             {/*Datasets*/}
-                                            <Datasets data={data.datasets} />
+                                            {data.datasets.length > 0 && <Datasets data={data.datasets} />}
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>
