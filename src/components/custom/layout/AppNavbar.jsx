@@ -23,14 +23,20 @@ const AppNavbar = ({hidden, signoutHidden}) => {
 
     const supportedSingleRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['upload']
+        let notSupported = ['publication entity', 'upload']
         return entities.filter(entity => !notSupported.includes(entity))
     }
 
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication']
-        return entities.filter(entity => !notSupported.includes(entity))
+
+        let notSupported = ['publication entity']
+        entities = entities.filter(entity => !notSupported.includes(entity))
+
+        const elem = entities.shift()
+        // Insert upload before dataset
+        entities.splice(2, 0, elem)
+        return entities
     }
 
     const formatRegisterUrl = (entity, range) => {
