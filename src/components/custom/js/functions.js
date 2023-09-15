@@ -144,6 +144,10 @@ function getNormalizedName(term) {
     return term
 }
 
+export function getDataTypes() {
+    return window.UBKG_CACHE.dataTypes
+}
+
 export function getDataTypesByProperty(property, value) {
     return window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type[property] === value).map(data_type => data_type.data_type);
 }
@@ -299,6 +303,17 @@ export function gotToLogin() {
 export function getEntityViewUrl(entity, uuid, {isEdit = false}) {
     const pre = isEdit ? '/edit' : ''
     return pre + "/" + entity?.toLowerCase() + "?uuid=" + uuid
+}
+
+export function autoBlobDownloader(data, type, filename) {
+    const a = document.createElement('a')
+    const url = window.URL.createObjectURL(new Blob(data, {type}))
+    a.href = url
+    a.download = filename
+    document.body.append(a)
+    a.click()
+    a.remove()
+    window.URL.revokeObjectURL(url)
 }
 
 

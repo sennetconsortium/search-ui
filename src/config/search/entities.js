@@ -23,6 +23,7 @@ export const SEARCH_ENTITIES = {
                 label: 'Entity Type',
                 type: 'value',
                 field: 'entity_type.keyword',
+                isExpanded: true,
                 filterType: 'any',
                 isFilterable: false,
             },
