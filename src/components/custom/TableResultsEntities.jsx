@@ -118,7 +118,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         {
             name: 'Status',
             selector: row => raw(row.status),
-            format: (row) => <Badge pill bg={getStatusColor(raw(row.status))}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></Badge>,
+            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
             sortable: true
         }
     ]
