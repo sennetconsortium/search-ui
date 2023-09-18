@@ -3,10 +3,16 @@ import {useRouter} from 'next/router';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {cleanJson, equals, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
+import {
+    cleanJson,
+    equals,
+    getRequestHeaders,
+    getStatusColor
+} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_entity, update_create_upload} from "../../lib/services";
-import SourceType from "../../components/custom/edit/source/SourceType";
+import {
+    update_create_dataset
+} from "../../lib/services";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
@@ -16,13 +22,11 @@ import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
-import Alert from 'react-bootstrap/Alert';
-import ImageSelector from "../../components/custom/edit/ImageSelector";
-import SenNetAlert from "../../components/SenNetAlert";
-import MetadataUpload from "../../components/custom/edit/MetadataUpload";
-import {SenPopoverOptions} from "../../components/SenNetPopover";
-import {BoxArrowUpRight} from "react-bootstrap-icons";
+import {Alert, Badge} from 'react-bootstrap';
+import SenNetPopover, {SenPopoverOptions} from "../../components/SenNetPopover";
 import $ from "jquery";
+import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
+import DatasetRevertButton from "../../components/custom/edit/dataset/DatasetRevertButton";
 
 
 function EditUpload() {
@@ -38,14 +42,11 @@ function EditUpload() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
-        metadata, setMetadata, checkMetadata, getMetadataNote, checkProtocolUrl,
-        warningClasses, getCancelBtn } = useContext(EntityContext)
-    const { _t, cache } = useContext(AppContext)
+        getCancelBtn } = useContext(EntityContext)
+    const { _t, cache, adminGroup, getGroupName } = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
-    const [imageByteArray, setImageByteArray] = useState([])
-    const alertStyle = useRef('info')
 
 
     // Disable all form elements if data_access_level is "public"
@@ -82,6 +83,7 @@ function EditUpload() {
                 let _values = {
                     'title': data.title,
                     'description': data.description,
+                    'status': data.status,
                 }
 
                 setValues(_values)
@@ -106,6 +108,21 @@ function EditUpload() {
         }
     }, [router]);
 
+    const modalResponse = (response) => {
+        setModalDetails({
+            entity: cache.entities.upload,
+            type: response.status,
+            typeHeader: _t('Status'),
+            response
+        })
+    }
+
+    const handlePut = async (action, body = {}) => {
+        await update_create_dataset(data.uuid, body, action, 'uploads').then((response) => {
+            modalResponse(response)
+        }).catch((e) => log.error(e))
+    }
+
     const handleSave = async (event) => {
         setDisableSubmit(true);
         const form = $(event.currentTarget.form)[0]
@@ -124,22 +141,32 @@ function EditUpload() {
 
             // Remove empty strings
             let json = cleanJson(values);
-            let uuid = data.uuid
 
-            await update_create_upload(uuid, json, editMode).then((response) => {
-                setModalDetails({entity: cache.entities.upload, type: response.title, typeHeader: _t('Title'), response})
-            }).catch((e) => log.error(e))
+            handlePut(editMode, json)
         }
 
         setValidated(true);
     };
 
-    const _onBlur = (e, fieldId, value) => {
+    const handleValidate = () => {
+        handlePut('validate')
+    }
 
-        if (fieldId === 'protocol_url') {
-            checkProtocolUrl(value)
+    const handleRevert = async () => {
+        const json = {
+            status: values.status,
+            validation_message: "",
         }
-    };
+        handlePut(editMode, json)
+    }
+
+    const handleSubmit = () => {
+        handlePut('submit')
+    }
+
+    const handleReorganize = () => {
+        handlePut('reorganize')
+    }
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
@@ -150,7 +177,7 @@ function EditUpload() {
         return (
             <>
                 {editMode &&
-                    <Header title={`${editMode} Source | SenNet`}></Header>
+                    <Header title={`${editMode} Upload | SenNet`}></Header>
                 }
 
                 <AppNavbar/>
@@ -162,7 +189,7 @@ function EditUpload() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={cache.entities.upload} isEditMode={isEditMode()} data={data} />
+                                <EntityHeader entity={cache.entities.upload} isEditMode={isEditMode()} data={data} values={values} />
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSave} id={"upload-form"}>
@@ -191,10 +218,51 @@ function EditUpload() {
 
                                     <div className={'d-flex flex-row-reverse'}>
                                         {getCancelBtn('upload')}
-                                        <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
-                                                disabled={disableSubmit}>
-                                            {_t('Save')}
-                                        </Button>
+
+
+                                        {!equals(data['status'], 'Reorganized') &&
+                                            <SenNetPopover text={<>Save changes to this <code>Upload</code>.</>} className={'save-button'}>
+                                                <Button variant="outline-primary rounded-0 js-btn--save"
+                                                        className={'me-2'}
+                                                        onClick={handleSave}
+                                                        disabled={disableSubmit}>
+                                                    {_t('Save')}
+                                                </Button>
+                                            </SenNetPopover>
+                                        }
+
+                                        {isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Valid')) &&
+                                            <SenNetPopover text={<>Mark this <code>Upload</code> as "Submitted" and ready for reorganizing.</>} className={'submit-dataset'}>
+                                                <DatasetSubmissionButton
+                                                    btnLabel={"Submit"}
+                                                    modalBody={<div><p>By clicking "Submit" this <code>Upload</code> will
+                                                        have its status set to <Badge pill
+                                                                                      bg={getStatusColor('Submitted')}>Submitted</Badge> and
+                                                        be ready for reorganizing.</p>
+                                                        <p>
+                                                            Before submitting your <code>Upload</code> please confirm that all files (including metadata/contributors TSVs) have been uploaded in Globus.
+                                                        </p>
+                                                    </div>}
+                                                    onClick={handleSubmit} disableSubmit={disableSubmit}/>
+                                            </SenNetPopover>
+                                        }
+
+                                        {adminGroup && isEditMode() && !(equals(data['status'], 'Processing')  || equals(data['status'], 'Reorganized')) && <SenNetPopover
+                                            text={<>Validate upload.
+                                            </>}
+                                            className={'validate-button'}>
+                                            <Button className="me-2" variant="outline-primary rounded-0"
+                                                    onClick={handleValidate}>
+                                                Validate
+                                            </Button>
+                                        </SenNetPopover>}
+
+                                        {adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) && <SenNetPopover
+                                            text={<>Revert this <code>Upload</code> back to <Badge pill bg={getStatusColor('New')}>New</Badge> or <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>  status.
+                                            </>}
+                                            className={'revert-button'}>
+                                            <DatasetRevertButton data={data} onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
+                                        </SenNetPopover>}
                                     </div>
                                     {getModal()}
                                 </Form>

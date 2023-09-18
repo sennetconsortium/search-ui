@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState, useContext } from 'react'
+import React, {createContext, useEffect, useState, useContext} from 'react'
 import { useRouter } from 'next/router'
 import {
     get_read_write_privileges,

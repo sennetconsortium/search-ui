@@ -516,7 +516,7 @@ export default function EditDataset() {
                                             text={<>Revert this <code>Dataset</code> back to <Badge pill bg={getStatusColor('New')}>New</Badge> or <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>  status.
                                                </>}
                                             className={'revert-button'}>
-                                                <DatasetRevertButton onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
+                                                <DatasetRevertButton data={data} onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
                                         </SenNetPopover>
                                         }
                                     </div>
