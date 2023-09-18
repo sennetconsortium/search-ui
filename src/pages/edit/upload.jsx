@@ -236,8 +236,7 @@ function EditUpload() {
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Submit"}
                                                     modalBody={<div><p>By clicking "Submit" this <code>Upload</code> will
-                                                        have its status set to <Badge pill
-                                                                                      bg={getStatusColor('Submitted')}>Submitted</Badge> and
+                                                        have its status set to <span className={`${getStatusColor('Submitted')} badge`}>Submitted</span> and
                                                         be ready for reorganizing.</p>
                                                         <p>
                                                             Before submitting your <code>Upload</code> please confirm that all files (including metadata/contributors TSVs) have been uploaded in Globus.
@@ -258,7 +257,7 @@ function EditUpload() {
                                         </SenNetPopover>}
 
                                         {adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) && <SenNetPopover
-                                            text={<>Revert this <code>Upload</code> back to <Badge pill bg={getStatusColor('New')}>New</Badge> or <Badge pill bg={getStatusColor('Submitted')}>Submitted</Badge>  status.
+                                            text={<>Revert this <code>Upload</code> back to <span className={`${getStatusColor('New')} badge`}>New</span> or <span className={`${getStatusColor('Submitted')} badge`}>Submitted</span>  status.
                                             </>}
                                             className={'revert-button'}>
                                             <DatasetRevertButton data={data} onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
