@@ -11,7 +11,7 @@ export default function Description({data, labId, primaryDateTitle, primaryDate,
 
         return (
             <SenNetAccordion title={'Summary'}>
-                {data?.description &&
+                {data && data?.description &&
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
                             <Card.Subtitle>{equals(data.entity_type, cache.entities.upload) ? 'Description' : 'DOI Abstract'}</Card.Subtitle>
@@ -20,7 +20,7 @@ export default function Description({data, labId, primaryDateTitle, primaryDate,
                     </Card>
                 }
                 <CardGroup>
-                    {isLoggedIn() && labId &&
+                    {isLoggedIn() && data && labId &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
                                 <Card.Subtitle>{equals(data.entity_type, cache.entities.upload) ? 'Title': 'Lab ID'}</Card.Subtitle>
