@@ -109,6 +109,7 @@ function EditUpload() {
     }, [router]);
 
     const modalResponse = (response) => {
+        setValues({...values, status: response.status})
         setModalDetails({
             entity: cache.entities.upload,
             type: response.status,

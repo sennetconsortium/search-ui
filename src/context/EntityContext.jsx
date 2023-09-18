@@ -61,7 +61,13 @@ export const EntityProvider = ({ children }) => {
         setShowModal(false)
     }
 
-    const handleClose = () => setShowModal(false)
+    const handleClose = () => {
+        // Update the data such that buttons are displayed correctly after change
+        if (isEditMode() && response && response.status) {
+            setData({...data, status: response.status})
+        }
+        setShowModal(false)
+    }
     const handleHome = () => router.push(APP_ROUTES.search)
 
     // only executed on init rendering, see the []

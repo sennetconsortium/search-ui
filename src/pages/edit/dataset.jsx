@@ -223,6 +223,7 @@ export default function EditDataset() {
     }
 
     const modalResponse = (response) => {
+        setValues({...values, status: response.status})
         setModalDetails({
             entity: cache.entities.dataset,
             type: (response.data_types ? response.data_types[0] : null),
