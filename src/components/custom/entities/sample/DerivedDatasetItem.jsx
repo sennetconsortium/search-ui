@@ -36,9 +36,9 @@ export default class DerivedDatasetItem extends React.Component {
                                                 this.state.descendant_data.data_types.join(', ') : this.state.descendant_data.data_types}
                                         </td>
                                         <td>
-                                            <Badge pill bg={getStatusColor(this.state.descendant_data.status)}>
+                                            <span className={`${getStatusColor(this.state.descendant_data.status)} badge`}>
                                                 {this.state.descendant_data.status}
-                                            </Badge>
+                                            </span>
                                         </td>
                                     </>
                                 )

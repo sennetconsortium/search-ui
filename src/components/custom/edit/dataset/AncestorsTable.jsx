@@ -39,9 +39,9 @@ export default class AncestorsTable extends React.Component {
                             <td>{ancestor?.display_subtype}</td>
                             <td>{ancestor?.lab_tissue_sample_id || ancestor?.lab_dataset_id}</td>
                             <td>{ancestor.group_name}</td>
-                            <td><Badge pill bg={getStatusColor(ancestor?.status)}>
+                            <td><span className={`${getStatusColor(ancestor?.status)} badge`}>
                                     <SenNetPopover text={getStatusDefinition(ancestor?.status)} className={`status-info-${ancestor.uuid}`}>{ancestor?.status}</SenNetPopover>
-                                </Badge>
+                                </span>
                             </td>
                             <td><Button className="pt-0 pb-0" variant="link" onClick={() => this.deleteAncestor(this, ancestor.uuid)}><TrashFill
                                 color="red"/></Button></td>

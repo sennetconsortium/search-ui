@@ -14,7 +14,7 @@ function EntityHeader({entity, data, isEditMode, values, showGroup = true, admin
   return (
     <Container className="px-0" fluid={true}>
         <Row md={12}>
-            <h4>{_t(`${entity} Information`)} {values && values.status && <Badge pill bg={getStatusColor(values.status)}><SenNetPopover text={getStatusDefinition(values.status)} className={'status-info'}>{values.status}</SenNetPopover></Badge>}</h4>
+            <h4>{_t(`${entity} Information`)} {values && values.status && <span className={`${getStatusColor(values.status)} badge`}><SenNetPopover text={getStatusDefinition(values.status)} className={'status-info'}>{values.status}</SenNetPopover></span>}</h4>
         </Row>
         {adminGroup && data.pipeline_message && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid')) &&
             <SenNetAlert className={"h6"} variant={'warning'} text={data.pipeline_message} icon={<ExclamationTriangleFill/>}/>
