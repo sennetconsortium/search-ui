@@ -3,14 +3,15 @@ import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import AppContext from "../../../../context/AppContext";
+import {equals} from "../../js/functions";
 
 export default function Description({data, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate}) {
 
-    const {isLoggedIn} = useContext(AppContext)
+    const {isLoggedIn, cache} = useContext(AppContext)
 
         return (
             <SenNetAccordion title={'Summary'}>
-                {data?.description &&
+                {data?.description && !equals(data.entity_type, cache.entities.upload) &&
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
                             <Card.Subtitle>DOI Abstract</Card.Subtitle>
@@ -22,7 +23,7 @@ export default function Description({data, labId, primaryDateTitle, primaryDate,
                     {isLoggedIn() && labId &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
-                                <Card.Subtitle>Lab ID</Card.Subtitle>
+                                <Card.Subtitle>{equals(data.entity_type, cache.entities.upload) ? 'Title': 'Lab ID'}</Card.Subtitle>
                                 <Card.Text>{labId}</Card.Text>
                             </Card.Body>
                         </Card>

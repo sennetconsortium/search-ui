@@ -128,6 +128,7 @@ function ViewUpload() {
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
                                                          labId={data.title}
+                                                         data={data}
                                             />
 
                                             {/*Files*/}
