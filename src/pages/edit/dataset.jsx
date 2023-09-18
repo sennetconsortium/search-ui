@@ -223,6 +223,7 @@ export default function EditDataset() {
     }
 
     const modalResponse = (response) => {
+        setValues({...values, status: response.status})
         setModalDetails({
             entity: cache.entities.dataset,
             type: (response.data_types ? response.data_types[0] : null),
@@ -517,7 +518,7 @@ export default function EditDataset() {
                                             text={<>Revert this <code>Dataset</code> back to <span className={`${getStatusColor('New')} badge`}>New</span> or <span className={`${getStatusColor('Submitted')} badge`}>Submitted</span>  status.
                                                </>}
                                             className={'revert-button'}>
-                                                <DatasetRevertButton onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
+                                                <DatasetRevertButton data={data} onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
                                         </SenNetPopover>
                                         }
                                     </div>
