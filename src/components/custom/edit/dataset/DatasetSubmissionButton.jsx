@@ -38,7 +38,7 @@ export default class DatasetSubmissionButton extends React.Component {
                         this.hideModal()
                     }}
                     actionButtonLabel={this.props.btnLabel}
-                    actionBtnClassName={'js-btn--submit'}
+                    actionBtnClassName={this.props.actionBtnClassName || 'js-btn--submit'}
                     showCloseButton={true}
                     closeButtonLabel={'Close'}
                 />

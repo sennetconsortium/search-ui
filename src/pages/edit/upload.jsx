@@ -251,10 +251,27 @@ function EditUpload() {
                                             text={<>Validate upload.
                                             </>}
                                             className={'validate-button'}>
-                                            <Button className="me-2" variant="outline-primary rounded-0"
-                                                    onClick={handleValidate}>
-                                                Validate
-                                            </Button>
+                                            <DatasetSubmissionButton
+                                                actionBtnClassName={'js-btn--validate'}
+                                                btnLabel={"Validate"}
+                                                modalBody={<div><p>By clicking "Validate" this <code>Upload</code> will
+                                                    have its status set to <span className={`${getStatusColor('Valid')} badge`}>Valid</span> if upload checks are met and
+                                                    be ready for submitting.</p>
+                                                </div>}
+                                                onClick={handleValidate} disableSubmit={disableSubmit}/>
+                                        </SenNetPopover>}
+
+                                        {adminGroup && isEditMode() && (equals(data['status'], 'Valid') || equals(data['status'], 'Submitted')) && <SenNetPopover
+                                            text={<>Reorganize this <code>Upload</code>.
+                                            </>}
+                                            className={'reorganize-button'}>
+                                            <DatasetSubmissionButton
+                                                actionBtnClassName={'js-btn--reorganize'}
+                                                btnLabel={"Validate"}
+                                                modalBody={<div><p>By clicking "Reorganize" this <code>Upload</code> will
+                                                    have its status set to <span className={`${getStatusColor('Processing')} badge`}>Processing</span> and corresponding Datasets and respective directories created and moved accordingly.</p>
+                                                </div>}
+                                                onClick={handleReorganize} disableSubmit={disableSubmit}/>
                                         </SenNetPopover>}
 
                                         {adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) && <SenNetPopover
