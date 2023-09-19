@@ -26,7 +26,7 @@ function DatasetRevertButton({disableSubmit, onClick, onStatusChange, data}) {
             <AppModal
                 className={`modal--ctaConfirm`}
                 showModal={show}
-                modalTitle={'Select Dataset Status'}
+                modalTitle={`Select ${data.entity_type} Status`}
                 modalBody={<div>
                     <Form.Group className="mb-3" controlId="status">
                         <Form.Label>Choose a status to revert this <code>{data.entity_type}</code> to, then click [Revert] to apply your changes.
