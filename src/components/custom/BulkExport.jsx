@@ -60,10 +60,16 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
             setTotalSelected(0)
         })
 
-        $('.sui-check-all').on('DOMSubtreeModified', (e) =>{
-            setTotalSelected(getTotal())
-        })
-    })
+        const target = $('.sui-check-all')
+        const observer = new MutationObserver((_) => setTotalSelected(getTotal()))
+        observer.observe(target[0], { attributes: true, childList: true, subtree: true })
+
+        return () => { 
+            // cleanup on unmount
+            $('.clear-filter-button').off('click');
+            observer.disconnect()
+        }
+    }, [])
 
     const toggleCheckAll = (e, setTotalSelected) => {
         const $el = $(e.currentTarget)
