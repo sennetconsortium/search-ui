@@ -1,8 +1,8 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import $ from "jquery";
 import Dropdown from 'react-bootstrap/Dropdown'
 import PropTypes from "prop-types";
-import SenNetPopover, {SenPopoverOptions} from "../SenNetPopover";
+import SenNetPopover from "../SenNetPopover";
 import {autoBlobDownloader, equals} from "./js/functions";
 
 export const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
