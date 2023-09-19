@@ -254,6 +254,7 @@ function EditUpload() {
                                             <DatasetSubmissionButton
                                                 actionBtnClassName={'js-btn--validate'}
                                                 btnLabel={"Validate"}
+                                                modalTitle={'Validation'}
                                                 modalBody={<div><p>By clicking "Validate" this <code>Upload</code> will
                                                     have its status set to <span className={`${getStatusColor('Valid')} badge`}>Valid</span> if upload checks are met and
                                                     be ready for submitting.</p>
@@ -267,7 +268,8 @@ function EditUpload() {
                                             className={'reorganize-button'}>
                                             <DatasetSubmissionButton
                                                 actionBtnClassName={'js-btn--reorganize'}
-                                                btnLabel={"Validate"}
+                                                btnLabel={"Reorganize"}
+                                                modalTitle={'Reorganization'}
                                                 modalBody={<div><p>By clicking "Reorganize" this <code>Upload</code> will
                                                     have its status set to <span className={`${getStatusColor('Processing')} badge`}>Processing</span> and corresponding Datasets and respective directories created and moved accordingly.</p>
                                                 </div>}

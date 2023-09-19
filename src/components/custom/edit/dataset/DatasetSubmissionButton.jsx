@@ -30,7 +30,7 @@ export default class DatasetSubmissionButton extends React.Component {
                 <AppModal
                     className={`modal--ctaConfirm`}
                     showModal={this.state.showModal}
-                    modalTitle={'Confirm Submission'}
+                    modalTitle={`Confirm ${this.props.modalTitle || 'Submission'}`}
                     modalBody={this.props.modalBody}
                     handleClose={this.hideModal}
                     handleHome={() => {
