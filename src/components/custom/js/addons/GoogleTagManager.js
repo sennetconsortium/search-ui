@@ -124,7 +124,7 @@ class GoogleTagManager extends Addon {
     }
 
     cta() {
-        $('[role="button"], .btn, button').on('click', ((e) => {
+        $('body').on('click', '[role="button"], .btn, button', ((e) => {
             this.handleCta(e)
         }).bind(this))
     }
