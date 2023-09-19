@@ -104,7 +104,7 @@ class GoogleTagManager extends Addon {
         const className = $el.attr('class')
         this.event = 'cta'
         let action
-        const actions = ['json', 'submit', 'login', 'save']
+        const actions = ['json', 'submit', 'login', 'save', 'revert', 'validate', 'reorganize']
         if (className) {
             for (let i = 0; i < actions.length; i++) {
                 if (className.includes(actions[i])){
