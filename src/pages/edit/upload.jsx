@@ -190,7 +190,7 @@ function EditUpload() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={cache.entities.upload} isEditMode={isEditMode()} data={data} values={values} />
+                                <EntityHeader adminGroup={adminGroup} entity={cache.entities.upload} isEditMode={isEditMode()} data={data} values={values} />
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSave} id={"upload-form"}>
