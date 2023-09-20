@@ -67,10 +67,12 @@ class GoogleTagManager extends Addon {
 
     handleDateFacets(e) {
         // const label = this.currentTarget(e).val()
+        this.event = 'facets'
         this.gtm({ group: this.group, label: this.subGroup, trail: `${this.group}.${this.subGroup}` })
     }
 
     handleNumericFacets(e) {
+        this.event = 'facets'
         let label = this.currentTarget(e).find('input').val()
         this.gtm({ group: this.group, label, trail: `${this.group}.${label}` })
     }
@@ -90,7 +92,6 @@ class GoogleTagManager extends Addon {
         body.addEventListener('click', ((e) => {
             const el = e.target
             if (el.classList.contains(`${pre}checkbox`) || el.classList.contains(`${pre}option-input-wrapper`)) {
-                //this.stop(e)
                 this.group = $(el).parents(sel).parent().find(this.sel.facets.title).text()
                 this.handleFacets(e)
             }
@@ -114,12 +115,19 @@ class GoogleTagManager extends Addon {
         const sel = this.storeLoaded('numericFacets')
         if (!sel) return
         $('body').on(
-            'click',
+            'DOMSubtreeModified',
             `${sel} .MuiSlider-thumb`,
             ((e) => {
                 this.stop(e)
-                this.group = this.currentTarget(e).parents(sel).parent().parent().find(this.sel.facets.title).text()
-                this.handleNumericFacets(e)
+                const $el = this.currentTarget(e)
+                let val = $el.attr('data-val')
+                let ioVal = $el.find('input').val()
+                // on DOMSubtreeModified, multiple triggers for same value, so only gtm once
+                if (val !== ioVal) {
+                    $el.attr('data-val', ioVal)
+                    this.group = this.currentTarget(e).parents(sel).parent().parent().find(this.sel.facets.title).text()
+                    this.handleNumericFacets(e)
+                }
             }).bind(this)
         )
     }
@@ -142,7 +150,7 @@ class GoogleTagManager extends Addon {
 
     getPath() {
         const path = window.location.pathname + window.location.search
-        return path > 70 ? window.location : path;
+        return path.length > 70 ? window.location.pathname : path;
     }
     handleLinks(e) {
         this.event = 'links'
