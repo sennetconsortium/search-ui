@@ -53,7 +53,7 @@ class GoogleTagManager extends Addon {
 
     handleFacets(e) {
         const label = this.currentTarget(e).text()
-        this.gtm({ group: this.group, label })
+        this.gtm({ group: this.group, label, trail: `${this.group}.${label}` })
     }
 
     facets() {
