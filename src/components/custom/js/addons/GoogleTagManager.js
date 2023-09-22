@@ -4,6 +4,11 @@ import $ from 'jquery'
 class GoogleTagManager extends Addon {
     constructor(el, args) {
         super(el, args)
+        this.sel = {
+            facets: {
+                title: '.sui-facet__title'
+            }
+        }
         this.extractEvent()
         this.modules()
     }
@@ -26,10 +31,14 @@ class GoogleTagManager extends Addon {
             case 'facets':
                 this.facets()
                 break
+            case 'dateFacets':
+                this.dateFacets()
+                break
             case 'results':
                 this.results()
                 break
             default:
+                this.numericFacets() // As these facets can be conditional
                 this.page()
                 this.cta()
                 this.links()
@@ -52,17 +61,73 @@ class GoogleTagManager extends Addon {
     }
 
     handleFacets(e) {
-        const label = this.currentTarget(e).text()
-        this.gtm({ group: this.group, label })
+        const label = $(e.target).parent().find('.sui-multi-checkbox-facet__input-text').text()
+        this.gtm({ group: this.group, label, trail: `${this.group}.${label}` })
+    }
+
+    handleDateFacets(e) {
+        // const label = this.currentTarget(e).val()
+        this.event = 'facets'
+        this.gtm({ group: this.group, label: this.subGroup, trail: `${this.group}.${this.subGroup}` })
+    }
+
+    handleNumericFacets(e) {
+        this.event = 'facets'
+        let label = this.currentTarget(e).find('input').val()
+        this.gtm({ group: this.group, label, trail: `${this.group}.${label}` })
+    }
+
+    storeLoaded(key) {
+        const $body = $('body')
+        if ($body.data(key)) return null
+        $body.attr(`data-${key}`, true)
+        return `.js-gtm--${key}`
     }
 
     facets() {
-        this.group = this.el.parent().find('.sui-facet__title').text()
-        this.el.on(
-            'click',
-            '.sui-multi-checkbox-facet__option-input-wrapper',
-            ((e) => {
+        const sel = this.storeLoaded('facets')
+        if (!sel) return
+        const pre = 'sui-multi-checkbox-facet__'
+        const body = document.querySelector('body')
+        body.addEventListener('click', ((e) => {
+            const el = e.target
+            if (el.classList.contains(`${pre}checkbox`) || el.classList.contains(`${pre}option-input-wrapper`)) {
+                this.group = $(el).parents(sel).parent().find(this.sel.facets.title).text()
                 this.handleFacets(e)
+            }
+        }).bind(this),true)
+    }
+
+    dateFacets() {
+        this.group = this.el.parent().find(this.sel.facets.title).text()
+        this.subGroup = this.el.find('.sui-multi-checkbox-facet').text()
+        this.el.on(
+            'change',
+            'input',
+            ((e) => {
+                this.stop(e)
+                this.handleDateFacets(e)
+            }).bind(this)
+        )
+    }
+
+    numericFacets() {
+        const sel = this.storeLoaded('numericFacets')
+        if (!sel) return
+        $('body').on(
+            'DOMSubtreeModified',
+            `${sel} .MuiSlider-thumb`,
+            ((e) => {
+                this.stop(e)
+                const $el = this.currentTarget(e)
+                let val = $el.attr('data-val')
+                let ioVal = $el.find('input').val()
+                // on DOMSubtreeModified, multiple triggers for same value, so only gtm once
+                if (val !== ioVal) {
+                    $el.attr('data-val', ioVal)
+                    this.group = this.currentTarget(e).parents(sel).parent().parent().find(this.sel.facets.title).text()
+                    this.handleNumericFacets(e)
+                }
             }).bind(this)
         )
     }
@@ -85,7 +150,7 @@ class GoogleTagManager extends Addon {
 
     getPath() {
         const path = window.location.pathname + window.location.search
-        return path > 70 ? window.location : path;
+        return path.length > 70 ? window.location.pathname : path;
     }
     handleLinks(e) {
         this.event = 'links'
@@ -104,7 +169,7 @@ class GoogleTagManager extends Addon {
         const className = $el.attr('class')
         this.event = 'cta'
         let action
-        const actions = ['json', 'submit', 'login', 'save']
+        const actions = ['json', 'submit', 'login', 'save', 'revert', 'validate', 'reorganize']
         if (className) {
             for (let i = 0; i < actions.length; i++) {
                 if (className.includes(actions[i])){
@@ -124,7 +189,7 @@ class GoogleTagManager extends Addon {
     }
 
     cta() {
-        $('[role="button"], .btn, button').on('click', ((e) => {
+        $('body').on('click', '[role="button"], .btn, button', ((e) => {
             this.handleCta(e)
         }).bind(this))
     }
