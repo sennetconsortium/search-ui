@@ -8,6 +8,7 @@ import ClipboardCopy from "../../../ClipboardCopy";
 import VersionDropdown from "./VersionDropdown";
 import {ViewHeaderBadges} from "./ViewHeaderBadges";
 import SenNetPopover from "../../../SenNetPopover";
+import VersionsDropdown from "./VersionsDropdown";
 
 const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
     const {_t, cache} = useContext(AppContext)
@@ -30,6 +31,7 @@ const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
                             variant="outline-primary rounded-0"><FiletypeJson/></Button>
                 </SenNetPopover>
 
+                {/*{equals(entity, cache.entities.dataset) && <VersionsDropdown data={data}/>}*/}
                 {equals(entity, cache.entities.dataset) && equals(data.status, 'published') &&
                     <VersionDropdown data={data}/>
                 }
