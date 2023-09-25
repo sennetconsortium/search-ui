@@ -221,7 +221,7 @@ function EditUpload() {
                                         {getCancelBtn('upload')}
 
 
-                                        {!equals(data['status'], 'Reorganized') &&
+                                        {!equals(data['status'], 'Processing') && !equals(data['status'], 'Reorganized') &&
                                             <SenNetPopover text={<>Save changes to this <code>Upload</code>.</>} className={'save-button'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--save"
                                                         className={'me-2'}
@@ -232,7 +232,7 @@ function EditUpload() {
                                             </SenNetPopover>
                                         }
 
-                                        {isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Valid')) &&
+                                        {!equals(data['status'], 'Processing') && isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Valid')) &&
                                             <SenNetPopover text={<>Mark this <code>Upload</code> as "Submitted" and ready for reorganizing.</>} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Submit"}
@@ -262,7 +262,7 @@ function EditUpload() {
                                                 onClick={handleValidate} disableSubmit={disableSubmit}/>
                                         </SenNetPopover>}
 
-                                        {adminGroup && isEditMode() && (equals(data['status'], 'Valid') || equals(data['status'], 'Submitted')) && <SenNetPopover
+                                        {!equals(data['status'], 'Processing') && adminGroup && isEditMode() && (equals(data['status'], 'Valid') || equals(data['status'], 'Submitted')) && <SenNetPopover
                                             text={<>Reorganize this <code>Upload</code>.
                                             </>}
                                             className={'reorganize-button'}>
@@ -276,7 +276,7 @@ function EditUpload() {
                                                 onClick={handleReorganize} disableSubmit={disableSubmit}/>
                                         </SenNetPopover>}
 
-                                        {adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) && <SenNetPopover
+                                        {!equals(data['status'], 'Processing') && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) && <SenNetPopover
                                             text={<>Revert this <code>Upload</code> back to <span className={`${getStatusColor('New')} badge`}>New</span> or <span className={`${getStatusColor('Submitted')} badge`}>Submitted</span>  status.
                                             </>}
                                             className={'revert-button'}>
