@@ -82,23 +82,23 @@ class RUIIntegration extends Component {
     }
 
     updateRUIConfig() {
-        const organ_info = this.props.cache.organTypes[this.props.organ].split('(')
-        const organ_side = organ_info[1]?.replace(/\(|\)/g, '').toLowerCase()
+        const organ = this.props.cache.organTypes[this.props.organ]
+        const [_, organType, organSide] = organ.match(/^((?:\w)+(?: \w+)?)(?: \((Right|Left)\))?$/) 
         const sex = this.props.sex
-        const user_name = this.props.user || ''
+        const [firstName, lastName] = this.props.user.split(' ')
         const location = parseJson(this.props.blockStartLocation)
         const self = this
 
         const rui = this.ruiRef.current
-        rui.user = {
-            firstName: user_name.split(' ')[0],
-            lastName: user_name.split(' ')[1]
-        }
         rui.organ = {
-            ontologyId: organ_info[0].trim(),
-            name: organ_info[0].trim(),
-            sex: sex || 'female',
-            side: organ_side
+            ontologyId: organType.toLowerCase(),
+            name: organType.toLowerCase(),
+            sex: sex?.toLowerCase(),
+            side: organSide?.toLowerCase(),
+        }
+        rui.user = {
+            firstName: firstName || '',
+            lastName: lastName || '',
         }
         rui.register = function (tissueBlockSpatialData) {
             console.log(tissueBlockSpatialData)
