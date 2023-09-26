@@ -394,6 +394,7 @@ function EditSample() {
                 {error &&
                     <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
                 }
+
                 {showRui &&
                     <RuiIntegration
                         organ={ancestorOrgan}
@@ -406,7 +407,7 @@ function EditSample() {
                     />
                 }
 
-                {data && !error &&
+                {!showRui && data && !error &&
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
@@ -518,7 +519,7 @@ function EditSample() {
                     </div>
                 }
 
-                {!showModal && <AppFooter/>}
+                {!showRui && !showModal && <AppFooter/>}
             </>
         )
     }
