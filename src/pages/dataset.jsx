@@ -22,6 +22,7 @@ import SidebarBtn from "../components/SidebarBtn";
 import {kuppe2022nature} from "../vitessce-view-config/kuppe_2022_nature";
 import Metadata from "../components/custom/entities/Metadata";
 import FileTreeView from "../components/custom/entities/dataset/FileTreeView";
+import Upload from "../components/custom/entities/dataset/Upload";
 
 function ViewDataset() {
     const [data, setData] = useState(null)
@@ -227,6 +228,9 @@ function ViewDataset() {
                                                 secondaryDateTitle="Modification Date"
                                                 secondaryDate={data.last_modified_timestamp}
                                                 data={data}/>
+
+                                            {/*Upload*/}
+                                            <Upload data={{sennet_id: 'SNT825.LVPW.557', uuid: '9ffd715fc6ecb318e29a3b3ce34e2573'}} />
 
                                             {/* Vitessce */}
                                             <SennetVitessce data={data}/>
