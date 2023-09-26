@@ -36,9 +36,9 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         >
             <Container fluid={true}>
                 <Navbar.Brand href={APP_ROUTES.search}>
-                    <Image
+                    <img
                         alt={_t("SenNet logo")}
-                        src={logo}
+                        src={'/static/sennet-logo.png'}
                         width="30"
                         height="30"
                         className="d-inline-block align-top"
