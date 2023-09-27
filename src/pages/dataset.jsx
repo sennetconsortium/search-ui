@@ -159,6 +159,13 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
+                                            {data.upload && data.upload.uuid &&
+                                                <li className="nav-item">
+                                                    <a href="#Associated Upload"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Upload</a>
+                                                </li>
+                                            }
                                             {showVitessce(isPrimaryDataset, data) &&
                                                 <li className="nav-item">
                                                     <a href="#Vitessce"
@@ -230,7 +237,7 @@ function ViewDataset() {
                                                 data={data}/>
 
                                             {/*Upload*/}
-                                            <Upload data={{sennet_id: 'SNT825.LVPW.557', uuid: '9ffd715fc6ecb318e29a3b3ce34e2573'}} />
+                                            {data.upload && data.upload.uuid && <Upload data={data.upload} />}
 
                                             {/* Vitessce */}
                                             <SennetVitessce data={data}/>
