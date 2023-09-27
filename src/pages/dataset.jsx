@@ -22,6 +22,7 @@ import SidebarBtn from "../components/SidebarBtn";
 import {kuppe2022nature} from "../vitessce-view-config/kuppe_2022_nature";
 import Metadata from "../components/custom/entities/Metadata";
 import FileTreeView from "../components/custom/entities/dataset/FileTreeView";
+import Upload from "../components/custom/entities/dataset/Upload";
 
 function ViewDataset() {
     const [data, setData] = useState(null)
@@ -158,6 +159,13 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
+                                            {data.upload && data.upload.uuid &&
+                                                <li className="nav-item">
+                                                    <a href="#Associated Upload"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Upload</a>
+                                                </li>
+                                            }
                                             {showVitessce(isPrimaryDataset, data) &&
                                                 <li className="nav-item">
                                                     <a href="#Vitessce"
@@ -227,6 +235,9 @@ function ViewDataset() {
                                                 secondaryDateTitle="Modification Date"
                                                 secondaryDate={data.last_modified_timestamp}
                                                 data={data}/>
+
+                                            {/*Upload*/}
+                                            {data.upload && data.upload.uuid && <Upload data={data.upload} />}
 
                                             {/* Vitessce */}
                                             <SennetVitessce data={data}/>
