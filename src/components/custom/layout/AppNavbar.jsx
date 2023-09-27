@@ -21,10 +21,30 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         window.location.replace(url)
     }
 
+    const supportedSingleRegister = () => {
+        let entities = Object.keys(cache.entities)
+        let notSupported = ['publication entity', 'upload']
+        return entities.filter(entity => !notSupported.includes(entity))
+    }
+
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication']
-        return entities.filter(entity => !notSupported.includes(entity))
+
+        let notSupported = ['publication entity']
+        entities = entities.filter(entity => !notSupported.includes(entity))
+
+        const elem = entities.shift()
+        // Insert upload before dataset
+        entities.splice(2, 0, elem)
+        return entities
+    }
+
+    const formatRegisterUrl = (entity, range) => {
+        if (equals(entity, 'upload') || equals(range, 'single')) {
+            return `/edit/${entity}?uuid=register`
+        } else {
+           return `/edit/bulk/${entity}?action=register`
+        }
     }
 
 
@@ -36,9 +56,9 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         >
             <Container fluid={true}>
                 <Navbar.Brand href={APP_ROUTES.search}>
-                    <Image
+                    <img
                         alt={_t("SenNet logo")}
-                        src={logo}
+                        src={'/static/sennet-logo.png'}
                         width="30"
                         height="30"
                         className="d-inline-block align-top"
@@ -65,15 +85,15 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                     </NavDropdown.Item>
 
                                     <div className={'submenu'} id={`submenu-md-${range}`}>
-                                        {equals(range, 'single') && Object.keys(cache.entities).map((entity) => (
-                                            <NavDropdown.Item key={entity} href={`/edit/${entity}?uuid=register`}>
-                                                {_t(entity)}
+                                        {equals(range, 'single') && supportedSingleRegister().map((entity) => (
+                                            <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
+                                                {equals(entity, cache.entities.upload) ? 'Data Upload' : _t(entity)}
                                             </NavDropdown.Item>
                                         ))}
 
                                         {equals(range, 'bulk') && supportedBulkRegister().map((entity) => (
-                                            <NavDropdown.Item key={entity} href={`/edit/bulk/${entity}?action=register`}>
-                                                {entity}s
+                                            <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
+                                                {equals(entity, 'upload') ? 'Data': `${entity}s`}
                                             </NavDropdown.Item>
                                         ))}
                                     </div>

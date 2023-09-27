@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState, useContext } from 'react'
+import React, {createContext, useEffect, useState, useContext} from 'react'
 import { useRouter } from 'next/router'
 import {
     get_read_write_privileges,
@@ -61,7 +61,13 @@ export const EntityProvider = ({ children }) => {
         setShowModal(false)
     }
 
-    const handleClose = () => setShowModal(false)
+    const handleClose = () => {
+        // Update the data such that buttons are displayed correctly after change
+        if (isEditMode() && response && response.status) {
+            setData({...data, status: response.status})
+        }
+        setShowModal(false)
+    }
     const handleHome = () => router.push(APP_ROUTES.search)
 
     // only executed on init rendering, see the []

@@ -539,11 +539,13 @@ export default function BulkCreate({
         return lowercase ? verb.toLowerCase() : verb
     }
 
+    const isMouse = () => equals(subType, cache.sourceTypes.Mouse)
+
     const getTitle = () => {
         const entity = cache.entities[entityType]
         let title = `${getVerb()} ${entity}s`
         if (isMetadata) {
-            const subTypeText = equals(subType, cache.sourceTypes.Mouse) ? "Murines'" : `${subType}s'`
+            const subTypeText = isMouse() ? "Murines'" : `${subType}s'`
             title = `${getVerb()} ${entity} ${subTypeText} Metadata`
         }
         return title
@@ -557,7 +559,8 @@ export default function BulkCreate({
     const getDocsUrl = () => {
         const url = new URL(getDocsRootURL());
         url.pathname = isMetadata ? 'libraries/ingest-validation-tools/schemas' : 'registration/bulk-registration'
-        url.pathname += isMetadata ? `/${entityType}-${subType.toLowerCase()}` : `/${entityType}`
+        const _subType = isMouse() ? 'murine' : subType
+        url.pathname += isMetadata ? `/${entityType}-${_subType.toLowerCase()}` : `/${entityType}`
         return url.href
     }
 
