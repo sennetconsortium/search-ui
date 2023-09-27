@@ -196,7 +196,10 @@ export const SEARCH_ENTITIES = {
             'data_types',
             'status',
             'origin_sample.organ',
-            'organ'
+            'organ',
+            'title',
+            'description',
+            'group_uuid'
         ],
     },
     initialState: {

@@ -89,10 +89,6 @@ export async function get_source_types() {
 
 export async function get_entities() {
     let list = await get_ontology_from_cache(getUbkgCodes().entities)
-    // remove entities other than source, sample, dataset
-    list = list.filter(function (element) {
-        return element.code <= "C050004"
-    });
     // order the list
     list.sort((a, b) => b.code.localeCompare(a.code))
     return to_key_val(list, true)

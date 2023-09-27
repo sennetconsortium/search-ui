@@ -4,7 +4,7 @@ import AppModal from "../../../AppModal";
 import {Button, Form, Badge} from 'react-bootstrap'
 import {getStatusColor} from "../../js/functions";
 
-function DatasetRevertButton({disableSubmit, onClick, onStatusChange}) {
+function DatasetRevertButton({disableSubmit, onClick, onStatusChange, data}) {
     const [show, setShow] = useState(false)
     useEffect(() => {
     }, [])
@@ -26,10 +26,10 @@ function DatasetRevertButton({disableSubmit, onClick, onStatusChange}) {
             <AppModal
                 className={`modal--ctaConfirm`}
                 showModal={show}
-                modalTitle={'Select Dataset Status'}
+                modalTitle={`Select ${data.entity_type} Status`}
                 modalBody={<div>
                     <Form.Group className="mb-3" controlId="status">
-                        <Form.Label>Choose a status to revert this <code>Dataset</code> to, then click [Revert] to apply your changes.
+                        <Form.Label>Choose a status to revert this <code>{data.entity_type}</code> to, then click [Revert] to apply your changes.
                         </Form.Label>
                         <Form.Select required aria-label="status-select"
                                      onChange={e => onStatusChange(e, e.target.id, e.target.value)}>

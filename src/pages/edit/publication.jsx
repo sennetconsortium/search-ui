@@ -6,13 +6,11 @@ import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
-import {get_headers, update_create_dataset, update_create_entity} from '../../lib/services'
+import {update_create_entity} from '../../lib/services'
 import {
     cleanJson,
     equals,
     fetchEntity,
-    getDataTypesByProperty,
-    getHeaders,
     getRequestHeaders
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
