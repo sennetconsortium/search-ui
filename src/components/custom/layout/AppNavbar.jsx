@@ -7,7 +7,7 @@ import Image from 'next/image'
 import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
 
-const AppNavbar = ({hidden, signoutHidden}) => {
+const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
     const {_t, isLoggedIn, logout, cache, supportedMetadata} = useContext(AppContext)
 
 
@@ -47,9 +47,9 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         }
     }
 
-
     return (
         <Navbar
+            ref={innerRef}
             variant={'dark'}
             expand="lg"
             className={`sticky-top bg--navBarGrey`}
