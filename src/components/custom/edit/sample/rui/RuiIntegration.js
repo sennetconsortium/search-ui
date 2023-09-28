@@ -25,29 +25,7 @@ class RUIIntegration extends Component {
         this.updateHeight();
         this.updateRUIConfig();
         window.addEventListener("resize", this.updateHeight.bind(this));
-
-        const ruiRef = this.ruiRef.current;
-        const ruiRefObserver = new MutationObserver((_) => {
-            // Check if the register button is present, if so then the rui is loaded
-            const element = ruiRef.getElementsByClassName("ccf-review-button");
-            if (element.length) {
-                this.ruiDidLoad();
-                ruiRefObserver.disconnect();
-            }
-        });
-        ruiRefObserver.observe(ruiRef, { childList: true });
-    }
-
-    /**
-     * Update ccf-rui config
-     * @param prevProps
-     * @param prevState
-     * @param snapShot
-     */
-    componentDidUpdate(prevProps, prevState, snapShot) {
-        if (this.ruiRef.current) {
-            this.updateRUIConfig();
-        }
+        this.registerRuiLoadListener();
     }
 
     /**
@@ -69,6 +47,19 @@ class RUIIntegration extends Component {
             }px`;
             this.setState({ viewHeight: height });
         }
+    }
+
+    registerRuiLoadListener() {
+        const ruiRef = this.ruiRef.current;
+        const ruiRefObserver = new MutationObserver((_) => {
+            // Check if the register button is present, if so then the rui is loaded
+            const element = ruiRef.getElementsByClassName("ccf-review-button");
+            if (element.length) {
+                this.ruiDidLoad();
+                ruiRefObserver.disconnect();
+            }
+        });
+        ruiRefObserver.observe(ruiRef, { childList: true });
     }
 
     ruiDidLoad() {
@@ -121,7 +112,6 @@ class RUIIntegration extends Component {
     }
 
     clickRegister() {
-        console.log("clickRegister", this.registerButtonRef.current);
         const registerButton = this.registerButtonRef.current;
         if (registerButton) {
             registerButton.getElementsByTagName("button")[0].click();
