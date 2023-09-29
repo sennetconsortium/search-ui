@@ -25,6 +25,7 @@ class RUIIntegration extends Component {
         this.updateHeight();
         this.updateRUIConfig();
         window.addEventListener("resize", this.updateHeight.bind(this));
+        window.addEventListener("beforeunload", this.beforeUnload.bind(this));
         this.registerRuiLoadListener();
     }
 
@@ -33,6 +34,7 @@ class RUIIntegration extends Component {
      */
     componentWillUnmount() {
         window.removeEventListener("resize", this.updateHeight.bind(this));
+        window.removeEventListener("resize", this.beforeUnload.bind(this));
     }
 
     updateHeight() {
@@ -116,6 +118,11 @@ class RUIIntegration extends Component {
         if (registerButton) {
             registerButton.getElementsByTagName("button")[0].click();
         }
+    }
+
+    beforeUnload(event) {
+        event.preventDefault();
+        event.returnValue = "";
     }
 
     render() {
