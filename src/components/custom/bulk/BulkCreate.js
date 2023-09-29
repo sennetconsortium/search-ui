@@ -13,8 +13,8 @@ import Box from "@mui/material/Box";
 import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
 import {Row, Col, Stack} from "react-bootstrap";
-import {Download, ArrowRightSquareFill} from "react-bootstrap-icons";
-import {getDocsRootURL, getIngestEndPoint} from "../../../config/config";
+import {Download, ArrowRightSquareFill, ExclamationTriangleFill} from "react-bootstrap-icons";
+import {getDocsRootURL, getIngestEndPoint, getRootURL} from "../../../config/config";
 import Spinner from "../Spinner";
 import AppFooter from "../layout/AppFooter";
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -26,6 +26,7 @@ import {createDownloadUrl, equals} from "../js/functions";
 import AppContext from "../../../context/AppContext";
 import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
 import { get } from 'lodash';
+import SenNetAlert from "../../SenNetAlert";
 
 
 export default function BulkCreate({
@@ -590,6 +591,17 @@ export default function BulkCreate({
                         <FileDownloadIcon/> {' '} EXAMPLE.TSV
                     </a>
                     <h1 className={'text-center'}>{getTitle()}</h1>
+                    {equals(entityType, cache.entities.dataset) &&
+                        <SenNetAlert variant={'warning'}
+                                     text={<>This page is intended for registering datasets in bulk. This process will
+                                         yield individual SenNet IDs and Globus locations per dataset. Data providers
+                                         will need to transfer their data files to each dataset individually.
+                                         <br></br><br></br>
+                                         If a data provider would prefer to transfer their data files in bulk, CODCC Curation
+                                         recommends creating an upload through <a
+                                             href={getRootURL() + 'edit/upload?uuid=register'}>this page</a>.</>}
+                                     icon={<ExclamationTriangleFill/>}/>
+                    }
                     <div className={'p-4 text-center'}>
                         To register multiple items at one time, upload a tsv file in the format specified by the example file.<br/>
                         {getDocsText()}
