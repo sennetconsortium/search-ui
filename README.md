@@ -113,7 +113,7 @@ The tool is integrated as a web component with a react component wrapping it. Th
 />
 ```
 
-The react component is `src/components/custom/edit/sample/rui/RuiIntegration.js`
+The react component is `src/components/custom/edit/sample/rui/RUIIntegration.js`
 
 The tool is only available for human `Block` tissue samples with an ancestor of `Organ`
 
