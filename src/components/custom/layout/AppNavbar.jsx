@@ -1,5 +1,5 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
-import {NAVBAR_TITLE} from '../../../config/config'
+import {getDataIngestBoardEndpoint, NAVBAR_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
 import {useContext} from 'react'
 import AppContext from '../../../context/AppContext'
@@ -157,6 +157,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                 <span>APIs</span>
                             </NavDropdown.Item>
                         </NavDropdown>
+                        <Nav.Link href={getDataIngestBoardEndpoint()} hidden={hidden || !isLoggedIn()}>Data Ingest Board</Nav.Link>
                     </Nav>
                     <Nav>
                         <Nav.Link
