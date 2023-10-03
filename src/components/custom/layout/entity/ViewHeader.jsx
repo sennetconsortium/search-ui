@@ -31,7 +31,7 @@ const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
                             variant="outline-primary rounded-0"><FiletypeJson/></Button>
                 </SenNetPopover>
 
-                {/*{equals(entity, cache.entities.dataset) && <VersionsDropdown data={data}/>}*/}
+                {equals(entity, cache.entities.dataset) && <VersionsDropdown data={data}/>}
                 {equals(entity, cache.entities.dataset) && equals(data.status, 'published') &&
                     <VersionDropdown data={data}/>
                 }
