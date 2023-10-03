@@ -40,7 +40,7 @@ function EditUpload() {
         dataAccessPublic, setDataAccessPublic,
         getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, getGroupName} = useContext(AppContext)
+    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
@@ -117,6 +117,7 @@ function EditUpload() {
 
     const handlePut = async (action, body = {}) => {
         await update_create_dataset(data.uuid, body, action, 'uploads').then((response) => {
+            toggleBusyOverlay(false)
             modalResponse(response)
         }).catch((e) => log.error(e))
     }
@@ -147,6 +148,7 @@ function EditUpload() {
     };
 
     const handleValidate = () => {
+        toggleBusyOverlay(true, <><code>Validate</code> the <code>Upload</code></>)
         handlePut('validate')
     }
 
@@ -163,6 +165,7 @@ function EditUpload() {
     }
 
     const handleReorganize = () => {
+        toggleBusyOverlay(true, <><code>Reorganize</code> the <code>Upload</code></>)
         handlePut('reorganize')
     }
 
@@ -327,6 +330,7 @@ function EditUpload() {
                                                 </SenNetPopover>}
                                         </div>
                                         {getModal()}
+                                        {getBusyOverlay()}
                                     </Form>
                                 </>
                             }
