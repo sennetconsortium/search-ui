@@ -59,7 +59,7 @@ export default function EditDataset() {
         getSampleEntityConstraints,
         buildConstraint, successIcon, errIcon, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, isLoggedIn} = useContext(AppContext)
+    const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
@@ -223,6 +223,7 @@ export default function EditDataset() {
     }
 
     const modalResponse = (response) => {
+        toggleBusyOverlay(false)
         setValues({...values, status: response.status})
         setModalDetails({
             entity: cache.entities.dataset,
@@ -240,6 +241,7 @@ export default function EditDataset() {
             ingest_id: "",
             run_id: ""
         }
+        toggleBusyOverlay(true, <><code>Revert</code> the <code>Dataset</code></>)
         await update_create_dataset(data.uuid, json, editMode).then((response) => {
             modalResponse(response)
         }).catch((e) => log.error(e))
@@ -289,7 +291,7 @@ export default function EditDataset() {
         }).catch((e) => log.error(e))
     }
     
-    const hanldeProcessing = async () => {
+    const handleProcessing = async () => {
         let result = await checkDoi()
         if (result) {
             const requestOptions = {
@@ -298,8 +300,11 @@ export default function EditDataset() {
                 body: JSON.stringify(values)
             }
             const submitDatasetUrl = getIngestEndPoint() + 'datasets/' + data['uuid'] + '/submit'
+            setShowModal(false)
+            toggleBusyOverlay(true, <><code>Process</code> the <code>Dataset</code></>)
             const response = await fetch(submitDatasetUrl, requestOptions)
             let submitResult = await response.text()
+            toggleBusyOverlay(false)
             setSubmissionModal(submitResult, !response.ok)
         }
 
@@ -510,7 +515,7 @@ export default function EditDataset() {
                                                     modalBody={<div><p>By clicking "Process" this <code>Dataset</code> will
                                                         be processed via the Ingest Pipeline and its status set
                                                         to <span className={`${getStatusColor('QA')} badge`}>QA</span>.</p></div>}
-                                                    onClick={hanldeProcessing} disableSubmit={disableSubmit}/>
+                                                    onClick={handleProcessing} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
 
@@ -523,6 +528,7 @@ export default function EditDataset() {
                                         }
                                     </div>
                                     {getModal()}
+                                    {getBusyOverlay()}
                                 </Form>
                             }
                         />
