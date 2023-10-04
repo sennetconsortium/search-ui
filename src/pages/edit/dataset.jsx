@@ -241,7 +241,7 @@ export default function EditDataset() {
             ingest_id: "",
             run_id: ""
         }
-        toggleBusyOverlay(<><code>Revert</code> the <code>Dataset</code></>, true)
+        toggleBusyOverlay(true, <><code>Revert</code> the <code>Dataset</code></>)
         await update_create_dataset(data.uuid, json, editMode).then((response) => {
             modalResponse(response)
         }).catch((e) => log.error(e))
@@ -291,7 +291,7 @@ export default function EditDataset() {
         }).catch((e) => log.error(e))
     }
     
-    const hanldeProcessing = async () => {
+    const handleProcessing = async () => {
         let result = await checkDoi()
         if (result) {
             const requestOptions = {
@@ -515,7 +515,7 @@ export default function EditDataset() {
                                                     modalBody={<div><p>By clicking "Process" this <code>Dataset</code> will
                                                         be processed via the Ingest Pipeline and its status set
                                                         to <span className={`${getStatusColor('QA')} badge`}>QA</span>.</p></div>}
-                                                    onClick={hanldeProcessing} disableSubmit={disableSubmit}/>
+                                                    onClick={handleProcessing} disableSubmit={disableSubmit}/>
                                             </SenNetPopover>
                                         }
 
