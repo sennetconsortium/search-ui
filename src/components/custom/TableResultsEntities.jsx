@@ -154,6 +154,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                     typeIndex = index
                     const hasOneEntity = filter.values.length === 1
                     const entityType = filter.values[0]
+                    let includeLabIdCol = true
                     if (hasOneEntity && equals(entityType, cache.entities.source)) {
                         columns = sourceColumns
                     } else if (hasOneEntity && equals(entityType, cache.entities.sample)) {
@@ -161,11 +162,12 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                     } else if (hasOneEntity && equals(entityType, cache.entities.dataset)) {
                         columns = datasetColumns
                     } else if (hasOneEntity && equals(entityType, cache.entities.upload)) {
+                        includeLabIdCol = false
                         columns = uploadColumns
                     } else {
                         log.debug('Table Results', hasMultipleEntityTypes)
                     }
-                    return defaultColumns({hasMultipleEntityTypes, columns, includeLabIdCol: false});
+                    return defaultColumns({hasMultipleEntityTypes, columns, includeLabIdCol});
                 }
             })
             cols = cols[typeIndex]
