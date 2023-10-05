@@ -22,7 +22,7 @@ const AppModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, sh
                     {modalBody && <div key="modal-body">{modalBody}</div> }
                     {children}
                 </Modal.Body>
-                <Modal.Footer>
+                {(showCloseButton || showHomeButton) && <Modal.Footer>
                     {showCloseButton &&
                         <Button variant="outline-secondary rounded-0" onClick={handleClose || closeModal}>
                             {_t(closeButtonLabel)}
@@ -33,7 +33,7 @@ const AppModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, sh
                             {_t(actionButtonLabel)}
                         </Button>
                     }
-                </Modal.Footer>
+                </Modal.Footer>}
             </Modal>
         </section>
     );

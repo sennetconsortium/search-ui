@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState} from 'react'
+import React, { createContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
 import { goToSearch } from '../components/custom/js/functions'
 import { getCookie, setCookie } from 'cookies-next'
@@ -8,11 +8,16 @@ import {deleteCookies} from "../lib/auth";
 import {APP_ROUTES} from "../config/constants";
 import {getUIPassword} from "../config/config";
 import Swal from 'sweetalert2'
+import AppModal from "../components/AppModal";
+import Spinner from "../components/custom/Spinner";
 
 const AppContext = createContext()
 
 export const AppProvider = ({ cache, children }) => {
     const [isBusy, setIsBusy] = useState(false)
+    const [showModal, setShowModal] = useState(false)
+    const [modalBody, setModalBody] = useState(null)
+    const [modalTitle, setModalTitle] = useState(null)
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const [authorized, setAuthorized] = useState(null)
     const [adminGroup, setAdminGroup] = useState(null)
@@ -193,6 +198,27 @@ export const AppProvider = ({ cache, children }) => {
         }
     }
 
+    const toggleBusyOverlay = (show, action) => {
+        setShowModal(show)
+        if (show && action) {
+            setModalTitle(<span>One moment ...</span>)
+            setModalBody(<div> <Spinner text={<>Currently handling your request to {action}...</>}  /></div>)
+        }
+    }
+
+    const getBusyOverlay = () => {
+        return (
+            <AppModal
+                className={`modal--busy`}
+                showModal={showModal}
+                modalTitle={modalTitle}
+                modalBody={modalBody}
+                showHomeButton={false}
+                showCloseButton={false}
+            />
+        )
+    }
+
     const handleSidebar = () => {
         setSidebarVisible(!sidebarVisible)
     }
@@ -258,7 +284,9 @@ export const AppProvider = ({ cache, children }) => {
                 handleSidebar,
                 sidebarVisible,
                 adminGroup,
-                getGroupName
+                getGroupName,
+                getBusyOverlay,
+                toggleBusyOverlay,
             }}
         >
             {children}
