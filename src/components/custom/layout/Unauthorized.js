@@ -11,10 +11,15 @@ const Unauthorized = () => {
                 <Col xs={6}>
                     <div className={'alert alert-danger text-center'}>
                         <p>
-                            Access denied
+                            You are trying to access the Data Portal. In order to do so, you must have provided a Globus
+                            account during member registration. If you have not provided a Globus account, please go to <a href={"https://profile.sennetconsortium.org/profile"}>https://profile.sennetconsortium.org/profile</a> and
+                            provide your SenNet Data Via Globus.
+
+                            <br></br>With any other questions, please reach out to the <a
+                            href={"mailto:help@sennetconsortium.org"}>SenNet Help Desk</a>.
                         </p>
                         <p>
-                            Check your permissions and log in <a href={APP_ROUTES.login}>here</a>
+                            Once you have completed these steps you may log in again <a href={APP_ROUTES.login}>here</a>.
                         </p>
                     </div>
                 </Col>
