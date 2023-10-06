@@ -157,7 +157,9 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                 <span>APIs</span>
                             </NavDropdown.Item>
                         </NavDropdown>
-                        <Nav.Link href={getDataIngestBoardEndpoint()} target='_blank' hidden={hidden || !isLoggedIn()}>Data Ingest Board</Nav.Link>
+                        {isLoggedIn() &&
+                            <Nav.Link href={getDataIngestBoardEndpoint()} target='_blank'>Data Ingest Board</Nav.Link>
+                        }
                     </Nav>
                     <Nav>
                         <Nav.Link
