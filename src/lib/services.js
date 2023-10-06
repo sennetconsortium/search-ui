@@ -1,7 +1,7 @@
 import {
     getAuth,
     getEntitiesIndex,
-    getEntityEndPoint,
+    getEntityEndPoint, getGlobusToken,
     getIngestEndPoint,
     getSearchEndPoint,
     getUUIDEndpoint
@@ -33,12 +33,21 @@ export async function update_create_dataset(uuid, body, action = "Edit", entityT
     }
 }
 
-export function check_valid_token() {
-    // https://search-api.dev.sennetconsortium.org/entities/search
-    let headers = get_headers()
-    let url = getSearchEndPoint() + getEntitiesIndex() + "/search"
-    return call_service(JSON.stringify({}), url, "POST", headers)
+export async function check_valid_token() {
+    let headers = new Headers();
+    headers.append("Authorization", "Basic " + getGlobusToken())
+    headers.append("Content-Type", "application/x-www-form-urlencoded")
 
+    let formBody = 'token=' + getAuth()
+
+    let url = "https://auth.globus.org/v2/oauth2/token/introspect"
+    console.log(formBody)
+    return await call_service(formBody, url, "POST", headers).then((response) => {
+        return response.active
+    }).catch(error => {
+        log.error('error', error)
+        return false
+    })
 }
 
 export function get_json_header( headers ) {

@@ -9,7 +9,7 @@ const Unauthorized = () => {
         <Container className={'mt-5'}>
             <Row>
                 <Col md={{span: 8, offset:2}}>
-                    <div className={'alert alert-danger text-center'}>
+                    <div className={'alert alert-danger'}>
                         <p>
                             You are trying to access the Data Portal, logged in as <b>{email}</b>.
                             You are not authorized to log into this portal with that account. Please check that
