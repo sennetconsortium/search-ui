@@ -1,4 +1,11 @@
-import {getAuth, getEntityEndPoint, getIngestEndPoint, getUUIDEndpoint} from "../config/config";
+import {
+    getAuth,
+    getEntitiesIndex,
+    getEntityEndPoint,
+    getIngestEndPoint,
+    getSearchEndPoint,
+    getUUIDEndpoint
+} from "../config/config";
 import log from "loglevel";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
@@ -24,6 +31,14 @@ export async function update_create_dataset(uuid, body, action = "Edit", entityT
 
         return call_service(raw, url, method)
     }
+}
+
+export function check_valid_token() {
+    // https://search-api.dev.sennetconsortium.org/entities/search
+    let headers = get_headers()
+    let url = getSearchEndPoint() + getEntitiesIndex() + "/search"
+    return call_service(JSON.stringify({}), url, "POST", headers)
+
 }
 
 export function get_json_header( headers ) {
