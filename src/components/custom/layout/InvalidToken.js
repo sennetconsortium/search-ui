@@ -3,8 +3,7 @@ import {Col, Container, Row} from 'react-bootstrap'
 import {APP_ROUTES} from "../../../config/constants";
 import {getCookie} from "cookies-next";
 
-const Unauthorized = () => {
-    const email = JSON.parse(atob(getCookie('info')))['email']
+const InvalidToken = () => {
     return (
         <Container className={'mt-5'}>
             <Row>
@@ -24,4 +23,4 @@ const Unauthorized = () => {
     )
 }
 
-export default Unauthorized
+export default InvalidToken

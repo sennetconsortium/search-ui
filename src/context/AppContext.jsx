@@ -44,24 +44,30 @@ export const AppProvider = ({ cache, children }) => {
         }
 
         let info = getCookie('info')
+        let groups_token = ""
         if (info) {
             info = atob(info)
             setCookie(
                 'groups_token',
                 JSON.parse(info).groups_token
             )
+            groups_token = JSON.parse(info).groups_token
         } else {
             // Delete in the event info doesn't exist as might have been logged out the system elsewhere.
             deleteCookies()
         }
 
-        check_valid_token().then((response) => {
-            if (typeof response == "boolean") {
-                setValidToken(response)
-            } else {
-                setValidToken(false)
-            }
-        }).catch((error) => setValidToken(false));
+        if(groups_token  != "") {
+            check_valid_token().then((response) => {
+                if (typeof response == "boolean") {
+                    setValidToken(response)
+                } else {
+                    setValidToken(false)
+                }
+            }).catch((error) => setValidToken(false));
+        } else {
+            setValidToken(true)
+        }
 
         get_read_write_privileges()
             .then((response) => {
