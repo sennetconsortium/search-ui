@@ -4,9 +4,11 @@ import {APP_ROUTES} from '../../../config/constants'
 import {useContext} from 'react'
 import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
+import {getCookie} from "cookies-next";
 
 const AppNavbar = ({hidden, signoutHidden}) => {
     const {_t, isLoggedIn, logout, cache, supportedMetadata} = useContext(AppContext)
+    const userEmail = (isLoggedIn() ? JSON.parse(atob(getCookie('info')))['email'] : "")
 
 
     const handleSession = (e) => {
@@ -162,6 +164,11 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                         }
                     </Nav>
                     <Nav>
+                        {isLoggedIn() &&
+                            <Navbar.Text>
+                                {userEmail}
+                            </Navbar.Text>
+                        }
                         <Nav.Link
                             className={'justify-content-end'}
                             hidden={signoutHidden}
