@@ -25,7 +25,7 @@ export const AppProvider = ({ cache, children }) => {
     const [modalTitle, setModalTitle] = useState(null)
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const [authorized, setAuthorized] = useState(null)
-    const [invalidToken, setInvalidToken] = useState(null)
+    const [validToken, setValidToken] = useState(null)
     const [adminGroup, setAdminGroup] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
     const [uiAdminAuthorized, setUIAuthorized] = useState(false)
@@ -56,12 +56,12 @@ export const AppProvider = ({ cache, children }) => {
         }
 
         check_valid_token().then((response) => {
-            if (response.error) {
-                setInvalidToken(true)
+            if (typeof response == "boolean") {
+                setValidToken(response)
             } else {
-                setInvalidToken(false)
+                setValidToken(false)
             }
-        }).catch((error) => setInvalidToken(true));
+        }).catch((error) => setValidToken(false));
 
         get_read_write_privileges()
             .then((response) => {
@@ -126,11 +126,11 @@ export const AppProvider = ({ cache, children }) => {
     }
 
     const hasInvalidToken = () => {
-        return invalidToken === true
+        return validToken === false
     }
 
     const validatingToken = () => {
-        return invalidToken === null
+        return validToken === null
     }
 
     const isUnauthorized = () => {
