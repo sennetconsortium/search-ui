@@ -265,3 +265,15 @@
     letter-spacing: .05em;
   }
 }
+
+
+.sui-multi-checkbox-facet {
+  &__option-input-wrapper {
+    display: table;
+    flex: inherit;
+  }
+  &__checkbox,
+  &__input-text {
+    display: table-cell;
+  }
+}
