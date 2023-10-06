@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
 import {Container, Row, Col} from 'react-bootstrap'
 import logo from "../../../public/static/sennet-txt-horizontal-logo.png";
-import nih from "../../../public/static/nih-txt-horizontal-logo.png"
 import Image from "next/image";
 import AppContext from "../../../context/AppContext";
 import {ToastContainer} from "react-toastify";
@@ -26,10 +25,10 @@ const AppFooter = () => {
                                 <ul className="pb-3 mb-3 nav--org" aria-label='Organization name'>
                                     <li className="nav-item">
                                         <a className="navbar-brand" href="https://sennetconsortium.org/">
-                                            <Image
+                                            <img
                                                 title='Senescence Network (SenNet)'
                                                 className="d-inline-block align-text-top sennet-logo"
-                                                src={logo}
+                                                src={'/static/sennet-txt-horizontal-logo.png'}
                                                 width="150"
                                                 alt={_t("SenNet logo")}
                                             />

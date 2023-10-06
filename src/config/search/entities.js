@@ -71,7 +71,7 @@ export const SEARCH_ENTITIES = {
                 isFilterable: false,
             },
             rui_location: {
-                label: 'Has Rui Info',
+                label: 'Has Location Information',
                 type: 'exists',
                 field: 'rui_location',
                 isExpanded: false,
@@ -87,7 +87,7 @@ export const SEARCH_ENTITIES = {
                 isFilterable: false,
             },
             "ancestors.rui_location": {
-                label: 'Has Rui Info',
+                label: 'Has Location Information',
                 type: 'exists',
                 field: 'ancestors.rui_location',
                 isExpanded: false,
@@ -196,7 +196,10 @@ export const SEARCH_ENTITIES = {
             'data_types',
             'status',
             'origin_sample.organ',
-            'organ'
+            'organ',
+            'title',
+            'description',
+            'group_uuid'
         ],
     },
     initialState: {

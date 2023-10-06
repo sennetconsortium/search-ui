@@ -1,9 +1,7 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
-import {NAVBAR_TITLE} from '../../../config/config'
+import {getDataIngestBoardEndpoint, NAVBAR_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
 import {useContext} from 'react'
-import logo from '../../../public/static/sennet-logo.png'
-import Image from 'next/image'
 import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
 
@@ -21,10 +19,30 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         window.location.replace(url)
     }
 
+    const supportedSingleRegister = () => {
+        let entities = Object.keys(cache.entities)
+        let notSupported = ['publication entity', 'upload']
+        return entities.filter(entity => !notSupported.includes(entity))
+    }
+
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication']
-        return entities.filter(entity => !notSupported.includes(entity))
+
+        let notSupported = ['publication entity']
+        entities = entities.filter(entity => !notSupported.includes(entity))
+
+        const elem = entities.shift()
+        // Insert upload before dataset
+        entities.splice(3, 0, elem)
+        return entities
+    }
+
+    const formatRegisterUrl = (entity, range) => {
+        if (equals(entity, 'upload') || equals(range, 'single')) {
+            return `/edit/${entity}?uuid=register`
+        } else {
+            return `/edit/bulk/${entity}?action=register`
+        }
     }
 
 
@@ -36,9 +54,9 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         >
             <Container fluid={true}>
                 <Navbar.Brand href={APP_ROUTES.search}>
-                    <Image
+                    <img
                         alt={_t("SenNet logo")}
-                        src={logo}
+                        src={'/static/sennet-logo.png'}
                         width="30"
                         height="30"
                         className="d-inline-block align-top"
@@ -65,15 +83,15 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                     </NavDropdown.Item>
 
                                     <div className={'submenu'} id={`submenu-md-${range}`}>
-                                        {equals(range, 'single') && Object.keys(cache.entities).map((entity) => (
-                                            <NavDropdown.Item key={entity} href={`/edit/${entity}?uuid=register`}>
-                                                {_t(entity)}
+                                        {equals(range, 'single') && supportedSingleRegister().map((entity) => (
+                                            <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
+                                                {equals(entity, cache.entities.upload) ? 'Data Upload' : _t(entity)}
                                             </NavDropdown.Item>
                                         ))}
 
                                         {equals(range, 'bulk') && supportedBulkRegister().map((entity) => (
-                                            <NavDropdown.Item key={entity} href={`/edit/bulk/${entity}?action=register`}>
-                                                {entity}s
+                                            <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
+                                                {equals(entity, 'upload') ? 'Data (IDs and Data Files)' : equals(entity, 'dataset') ? 'Data (IDs Only)' : `${entity}s`}
                                             </NavDropdown.Item>
                                         ))}
                                     </div>
@@ -127,16 +145,19 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                               href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/upload-guidelines/getting-started/'>
                                 <span>Getting started</span>
                             </NavDropdown.Item>
-                            <NavDropdown.Item key={`dd-search-md-schema`} href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/'>
+                            <NavDropdown.Item key={`dd-search-md-schema`}
+                                              href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/'>
                                 <span>Metadata schemas & upload guidelines</span>
                             </NavDropdown.Item>
-                            <NavDropdown.Item key={`dd-prov-ui`} href='https://docs.sennetconsortium.org/libraries/provenance-ui/'>
+                            <NavDropdown.Item key={`dd-prov-ui`}
+                                              href='https://docs.sennetconsortium.org/libraries/provenance-ui/'>
                                 <span>Provenance UI</span>
                             </NavDropdown.Item>
                             <NavDropdown.Item key={`dd-apis`} href='https://docs.sennetconsortium.org/apis/'>
                                 <span>APIs</span>
                             </NavDropdown.Item>
                         </NavDropdown>
+                        <Nav.Link href={getDataIngestBoardEndpoint()} target='_blank' hidden={hidden || !isLoggedIn()}>Data Ingest Board</Nav.Link>
                     </Nav>
                     <Nav>
                         <Nav.Link

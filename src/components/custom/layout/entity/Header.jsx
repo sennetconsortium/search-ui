@@ -7,23 +7,24 @@ import ClipboardCopy from "../../../ClipboardCopy";
 import SenNetAlert from "../../../SenNetAlert";
 import {ExclamationTriangleFill} from 'react-bootstrap-icons'
 import SenNetPopover from "../../../SenNetPopover";
+import EntityContext from "../../../../context/EntityContext";
 
 
 function EntityHeader({entity, data, isEditMode, values, showGroup = true, adminGroup}) {
-  const {_t } = useContext(AppContext)
+  const { _t, getGroupName } = useContext(AppContext)
   return (
     <Container className="px-0" fluid={true}>
         <Row md={12}>
             <h4>{_t(`${entity} Information`)} {values && values.status && <span className={`${getStatusColor(values.status)} badge`}><SenNetPopover text={getStatusDefinition(values.status)} className={'status-info'}>{values.status}</SenNetPopover></span>}</h4>
         </Row>
-        {adminGroup && data.pipeline_message && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid')) &&
-            <SenNetAlert className={"h6"} variant={'warning'} text={data.pipeline_message} icon={<ExclamationTriangleFill/>}/>
+        {adminGroup && (data.pipeline_message || data.validation_message) && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid')) &&
+            <SenNetAlert className={"h6"} variant={'warning'} text={data.pipeline_message || data.validation_message} icon={<ExclamationTriangleFill/>}/>
         }
         {isEditMode &&
             <>
                 <Row>
                     <Col md={6}><h5>{_t('SenNet ID')}: {data.sennet_id}<ClipboardCopy text={data.sennet_id} /></h5></Col>
-                    {showGroup && <Col md={6}><h5>{_t('Group')}: {data.group_name}</h5></Col> }
+                    {showGroup && <Col md={6}><h5>{_t('Group')}: {getGroupName(data)}</h5></Col> }
                 </Row>
                 <Row>
                     <Col md={6}><h5>{_t('Entered By')}: {data.created_by_user_email}</h5></Col>

@@ -263,9 +263,9 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
 
     return (<Fragment>
         <SenNetAccordion title={'Files'}>
-            <Card border={'0'} className={"m-2 p-2"}>
+            <Card border={'0'} className={"mb-2 pb-2"}>
                 {status === 200 && filepath &&
-                    <p className={'fw-light fs-6 mb-2'}>Files for this dataset are available through the Globus Research Data Management System.
+                    <p className={'fw-light fs-6 mb-2'}>Files for this <code>{data.entity_type}</code> are available through the Globus Research Data Management System.
                         Access <a
                             target="_blank"
                             href={filepath}
@@ -286,7 +286,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
             </Card>
 
             {hasData &&
-                <Card border={'0'} className={"m-2 p-2"}>
+                <Card border={'0'} className={"mt-2 pt-2 mb-2 pb-2"}>
                     {derivedDataset &&
                         <span className={'fw-light fs-6 mb-2'}>
                                 Files from descendant

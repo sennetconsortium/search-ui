@@ -21,7 +21,7 @@ Spinner.defaultProps = {
 }
 
 Spinner.propTypes = {
-    text: PropTypes.string,
+    text: PropTypes.object,
 }
 
 export default Spinner

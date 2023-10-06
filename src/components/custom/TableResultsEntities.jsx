@@ -19,7 +19,7 @@ import SenNetPopover from "../SenNetPopover";
 function TableResultsEntities({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
 
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
-    const {isLoggedIn, cache} = useContext(AppContext)
+    const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
     const currentColumns = useRef([])
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
@@ -28,7 +28,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
 
     const getId = (column) => column.id || column.sennet_id
 
-    const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn}) => {
+    const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn, includeLabIdCol = true}) => {
         let cols = []
         if (!inModal) {
             cols.push({
@@ -58,7 +58,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 format: row => <span data-field='entity_type'>{raw(row.entity_type)}</span>,
             })
         }
-        if (isLoggedIn() || _isLoggedIn) {
+        if (includeLabIdCol && isLoggedIn() || _isLoggedIn) {
             cols.push({
                 name: 'Lab ID',
                 selector: row => {
@@ -73,7 +73,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 name: 'Group',
                 selector: row => raw(row.group_name),
                 sortable: true,
-                format: row => <span data-field='group_name'>{raw(row.group_name)}</span>,
+                format: row => <span data-field='group_name'>{getGroupName({group_name: raw(row.group_name), group_uuid: raw(row.group_uuid)})}</span>,
             })
         return cols;
     }
@@ -123,6 +123,25 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         }
     ]
 
+    const uploadColumns = [
+        {
+            name: 'Title',
+            selector: row => raw(row.title),
+            sortable: true,
+        },
+        {
+            name: 'Description',
+            selector: row => raw(row.description),
+            sortable: true,
+        },
+        {
+            name: 'Status',
+            selector: row => raw(row.status),
+            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
+            sortable: true
+        }
+    ]
+
     const getTableColumns = () => {
         let cols;
         if (checkFilterType(filters) === false) {
@@ -135,16 +154,20 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                     typeIndex = index
                     const hasOneEntity = filter.values.length === 1
                     const entityType = filter.values[0]
+                    let includeLabIdCol = true
                     if (hasOneEntity && equals(entityType, cache.entities.source)) {
                         columns = sourceColumns
                     } else if (hasOneEntity && equals(entityType, cache.entities.sample)) {
                         columns = sampleColumns
                     } else if (hasOneEntity && equals(entityType, cache.entities.dataset)) {
                         columns = datasetColumns
+                    } else if (hasOneEntity && equals(entityType, cache.entities.upload)) {
+                        includeLabIdCol = false
+                        columns = uploadColumns
                     } else {
                         log.debug('Table Results', hasMultipleEntityTypes)
                     }
-                    return defaultColumns({hasMultipleEntityTypes, columns});
+                    return defaultColumns({hasMultipleEntityTypes, columns, includeLabIdCol});
                 }
             })
             cols = cols[typeIndex]

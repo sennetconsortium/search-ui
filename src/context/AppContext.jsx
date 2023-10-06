@@ -1,24 +1,30 @@
-import { createContext, useEffect, useState} from 'react'
+import React, { createContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
 import { goToSearch } from '../components/custom/js/functions'
 import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
-import {get_read_write_privileges, has_data_admin_privs} from '../lib/services'
+import {get_read_write_privileges, get_user_write_groups, has_data_admin_privs} from '../lib/services'
 import {deleteCookies} from "../lib/auth";
 import {APP_ROUTES} from "../config/constants";
 import {getUIPassword} from "../config/config";
 import Swal from 'sweetalert2'
+import AppModal from "../components/AppModal";
+import Spinner from "../components/custom/Spinner";
 
 const AppContext = createContext()
 
 export const AppProvider = ({ cache, children }) => {
     const [isBusy, setIsBusy] = useState(false)
+    const [showModal, setShowModal] = useState(false)
+    const [modalBody, setModalBody] = useState(null)
+    const [modalTitle, setModalTitle] = useState(null)
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const [authorized, setAuthorized] = useState(null)
     const [adminGroup, setAdminGroup] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
     const [uiAdminAuthorized, setUIAuthorized] = useState(false)
     const [sidebarVisible, setSidebarVisible] = useState(false)
+    const [userWriteGroups, setUserWriteGroups] = useState([])
     const router = useRouter()
     const authKey = 'isAuthenticated'
     const pageKey = 'userPage'
@@ -58,7 +64,14 @@ export const AppProvider = ({ cache, children }) => {
                 setAdminGroup(response.has_data_admin_privs)
             })
             .catch((error) => log.error(error))
-    })
+
+
+        get_user_write_groups()
+            .then((response) => {
+                setUserWriteGroups(response.user_write_groups)
+            })
+            .catch((e) => log.error(e))
+    }, [])
 
     const setLocalItemWithExpiry = (key, value, ttl) => {
         const now = new Date()
@@ -176,6 +189,36 @@ export const AppProvider = ({ cache, children }) => {
         return supported
     }
 
+    const getGroupName = (data) => {
+        if (data.group_name) return data.group_name
+        for (let group of userWriteGroups) {
+            if (data.group_uuid === group.uuid) {
+                return group.displayname
+            }
+        }
+    }
+
+    const toggleBusyOverlay = (show, action) => {
+        setShowModal(show)
+        if (show && action) {
+            setModalTitle(<span>One moment ...</span>)
+            setModalBody(<div> <Spinner text={<>Currently handling your request to {action}...</>}  /></div>)
+        }
+    }
+
+    const getBusyOverlay = () => {
+        return (
+            <AppModal
+                className={`modal--busy`}
+                showModal={showModal}
+                modalTitle={modalTitle}
+                modalBody={modalBody}
+                showHomeButton={false}
+                showCloseButton={false}
+            />
+        )
+    }
+
     const handleSidebar = () => {
         setSidebarVisible(!sidebarVisible)
     }
@@ -240,7 +283,10 @@ export const AppProvider = ({ cache, children }) => {
                 supportedMetadata,
                 handleSidebar,
                 sidebarVisible,
-                adminGroup
+                adminGroup,
+                getGroupName,
+                getBusyOverlay,
+                toggleBusyOverlay,
             }}
         >
             {children}
