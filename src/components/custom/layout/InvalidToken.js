@@ -11,15 +11,7 @@ const Unauthorized = () => {
                 <Col md={{span: 8, offset:2}}>
                     <div className={'alert alert-danger text-center'}>
                         <p>
-                            You are trying to access the Data Portal, logged in as <b>{email}</b>.
-                            You are not authorized to log into this portal with that account. Please check that
-                            you have registered via the <a href={"https://profile.sennetconsortium.org/profile"}>Member
-                            Registration Page</a>, have provided Globus account
-                            information and are logging in with that account.
-                        </p>
-                        <p>
-                            Once you have confirmed your registration information you can <a href={APP_ROUTES.login}>log in</a> again.
-                            Without login you can view the public facing <a href={APP_ROUTES.search}>Data Portal</a>.
+                            The token you are using is either expired or invalid. Please <a href={APP_ROUTES.logout}>log out</a> then try to log in again.
                         </p>
                         <p>
                             If you continue to have issues accessing this site please contact the <a
