@@ -5,45 +5,44 @@ import AppContext from "../../../../context/AppContext";
 import {getEntityEndPoint} from "../../../../config/config";
 import {getEntityViewUrl} from "../../js/functions";
 import Select from 'react-select'
+import {get_headers} from "../../../../lib/services";
 
 function VersionsDropdown({data}) {
 
     const {_t, cache } = useContext(AppContext)
-    const [revisions, setRevisions] = useState([
-        {
-            rev: 1,
-            uuids: ['A', 'B']
-        },
-        {
-            rev: 2,
-            uuids: ['C', 'D']
-        },
-        {
-            rev: 3,
-            uuids: ['D']
-        }])
+    const [revisions, setRevisions] = useState([])
     const [isBusy, setIsBusy] = useState(false)
 
     useEffect(() => {
-        // const fetchRevisions = async () => {
-        //     setIsBusy(true)
-        //     let response = await fetch(getEntityEndPoint() + `datasets/${data.uuid}/revisions?include_dataset=true`)
-        //     if (response.ok) {
-        //         let json = await response.json()
-        //         setRevisions(json)
-        //     }
-        //     setIsBusy(false)
-        // }
-        //
-        // fetchRevisions()
+        const fetchRevisions = async () => {
+            setIsBusy(true)
+            const options = {
+                method: 'GET',
+                headers: get_headers()
+            }
+            const url = getEntityEndPoint() + `datasets/${data.uuid}/multi-revisions?include_dataset=true`
+            let response = await fetch(url, options)
+            if (response.ok) {
+                console.log(url)
+                let json = await response.json()
+                setRevisions(json)
+            }
+            setIsBusy(false)
+        }
+
+        fetchRevisions()
     }, [])
 
     const buildOptions = (r) => {
         let results = []
         for (let s of r.uuids) {
-            results.push({value: s, label: s})
+            results.push({value: s.uuid, label: s.sennet_id, revision: r})
         }
         return results
+    }
+
+    const handleChange = (e) => {
+        window.location = getEntityViewUrl(cache.entities.dataset, e.value, {isEdit: false})
     }
 
 
@@ -58,10 +57,7 @@ function VersionsDropdown({data}) {
 
         for (let r of revisions) {
             results.push(
-                // <Dropdown.Item active={getActive(r)} key={`version-${r.rev}`} href='#' onClick={(e) => e.preventDefault()}>
-                //
-                // </Dropdown.Item>
-                <div key={`version-${r.rev}`} className={'p-2'}><Select placeholder={`Revision ${r.rev}`} options={buildOptions(r)} /></div>
+                <div key={`version-${r.revision_number}`} className={`p-2`}><Select className={`revisions-select ${r.revision_number == getActiveRevision() ? 'is-active' : ''}`} onChange={handleChange} placeholder={`Revision ${r.revision_number}`} options={buildOptions(r)} /></div>
             )
         }
         return results;
@@ -69,10 +65,11 @@ function VersionsDropdown({data}) {
 
     const getActiveRevision = () => {
 
-        return 1
-        for (let r of revisions) {
-            if (data.uuid === r.uuid) {
-                return r.revision_number
+        for (let rev of revisions) {
+            for (let e of rev.uuids) {
+                if (data.uuid === e.uuid) {
+                    return rev.revision_number
+                }
             }
         }
     }
@@ -83,7 +80,7 @@ function VersionsDropdown({data}) {
 
     return (
         <Dropdown>
-            <Dropdown.Toggle  id="dropdown-basic">
+            <Dropdown.Toggle  id="multi-revisions-dropdown">
                 Revision {getActiveRevision()}
             </Dropdown.Toggle>
 

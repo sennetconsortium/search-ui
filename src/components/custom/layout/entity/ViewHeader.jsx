@@ -32,9 +32,9 @@ const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
                 </SenNetPopover>
 
                 {equals(entity, cache.entities.dataset) && <VersionsDropdown data={data}/>}
-                {equals(entity, cache.entities.dataset) && equals(data.status, 'published') &&
-                    <VersionDropdown data={data}/>
-                }
+                {/*{equals(entity, cache.entities.dataset) && equals(data.status, 'published') &&*/}
+                {/*    <VersionDropdown data={data}/>*/}
+                {/*}*/}
             </Stack>
 
         </div>

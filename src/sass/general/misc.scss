@@ -89,3 +89,11 @@ p {
   /* new small viewport height for modern browsers */
   min-height: calc(100svh - 277px);
 }
+
+.revisions-select {
+  font-size: 12px !important;
+  &.is-active .css-1s2u09g-control {
+    border: solid 2px var(--bs-success);
+    border-radius: 4px;
+  }
+}
