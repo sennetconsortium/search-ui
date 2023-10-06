@@ -17,7 +17,7 @@ function Spinner({ text }) {
 }
 
 Spinner.defaultProps = {
-    text: 'Loading, please wait...',
+    text: <span>Loading, please wait...</span>,
 }
 
 Spinner.propTypes = {

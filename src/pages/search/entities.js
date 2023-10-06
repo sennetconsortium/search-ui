@@ -20,12 +20,15 @@ import SearchUIContainer from "search-ui/components/core/SearchUIContainer";
 import FacetsContent from "../../components/custom/search/FacetsContent";
 import BodyContent from "../../components/custom/search/BodyContent";
 import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
+import InvalidToken from "../../components/custom/layout/InvalidToken";
 
 function SearchEntities() {
     const {
         _t,
         logout,
         isRegisterHidden,
+        hasInvalidToken,
+        validatingToken,
         isAuthorizing,
         isUnauthorized,
         hasAuthenticationCookie
@@ -54,8 +57,10 @@ function SearchEntities() {
         onSubmit(event)
     }
 
-    if (isAuthorizing()) {
+    if (validatingToken() || isAuthorizing()) {
         return <Spinner/>
+    } else if (hasInvalidToken()) {
+        return <InvalidToken/>
     } else {
         if (isUnauthorized() && hasAuthenticationCookie()) {
             // This is a scenario in which the GLOBUS token is expired but the token still exists in the user's cookies
