@@ -1,4 +1,11 @@
-import {getAuth, getEntityEndPoint, getIngestEndPoint, getUUIDEndpoint} from "../config/config";
+import {
+    getAuth,
+    getEntitiesIndex,
+    getEntityEndPoint, getGlobusToken,
+    getIngestEndPoint,
+    getSearchEndPoint,
+    getUUIDEndpoint
+} from "../config/config";
 import log from "loglevel";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
@@ -24,6 +31,23 @@ export async function update_create_dataset(uuid, body, action = "Edit", entityT
 
         return call_service(raw, url, method)
     }
+}
+
+export async function check_valid_token() {
+    let headers = new Headers();
+    headers.append("Authorization", "Basic " + getGlobusToken())
+    headers.append("Content-Type", "application/x-www-form-urlencoded")
+
+    let formBody = 'token=' + getAuth()
+
+    let url = "https://auth.globus.org/v2/oauth2/token/introspect"
+    console.log(formBody)
+    return await call_service(formBody, url, "POST", headers).then((response) => {
+        return response.active
+    }).catch(error => {
+        log.error('error', error)
+        return false
+    })
 }
 
 export function get_json_header( headers ) {

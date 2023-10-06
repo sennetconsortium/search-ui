@@ -3,7 +3,12 @@ import { useRouter } from 'next/router'
 import { goToSearch } from '../components/custom/js/functions'
 import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
-import {get_read_write_privileges, get_user_write_groups, has_data_admin_privs} from '../lib/services'
+import {
+    check_valid_token,
+    get_read_write_privileges,
+    get_user_write_groups,
+    has_data_admin_privs
+} from '../lib/services'
 import {deleteCookies} from "../lib/auth";
 import {APP_ROUTES} from "../config/constants";
 import {getUIPassword} from "../config/config";
@@ -20,6 +25,7 @@ export const AppProvider = ({ cache, children }) => {
     const [modalTitle, setModalTitle] = useState(null)
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const [authorized, setAuthorized] = useState(null)
+    const [validToken, setValidToken] = useState(null)
     const [adminGroup, setAdminGroup] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
     const [uiAdminAuthorized, setUIAuthorized] = useState(false)
@@ -38,15 +44,29 @@ export const AppProvider = ({ cache, children }) => {
         }
 
         let info = getCookie('info')
+        let groups_token = ""
         if (info) {
             info = atob(info)
             setCookie(
                 'groups_token',
                 JSON.parse(info).groups_token
             )
+            groups_token = JSON.parse(info).groups_token
         } else {
             // Delete in the event info doesn't exist as might have been logged out the system elsewhere.
             deleteCookies()
+        }
+
+        if(groups_token  != "") {
+            check_valid_token().then((response) => {
+                if (typeof response == "boolean") {
+                    setValidToken(response)
+                } else {
+                    setValidToken(false)
+                }
+            }).catch((error) => setValidToken(false));
+        } else {
+            setValidToken(true)
         }
 
         get_read_write_privileges()
@@ -109,6 +129,14 @@ export const AppProvider = ({ cache, children }) => {
 
     const isLoggedIn = () => {
         return authorized && hasAuthenticationCookie()
+    }
+
+    const hasInvalidToken = () => {
+        return validToken === false
+    }
+
+    const validatingToken = () => {
+        return validToken === null
     }
 
     const isUnauthorized = () => {
@@ -272,6 +300,8 @@ export const AppProvider = ({ cache, children }) => {
                 isLoggedIn,
                 isAuthorizing,
                 isUnauthorized,
+                hasInvalidToken,
+                validatingToken,
                 logout,
                 login,
                 _t,
