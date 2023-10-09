@@ -4,12 +4,15 @@ import {APP_ROUTES} from "../../../config/constants";
 import {getCookie} from "cookies-next";
 
 const Unauthorized = () => {
-    const email = JSON.parse(atob(getCookie('info')))['email']
+    const cookie = getCookie('info')
+    const email = cookie ? JSON.parse(atob(cookie))['email'] : null
     return (
         <Container className={'mt-5'}>
             <Row>
                 <Col md={{span: 8, offset:2}}>
-                    <div className={'alert alert-danger'}>
+                    {!email && <div className={'alert alert-danger text-center'}>Access denied</div>}
+
+                    {email && <div className={'alert alert-danger'}>
                         <p>
                             You are trying to access the Data Portal, logged in as <b>{email}</b>.
                             You are not authorized to log into this portal with that account. Please check that
@@ -25,7 +28,7 @@ const Unauthorized = () => {
                             If you continue to have issues accessing this site please contact the <a
                             href={"mailto:help@sennetconsortium.org"}>SenNet Help Desk</a>.
                         </p>
-                    </div>
+                    </div>}
                 </Col>
             </Row>
         </Container>
