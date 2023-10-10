@@ -36,7 +36,7 @@ function VersionsDropdown({data}) {
     const buildOptions = (r) => {
         let results = []
         for (let s of r.uuids) {
-            results.push({value: s.uuid, label: s.sennet_id, revision: r})
+            results.push({value: s.uuid, label: `${s.sennet_id} (${s.data_types[0]})`, revision: r})
         }
         return results
     }
@@ -47,29 +47,35 @@ function VersionsDropdown({data}) {
 
 
     const buildRevisions = () => {
-        let results = [];
-        const setUrl = (_entity) => {
-            if (data.uuid === _entity.uuid) return '#'
-            return getEntityViewUrl(cache.entities.dataset, _entity.uuid, {isEdit: false})
-        }
+        let results = []
 
-        const getActive = (_entity) => setUrl(_entity) === '#' ? true : null
-
+        const currentRevision = getActiveRevision()
+        let options, isActive
         for (let r of revisions) {
+            options = buildOptions(r)
+            isActive = r.revision_number === currentRevision.revision
             results.push(
-                <div key={`version-${r.revision_number}`} className={`p-2`}><Select className={`revisions-select ${r.revision_number == getActiveRevision() ? 'is-active' : ''}`} onChange={handleChange} placeholder={`Revision ${r.revision_number}`} options={buildOptions(r)} /></div>
+                <div key={`version-${r.revision_number}`} className={`p-2`}>
+                    <Select className={`revisions-select ${isActive ? 'is-active' : ''}`}
+                            onChange={handleChange}
+                            defaultValue={isActive ? options[currentRevision.index] : undefined}
+                            placeholder={`Revision ${r.revision_number}`}
+                            options={options} />
+                </div>
             )
         }
         return results;
     }
 
     const getActiveRevision = () => {
-
+        let x
         for (let rev of revisions) {
+            x = 0
             for (let e of rev.uuids) {
                 if (data.uuid === e.uuid) {
-                    return rev.revision_number
+                    return {revision: rev.revision_number, index: x}
                 }
+                x++
             }
         }
     }
@@ -81,7 +87,7 @@ function VersionsDropdown({data}) {
     return (
         <Dropdown>
             <Dropdown.Toggle  id="multi-revisions-dropdown">
-                Revision {getActiveRevision()}
+                Revision {getActiveRevision().revision}
             </Dropdown.Toggle>
 
             <Dropdown.Menu>
