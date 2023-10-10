@@ -603,7 +603,7 @@ export default function BulkCreate({
                                      icon={<ExclamationTriangleFill/>}/>
                     }
                     <div className={'p-4 text-center'}>
-                        To register multiple items at one time, upload a tsv file in the format specified by the example file.<br/>
+                        To register multiple items at one time, upload a <code>TSV</code> file in the format specified by the example file.<br/>
                         {getDocsText()}
                     </div>
                     <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector/>}>
@@ -678,6 +678,7 @@ export default function BulkCreate({
                                     <input
                                         style={{display: 'none'}}
                                         type={'file'}
+                                        accept={".tsv"}
                                         ref={inputFileRef}
                                         onChange={handleFileChange}
                                     />

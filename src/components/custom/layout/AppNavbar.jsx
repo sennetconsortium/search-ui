@@ -4,9 +4,11 @@ import {APP_ROUTES} from '../../../config/constants'
 import {useContext} from 'react'
 import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
+import {getCookie} from "cookies-next";
 
 const AppNavbar = ({hidden, signoutHidden}) => {
     const {_t, isLoggedIn, logout, cache, supportedMetadata} = useContext(AppContext)
+    const userEmail = (isLoggedIn() ? JSON.parse(atob(getCookie('info')))['email'] : "")
 
 
     const handleSession = (e) => {
@@ -157,9 +159,16 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                 <span>APIs</span>
                             </NavDropdown.Item>
                         </NavDropdown>
-                        <Nav.Link href={getDataIngestBoardEndpoint()} target='_blank' hidden={hidden || !isLoggedIn()}>Data Ingest Board</Nav.Link>
+                        {isLoggedIn() &&
+                            <Nav.Link href={getDataIngestBoardEndpoint()} target='_blank'>Data Ingest Board</Nav.Link>
+                        }
                     </Nav>
                     <Nav>
+                        {isLoggedIn() &&
+                            <Navbar.Text>
+                                {userEmail}
+                            </Navbar.Text>
+                        }
                         <Nav.Link
                             className={'justify-content-end'}
                             hidden={signoutHidden}
