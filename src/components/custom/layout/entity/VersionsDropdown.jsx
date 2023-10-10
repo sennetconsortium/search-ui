@@ -23,7 +23,6 @@ function VersionsDropdown({data}) {
             const url = getEntityEndPoint() + `datasets/${data.uuid}/multi-revisions?include_dataset=true`
             let response = await fetch(url, options)
             if (response.ok) {
-                console.log(url)
                 let json = await response.json()
                 setRevisions(json)
             }
