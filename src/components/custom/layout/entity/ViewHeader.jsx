@@ -5,7 +5,6 @@ import {FiletypeJson} from 'react-bootstrap-icons';
 import {equals} from "../../js/functions";
 import PropTypes from 'prop-types'
 import ClipboardCopy from "../../../ClipboardCopy";
-import VersionDropdown from "./VersionDropdown";
 import {ViewHeaderBadges} from "./ViewHeaderBadges";
 import SenNetPopover from "../../../SenNetPopover";
 import VersionsDropdown from "./VersionsDropdown";
@@ -32,9 +31,6 @@ const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
                 </SenNetPopover>
 
                 {equals(entity, cache.entities.dataset) && <VersionsDropdown data={data}/>}
-                {/*{equals(entity, cache.entities.dataset) && equals(data.status, 'published') &&*/}
-                {/*    <VersionDropdown data={data}/>*/}
-                {/*}*/}
             </Stack>
 
         </div>
