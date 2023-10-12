@@ -232,9 +232,9 @@ export const EntityProvider = ({ children }) => {
     const checkProtocolUrl = async (value) => {
         let classes = {...warningClasses}
         const el = document.getElementById('protocol_url')
-        const valid = el.checkValidity()
+        const valid = el?.checkValidity()
         if (!value || !valid) {
-            el.reportValidity()
+            el?.reportValidity()
             delete classes.protocol_url
             setWarningClasses(classes)
             return
