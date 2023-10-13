@@ -10,27 +10,8 @@ import {get_headers} from "../../../../lib/services";
 function VersionsDropdown({data}) {
 
     const {_t, cache } = useContext(AppContext)
-    const [revisions, setRevisions] = useState([])
+    const [revisions, setRevisions] = useState(data.multi_revisions || [])
     const [isBusy, setIsBusy] = useState(false)
-
-    useEffect(() => {
-        const fetchRevisions = async () => {
-            setIsBusy(true)
-            const options = {
-                method: 'GET',
-                headers: get_headers()
-            }
-            const url = getEntityEndPoint() + `datasets/${data.uuid}/multi-revisions?include_dataset=true`
-            let response = await fetch(url, options)
-            if (response.ok) {
-                let json = await response.json()
-                setRevisions(json)
-            }
-            setIsBusy(false)
-        }
-
-        fetchRevisions()
-    }, [])
 
     const buildOptions = (r) => {
         let results = []
