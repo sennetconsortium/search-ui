@@ -1,0 +1,32 @@
+.alert {
+  .alert-body {
+    border-bottom: 1px solid aliceblue;
+  }
+  .alert-btn {
+    a {
+      width: 75%;
+    }
+  }
+
+  @include lg {
+    .alert-btn {
+      a {
+        width: 50%;
+      }
+    }
+  }
+
+  @include sm-mx {
+    .alert-btn {
+      a {
+        width: 100%;
+      }
+    }
+  }
+  &.alert-danger {
+    .alert-body {
+      border-color: var(--bs-alert-border-color);
+    }
+  }
+}
+
