@@ -230,20 +230,23 @@ export const EntityProvider = ({ children }) => {
     }
 
     const checkProtocolUrl = async (value) => {
-        let values = {...warningClasses}
-        if (!value) {
-            delete values.protocol_url
-            setWarningClasses(values)
+        let classes = {...warningClasses}
+        const el = document.getElementById('protocol_url')
+        const valid = el?.checkValidity()
+        if (!value || !valid) {
+            el?.reportValidity()
+            delete classes.protocol_url
+            setWarningClasses(classes)
             return
         }
         let protocolCheck = await fetchProtocols(value)
 
         if (!protocolCheck) {
-            values.protocol_url = 'has-warning'
+            classes.protocol_url = 'has-warning'
         } else {
-            delete values.protocol_url
+            delete classes.protocol_url
         }
-        setWarningClasses(values)
+        setWarningClasses(classes)
     }
 
     const getCancelBtn = (entity) => {

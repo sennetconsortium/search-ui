@@ -1,21 +1,29 @@
 import React from "react";
 import {Col, Container, Row} from 'react-bootstrap'
 import {APP_ROUTES} from "../../../config/constants";
-import {getCookie} from "cookies-next";
+import {BoxArrowInLeft, EnvelopeFill} from "react-bootstrap-icons";
 
 const InvalidToken = () => {
     return (
         <Container className={'mt-5'}>
             <Row>
                 <Col md={{span: 8, offset:2}}>
-                    <div className={'alert alert-danger text-center'}>
-                        <p>
-                            The token you are using is either expired or invalid. Please <a href={APP_ROUTES.logout}>log out</a> then try to log in again.
-                        </p>
-                        <p>
-                            If you continue to have issues accessing this site please contact the <a
-                            href={"mailto:help@sennetconsortium.org"}>SenNet Help Desk</a>.
-                        </p>
+                    <div className={'alert alert-danger'}>
+                        <h1>Invalid Token</h1>
+                        <div className='alert-body'>
+                            <p>
+                                The token you are using is either expired or invalid. Please <a href={APP_ROUTES.logout} className='lnk--ic'>log out <BoxArrowInLeft /></a> then try to log in again.
+                            </p>
+                            <p>
+                                If you continue to have issues accessing this site, please contact the <a
+                                href={"mailto:help@sennetconsortium.org"} className='lnk--ic'>SenNet Help Desk <EnvelopeFill /></a>.
+                            </p>
+                        </div>
+                        <div className="alert-btn mt-4 mb-3">
+                            <a className="btn btn-primary col-4 p-2" href={APP_ROUTES.logout}>
+                                Log out
+                            </a>
+                        </div>
                     </div>
                 </Col>
             </Row>
