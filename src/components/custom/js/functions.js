@@ -332,10 +332,6 @@ export function goToSearch() {
     goIntent('search')
 }
 
-export function gotToLogin() {
-    goIntent('login')
-}
-
 export function getEntityViewUrl(entity, uuid, {isEdit = false}) {
     const pre = isEdit ? '/edit' : ''
     return pre + "/" + entity?.toLowerCase() + "?uuid=" + uuid
