@@ -377,6 +377,24 @@ Object.assign(String.prototype, {
     }
 })
 
+Object.assign(Array.prototype, {
+    sortOnProperty(key) {
+        return this.sort((a, b) => {
+                let fa = a[key].toLowerCase(),
+                    fb = b[key].toLowerCase()
+
+                if (fa < fb) {
+                    return -1
+                }
+                if (fa > fb) {
+                    return 1
+                }
+                return 0
+        })
+    }
+})
+
+
 export const flipObj = (obj) => {
     return Object.keys(obj).reduce((ret, key) => {
         ret[obj[key]] = key;
