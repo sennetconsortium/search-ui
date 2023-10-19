@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {Form} from 'react-bootstrap';
 import SenNetPopover from "../../SenNetPopover";
@@ -6,6 +6,11 @@ import AppContext from "../../../context/AppContext";
 
 const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural}) => {
     const {cache} = useContext(AppContext)
+
+    useEffect(() => {
+        groups.sortOnProperty('displayname')
+    })
+
     return (
         <>
             <Form.Group className="mb-3" controlId="group_uuid">
