@@ -1,5 +1,8 @@
 .rdt {
   &_Results {
+    [data-column-id="2"] {
+      min-width: 185px;
+    }
     .MuiChip-sizeSmall {
       height: 16px;
       &:hover {
