@@ -36,6 +36,11 @@ const Unauthorized = () => {
                     information and are logging in with that account.
                 </p>
                 <p>
+                    You will receive an email from Globus notifying that you have been invited to join the <b>SenNet -
+                    Read</b> group. You must click the link that says "Click here to apply for membership" then click "Accept
+                    Invitation" in the browser.
+                </p>
+                <p>
                     Once you have confirmed your registration information you can <a className='lnk--ic' href={APP_ROUTES.login}>log
                     in <BoxArrowInRight /></a> again.
                     Without login you can view the public facing <a href={APP_ROUTES.search}>Data Portal</a>.
