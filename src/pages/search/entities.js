@@ -50,7 +50,7 @@ function SearchEntities() {
 
     SEARCH_ENTITIES['searchQuery']['conditionalFacets']['ancestors.rui_location'] = ({filters}) => {
         return hasAuthenticationCookie() && !isUnauthorized() && 
-            filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
+            filters.some((filter) => filter.field === "entity_type" && (filter.values.includes("Sample") || filter.values.includes("Dataset")) )
     }
 
     function handleSearchFormSubmit(event, onSubmit) {

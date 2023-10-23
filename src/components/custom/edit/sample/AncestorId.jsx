@@ -6,7 +6,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
-import {exclude_dataset_config} from "../../../../config/config";
+import {exclude_dataset_config, valid_dataset_ancestor_config} from "../../../../config/config";
 import {TableResultsEntities} from '../../TableResultsEntities';
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
@@ -16,9 +16,21 @@ import SenNetPopover from "../../../SenNetPopover";
 import SearchUIContainer from 'search-ui/components/core/SearchUIContainer';
 import SearchUIContext from 'search-ui/components/core/SearchUIContext';
 import FacetsContent from '../../search/FacetsContent';
+import AppContext from "../../../../context/AppContext";
 
 function BodyContent({ handleChangeSource }) {
+    const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
     const { filters } = useContext(SearchUIContext)
+
+    const addConditional = (key) => {
+        exclude_dataset_config['searchQuery']['conditionalFacets'][key] = ({filters}) => {
+            return hasAuthenticationCookie() && !isUnauthorized() &&
+                filters.some((filter) => filter.field === "entity_type" && filter.values.includes('Sample'))
+        }
+    }
+
+    addConditional('rui_location')
+    addConditional('ancestors.rui_location')
 
     return (
         <div className="js-gtm--results"

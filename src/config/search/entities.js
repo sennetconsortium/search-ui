@@ -86,6 +86,14 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            "ancestors.rui_location": {
+                label: 'Ancestors Has Location Information',
+                type: 'exists',
+                field: 'ancestors.rui_location',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
             status: {
                 label: 'Status',
                 type: 'value',
