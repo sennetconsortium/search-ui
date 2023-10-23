@@ -30,7 +30,6 @@ function BodyContent({ handleChangeSource }) {
     }
 
     addConditional('rui_location')
-    addConditional('ancestors.rui_location')
 
     return (
         <div className="js-gtm--results"
