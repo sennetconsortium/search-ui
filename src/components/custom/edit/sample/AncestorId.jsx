@@ -22,14 +22,12 @@ function BodyContent({ handleChangeSource }) {
     const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
     const { filters } = useContext(SearchUIContext)
 
-    const addConditional = (key) => {
-        exclude_dataset_config['searchQuery']['conditionalFacets'][key] = ({filters}) => {
-            return hasAuthenticationCookie() && !isUnauthorized() &&
-                filters.some((filter) => filter.field === "entity_type" && filter.values.includes('Sample'))
-        }
+    exclude_dataset_config['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
+        return hasAuthenticationCookie() && !isUnauthorized() &&
+            filters.some((filter) => filter.field === "entity_type" && filter.values.includes('Sample'))
     }
 
-    addConditional('rui_location')
+    exclude_dataset_config['searchQuery']['conditionalFacets']['ancestors.rui_location'] = () => false
 
     return (
         <div className="js-gtm--results"
