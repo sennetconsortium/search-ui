@@ -277,3 +277,14 @@
     display: table-cell;
   }
 }
+
+.sui-facet__RegisteredBy {
+  .sui-multi-checkbox-facet {
+    &__input-text {
+      max-width: 120px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+}
