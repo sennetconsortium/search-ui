@@ -70,7 +70,7 @@ p {
 }
 
 .mt-resp {
-  @media (min-width: 950px) {
+  @include lg {
     margin-top: 5rem;
   }
 }

@@ -1,5 +1,5 @@
 .MuiContainer-root {
-  @media (max-width: 950px) {
+  @include md-mx {
     .MuiBox-root {
       text-align: center;
       > .btn {

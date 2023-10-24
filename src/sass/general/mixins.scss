@@ -2,7 +2,12 @@
   outline: 1px dotted $col-bs-blue;
 }
 
-// TODO: Use the mixins /portal-ui/issues/977
+// Breakpoints taken to match https://getbootstrap.com/docs/5.0/layout/breakpoints/
+@mixin xsm {
+  @media (max-width: 575px) {
+    @content
+  }
+}
 
 @mixin sm {
   @media (min-width: 576px) and (max-width: 767px) {

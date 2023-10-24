@@ -101,7 +101,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
             <Fragment>
                 {node.icon.includes("file") ? (
                     <Row className={"w-100"}>
-                        <Col md={8}>
+                        <Col md={8} sm={8}>
                             <a target="_blank"
                                className={"icon_inline"}
                                href={`${getAssetsEndpoint()}${node.data.uuid}/${node.data.rel_path}?token=${getAuth()}`}><span
@@ -112,11 +112,11 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                                            text={`${node.data.description}`}><InfoCircleFill/>
                             </SenNetPopover>
                         </Col>
-                        <Col md={2} className={"text-end"}>
+                        <Col md={2} sm={2} className={"text-end"}>
                             {node.data.is_qa_qc === "true" ? (
                                 <span className="badge bg-secondary mx-2"> QA</span>) : (<></>)}
                         </Col>
-                        <Col md={2} className={"text-end"}>
+                        <Col md={2} sm={2} className={"text-end"}>
                             {formatByteSize(node.data.size)}
                         </Col>
                     </Row>) : (<>{node.label}</>)}
@@ -141,7 +141,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         </InputGroup>
                     </Form.Group>
 
-                    {showQAButton && <Form.Group as={Col} md={2}>
+                    {showQAButton && <Form.Group as={Col} md={4}>
                         <ToggleButton
                             className="rounded-0"
                             id="toggle-check"
