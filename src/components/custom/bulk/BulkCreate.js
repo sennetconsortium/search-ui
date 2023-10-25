@@ -548,9 +548,13 @@ export default function BulkCreate({
         return title
     }
 
-    const getFilename = () => {
-        let filename = `example_${entityType}`
+    const getFilename = (variant = '') => {
+        let filename = `example${variant}_${entityType}`
         return isMetadata ? `metadata/${filename}_${subType}_metadata` : `entities/${filename}`
+    }
+
+    const isCedarSupported = () => {
+        return isMetadata && !subType.includes([cache.sourceTypes.Mouse])
     }
 
     const getDocsUrl = () => {
@@ -579,13 +583,16 @@ export default function BulkCreate({
                     padding: 5,
                     boxShadow: 3,
                 }}>
-                    <a
-                        download
-                        className={buttonVariant}
-                        href={`/bulk/${getFilename().toLowerCase()}.tsv`}
-                    >
-                        <FileDownloadIcon/> {' '} EXAMPLE.TSV
-                    </a>
+                    <div>
+                        <a
+                            download
+                            className={buttonVariant}
+                            href={`/bulk/${getFilename(isCedarSupported() ? '_cedar' : '').toLowerCase()}.tsv`}
+                        >
+                            <FileDownloadIcon/> {' '} <span>EXAMPLE.TSV {isCedarSupported() && <span>(CEDAR)</span>}</span>
+                        </a>
+                        {isCedarSupported() && <small className='fs-xs'><br />Or download <a download href={`/bulk/${getFilename().toLowerCase()}.tsv`}>legacy example.tsv</a></small>}
+                    </div>
                     <h1 className={'text-center'}>{getTitle()}</h1>
                     {equals(entityType, cache.entities.dataset) &&
                         <SenNetAlert variant={'warning'}
