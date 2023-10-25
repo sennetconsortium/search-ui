@@ -79,6 +79,10 @@ p {
   padding-left: 0 !important;
 }
 
+.fs-xs {
+  font-size: 12px;
+}
+
 #__next, #__next > div:not(.sui-layout, .footer-wrapper, .spinner-wrapper) {
   display:grid;
   grid-template-rows:auto 1fr auto;
