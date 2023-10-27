@@ -21,7 +21,7 @@
   border-bottom: 0;
 }
 
-@media (max-width: 800px) {
+@include md-mx {
   .sui-layout-sidebar-toggle {
     display: block !important;
     width: 100%;
@@ -120,7 +120,7 @@
   text-transform: uppercase;
 }
 // Handle sidebar on smaller screens
-@media (max-width: 859px) {
+@include md-mx {
   .sui-layout-main {
     padding-left: 0;
   }
@@ -208,7 +208,7 @@
 
 .sui-resultsTable {
   min-height: 400px;
-  @media (min-width: 1200px) {
+  @include xlg {
     .spinner-wrapper {
       position: absolute;
       top: 30%; right: 45%;
@@ -275,5 +275,16 @@
   &__checkbox,
   &__input-text {
     display: table-cell;
+  }
+}
+
+.sui-facet__RegisteredBy {
+  .sui-multi-checkbox-facet {
+    &__input-text {
+      max-width: 140px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
   }
 }
