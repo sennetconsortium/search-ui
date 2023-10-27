@@ -6,6 +6,7 @@ import AppContext from "../../../context/AppContext";
 
 const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural}) => {
     const {cache} = useContext(AppContext)
+
     return (
         <>
             <Form.Group className="mb-3" controlId="group_uuid">
@@ -22,7 +23,7 @@ const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural}) => {
                              onChange={e => onGroupSelectChange(e, e.target.id, e.target.value)}>
                     <option value="">----</option>
                     {
-                        groups.map(group => {
+                        (groups.sortOnProperty('displayname')).map(group => {
                             return (
                                 <option key={group.uuid} value={group.uuid}>
                                     {group.displayname}
