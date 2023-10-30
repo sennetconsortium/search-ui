@@ -1,6 +1,10 @@
 import {createContext, useCallback, useState} from "react";
 import $ from "jquery";
 import {fetchEntity, getDataTypes, getDataTypesByProperty} from "../components/custom/js/functions";
+import {get_prov_info} from "../lib/services";
+import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
+import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
+import {kuppe2022nature} from "../vitessce-view-config/kuppe_2022_nature";
 
 const DerivedContext = createContext({})
 
@@ -14,49 +18,66 @@ export const DerivedProvider = ({children}) => {
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
     const [derivedDataset, setDerivedDataset] = useState(null)
+    const [showVitessce, setShowVitessce] = useState(false)
 
-    const showVitessce = (is_primary_dataset, data) => {
-        let show_vitessce = false
-        const nonPrimaryTypes = getDataTypesByProperty("primary", false)
-
-        //Check first that this dataset has a valid status and has descendants or if we know this isn't a primary dataset
-        if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset)) {
-            if (!isPrimaryDataset) {
-                return true
+    // Load the correct Vitessce view config
+    const set_vitessce_config = (data, dataset_id) => {
+        const assayTypes = getDataTypes()
+        data.data_types.forEach(assay => {
+            switch (assay) {
+                case assayTypes['snRNA-seq']:
+                case assayTypes['scRNA-seq']:
+                case assayTypes['salmon_rnaseq_10x']:
+                case assayTypes['salmon_sn_rnaseq_10x']:
+                    setVitessceConfig(rna_seq(dataset_id))
+                    break
+                case assayTypes['codex_cytokit']:
+                case assayTypes['codex_cytokit_v1']:
+                case assayTypes['CODEX']:
+                    setVitessceConfig(codex_config(dataset_id))
+                    break
+                case assayTypes['Visium']:
+                    setVitessceConfig(kuppe2022nature())
+                    break
+                default:
+                    console.log(`No Vitessce config found for assay type: ${assay}`)
             }
-
-            // Iterate over all descendants
-            for (let i = 0; i < data.descendants.length; i++) {
-                let descendantData = data.descendants[i]
-                // Check that the descendant is a derived type and has a valid status
-                if (nonPrimaryTypes.includes(descendantData.data_types[0]) && isDatasetStatusPassed(descendantData)) {
-                    show_vitessce = true
-                    break;
-                }
-            }
-        }
-        return show_vitessce
+        })
     }
 
-    const setDerived = async (data) => {
-        let derived = null
-        if (data.descendants.length !== 0) {
-            for (let i = data.descendants.length - 1; i >= 0; i--) {
-                let descendantData = await fetchEntity(data.descendants[i].uuid)
-                if (isDatasetStatusPassed(descendantData) && vitessceSupportedAssays.includes(descendantData.data_types[0])) {
-                    // If derivedDataset hasn't been set then set it to this descendant
-                    if (derivedDataset === null) {
-                        derived = descendantData;
-                    } else if (descendantData.status === 'Published') {
-                        // If we come across a Published descendant then set it to this
-                        derived = descendantData;
-                        break;
+    const initVitessceConfig = async (data) => {
+        const primary_assays = getDataTypesByProperty("primary", true)
+        let is_primary_dataset = primary_assays.includes(data.data_types[0]);
+        setIsPrimaryDataset(is_primary_dataset)
+
+        // Determine whether to show the Vitessce visualizations and where to pull data from
+        //Check that this dataset has a valid status and has descendants or if we know this isn't a primary dataset
+        if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset)) {
+            if (!is_primary_dataset) {
+                // Check that the assay type is supported by Vitessce
+                if (vitessceSupportedAssays.includes(data.data_types[0])) {
+                    setShowVitessce(true)
+                    set_vitessce_config(data, data.uuid)
+                }
+
+            } else {
+                //Call `/prov-info` and check if processed datasets are returned
+                const prov_info = await get_prov_info(data.uuid)
+                if (prov_info !== {}) {
+                    const processed_datasets = prov_info['processed_dataset_uuid']
+                    if (processed_datasets.length > 0) {
+                        fetchEntity(processed_datasets[0]).then(processed_dataset => {
+                            // Check that the assay type is supported by Vitessce
+                            if (vitessceSupportedAssays.includes(processed_dataset.data_types[0])) {
+                                setShowVitessce(true)
+                                setDerivedDataset(processed_dataset)
+                                set_vitessce_config(processed_dataset, processed_dataset.uuid)
+                            }
+                        })
                     }
                 }
             }
         }
-        setDerivedDataset(derived)
-        return derived;
     }
 
     const vitessceSupportedAssays = (() => {
@@ -91,10 +112,10 @@ export const DerivedProvider = ({children}) => {
     //endregion
 
     return <DerivedContext.Provider value={{
+        initVitessceConfig,
         showVitessce,
         isPrimaryDataset,
         derivedDataset,
-        setDerived,
         vitessceTheme,
         setVitessceTheme,
         vitessceConfig,
@@ -106,7 +127,6 @@ export const DerivedProvider = ({children}) => {
         isFullscreen,
         setIsFullscreen,
         expandVitessceToFullscreen,
-        setIsPrimaryDataset
     }}>
         {children}
     </DerivedContext.Provider>

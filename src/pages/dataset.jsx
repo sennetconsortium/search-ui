@@ -33,57 +33,13 @@ function ViewDataset() {
     const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
     const {
         showVitessce,
-        setVitessceConfig,
-        setIsPrimaryDataset,
-        isPrimaryDataset,
-        setDerived
+        initVitessceConfig,
     } = useContext(DerivedContext)
-    
-    // Load the correct Vitessce view config
-    const vitessceConfig = (data, dataset_id) => {
-        const assayTypes = getDataTypes()
-        data.data_types.forEach(assay => {
-            switch (assay) {
-                case assayTypes['snRNA-seq']:
-                case assayTypes['scRNA-seq']:
-                case assayTypes['salmon_rnaseq_10x']:
-                case assayTypes['salmon_sn_rnaseq_10x']:
-                    setVitessceConfig(rna_seq(dataset_id))
-                    break
-                case assayTypes['codex_cytokit']:
-                case assayTypes['codex_cytokit_v1']:
-                case assayTypes['CODEX']:
-                    setVitessceConfig(codex_config(dataset_id))
-                    break
-                case assayTypes['Visium']:
-                    setVitessceConfig(kuppe2022nature())
-                    break
-                default:
-                    console.log(`No Vitessce config found for assay type: ${assay}`)
-            }
-        })
-    }
 
     useEffect(() => {
-        const initVitessceConfig = async () => {
             if (data) {
-                const primary_assays = getDataTypesByProperty("primary", true)
-                let is_primary_dataset = primary_assays.includes(data.data_types[0]);
-                setIsPrimaryDataset(is_primary_dataset)
-                if (showVitessce(is_primary_dataset, data)) {
-                    if (is_primary_dataset) {
-                        setDerived(data).then(derived => {
-                            if(derived) {
-                                vitessceConfig(derived, derived.uuid)
-                            }
-                        })
-                    } else {
-                        vitessceConfig(data, data.uuid)
-                    }
-                }
+                initVitessceConfig(data)
             }
-        }
-        initVitessceConfig()
     }, [data])
 
     // only executed on init rendering, see the []
@@ -166,7 +122,7 @@ function ViewDataset() {
                                                        data-bs-parent="#sidebar">Upload</a>
                                                 </li>
                                             }
-                                            {showVitessce(isPrimaryDataset, data) &&
+                                            {showVitessce &&
                                                 <li className="nav-item">
                                                     <a href="#Vitessce"
                                                        className="nav-link"
@@ -237,7 +193,7 @@ function ViewDataset() {
                                                 data={data}/>
 
                                             {/*Upload*/}
-                                            {data.upload && data.upload.uuid && <Upload data={data.upload} />}
+                                            {data.upload && data.upload.uuid && <Upload data={data.upload}/>}
 
                                             {/* Vitessce */}
                                             <SennetVitessce data={data}/>

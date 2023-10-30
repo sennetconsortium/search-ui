@@ -15,7 +15,6 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import {Tree} from 'primereact/tree';
 import $ from 'jquery'
-import log from 'loglevel'
 
 import 'primeicons/primeicons.css';
 
@@ -234,7 +233,6 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                     }
                 }
             });
-            log.debug(data)
             setTreeData(data)
         } catch (e) {
             console.error(e)
