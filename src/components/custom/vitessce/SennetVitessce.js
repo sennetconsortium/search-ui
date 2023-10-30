@@ -27,7 +27,7 @@ export const SennetVitessce = ({data}) => {
     } = useContext(DerivedContext)
 
     return <>
-        {showVitessce(isPrimaryDataset, data) &&
+        {showVitessce &&
             <SenNetAccordion title='Visualization' id={'Vitessce'} className={'accordion--vitessce'}>
                 <div className={'row'}>
                     <div className={'col p-2 m-2'}>
