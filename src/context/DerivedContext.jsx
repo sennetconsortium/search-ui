@@ -65,15 +65,20 @@ export const DerivedProvider = ({children}) => {
                 const prov_info = await get_prov_info(data.uuid)
                 if (prov_info !== {}) {
                     const processed_datasets = prov_info['processed_dataset_uuid']
-                    if (processed_datasets.length > 0) {
-                        fetchEntity(processed_datasets[0]).then(processed_dataset => {
-                            // Check that the assay type is supported by Vitessce
-                            if (vitessceSupportedAssays.includes(processed_dataset.data_types[0])) {
-                                setShowVitessce(true)
-                                setDerivedDataset(processed_dataset)
-                                set_vitessce_config(processed_dataset, processed_dataset.uuid)
-                            }
-                        })
+                    const processed_dataset_statuses = prov_info['processed_dataset_status']
+                    // Iterate over processed datasets and check that the status is valid
+                    for (let i = 0; i < processed_dataset_statuses.length; i++) {
+                        if (isDatasetStatusPassed(processed_dataset_statuses[i])) {
+                            fetchEntity(processed_datasets[0]).then(processed_dataset => {
+                                // Check that the assay type is supported by Vitessce
+                                if (vitessceSupportedAssays.includes(processed_dataset.data_types[0])) {
+                                    setShowVitessce(true)
+                                    setDerivedDataset(processed_dataset)
+                                    set_vitessce_config(processed_dataset, processed_dataset.uuid)
+                                }
+                            })
+                            break;
+                        }
                     }
                 }
             }
@@ -92,7 +97,11 @@ export const DerivedProvider = ({children}) => {
     })()
 
     const isDatasetStatusPassed = data => {
-        return data.status === "QA" || data.status === 'Published'
+        if(data.hasOwnProperty('status')) {
+            return data.status === "QA" || data.status === 'Published'
+        } else {
+            return data === "QA" || data === 'Published'
+        }
     }
 
     const expandVitessceToFullscreen = () => {
