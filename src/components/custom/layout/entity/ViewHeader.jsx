@@ -55,7 +55,7 @@ function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
             </h3>
             <div className="row mb-2">
                 <div className="col-md-6 col-sm-12 entity_subtitle icon_inline">
-                    <ViewHeaderBadges data={data} uniqueHeader={uniqueHeader}/>
+                    <ViewHeaderBadges data={data} uniqueHeader={uniqueHeader} hasWritePrivilege={hasWritePrivilege}/>
                 </div>
 
                 <div className="col-md-6 col-sm-12">
