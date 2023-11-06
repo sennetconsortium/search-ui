@@ -16,16 +16,14 @@ import {Row, Col, Stack} from "react-bootstrap";
 import {Download, ArrowRightSquareFill, ExclamationTriangleFill} from "react-bootstrap-icons";
 import {getDocsRootURL, getIngestEndPoint, getRootURL} from "../../../config/config";
 import Spinner from "../Spinner";
-import AppFooter from "../layout/AppFooter";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
-import {tableColumns, formatErrorColumnTimer, getErrorList} from "../edit/MetadataUpload";
+import {tableColumns, getErrorList} from "../edit/MetadataUpload";
 import DataTable from 'react-data-table-component';
 import {createDownloadUrl, equals} from "../js/functions";
 import AppContext from "../../../context/AppContext";
 import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
-import { get } from 'lodash';
 import SenNetAlert from "../../SenNetAlert";
 
 
@@ -173,7 +171,6 @@ export default function BulkCreate({
             setError({1: true})
             const errorList = getErrorList(data)
             setErrorMessage(errorList)
-            formatErrorColumnTimer('`')
         } else {
             setBulkResponse(data.description)
             setValidationSuccess(true)
@@ -220,7 +217,6 @@ export default function BulkCreate({
         if (!response.ok) {
             setError({1: true})
             setErrorMessage(data.description)
-            formatErrorColumnTimer('`')
         } else {
             setTempId(data.description.temp_id)
             setValidationSuccess(true)
@@ -552,9 +548,13 @@ export default function BulkCreate({
         return title
     }
 
-    const getFilename = () => {
-        let filename = `example_${entityType}`
+    const getFilename = (variant = '') => {
+        let filename = `example${variant}_${entityType}`
         return isMetadata ? `metadata/${filename}_${subType}_metadata` : `entities/${filename}`
+    }
+
+    const isCedarSupported = () => {
+        return isMetadata && !subType.includes([cache.sourceTypes.Mouse])
     }
 
     const getDocsUrl = () => {
@@ -583,13 +583,16 @@ export default function BulkCreate({
                     padding: 5,
                     boxShadow: 3,
                 }}>
-                    <a
-                        download
-                        className={buttonVariant}
-                        href={`/bulk/${getFilename().toLowerCase()}.tsv`}
-                    >
-                        <FileDownloadIcon/> {' '} EXAMPLE.TSV
-                    </a>
+                    <div>
+                        <a
+                            download
+                            className={buttonVariant}
+                            href={`/bulk/${getFilename(isCedarSupported() ? '_cedar' : '').toLowerCase()}.tsv`}
+                        >
+                            <FileDownloadIcon/> {' '} <span>EXAMPLE.TSV {isCedarSupported() && <span>(CEDAR)</span>}</span>
+                        </a>
+                        {isCedarSupported() && <small className='fs-xs'><br />Or download <a download href={`/bulk/${getFilename().toLowerCase()}.tsv`}>legacy example.tsv</a></small>}
+                    </div>
                     <h1 className={'text-center'}>{getTitle()}</h1>
                     {equals(entityType, cache.entities.dataset) &&
                         <SenNetAlert variant={'warning'}
@@ -627,7 +630,7 @@ export default function BulkCreate({
                     {isLoading && <Spinner/>}
                     {
                         errorMessage && <div className='c-metadataUpload__table table-responsive has-error'>
-                            <DataTable columns={tableColumns} data={errorMessage.data ? errorMessage.data : errorMessage} pagination />
+                            <DataTable columns={tableColumns('`')} data={errorMessage.data ? errorMessage.data : errorMessage} pagination />
                         </div>
                     }
                     {activeStep === 1 && !errorMessage && validationSuccess &&
