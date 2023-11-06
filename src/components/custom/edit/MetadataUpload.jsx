@@ -181,9 +181,8 @@ function MetadataUpload({ setMetadata, entity, subType }) {
     }
 
     const getSchemaUrl = () => {
-        let url = 'https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/'
+        let url = 'https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/#'
         url += entity
-        url = subType ? `${url}-${subType}` : url
         return url.toLowerCase()
     }
 

@@ -587,7 +587,7 @@ export default function BulkCreate({
                         <a
                             download
                             className={buttonVariant}
-                            href={`/bulk/${getFilename(isCedarSupported() ? '_cedar' : '').toLowerCase()}.tsv`}
+                            href={isCedarSupported() ? `https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/${entityType}-${subType.toLowerCase()}/latest/${entityType}-${subType.toLowerCase()}.tsv` : `/bulk/${getFilename().toLowerCase()}.tsv`}
                         >
                             <FileDownloadIcon/> {' '} <span>EXAMPLE.TSV {isCedarSupported() && <span>(CEDAR)</span>}</span>
                         </a>
