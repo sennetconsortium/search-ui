@@ -3,14 +3,14 @@ import PropTypes from 'prop-types'
 import SenNetPopover, {SenPopoverOptions} from "./SenNetPopover";
 import {displayBodyHeader} from "./custom/js/functions";
 
-function StatusError({children, text, error, title, className, size = 12}) {
+function StatusError({text, error, title}) {
     const copyToClipboard = () => {
         navigator.clipboard.writeText(error)
     }
 
     return (
-        <SenNetPopover text={<code>{error}</code>} trigger={SenPopoverOptions.triggers.hover} placement={"bottom"}
-                       className={`${className} popover-status-error`}>
+        <SenNetPopover text={<code>{error}</code>} placement={"bottom"}
+                       className="error-popover">
             <span title={title.replace('{error}', error)} onClick={copyToClipboard}>
                 {displayBodyHeader(text)}
             </span>
@@ -24,11 +24,9 @@ StatusError.defaultProps = {
 }
 
 StatusError.propTypes = {
-    children: PropTypes.node,
     text: PropTypes.string.isRequired,
     error: PropTypes.string.isRequired,
     title: PropTypes.string,
-    className: PropTypes.string
 }
 
 export default StatusError
