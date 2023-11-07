@@ -34,7 +34,6 @@ export async function check_valid_token() {
     let formBody = 'token=' + getAuth()
 
     let url = "https://auth.globus.org/v2/oauth2/token/introspect"
-    console.log(formBody)
     return await call_service(formBody, url, "POST", headers).then((response) => {
         return response.active
     }).catch(error => {
