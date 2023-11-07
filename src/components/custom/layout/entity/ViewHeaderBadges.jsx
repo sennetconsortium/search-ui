@@ -79,7 +79,8 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader, hasWritePrivile
 
                         {(data.status === 'Invalid' || data.status === 'Error') && hasWritePrivilege ?
                             (
-                                <StatusError text={data.status} error={data.pipeline_message}/>
+                                <StatusError text={data.status} className={"error-popover"}
+                                             error={data.pipeline_message ? data.pipeline_message : data.validation_message}/>
                             ) : (
                                 <SenNetPopover text={getStatusDefinition(data.status)} className={'status-info'}>
                                     {displayBodyHeader(data.status)}
