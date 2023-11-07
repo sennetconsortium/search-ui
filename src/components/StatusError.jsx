@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import SenNetPopover, {SenPopoverOptions} from "./SenNetPopover";
 import {displayBodyHeader} from "./custom/js/functions";
 
-function StatusError({text, error, title, className, size = 12}) {
+function StatusError({text, error, title}) {
     const copyToClipboard = () => {
         navigator.clipboard.writeText(error)
     }
@@ -27,7 +27,6 @@ StatusError.propTypes = {
     text: PropTypes.string.isRequired,
     error: PropTypes.string.isRequired,
     title: PropTypes.string,
-    className: PropTypes.string
 }
 
 export default StatusError
