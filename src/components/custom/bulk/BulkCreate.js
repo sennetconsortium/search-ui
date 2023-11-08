@@ -594,6 +594,11 @@ export default function BulkCreate({
                         {isCedarSupported() && <small className='fs-xs'><br />Or download <a download href={`/bulk/${getFilename().toLowerCase()}.tsv`}>legacy example.tsv</a></small>}
                     </div>
                     <h1 className={'text-center'}>{getTitle()}</h1>
+                     <SenNetAlert variant={'warning'}
+                                  text={<>Limit the number of rows containing data to <u>30 rows</u>. If necessary you
+                                      will need to register entities via multiple submissions.</>}
+                                     icon={<ExclamationTriangleFill/>}/>
+
                     {equals(entityType, cache.entities.dataset) &&
                         <SenNetAlert variant={'warning'}
                                      text={<>This page is intended for registering datasets in bulk. This process will
