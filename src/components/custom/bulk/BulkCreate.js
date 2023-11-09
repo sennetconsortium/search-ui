@@ -595,8 +595,9 @@ export default function BulkCreate({
                     </div>
                     <h1 className={'text-center'}>{getTitle()}</h1>
                      <SenNetAlert variant={'warning'}
-                                  text={<>Limit the number of rows containing data to <u>30 rows</u>. If necessary you
-                                      will need to register entities via multiple submissions.</>}
+                                  text={<>Please limit the number of rows (excluding headers) containing data to 30 for
+                                      processing purposes. If necessary, you may need to register entities via multiple
+                                      submissions.</>}
                                      icon={<ExclamationTriangleFill/>}/>
 
                     {equals(entityType, cache.entities.dataset) &&
