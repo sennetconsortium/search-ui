@@ -126,7 +126,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
     const filterTemplate = (options) => {
         let {filterOptions} = options;
         return (
-            <Form id="file-search">
+            <Form id="file-search" onSubmit={(e) => e.preventDefault()}>
                 <Row className={"mb-4"}>
                     <Form.Group as={Col} md={6}>
                         <InputGroup>
