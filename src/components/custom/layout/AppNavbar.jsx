@@ -23,14 +23,14 @@ const AppNavbar = ({hidden, signoutHidden}) => {
 
     const supportedSingleRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication entity', 'upload']
+        let notSupported = ['publication entity', 'upload', 'organ']
         return entities.filter(entity => !notSupported.includes(entity))
     }
 
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
 
-        let notSupported = ['publication entity']
+        let notSupported = ['publication entity', 'organ']
         entities = entities.filter(entity => !notSupported.includes(entity))
 
         const elem = entities.shift()
