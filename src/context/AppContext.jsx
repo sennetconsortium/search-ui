@@ -38,10 +38,6 @@ export const AppProvider = ({ cache, children }) => {
     useEffect(() => {
         // Should only include: '/', '/search', '/logout', '/login', '/404'
         const noRedirectTo = Object.values(APP_ROUTES)
-        if (noRedirectTo.indexOf(router.pathname) === -1) {
-            // Set expiry for 10 minutes
-            setLocalItemWithExpiry(pageKey, router.asPath, 600000)
-        }
 
         let info = getCookie('info')
         let groups_token = ""
@@ -55,6 +51,11 @@ export const AppProvider = ({ cache, children }) => {
         } else {
             // Delete in the event info doesn't exist as might have been logged out the system elsewhere.
             deleteCookies()
+        }
+
+        if (noRedirectTo.indexOf(router.pathname) === -1) {
+            // Set expiry for 10 minutes
+            setLocalItemWithExpiry(pageKey, router.asPath, 600000)
         }
 
         if(groups_token  != "") {
