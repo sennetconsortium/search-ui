@@ -49,7 +49,8 @@ export const AppProvider = ({ cache, children }) => {
             info = atob(info)
             setCookie(
                 'groups_token',
-                JSON.parse(info).groups_token
+                JSON.parse(info).groups_token,
+                {sameSite: "Lax"},
             )
             groups_token = JSON.parse(info).groups_token
         } else {
@@ -151,12 +152,12 @@ export const AppProvider = ({ cache, children }) => {
         get_read_write_privileges()
             .then((read_write_privileges) => {
                 if (read_write_privileges.read_privs === true) {
-                    setCookie(authKey, true)
+                    setCookie(authKey, true, {sameSite: "Lax"})
                     let info = getCookie('info')
                     if (info) {
                         info = atob(info)
                         const {email, globus_id} = JSON.parse(info)
-                        setCookie('user', {email, globus_id})
+                        setCookie('user', {email, globus_id}, {sameSite: "Lax"})
                     }
                     // Redirect to home page without query string
                     const page = getLocalItemWithExpiry(pageKey)
@@ -278,7 +279,7 @@ export const AppProvider = ({ cache, children }) => {
         if (!uiAuthCookie) {
             const result = await promptForUIPasscode()
             if (result.value === atob(getUIPassword())) {
-                setCookie('adminUIAuthorized', true)
+                setCookie('adminUIAuthorized', true, {sameSite: "Lax"})
                 setUIAuthorized(true)
             } else {
                 await checkUIPassword()
