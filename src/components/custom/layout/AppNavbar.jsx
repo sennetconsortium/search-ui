@@ -223,6 +223,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                     hideCloseButton={true}
                     showProgress={true}
                     showSkipButton={true}
+                    continuous
                     styles={{
                         options: {
                             arrowColor: '#ffffff',
