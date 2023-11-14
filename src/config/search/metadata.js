@@ -437,10 +437,10 @@ export const SEARCH_METADATA = {
             queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Source&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=source_type&filters%5B1%5D%5Bvalues%5D%5B0%5D=Human&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
         },
         {
-            title: 'C57BL/6J-Kit<W-39J> Mouse Sources',
-            description: 'Mouse sources from the C57BL/6J-Kit<W-39J> strain',
+            title: 'C57BL/6 Mouse Sources',
+            description: 'Mouse sources from the C57BL/6 strain',
             entityType: 'source',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Source&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=source_type&filters%5B1%5D%5Bvalues%5D%5B0%5D=Mouse&filters%5B1%5D%5Btype%5D=any&filters%5B2%5D%5Bfield%5D=metadata.strain&filters%5B2%5D%5Bvalues%5D%5B0%5D=C57BL%2F6J-Kit<W-39J>&filters%5B2%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: 'size=n_10000_n&filters[0][field]=entity_type&filters[0][values][0]=Source&filters[0][type]=any&filters[1][field]=source_type&filters[1][values][0]=Mouse&filters[1][type]=any&filters[2][field]=metadata.strain&filters[2][values][0]=C57BL%2F6&filters[2][type]=any&sort[0][field]=last_modified_timestamp&sort[0][direction]=desc'
         },
         {
             title: 'All Mouse Sources',
