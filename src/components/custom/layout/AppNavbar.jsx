@@ -37,7 +37,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
     ]
     if (isLoggedIn()){
         _steps.push({
-            target: '#submenu-md-Single',
+            target: '#nav-dropdown',
             title: <span>Registering entities (5/{stepsCount})</span>,
             content: <span>You may register individual and bulk entities by clicking on this menu. Then selecting under <i>Single</i> for single registration or under <i>Bulk</i> for bulk registration.</span>
         })
