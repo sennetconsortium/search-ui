@@ -22,7 +22,7 @@ function AppTutorial() {
                 steps={steps}
                 callback={(res) => {
                         if (equals(res.action, 'reset')) {
-                            setCookie('tutorialCompleted', true)
+                            setCookie('tutorialCompleted', true, {sameSite: 'Lax'})
                         }
                     }
                 }
