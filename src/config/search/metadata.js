@@ -143,10 +143,10 @@ export const SEARCH_METADATA = {
                 uiType: 'numrange',
                 uiRange: [0, 100],
             },
-            "metadata.weight_value_unit": {
+            "metadata.weight_unit": {
                 label: 'Weight Unit',
                 type: 'value',
-                field: 'metadata.weight_value_unit.keyword',
+                field: 'metadata.weight_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -161,10 +161,10 @@ export const SEARCH_METADATA = {
                 uiType: 'numrange',
                 uiRange: [0, 100],
             },
-            "metadata.volume_value_unit": {
+            "metadata.volume_unit": {
                 label: 'Volume Unit',
                 type: 'value',
-                field: 'metadata.volume_value_unit.keyword',
+                field: 'metadata.volume_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -179,10 +179,10 @@ export const SEARCH_METADATA = {
                 uiType: 'numrange',
                 uiRange: [0, 100],
             },
-            "metadata.pathology_distance_value_unit": {
+            "metadata.pathology_distance_unit": {
                 label: 'Pathology Distance Unit',
                 type: 'value',
-                field: 'metadata.pathology_distance_value_unit.keyword',
+                field: 'metadata.pathology_distance_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -332,11 +332,11 @@ export const SEARCH_METADATA = {
 
             // Sample Block
             "metadata.weight_value": FilterIsSelected('sample_category', 'Block'),
-            "metadata.weight_value_unit": FilterIsSelected('sample_category', 'Block'),
+            "metadata.weight_unit": FilterIsSelected('sample_category', 'Block'),
             "metadata.volume_value": FilterIsSelected('sample_category', 'Block'),
-            "metadata.volume_value_unit": FilterIsSelected('sample_category', 'Block'),
+            "metadata.volume_unit": FilterIsSelected('sample_category', 'Block'),
             "metadata.pathology_distance_value": FilterIsSelected('sample_category', 'Block'),
-            "metadata.pathology_distance_value_unit": FilterIsSelected('sample_category', 'Block'),
+            "metadata.pathology_distance_unit": FilterIsSelected('sample_category', 'Block'),
 
             // Sample Section
             "metadata.section_thickness_value": FilterIsSelected('sample_category', 'Section'),
