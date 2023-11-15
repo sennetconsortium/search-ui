@@ -1,17 +1,15 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
 import {getDataIngestBoardEndpoint, NAVBAR_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
 import {getCookie} from "cookies-next";
-import Joyride from "react-joyride";
-import TutorialSteps from "./TutorialSteps";
+import AppTutorial from "./AppTutorial";
 
 const AppNavbar = ({hidden, signoutHidden}) => {
     const {_t, isLoggedIn, logout, cache, supportedMetadata} = useContext(AppContext)
     const userEmail = (isLoggedIn() ? JSON.parse(atob(getCookie('info')))['email'] : "")
-    const [steps, setSteps] = useState(TutorialSteps(isLoggedIn()))
 
     const handleSession = (e) => {
         e.preventDefault()
@@ -181,24 +179,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                         </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
-                <Joyride
-                    steps={steps}
-                    hideCloseButton={true}
-                    showProgress={true}
-                    showSkipButton={true}
-                    continuous
-                    styles={{
-                        options: {
-                            arrowColor: '#ffffff',
-                            backgroundColor: '#ffffff',
-                            overlayColor: 'rgba(255,253,253,0.4)',
-                            primaryColor: '#0d6efd',
-                            textColor: 'rgba(0, 0, 0, 0.87)',
-                            width: 900,
-                            zIndex: 1000,
-                        }
-                    }}
-                />
+                <AppTutorial />
             </Container>
         </Navbar>
     )
