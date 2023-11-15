@@ -159,7 +159,8 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 100],
+                uiRange: [0, 100000],
+                uiInterval: 5000,
             },
             "metadata.volume_unit": {
                 label: 'Volume Unit',
