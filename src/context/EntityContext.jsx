@@ -229,6 +229,23 @@ export const EntityProvider = ({ children }) => {
         setModalBody(body)
     }
 
+    const checkInputLength = (value, fieldId) => {
+        let classes = {...warningClasses}
+        const el = document.getElementById(fieldId)
+        const valid = el?.checkValidity()
+        if (!value || !valid) {
+            delete classes.abstract
+            setWarningClasses(classes)
+            return
+        }
+        if (value.length < 100) {
+            classes.abstract = 'has-warning'
+        } else {
+            delete classes.abstract
+        }
+        setWarningClasses(classes)
+    }
+
     const checkProtocolUrl = async (value) => {
         let classes = {...warningClasses}
         const el = document.getElementById('protocol_url')
@@ -295,7 +312,7 @@ export const EntityProvider = ({ children }) => {
                 metadata, setMetadata,
                 dataAccessPublic, setDataAccessPublic,
                 getEntityConstraints, getSampleEntityConstraints, buildConstraint,
-                checkMetadata, getMetadataNote, successIcon, errIcon, checkProtocolUrl,
+                checkMetadata, getMetadataNote, successIcon, errIcon, checkProtocolUrl, checkInputLength,
                 warningClasses, setWarningClasses, getCancelBtn
             }}
         >

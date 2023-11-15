@@ -36,7 +36,7 @@ import {
 } from "../../config/config";
 import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import $ from 'jquery'
-import SenNetPopover from "../../components/SenNetPopover"
+import SenNetPopover, {SenPopoverOptions} from "../../components/SenNetPopover"
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
 import DatasetRevertButton from "../../components/custom/edit/dataset/DatasetRevertButton";
 
@@ -56,7 +56,8 @@ export default function EditDataset() {
         metadata, setMetadata,
         dataAccessPublic, setDataAccessPublic,
         getEntityConstraints,
-        getSampleEntityConstraints,
+        checkInputLength,
+        warningClasses,
         buildConstraint, successIcon, errIcon, getCancelBtn
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
@@ -247,6 +248,12 @@ export default function EditDataset() {
         }).catch((e) => log.error(e))
     }
 
+    const _onBlur = (e, fieldId, value) => {
+        if(fieldId === 'purpose' || fieldId === 'method' || fieldId === 'result') {
+            checkInputLength(value, fieldId)
+        }
+    }
+
     const checkDoi = async () => {
         try {
             setDisableSubmit(true)
@@ -411,11 +418,71 @@ export default function EditDataset() {
                                                          the <code>Dataset</code>. This can be useful for lab members to
                                                          identify and look-up Datasets.</>}/>
 
-                                    {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='DOI Abstract' type='textarea' controlId='description'
-                                                     value={data.description}
-                                                     onChange={onChange}
-                                                     text={<>An abstract publicly available when the <code>Dataset</code> is published.  This will be included with the DOI information of the published <code>Dataset</code>.</>}/>
+                                    {/*/!*Abstract*!/*/}
+                                    <h6>Abstract <SenNetPopover className={"abstract"}
+                                                       text={<>These fields will be combined to create a complete abstract during the publishing of this <code>Dataset</code> and minting of a DOI.</>}>
+                                            <QuestionCircleFill/>
+                                        </SenNetPopover>
+                                    </h6>
+                                    <div className={"card mb-4 bg-transparent"}>
+                                        <div className={"card-body"}>
+                                            <div className={"container-fluid px-4"}>
+                                                <div className={"row mt-4"}>
+                                                    <EntityFormGroup label='Purpose' type='textarea'
+                                                                     controlId='purpose'
+                                                                     isRequired={true}
+                                                                     value={data.description}
+                                                                     onChange={onChange}
+                                                                     row={2}
+                                                                     className={warningClasses.abstract}
+                                                                     warningClass={"warning-icon-trigger-textarea"}
+                                                                     warningText={<>This field is required for
+                                                                         publishing of this <code>Dataset</code>. This
+                                                                         will need to be filled out with at least 100
+                                                                         character prior to submission.</>}
+                                                                     onBlur={_onBlur}
+                                                                     popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
+                                                                     text={<>An abstract publicly available when
+                                                                         the <code>Dataset</code> is published. This
+                                                                         will be
+                                                                         included with the DOI information of the
+                                                                         published <code>Dataset</code>.</>}/>
+
+                                                    <EntityFormGroup label='Method' type='textarea'
+                                                                     controlId='method'
+                                                                     value={data.description}
+                                                                     onChange={onChange}
+                                                                     row={2}
+                                                                     warningText={<>This field is required for
+                                                                         publishing of this <code>Dataset</code>. This
+                                                                         will need to be filled out with at least 100
+                                                                         character prior to submission.</>}
+                                                                     text={<>An abstract publicly available when
+                                                                         the <code>Dataset</code> is published. This
+                                                                         will be
+                                                                         included with the DOI information of the
+                                                                         published <code>Dataset</code>.</>}/>
+
+                                                    <EntityFormGroup label='Result' type='textarea'
+                                                                     controlId='result'
+                                                                     value={data.description}
+                                                                     onChange={onChange}
+                                                                     row={2}
+                                                                     warningText={<>This field is required for
+                                                                         publishing of this <code>Dataset</code>. This
+                                                                         will need to be filled out with at least 100
+                                                                         character prior to submission.</>}
+                                                                     text={<>An abstract publicly available when
+                                                                         the <code>Dataset</code> is published. This
+                                                                         will be
+                                                                         included with the DOI information of the
+                                                                         published <code>Dataset</code>.</>}/>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     {/*/!*Additional Information*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea'

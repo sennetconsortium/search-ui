@@ -3,7 +3,7 @@
     position: relative;
 
     &.has-warning {
-      input {
+      input, textarea {
         border-color: var(--bs-warning) !important;
         background-image: none !important;
 
@@ -16,6 +16,11 @@
         position: absolute;
         top: 36px;
         right: 10px;
+      }
+      .warning-icon-trigger-textarea {
+        position: absolute;
+        top: 36px;
+        right: 20px;
       }
     }
   }
