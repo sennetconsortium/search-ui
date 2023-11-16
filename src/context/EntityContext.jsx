@@ -234,14 +234,14 @@ export const EntityProvider = ({ children }) => {
         const el = document.getElementById(fieldId)
         const valid = el?.checkValidity()
         if (!value || !valid) {
-            delete classes.abstract
+            delete classes["abstract_" + fieldId]
             setWarningClasses(classes)
             return
         }
         if (value.length < 100) {
-            classes.abstract = 'has-warning'
+            classes["abstract_" + fieldId] = 'has-warning'
         } else {
-            delete classes.abstract
+            delete classes["abstract_" + fieldId]
         }
         setWarningClasses(classes)
     }
