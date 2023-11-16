@@ -1,18 +1,23 @@
 import Link from "next/link";
+import { APP_ROUTES } from "../../../config/constants";
 
 const SearchDropdown = ({ title }) => {
     const dropdownItems = [
-        { name: "Entities", url: "/search" },
-        { name: "Metadata", url: "/search/metadata" },
+        { name: "Entities", url: APP_ROUTES.search },
+        { name: "Metadata", url: APP_ROUTES.discover + "/metadata" },
     ];
 
     const createLinkView = (item) => {
         if (item.name === title) {
-            return <span key={item.name} className="dropdown-item">{item.name}</span>;
+            return (
+                <span key={item.name} className="dropdown-item">
+                    Search {item.name}
+                </span>
+            );
         }
         return (
             <Link key={item.name} className="dropdown-item" href={item.url}>
-                {item.name}
+                Search {item.name}
             </Link>
         );
     };
@@ -26,7 +31,7 @@ const SearchDropdown = ({ title }) => {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
             >
-                {title}
+                Search {title}
             </button>
             <ul className="dropdown-menu" aria-labelledby="searchDropdown">
                 {dropdownItems.map((item) => {
