@@ -19,6 +19,7 @@ import SelectedFacets from "../../components/custom/search/SelectedFacets";
 import SearchUIContainer from "search-ui/components/core/SearchUIContainer";
 import FacetsContent from "../../components/custom/search/FacetsContent";
 import BodyContent from "../../components/custom/search/BodyContent";
+import SearchDropdown from "../../components/custom/search/SearchDropdown";
 import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
 import InvalidToken from "../../components/custom/layout/InvalidToken";
 
@@ -109,6 +110,8 @@ function SearchEntities() {
                             sideContent={
                                 <div data-js-ada='facets'>
                                     <CustomClearSearchBox />
+
+                                    <SearchDropdown title='Entities' />
 
                                     <SelectedFilters />
 
