@@ -422,7 +422,7 @@ export default function EditDataset() {
                                                          identify and look-up Datasets.</>}/>
 
                                     {/*/!*Abstract*!/*/}
-                                    <Abstract onChange={onChange} onBlur={_onBlur} data={data}
+                                    <Abstract onChange={onChange} onBlur={_onBlur} data={data} values={values}
                                               warningClasses={warningClasses}/>
 
 
@@ -485,14 +485,14 @@ export default function EditDataset() {
                                         {getCancelBtn('dataset')}
 
                                         {!equals(data['status'], 'Processing') &&
-                                            <zPopover text={<>Save changes to this <code>Dataset</code>.</>} className={'save-button'}>
+                                            <SenNetPopover text={<>Save changes to this <code>Dataset</code>.</>} className={'save-button'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--save"
                                                         className={'me-2'}
                                                         onClick={handleSave}
                                                         disabled={disableSubmit}>
                                                     {_t('Save')}
                                                 </Button>
-                                            </zPopover>
+                                            </SenNetPopover>
                                         }
 
                                         {/*If the status for the Dataset is 'New' then allow the user to mark this as 'Submitted'*/}

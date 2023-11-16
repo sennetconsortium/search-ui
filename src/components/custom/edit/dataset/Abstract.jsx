@@ -15,7 +15,12 @@ export default class Abstract extends React.Component {
 
     onChange = (e, fieldId, value) => {
         this.props.onChange(e, fieldId, value);
-        this.setState({"abstract": this.props.value?.purpose?.trim() + " " + this.props.data?.method?.trim() + " " + this.props.data?.result?.trim()});
+
+        let purpose = fieldId==='purpose' ? value.trim() : (this.props.values?.purpose ? this.props.values.purpose : "")
+        let method = fieldId==='method' ? value.trim() : (this.props.values?.method ? this.props.values.method : "")
+        let result = fieldId==='result' ? value.trim() : (this.props.values?.result ? this.props.values.result : "")
+
+        this.setState({"abstract": purpose + " " + method + " " + result});
     };
 
     render() {
