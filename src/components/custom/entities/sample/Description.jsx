@@ -11,11 +11,11 @@ export default function Description({data, labId, primaryDateTitle, primaryDate,
 
         return (
             <SenNetAccordion title={'Summary'}>
-                {data && data?.description &&
+                {data && (data?.description || data?.abstract) &&
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
-                            <Card.Subtitle>{equals(data.entity_type, cache.entities.upload) ? 'Description' : 'DOI Abstract'}</Card.Subtitle>
-                            <Card.Text>{data.description}</Card.Text>
+                            <Card.Subtitle>{equals(data.entity_type, cache.entities.upload) ? 'Description' : 'Abstract'}</Card.Subtitle>
+                            <Card.Text>{data.description ? data.description : data.abstract}</Card.Text>
                         </Card.Body>
                     </Card>
                 }

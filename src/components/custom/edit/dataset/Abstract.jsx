@@ -2,12 +2,21 @@ import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import EntityFormGroup from "../../layout/entity/FormGroup";
 import React from "react";
+import { Form } from 'react-bootstrap'
 
 export default class Abstract extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            abstract: this.props.data.abstract || ""
+        };
     }
+
+    onChange = (e, fieldId, value) => {
+        this.props.onChange(e, fieldId, value);
+        this.setState({"abstract": this.props.value?.purpose?.trim() + " " + this.props.data?.method?.trim() + " " + this.props.data?.result?.trim()});
+    };
 
     render() {
         return (
@@ -22,6 +31,9 @@ export default class Abstract extends React.Component {
                     <QuestionCircleFill/>
                 </SenNetPopover>
                 </h6>
+                <Form.Group className={"mb-4"}>
+                    <Form.Control as={"textarea"} rows={2} disabled value={this.state.abstract}/>
+                </Form.Group>
                 <div className={"card mb-4 bg-transparent"}>
                     <div className={"card-body"}>
                         <div className={"container-fluid px-4"}>
@@ -30,8 +42,8 @@ export default class Abstract extends React.Component {
                                 <EntityFormGroup label='Purpose' type='textarea'
                                                  controlId='purpose'
                                                  isRequired={true}
-                                                 value={this.props.data.description}
-                                                 onChange={this.props.onChange}
+                                                 value={this.props.data.purpose}
+                                                 onChange={this.onChange}
                                                  row={2}
                                                  className={this.props.warningClasses.abstract_purpose}
                                                  warningClass={"warning-icon-trigger-textarea"}
@@ -47,8 +59,8 @@ export default class Abstract extends React.Component {
                                 <EntityFormGroup label='Method' type='textarea'
                                                  controlId='method'
                                                  isRequired={true}
-                                                 value={this.props.data.description}
-                                                 onChange={this.props.onChange}
+                                                 value={this.props.data.method}
+                                                 onChange={this.onChange}
                                                  row={2}
                                                  className={this.props.warningClasses.abstract_method}
                                                  warningClass={"warning-icon-trigger-textarea"}
@@ -64,8 +76,8 @@ export default class Abstract extends React.Component {
                                 <EntityFormGroup label='Result' type='textarea'
                                                  controlId='result'
                                                  isRequired={true}
-                                                 value={this.props.data.description}
-                                                 onChange={this.props.onChange}
+                                                 value={this.props.data.result}
+                                                 onChange={this.onChange}
                                                  row={2}
                                                  className={this.props.warningClasses.abstract_result}
                                                  warningClass={"warning-icon-trigger-textarea"}
@@ -75,7 +87,8 @@ export default class Abstract extends React.Component {
                                                      character prior to submission.</>}
                                                  onBlur={this.props.onBlur}
                                                  popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
-                                                  text={<>Two or three sentences explaining what the <b>main result</b> reveals
+                                                 text={<>Two or three sentences explaining what the <b>main
+                                                     result</b> reveals
                                                      in direct
                                                      comparison to what was thought to be the case previously, or how
                                                      the
