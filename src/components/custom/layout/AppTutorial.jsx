@@ -8,9 +8,10 @@ import {equals} from "../js/functions";
 function AppTutorial() {
     const {isLoggedIn} = useContext(AppContext)
     const [steps, setSteps] = useState([])
+    const cookieKey = `tutorialCompleted_${isLoggedIn()}`
 
     useEffect(() => {
-        const tutorialCompleted = getCookie('tutorialCompleted')
+        const tutorialCompleted = getCookie(cookieKey)
         if (!tutorialCompleted) {
             setSteps(TutorialSteps(isLoggedIn()))
         }
@@ -22,7 +23,7 @@ function AppTutorial() {
                 steps={steps}
                 callback={(res) => {
                         if (equals(res.action, 'reset')) {
-                            setCookie('tutorialCompleted', true, {sameSite: 'Lax'})
+                            setCookie(cookieKey, true, {sameSite: 'Lax'})
                         }
                     }
                 }
