@@ -55,6 +55,6 @@ export function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
     }
 
     return (
-        <div className={'sui-react-select'}>&nbsp; {getOptions(totalRows).length > 0 && <Select blurInputOnSelect={false} options={getOptions(totalRows)} defaultValue={getDefaultValue()} value={getCurrentValue()} onChange={handleChange} name={'resultsPerPage'} />}</div>
+        <div className={'sui-react-select'}>{getOptions(totalRows).length > 0 && <Select blurInputOnSelect={false} options={getOptions(totalRows)} defaultValue={getDefaultValue()} value={getCurrentValue()} onChange={handleChange} name={'resultsPerPage'} />}</div>
     )
 }

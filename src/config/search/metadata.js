@@ -143,10 +143,10 @@ export const SEARCH_METADATA = {
                 uiType: 'numrange',
                 uiRange: [0, 100],
             },
-            "metadata.weight_value_unit": {
+            "metadata.weight_unit": {
                 label: 'Weight Unit',
                 type: 'value',
-                field: 'metadata.weight_value_unit.keyword',
+                field: 'metadata.weight_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -159,12 +159,13 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 100],
+                uiRange: [0, 100000],
+                uiInterval: 5000,
             },
-            "metadata.volume_value_unit": {
+            "metadata.volume_unit": {
                 label: 'Volume Unit',
                 type: 'value',
-                field: 'metadata.volume_value_unit.keyword',
+                field: 'metadata.volume_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -179,10 +180,10 @@ export const SEARCH_METADATA = {
                 uiType: 'numrange',
                 uiRange: [0, 100],
             },
-            "metadata.pathology_distance_value_unit": {
+            "metadata.pathology_distance_unit": {
                 label: 'Pathology Distance Unit',
                 type: 'value',
-                field: 'metadata.pathology_distance_value_unit.keyword',
+                field: 'metadata.pathology_distance_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -332,11 +333,11 @@ export const SEARCH_METADATA = {
 
             // Sample Block
             "metadata.weight_value": FilterIsSelected('sample_category', 'Block'),
-            "metadata.weight_value_unit": FilterIsSelected('sample_category', 'Block'),
+            "metadata.weight_unit": FilterIsSelected('sample_category', 'Block'),
             "metadata.volume_value": FilterIsSelected('sample_category', 'Block'),
-            "metadata.volume_value_unit": FilterIsSelected('sample_category', 'Block'),
+            "metadata.volume_unit": FilterIsSelected('sample_category', 'Block'),
             "metadata.pathology_distance_value": FilterIsSelected('sample_category', 'Block'),
-            "metadata.pathology_distance_value_unit": FilterIsSelected('sample_category', 'Block'),
+            "metadata.pathology_distance_unit": FilterIsSelected('sample_category', 'Block'),
 
             // Sample Section
             "metadata.section_thickness_value": FilterIsSelected('sample_category', 'Section'),
@@ -437,10 +438,10 @@ export const SEARCH_METADATA = {
             queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Source&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=source_type&filters%5B1%5D%5Bvalues%5D%5B0%5D=Human&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
         },
         {
-            title: 'C57BL/6J-Kit<W-39J> Mouse Sources',
-            description: 'Mouse sources from the C57BL/6J-Kit<W-39J> strain',
+            title: 'C57BL/6 Mouse Sources',
+            description: 'Mouse sources from the C57BL/6 strain',
             entityType: 'source',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Source&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=source_type&filters%5B1%5D%5Bvalues%5D%5B0%5D=Mouse&filters%5B1%5D%5Btype%5D=any&filters%5B2%5D%5Bfield%5D=metadata.strain&filters%5B2%5D%5Bvalues%5D%5B0%5D=C57BL%2F6J-Kit<W-39J>&filters%5B2%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: 'size=n_10000_n&filters[0][field]=entity_type&filters[0][values][0]=Source&filters[0][type]=any&filters[1][field]=source_type&filters[1][values][0]=Mouse&filters[1][type]=any&filters[2][field]=metadata.strain&filters[2][values][0]=C57BL%2F6&filters[2][type]=any&sort[0][field]=last_modified_timestamp&sort[0][direction]=desc'
         },
         {
             title: 'All Mouse Sources',
@@ -479,10 +480,10 @@ export const SEARCH_METADATA = {
             queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=metadata.metadata.analyte_class&filters%5B1%5D%5Bvalues%5D%5B0%5D=RNA&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
         },
         {
-            title: 'All Protein Datasets',
-            description: 'Datasets with the Protein analyte class.',
+            title: 'All Sequence Datasets',
+            description: 'Datasets with the sequence assay category.',
             entityType: 'dataset',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=metadata.metadata.analyte_class&filters%5B1%5D%5Bvalues%5D%5B0%5D=protein&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=metadata.metadata.assay_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=sequence&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
         },
     ],
 }
