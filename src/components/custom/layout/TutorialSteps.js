@@ -5,6 +5,7 @@ function TutorialSteps(loggedIn) {
     let _steps = [
         {
             target: '#search',
+            disableBeacon: true,
             title: <span>Search Entities by Free Text (1/{stepsCount})</span>,
             content: 'To further narrow the relevant entities, type search terms or phrases into the Search bar. Entities containing any of the search terms will be returned.'
         },

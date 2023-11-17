@@ -1,4 +1,10 @@
 .alert {
+  &-hlf {
+    @include lg {
+      width: 60%;
+      margin: auto;
+    }
+  }
   .alert-body {
     border-bottom: 1px solid aliceblue;
   }

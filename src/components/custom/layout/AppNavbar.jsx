@@ -5,7 +5,6 @@ import React, {useContext, useState, useEffect} from 'react'
 import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
 import {getCookie} from "cookies-next";
-import AppTutorial from "./AppTutorial";
 
 const AppNavbar = ({hidden, signoutHidden}) => {
     const {_t, isLoggedIn, logout, cache, supportedMetadata} = useContext(AppContext)
@@ -179,7 +178,6 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                         </Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
-                <AppTutorial />
             </Container>
         </Navbar>
     )
