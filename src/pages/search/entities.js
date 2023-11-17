@@ -109,9 +109,9 @@ function SearchEntities() {
                             }
                             sideContent={
                                 <div data-js-ada='facets'>
-                                    <CustomClearSearchBox />
+                                    <SearchDropdown className="mb-4" title='Entities' />
 
-                                    <SearchDropdown title='Entities' />
+                                    <CustomClearSearchBox />
 
                                     <SelectedFilters />
 
