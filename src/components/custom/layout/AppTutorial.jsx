@@ -6,7 +6,6 @@ import Joyride from "react-joyride";
 import {equals} from "../js/functions";
 import {Alert} from 'react-bootstrap'
 import {Binoculars} from "react-bootstrap-icons";
-import $ from 'jquery'
 
 function AppTutorial() {
     const {isLoggedIn} = useContext(AppContext)
@@ -26,7 +25,6 @@ function AppTutorial() {
 
     const handleTutorial = () => {
         setShowAlert(false)
-        $('.sticky-top.navbar').addClass('is-static')
         // Set a quick timeout to allow the alert to close
         // first before Joyride calculates the highlight region
         setTimeout(()=> {
@@ -42,10 +40,10 @@ function AppTutorial() {
             </Alert>
             {steps.length > 0 && <Joyride
                 steps={steps}
+                scrollOffset={80}
                 callback={(res) => {
                     console.log(res)
                         if (equals(res.action, 'reset')) {
-                            $('.sticky-top.navbar').removeClass('is-static')
                             setCookie(cookieKey, true, {sameSite: 'Lax'})
                         }
                     }
