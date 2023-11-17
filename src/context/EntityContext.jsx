@@ -231,13 +231,6 @@ export const EntityProvider = ({ children }) => {
 
     const checkInputLength = (value, fieldId) => {
         let classes = {...warningClasses}
-        const el = document.getElementById(fieldId)
-        const valid = el?.checkValidity()
-        if (!value || !valid) {
-            delete classes["abstract_" + fieldId]
-            setWarningClasses(classes)
-            return
-        }
         if (value.length < 100) {
             classes["abstract_" + fieldId] = 'has-warning'
         } else {

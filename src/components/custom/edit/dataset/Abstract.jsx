@@ -47,7 +47,6 @@ export default class Abstract extends React.Component {
                                 {/*Purpose*/}
                                 <EntityFormGroup label='Purpose' type='textarea'
                                                  controlId='purpose'
-                                                 isRequired={true}
                                                  value={this.props.data.purpose}
                                                  onChange={this.onChange}
                                                  row={2}
@@ -64,7 +63,6 @@ export default class Abstract extends React.Component {
                                 {/*Method*/}
                                 <EntityFormGroup label='Method' type='textarea'
                                                  controlId='method'
-                                                 isRequired={true}
                                                  value={this.props.data.method}
                                                  onChange={this.onChange}
                                                  row={2}
@@ -81,7 +79,6 @@ export default class Abstract extends React.Component {
                                 {/*Result*/}
                                 <EntityFormGroup label='Result' type='textarea'
                                                  controlId='result'
-                                                 isRequired={true}
                                                  value={this.props.data.result}
                                                  onChange={this.onChange}
                                                  row={2}
