@@ -8,8 +8,9 @@ export default class Abstract extends React.Component {
 
     constructor(props) {
         super(props);
+        // Initialize the abstract field with the auto generated `abstract` if it exists. For older Datasets show the description
         this.state = {
-            abstract: this.props.data.abstract || ""
+            abstract: this.props.data.abstract ? this.props.data.abstract : (this.props.data.description ? this.props.data.description : "")
         };
     }
 

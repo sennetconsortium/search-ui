@@ -15,7 +15,7 @@ export default function Description({data, labId, primaryDateTitle, primaryDate,
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
                             <Card.Subtitle>{equals(data.entity_type, cache.entities.upload) ? 'Description' : 'Abstract'}</Card.Subtitle>
-                            <Card.Text>{data.description ? data.description : data.abstract}</Card.Text>
+                            <Card.Text>{data.abstract ? data.abstract : data.description}</Card.Text>
                         </Card.Body>
                     </Card>
                 }
