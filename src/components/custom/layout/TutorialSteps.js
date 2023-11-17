@@ -15,7 +15,7 @@ function TutorialSteps(loggedIn) {
             content: 'The faceted search options on the left side allows filtering entities by any combination of categories. Search results update automatically as you edit the selection of filters.',
         },
         {
-            target: '.sc-eDWCr',
+            target: '[data-column-id="2"].rdt_TableCol',
             title: <span>Sort Search Results (3/{stepsCount})</span>,
             content: 'Clicking the header of any column will sort search results. A bolded arrow indicates the current sorting selection. Clicking again will reverse the order.'
         },
