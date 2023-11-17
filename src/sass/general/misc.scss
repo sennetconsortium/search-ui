@@ -83,6 +83,21 @@ p {
   font-size: 12px;
 }
 
+[id^="react-joyride-step"] {
+  * {
+    text-align: left;
+  }
+  h4 {
+    padding-left: 10px;
+    padding-top: 20px;
+  }
+  .__floater {
+   @include lg {
+     width: 40% !important;
+   }
+  }
+}
+
 #__next, #__next > div:not(.sui-layout, .footer-wrapper, .spinner-wrapper) {
   display:grid;
   grid-template-rows:auto 1fr auto;

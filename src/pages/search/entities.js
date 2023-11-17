@@ -21,6 +21,7 @@ import FacetsContent from "../../components/custom/search/FacetsContent";
 import BodyContent from "../../components/custom/search/BodyContent";
 import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
 import InvalidToken from "../../components/custom/layout/InvalidToken";
+import AppTutorial from "../../components/custom/layout/AppTutorial";
 
 function SearchEntities() {
     const {
@@ -78,6 +79,7 @@ function SearchEntities() {
                             header={
                                 <>
                                     <div className="search-box-header js-gtm--search">
+                                        <AppTutorial />
                                         <SearchBox
                                             view={({onChange, value, onSubmit}) => (
                                                 <Form onSubmit={e => handleSearchFormSubmit(e, onSubmit)}>
