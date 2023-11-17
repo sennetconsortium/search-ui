@@ -98,11 +98,6 @@ p {
   }
 }
 
-// Set this so tutorial overlay can be above navbar sticky
-.sticky-top.navbar {
-  z-index: 1000 !important;
-}
-
 #__next, #__next > div:not(.sui-layout, .footer-wrapper, .spinner-wrapper) {
   display:grid;
   grid-template-rows:auto 1fr auto;
