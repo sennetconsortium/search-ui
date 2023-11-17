@@ -93,7 +93,7 @@ function SearchMetadata() {
                                 }
                                 sideContent={
                                     <div data-js-ada='facets'>
-                                        <SearchDropdown className="mb-4" title='Metadata' />
+                                        <SearchDropdown title='Metadata' />
 
                                         <CustomClearSearchBox />
 

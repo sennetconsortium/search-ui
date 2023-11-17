@@ -1,13 +1,11 @@
 import Link from "next/link";
 import { APP_ROUTES } from "../../../config/constants";
 
-const SearchDropdown = ({ title, className }) => {
+const SearchDropdown = ({ title }) => {
     const dropdownItems = [
         { name: "Entities", url: APP_ROUTES.search },
         { name: "Metadata", url: APP_ROUTES.discover + "/metadata" },
     ];
-
-    const additionalClassName = className ? " " + className : "";
 
     const createLinkView = (item) => {
         if (item.name === title) {
@@ -25,7 +23,7 @@ const SearchDropdown = ({ title, className }) => {
     };
 
     return (
-        <div className={`dropdown${additionalClassName}`}>
+        <div className="dropdown sui-layout-sidebar-dropdown">
             <button
                 className="btn btn-outline-primary rounded-0 dropdown-toggle w-100"
                 type="button"
