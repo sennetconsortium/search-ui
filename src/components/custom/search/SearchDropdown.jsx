@@ -9,11 +9,7 @@ const SearchDropdown = ({ title }) => {
 
     const createLinkView = (item) => {
         if (item.name === title) {
-            return (
-                <span key={item.name} className="dropdown-item">
-                    Search {item.name}
-                </span>
-            );
+            return null;
         }
         return (
             <Link key={item.name} className="dropdown-item" href={item.url}>
