@@ -27,15 +27,14 @@ function AppTutorial() {
                         }
                     }
                 }
-                hideCloseButton={true}
                 showProgress={true}
                 showSkipButton={true}
+                locale={{last: 'Finish Tutorial'}}
                 continuous
                 styles={{
                     options: {
                         arrowColor: '#ffffff',
                         backgroundColor: '#ffffff',
-                        overlayColor: 'rgba(255,253,253,0.4)',
                         primaryColor: '#0d6efd',
                         textColor: 'rgba(0, 0, 0, 0.87)',
                         width: 900,
