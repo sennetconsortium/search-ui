@@ -19,6 +19,7 @@ import SelectedFacets from "../../components/custom/search/SelectedFacets";
 import SearchUIContainer from "search-ui/components/core/SearchUIContainer";
 import FacetsContent from "../../components/custom/search/FacetsContent";
 import BodyContent from "../../components/custom/search/BodyContent";
+import SearchDropdown from "../../components/custom/search/SearchDropdown";
 import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
 
 function SearchMetadata() {
@@ -92,6 +93,8 @@ function SearchMetadata() {
                                 }
                                 sideContent={
                                     <div data-js-ada='facets'>
+                                        <SearchDropdown title='Metadata' />
+
                                         <CustomClearSearchBox />
 
                                         <SelectedFilters/>
