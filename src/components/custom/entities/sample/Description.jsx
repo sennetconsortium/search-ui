@@ -3,22 +3,34 @@ import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import AppContext from "../../../../context/AppContext";
-import {equals} from "../../js/functions";
+import {equals, formatCitation} from "../../js/functions";
+import {BoxArrowUpRight} from "react-bootstrap-icons";
 
-export default function Description({data, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate}) {
+export default function Description({data, doiData, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate}) {
 
     const {isLoggedIn, cache} = useContext(AppContext)
 
         return (
-            <SenNetAccordion title={'Summary'}>
+            <SenNetAccordion title={data?.title || 'Summary'} id={'Summary'}>
+
                 {data && data?.description &&
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
-                            <Card.Subtitle>{equals(data.entity_type, cache.entities.upload) ? 'Description' : 'DOI Abstract'}</Card.Subtitle>
+                            <Card.Subtitle>{(equals(data.entity_type, cache.entities.upload) || equals(data.entity_type, 'Collection')) ? 'Description' : 'DOI Abstract'}</Card.Subtitle>
                             <Card.Text>{data.description}</Card.Text>
                         </Card.Body>
                     </Card>
                 }
+
+                {data && data?.doi_url &&
+                    <Card border={'0'} className={'pb-3'}>
+                        <Card.Body>
+                            <Card.Subtitle>Citation</Card.Subtitle>
+                            <Card.Text>{doiData && <span>{formatCitation(doiData, data.doi_url)}</span>}</Card.Text>
+                        </Card.Body>
+                    </Card>
+                }
+
                 <CardGroup>
                     {isLoggedIn() && data && labId &&
                         <Card border={'0'} className={'pb-3'}>
