@@ -19,7 +19,8 @@ export default function Home() {
                 info = atob(info)
                 setCookie(
                     'groups_token',
-                    JSON.parse(info).groups_token
+                    JSON.parse(info).groups_token,
+                    {sameSite: "Lax"},
                 )
 
                 log.debug(router.query)
