@@ -30,7 +30,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
 
-        let notSupported = ['publication entity', 'organ']
+        let notSupported = ['publication entity', 'organ', 'collection']
         entities = entities.filter(entity => !notSupported.includes(entity))
 
         const elem = entities.shift()
