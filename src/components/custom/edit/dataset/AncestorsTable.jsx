@@ -9,10 +9,10 @@ import ClipboardCopy from "../../../ClipboardCopy";
 
 export default class AncestorsTable extends React.Component {
     deleteAncestor = async (e, ancestorId) => {
-        const old_uuids = [...this.props.values.direct_ancestor_uuids]
+        const old_uuids = [...this.props.values[this.props.controlId]]
         let updated_uuids = old_uuids.filter(e => e !== ancestorId)
         console.log(updated_uuids)
-        this.props.onChange(e, 'direct_ancestor_uuids', updated_uuids);
+        this.props.onChange(e, this.props.controlId, updated_uuids);
         this.props.deleteAncestor(ancestorId);
     }
 
@@ -21,7 +21,7 @@ export default class AncestorsTable extends React.Component {
             <Table className={'table--ancestors'}>
                 <thead>
                 <tr>
-                    <th>Ancestor ID</th>
+                    <th>{this.props.formLabel.upperCaseFirst()} ID</th>
                     <th>Entity Type</th>
                     <th>Subtype</th>
                     <th>Lab ID</th>
