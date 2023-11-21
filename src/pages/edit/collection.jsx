@@ -29,16 +29,10 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
 import {
-    getEntityEndPoint,
-    getIngestEndPoint,
-    getProtocolsToken,
     valid_dataset_ancestor_config
 } from "../../config/config";
-import MetadataUpload from "../../components/custom/edit/MetadataUpload";
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
-import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
-import DatasetRevertButton from "../../components/custom/edit/dataset/DatasetRevertButton";
 import AttributesUpload from "../../components/custom/edit/AttributesUpload";
 
 export default function EditCollection() {

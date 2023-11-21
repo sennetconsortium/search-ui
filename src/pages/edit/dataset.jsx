@@ -34,7 +34,7 @@ import {
     getProtocolsToken,
     valid_dataset_ancestor_config
 } from "../../config/config";
-import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+import AttributesUpload from "../../components/custom/edit/AttributesUpload";
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
@@ -469,7 +469,7 @@ export default function EditDataset() {
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    {/*<MetadataUpload setMetadata={setMetadata} entity={cache.entities.dataset} />*/}
+                                    {/*<AttributesUpload setAttribute={setMetadata} entity={cache.entities.dataset} />*/}
                                     
                                     <div className={'d-flex flex-row-reverse'}>
 
