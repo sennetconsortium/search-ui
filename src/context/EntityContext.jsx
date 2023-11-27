@@ -191,7 +191,9 @@ export const EntityProvider = ({ children }) => {
             setModalTitle(<span key='title-0'>{successIcon()}<span key='title-1' className={'title-text'} > {entity} {verb}</span></span>)
             body.push(<span key='bdy-1'>{_t(`Your ${entity} was ${verb.toLocaleLowerCase()}`)}. <br /></span>)
             body.push(<span key='bdy-2'><strong>{_t(typeHeader)}:</strong> {type}<br /></span>)
-            body.push(<span key='bdy-3'><strong>{_t('Group Name')}:</strong> {response.group_name}<br /></span>)
+            if (response.group_name) {
+                body.push(<span key='bdy-3'><strong>{_t('Group Name')}:</strong> {response.group_name}<br /></span>)
+            }
             body.push(<span key='bdy-4'><strong>{_t('SenNet ID')}:</strong> {response.sennet_id} <ClipboardCopy text={response.sennet_id} /> </span>)
             setModalBody(body)
             setResponse(response)
