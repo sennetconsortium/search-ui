@@ -217,13 +217,6 @@
 
 .sui-resultsTable {
   min-height: 400px;
-  @include xlg {
-    .spinner-wrapper {
-      position: absolute;
-      top: 30%; right: 45%;
-      transform: translate(50%,-50%);
-    }
-  }
 }
 
 #sui-tbl-checkbox-actions {
