@@ -13,6 +13,7 @@ function BodyContent({ view }) {
             data-ada-data='{"trigger": ".rdt_TableCell", "tabIndex": ".rdt_TableRow"}'
         >
             {wasSearched && <Results filters={filters} titleField={filters} rawResponse={rawResponse} view={view} />}
+            {!wasSearched && <Spinner />}
         </div>
     )
 }
