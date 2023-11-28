@@ -10,10 +10,7 @@ const connector = new SearchAPIConnector({
 export const SEARCH_ENTITIES = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
-        excludeFilters: [{
-            keyword: "entity_type.keyword",
-            value: "Collection"
-        }, {
+        excludeFilters: [ {
             keyword: "entity_type.keyword",
             value: "Publication"
         }

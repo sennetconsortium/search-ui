@@ -9,7 +9,7 @@ import DataTable from 'react-data-table-component';
 import $ from 'jquery'
 import { get_auth_header } from "../../../lib/services";
 import SenNetPopover, {SenPopoverOptions} from "../../SenNetPopover";
-import {urlify} from "../js/functions";
+import {equals, urlify} from "../js/functions";
 
 const handleErrorRow = (row) => {
     let err = row.error
@@ -91,9 +91,24 @@ export const getErrorList = (details) => {
     return {data, columns: tableColumns()};
 }
 
-function MetadataUpload({ setMetadata, entity, subType }) {
+export const getResponseList = (details) => {
+    let columns = []
+    for (let column of details?.description?.headers) {
+        columns.push(
+            {
+                name: column.upperCaseFirst(),
+                selector: row => row[column],
+                sortable: true,
+            }
+        )
+    }
 
-    const metadataInputRef = useRef()
+    return {data: details?.description?.records, columns}
+}
+
+function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable }) {
+
+    const attributeInputRef = useRef()
     const [file, setFile] = useState('')
     const [fileStatus, setFileStatus] = useState('')
     const [error, setError] = useState(null)
@@ -107,13 +122,13 @@ function MetadataUpload({ setMetadata, entity, subType }) {
     useEffect(()=> {
         if (!initialized.current){
             initialized.current = true
-            setMetadata({})
+            setAttribute({})
         }
         if (file && rerun !== subType) {
             setError(true)
             setRerun(subType)
             setSuccess(false)
-            setMetadata({})
+            setAttribute({})
             handleUpload(null)
         } else {
             setRerun(null)
@@ -132,11 +147,12 @@ function MetadataUpload({ setMetadata, entity, subType }) {
             let formData = new FormData()
             setFile(upload)
             setFileStatus(upload.name)
-            formData.append('metadata', upload)
+            formData.append(attribute, upload)
+            formData.append('attribute', attribute)
             formData.append('entity_type', entity)
             formData.append('sub_type', subType)
             formData.append('ui_type', 'gui')
-            const response = await fetch(getIngestEndPoint() + 'metadata/validate', { method: 'POST', body: formData, headers: get_auth_header() })
+            const response = await fetch(getIngestEndPoint() + ingestEndpoint, { method: 'POST', body: formData, headers: get_auth_header() })
             const details = await response.json()
             $('[type=file]').val(null)
             if (details.code !== 200) {
@@ -150,11 +166,14 @@ function MetadataUpload({ setMetadata, entity, subType }) {
                 }
                 setTable(result)
             } else {
+                if (showAllInTable) {
+                    setTable(getResponseList(details))
+                }
                 setError(false)
                 setValidationError(false)
                 setFileStatus(upload.name)
                 setSuccess(true)
-                setMetadata(details)
+                setAttribute(details)
             }
             setIsValidating(false)
         } catch(e) {
@@ -186,23 +205,31 @@ function MetadataUpload({ setMetadata, entity, subType }) {
         return url.toLowerCase()
     }
 
-    const handleUploadMetadataClick = () => metadataInputRef.current.click()
+    const getTooltip = () => {
+        if (equals(attribute, 'metadata')) {
+            return <span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
+                            <small className='popover-note text-muted'>For example TSV schemas, please see the <a href={getSchemaUrl()}>docs</a>.</small></span>
+        } else {
+            return <span>Click here to upload and validate your <code>{attribute}</code> TSV file.</span>
+        }
+    }
+
+    const handleUploadMetadataClick = () => attributeInputRef.current.click()
 
 
     return (
         <div className={`c-metadataUpload`}>
             <InputGroup className="mb-3">
                 <input style={{display: 'none'}} onInput={handleUpload} type='file' id='entity_metadata'
-                       name='entity_metadata' ref={metadataInputRef}/>
+                       name='entity_metadata' ref={attributeInputRef}/>
 
                 <SenNetPopover placement={SenPopoverOptions.placement.right}
                                trigger={SenPopoverOptions.triggers.hoverOnClickOff}
-                               className='c-metadataUpload__popover'
-                               text={<span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
-                            <small className='popover-note text-muted'>For example TSV schemas, please see the <a href={getSchemaUrl()}>docs</a>.</small></span>}
+                               className={`c-metadataUpload__popover--${attribute}`}
+                               text={getTooltip()}
                 >
                     <Button variant={'outline-primary rounded-0'} onClick={handleUploadMetadataClick}>
-                        Upload Metadata File
+                        Upload {attribute.upperCaseFirst()} File
                         <Paperclip className={'ms-2'}/>
                     </Button>
                 </SenNetPopover>
@@ -216,7 +243,7 @@ function MetadataUpload({ setMetadata, entity, subType }) {
                         {isValidating && <span className="spinner spinner-border ic alert alert-info"></span>}
                     </small>
                 </span>
-                {error && table.data && <div className='c-metadataUpload__table table-responsive has-error'>
+                {(error || showAllInTable) && table.data && <div className={`c-metadataUpload__table table-responsive ${error ? 'has-error' : ''}`}>
                     <DataTable
                         columns={table.columns}
                         data={table.data}
@@ -228,14 +255,20 @@ function MetadataUpload({ setMetadata, entity, subType }) {
     )
 }
 
-MetadataUpload.defaultProps = {
-    subType: ''
+AttributesUpload.defaultProps = {
+    subType: '',
+    attribute: 'metadata',
+    ingestEndpoint: 'metadata/validate',
+    showAllInTable: false,
 }
 
-MetadataUpload.propTypes = {
-    setMetadata: PropTypes.func,
+AttributesUpload.propTypes = {
+    setAttribute: PropTypes.func,
     entity: PropTypes.string.isRequired,
-    subType: PropTypes.string
+    subType: PropTypes.string,
+    attribute: PropTypes.string.isRequired,
+    ingestEndpoint: PropTypes.string.isRequired,
+    showAllInTable: PropTypes.bool.isRequired
 }
 
-export default MetadataUpload
+export default AttributesUpload
