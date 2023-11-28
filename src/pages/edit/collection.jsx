@@ -31,6 +31,7 @@ import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import AttributesUpload, {getResponseList} from "../../components/custom/edit/AttributesUpload";
 import DataTable from "react-data-table-component";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 export default function EditCollection() {
     const {
@@ -265,7 +266,10 @@ export default function EditCollection() {
                                                      onChange={onChange}
                                                      text={<>An abstract publicly available when the <code>Collection</code> is published.</>}/>
 
-                                    <AttributesUpload ingestEndpoint={ingestEndpoint} showAllInTable={true} setAttribute={setAttributes} entity={cache.entities.collection} excludeColumns={excludeColumns} attribute={'Contributors'} title={<h6>Contributors</h6>} />
+                                    <AttributesUpload ingestEndpoint={ingestEndpoint} showAllInTable={true} setAttribute={setAttributes}
+                                                      entity={cache.entities.collection} excludeColumns={excludeColumns}
+                                                      attribute={'Contributors'} title={<h6>Contributors</h6>}
+                                                      customFileInfo={<span><a className='btn btn-outline-primary rounded-0 fs-8' download href={'/bulk/entities/example_collection_contributors.tsv'}> <FileDownloadIcon  />EXAMPLE.TSV</a></span>}/>
                                     {contacts && contacts.description && <div className='c-metadataUpload__table table-responsive'>
                                         <h6>Contacts</h6>
                                         <DataTable
