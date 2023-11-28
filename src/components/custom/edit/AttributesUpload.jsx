@@ -109,7 +109,7 @@ export const getResponseList = (details, excludeColumns) => {
     return {data: details?.description?.records, columns}
 }
 
-function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable, excludeColumns }) {
+function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable, excludeColumns, title }) {
 
     const attributeInputRef = useRef()
     const [file, setFile] = useState('')
@@ -247,6 +247,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
                     </small>
                 </span>
                 {(error || showAllInTable) && table.data && <div className={`c-metadataUpload__table table-responsive ${error ? 'has-error' : ''}`}>
+                    {title}
                     <DataTable
                         columns={table.columns}
                         data={table.data}
@@ -273,7 +274,8 @@ AttributesUpload.propTypes = {
     attribute: PropTypes.string.isRequired,
     ingestEndpoint: PropTypes.string.isRequired,
     showAllInTable: PropTypes.bool.isRequired,
-    excludeColumns: PropTypes.array
+    excludeColumns: PropTypes.array,
+    title: PropTypes.node
 }
 
 export default AttributesUpload

@@ -265,7 +265,7 @@ export default function EditCollection() {
                                                      onChange={onChange}
                                                      text={<>An abstract publicly available when the <code>Collection</code> is published.</>}/>
 
-                                    <AttributesUpload ingestEndpoint={ingestEndpoint} showAllInTable={true} setAttribute={setAttributes} entity={cache.entities.collection} excludeColumns={excludeColumns} attribute={'Contributors'} />
+                                    <AttributesUpload ingestEndpoint={ingestEndpoint} showAllInTable={true} setAttribute={setAttributes} entity={cache.entities.collection} excludeColumns={excludeColumns} attribute={'Contributors'} title={<h6>Contributors</h6>} />
                                     {contacts && contacts.description && <div className='c-metadataUpload__table table-responsive'>
                                         <h6>Contacts</h6>
                                         <DataTable
