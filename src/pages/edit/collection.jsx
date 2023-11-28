@@ -1,25 +1,21 @@
 import React, {useContext, useEffect, useRef, useState} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
-import {Button, Form, Badge} from 'react-bootstrap'
+import {Button, Form} from 'react-bootstrap'
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
-import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
-import {get_headers, update_create_dataset, update_create_entity} from '../../lib/services'
+import { update_create_entity} from '../../lib/services'
 import {
     cleanJson,
     equals,
-    fetchEntity, fetchProtocols,
-    getDataTypesByProperty, getEntityViewUrl,
-    getRequestHeaders, getStatusColor, isPrimaryAssay
+    fetchEntity,
+    getRequestHeaders, isPrimaryAssay
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
-import DataTypes from '../../components/custom/edit/dataset/DataTypes'
 import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
 import Unauthorized from '../../components/custom/layout/Unauthorized'
 import AppFooter from '../../components/custom/layout/AppFooter'
-import GroupSelect from '../../components/custom/edit/GroupSelect'
 import Header from '../../components/custom/layout/Header'
 
 import AppContext from '../../context/AppContext'
@@ -33,7 +29,8 @@ import {
 } from "../../config/config";
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
-import AttributesUpload from "../../components/custom/edit/AttributesUpload";
+import AttributesUpload, {getResponseList} from "../../components/custom/edit/AttributesUpload";
+import DataTable from "react-data-table-component";
 
 export default function EditCollection() {
     const {
@@ -57,6 +54,7 @@ export default function EditCollection() {
     const [contacts, setContacts] = useState([])
     const [contributors, setContributors] = useState([])
     const ingestEndpoint = 'collections/attributes'
+    const excludeColumns = ['is_contact']
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -189,11 +187,10 @@ export default function EditCollection() {
 
                 log.debug("Form is valid")
 
-                if(!_.isEmpty(contacts)) {
-                    values["contacts"] = contacts.description.records
-                }
+
                 if(!_.isEmpty(contributors)) {
                     values["creators"] = contributors.description.records
+                    values['contacts'] = contacts.description.records
                 }
 
                 // Remove empty strings
@@ -207,6 +204,18 @@ export default function EditCollection() {
         }
         setValidated(true);
     };
+
+    const setAttributes = (resp) => {
+        if (!resp.description) return
+        setContributors(resp)
+        let _contacts = []
+        for (let creator of resp?.description?.records) {
+            if (equals(creator.is_contact, 'true')) {
+                _contacts.push(creator)
+            }
+        }
+        setContacts({description: {records: _contacts, headers: resp.description.headers}})
+    }
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
@@ -256,9 +265,14 @@ export default function EditCollection() {
                                                      onChange={onChange}
                                                      text={<>An abstract publicly available when the <code>Collection</code> is published.</>}/>
 
-
-                                    <AttributesUpload ingestEndpoint={ingestEndpoint} showAllInTable={true} setAttribute={setContacts} entity={cache.entities.collection} attribute={'Contacts'} />
-                                    <AttributesUpload ingestEndpoint={ingestEndpoint} showAllInTable={true} setAttribute={setContributors} entity={cache.entities.collection} attribute={'Contributors'} />
+                                    <AttributesUpload ingestEndpoint={ingestEndpoint} showAllInTable={true} setAttribute={setAttributes} entity={cache.entities.collection} excludeColumns={excludeColumns} attribute={'Contributors'} />
+                                    {contacts && contacts.description && <div className='c-metadataUpload__table table-responsive'>
+                                        <h6>Contacts</h6>
+                                        <DataTable
+                                            columns={getResponseList(contacts, excludeColumns).columns}
+                                            data={contacts.description.records}
+                                            pagination />
+                                    </div>}
 
                                     <div className={'d-flex flex-row-reverse'}>
 

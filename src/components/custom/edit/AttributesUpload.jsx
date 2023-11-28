@@ -91,22 +91,25 @@ export const getErrorList = (details) => {
     return {data, columns: tableColumns()};
 }
 
-export const getResponseList = (details) => {
+export const getResponseList = (details, excludeColumns) => {
     let columns = []
     for (let column of details?.description?.headers) {
-        columns.push(
-            {
-                name: column.upperCaseFirst(),
-                selector: row => row[column],
-                sortable: true,
-            }
-        )
+        if (excludeColumns.indexOf(column) === -1) {
+            columns.push(
+                {
+                    name: column.upperCaseFirst(),
+                    selector: row => row[column],
+                    sortable: true,
+                }
+            )
+        }
+
     }
 
     return {data: details?.description?.records, columns}
 }
 
-function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable }) {
+function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable, excludeColumns }) {
 
     const attributeInputRef = useRef()
     const [file, setFile] = useState('')
@@ -167,7 +170,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
                 setTable(result)
             } else {
                 if (showAllInTable) {
-                    setTable(getResponseList(details))
+                    setTable(getResponseList(details, excludeColumns))
                 }
                 setError(false)
                 setValidationError(false)
@@ -260,6 +263,7 @@ AttributesUpload.defaultProps = {
     attribute: 'metadata',
     ingestEndpoint: 'metadata/validate',
     showAllInTable: false,
+    excludeColumns: []
 }
 
 AttributesUpload.propTypes = {
@@ -268,7 +272,8 @@ AttributesUpload.propTypes = {
     subType: PropTypes.string,
     attribute: PropTypes.string.isRequired,
     ingestEndpoint: PropTypes.string.isRequired,
-    showAllInTable: PropTypes.bool.isRequired
+    showAllInTable: PropTypes.bool.isRequired,
+    excludeColumns: PropTypes.array
 }
 
 export default AttributesUpload
