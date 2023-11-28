@@ -1,7 +1,7 @@
 import React from "react";
 
 function TutorialSteps(loggedIn) {
-    const stepsCount = loggedIn ? 6 : 4
+    const stepsCount = loggedIn ? 7 : 5
     let _steps = [
         {
             target: '#search',
@@ -10,18 +10,23 @@ function TutorialSteps(loggedIn) {
             content: 'To further narrow the relevant entities, type search terms or phrases into the Search bar. Entities containing any of the search terms will be returned.'
         },
         {
+            target: '#searchDropdown',
+            title: <span>Search Entities or Metadata (2/{stepsCount})</span>,
+            content: 'The default option to search by entities allows you to filter results based on the core properties of various entity types. You can also search and filter the metadata that has been submitted to registered entities.',
+        },
+        {
             target: '.sui-facet',
-            title: <span>Filter Your Browsing (2/{stepsCount})</span>,
+            title: <span>Filter Your Browsing (3/{stepsCount})</span>,
             content: 'The faceted search options on the left side allows filtering entities by any combination of categories. Search results update automatically as you edit the selection of filters.',
         },
         {
             target: '[data-column-id="2"].rdt_TableCol',
-            title: <span>Sort Search Results (3/{stepsCount})</span>,
+            title: <span>Sort Search Results (4/{stepsCount})</span>,
             content: 'Clicking the header of any column will sort search results. A bolded arrow indicates the current sorting selection. Clicking again will reverse the order.'
         },
         {
             target: '#sui-tbl-checkbox-actions',
-            title: <span>Download Search Results (4/{stepsCount})</span>,
+            title: <span>Download Search Results (5/{stepsCount})</span>,
             content: <span>Clicking on the checkboxes <input type={'checkbox'} role='presentation' disabled /> on the left side of the search results table allows selecting distinct entities for export. Clicking on the ellipsis <button
                 role='presentation'
                 className="dropdown-toggle btn btn-secondary-outline border-0">...</button> at the top of the search results table allows for exporting either only the selected entities or all entities in the table to a <code>JSON</code> or <code>TSV</code> format.</span>
