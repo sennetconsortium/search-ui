@@ -18,7 +18,11 @@ export const SEARCH_METADATA = {
             {
                 keyword: "entity_type.keyword",
                 value: "Publication"
-            }
+            },
+            {
+                keyword: "sample_category.keyword",
+                value: "Organ",
+            },
         ],
         facets: {
             entity_type: {
@@ -454,12 +458,6 @@ export const SEARCH_METADATA = {
             description: 'Block samples of all weights, volumes, and preparation conditions.',
             entityType: 'sample',
             queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Sample&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=sample_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=Block&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
-        },
-        {
-            title: 'All Organ Samples',
-            description: 'Organ samples of all preparation conditions.',
-            entityType: 'sample',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Sample&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=sample_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=Organ&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
         },
         {
             title: 'All Section Samples',
