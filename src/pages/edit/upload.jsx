@@ -79,6 +79,7 @@ function EditUpload() {
                 // Set state with default values that will be PUT to Entity API to update
                 let _values = {
                     'title': data.title,
+                    'ingest_task': data.ingest_task,
                     'description': data.description,
                     'status': data.status,
                 }
@@ -225,6 +226,26 @@ function EditUpload() {
                                                 onGroupSelectChange={onChange}
                                                 entity_type={'source'}/>
                                         }
+
+                                        {
+                                            !(userWriteGroups.length === 1) && isEditMode() && adminGroup &&
+                                            <GroupSelect
+                                                title={'Assigned to Group Name'}
+                                                required={false}
+                                                controlId={'assigned_to_group_name'}
+                                                popover={<>The group responsible for the next step in the data ingest process.</>}
+                                                data={data}
+                                                groups={userWriteGroups.map(item => {if (item.data_provider) return item})}
+                                                onGroupSelectChange={onChange}
+                                                entity_type={'dataset'}/>
+                                        }
+
+                                        {/*/!*Ingest*!/*/}
+                                        {isEditMode() && adminGroup &&
+                                            <EntityFormGroup label='Ingest Task'
+                                                             controlId='ingest_task' value={data.ingest_task}
+                                                             onChange={onChange}
+                                                             text={<>The next task in the data ingest process.</>} />}
 
                                         {/*Title*/}
                                         <EntityFormGroup label="Upload Title" placeholder='Upload Title'

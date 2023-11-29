@@ -4,22 +4,22 @@ import {Form} from 'react-bootstrap';
 import SenNetPopover from "../../SenNetPopover";
 import AppContext from "../../../context/AppContext";
 
-const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural}) => {
+const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural, popover, title = 'Group', controlId='group_uuid', required = true}) => {
     const {cache} = useContext(AppContext)
-
+    popover = popover || <>{`You are a member of more than one Globus group and need to pick a group to associate with ${plural ? 'these ' : 'this '}`}
+        <code>{cache.entities[entity_type]}</code>.</>
     return (
         <>
-            <Form.Group className="mb-3" controlId="group_uuid">
-                <Form.Label>Group<span
-                    className="required">* </span>
-                    <SenNetPopover className={'group_uuid'} text={<>{`You are a member of more than one Globus group and need to pick a group to associate with ${plural ? 'these ' : 'this '}`}
-                        <code>{cache.entities[entity_type]}</code>.</>}>
-                        <QuestionCircleFill/>
+            <Form.Group className="mb-3" controlId={controlId}>
+                <Form.Label>{title}{required &&<span
+                    className="required">*</span>}
+                    <SenNetPopover className={'group_uuid'} text={popover}>
+                        &nbsp;<QuestionCircleFill/>
                     </SenNetPopover>
 
                 </Form.Label>
 
-                <Form.Select required aria-label="group-select"
+                <Form.Select required={required} aria-label="group-select"
                              onChange={e => onGroupSelectChange(e, e.target.id, e.target.value)}>
                     <option value="">----</option>
                     {
