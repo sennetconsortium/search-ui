@@ -35,13 +35,13 @@ function TutorialSteps(loggedIn) {
     if (loggedIn){
         _steps.push({
             target: '#nav-dropdown',
-            title: <span>Registering entities (5/{stepsCount})</span>,
+            title: <span>Registering entities (6/{stepsCount})</span>,
             content: <span>You may register individual and bulk entities by clicking on this menu. Then selecting under <i>Single</i> for single registration or under <i>Bulk</i> for bulk registration.</span>
         })
 
         _steps.push({
             target: '#nav-dropdown--bulkMetadata',
-            title: <span>Bulk uploading metadata (6/{stepsCount})</span>,
+            title: <span>Bulk uploading metadata (7/{stepsCount})</span>,
             content: <span>Select this menu to bulk upload metadata. <br /> <small className='text-muted'>Note: You may also upload metadata for a single entity during registration. See previous step for details.</small></span>
         })
     }
