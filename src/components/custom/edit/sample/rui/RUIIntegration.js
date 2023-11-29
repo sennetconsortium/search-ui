@@ -90,16 +90,18 @@ class RUIIntegration extends Component {
         const self = this;
 
         const rui = this.ruiRef.current;
-        rui.organ = {
-            ontologyId: organType.toLowerCase(),
-            name: organType.toLowerCase(),
-            sex: sex?.toLowerCase(),
-            side: organSide?.toLowerCase(),
-        };
-        rui.user = {
+        rui.baseHref = "https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
+         rui.user = {
             firstName: firstName || "",
             lastName: lastName || "",
         };
+        rui.organ = {
+            ontologyId: this.props.organ[0],
+            name: organType.toLowerCase(),
+            sex: sex?.toLowerCase() || "female",
+            side: organSide?.toLowerCase(),
+        };
+
         rui.register = function (tissueBlockSpatialData) {
             console.log(tissueBlockSpatialData);
             self.props.setRuiLocation(tissueBlockSpatialData);
@@ -134,7 +136,6 @@ class RUIIntegration extends Component {
                 >
                     <ccf-rui
                         ref={this.ruiRef}
-                        base-href="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
                         theme={"sennet"}
                         header={false}
                     />
@@ -185,7 +186,7 @@ class RUIIntegration extends Component {
 
                     <Script
                         only="edit/sample"
-                        src="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3.7/rui/wc.js"
+                        src="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/wc.js"
                     />
                 </div>
             </div>

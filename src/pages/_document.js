@@ -7,7 +7,7 @@ export default function Document() {
                 {/* RUI styles */}
                 <link rel="stylesheet" href={"https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/styles.css"}/>
                 {/* RUI fonts */}
-                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap"
+                <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap"
                       rel="stylesheet"/>
                 {/* RUI Icons */}
                 <link rel="stylesheet"
