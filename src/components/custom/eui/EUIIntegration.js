@@ -27,7 +27,7 @@ const EUIIntegration = ({ height }) => {
 
             <Script
                 only="ccf-eui"
-                src="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3.7/wc.js"
+                src="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/wc.js"
             />
         </>
     );
