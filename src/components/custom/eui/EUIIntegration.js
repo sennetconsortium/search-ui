@@ -7,7 +7,7 @@ const EUIIntegration = ({ height }) => {
     useEffect(() => {
         const eui = euiRef.current;
         eui.dataSources = [
-            "https://hubmapconsortium.github.io/hra-registrations/staging/sennet/rui_locations.jsonld",
+            "https://apps.humanatlas.io/hra-api/v1/sennet/rui_locations.jsonld",
         ];
     }, []);
 
