@@ -5,28 +5,28 @@ import EUIIntegration from "../../components/custom/eui/EUIIntegration";
 
 const EUIExploration = () => {
     const navBarRef = useRef(null);
-    const [ruiHeight, setRuiHeight] = useState("50vh");
+    const [euiHeight, setEUIHeight] = useState("50vh");
 
     useEffect(() => {
-        resizeRui();
-        window.addEventListener("resize", resizeRui);
+        resizeEUI();
+        window.addEventListener("resize", resizeEUI);
 
         return () => {
-            window.removeEventListener("resize", resizeRui);
+            window.removeEventListener("resize", resizeEUI);
         };
     }, []);
 
-    function resizeRui() {
+    function resizeEUI() {
         const navBar = navBarRef.current;
         if (!navBar) return;
-        const ruiHeight = `${window.innerHeight - navBar.offsetHeight - 10}px`;
-        setRuiHeight(ruiHeight);
+        const euiHeight = `${window.innerHeight - navBar.offsetHeight - 10}px`;
+        setEUIHeight(euiHeight);
     }
 
     return (
         <div className="m-0 h-100 overflow-hidden">
             <AppNavbar innerRef={navBarRef} />
-            <EUIIntegration height={ruiHeight} />
+            <EUIIntegration height={euiHeight} />
         </div>
     );
 };
