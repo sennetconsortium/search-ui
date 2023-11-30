@@ -185,7 +185,7 @@ function ViewDataset() {
                                                 primaryDateTitle={data.published_timestamp ? ("Publication Date") : ("Creation Date")}
                                                 primaryDate={data.published_timestamp ? (data.published_timestamp) : (data.created_timestamp)}
                                                 labId={data.lab_dataset_id}
-                                                secondaryDateTitle="Modification Date"
+                                                secondaryDateTitle="Last Touch"
                                                 secondaryDate={data.last_modified_timestamp}
                                                 data={data}/>
 
