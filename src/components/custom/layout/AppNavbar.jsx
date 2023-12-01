@@ -151,6 +151,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                     <Nav>
                         <NavDropdown active={false}
                                      variant={'primary'}
+                                     align={{ lg: 'end' }}
                                      title="Atlas & Tools"
                                      id="nav-dropdown--atlas">
                             <NavDropdown.Item key={`dd-ccf-eui`}
