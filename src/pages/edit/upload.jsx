@@ -81,6 +81,7 @@ function EditUpload() {
                     'title': data.title,
                     'ingest_task': data.ingest_task,
                     'description': data.description,
+                    'assigned_to_group_name': data.assigned_to_group_name,
                     'status': data.status,
                 }
 
@@ -236,6 +237,7 @@ function EditUpload() {
                                                 controlId={'assigned_to_group_name'}
                                                 popover={<>The group responsible for the next step in the data ingest process.</>}
                                                 data={data}
+                                                value={values.assigned_to_group_name}
                                                 groups={userWriteGroups.map(item => {if (item.data_provider) return item})}
                                                 onGroupSelectChange={onChange}
                                                 entity_type={'dataset'}/>
