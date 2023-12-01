@@ -173,9 +173,10 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                                              title={userEmail}
                                              id="nav-dropdown--user">
                                     <NavDropdown.Item key={`dd-user-logout`}
+                                                      hidden={signoutHidden}
                                                       href='#'
                                                       onClick={(e) => handleSession(e)}>
-                                        Log Out
+                                        {_t('Log out')}
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             ) : (
@@ -184,11 +185,10 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                                     hidden={signoutHidden}
                                     href='#'
                                     onClick={(e) => handleSession(e)}
-                                >Log In
+                                >{_t('Log in')}
                                 </Nav.Link>
                             )
                         }
-
                     </Nav>
                 </Navbar.Collapse>
             </Container>
