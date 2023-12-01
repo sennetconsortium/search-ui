@@ -70,13 +70,32 @@ p {
 }
 
 .mt-resp {
-  @media (min-width: 950px) {
+  @include lg {
     margin-top: 5rem;
   }
 }
 
 .pl-0 {
   padding-left: 0 !important;
+}
+
+.fs-xs {
+  font-size: 12px;
+}
+
+[id^="react-joyride-step"] {
+  * {
+    text-align: left;
+  }
+  h4 {
+    padding-left: 10px;
+    padding-top: 20px;
+  }
+  .__floater {
+   @include lg {
+     width: 40% !important;
+   }
+  }
 }
 
 #__next, #__next > div:not(.sui-layout, .footer-wrapper, .spinner-wrapper) {
@@ -88,4 +107,12 @@ p {
   min-height: calc(100vh - 277px);
   /* new small viewport height for modern browsers */
   min-height: calc(100svh - 277px);
+}
+
+.revisions-select {
+  font-size: 12px !important;
+  &.is-active .css-1s2u09g-control {
+    border: solid 2px var(--bs-success);
+    border-radius: 4px;
+  }
 }

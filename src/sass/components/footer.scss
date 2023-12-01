@@ -35,7 +35,7 @@ footer {
     }
   }
 
-  @media (max-width: 950px) {
+  @include md-mx {
     .col {
       &--main {
         .col-sm-2 {
@@ -54,7 +54,7 @@ footer {
     }
   }
 
-  @media (max-width: 500px) {
+  @include sm-mx {
     .nih-logo {
       max-width: 250px;
       height: 39px;

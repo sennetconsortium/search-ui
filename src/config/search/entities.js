@@ -70,14 +70,6 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            rui_location: {
-                label: 'Has Location Information',
-                type: 'exists',
-                field: 'rui_location',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
             data_types: {
                 label: 'Data Type',
                 type: 'value',
@@ -86,10 +78,10 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            "ancestors.rui_location": {
+            has_rui_information: {
                 label: 'Has Location Information',
-                type: 'exists',
-                field: 'ancestors.rui_location',
+                type: 'value',
+                field: 'has_rui_information.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,

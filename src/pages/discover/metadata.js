@@ -51,7 +51,7 @@ function Metadata() {
                             <div className="bd-highlight">
                                 <button className="btn btn-outline-primary rounded-0 clear-filter-button"
                                         onClick={handleBrowseAllMetadataClicked}>
-                                    Browse All Metadata
+                                    Search all metadata
                                 </button>
                             </div>
                         </div>
@@ -69,7 +69,7 @@ function Metadata() {
                                                 <Card.Text className="mb-2">{item.description}</Card.Text>
                                             </div>
                                             <Link href={{ pathname: METADATA_SEARCH, query: item.queryString }}>
-                                                <Button variant="primary rounded-0">Browse</Button>
+                                                <Button variant="primary rounded-0">Search</Button>
                                             </Link>
                                         </Card.Body>
                                     </Card>

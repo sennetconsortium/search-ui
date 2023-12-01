@@ -1,4 +1,4 @@
-import React, {Fragment, useContext, useEffect, useState} from 'react';
+import React, {Fragment, useContext, useEffect, useRef, useState} from 'react';
 import {BoxArrowUpRight, EnvelopeFill, InfoCircleFill, Search, X} from 'react-bootstrap-icons';
 import Card from 'react-bootstrap/Card';
 import SenNetAccordion from "../../layout/SenNetAccordion";
@@ -14,8 +14,6 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import {Tree} from 'primereact/tree';
-import $ from 'jquery'
-import log from 'loglevel'
 
 import 'primeicons/primeicons.css';
 
@@ -24,9 +22,10 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
     const [status, setStatus] = useState(null)
     const [filepath, setFilepath] = useState(null)
     const [treeData, setTreeData] = useState(null)
-    const [filterValue, setFilterValue] = useState('')
     const [checked, setChecked] = useState(false)
     const [hasData, setHasData] = useState(false)
+
+    const formRef = useRef(null)
 
     const {
         isPrimaryDataset,
@@ -73,26 +72,32 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
         event.node.icon = 'pi pi-fw pi-folder'
     }
 
-    const myResetFunction = (options) => {
-        let form = $('#file-search')[0]
-        form.reset();
+    const handleSearchResetButtonClick = (options) => {
+        formRef.current.reset()
         options.reset();
+        setChecked(false)
     }
 
-    const myFilterFunction = (event, options) => {
-        let _filterValue = event.target.value;
-        setFilterValue(_filterValue);
+    const handleFileSearchInputChange = (event, options) => {
         options.filter(event);
+        if (checked) {
+            setChecked(false)
+        }
     }
 
     const showHideQa = (event, options) => {
         if (event.currentTarget.checked) {
-            setFilterValue("true");
             event.target.value = "true"
             options.filter(event);
         } else {
-            myResetFunction(options)
+            handleSearchResetButtonClick(options)
         }
+        formRef.current.reset()
+    }
+
+    const handleQAToggleButtonClick = (event, options) => {
+        setChecked(event.currentTarget.checked)
+        showHideQa(event, options)
     }
 
     const nodeTemplate = (node, options) => {
@@ -101,7 +106,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
             <Fragment>
                 {node.icon.includes("file") ? (
                     <Row className={"w-100"}>
-                        <Col md={8}>
+                        <Col md={8} sm={8}>
                             <a target="_blank"
                                className={"icon_inline"}
                                href={`${getAssetsEndpoint()}${node.data.uuid}/${node.data.rel_path}?token=${getAuth()}`}><span
@@ -112,11 +117,11 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                                            text={`${node.data.description}`}><InfoCircleFill/>
                             </SenNetPopover>
                         </Col>
-                        <Col md={2} className={"text-end"}>
+                        <Col md={2} sm={2} className={"text-end"}>
                             {node.data.is_qa_qc === "true" ? (
                                 <span className="badge bg-secondary mx-2"> QA</span>) : (<></>)}
                         </Col>
-                        <Col md={2} className={"text-end"}>
+                        <Col md={2} sm={2} className={"text-end"}>
                             {formatByteSize(node.data.size)}
                         </Col>
                     </Row>) : (<>{node.label}</>)}
@@ -127,21 +132,32 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
     const filterTemplate = (options) => {
         let {filterOptions} = options;
         return (
-            <Form id="file-search">
+            <Form
+                ref={formRef}
+                id="file-search"
+                onSubmit={(e) => e.preventDefault()}
+            >
                 <Row className={"mb-4"}>
                     <Form.Group as={Col} md={6}>
                         <InputGroup>
                             <Form.Control
-                                onChange={(e) => myFilterFunction(e, filterOptions)}
+                                onChange={(e) => handleFileSearchInputChange(e, filterOptions)}
                                 className="right-border-none rounded-0"
                                 placeholder="Search"
                             />
-                            <InputGroup.Text className={"transparent"}><Search/></InputGroup.Text>
-                            <Button label="Reset" onClick={() => myResetFunction(filterOptions)}><X/></Button>
+                            <InputGroup.Text 
+                                className={"transparent"}>
+                                <Search/>
+                            </InputGroup.Text>
+                            <Button
+                                label="Reset"
+                                onClick={() => handleSearchResetButtonClick(filterOptions)}>
+                                <X/>
+                            </Button>
                         </InputGroup>
                     </Form.Group>
 
-                    {showQAButton && <Form.Group as={Col} md={2}>
+                    {showQAButton && <Form.Group as={Col} md={4}>
                         <ToggleButton
                             className="rounded-0"
                             id="toggle-check"
@@ -149,7 +165,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                             variant="outline-primary"
                             checked={checked}
                             value="1"
-                            onChange={(e) => (setChecked(e.currentTarget.checked), showHideQa(e, filterOptions))}
+                            onChange={(e) => handleQAToggleButtonClick(e, filterOptions)}
                         >
                             Show QA files only
                         </ToggleButton>
@@ -234,7 +250,6 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                     }
                 }
             });
-            log.debug(data)
             setTreeData(data)
         } catch (e) {
             console.error(e)

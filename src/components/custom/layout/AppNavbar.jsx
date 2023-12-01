@@ -1,15 +1,14 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
-import {NAVBAR_TITLE} from '../../../config/config'
+import {getDataIngestBoardEndpoint, NAVBAR_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
-import {useContext} from 'react'
-import logo from '../../../public/static/sennet-logo.png'
-import Image from 'next/image'
+import React, {useContext, useState, useEffect} from 'react'
 import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
+import {getCookie} from "cookies-next";
 
 const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
     const {_t, isLoggedIn, logout, cache, supportedMetadata} = useContext(AppContext)
-
+    const userEmail = (isLoggedIn() ? JSON.parse(atob(getCookie('info')))['email'] : "")
 
     const handleSession = (e) => {
         e.preventDefault()
@@ -23,19 +22,19 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
 
     const supportedSingleRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication entity', 'upload']
+        let notSupported = ['publication entity', 'upload', 'organ']
         return entities.filter(entity => !notSupported.includes(entity))
     }
 
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
 
-        let notSupported = ['publication entity']
+        let notSupported = ['publication entity', 'organ']
         entities = entities.filter(entity => !notSupported.includes(entity))
 
         const elem = entities.shift()
         // Insert upload before dataset
-        entities.splice(2, 0, elem)
+        entities.splice(3, 0, elem)
         return entities
     }
 
@@ -43,7 +42,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
         if (equals(entity, 'upload') || equals(range, 'single')) {
             return `/edit/${entity}?uuid=register`
         } else {
-           return `/edit/bulk/${entity}?action=register`
+            return `/edit/bulk/${entity}?action=register`
         }
     }
 
@@ -93,7 +92,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
 
                                         {equals(range, 'bulk') && supportedBulkRegister().map((entity) => (
                                             <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
-                                                {equals(entity, 'upload') ? 'Data': `${entity}s`}
+                                                {equals(entity, 'upload') ? 'Data (IDs and Data Files)' : equals(entity, 'dataset') ? 'Data (IDs Only)' : `${entity}s`}
                                             </NavDropdown.Item>
                                         ))}
                                     </div>
@@ -127,18 +126,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                                 </div>
                             ))}
                         </NavDropdown>
-                        {/*<NavDropdown active={false}*/}
-                        {/*             variant={'primary'}*/}
-                        {/*             hidden={hidden}*/}
-                        {/*             title="Search"*/}
-                        {/*             id="nav-dropdown--search">*/}
-                        {/*    <NavDropdown.Item key={`dd-search-entity`} href={APP_ROUTES.search}>*/}
-                        {/*        <span>Entity</span>*/}
-                        {/*    </NavDropdown.Item>*/}
-                        {/*    <NavDropdown.Item key={`dd-search-file`} href={`${APP_ROUTES.search}/files`}>*/}
-                        {/*        <span>File</span>*/}
-                        {/*    </NavDropdown.Item>*/}
-                        {/*</NavDropdown>*/}
+
                         <NavDropdown active={false}
                                      variant={'primary'}
                                      title="Documentation"
@@ -147,18 +135,28 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                                               href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/upload-guidelines/getting-started/'>
                                 <span>Getting started</span>
                             </NavDropdown.Item>
-                            <NavDropdown.Item key={`dd-search-md-schema`} href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/'>
+                            <NavDropdown.Item key={`dd-search-md-schema`}
+                                              href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/'>
                                 <span>Metadata schemas & upload guidelines</span>
                             </NavDropdown.Item>
-                            <NavDropdown.Item key={`dd-prov-ui`} href='https://docs.sennetconsortium.org/libraries/provenance-ui/'>
+                            <NavDropdown.Item key={`dd-prov-ui`}
+                                              href='https://docs.sennetconsortium.org/libraries/provenance-ui/'>
                                 <span>Provenance UI</span>
                             </NavDropdown.Item>
                             <NavDropdown.Item key={`dd-apis`} href='https://docs.sennetconsortium.org/apis/'>
                                 <span>APIs</span>
                             </NavDropdown.Item>
                         </NavDropdown>
+                        {isLoggedIn() &&
+                            <Nav.Link href={getDataIngestBoardEndpoint()} target='_blank'>Data Ingest Board</Nav.Link>
+                        }
                     </Nav>
                     <Nav>
+                        {isLoggedIn() &&
+                            <Navbar.Text>
+                                {userEmail}
+                            </Navbar.Text>
+                        }
                         <Nav.Link
                             className={'justify-content-end'}
                             hidden={signoutHidden}

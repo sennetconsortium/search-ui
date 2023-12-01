@@ -3,8 +3,9 @@ import {displayBodyHeader, equals, getStatusColor, getStatusDefinition, getUBKGF
 import React, {Fragment, useContext} from "react";
 import AppContext from "../../../../context/AppContext";
 import SenNetPopover from "../../../SenNetPopover";
+import StatusError from "../../../StatusError";
 
-function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
+function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader, hasWritePrivilege}) {
     const {cache} = useContext(AppContext)
 
     return (
@@ -74,12 +75,19 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader}) {
                     }
                     {data.status &&
                         <h5 className={"title_badge"}>
-                            <span className={`badge ${getStatusColor(data.status)} ms-2`}>
-                                <SenNetPopover text={getStatusDefinition(data.status)} className={'status-info'}>
-                                     {displayBodyHeader(data.status)}
-                                </SenNetPopover>
+                        <span className={`badge ${getStatusColor(data.status)} ms-2`}>
 
-                            </span>
+                        {(data.status === 'Invalid' || data.status === 'Error') && hasWritePrivilege ?
+                            (
+                                <StatusError text={data.status}
+                                             error={data.pipeline_message ? data.pipeline_message : data.validation_message}/>
+                            ) : (
+                                <SenNetPopover text={getStatusDefinition(data.status)} className={'status-info'}>
+                                    {displayBodyHeader(data.status)}
+                                </SenNetPopover>
+                            )}
+                        </span>
+
                         </h5>
                     }
                 </Fragment>

@@ -18,9 +18,20 @@ import SenNetPopover from "../../../SenNetPopover";
 import SearchUIContainer from 'search-ui/components/core/SearchUIContainer';
 import FacetsContent from '../../search/FacetsContent';
 import SearchUIContext from 'search-ui/components/core/SearchUIContext';
+import AppContext from "../../../../context/AppContext";
 
 function BodyContent({ handleChangeAncestor }) {
     const { wasSearched, filters } = useContext(SearchUIContext)
+    const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
+    const addConditional = (key, entity) => {
+        valid_dataset_ancestor_config['searchQuery']['conditionalFacets'][key] = ({filters}) => {
+            return hasAuthenticationCookie() && !isUnauthorized() &&
+                filters.some((filter) => filter.field === "entity_type" && filter.values.includes(entity))
+        }
+    }
+
+    addConditional('rui_location','Sample' )
+    addConditional('ancestors.rui_location', 'Dataset')
 
     return (
         <div

@@ -1,4 +1,4 @@
-import {getAuth, getEntityEndPoint, getIngestEndPoint, getUUIDEndpoint} from "../config/config";
+import {getAuth, getEntityEndPoint, getGlobusToken, getIngestEndPoint, getUUIDEndpoint} from "../config/config";
 import log from "loglevel";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
@@ -26,7 +26,42 @@ export async function update_create_dataset(uuid, body, action = "Edit", entityT
     }
 }
 
-export function get_json_header( headers ) {
+export async function check_valid_token() {
+    let headers = new Headers();
+    headers.append("Authorization", "Basic " + getGlobusToken())
+    headers.append("Content-Type", "application/x-www-form-urlencoded")
+
+    let formBody = 'token=' + getAuth()
+
+    let url = "https://auth.globus.org/v2/oauth2/token/introspect"
+    return await call_service(formBody, url, "POST", headers).then((response) => {
+        return response.active
+    }).catch(error => {
+        log.error('error', error)
+        return false
+    })
+}
+
+export async function get_prov_info(dataset_uuid) {
+    let headers = get_headers()
+    const url = getEntityEndPoint() + "datasets/" + dataset_uuid + "/prov-info?format=json"
+        const request_options = {
+        method: 'GET',
+        headers: headers
+    }
+    const response = await fetch(url, request_options)
+     if (response.status === 200) {
+         return await response.json()
+    }
+    else if (response.status === 400) {
+        // This is not a primary dataset so just return empty
+        return {}
+    }
+    log.error('error', response)
+    return {}
+}
+
+export function get_json_header(headers) {
     headers = headers || new Headers();
     headers.append("Content-Type", "application/json");
     return headers;

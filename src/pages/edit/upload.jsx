@@ -1,18 +1,11 @@
-import React, {useContext, useEffect, useState, useRef} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
-import {Button, Form} from 'react-bootstrap';
+import {Alert, Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {
-    cleanJson,
-    equals,
-    getRequestHeaders,
-    getStatusColor
-} from "../../components/custom/js/functions";
+import {cleanJson, equals, getRequestHeaders, getStatusColor} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {
-    update_create_dataset
-} from "../../lib/services";
+import {update_create_dataset} from "../../lib/services";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
@@ -22,28 +15,32 @@ import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import Spinner from '../../components/custom/Spinner'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
-import {Alert, Badge} from 'react-bootstrap';
-import SenNetPopover, {SenPopoverOptions} from "../../components/SenNetPopover";
+import SenNetPopover from "../../components/SenNetPopover";
 import $ from "jquery";
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
 import DatasetRevertButton from "../../components/custom/edit/dataset/DatasetRevertButton";
+import SenNetAlert from "../../components/SenNetAlert";
+import {getRootURL} from "../../config/config";
+import {ExclamationTriangleFill} from "react-bootstrap-icons";
 
 
 function EditUpload() {
-    const { isUnauthorized, isAuthorizing, getModal, setModalDetails,
+    const {
+        isUnauthorized, isAuthorizing, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
         errorMessage, setErrorMessage,
         validated, setValidated,
         userWriteGroups, onChange,
-        editMode, setEditMode,isEditMode,
+        editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
-        getCancelBtn } = useContext(EntityContext)
-    const { _t, cache, adminGroup, getGroupName } = useContext(AppContext)
+        getCancelBtn
+    } = useContext(EntityContext)
+    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
@@ -120,6 +117,7 @@ function EditUpload() {
 
     const handlePut = async (action, body = {}) => {
         await update_create_dataset(data.uuid, body, action, 'uploads').then((response) => {
+            toggleBusyOverlay(false)
             modalResponse(response)
         }).catch((e) => log.error(e))
     }
@@ -150,6 +148,7 @@ function EditUpload() {
     };
 
     const handleValidate = () => {
+        toggleBusyOverlay(true, <><code>Validate</code> the <code>Upload</code></>)
         handlePut('validate')
     }
 
@@ -166,12 +165,13 @@ function EditUpload() {
     }
 
     const handleReorganize = () => {
+        toggleBusyOverlay(true, <><code>Reorganize</code> the <code>Upload</code></>)
         handlePut('reorganize')
     }
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
-            isUnauthorized() ? <Unauthorized /> : <Spinner />
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
         console.log(values)
@@ -190,101 +190,149 @@ function EditUpload() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader adminGroup={adminGroup} entity={cache.entities.upload} isEditMode={isEditMode()} data={data} values={values} />
+                                <EntityHeader adminGroup={adminGroup} entity={cache.entities.upload}
+                                              isEditMode={isEditMode()} data={data} values={values}/>
                             }
                             bodyContent={
-                                <Form noValidate validated={validated} onSubmit={handleSave} id={"upload-form"}>
-                                    {/*Group select*/}
-                                    {
-                                        !(userWriteGroups.length === 1 || isEditMode()) &&
-                                        <GroupSelect
-                                            data={data}
-                                            groups={userWriteGroups}
-                                            onGroupSelectChange={onChange}
-                                            entity_type={'source'}/>
+                                <>
+                                    {editMode && editMode === 'Register' &&
+                                        <SenNetAlert variant={'warning'}
+                                                     text={<> This page is intended for registering a single data
+                                                         upload. An upload is a unique entity with one SenNet ID and
+                                                         Globus location. Valid uploads will be reorganized into
+                                                         individual datasets with their own SenNet IDs by CODCC
+                                                         Curation. Uploads must have directory structures, contributors,
+                                                         and metadata files per the <a target="_blank" href={"https://docs.google.com/document/d/1jXjUhC9ErfU7CVe5UGA5UEYx1MIXTq7KmDpF0s69ZsY/edit#heading=h.35zdcmzbs5a0"}>Data Submission Guide</a>. A new section
+                                                         on this topic is forthcoming as of 2023-09-29. For now, please
+                                                         schedule a <a target="_blank" href={"https://calendly.com/bhonick-psc/30min"}>Data Submission Office Hours</a> meeting with the
+                                                         Curation team or email the Help Desk for guidance on
+                                                         constructing an upload.
+                                                         <br></br><br></br>
+                                                         If a data provider would rather have SenNet IDs for their
+                                                         datasets as soon as possible, CODCC Curation recommends bulk
+                                                         dataset registration through <a
+                                                             href={getRootURL() + 'edit/bulk/dataset?action=register'}>this
+                                                             page</a>.</>}
+                                                     icon={<ExclamationTriangleFill/>}/>
                                     }
-
-                                    {/*Title*/}
-                                    <EntityFormGroup label="Upload Title" placeholder='Upload Title'
-                                                     controlId='title' value={data.title}
-                                                     isRequired={true}
-                                                     onChange={onChange}
-                                                     text={<>A meaningful title for the <code>Upload</code>.
-                                                     </>}/>
-
-                                    {/*/!*Description*!/*/}
-                                    <EntityFormGroup isRequired={true} label='Description' type='textarea' controlId='description' value={data.description}
-                                                     onChange={onChange} text={<>Free text field to enter a description of the <code>Upload</code>.</>} />
-
-
-                                    <div className={'d-flex flex-row-reverse'}>
-                                        {getCancelBtn('upload')}
-
-
-                                        {!equals(data['status'], 'Processing') && !equals(data['status'], 'Reorganized') &&
-                                            <SenNetPopover text={<>Save changes to this <code>Upload</code>.</>} className={'save-button'}>
-                                                <Button variant="outline-primary rounded-0 js-btn--save"
-                                                        className={'me-2'}
-                                                        onClick={handleSave}
-                                                        disabled={disableSubmit}>
-                                                    {_t('Save')}
-                                                </Button>
-                                            </SenNetPopover>
+                                    <Form noValidate validated={validated} onSubmit={handleSave} id={"upload-form"}>
+                                        {/*Group select*/}
+                                        {
+                                            !(userWriteGroups.length === 1 || isEditMode()) &&
+                                            <GroupSelect
+                                                data={data}
+                                                groups={userWriteGroups}
+                                                onGroupSelectChange={onChange}
+                                                entity_type={'source'}/>
                                         }
 
-                                        {!equals(data['status'], 'Processing') && isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Valid')) &&
-                                            <SenNetPopover text={<>Mark this <code>Upload</code> as "Submitted" and ready for reorganizing.</>} className={'submit-dataset'}>
-                                                <DatasetSubmissionButton
-                                                    btnLabel={"Submit"}
-                                                    modalBody={<div><p>By clicking "Submit" this <code>Upload</code> will
-                                                        have its status set to <span className={`${getStatusColor('Submitted')} badge`}>Submitted</span> and
-                                                        be ready for reorganizing.</p>
-                                                        <p>
-                                                            Before submitting your <code>Upload</code> please confirm that all files (including metadata/contributors TSVs) have been uploaded in Globus.
-                                                        </p>
-                                                    </div>}
-                                                    onClick={handleSubmit} disableSubmit={disableSubmit}/>
-                                            </SenNetPopover>
-                                        }
+                                        {/*Title*/}
+                                        <EntityFormGroup label="Upload Title" placeholder='Upload Title'
+                                                         controlId='title' value={data.title}
+                                                         isRequired={true}
+                                                         onChange={onChange}
+                                                         text={<>A meaningful title for the <code>Upload</code>.
+                                                         </>}/>
 
-                                        {adminGroup && isEditMode() && !(equals(data['status'], 'Processing')  || equals(data['status'], 'Reorganized')) && <SenNetPopover
-                                            text={<>Validate upload.
-                                            </>}
-                                            className={'validate-button'}>
-                                            <DatasetSubmissionButton
-                                                actionBtnClassName={'js-btn--validate'}
-                                                btnLabel={"Validate"}
-                                                modalTitle={'Validation'}
-                                                modalBody={<div><p>By clicking "Validate" this <code>Upload</code> will
-                                                    have its status set to <span className={`${getStatusColor('Valid')} badge`}>Valid</span> if upload checks are met and
-                                                    be ready for submitting.</p>
-                                                </div>}
-                                                onClick={handleValidate} disableSubmit={disableSubmit}/>
-                                        </SenNetPopover>}
+                                        {/*/!*Description*!/*/}
+                                        <EntityFormGroup isRequired={true} label='Description' type='textarea'
+                                                         controlId='description' value={data.description}
+                                                         onChange={onChange}
+                                                         text={<>Free text field to enter a description of
+                                                             the <code>Upload</code>.</>}/>
 
-                                        {!equals(data['status'], 'Processing') && adminGroup && isEditMode() && (equals(data['status'], 'Valid') || equals(data['status'], 'Submitted')) && <SenNetPopover
-                                            text={<>Reorganize this <code>Upload</code>.
-                                            </>}
-                                            className={'reorganize-button'}>
-                                            <DatasetSubmissionButton
-                                                actionBtnClassName={'js-btn--reorganize'}
-                                                btnLabel={"Reorganize"}
-                                                modalTitle={'Reorganization'}
-                                                modalBody={<div><p>By clicking "Reorganize" this <code>Upload</code> will
-                                                    have its status set to <span className={`${getStatusColor('Processing')} badge`}>Processing</span> and corresponding Datasets and respective directories created and moved accordingly.</p>
-                                                </div>}
-                                                onClick={handleReorganize} disableSubmit={disableSubmit}/>
-                                        </SenNetPopover>}
 
-                                        {!equals(data['status'], 'Processing') && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) && <SenNetPopover
-                                            text={<>Revert this <code>Upload</code> back to <span className={`${getStatusColor('New')} badge`}>New</span> or <span className={`${getStatusColor('Submitted')} badge`}>Submitted</span>  status.
-                                            </>}
-                                            className={'revert-button'}>
-                                            <DatasetRevertButton data={data} onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
-                                        </SenNetPopover>}
-                                    </div>
-                                    {getModal()}
-                                </Form>
+                                        <div className={'d-flex flex-row-reverse'}>
+                                            {getCancelBtn('upload')}
+
+
+                                            {!equals(data['status'], 'Processing') && !equals(data['status'], 'Reorganized') &&
+                                                <SenNetPopover text={<>Save changes to this <code>Upload</code>.</>}
+                                                               className={'save-button'}>
+                                                    <Button variant="outline-primary rounded-0 js-btn--save"
+                                                            className={'me-2'}
+                                                            onClick={handleSave}
+                                                            disabled={disableSubmit}>
+                                                        {_t('Save')}
+                                                    </Button>
+                                                </SenNetPopover>
+                                            }
+
+                                            {!equals(data['status'], 'Processing') && isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Valid')) &&
+                                                <SenNetPopover
+                                                    text={<>Mark this <code>Upload</code> as "Submitted" and ready for
+                                                        reorganizing.</>} className={'submit-dataset'}>
+                                                    <DatasetSubmissionButton
+                                                        btnLabel={"Submit"}
+                                                        modalBody={<div><p>By clicking "Submit"
+                                                            this <code>Upload</code> will
+                                                            have its status set to <span
+                                                                className={`${getStatusColor('Submitted')} badge`}>Submitted</span> and
+                                                            be ready for reorganizing.</p>
+                                                            <p>
+                                                                Before submitting your <code>Upload</code> please
+                                                                confirm that all files (including metadata/contributors
+                                                                TSVs) have been uploaded in Globus.
+                                                            </p>
+                                                        </div>}
+                                                        onClick={handleSubmit} disableSubmit={disableSubmit}/>
+                                                </SenNetPopover>
+                                            }
+
+                                            {adminGroup && isEditMode() && !(equals(data['status'], 'Processing') || equals(data['status'], 'Reorganized')) &&
+                                                <SenNetPopover
+                                                    text={<>Validate upload.
+                                                    </>}
+                                                    className={'validate-button'}>
+                                                    <DatasetSubmissionButton
+                                                        actionBtnClassName={'js-btn--validate'}
+                                                        btnLabel={"Validate"}
+                                                        modalTitle={'Validation'}
+                                                        modalBody={<div><p>By clicking "Validate"
+                                                            this <code>Upload</code> will
+                                                            have its status set to <span
+                                                                className={`${getStatusColor('Valid')} badge`}>Valid</span> if
+                                                            upload checks are met and
+                                                            be ready for submitting.</p>
+                                                        </div>}
+                                                        onClick={handleValidate} disableSubmit={disableSubmit}/>
+                                                </SenNetPopover>}
+
+                                            {!equals(data['status'], 'Processing') && adminGroup && isEditMode() && (equals(data['status'], 'Valid') || equals(data['status'], 'Submitted')) &&
+                                                <SenNetPopover
+                                                    text={<>Reorganize this <code>Upload</code>.
+                                                    </>}
+                                                    className={'reorganize-button'}>
+                                                    <DatasetSubmissionButton
+                                                        actionBtnClassName={'js-btn--reorganize'}
+                                                        btnLabel={"Reorganize"}
+                                                        modalTitle={'Reorganization'}
+                                                        modalBody={<div><p>By clicking "Reorganize"
+                                                            this <code>Upload</code> will
+                                                            have its status set to <span
+                                                                className={`${getStatusColor('Processing')} badge`}>Processing</span> and
+                                                            corresponding Datasets and respective directories created
+                                                            and moved accordingly.</p>
+                                                        </div>}
+                                                        onClick={handleReorganize} disableSubmit={disableSubmit}/>
+                                                </SenNetPopover>}
+
+                                            {!equals(data['status'], 'Processing') && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) &&
+                                                <SenNetPopover
+                                                    text={<>Revert this <code>Upload</code> back to <span
+                                                        className={`${getStatusColor('New')} badge`}>New</span> or <span
+                                                        className={`${getStatusColor('Submitted')} badge`}>Submitted</span> status.
+                                                    </>}
+                                                    className={'revert-button'}>
+                                                    <DatasetRevertButton data={data} onClick={handleRevert}
+                                                                         disableSubmit={disableSubmit}
+                                                                         onStatusChange={onChange}/>
+                                                </SenNetPopover>}
+                                        </div>
+                                        {getModal()}
+                                        {getBusyOverlay()}
+                                    </Form>
+                                </>
                             }
                         />
                     </div>
@@ -296,7 +344,7 @@ function EditUpload() {
     }
 }
 
-EditUpload.withWrapper = function(page) {
+EditUpload.withWrapper = function (page) {
     return <EntityProvider>{page}</EntityProvider>
 }
 

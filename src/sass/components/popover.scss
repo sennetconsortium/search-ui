@@ -1,5 +1,6 @@
 .popover {
   z-index: 10000 !important;
+
   &-clipboard {
     &-pc {
       &:hover {
@@ -8,9 +9,10 @@
         }
       }
     }
+
+    z-index: 10;
   }
 
-  z-index: 10;
   &.is-error {
     color: $col-err-txt;
     background: $col-err-bg;
@@ -24,4 +26,11 @@
       border-right-color: $col-err-bdr;
     }
   }
+}
+
+
+.error-popover {
+  max-width: 700px;
+  //1 less than the navbar
+  z-index: 1019 !important;
 }

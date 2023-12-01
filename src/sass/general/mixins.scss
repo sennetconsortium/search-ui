@@ -1,3 +1,52 @@
 @mixin mx-focus {
   outline: 1px dotted $col-bs-blue;
 }
+
+// Breakpoints taken to match https://getbootstrap.com/docs/5.0/layout/breakpoints/
+@mixin xsm {
+  @media (max-width: 575px) {
+    @content
+  }
+}
+
+@mixin sm {
+  @media (min-width: 576px) and (max-width: 767px) {
+    @content
+  }
+}
+
+@mixin sm-mx {
+  @media (max-width: 767px) {
+    @content
+  }
+}
+
+@mixin md-mx {
+  @media (max-width: 991px) {
+    @content
+  }
+}
+
+@mixin md {
+  @media (min-width: 768px) and (max-width: 991px) {
+    @content
+  }
+}
+
+@mixin lg {
+  @media (min-width: 992px) {
+    @content
+  }
+}
+
+@mixin xlg {
+  @media (min-width: 1200px) {
+    @content
+  }
+}
+
+@mixin xxlg {
+  @media (min-width: 1400px) {
+    @content
+  }
+}

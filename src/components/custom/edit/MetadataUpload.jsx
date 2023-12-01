@@ -11,18 +11,18 @@ import { get_auth_header } from "../../../lib/services";
 import SenNetPopover, {SenPopoverOptions} from "../../SenNetPopover";
 import {urlify} from "../js/functions";
 
-
-export const formatErrorColumn = (d = '"') => {
-    const formatError = (val) => val.replaceAll(' '+d, ' <code>').replaceAll(' "', ' <code>').replaceAll(d, '</code>').replaceAll('"', '</code>')
-
-    $('.rdt_TableBody [data-column-id="2"] div').each((i, el) => {
-        let txt = $(el).html()
-        txt = formatError(txt)
-        $(el).html(urlify(txt))
-    })
+const handleErrorRow = (row) => {
+    let err = row.error
+    if (typeof row.error === 'object') {
+        err = err.msg
+        if (row.error.data) {
+            const jsonStr = JSON.stringify(row.error.data);
+            err += ' http://local/api/json?view='+btoa(jsonStr)
+        }
+    }
+    return err
 }
-
-export const tableColumns = [
+export const tableColumns = (d = '"') => [
     {
         name: 'Row',
         selector: row => row.row,
@@ -32,72 +32,63 @@ export const tableColumns = [
     {
         name: 'Error',
         selector: row => {
-            let err = row.error
-            if (typeof row.error === 'object') {
-                err = err.msg
-                if (row.error.data) {
-                    const jsonStr = JSON.stringify(row.error.data);
-                    err += ' http://local/api/json?view='+btoa(jsonStr)
-                }
-            }
+            let err = handleErrorRow(row)
             return row.column ? ` "${row.column}" ` + err : err
         },
         sortable: true,
+        format: (row) => {
+            const formatError = (val) => val.replaceAll(' '+d, ' <code>').replaceAll(' "', ' <code>').replaceAll(d, '</code>').replaceAll('"', '</code>')
+            let err = handleErrorRow(row)
+            err = formatError(err)
+            return <span dangerouslySetInnerHTML={{__html: urlify(err)}} />
+        }
     }
 ]
 
-export const formatErrorColumnTimer = (d = '"') => {
-    let st
-    // Unfortunately have to format like this with setTimeout as
-    // the 3rd party DataTable component doesn't appear allow for html in the row values.
-    clearTimeout(st)
-    st = setTimeout(()=> {
-        let st2
-        $('.rdt_TableCol').on('click', (e) => {
-            clearTimeout(st2)
-            st2 = setTimeout(()=>{
-                formatErrorColumn(d)
-            }, 100)
-        })
-        formatErrorColumn(d)
-    }, 200)
-}
 const isUnacceptable = (code) => code === 406
 
 export const getErrorList = (details) => {
     let data = []
     try {
         let {code, description} = details
-        const preflight = description['Preflight']
-        let err = preflight ? {error: preflight} : {error: description}
-        err = isUnacceptable(code) && !preflight ? null : err
-        if (err) {
-            data = [err]
-        } else {
-            if (Array.isArray(description)) {
-                if (typeof description[0] === 'string') {
-                    data = description.map(d => {
-                        return {error: d}
-                    })
-                } else {
-                    if (description[0].description !== undefined) {
-                        data = description.map(d => {
-                            return d.description
-                        })
-                    } else {
-                        data = Array.from(description)
-                    }
+        const keyedErrors = description['Preflight'] || description['Validation Errors'] || description['URL Errors'] || description['Request Errors']
+
+        const errorMessageFormat = (err) => {
+            let results = []
+            if (typeof err === 'object') {
+                for (let key in err) {
+                    results.push({error: `${key}: ${err[key]}`})
                 }
             } else {
-                data = [{error: JSON.stringify(description)}]
+                results.push({error: err})
             }
+            return results
         }
+
+        let err = keyedErrors ? keyedErrors : description
+
+        if (Array.isArray(err)) {
+            if (err.length) {
+                // Is it already formatted?
+                if (err[0].error) {
+                    data = err
+                } else {
+                    // No, let's run through the list and format for the table.
+                    for (let item of err) {
+                        data = data.concat(errorMessageFormat(item))
+                    }
+                }
+            }
+        } else {
+            data = errorMessageFormat(err)
+        }
+
         log.debug('Metadata errors', data)
 
     } catch (e) {
         console.error(e)
     }
-    return {data, columns: tableColumns};
+    return {data, columns: tableColumns()};
 }
 
 function MetadataUpload({ setMetadata, entity, subType }) {
@@ -131,9 +122,6 @@ function MetadataUpload({ setMetadata, entity, subType }) {
     }, [subType])
 
 
-
-
-
     const handleUpload = async (e) => {
         try {
             const upload = e && e.currentTarget.files ? e.currentTarget.files[0] : file
@@ -161,7 +149,6 @@ function MetadataUpload({ setMetadata, entity, subType }) {
                     setValidationError(true)
                 }
                 setTable(result)
-                formatErrorColumnTimer()
             } else {
                 setError(false)
                 setValidationError(false)
@@ -194,9 +181,8 @@ function MetadataUpload({ setMetadata, entity, subType }) {
     }
 
     const getSchemaUrl = () => {
-        let url = 'https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/'
+        let url = 'https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/#'
         url += entity
-        url = subType ? `${url}-${subType}` : url
         return url.toLowerCase()
     }
 

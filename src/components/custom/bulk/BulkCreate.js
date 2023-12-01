@@ -13,19 +13,18 @@ import Box from "@mui/material/Box";
 import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
 import {Row, Col, Stack} from "react-bootstrap";
-import {Download, ArrowRightSquareFill} from "react-bootstrap-icons";
-import {getDocsRootURL, getIngestEndPoint} from "../../../config/config";
+import {Download, ArrowRightSquareFill, ExclamationTriangleFill} from "react-bootstrap-icons";
+import {getDocsRootURL, getIngestEndPoint, getRootURL} from "../../../config/config";
 import Spinner from "../Spinner";
-import AppFooter from "../layout/AppFooter";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
-import {tableColumns, formatErrorColumnTimer, getErrorList} from "../edit/MetadataUpload";
+import {tableColumns, getErrorList} from "../edit/MetadataUpload";
 import DataTable from 'react-data-table-component';
 import {createDownloadUrl, equals} from "../js/functions";
 import AppContext from "../../../context/AppContext";
 import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
-import { get } from 'lodash';
+import SenNetAlert from "../../SenNetAlert";
 
 
 export default function BulkCreate({
@@ -172,7 +171,6 @@ export default function BulkCreate({
             setError({1: true})
             const errorList = getErrorList(data)
             setErrorMessage(errorList)
-            formatErrorColumnTimer('`')
         } else {
             setBulkResponse(data.description)
             setValidationSuccess(true)
@@ -219,7 +217,6 @@ export default function BulkCreate({
         if (!response.ok) {
             setError({1: true})
             setErrorMessage(data.description)
-            formatErrorColumnTimer('`')
         } else {
             setTempId(data.description.temp_id)
             setValidationSuccess(true)
@@ -551,9 +548,13 @@ export default function BulkCreate({
         return title
     }
 
-    const getFilename = () => {
-        let filename = `example_${entityType}`
+    const getFilename = (variant = '') => {
+        let filename = `example${variant}_${entityType}`
         return isMetadata ? `metadata/${filename}_${subType}_metadata` : `entities/${filename}`
+    }
+
+    const isCedarSupported = () => {
+        return isMetadata && !subType.includes([cache.sourceTypes.Mouse])
     }
 
     const getDocsUrl = () => {
@@ -582,16 +583,36 @@ export default function BulkCreate({
                     padding: 5,
                     boxShadow: 3,
                 }}>
-                    <a
-                        download
-                        className={buttonVariant}
-                        href={`/bulk/${getFilename().toLowerCase()}.tsv`}
-                    >
-                        <FileDownloadIcon/> {' '} EXAMPLE.TSV
-                    </a>
+                    <div>
+                        <a
+                            download
+                            className={buttonVariant}
+                            href={isCedarSupported() ? `https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/${entityType}-${subType.toLowerCase()}/latest/${entityType}-${subType.toLowerCase()}.tsv` : `/bulk/${getFilename().toLowerCase()}.tsv`}
+                        >
+                            <FileDownloadIcon/> {' '} <span>EXAMPLE.TSV {isCedarSupported() && <span>(CEDAR)</span>}</span>
+                        </a>
+                        {isCedarSupported() && <small className='fs-xs'><br />Or download <a download href={`/bulk/${getFilename().toLowerCase()}.tsv`}>legacy example.tsv</a></small>}
+                    </div>
                     <h1 className={'text-center'}>{getTitle()}</h1>
+                     <SenNetAlert variant={'warning'}
+                                  text={<>Please limit the number of rows (excluding headers) containing data to 30 for
+                                      processing purposes. If necessary, you may need to register entities via multiple
+                                      submissions.</>}
+                                     icon={<ExclamationTriangleFill/>}/>
+
+                    {equals(entityType, cache.entities.dataset) &&
+                        <SenNetAlert variant={'warning'}
+                                     text={<>This page is intended for registering datasets in bulk. This process will
+                                         yield individual SenNet IDs and Globus locations per dataset. Data providers
+                                         will need to transfer their data files to each dataset individually.
+                                         <br></br><br></br>
+                                         If a data provider would prefer to transfer their data files in bulk, CODCC Curation
+                                         recommends creating an upload through <a
+                                             href={getRootURL() + 'edit/upload?uuid=register'}>this page</a>.</>}
+                                     icon={<ExclamationTriangleFill/>}/>
+                    }
                     <div className={'p-4 text-center'}>
-                        To register multiple items at one time, upload a tsv file in the format specified by the example file.<br/>
+                        To register multiple items at one time, upload a <code>TSV</code> file in the format specified by the example file.<br/>
                         {getDocsText()}
                     </div>
                     <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector/>}>
@@ -615,7 +636,7 @@ export default function BulkCreate({
                     {isLoading && <Spinner/>}
                     {
                         errorMessage && <div className='c-metadataUpload__table table-responsive has-error'>
-                            <DataTable columns={tableColumns} data={errorMessage.data ? errorMessage.data : errorMessage} pagination />
+                            <DataTable columns={tableColumns('`')} data={errorMessage.data ? errorMessage.data : errorMessage} pagination />
                         </div>
                     }
                     {activeStep === 1 && !errorMessage && validationSuccess &&
@@ -666,6 +687,7 @@ export default function BulkCreate({
                                     <input
                                         style={{display: 'none'}}
                                         type={'file'}
+                                        accept={".tsv"}
                                         ref={inputFileRef}
                                         onChange={handleFileChange}
                                     />

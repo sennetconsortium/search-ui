@@ -4,12 +4,14 @@
 @import 'general/misc';
 
 @import 'components/accordion';
+@import 'components/alert';
 @import 'components/btn';
 @import 'components/badge';
 @import 'components/card';
 @import 'components/entity';
 @import 'components/footer';
 @import 'components/form';
+@import 'components/header';
 @import 'components/metadaUpload';
 @import 'components/modal';
 @import 'components/mui';
@@ -24,6 +26,7 @@
 @import 'components/vitessce';
 @import 'components/table';
 @import 'components/treeView';
+@import 'vendor/primereact';
 
 @import 'pages/edit';
 @import 'pages/discover';

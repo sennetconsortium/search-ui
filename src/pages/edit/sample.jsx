@@ -18,7 +18,7 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import GroupSelect from "../../components/custom/edit/GroupSelect";
 import Header from "../../components/custom/layout/Header";
-import RuiIntegration from "../../components/custom/edit/sample/rui/RuiIntegration";
+import RUIIntegration from "../../components/custom/edit/sample/rui/RUIIntegration";
 import RUIButton from "../../components/custom/edit/sample/rui/RUIButton";
 import AppContext from '../../context/AppContext'
 import {EntityProvider} from '../../context/EntityContext'
@@ -394,8 +394,9 @@ function EditSample() {
                 {error &&
                     <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
                 }
+
                 {showRui &&
-                    <RuiIntegration
+                    <RUIIntegration
                         organ={ancestorOrgan}
                         sex={'male'}
                         user={getUserName()}
@@ -406,7 +407,7 @@ function EditSample() {
                     />
                 }
 
-                {data && !error &&
+                {!showRui && data && !error &&
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
@@ -518,7 +519,7 @@ function EditSample() {
                     </div>
                 }
 
-                {!showModal && <AppFooter/>}
+                {!showRui && !showModal && <AppFooter/>}
             </>
         )
     }

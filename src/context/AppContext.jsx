@@ -1,20 +1,31 @@
-import { createContext, useEffect, useState} from 'react'
+import React, { createContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
 import { goToSearch } from '../components/custom/js/functions'
 import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
-import {get_read_write_privileges, get_user_write_groups, has_data_admin_privs} from '../lib/services'
+import {
+    check_valid_token,
+    get_read_write_privileges,
+    get_user_write_groups,
+    has_data_admin_privs
+} from '../lib/services'
 import {deleteCookies} from "../lib/auth";
 import {APP_ROUTES} from "../config/constants";
 import {getUIPassword} from "../config/config";
 import Swal from 'sweetalert2'
+import AppModal from "../components/AppModal";
+import Spinner from "../components/custom/Spinner";
 
 const AppContext = createContext()
 
 export const AppProvider = ({ cache, children }) => {
     const [isBusy, setIsBusy] = useState(false)
+    const [showModal, setShowModal] = useState(false)
+    const [modalBody, setModalBody] = useState(null)
+    const [modalTitle, setModalTitle] = useState(null)
     const [isLoginPermitted, setIsLoginPermitted] = useState(true)
     const [authorized, setAuthorized] = useState(null)
+    const [validToken, setValidToken] = useState(null)
     const [adminGroup, setAdminGroup] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
     const [uiAdminAuthorized, setUIAuthorized] = useState(false)
@@ -27,21 +38,37 @@ export const AppProvider = ({ cache, children }) => {
     useEffect(() => {
         // Should only include: '/', '/search', '/logout', '/login', '/404'
         const noRedirectTo = Object.values(APP_ROUTES)
+
+        let info = getCookie('info')
+        let groups_token = ""
+        if (info) {
+            info = atob(info)
+            setCookie(
+                'groups_token',
+                JSON.parse(info).groups_token,
+                {sameSite: "Lax"},
+            )
+            groups_token = JSON.parse(info).groups_token
+        } else {
+            // Delete in the event info doesn't exist as might have been logged out the system elsewhere.
+            deleteCookies()
+        }
+
         if (noRedirectTo.indexOf(router.pathname) === -1) {
             // Set expiry for 10 minutes
             setLocalItemWithExpiry(pageKey, router.asPath, 600000)
         }
 
-        let info = getCookie('info')
-        if (info) {
-            info = atob(info)
-            setCookie(
-                'groups_token',
-                JSON.parse(info).groups_token
-            )
+        if(groups_token  != "") {
+            check_valid_token().then((response) => {
+                if (typeof response == "boolean") {
+                    setValidToken(response)
+                } else {
+                    setValidToken(false)
+                }
+            }).catch((error) => setValidToken(false));
         } else {
-            // Delete in the event info doesn't exist as might have been logged out the system elsewhere.
-            deleteCookies()
+            setValidToken(true)
         }
 
         get_read_write_privileges()
@@ -106,6 +133,14 @@ export const AppProvider = ({ cache, children }) => {
         return authorized && hasAuthenticationCookie()
     }
 
+    const hasInvalidToken = () => {
+        return validToken === false
+    }
+
+    const validatingToken = () => {
+        return validToken === null
+    }
+
     const isUnauthorized = () => {
         return authorized === false  
     }
@@ -118,12 +153,12 @@ export const AppProvider = ({ cache, children }) => {
         get_read_write_privileges()
             .then((read_write_privileges) => {
                 if (read_write_privileges.read_privs === true) {
-                    setCookie(authKey, true)
+                    setCookie(authKey, true, {sameSite: "Lax"})
                     let info = getCookie('info')
                     if (info) {
                         info = atob(info)
                         const {email, globus_id} = JSON.parse(info)
-                        setCookie('user', {email, globus_id})
+                        setCookie('user', {email, globus_id}, {sameSite: "Lax"})
                     }
                     // Redirect to home page without query string
                     const page = getLocalItemWithExpiry(pageKey)
@@ -193,6 +228,27 @@ export const AppProvider = ({ cache, children }) => {
         }
     }
 
+    const toggleBusyOverlay = (show, action) => {
+        setShowModal(show)
+        if (show && action) {
+            setModalTitle(<span>One moment ...</span>)
+            setModalBody(<div> <Spinner text={<>Currently handling your request to {action}...</>}  /></div>)
+        }
+    }
+
+    const getBusyOverlay = () => {
+        return (
+            <AppModal
+                className={`modal--busy`}
+                showModal={showModal}
+                modalTitle={modalTitle}
+                modalBody={modalBody}
+                showHomeButton={false}
+                showCloseButton={false}
+            />
+        )
+    }
+
     const handleSidebar = () => {
         setSidebarVisible(!sidebarVisible)
     }
@@ -224,7 +280,7 @@ export const AppProvider = ({ cache, children }) => {
         if (!uiAuthCookie) {
             const result = await promptForUIPasscode()
             if (result.value === atob(getUIPassword())) {
-                setCookie('adminUIAuthorized', true)
+                setCookie('adminUIAuthorized', true, {sameSite: "Lax"})
                 setUIAuthorized(true)
             } else {
                 await checkUIPassword()
@@ -246,6 +302,8 @@ export const AppProvider = ({ cache, children }) => {
                 isLoggedIn,
                 isAuthorizing,
                 isUnauthorized,
+                hasInvalidToken,
+                validatingToken,
                 logout,
                 login,
                 _t,
@@ -258,7 +316,9 @@ export const AppProvider = ({ cache, children }) => {
                 handleSidebar,
                 sidebarVisible,
                 adminGroup,
-                getGroupName
+                getGroupName,
+                getBusyOverlay,
+                toggleBusyOverlay,
             }}
         >
             {children}

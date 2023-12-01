@@ -19,13 +19,18 @@ import SelectedFacets from "../../components/custom/search/SelectedFacets";
 import SearchUIContainer from "search-ui/components/core/SearchUIContainer";
 import FacetsContent from "../../components/custom/search/FacetsContent";
 import BodyContent from "../../components/custom/search/BodyContent";
+import SearchDropdown from "../../components/custom/search/SearchDropdown";
 import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
+import InvalidToken from "../../components/custom/layout/InvalidToken";
+import AppTutorial from "../../components/custom/layout/AppTutorial";
 
 function SearchEntities() {
     const {
         _t,
         logout,
         isRegisterHidden,
+        hasInvalidToken,
+        validatingToken,
         isAuthorizing,
         isUnauthorized,
         hasAuthenticationCookie
@@ -47,15 +52,17 @@ function SearchEntities() {
 
     SEARCH_ENTITIES['searchQuery']['conditionalFacets']['ancestors.rui_location'] = ({filters}) => {
         return hasAuthenticationCookie() && !isUnauthorized() && 
-            filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
+            filters.some((filter) => filter.field === "entity_type" &&  filter.values.includes("Dataset") )
     }
 
     function handleSearchFormSubmit(event, onSubmit) {
         onSubmit(event)
     }
 
-    if (isAuthorizing()) {
+    if (validatingToken() || isAuthorizing()) {
         return <Spinner/>
+    } else if (hasInvalidToken()) {
+        return <InvalidToken/>
     } else {
         if (isUnauthorized() && hasAuthenticationCookie()) {
             // This is a scenario in which the GLOBUS token is expired but the token still exists in the user's cookies
@@ -73,6 +80,7 @@ function SearchEntities() {
                             header={
                                 <>
                                     <div className="search-box-header js-gtm--search">
+                                        <AppTutorial />
                                         <SearchBox
                                             view={({onChange, value, onSubmit}) => (
                                                 <Form onSubmit={e => handleSearchFormSubmit(e, onSubmit)}>
@@ -103,6 +111,8 @@ function SearchEntities() {
                             }
                             sideContent={
                                 <div data-js-ada='facets'>
+                                    <SearchDropdown title='Entities' />
+
                                     <CustomClearSearchBox />
 
                                     <SelectedFilters />

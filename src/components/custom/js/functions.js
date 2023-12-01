@@ -332,10 +332,6 @@ export function goToSearch() {
     goIntent('search')
 }
 
-export function gotToLogin() {
-    goIntent('login')
-}
-
 export function getEntityViewUrl(entity, uuid, {isEdit = false}) {
     const pre = isEdit ? '/edit' : ''
     return pre + "/" + entity?.toLowerCase() + "?uuid=" + uuid
@@ -380,6 +376,24 @@ Object.assign(String.prototype, {
         return this.replace(/(<([^>]+)>)/gi, "")
     }
 })
+
+Object.assign(Array.prototype, {
+    sortOnProperty(key) {
+        return this.sort((a, b) => {
+                let fa = a[key].toLowerCase(),
+                    fb = b[key].toLowerCase()
+
+                if (fa < fb) {
+                    return -1
+                }
+                if (fa > fb) {
+                    return 1
+                }
+                return 0
+        })
+    }
+})
+
 
 export const flipObj = (obj) => {
     return Object.keys(obj).reduce((ret, key) => {
