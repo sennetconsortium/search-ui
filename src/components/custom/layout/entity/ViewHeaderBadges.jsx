@@ -4,6 +4,7 @@ import React, {Fragment, useContext} from "react";
 import AppContext from "../../../../context/AppContext";
 import SenNetPopover from "../../../SenNetPopover";
 import StatusError from "../../../StatusError";
+import ClipboardCopy from "../../../ClipboardCopy";
 
 function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader, hasWritePrivilege}) {
     const {cache} = useContext(AppContext)
@@ -97,7 +98,8 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader, hasWritePrivile
             {data?.doi_url &&
                 <h5 className={"title_badge"}>
                             <span className={`${getStatusColor(data.status)} badge ms-2`}>
-                                DOI: <a href={data.doi_url} className={"icon_inline"} style={{color: 'white'}}>{data.registered_doi}</a>
+                                DOI: <a href={data.doi_url} style={{color: 'white'}}>{data.registered_doi}</a>
+                                &nbsp;<ClipboardCopy text={data.registered_doi} />
                             </span>
                 </h5>
             }
