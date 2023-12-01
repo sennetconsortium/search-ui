@@ -147,24 +147,47 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                                 <span>APIs</span>
                             </NavDropdown.Item>
                         </NavDropdown>
-                        {isLoggedIn() &&
-                            <Nav.Link href={getDataIngestBoardEndpoint()} target='_blank'>Data Ingest Board</Nav.Link>
-                        }
                     </Nav>
                     <Nav>
-                        {isLoggedIn() &&
-                            <Navbar.Text>
-                                {userEmail}
-                            </Navbar.Text>
+                        <NavDropdown active={false}
+                                     variant={'primary'}
+                                     title="Atlas & Tools"
+                                     id="nav-dropdown--atlas">
+                            <NavDropdown.Item key={`dd-ccf-eui`}
+                                              href='/ccf-eui'>
+                                <span>Exploration User Interface (EUI)</span>
+                            </NavDropdown.Item>
+                            {isLoggedIn() &&
+                                <NavDropdown.Item key={`dd-data-board`}
+                                                  href={getDataIngestBoardEndpoint()}
+                                                  target='_blank'>
+                                    <span>Data Ingest Board</span>
+                                </NavDropdown.Item>
                         }
-                        <Nav.Link
-                            className={'justify-content-end'}
-                            hidden={signoutHidden}
-                            href='#'
-                            onClick={(e) => handleSession(e)}
-                        >
-                            {isLoggedIn() ? _t('Log out') : _t('Log in')}
-                        </Nav.Link>
+                        </NavDropdown>
+                        {isLoggedIn() ?
+                            (
+                                <NavDropdown active={false}
+                                             variant={'primary'}
+                                             title={userEmail}
+                                             id="nav-dropdown--user">
+                                    <NavDropdown.Item key={`dd-user-logout`}
+                                                      href='#'
+                                                      onClick={(e) => handleSession(e)}>
+                                        Log Out
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+                            ) : (
+                                <Nav.Link
+                                    className={'justify-content-end'}
+                                    hidden={signoutHidden}
+                                    href='#'
+                                    onClick={(e) => handleSession(e)}
+                                >Log In
+                                </Nav.Link>
+                            )
+                        }
+
                     </Nav>
                 </Navbar.Collapse>
             </Container>
