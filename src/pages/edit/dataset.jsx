@@ -400,7 +400,7 @@ export default function EditDataset() {
                                     {
                                         !(userWriteGroups.length === 1) && isEditMode() && adminGroup &&
                                         <GroupSelect
-                                            optionValueProp={'shortname'}
+                                            optionValueProp={'displayname'}
                                             title={'Assigned to Group Name'}
                                             required={false}
                                             controlId={'assigned_to_group_name'}
