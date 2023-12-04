@@ -174,7 +174,6 @@ function EditUpload() {
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
-        console.log(values)
         return (
             <>
                 {editMode &&
