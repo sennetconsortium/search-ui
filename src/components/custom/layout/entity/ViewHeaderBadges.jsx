@@ -98,8 +98,8 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader, hasWritePrivile
             {data?.doi_url &&
                 <h5 className={"title_badge"}>
                             <span className={`${getStatusColor(data.status)} badge ms-2`}>
-                                DOI: <a href={data.doi_url} style={{color: 'white'}}>{data.registered_doi}</a>
-                                &nbsp;<ClipboardCopy text={data.registered_doi} />
+                                DOI: <a href={data.doi_url} className={'lnk--nodecor'} style={{color: 'white'}}>{data.registered_doi}</a>
+                                &nbsp;<ClipboardCopy text={data.registered_doi} className={'lnk--white'} />
                             </span>
                 </h5>
             }

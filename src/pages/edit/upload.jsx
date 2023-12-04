@@ -246,6 +246,7 @@ function EditUpload() {
                                         {/*/!*Ingest*!/*/}
                                         {isEditMode() && adminGroup &&
                                             <EntityFormGroup label='Ingest Task'
+                                                             type={'textarea'}
                                                              controlId='ingest_task' value={data.ingest_task}
                                                              onChange={onChange}
                                                              text={<>The next task in the data ingest process.</>} />}
