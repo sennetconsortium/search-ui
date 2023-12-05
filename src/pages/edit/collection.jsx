@@ -218,6 +218,11 @@ export default function EditCollection() {
         setContacts({description: {records: _contacts, headers: resp.description.headers}})
     }
 
+    // TODO: May see a brief flash of this Unauthorized view ...
+    if (!isAuthorizing() && !adminGroup) {
+        return <Unauthorized/>
+    }
+
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
