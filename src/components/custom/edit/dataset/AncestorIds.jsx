@@ -117,7 +117,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
             </Form.Group>
 
             {/*Ancestor Information Box*/}
-            {ancestors &&
+            {ancestors && ancestors.length !== 0 &&
                 <AncestorsTable controlId={controlId} formLabel={formLabel} values={values} onChange={onChange}
                                 ancestors={ancestors} deleteAncestor={deleteAncestor}/>
             }

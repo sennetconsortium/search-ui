@@ -12,10 +12,12 @@ export default async function handler(req, res) {
 
         // use the f
         let uuid = req.query.uuid
+        let sennetId = req.query.sennet_id
+        let key = sennetId ? 'sennet_id' : 'uuid'
 
-        if (uuid) {
+        if (uuid || sennetId) {
             // need to convert into a ES ready query
-            let queryBody = simple_query_builder("uuid", uuid)
+            let queryBody = simple_query_builder(key, uuid || sennetId)
             console.log('QUERY', formatMessageForCloudwatch(queryBody))
             var myHeaders = new Headers();
             if(req.headers.authorization !== undefined) {

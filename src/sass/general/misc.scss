@@ -108,6 +108,12 @@ p {
     max-height: 40px;
   }
 
+  .MuiTooltip-tooltip {
+    background-color: $col-err-bg;
+    color: $col-err-txt;
+    border: solid 1px $col-err-bdr;
+  }
+
   .btn-close {
     background-size: 35%;
     transition-property: opacity;

@@ -9,7 +9,7 @@ import { update_create_entity} from '../../lib/services'
 import {
     cleanJson,
     equals,
-    fetchEntity,
+    fetchEntity, getIdRegEx,
     getRequestHeaders, isPrimaryAssay
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
@@ -33,6 +33,8 @@ import AttributesUpload, {getResponseList} from "../../components/custom/edit/At
 import DataTable from "react-data-table-component";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import {PlusLg} from "react-bootstrap-icons";
+import Tooltip from '@mui/material/Tooltip';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
 
 export default function EditCollection() {
     const {
@@ -58,6 +60,9 @@ export default function EditCollection() {
     const ingestEndpoint = 'collections/attributes'
     const excludeColumns = ['is_contact']
     const [bulkAddField, setBulkAddField] = useState(false)
+    const isBulkHandling = useRef(false)
+    const [bulkErrorMessage, setBulkErrorMessage] = useState(null)
+    const [bulkPopover, setBulkPopover] = useState(false)
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -141,15 +146,24 @@ export default function EditCollection() {
         }
 
         for (const ancestor_uuid of dataset_uuids) {
-            let ancestor = await fetchEntity(ancestor_uuid);
+            let paramKey = getIdRegEx().exec(ancestor_uuid) ? 'sennet_id' : 'uuid'
+            let ancestor = await fetchEntity(ancestor_uuid, paramKey);
             if (ancestor.hasOwnProperty("error")) {
-                setError(true)
-                setErrorMessage(ancestor["error"])
+                if (isBulkHandling.current) {
+                    setBulkPopover(true)
+                    setBulkErrorMessage(ancestor["error"])
+                } else {
+                    setError(true)
+                    setErrorMessage(ancestor["error"])
+                }
+
             } else {
                 newDatasets.push(ancestor)
             }
         }
+        isBulkHandling.current = false
         setAncestors(newDatasets)
+        return newDatasets
     }
 
     const deleteLinkedDataset = (uuid) => {
@@ -216,18 +230,35 @@ export default function EditCollection() {
         setBulkAddField(false)
     }
 
-    const handleBulkChange = () => {
+    const handleBulkChange = async () => {
         const textareaVal = $('[name="ancestor_ids"]').val()
+        isBulkHandling.current = true
         if (textareaVal) {
             const ids = textareaVal.split(',')
-            const re = new RegExp(/SNT\d{3}\.[A-Za-z]{4}\.\d{3}/, 'ig')
+            const re = getIdRegEx()
             let validIds = []
+            let previous = ancestors ? [...ancestors] : []
+            let dict = {}
+            for (let p of previous) {
+                dict[p.uuid] = true
+                dict[p.sennet_id] = true
+            }
             for (let id of ids) {
-                if (re.exec(id) || id.length === 32) {
+                let matched = re.exec(id)
+                if ((matched || id.length === 32) && !dict[id]) {
                     validIds.push(id)
                 }
+                if (dict[id]) {
+                    setBulkErrorMessage('That dataset has already been added.')
+                }
+                if (!matched && id.length !== 32) {
+                    setBulkErrorMessage(<span>Invalid dataset id format <code>{id}</code>.</span>)
+                }
             }
-            fetchLinkedDataset(validIds)
+            let datasets = await fetchLinkedDataset(validIds)
+            if (datasets.length) {
+                onChange(null, 'dataset_uuids', datasets)
+            }
         }
 
     }
@@ -274,15 +305,29 @@ export default function EditCollection() {
                                     {/*Ancestor IDs*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
+                                        <ClickAwayListener onClickAway={()=> {setBulkPopover(false)}}>
                                         <AncestorIds controlId={'dataset_uuids'} otherWithAdd={<>&nbsp; &nbsp;
                                             <Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkChange} aria-controls='js-modal'>
                                             Bulk add datasets <PlusLg/>
                                         </Button>
-                                            <textarea name='ancestor_ids' className={bulkAddField ? 'is-visible': ''} />
+
+                                            <Tooltip
+                                                PopperProps={{
+                                                    disablePortal: true,
+                                                }}
+                                                onClose={()=> {setBulkPopover(false)}}
+                                                open={bulkPopover}
+                                                disableFocusListener
+                                                disableHoverListener
+                                                disableTouchListener
+                                                title={bulkErrorMessage}
+                                            > <span></span> </Tooltip>
+                                            <textarea name='ancestor_ids' className={bulkAddField ? 'is-visible': ''} onChange={()=>setBulkErrorMessage(null)} />
                                             <span className={`btn-close ${bulkAddField ? 'is-visible' : ''}`} onClick={hideBulkAdd}></span>
                                         </>}
                                                      formLabel={'dataset'} values={values} ancestors={ancestors} onChange={onChange}
                                                      fetchAncestors={fetchLinkedDataset} deleteAncestor={deleteLinkedDataset}/>
+                                        </ClickAwayListener>
                                     }
 
                                     {/*/!*Lab Name or ID*!/*/}
