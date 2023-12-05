@@ -108,13 +108,28 @@ p {
     max-height: 40px;
   }
 
+  .btn-close {
+    background-size: 35%;
+    transition-property: opacity;
+    opacity: 0;
+    transition:  1s ease;
+    &.is-visible {
+      opacity: 1;
+    }
+  }
+
   textarea {
     transition:  1s ease-in-out;
     margin-left: 10px !important;
     margin-top: 5px;
     border: solid 1px #999;
+    transition-property: opacity, width;
     width: 0;
     opacity: 0;
+    height: 40px;
+    font-size: 12px;
+    padding: 3px 7px;
+    font-family: monospace;
     &.is-visible {
       width: 50%;
       opacity: 1;

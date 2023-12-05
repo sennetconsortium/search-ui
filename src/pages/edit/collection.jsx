@@ -212,6 +212,26 @@ export default function EditCollection() {
         setBulkAddField(true)
     }
 
+    const hideBulkAdd = () => {
+        setBulkAddField(false)
+    }
+
+    const handleBulkChange = () => {
+        const textareaVal = $('[name="ancestor_ids"]').val()
+        if (textareaVal) {
+            const ids = textareaVal.split(',')
+            const re = new RegExp(/SNT\d{3}\.[A-Za-z]{4}\.\d{3}/, 'ig')
+            let validIds = []
+            for (let id of ids) {
+                if (re.exec(id) || id.length === 32) {
+                    validIds.push(id)
+                }
+            }
+            fetchLinkedDataset(validIds)
+        }
+
+    }
+
     const setAttributes = (resp) => {
         if (!resp.description) return
         setContributors(resp)
@@ -255,10 +275,11 @@ export default function EditCollection() {
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
                                         <AncestorIds controlId={'dataset_uuids'} otherWithAdd={<>&nbsp; &nbsp;
-                                            <Button variant="outline-secondary rounded-0 mt-1" onClick={showBulkAdd} aria-controls='js-modal'>
-                                            Bulk add Datasets <PlusLg/>
+                                            <Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkChange} aria-controls='js-modal'>
+                                            Bulk add datasets <PlusLg/>
                                         </Button>
                                             <textarea name='ancestor_ids' className={bulkAddField ? 'is-visible': ''} />
+                                            <span className={`btn-close ${bulkAddField ? 'is-visible' : ''}`} onClick={hideBulkAdd}></span>
                                         </>}
                                                      formLabel={'dataset'} values={values} ancestors={ancestors} onChange={onChange}
                                                      fetchAncestors={fetchLinkedDataset} deleteAncestor={deleteLinkedDataset}/>
