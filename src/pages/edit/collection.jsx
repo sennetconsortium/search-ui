@@ -32,6 +32,7 @@ import SenNetPopover from "../../components/SenNetPopover"
 import AttributesUpload, {getResponseList} from "../../components/custom/edit/AttributesUpload";
 import DataTable from "react-data-table-component";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import {PlusLg} from "react-bootstrap-icons";
 
 export default function EditCollection() {
     const {
@@ -56,6 +57,7 @@ export default function EditCollection() {
     const [contributors, setContributors] = useState([])
     const ingestEndpoint = 'collections/attributes'
     const excludeColumns = ['is_contact']
+    const [bulkAddField, setBulkAddField] = useState(false)
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -206,6 +208,10 @@ export default function EditCollection() {
         setValidated(true);
     };
 
+    const showBulkAdd = () => {
+        setBulkAddField(true)
+    }
+
     const setAttributes = (resp) => {
         if (!resp.description) return
         setContributors(resp)
@@ -248,7 +254,13 @@ export default function EditCollection() {
                                     {/*Ancestor IDs*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
-                                        <AncestorIds controlId={'dataset_uuids'} formLabel={'dataset'} values={values} ancestors={ancestors} onChange={onChange}
+                                        <AncestorIds controlId={'dataset_uuids'} otherWithAdd={<>&nbsp; &nbsp;
+                                            <Button variant="outline-secondary rounded-0 mt-1" onClick={showBulkAdd} aria-controls='js-modal'>
+                                            Bulk add Datasets <PlusLg/>
+                                        </Button>
+                                            <textarea name='ancestor_ids' className={bulkAddField ? 'is-visible': ''} />
+                                        </>}
+                                                     formLabel={'dataset'} values={values} ancestors={ancestors} onChange={onChange}
                                                      fetchAncestors={fetchLinkedDataset} deleteAncestor={deleteLinkedDataset}/>
                                     }
 

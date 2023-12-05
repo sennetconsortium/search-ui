@@ -101,3 +101,23 @@ p {
     border-radius: 4px;
   }
 }
+
+.ancestor-ctas {
+  display: flex;
+  .btn {
+    max-height: 40px;
+  }
+
+  textarea {
+    transition:  1s ease-in-out;
+    margin-left: 10px !important;
+    margin-top: 5px;
+    border: solid 1px #999;
+    width: 0;
+    opacity: 0;
+    &.is-visible {
+      width: 50%;
+      opacity: 1;
+    }
+  }
+}

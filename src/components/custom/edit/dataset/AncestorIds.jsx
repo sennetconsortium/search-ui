@@ -47,7 +47,8 @@ function BodyContent({ handleChangeAncestor }) {
     )
 }
 
-export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, formLabel = 'ancestor', controlId = 'direct_ancestor_uuids'}) {
+export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd,
+                                        formLabel = 'ancestor', controlId = 'direct_ancestor_uuids'}) {
     const [showHideModal, setShowHideModal] = useState(false)
 
     useEffect(() => {
@@ -121,11 +122,14 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
                                 ancestors={ancestors} deleteAncestor={deleteAncestor}/>
             }
 
-            <InputGroup className="mb-3" id="direct_ancestor_uuid_button">
+            <InputGroup className="mb-3 ancestor-ctas" id="direct_ancestor_uuid_button">
                 <Button variant="outline-primary rounded-0 mt-1" onClick={showModal} aria-controls='js-modal'>
                     Add another {formLabel} <PlusLg/>
                 </Button>
+                {otherWithAdd}
             </InputGroup>
+
+
 
             <Modal
                 size="xxl"
