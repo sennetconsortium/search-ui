@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     // only allow POST
     if (req.method === "GET" || req.method === "POST") {
 
-        // use the f
+        let returnMultiple = req.query.return_multiple || false
         let uuid = req.query.uuid
         let sennetId = req.query.sennet_id
         let key = sennetId ? 'sennet_id' : 'uuid'
@@ -45,8 +45,16 @@ export default async function handler(req, res) {
                     } else {
                         var total = result["hits"]["total"]["value"]
                         if (total !== 0) {
-                            var entity = result["hits"]["hits"][0]["_source"]
-                            res.status(200).json(entity)
+                            if(returnMultiple) {
+                                let entities = []
+                                result["hits"]["hits"].forEach((hit) => {
+                                    entities.push(hit["_source"])
+                                })
+                                res.status(200).json(entities)
+                            } else {
+                                var entity = result["hits"]["hits"][0]["_source"]
+                                res.status(200).json(entity)
+                            }
                         } else {
                             res.status(404).json(error_messages[1])
                         }
