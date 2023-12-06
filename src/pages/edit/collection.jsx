@@ -145,26 +145,33 @@ export default function EditCollection() {
         }
     }, [router]);
 
-    async function fetchLinkedDataset(dataset_uuids) {
+    async function fetchLinkedDataset(datasetUuids) {
         let newDatasets = []
         if (ancestors) {
             newDatasets = [...ancestors];
         }
 
-        for (const ancestor_uuid of dataset_uuids) {
-            let paramKey = getIdRegEx().exec(ancestor_uuid) ? 'sennet_id' : 'uuid'
-            let ancestor = await fetchEntity(ancestor_uuid, paramKey);
-            if (ancestor.hasOwnProperty("error")) {
+        for (const uuid of datasetUuids) {
+            let paramKey = getIdRegEx().exec(uuid) ? 'sennet_id' : 'uuid'
+            let entity = await fetchEntity(uuid, paramKey);
+            if (entity.hasOwnProperty("error")) {
                 if (isBulkHandling.current) {
                     setBulkPopover(true)
-                    setBulkErrorMessage(ancestor["error"])
+                    setBulkErrorMessage(entity["error"])
                 } else {
                     setError(true)
-                    setErrorMessage(ancestor["error"])
+                    setErrorMessage(entity["error"])
                 }
 
             } else {
-                newDatasets.push(ancestor)
+                if (equals(entity.entity_type, cache.entities.dataset)) {
+                    newDatasets.push(entity)
+                } else {
+                    if (isBulkHandling.current) {
+                        setBulkPopover(true)
+                        setBulkErrorMessage(`Entity with ${uuid} is not a dataset.`)
+                    }
+                }
             }
         }
         isBulkHandling.current = false
