@@ -44,7 +44,7 @@ export default async function handler(req, res) {
                         res.status(401).json(result)
                     } else {
                         var total = result["hits"]["total"]["value"]
-                        if (total === 1) {
+                        if (total !== 0) {
                             var entity = result["hits"]["hits"][0]["_source"]
                             res.status(200).json(entity)
                         } else {
