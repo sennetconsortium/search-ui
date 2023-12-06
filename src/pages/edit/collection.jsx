@@ -175,7 +175,7 @@ export default function EditCollection() {
         }
         if (errMsgs && !notSupported.length) {
             setBulkPopover(true)
-            setBulkPopover(errMsgs)
+            setBulkErrorMessage(<>{errMsgs}</>)
         }
         if (notSupported.length) {
             setBulkPopover(true)
