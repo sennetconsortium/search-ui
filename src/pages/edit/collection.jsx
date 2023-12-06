@@ -63,6 +63,7 @@ export default function EditCollection() {
     const isBulkHandling = useRef(false)
     const [bulkErrorMessage, setBulkErrorMessage] = useState(null)
     const [bulkPopover, setBulkPopover] = useState(false)
+    const headers =  ['version', 'affiliation', 'first_name', 'last_name', 'middle_name_or_initial', 'name', 'orcid_id']
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -101,13 +102,18 @@ export default function EditCollection() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data)
-                isPrimary.current = isPrimaryAssay(data)
+                //isPrimary.current = isPrimaryAssay(data)
                 let dataset_uuids = []
-                if (data.hasOwnProperty("dataset_uuids")) {
-                    for (const ancestor of data.dataset_uuids) {
+
+                if (data.hasOwnProperty("datasets")) {
+                    for (const ancestor of data.datasets) {
                         dataset_uuids.push(ancestor.uuid)
                     }
                     await fetchLinkedDataset(dataset_uuids)
+                }
+
+                if (data.contacts) {
+                    setContacts({description: {records: data.contacts, headers}})
                 }
 
                 // Set state with default values that will be PUT to Entity API to update
@@ -306,34 +312,28 @@ export default function EditCollection() {
                             bodyContent={
                                 <Form noValidate validated={validated} id="collection-form">
 
+                                    {/*Linked Datasets*/}
+                                    <AncestorIds controlId={'dataset_uuids'} otherWithAdd={<>&nbsp; &nbsp;
+                                        <Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkChange} aria-controls='js-modal'>
+                                        Bulk add datasets <PlusLg/>
+                                    </Button>
 
-                                    {/*Ancestor IDs*/}
-                                    {/*editMode is only set when page is ready to load */}
-                                    {editMode &&
-                                        <ClickAwayListener onClickAway={()=> {setBulkPopover(false)}}>
-                                        <AncestorIds controlId={'dataset_uuids'} otherWithAdd={<>&nbsp; &nbsp;
-                                            <Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkChange} aria-controls='js-modal'>
-                                            Bulk add datasets <PlusLg/>
-                                        </Button>
-
-                                            <Tooltip
-                                                PopperProps={{
-                                                    disablePortal: true,
-                                                }}
-                                                onClose={()=> {setBulkPopover(false)}}
-                                                open={bulkPopover}
-                                                disableFocusListener
-                                                disableHoverListener
-                                                disableTouchListener
-                                                title={bulkErrorMessage}
-                                            > <span></span> </Tooltip>
-                                            <textarea name='ancestor_ids' className={bulkAddField ? 'is-visible': ''} onChange={()=>setBulkErrorMessage(null)} />
-                                            <span className={`btn-close ${bulkAddField ? 'is-visible' : ''}`} onClick={hideBulkAdd}></span>
-                                        </>}
-                                                     formLabel={'dataset'} values={values} ancestors={ancestors} onChange={onChange}
-                                                     fetchAncestors={fetchLinkedDataset} deleteAncestor={deleteLinkedDataset}/>
-                                        </ClickAwayListener>
-                                    }
+                                        <Tooltip
+                                            PopperProps={{
+                                                disablePortal: true,
+                                            }}
+                                            onClose={()=> {setBulkPopover(false)}}
+                                            open={bulkPopover}
+                                            disableFocusListener
+                                            disableHoverListener
+                                            disableTouchListener
+                                            title={bulkErrorMessage}
+                                        > <span></span> </Tooltip>
+                                        <textarea name='ancestor_ids' className={bulkAddField ? 'is-visible': ''} onChange={()=>setBulkErrorMessage(null)} />
+                                        <span className={`btn-close ${bulkAddField ? 'is-visible' : ''}`} onClick={hideBulkAdd}></span>
+                                    </>}
+                                                 formLabel={'dataset'} values={values} ancestors={ancestors} onChange={onChange}
+                                                 fetchAncestors={fetchLinkedDataset} deleteAncestor={deleteLinkedDataset}/>
 
                                     {/*/!*Lab Name or ID*!/*/}
                                     <EntityFormGroup label='Title' placeholder='The title of the collection'
@@ -353,6 +353,17 @@ export default function EditCollection() {
                                                       entity={cache.entities.collection} excludeColumns={excludeColumns}
                                                       attribute={'Contributors'} title={<h6>Contributors</h6>}
                                                       customFileInfo={<span><a className='btn btn-outline-primary rounded-0 fs-8' download href={'/bulk/entities/example_collection_contributors.tsv'}> <FileDownloadIcon  />EXAMPLE.TSV</a></span>}/>
+
+                                    {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
+                                    {isEditMode && !contributors.description && data.creators && <div className='c-metadataUpload__table table-responsive'>
+                                        <h6>Contributors</h6>
+                                        <DataTable
+                                            columns={getResponseList({headers}, excludeColumns).columns}
+                                            data={data.creators}
+                                            pagination />
+                                    </div>}
+
+                                    {/*When a user uploads a file, the is_contact property is used to determine contacts, on edit mode, this just displays list from data.contacts*/}
                                     {contacts && contacts.description && <div className='c-metadataUpload__table table-responsive'>
                                         <h6>Contacts</h6>
                                         <DataTable
