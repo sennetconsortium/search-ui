@@ -295,7 +295,7 @@ export default function EditCollection() {
             }
             let datasets = await fetchLinkedDataset(validIds, errMsg)
             if (datasets.length) {
-                onChange(null, 'dataset_uuids', datasets)
+                onChange(null, 'dataset_uuids', datasets.map((item) => item.uuid))
             }
         }
 
@@ -372,6 +372,7 @@ export default function EditCollection() {
                                         <span className={`btn-close ${bulkAddField ? 'is-visible' : ''}`} onClick={hideBulkAdd}></span>
                                     </>}
                                                  formLabel={'dataset'} values={values} ancestors={ancestors} onChange={onChange}
+                                                 onShowModal={clearBulkPopover}
                                                  fetchAncestors={fetchLinkedDataset} deleteAncestor={deleteLinkedDataset}/>
 
                                     {/*/!*Lab Name or ID*!/*/}

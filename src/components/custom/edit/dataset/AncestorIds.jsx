@@ -47,7 +47,7 @@ function BodyContent({ handleChangeAncestor }) {
     )
 }
 
-export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd,
+export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd, onShowModal,
                                         formLabel = 'ancestor', controlId = 'direct_ancestor_uuids'}) {
     const [showHideModal, setShowHideModal] = useState(false)
 
@@ -67,6 +67,9 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
     }
 
     const showModal = () => {
+        if (onShowModal) {
+            onShowModal()
+        }
         setShowHideModal(true)
         // Enable addons for facets
         addons('dataset')
@@ -92,7 +95,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
             hideModal();
             $modalTable.removeAttr('data-tooltipText')
         } else {
-            $modalTable.attr('data-tooltipText', 'That ancestor has already been selected.')
+            $modalTable.attr('data-tooltipText', `That ${formLabel} has already been selected.`)
         }
     }
 
