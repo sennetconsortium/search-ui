@@ -7,7 +7,7 @@ import {equals} from "../js/functions";
 import {getCookie} from "cookies-next";
 
 const AppNavbar = ({hidden, signoutHidden}) => {
-    const {_t, isLoggedIn, logout, cache, supportedMetadata} = useContext(AppContext)
+    const {_t, isLoggedIn, logout, cache, supportedMetadata, adminGroup} = useContext(AppContext)
     const userEmail = (isLoggedIn() ? JSON.parse(atob(getCookie('info')))['email'] : "")
 
 
@@ -23,8 +23,14 @@ const AppNavbar = ({hidden, signoutHidden}) => {
 
     const supportedSingleRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication entity', 'upload', 'organ']
+        let notSupported = ['publication entity', 'upload', 'organ', 'collection']
         return entities.filter(entity => !notSupported.includes(entity))
+    }
+
+    const adminSupportedSingleRegister = () => {
+        let entities = Object.keys(cache.entities)
+        let adminOnly = ['collection']
+        return entities.filter(entity => adminOnly.includes(entity))
     }
 
     const supportedBulkRegister = () => {
@@ -88,6 +94,12 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                         {equals(range, 'single') && supportedSingleRegister().map((entity) => (
                                             <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
                                                 {equals(entity, cache.entities.upload) ? 'Data Upload' : _t(entity)}
+                                            </NavDropdown.Item>
+                                        ))}
+
+                                        {equals(range, 'single') && adminGroup && adminSupportedSingleRegister().map((entity) => (
+                                            <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
+                                                {_t(entity)}
                                             </NavDropdown.Item>
                                         ))}
 
