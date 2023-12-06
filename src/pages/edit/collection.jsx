@@ -34,7 +34,8 @@ import DataTable from "react-data-table-component";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import {PlusLg} from "react-bootstrap-icons";
 import Tooltip from '@mui/material/Tooltip';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
+import {Zoom, Popper} from "@mui/material";
+import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
 
 export default function EditCollection() {
     const {
@@ -145,15 +146,15 @@ export default function EditCollection() {
         }
     }, [router]);
 
-    async function fetchLinkedDataset(datasetUuids) {
+    async function fetchLinkedDataset(datasetUuids, errMsgs) {
         let newDatasets = []
         if (ancestors) {
             newDatasets = [...ancestors];
         }
-
+        let notSupported = []
         for (const uuid of datasetUuids) {
             let paramKey = getIdRegEx().exec(uuid) ? 'sennet_id' : 'uuid'
-            let entity = await fetchEntity(uuid, paramKey);
+            let entity = await fetchEntity(uuid, paramKey)
             if (entity.hasOwnProperty("error")) {
                 if (isBulkHandling.current) {
                     setBulkPopover(true)
@@ -162,17 +163,24 @@ export default function EditCollection() {
                     setError(true)
                     setErrorMessage(entity["error"])
                 }
-
             } else {
                 if (equals(entity.entity_type, cache.entities.dataset)) {
                     newDatasets.push(entity)
                 } else {
                     if (isBulkHandling.current) {
-                        setBulkPopover(true)
-                        setBulkErrorMessage(<span>Entity with <code>{uuid}</code> is not a dataset.</span>)
+                        notSupported.push(uuid)
                     }
                 }
             }
+        }
+        if (errMsgs && !notSupported.length) {
+            setBulkPopover(true)
+            setBulkPopover(errMsgs)
+        }
+        if (notSupported.length) {
+            setBulkPopover(true)
+            setBulkErrorMessage(<>{errMsgs}{errMsgs && <br />}<span>Entity with <code>{notSupported.join(',')}</code>
+                {notSupported.length > 1 ? ' are' : ' is'} not{notSupported.length > 1 ?  '': ' a'} dataset{notSupported.length > 1 ?  's': ''}.</span></>)
         }
         isBulkHandling.current = false
         setAncestors(newDatasets)
@@ -243,11 +251,19 @@ export default function EditCollection() {
         setBulkAddField(false)
     }
 
+    const clearBulkPopover = () => {
+        setBulkErrorMessage(null)
+        setBulkPopover(false)
+    }
+
     const handleBulkChange = async () => {
         const textareaVal = $('[name="ancestor_ids"]').val()
+        clearBulkPopover()
         isBulkHandling.current = true
         if (textareaVal) {
-            const ids = textareaVal.split(',')
+            let ids = textareaVal.split(',')
+            ids = new Set(ids) // remove duplicates
+            ids = Array.from(ids)
             const re = getIdRegEx()
             let validIds = []
             let previous = ancestors ? [...ancestors] : []
@@ -256,19 +272,28 @@ export default function EditCollection() {
                 dict[p.uuid] = true
                 dict[p.sennet_id] = true
             }
+            let alreadyAdded = []
+            let invalidFormat = []
             for (let id of ids) {
-                let matched = re.exec(id)
+                let matched = getIdRegEx().test(id)
                 if ((matched || id.length === 32) && !dict[id]) {
                     validIds.push(id)
                 }
                 if (dict[id]) {
-                    setBulkErrorMessage('That dataset has already been added.')
+                    alreadyAdded.push(id)
                 }
                 if (!matched && id.length !== 32) {
-                    setBulkErrorMessage(<span>Invalid dataset id format <code>{id}</code>.</span>)
+                    invalidFormat.push(id)
                 }
             }
-            let datasets = await fetchLinkedDataset(validIds)
+            let errMsg
+            if (alreadyAdded.length) {
+                errMsg = <span>The dataset{alreadyAdded.length > 1 ? 's': ''} <code>{alreadyAdded.join(',')}</code> {alreadyAdded.length > 1 ? 'have': 'has'} already been added.</span>
+            }
+            if (invalidFormat.length) {
+                errMsg = <>{errMsg}<span>Invalid dataset{invalidFormat.length > 1 ? 's': ''} id format <code>{invalidFormat.join(',')}</code>.</span></>
+            }
+            let datasets = await fetchLinkedDataset(validIds, errMsg)
             if (datasets.length) {
                 onChange(null, 'dataset_uuids', datasets)
             }
@@ -320,10 +345,11 @@ export default function EditCollection() {
                                 <Form noValidate validated={validated} id="collection-form">
 
                                     {/*Linked Datasets*/}
-                                    <AncestorIds controlId={'dataset_uuids'} otherWithAdd={<>&nbsp; &nbsp;
-                                        <Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkChange} aria-controls='js-modal'>
-                                        Bulk add datasets <PlusLg/>
-                                    </Button>
+                                    <AncestorIds controlId={'dataset_uuids'}
+                                                 otherWithAdd={<>&nbsp; &nbsp;
+                                                    <Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkChange} aria-controls='js-modal'>
+                                                        Bulk add datasets <PlusLg/>
+                                                    </Button>
 
                                         <Tooltip
                                             PopperProps={{
@@ -331,12 +357,18 @@ export default function EditCollection() {
                                             }}
                                             onClose={()=> {setBulkPopover(false)}}
                                             open={bulkPopover}
+                                            TransitionComponent={Zoom}
                                             disableFocusListener
                                             disableHoverListener
                                             disableTouchListener
-                                            title={bulkErrorMessage}
-                                        > <span></span> </Tooltip>
-                                        <textarea name='ancestor_ids' className={bulkAddField ? 'is-visible': ''} onChange={()=>setBulkErrorMessage(null)} />
+                                            title={<><span role='button' aria-label='Close bulk add dataset tooltip' className='tooltip-close'
+                                                           onClick={()=> {setBulkPopover(false)}}><CloseIcon />
+                                                    </span>
+                                                <div className={'tooltip-content'}>{bulkErrorMessage}</div>
+                                            </>}
+                                            ><span>&nbsp;</span>
+                                        </Tooltip>
+                                        <textarea name='ancestor_ids' className={bulkAddField ? 'is-visible': ''} onChange={clearBulkPopover} />
                                         <span className={`btn-close ${bulkAddField ? 'is-visible' : ''}`} onClick={hideBulkAdd}></span>
                                     </>}
                                                  formLabel={'dataset'} values={values} ancestors={ancestors} onChange={onChange}
