@@ -112,6 +112,10 @@ p {
     background-color: $col-err-bg;
     color: $col-err-txt;
     border: solid 1px $col-err-bdr;
+    code {
+      font-weight: bold;
+      color: $col-err-txt;
+    }
   }
 
   .btn-close {

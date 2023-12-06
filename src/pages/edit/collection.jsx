@@ -169,7 +169,7 @@ export default function EditCollection() {
                 } else {
                     if (isBulkHandling.current) {
                         setBulkPopover(true)
-                        setBulkErrorMessage(`Entity with ${uuid} is not a dataset.`)
+                        setBulkErrorMessage(<span>Entity with <code>{uuid}</code> is not a dataset.</span>)
                     }
                 }
             }
