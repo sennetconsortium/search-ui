@@ -1,5 +1,6 @@
-import {getAuth, getEntityEndPoint, getGlobusToken, getIngestEndPoint, getUUIDEndpoint} from "../config/config";
 import log from "loglevel";
+import { getDataTypesByProperty } from "../components/custom/js/functions";
+import { getAuth, getEntityEndPoint, getGlobusToken, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "../config/config";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
@@ -239,3 +240,58 @@ export const uploadFile = async file => {
         throw Error('413')
     }
 }
+
+export const getDatasetQuantities = async () => {
+    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false);
+    const body = {
+        size: 0,
+        query: {
+            bool: {
+                filter: {
+                    term: {
+                        "entity_type.keyword": "Dataset",
+                    },
+                },
+                must_not: excludeNonPrimaryTypes.map((type) => ({
+                    term: {
+                        "data_types.keyword": type,
+                    },
+                })),
+            },
+        },
+        aggs: {
+            "origin_sample.organ": {
+                terms: {
+                    field: "origin_sample.organ.keyword",
+                    size: 40,
+                },
+            },
+        },
+    };
+    const token = getAuth();
+    const headers = get_json_header()
+    if (token) {
+        headers.append("Authorization", `Bearer ${token}`)
+    }
+    try {
+        const res = await fetch(`${getSearchEndPoint()}/entities/search`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+            return null;
+        }
+        const content = await res.json();
+        return content.aggregations["origin_sample.organ"].buckets.reduce(
+            (acc, bucket) => {
+                acc[bucket.key] = bucket.doc_count;
+                return acc;
+            },
+            {}
+        );
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
