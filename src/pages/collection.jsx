@@ -28,7 +28,7 @@ function ViewCollection() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
+    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t, cache, adminGroup} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -52,10 +52,6 @@ function ViewCollection() {
                 setData(data);
                 const doi = await fetchDataCite(data.doi_url)
                 setDoiData(doi?.data)
-
-                // get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
-                //     setHasWritePrivilege(response.has_write_privs)
-                // }).catch(log.error)
             }
         }
 
@@ -122,7 +118,7 @@ function ViewCollection() {
                                     <SidebarBtn />
 
                                     <EntityViewHeader data={data} entity={'collection'}
-                                                      hasWritePrivilege={hasWritePrivilege}
+                                                      hasWritePrivilege={adminGroup}
                                                        />
 
                                     <div className="row">

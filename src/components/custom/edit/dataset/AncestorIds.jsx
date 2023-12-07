@@ -47,7 +47,8 @@ function BodyContent({ handleChangeAncestor }) {
     )
 }
 
-export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, formLabel = 'ancestor', controlId = 'direct_ancestor_uuids'}) {
+export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd, onShowModal,
+                                        formLabel = 'ancestor', controlId = 'direct_ancestor_uuids'}) {
     const [showHideModal, setShowHideModal] = useState(false)
 
     useEffect(() => {
@@ -66,6 +67,9 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
     }
 
     const showModal = () => {
+        if (onShowModal) {
+            onShowModal()
+        }
         setShowHideModal(true)
         // Enable addons for facets
         addons('dataset')
@@ -91,7 +95,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
             hideModal();
             $modalTable.removeAttr('data-tooltipText')
         } else {
-            $modalTable.attr('data-tooltipText', 'That ancestor has already been selected.')
+            $modalTable.attr('data-tooltipText', `That ${formLabel} has already been selected.`)
         }
     }
 
@@ -116,16 +120,19 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
             </Form.Group>
 
             {/*Ancestor Information Box*/}
-            {ancestors &&
+            {ancestors && ancestors.length !== 0 &&
                 <AncestorsTable controlId={controlId} formLabel={formLabel} values={values} onChange={onChange}
                                 ancestors={ancestors} deleteAncestor={deleteAncestor}/>
             }
 
-            <InputGroup className="mb-3" id="direct_ancestor_uuid_button">
+            <InputGroup className="mb-3 ancestor-ctas" id="direct_ancestor_uuid_button">
                 <Button variant="outline-primary rounded-0 mt-1" onClick={showModal} aria-controls='js-modal'>
                     Add another {formLabel} <PlusLg/>
                 </Button>
+                {otherWithAdd}
             </InputGroup>
+
+
 
             <Modal
                 size="xxl"
