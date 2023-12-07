@@ -1,11 +1,9 @@
 import React, {useContext} from 'react';
-import {Container, Row, Col} from 'react-bootstrap'
-import logo from "../../../public/static/sennet-txt-horizontal-logo.png";
-import Image from "next/image";
+import {Row, Col} from 'react-bootstrap'
 import AppContext from "../../../context/AppContext";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import {BoxArrowUpRight, EnvelopeFill} from 'react-bootstrap-icons';
+import {BoxArrowUpRight} from 'react-bootstrap-icons';
 
 const AppFooter = () => {
     const {_t} = useContext(AppContext)

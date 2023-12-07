@@ -25,7 +25,7 @@
   .sui-layout-sidebar-toggle {
     display: block !important;
     width: 100%;
-    margin-top: 20px;
+    margin-bottom: 20px;
     padding: 10px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.5;
@@ -85,7 +85,6 @@
 
 // Facets
 .clear-filter-div {
-  padding-bottom: 32px;
 }
 
 .clear-filter-button {
@@ -103,7 +102,7 @@
 .sui-layout-sidebar {
   -ms-flex: 0 0 300px;
   flex: 0 0 300px;
-  padding: 32px 32px 0 0;
+  padding: 0 32px 0 0;
 }
 
 .sui-layout-sidebar--toggled {
@@ -113,12 +112,17 @@
 
 .sui-layout-main {
   width: 100%;
-  padding: 32px 0 32px 32px;
+  padding: 0 0 32px 32px;
 }
 
 .sui-facet__title--FileType + .sui-facet {
   text-transform: uppercase;
 }
+
+.sui-layout-sidebar-dropdown {
+   margin-bottom: 1.5rem; 
+}
+
 // Handle sidebar on smaller screens
 @include md-mx {
   .sui-layout-main {
@@ -148,10 +152,15 @@
     overflow: auto;
   }
 
+  .sui-layout-sidebar-dropdown {
+    margin-bottom: 20px;
+  }
+
   .sui-layout-sidebar-toggle {
     display: block !important;
     width: 100%;
     margin-top: 20px;
+    margin-bottom: 20px;
     padding: 10px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.5;
@@ -193,7 +202,7 @@
   .modal-content .sui-layout-sidebar-toggle {
     display: block !important;
     width: 100%;
-    margin-top: 20px;
+    margin-bottom: 20px;
     padding: 10px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.5;
@@ -208,13 +217,6 @@
 
 .sui-resultsTable {
   min-height: 400px;
-  @include xlg {
-    .spinner-wrapper {
-      position: absolute;
-      top: 30%; right: 45%;
-      transform: translate(50%,-50%);
-    }
-  }
 }
 
 #sui-tbl-checkbox-actions {
@@ -254,8 +256,6 @@
   background: $col-entity-grey;
   padding: 0 24px;
   .MuiChip-root {
-    margin-top: 10px;
-    margin-right: 5px;
     color: #4f4f4f;
   }
   .chip-title {

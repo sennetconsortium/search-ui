@@ -19,6 +19,7 @@ import SelectedFacets from "../../components/custom/search/SelectedFacets";
 import SearchUIContainer from "search-ui/components/core/SearchUIContainer";
 import FacetsContent from "../../components/custom/search/FacetsContent";
 import BodyContent from "../../components/custom/search/BodyContent";
+import SearchDropdown from "../../components/custom/search/SearchDropdown";
 
 function SearchFiles() {
     const {
@@ -81,6 +82,8 @@ function SearchFiles() {
                             }
                             sideContent={
                                 <div data-js-ada='facets'>
+                                    <SearchDropdown title='Files' />
+
                                     <CustomClearSearchBox />
 
                                     <SelectedFilters />

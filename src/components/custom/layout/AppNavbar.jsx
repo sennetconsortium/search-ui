@@ -1,7 +1,7 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
 import {getDataIngestBoardEndpoint, NAVBAR_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
-import {useContext} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
 import {getCookie} from "cookies-next";
@@ -9,7 +9,6 @@ import {getCookie} from "cookies-next";
 const AppNavbar = ({hidden, signoutHidden}) => {
     const {_t, isLoggedIn, logout, cache, supportedMetadata, adminGroup} = useContext(AppContext)
     const userEmail = (isLoggedIn() ? JSON.parse(atob(getCookie('info')))['email'] : "")
-
 
     const handleSession = (e) => {
         e.preventDefault()
@@ -139,18 +138,7 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                 </div>
                             ))}
                         </NavDropdown>
-                        {/*<NavDropdown active={false}*/}
-                        {/*             variant={'primary'}*/}
-                        {/*             hidden={hidden}*/}
-                        {/*             title="Search"*/}
-                        {/*             id="nav-dropdown--search">*/}
-                        {/*    <NavDropdown.Item key={`dd-search-entity`} href={APP_ROUTES.search}>*/}
-                        {/*        <span>Entity</span>*/}
-                        {/*    </NavDropdown.Item>*/}
-                        {/*    <NavDropdown.Item key={`dd-search-file`} href={`${APP_ROUTES.search}/files`}>*/}
-                        {/*        <span>File</span>*/}
-                        {/*    </NavDropdown.Item>*/}
-                        {/*</NavDropdown>*/}
+
                         <NavDropdown active={false}
                                      variant={'primary'}
                                      title="Documentation"
