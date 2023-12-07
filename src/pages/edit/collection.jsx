@@ -28,7 +28,7 @@ import {
     valid_dataset_ancestor_config
 } from "../../config/config";
 import $ from 'jquery'
-import SenNetPopover from "../../components/SenNetPopover"
+import SenNetPopover, {SenPopoverOptions} from "../../components/SenNetPopover"
 import AttributesUpload, {getResponseList} from "../../components/custom/edit/AttributesUpload";
 import DataTable from "react-data-table-component";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -64,6 +64,8 @@ export default function EditCollection() {
     const isBulkHandling = useRef(false)
     const [bulkErrorMessage, setBulkErrorMessage] = useState(null)
     const [bulkPopover, setBulkPopover] = useState(false)
+    const bulkAddBtnTooltipDefault = <span>Toggle the field to bulk add comma separated SenNet ids or uuids.</span>
+    const [bulkAddBtnTooltip, setBulkAddBtnTooltip] = useState(bulkAddBtnTooltipDefault)
     const headers =  ['version', 'affiliation', 'first_name', 'last_name', 'middle_name_or_initial', 'name', 'orcid_id']
 
     useEffect(() => {
@@ -244,10 +246,13 @@ export default function EditCollection() {
     };
 
     const showBulkAdd = () => {
+        setBulkAddBtnTooltip(<span>Add your comma separated SenNet ids or uuids, and then click this button to bulk add <code>Datasets</code> to the <code>Collection</code>.</span>)
         setBulkAddField(true)
     }
 
     const hideBulkAdd = () => {
+        setBulkAddBtnTooltip(bulkAddBtnTooltipDefault)
+        clearBulkPopover()
         setBulkAddField(false)
     }
 
@@ -347,9 +352,14 @@ export default function EditCollection() {
                                     {/*Linked Datasets*/}
                                     <AncestorIds controlId={'dataset_uuids'}
                                                  otherWithAdd={<>&nbsp; &nbsp;
-                                                    <Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkChange} aria-controls='js-modal'>
+                                                    <SenNetPopover
+                                                        placement={SenPopoverOptions.placement.top}
+                                                        trigger={SenPopoverOptions.triggers.hoverOnClickOff}
+                                                        className={`c-metadataUpload__popover--dataset_uuids`}
+                                                        text={bulkAddBtnTooltip}
+                                                    ><Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkChange} aria-controls='js-modal'>
                                                         Bulk add datasets <PlusLg/>
-                                                    </Button>
+                                                    </Button></SenNetPopover>
 
                                         <Tooltip
                                             PopperProps={{

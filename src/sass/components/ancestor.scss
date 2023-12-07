@@ -50,9 +50,15 @@
     font-size: 12px;
     padding: 3px 7px;
     font-family: monospace;
+    @include md-mx {
+      margin-left: 0 !important;
+    }
     &.is-visible {
       width: 50%;
       opacity: 1;
+      @include md-mx {
+        width: 90%;
+      }
     }
   }
 }
