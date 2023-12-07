@@ -233,7 +233,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
                                text={getTooltip()}
                 >
                     <Button variant={'outline-primary rounded-0'} onClick={handleUploadMetadataClick}>
-                        Upload {attribute.upperCaseFirst()} File
+                        Upload {attribute.toLowerCase()} file
                         <Paperclip className={'ms-2'}/>
                     </Button>
                 </SenNetPopover>

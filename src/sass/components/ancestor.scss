@@ -35,6 +35,7 @@
     transition:  1s ease;
     &.is-visible {
       opacity: 1;
+      cursor: pointer;
     }
   }
 

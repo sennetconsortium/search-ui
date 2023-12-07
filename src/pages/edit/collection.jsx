@@ -57,7 +57,7 @@ export default function EditCollection() {
     const [ancestors, setAncestors] = useState(null)
     const isPrimary = useRef(false)
     const [contacts, setContacts] = useState([])
-    const [contributors, setContributors] = useState([])
+    const [creators, setCreators] = useState([])
     const ingestEndpoint = 'collections/attributes'
     const excludeColumns = ['is_contact']
     const [bulkAddField, setBulkAddField] = useState(false)
@@ -220,8 +220,8 @@ export default function EditCollection() {
                 log.debug("Form is valid")
 
 
-                if(!_.isEmpty(contributors)) {
-                    values["creators"] = contributors.description.records
+                if(!_.isEmpty(creators)) {
+                    values["creators"] = creators.description.records
                     values['contacts'] = contacts.description.records
                 }
 
@@ -300,7 +300,7 @@ export default function EditCollection() {
 
     const setAttributes = (resp) => {
         if (!resp.description) return
-        setContributors(resp)
+        setCreators(resp)
         let _contacts = []
         for (let creator of resp?.description?.records) {
             if (equals(creator.is_contact, 'true')) {
@@ -393,12 +393,12 @@ export default function EditCollection() {
 
                                     <AttributesUpload ingestEndpoint={ingestEndpoint} showAllInTable={true} setAttribute={setAttributes}
                                                       entity={cache.entities.collection} excludeColumns={excludeColumns}
-                                                      attribute={'Contributors'} title={<h6>Contributors</h6>}
-                                                      customFileInfo={<span><a className='btn btn-outline-primary rounded-0 fs-8' download href={'/bulk/entities/example_collection_contributors.tsv'}> <FileDownloadIcon  />EXAMPLE.TSV</a></span>}/>
+                                                      attribute={'Creators'} title={<h6>Creators</h6>}
+                                                      customFileInfo={<span><a className='btn btn-outline-primary rounded-0 fs-8' download href={'/bulk/entities/example_collection_creators.tsv'}> <FileDownloadIcon  />EXAMPLE.TSV</a></span>}/>
 
                                     {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
-                                    {isEditMode && !contributors.description && data.creators && <div className='c-metadataUpload__table table-responsive'>
-                                        <h6>Contributors</h6>
+                                    {isEditMode && !creators.description && data.creators && <div className='c-metadataUpload__table table-responsive'>
+                                        <h6>Creators</h6>
                                         <DataTable
                                             columns={getResponseList({headers}, excludeColumns).columns}
                                             data={data.creators}
