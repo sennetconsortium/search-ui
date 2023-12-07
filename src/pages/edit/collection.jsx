@@ -70,19 +70,11 @@ export default function EditCollection() {
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
-            const fullBody = [
-                {
-                    descendants: [{
-                        entity_type: cache.entities.dataset
-                    }]
-                }
-            ]
-
-            const response = await getEntityConstraints(fullBody, {order: 'descendants', filter: 'search'})
-            if (response.ok) {
-                const body = await response.json()
-                valid_dataset_ancestor_config['searchQuery']['includeFilters'] = body.description[0].description
-            }
+            // TODO: maybe we want to add to entity-api constraints for Collection instead of hard coding here ...
+            valid_dataset_ancestor_config['searchQuery']['includeFilters'] = [{
+                "keyword": "entity_type.keyword",
+                "value": "Dataset"
+            }]
         }
 
         fetchAncestorConstraints()
@@ -124,7 +116,7 @@ export default function EditCollection() {
                     'title': data.title,
                     'description': data.description,
                     'dataset_uuids': dataset_uuids,
-                    'metadata': data.contacts,
+                    'contacts': data.contacts,
                     'creators': data.creators
                 })
                 setEditMode("Edit")
