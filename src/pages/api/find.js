@@ -15,6 +15,8 @@ export default async function handler(req, res) {
         let sennetId = req.query.sennet_id
         let key = sennetId ? 'sennet_id' : 'uuid'
         let id = uuid || sennetId
+        // Remove trailing slash
+        id = id.replace(/\/$/, "")
         error_messages.push({error: `${key} ${id} not found, please check for the correct id.`})
         if (id) {
             // need to convert into a ES ready query
