@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import log from "loglevel";
-import {getRequestHeaders} from "../components/custom/js/functions";
+import {fetchDataCite, fetchProtocols, getProtocolId, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -23,6 +23,7 @@ import Datasets from "../components/custom/entities/collection/Datasets";
 function ViewCollection() {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [doiData, setDoiData] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -49,6 +50,8 @@ function ViewCollection() {
             } else {
                 // set state with the result
                 setData(data);
+                const doi = await fetchDataCite(data.doi_url)
+                setDoiData(doi?.data)
 
                 // get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                 //     setHasWritePrivilege(response.has_write_privs)
@@ -106,11 +109,6 @@ function ViewCollection() {
                                                    data-bs-parent="#sidebar">Datasets</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="#Protocols"
-                                                   className="nav-link "
-                                                   data-bs-parent="#sidebar">Protocols</a>
-                                            </li>
-                                            <li className="nav-item">
                                                 <a href="#Creators"
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Creators</a>
@@ -125,15 +123,18 @@ function ViewCollection() {
 
                                     <EntityViewHeader data={data} entity={'collection'}
                                                       hasWritePrivilege={hasWritePrivilege}
-                                                      uniqueHeader={data.title} />
+                                                       />
 
                                     <div className="row">
                                         <div className="col-12">
                                             {/*Description*/}
-                                            <Description primaryDateTitle="Creation Date"
-                                                         primaryDate={data.created_timestamp}
-                                                         secondaryDateTitle="Modification Date"
-                                                         secondaryDate={data.last_modified_timestamp}
+                                            <Description
+                                                     data={data}
+                                                     doiData={doiData}
+                                                     primaryDateTitle="Creation Date"
+                                                     primaryDate={data.created_timestamp}
+                                                     secondaryDateTitle="Modification Date"
+                                                     secondaryDate={data.last_modified_timestamp}
                                             />
 
                                             {/*Contacts*/}
@@ -141,11 +142,6 @@ function ViewCollection() {
 
                                             {/*Datasets*/}
                                             <Datasets data={data.datasets} />
-
-                                            {/*Protocols*/}
-                                            {data.doi_url &&
-                                                <Protocols protocol_url={data.doi_url}/>
-                                            }
 
                                             {/*Creators*/}
                                             <ContributorsContacts title={'Creators'} data={data.creators} />

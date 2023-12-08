@@ -269,6 +269,10 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
     )
 }
 
+BulkExport.defaultProps = {
+    data: []
+}
+
 BulkExport.propTypes = {
     data: PropTypes.array.isRequired,
     columns: PropTypes.object.isRequired,
