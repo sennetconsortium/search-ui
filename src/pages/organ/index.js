@@ -21,6 +21,14 @@ const AllOrgans = () => {
 
     const { organs } = useOrganList();
 
+    const getDisplayQty = (qty) => {
+        if (qty === 1) {
+            return "1 dataset";
+        } else {
+            return `${qty} datasets`;
+        }
+    };
+
     if (isAuthorizing()) {
         return <Spinner />;
     }
@@ -58,12 +66,7 @@ const AllOrgans = () => {
                                             <Link href={organ.searchUrl}>
                                                 <div className="title_badge">
                                                     <span className="badge bg-dataset p-2 text-dark">
-                                                        {`${organ.datasetQty} ${
-                                                            organ.datasetQty ==
-                                                            1
-                                                                ? "dataset"
-                                                                : "datasets"
-                                                        }`}
+                                                        {getDisplayQty(organ.datasetQty)}
                                                     </span>
                                                 </div>
                                             </Link>
