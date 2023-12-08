@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { useEffect, useState } from "react";
-import { organDetails } from "../config/organs";
-import { getOrgans } from "../lib/ontology";
+import { organDetails } from "../../config/organs";
+import { getOrgans } from "../../lib/ontology";
 
 const useOrganDetail = (urlParamName) => {
     const [organDetail, setOrganDetail] = useState({

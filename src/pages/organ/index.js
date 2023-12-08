@@ -8,7 +8,7 @@ import Header from "../../components/custom/layout/Header";
 import { APP_TITLE } from "../../config/config";
 import { APP_ROUTES } from "../../config/constants";
 import AppContext from "../../context/AppContext";
-import useOrganList from "../../hooks/useOrganList";
+import useOrganList from "../../hooks/organ/useOrganList";
 
 const AllOrgans = () => {
     const {

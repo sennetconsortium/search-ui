@@ -8,7 +8,7 @@ import DataTypeQuantities from "../../components/custom/organ/DataTypeQuantities
 import Samples from "../../components/custom/organ/Samples";
 import OrganViewHeader from "../../components/custom/organ/ViewHeader";
 import AppContext from "../../context/AppContext";
-import useOrganDetail from "../../hooks/useOrganDetail";
+import useOrganDetail from "../../hooks/organ/useOrganDetail";
 
 const Organ = () => {
     const { isRegisterHidden } = useContext(AppContext);

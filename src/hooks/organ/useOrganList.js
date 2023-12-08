@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { organDetails } from "../config/organs";
-import { getOrgans } from "../lib/ontology";
-import { getDatasetQuantities } from "../lib/services";
+import { organDetails } from "../../config/organs";
+import { getOrgans } from "../../lib/ontology";
+import { getDatasetQuantities } from "../../lib/services";
 
 const useOrganList = () => {
     const [organs, setOrgans] = useState([]);
