@@ -221,6 +221,7 @@ export const AppProvider = ({ cache, children }) => {
 
     const getGroupName = (data) => {
         if (data.group_name) return data.group_name
+        if (!userWriteGroups) return undefined
         for (let group of userWriteGroups) {
             if (data.group_uuid === group.uuid) {
                 return group.displayname

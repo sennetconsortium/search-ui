@@ -28,7 +28,7 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from 'react-bootstrap/Alert';
 import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/config";
-import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+import AttributesUpload from "../../components/custom/edit/AttributesUpload";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import SenNetAlert from "../../components/SenNetAlert";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
@@ -503,7 +503,7 @@ function EditSample() {
                                                        values={values}
                                                        setValues={setValues}/>
 
-                                    { values.sample_category && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.sample} subType={values.sample_category}  /> }
+                                    { values.sample_category && supportsMetadata() && <AttributesUpload setAttribute={setMetadata} entity={cache.entities.sample} subType={values.sample_category}  /> }
                                     <div className={'d-flex flex-row-reverse'}>
                                         {getCancelBtn('sample')}
                                         <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}

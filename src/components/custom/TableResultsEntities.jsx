@@ -28,7 +28,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
 
     const getId = (column) => column.id || column.sennet_id
 
-    const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn, includeLabIdCol = true}) => {
+    const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn, includeLabIdCol = true, includeGroupCol = true}) => {
         let cols = []
         if (!inModal) {
             cols.push({
@@ -69,12 +69,15 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             })
         }
         cols = cols.concat(columns)
-        cols.push({
+        if (includeGroupCol) {
+            cols.push({
                 name: 'Group',
                 selector: row => raw(row.group_name),
                 sortable: true,
                 format: row => <span data-field='group_name'>{getGroupName({group_name: raw(row.group_name), group_uuid: raw(row.group_uuid)})}</span>,
             })
+        }
+
         return cols;
     }
 
@@ -142,6 +145,19 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         }
     ]
 
+    const collectionColumns = [
+        {
+            name: 'Title',
+            selector: row => raw(row.title),
+            sortable: true,
+        },
+        {
+            name: 'Description',
+            selector: row => raw(row.description),
+            sortable: true,
+        }
+    ]
+
     const getTableColumns = () => {
         let cols;
         if (checkFilterType(filters) === false) {
@@ -155,6 +171,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                     const hasOneEntity = filter.values.length === 1
                     const entityType = filter.values[0]
                     let includeLabIdCol = true
+                    let includeGroupCol = true
                     if (hasOneEntity && equals(entityType, cache.entities.source)) {
                         columns = sourceColumns
                     } else if (hasOneEntity && equals(entityType, cache.entities.sample)) {
@@ -164,10 +181,14 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                     } else if (hasOneEntity && equals(entityType, cache.entities.upload)) {
                         includeLabIdCol = false
                         columns = uploadColumns
+                    } else if (hasOneEntity && equals(entityType, cache.entities.collection)) {
+                        includeLabIdCol = false
+                        includeGroupCol = false
+                        columns = collectionColumns
                     } else {
                         log.debug('Table Results', hasMultipleEntityTypes)
                     }
-                    return defaultColumns({hasMultipleEntityTypes, columns, includeLabIdCol});
+                    return defaultColumns({hasMultipleEntityTypes, columns, includeLabIdCol, includeGroupCol});
                 }
             })
             cols = cols[typeIndex]

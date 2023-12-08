@@ -19,7 +19,7 @@ import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import SenNetAlert from "../../components/SenNetAlert";
-import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+import AttributesUpload from "../../components/custom/edit/AttributesUpload";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 import $ from "jquery";
@@ -281,7 +281,7 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    { values && supportsMetadata() && <MetadataUpload setMetadata={setMetadata} entity={cache.entities.source} subType={equals(values.source_type, cache.sourceTypes.Mouse) ? "murine" :   values.source_type} />}
+                                    { values && supportsMetadata() && <AttributesUpload setAttribute={setMetadata} entity={cache.entities.source} subType={equals(values.source_type, cache.sourceTypes.Mouse) ? "murine" :   values.source_type} />}
                                     <div className={'d-flex flex-row-reverse'}>
                                         {getCancelBtn('source')}
                                         <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
