@@ -53,6 +53,19 @@ p {
   }
 }
 
+.lnk--nodecor {
+  text-decoration: none;
+}
+
+.lnk--white {
+  &:hover {
+    svg {
+      fill: white !important;
+    }
+
+  }
+}
+
 .text-right {
   text-align: right;
 }
