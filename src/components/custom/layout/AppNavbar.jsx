@@ -176,7 +176,11 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                                                   target='_blank'>
                                     <span>Data Ingest Board</span>
                                 </NavDropdown.Item>
-                        }
+                            }
+                            <NavDropdown.Item key={`dd-organs`}
+                                              href='/organ'>
+                                <span>Organs</span>
+                            </NavDropdown.Item>
                         </NavDropdown>
                         {isLoggedIn() ?
                             (
