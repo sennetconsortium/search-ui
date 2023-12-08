@@ -36,6 +36,7 @@ import {PlusLg} from "react-bootstrap-icons";
 import Tooltip from '@mui/material/Tooltip';
 import {Zoom, Popper} from "@mui/material";
 import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
+import {CheckIcon} from "primereact/icons/check";
 
 export default function EditCollection() {
     const {
@@ -66,6 +67,7 @@ export default function EditCollection() {
     const [bulkPopover, setBulkPopover] = useState(false)
     const bulkAddBtnTooltipDefault = <span>Toggle the field to bulk add comma separated SenNet ids or uuids.</span>
     const [bulkAddBtnTooltip, setBulkAddBtnTooltip] = useState(bulkAddBtnTooltipDefault)
+    const [bulkAddTextareaVal, setBulkAddTextareaVal] = useState(null)
     const headers =  ['version', 'affiliation', 'first_name', 'last_name', 'middle_name_or_initial', 'name', 'orcid_id']
 
     useEffect(() => {
@@ -245,16 +247,25 @@ export default function EditCollection() {
     const hideBulkAdd = () => {
         setBulkAddBtnTooltip(bulkAddBtnTooltipDefault)
         clearBulkPopover()
+        setBulkAddTextareaVal(null)
         setBulkAddField(false)
     }
+
+    const getTextareaVal = () => $('[name="ancestor_ids"]').val()
 
     const clearBulkPopover = () => {
         setBulkErrorMessage(null)
         setBulkPopover(false)
     }
 
-    const handleBulkChange = async () => {
-        const textareaVal = $('[name="ancestor_ids"]').val()
+    const handleBulkAddTextChange = () => {
+        clearBulkPopover()
+        setBulkAddTextareaVal(getTextareaVal())
+    }
+
+    const handleBulkAdd = async () => {
+        const textareaVal = getTextareaVal()
+        setBulkAddTextareaVal(textareaVal)
         clearBulkPopover()
         isBulkHandling.current = true
         if (textareaVal) {
@@ -349,7 +360,7 @@ export default function EditCollection() {
                                                         trigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                                         className={`c-metadataUpload__popover--dataset_uuids`}
                                                         text={bulkAddBtnTooltip}
-                                                    ><Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkChange} aria-controls='js-modal'>
+                                                    ><Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkAdd} aria-controls='js-modal'>
                                                         Bulk add datasets <PlusLg/>
                                                     </Button></SenNetPopover>
 
@@ -370,8 +381,26 @@ export default function EditCollection() {
                                             </>}
                                             ><span>&nbsp;</span>
                                         </Tooltip>
-                                        <textarea name='ancestor_ids' className={bulkAddField ? 'is-visible': ''} onChange={clearBulkPopover} />
-                                        <span className={`btn-close ${bulkAddField ? 'is-visible' : ''}`} onClick={hideBulkAdd}></span>
+                                        <textarea name='ancestor_ids' className={bulkAddField ? 'is-visible': ''} onChange={handleBulkAddTextChange} />
+                                         <SenNetPopover
+                                             placement={SenPopoverOptions.placement.top}
+                                             trigger={SenPopoverOptions.triggers.hover}
+                                             className={`c-metadataUpload__popover--btnClose`}
+                                             text={<span>Click here to cancel/close this field.</span>}
+                                         >
+                                            <span role={'button'} aria-label={'Cancel/close this field'} className={`btn-close ${bulkAddField ? 'is-visible' : ''}`} onClick={hideBulkAdd}></span>
+                                         </SenNetPopover>
+
+                                         {bulkAddField && bulkAddTextareaVal && <SenNetPopover
+                                                 placement={SenPopoverOptions.placement.bottom}
+                                                 trigger={SenPopoverOptions.triggers.hover}
+                                                 className={`c-metadataUpload__popover--btnAdd`}
+                                                 text={<span>Click here to bulk add <code>Datasets</code> to the <code>Collection</code></span>}
+                                             >
+                                                 <span role='button' aria-label={'Bulk add Datasets to the Collection'} onClick={handleBulkAdd}
+                                                       className={`btn-add ${bulkAddField && bulkAddTextareaVal ? 'is-visible' : ''}`}> <CheckIcon />
+                                                 </span>
+                                             </SenNetPopover>}
                                     </>}
                                                  formLabel={'dataset'} values={values} ancestors={ancestors} onChange={onChange}
                                                  onShowModal={clearBulkPopover}

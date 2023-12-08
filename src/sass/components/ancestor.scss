@@ -5,11 +5,12 @@
   }
 
   .MuiTooltip-tooltip {
+    font-weight: normal !important;
     background-color: $col-err-bg;
     color: $col-err-txt;
     border: solid 1px $col-err-bdr;
     code {
-      font-weight: bold;
+      font-weight: bold !important;
       color: $col-err-txt;
     }
     .tooltip {
@@ -28,14 +29,27 @@
     }
   }
 
-  .btn-close {
-    background-size: 35%;
+  .btn-close, .btn-add {
+    margin-left: 10px;
     transition-property: opacity;
     opacity: 0;
     transition:  1s ease;
     &.is-visible {
       opacity: 1;
       cursor: pointer;
+    }
+  }
+
+  .btn-add {
+    margin-left: 6px;
+    svg {
+      width: 0.8em;
+      margin-left: -15px;
+      position: absolute;
+      top: 30px;
+      path {
+        fill: green;
+      }
     }
   }
 
