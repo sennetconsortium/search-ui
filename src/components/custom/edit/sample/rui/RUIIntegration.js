@@ -1,9 +1,10 @@
-import React, { Component } from "react";
-import { Button, Modal } from "react-bootstrap";
+import React, {Component} from "react";
+import {Button, Modal} from "react-bootstrap";
 import Spinner from "../../../Spinner";
-import { parseJson } from "../../../../../lib/services";
+import {parseJson} from "../../../../../lib/services";
 import AppModal from "../../../../AppModal";
 import Script from "next/script";
+import {Helmet, HelmetProvider} from "react-helmet-async";
 
 class RUIIntegration extends Component {
     constructor(props) {
@@ -47,7 +48,7 @@ class RUIIntegration extends Component {
                 navBars[0].offsetHeight -
                 footer.offsetHeight
             }px`;
-            this.setState({ viewHeight: height });
+            this.setState({viewHeight: height});
         }
     }
 
@@ -61,11 +62,11 @@ class RUIIntegration extends Component {
                 ruiRefObserver.disconnect();
             }
         });
-        ruiRefObserver.observe(ruiRef, { childList: true });
+        ruiRefObserver.observe(ruiRef, {childList: true});
     }
 
     ruiDidLoad() {
-        this.setState({ ruiLoaded: true });
+        this.setState({ruiLoaded: true});
         this.removeRegisterButton();
         this.updateHeight();
     }
@@ -91,7 +92,7 @@ class RUIIntegration extends Component {
 
         const rui = this.ruiRef.current;
         rui.baseHref = "https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
-         rui.user = {
+        rui.user = {
             firstName: firstName || "",
             lastName: lastName || "",
         };
@@ -129,67 +130,77 @@ class RUIIntegration extends Component {
 
     render() {
         return (
-            <div className="webgl-content mat-typography rui">
-                <div
-                    id="unityContainer"
-                    style={{ height: this.state.viewHeight }}
-                >
-                    <ccf-rui
-                        ref={this.ruiRef}
-                        theme={"sennet"}
-                        header={false}
-                    />
+            <HelmetProvider>
+                <Helmet>
+                    <link rel="stylesheet"
+                          href={"https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/styles.css"}/>
+                    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap"
+                          rel="stylesheet"/>
+                    <link rel="stylesheet"
+                          href={"https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Sharp|Material+Icons+Outlined"}/>
+                </Helmet>
+                <div className="webgl-content mat-typography rui">
+                    <div
+                        id="unityContainer"
+                        style={{height: this.state.viewHeight}}
+                    >
+                        <ccf-rui
+                            ref={this.ruiRef}
+                            theme={"sennet"}
+                            header={false}
+                        />
 
-                    {!this.state.ruiLoaded && (
-                        <div
-                            className="d-flex flex-column justify-content-center"
-                            style={{ height: this.state.viewHeight }}
-                        >
-                            <Spinner style={{ margin: "auto" }} />
-                        </div>
-                    )}
+                        {!this.state.ruiLoaded && (
+                            <div
+                                className="d-flex flex-column justify-content-center"
+                                style={{height: this.state.viewHeight}}
+                            >
+                                <Spinner style={{margin: "auto"}}/>
+                            </div>
+                        )}
 
-                    <Modal.Footer id="rui-footer">
-                        <Button
-                            variant="outline-secondary rounded-0 my-3 mx-2"
-                            onClick={() =>
-                                this.setState({ showCancelModal: true })
+                        <Modal.Footer id="rui-footer">
+                            <Button
+                                variant="outline-secondary rounded-0 my-3 mx-2"
+                                onClick={() =>
+                                    this.setState({showCancelModal: true})
+                                }
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="outline-primary rounded-0 my-3 mx-2"
+                                disabled={!this.state.ruiLoaded}
+                                onClick={() => this.clickRegister()}
+                            >
+                                Register
+                            </Button>
+                        </Modal.Footer>
+
+                        <AppModal
+                            modalTitle={"Cancel Registration?"}
+                            modalBody={
+                                "Any changes will be lost. Are you sure you want to cancel registration?"
                             }
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="outline-primary rounded-0 my-3 mx-2"
-                            disabled={!this.state.ruiLoaded}
-                            onClick={() => this.clickRegister()}
-                        >
-                            Register
-                        </Button>
-                    </Modal.Footer>
+                            modalSize="md"
+                            showModal={this.state.showCancelModal}
+                            showCloseButton={true}
+                            closeButtonLabel={"Close"}
+                            handleClose={() =>
+                                this.setState({showCancelModal: false})
+                            }
+                            showHomeButton={true}
+                            actionButtonLabel={"Cancel Registration"}
+                            handleHome={() => this.props.setShowRui(false)}
+                        />
 
-                    <AppModal
-                        modalTitle={"Cancel Registration?"}
-                        modalBody={
-                            "Any changes will be lost. Are you sure you want to cancel registration?"
-                        }
-                        modalSize="md"
-                        showModal={this.state.showCancelModal}
-                        showCloseButton={true}
-                        closeButtonLabel={"Close"}
-                        handleClose={() =>
-                            this.setState({ showCancelModal: false })
-                        }
-                        showHomeButton={true}
-                        actionButtonLabel={"Cancel Registration"}
-                        handleHome={() => this.props.setShowRui(false)}
-                    />
-
-                    <Script
-                        only="edit/sample"
-                        src="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/wc.js"
-                    />
+                        <Script
+                            only="edit/sample"
+                            src="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/wc.js"
+                        />
+                    </div>
                 </div>
-            </div>
+            </HelmetProvider>
         );
     }
 }

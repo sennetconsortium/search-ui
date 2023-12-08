@@ -6,7 +6,7 @@ import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
 import {getCookie} from "cookies-next";
 
-const AppNavbar = ({hidden, signoutHidden}) => {
+const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
     const {_t, isLoggedIn, logout, cache, supportedMetadata, adminGroup} = useContext(AppContext)
     const userEmail = (isLoggedIn() ? JSON.parse(atob(getCookie('info')))['email'] : "")
 
@@ -52,9 +52,9 @@ const AppNavbar = ({hidden, signoutHidden}) => {
         }
     }
 
-
     return (
         <Navbar
+            ref={innerRef}
             variant={'dark'}
             expand="lg"
             className={`sticky-top bg--navBarGrey`}
@@ -159,24 +159,48 @@ const AppNavbar = ({hidden, signoutHidden}) => {
                                 <span>APIs</span>
                             </NavDropdown.Item>
                         </NavDropdown>
-                        {isLoggedIn() &&
-                            <Nav.Link href={getDataIngestBoardEndpoint()} target='_blank'>Data Ingest Board</Nav.Link>
-                        }
                     </Nav>
                     <Nav>
-                        {isLoggedIn() &&
-                            <Navbar.Text>
-                                {userEmail}
-                            </Navbar.Text>
+                        <NavDropdown active={false}
+                                     variant={'primary'}
+                                     align={{ lg: 'end' }}
+                                     title="Atlas & Tools"
+                                     id="nav-dropdown--atlas">
+                            <NavDropdown.Item key={`dd-ccf-eui`}
+                                              href='/ccf-eui'>
+                                <span>Exploration User Interface (EUI)</span>
+                            </NavDropdown.Item>
+                            {isLoggedIn() &&
+                                <NavDropdown.Item key={`dd-data-board`}
+                                                  href={getDataIngestBoardEndpoint()}
+                                                  target='_blank'>
+                                    <span>Data Ingest Board</span>
+                                </NavDropdown.Item>
                         }
-                        <Nav.Link
-                            className={'justify-content-end'}
-                            hidden={signoutHidden}
-                            href='#'
-                            onClick={(e) => handleSession(e)}
-                        >
-                            {isLoggedIn() ? _t('Log out') : _t('Log in')}
-                        </Nav.Link>
+                        </NavDropdown>
+                        {isLoggedIn() ?
+                            (
+                                <NavDropdown active={false}
+                                             variant={'primary'}
+                                             title={userEmail}
+                                             id="nav-dropdown--user">
+                                    <NavDropdown.Item key={`dd-user-logout`}
+                                                      hidden={signoutHidden}
+                                                      href='#'
+                                                      onClick={(e) => handleSession(e)}>
+                                        {_t('Log out')}
+                                    </NavDropdown.Item>
+                                </NavDropdown>
+                            ) : (
+                                <Nav.Link
+                                    className={'justify-content-end'}
+                                    hidden={signoutHidden}
+                                    href='#'
+                                    onClick={(e) => handleSession(e)}
+                                >{_t('Log in')}
+                                </Nav.Link>
+                            )
+                        }
                     </Nav>
                 </Navbar.Collapse>
             </Container>
