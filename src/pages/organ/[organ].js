@@ -27,7 +27,7 @@ const Organ = () => {
             <div className="container-fluid">
                 <div className="row flex-nowrap entity_body">
                     {/* Sidebar */}
-                    <div className="col-auto p-1">
+                    <div className="col-auto p-0">
                         <div
                             id="sidebar"
                             className="collapse collapse-horizontal sticky-top custom-sticky"
