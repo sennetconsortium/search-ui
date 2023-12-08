@@ -47,6 +47,9 @@
       margin-left: -15px;
       position: absolute;
       top: 30px;
+      @include md-mx {
+        top: 70px;
+      }
       path {
         fill: green;
       }
