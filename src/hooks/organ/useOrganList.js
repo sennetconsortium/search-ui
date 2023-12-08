@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { useEffect, useState } from "react";
 import { organDetails } from "../../config/organs";
 import { getOrgans } from "../../lib/ontology";
@@ -10,7 +11,8 @@ const useOrganList = () => {
         const retrieveOrgans = async () => {
             let organs = await getOrgans();
             organs = organs.map((organ) => {
-                return {...organ, ...organDetails[organ.rui_code]}
+                const o = _.mapKeys(organ, (v, k) => _.camelCase(k));
+                return {...o, ...organDetails[o.ruiCode]}
             });
             setOrgans(organs);
 
@@ -21,7 +23,7 @@ const useOrganList = () => {
             organs = organs.map((organ) => {
                 return {
                     ...organ,
-                    datasetQty: datasetQtys[organ.rui_code] || 0,
+                    datasetQty: datasetQtys[organ.ruiCode] || 0,
                 };
             })
             setOrgans(organs);

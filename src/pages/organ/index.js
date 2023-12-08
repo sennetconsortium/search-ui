@@ -44,7 +44,7 @@ const AllOrgans = () => {
 
                 <Row xs={1} s={2} md={4} className="gy-2">
                     {organs.map((organ) => (
-                        <Col key={organ.rui_code}>
+                        <Col key={organ.ruiCode}>
                             <Card className="p-4 rounded-0 h-100">
                                 <Card.Body className="d-flex flex-row justify-content-between">
                                     <div>
@@ -52,7 +52,7 @@ const AllOrgans = () => {
                                             {organ.term}
                                         </div>
                                         <div className="mb-1">
-                                            {organ.organ_uberon}
+                                            {organ.organUberon}
                                         </div>
                                         {organ.datasetQty != undefined && (
                                             <Link href={organ.searchUrl}>
