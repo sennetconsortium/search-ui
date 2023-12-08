@@ -1,6 +1,6 @@
 {
   "name": "portal-ui",
-  "version": "1.6.10",
+  "version": "1.6.11",
   "private": true,
   "scripts": {
     "run": "npm-run-all --parallel dev sass",
@@ -27,6 +27,7 @@
     "provenance-ui": "github:sennetconsortium/provenance-ui#main",
     "react-bootstrap-icons": "^1.8.4",
     "react-data-table-component": "^7.5.3",
+    "react-helmet-async": "^2.0.3",
     "react-idle-timer": "^5.4.2",
     "react-joyride": "^2.7.0",
     "react-toastify": "^9.1.1",

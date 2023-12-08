@@ -34,11 +34,12 @@ import {
     getProtocolsToken,
     valid_dataset_ancestor_config
 } from "../../config/config";
-import MetadataUpload from "../../components/custom/edit/MetadataUpload";
+import AttributesUpload from "../../components/custom/edit/AttributesUpload";
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
 import DatasetRevertButton from "../../components/custom/edit/dataset/DatasetRevertButton";
+import admin from "../admin";
 
 export default function EditDataset() {
     const {
@@ -172,6 +173,8 @@ export default function EditDataset() {
                     'description': data.description,
                     'dataset_info': data.dataset_info,
                     'direct_ancestor_uuids': immediate_ancestors,
+                    'assigned_to_group_name': data.assigned_to_group_name,
+                    'ingest_task': data.ingest_task,
                     'contains_human_genetic_sequences': data.contains_human_genetic_sequences,
                     'metadata': data.metadata
                 })
@@ -395,6 +398,28 @@ export default function EditDataset() {
                                             onGroupSelectChange={onChange}
                                             entity_type={'dataset'}/>
                                     }
+                                    {
+                                        !(userWriteGroups.length === 1) && isEditMode() && adminGroup &&
+                                        <GroupSelect
+                                            optionValueProp={'displayname'}
+                                            title={'Assigned to Group Name'}
+                                            required={false}
+                                            controlId={'assigned_to_group_name'}
+                                            popover={<>The group responsible for the next step in the data ingest process.</>}
+                                            data={data}
+                                            value={values.assigned_to_group_name}
+                                            groups={userWriteGroups.map(item => {if (item.data_provider) return item})}
+                                            onGroupSelectChange={onChange}
+                                            entity_type={'dataset'}/>
+                                    }
+
+                                    {/*/!*Ingest*!/*/}
+                                    {isEditMode() && adminGroup &&
+                                        <EntityFormGroup label='Ingest Task'
+                                           type={'textarea'}
+                                        controlId='ingest_task' value={data.ingest_task}
+                                        onChange={onChange}
+                                        text={<>The next task in the data ingest process.</>} />}
 
                                     {/*Ancestor IDs*/}
                                     {/*editMode is only set when page is ready to load */}
@@ -469,7 +494,7 @@ export default function EditDataset() {
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    {/*<MetadataUpload setMetadata={setMetadata} entity={cache.entities.dataset} />*/}
+                                    {/*<AttributesUpload setAttribute={setMetadata} entity={cache.entities.dataset} />*/}
                                     
                                     <div className={'d-flex flex-row-reverse'}>
 

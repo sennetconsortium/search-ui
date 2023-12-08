@@ -2,6 +2,8 @@ import {getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
 import {APP_ROUTES} from "../../../config/constants";
 import log from "loglevel";
 import fetchJsonp from "fetch-jsonp";
+import {BoxArrowUpRight} from "react-bootstrap-icons";
+import React from "react";
 
 export function getHeaders() {
     const myHeaders = new Headers();
@@ -27,8 +29,12 @@ export function getRequestHeaders() {
     };
 }
 
-export async function fetchEntity(ancestorId) {
-    const response = await fetch("/api/find?uuid=" + ancestorId, getRequestHeaders());
+export function getIdRegEx() {
+    return new RegExp(/SNT\d{3}\.[A-Za-z]{4}\.\d{3}/, 'ig')
+}
+
+export async function fetchEntity(ancestorId, paramKey = 'uuid') {
+    const response = await fetch(`/api/find?${paramKey}=` + ancestorId, getRequestHeaders());
     // convert the data to json
     const entity = await response.json();
     if (entity.hasOwnProperty("error")) {
@@ -54,22 +60,33 @@ export async function fetchProtocol(protocolUrl) {
     );
 }
 
-export async function fetchProtocolView(protocolUrl) {
-    if (!protocolUrl) return null
-    let uri = getClickableLink(protocolUrl)
-    try {
-        let result = await fetchJsonp(uri, {
-            timeout: 2000,
-        }).then(function (json) {
-            return true
-        }).catch(function (resp) {
-            return resp.message.contains('timed out')
-        })
-        return {ok: result}
-    } catch (e) {
-        console.error(e)
-        return {ok: false}
+export function formatCitation(data, url) {
+    let result = []
+    const creators = data.attributes.creators;
+    for (let i = 0; i < creators.length; i++) {
+        result.push(<span key={creators[i].name}>
+            {creators[i].familyName} {creators[i].givenName[0]}
+            {i == creators.length - 1 ? `. ` : `, `} </span>)
     }
+    result.push(<span key={`${data}-title`} className={'fw-light'}>{data.attributes?.titles[0].title}</span>)
+    result.push(<span key={`${data}-publisher`}>. {data.attributes?.publisher}. {data.attributes.publicationYear}.</span>)
+    return <>
+        {result}
+        <span> Available from: <br /><a className='lnk--ic' href={url}>{url} <BoxArrowUpRight/></a></span>
+        <hr />
+        <span><a className='lnk--ic' href={`https://commons.datacite.org/${url.replace('https://', '')}`}>View the DataCite page <BoxArrowUpRight/></a></span>
+    </>
+}
+
+export async function fetchDataCite(protocolUrl) {
+    if (!protocolUrl) return null
+    const regex = new RegExp("(?<=doi.org/).*")
+    const protocolId = regex.exec(protocolUrl)
+    const response = await fetch(`https://api.datacite.org/dois/${protocolId}`)
+    if (!response.ok) {
+        return null
+    }
+    return response.json()
 }
 
 export async function fetchProtocols(protocolUrl) {

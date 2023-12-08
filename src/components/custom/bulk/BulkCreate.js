@@ -19,7 +19,7 @@ import Spinner from "../Spinner";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
-import {tableColumns, getErrorList} from "../edit/MetadataUpload";
+import {tableColumns, getErrorList} from "../edit/AttributesUpload";
 import DataTable from 'react-data-table-component';
 import {createDownloadUrl, equals} from "../js/functions";
 import AppContext from "../../../context/AppContext";

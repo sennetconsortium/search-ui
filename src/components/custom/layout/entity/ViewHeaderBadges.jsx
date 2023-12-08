@@ -7,6 +7,7 @@ import StatusError from "../../../StatusError";
 import Link from "next/link";
 import {APP_ROUTES} from "../../../../config/constants";
 import {organDetails} from "../../../../config/organs";
+import ClipboardCopy from "../../../ClipboardCopy";
 
 function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader, hasWritePrivilege}) {
     const {cache} = useContext(AppContext)
@@ -115,7 +116,8 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
             {data?.doi_url &&
                 <h5 className={"title_badge"}>
                             <span className={`${getStatusColor(data.status)} badge ms-2`}>
-                                DOI: <a href={data.doi_url} className={"icon_inline"} style={{color: 'white'}}>{data.registered_doi}</a>
+                                DOI: <a href={data.doi_url} className={'lnk--nodecor'} style={{color: 'white'}}>{data.registered_doi}</a>
+                                &nbsp;<ClipboardCopy text={data.registered_doi} className={'lnk--white'} />
                             </span>
                 </h5>
             }

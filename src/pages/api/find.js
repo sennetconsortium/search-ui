@@ -4,18 +4,22 @@ import log from "loglevel";
 
 // a mock service to return some data
 export default async function handler(req, res) {
-    var error_messages = [{error: "Only support GET/POST"}, {error: "UUID Not found, please check for the correct id"}]
+    let error_messages = [{error: "Only support GET/POST"}]
     log.debug("FIND API...")
 
     // only allow POST
     if (req.method === "GET" || req.method === "POST") {
 
-        // use the f
         let uuid = req.query.uuid
-
-        if (uuid) {
+        let sennetId = req.query.sennet_id
+        let key = sennetId ? 'sennet_id' : 'uuid'
+        let id = uuid || sennetId
+        // Remove trailing slash
+        id = id.replace(/\/$/, "")
+        error_messages.push({error: `${key} ${id} not found, please check for the correct id.`})
+        if (id) {
             // need to convert into a ES ready query
-            let queryBody = simple_query_builder("uuid", uuid)
+            let queryBody = simple_query_builder(key, id)
             console.log('QUERY', formatMessageForCloudwatch(queryBody))
             var myHeaders = new Headers();
             if(req.headers.authorization !== undefined) {
@@ -42,9 +46,18 @@ export default async function handler(req, res) {
                         res.status(401).json(result)
                     } else {
                         var total = result["hits"]["total"]["value"]
-                        if (total === 1) {
-                            var entity = result["hits"]["hits"][0]["_source"]
-                            res.status(200).json(entity)
+                        if (total !== 0) {
+                            let entity //result["hits"]["hits"][0]["_source"]
+                            result["hits"]["hits"].forEach((hit) => {
+                                if (hit["_source"][key] === id) {
+                                    entity = hit["_source"]
+                                }
+                            })
+                            if (entity) {
+                                res.status(200).json(entity)
+                            } else {
+                                res.status(404).json(error_messages[1])
+                            }
                         } else {
                             res.status(404).json(error_messages[1])
                         }

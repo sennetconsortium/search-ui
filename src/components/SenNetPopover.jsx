@@ -11,7 +11,7 @@ export const SenPopoverOptions = {
       bottom: 'bottom'
     },
     triggers: {
-        hover: 'hover',
+        hover: ['hover', 'focus'],
         click: 'click',
         hoverOnClickOff: 'hover-on-click-off'
     }
@@ -110,7 +110,7 @@ SenNetPopover.propTypes = {
     children: PropTypes.node,
     placement: PropTypes.string,
     className: PropTypes.string.isRequired,
-    trigger: PropTypes.string,
+    trigger: PropTypes.any,
 }
 
 export default SenNetPopover

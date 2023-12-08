@@ -26,6 +26,7 @@ function EntityFormGroup({ controlId, label, text, onChange, value, type, placeh
                         onChange={e => onChange(e, e.target.id, e.target.value)} /> }
 
             {isTextarea && <Form.Control as={type} rows={4} defaultValue={value}
+                                         required={isRequired}
                         onBlur={onBlur ? (e => onBlur(e, e.target.id, e.target.value)) : undefined}
                         onChange={e => onChange(e, e.target.id, e.target.value)} /> }
 

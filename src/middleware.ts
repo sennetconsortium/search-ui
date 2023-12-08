@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
     if (entity_type === "404") {
         return NextResponse.rewrite(new URL('/404', request.url))
     } else if (entity_type != "") {
-        let updated_url = request.url.replace(/(source|sample|dataset|upload)/, entity_type)
+        let updated_url = request.url.replace(/(source|sample|dataset|upload|collection)/, entity_type)
         if (!updated_url.includes('_next')) {
             updated_url = decodeURIComponent(updated_url)
             updated_url = updated_url[updated_url.length - 1] === '/' ? updated_url : updated_url + '/'
@@ -36,8 +36,8 @@ export async function middleware(request: NextRequest) {
 // Match view and edit entity pages and grab the correct entity type
 export const config = {
     matcher: [
-        '/((?:source|sample|dataset|upload).*)',
-        '/edit/((?:source|sample|dataset|upload).*)'
+        '/((?:source|sample|dataset|upload|collection).*)',
+        '/edit/((?:source|sample|dataset|upload|collection).*)'
     ],
     // Need to make exceptions for lodash
     // https://nextjs.org/docs/messages/edge-dynamic-code-evaluation
