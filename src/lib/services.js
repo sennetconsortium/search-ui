@@ -295,3 +295,114 @@ export const getDatasetQuantities = async () => {
         return null;
     }
 };
+
+export const getOrganDataTypeQuantities = async (organCode) => {
+    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false);
+    const body = {
+        size: 0,
+        query: {
+            bool: {
+                filter: {
+                    term: {
+                        "origin_sample.organ.keyword": organCode,
+                    }
+                },
+                must_not: excludeNonPrimaryTypes.map((type) => ({
+                    term: {
+                        "data_types.keyword": type,
+                    },
+                }))
+            }
+        },
+        aggs: {
+            data_types: {
+                terms: {
+                    field: "data_types.keyword",
+                    size: 40
+                }
+            }
+        }
+    }
+    const token = getAuth();
+    const headers = get_json_header()
+    if (token) {
+        headers.append("Authorization", `Bearer ${token}`)
+    }
+    try {
+        const res = await fetch(`${getSearchEndPoint()}/entities/search`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+            return null;
+        }
+        const content = await res.json();
+        return content.aggregations["data_types"].buckets.reduce(
+            (acc, bucket) => {
+                acc[bucket.key] = bucket.doc_count;
+                return acc;
+            },
+            {}
+        );
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export const getSamplesByOrgan = async (ruiCode) => {
+    const body = {
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "term": {
+                            "entity_type.keyword": "Sample"
+                        }
+                    },
+                    {
+                        "term": {
+                            "organ.keyword": ruiCode
+                        }
+                    }
+                ]
+            }
+        },
+        "_source": {
+            "includes": [
+                "sennet_id",
+                "lab_tissue_sample_id",
+                "group_name",
+                "last_touch"
+            ]
+        }
+    }
+    const token = getAuth();
+    const headers = get_json_header()
+    if (token) {
+        headers.append("Authorization", `Bearer ${token}`)
+    }
+    try {
+        const res = await fetch(`${getSearchEndPoint()}/entities/search`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+            return null;
+        }
+        const content = await res.json();
+        return content.hits.hits.map((hit) => {
+            return {
+                sennetId: hit._source.sennet_id,
+                labId: hit._source.lab_tissue_sample_id,
+                groupName: hit._source.group_name,
+                lastTouch: hit._source.last_touch, 
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        return null;
+    } 
+}

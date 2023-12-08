@@ -6,6 +6,7 @@ import Spinner from "../../components/custom/Spinner";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import Header from "../../components/custom/layout/Header";
 import { APP_TITLE } from "../../config/config";
+import { APP_ROUTES } from "../../config/constants";
 import AppContext from "../../context/AppContext";
 import useOrganList from "../../hooks/useOrganList";
 
@@ -33,7 +34,7 @@ const AllOrgans = () => {
     return (
         <>
             <Header title={APP_TITLE} />
-            <AppNavbar hidden={isRegisterHidden} />
+            <AppNavbar hidden={isRegisterHidden} signoutHidden={false} />
             <Container className="mb-5 d-block">
                 <Row>
                     <div className="py-4 bd-highlight">
@@ -58,7 +59,8 @@ const AllOrgans = () => {
                                                 <div className="title_badge">
                                                     <span className="badge bg-dataset p-2 text-dark">
                                                         {`${organ.datasetQty} ${
-                                                            organ.datasetQty == 1
+                                                            organ.datasetQty ==
+                                                            1
                                                                 ? "dataset"
                                                                 : "datasets"
                                                         }`}
@@ -66,7 +68,9 @@ const AllOrgans = () => {
                                                 </div>
                                             </Link>
                                         )}
-                                        <Link href="#">
+                                        <Link
+                                            href={`${APP_ROUTES.organ}/${organ.urlParamName}`}
+                                        >
                                             <Button variant="primary mt-4 rounded-0">
                                                 View
                                             </Button>
