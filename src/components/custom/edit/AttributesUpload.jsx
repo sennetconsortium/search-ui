@@ -92,8 +92,9 @@ export const getErrorList = (details) => {
 }
 
 export const getResponseList = (details, excludeColumns) => {
+    let data = details?.description || details
     let columns = []
-    for (let column of details?.description?.headers) {
+    for (let column of data?.headers) {
         if (excludeColumns.indexOf(column) === -1) {
             columns.push(
                 {
@@ -106,7 +107,7 @@ export const getResponseList = (details, excludeColumns) => {
 
     }
 
-    return {data: details?.description?.records, columns}
+    return {data: data?.records, columns}
 }
 
 function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable, excludeColumns, title, customFileInfo }) {
@@ -232,7 +233,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
                                text={getTooltip()}
                 >
                     <Button variant={'outline-primary rounded-0'} onClick={handleUploadMetadataClick}>
-                        Upload {attribute.upperCaseFirst()} File
+                        Upload {attribute.toLowerCase()} file
                         <Paperclip className={'ms-2'}/>
                     </Button>
                 </SenNetPopover>

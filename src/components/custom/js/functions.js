@@ -29,8 +29,12 @@ export function getRequestHeaders() {
     };
 }
 
-export async function fetchEntity(ancestorId) {
-    const response = await fetch("/api/find?uuid=" + ancestorId, getRequestHeaders());
+export function getIdRegEx() {
+    return new RegExp(/SNT\d{3}\.[A-Za-z]{4}\.\d{3}/, 'ig')
+}
+
+export async function fetchEntity(ancestorId, paramKey = 'uuid') {
+    const response = await fetch(`/api/find?${paramKey}=` + ancestorId, getRequestHeaders());
     // convert the data to json
     const entity = await response.json();
     if (entity.hasOwnProperty("error")) {
