@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { getSamplesByOrgan } from "../../../lib/services";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import { APP_ROUTES } from "../../../config/constants";
+import ClipboardCopy from "../../ClipboardCopy";
 
 const Samples = ({ id, ruiCode }) => {
     const [samples, setSamples] = useState(null);
@@ -30,9 +31,11 @@ const Samples = ({ id, ruiCode }) => {
             sortable: true,
             cell: (row, index, column, id) => {
                 return (
-                    <Link className="text-dark" href={sampleUrl(row.uuid)}>
+                    <span data-field='sennet_id'>
+                    <Link href={sampleUrl(row.uuid)}>
                         {row.sennetId}
-                    </Link>
+                    </Link> <ClipboardCopy text={(row.sennetId)} title={'Copy SenNet ID {text} to clipboard'}/>
+                     </span>
                 );
             },
         },

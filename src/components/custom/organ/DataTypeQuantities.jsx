@@ -47,7 +47,6 @@ const DataTypeQuantities = ({ id, ruiCode }) => {
             cell: (row, index, column, id) => {
                 return (
                     <Link
-                        className="text-dark"
                         href={searchUrlForDatasetType(row.dataType)}
                     >
                         {row.dataType}
