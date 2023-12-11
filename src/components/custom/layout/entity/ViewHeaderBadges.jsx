@@ -4,10 +4,17 @@ import React, {Fragment, useContext} from "react";
 import AppContext from "../../../../context/AppContext";
 import SenNetPopover from "../../../SenNetPopover";
 import StatusError from "../../../StatusError";
+import Link from "next/link";
+import {APP_ROUTES} from "../../../../config/constants";
+import {organDetails} from "../../../../config/organs";
 import ClipboardCopy from "../../../ClipboardCopy";
 
-function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader, hasWritePrivilege}) {
+function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader, hasWritePrivilege}) {
     const {cache} = useContext(AppContext)
+
+    const getOrganRoute = (ruiCode) => {
+        return `${APP_ROUTES.organ}/${organDetails[ruiCode].urlParamName}`
+    }
 
     return (
         <Fragment>
@@ -53,11 +60,13 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader, hasWritePrivile
                 </Fragment>) : (
                 <Fragment>
                     {data.origin_sample &&
-                        <h5 className={"title_badge"}>
-                            <span className="badge bg-secondary">
-                                {displayBodyHeader(getUBKGFullName(data.origin_sample.organ))}
-                            </span>
-                        </h5>
+                        <Link href={getOrganRoute(data.origin_sample.organ)}>
+                            <h5 className={"title_badge"}>
+                                <span className="badge bg-secondary">
+                                    {displayBodyHeader(getUBKGFullName(data.origin_sample.organ))}
+                                </span>
+                            </h5>
+                        </Link>
                     }
                     {data.source_type &&
                         <h5 className={"title_badge"}>
@@ -67,12 +76,21 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader, hasWritePrivile
                         </h5>
 
                     }
-                    {uniqueHeader &&
+                    {uniqueHeader && !uniqueHeaderUrl &&
                         <h5 className={"title_badge"}>
                             <span className="badge bg-secondary ms-2">
-                                    {getUBKGFullName(uniqueHeader)}
+                                {getUBKGFullName(uniqueHeader)}
                             </span>
                         </h5>
+                    }
+                    {uniqueHeader && uniqueHeaderUrl &&
+                        <Link href={uniqueHeaderUrl}>
+                            <h5 className={"title_badge"}>
+                                <span className="badge bg-secondary ms-2">
+                                    {getUBKGFullName(uniqueHeader)}
+                                </span>
+                            </h5>
+                        </Link>
                     }
                     {data.status &&
                         <h5 className={"title_badge"}>
@@ -111,6 +129,7 @@ function ViewHeaderBadges({data, uniqueHeader, isMetadataHeader, hasWritePrivile
 ViewHeaderBadges.propTypes = {
     data: PropTypes.object.isRequired,
     uniqueHeader: PropTypes.string,
+    uniqueHeaderUrl: PropTypes.string,
     isMetadataHeader: PropTypes.bool
 }
 
