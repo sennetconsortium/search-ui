@@ -376,6 +376,7 @@ export const getSamplesByOrgan = async (ruiCode) => {
     }
     return content.hits.hits.map((hit) => {
         return {
+            uuid: hit._id,
             sennetId: hit._source.sennet_id,
             labId: hit._source.lab_tissue_sample_id,
             groupName: hit._source.group_name,

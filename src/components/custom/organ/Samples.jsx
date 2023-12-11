@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import { getSamplesByOrgan } from "../../../lib/services";
 import SenNetAccordion from "../layout/SenNetAccordion";
+import { APP_ROUTES } from "../../../config/constants";
 
 const Samples = ({ id, ruiCode }) => {
     const [samples, setSamples] = useState(null);
@@ -19,11 +20,21 @@ const Samples = ({ id, ruiCode }) => {
         getSamples();
     }, [ruiCode]);
 
+    const sampleUrl = (uuid) => {
+        return `${APP_ROUTES.sample}?uuid=${uuid}`;
+    };
+
     const columns = [
         {
             name: "SenNet ID",
-            selector: (row) => row.sennetId,
             sortable: true,
+            cell: (row, index, column, id) => {
+                return (
+                    <Link className="text-dark" href={sampleUrl(row.uuid)}>
+                        {row.sennetId}
+                    </Link>
+                );
+            },
         },
         {
             name: "Lab ID",
