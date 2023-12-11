@@ -31,7 +31,7 @@ const DataTypeQuantities = ({ id, ruiCode }) => {
 
     const columns = [
         {
-            name: "Data Type",
+            name: "Dataset Type",
             selector: (row) => row.dataType,
             sortable: true,
         },
@@ -43,7 +43,7 @@ const DataTypeQuantities = ({ id, ruiCode }) => {
     ];
 
     return (
-        <SenNetAccordion id={id} title={"Data Types"} afterTitle={undefined}>
+        <SenNetAccordion id={id} title="Dataset Types" afterTitle={undefined}>
             <div className="d-flex flex-row-reverse">
                 <Link
                     className="btn btn-outline-primary rounded-0"
