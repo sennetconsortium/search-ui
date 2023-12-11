@@ -43,7 +43,7 @@ const AllOrgans = () => {
         <>
             <Header title={APP_TITLE} />
             <AppNavbar hidden={isRegisterHidden} signoutHidden={false} />
-            <Container className="mb-5 d-block">
+            <Container fluid className="mb-5 d-block">
                 <Row>
                     <div className="py-4 bd-highlight">
                         <h2 className="m-0 flex-grow-1 bd-highlight">Organs</h2>
