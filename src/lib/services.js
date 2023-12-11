@@ -241,6 +241,28 @@ export const uploadFile = async file => {
     }
 }
 
+const fetchSearchAPIEntities = async (body) => {
+    const token = getAuth();
+    const headers = get_json_header()
+    if (token) {
+        headers.append("Authorization", `Bearer ${token}`)
+    }
+    try {
+        const res = await fetch(`${getSearchEndPoint()}/entities/search`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+            return null;
+        }
+        return res.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
 export const getDatasetQuantities = async () => {
     const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false);
     const body = {
@@ -268,32 +290,17 @@ export const getDatasetQuantities = async () => {
             },
         },
     };
-    const token = getAuth();
-    const headers = get_json_header()
-    if (token) {
-        headers.append("Authorization", `Bearer ${token}`)
-    }
-    try {
-        const res = await fetch(`${getSearchEndPoint()}/entities/search`, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify(body),
-        });
-        if (!res.ok) {
-            return null;
-        }
-        const content = await res.json();
-        return content.aggregations["origin_sample.organ"].buckets.reduce(
-            (acc, bucket) => {
-                acc[bucket.key] = bucket.doc_count;
-                return acc;
-            },
-            {}
-        );
-    } catch (error) {
-        console.error(error);
+    const content = await fetchSearchAPIEntities(body);
+    if (!content) {
         return null;
     }
+    return content.aggregations["origin_sample.organ"].buckets.reduce(
+        (acc, bucket) => {
+            acc[bucket.key] = bucket.doc_count;
+            return acc;
+        },
+        {}
+    );
 };
 
 export const getOrganDataTypeQuantities = async (organCode) => {
@@ -323,32 +330,17 @@ export const getOrganDataTypeQuantities = async (organCode) => {
             }
         }
     }
-    const token = getAuth();
-    const headers = get_json_header()
-    if (token) {
-        headers.append("Authorization", `Bearer ${token}`)
-    }
-    try {
-        const res = await fetch(`${getSearchEndPoint()}/entities/search`, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify(body),
-        });
-        if (!res.ok) {
-            return null;
-        }
-        const content = await res.json();
-        return content.aggregations["data_types"].buckets.reduce(
-            (acc, bucket) => {
-                acc[bucket.key] = bucket.doc_count;
-                return acc;
-            },
-            {}
-        );
-    } catch (error) {
-        console.error(error);
+    const content = await fetchSearchAPIEntities(body);
+    if (!content) {
         return null;
     }
+    return content.aggregations["data_types"].buckets.reduce(
+        (acc, bucket) => {
+            acc[bucket.key] = bucket.doc_count;
+            return acc;
+        },
+        {}
+    );
 }
 
 export const getSamplesByOrgan = async (ruiCode) => {
@@ -378,31 +370,16 @@ export const getSamplesByOrgan = async (ruiCode) => {
             ]
         }
     }
-    const token = getAuth();
-    const headers = get_json_header()
-    if (token) {
-        headers.append("Authorization", `Bearer ${token}`)
-    }
-    try {
-        const res = await fetch(`${getSearchEndPoint()}/entities/search`, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify(body),
-        });
-        if (!res.ok) {
-            return null;
-        }
-        const content = await res.json();
-        return content.hits.hits.map((hit) => {
-            return {
-                sennetId: hit._source.sennet_id,
-                labId: hit._source.lab_tissue_sample_id,
-                groupName: hit._source.group_name,
-                lastTouch: hit._source.last_touch, 
-            }
-        });
-    } catch (error) {
-        console.error(error);
+    const content = await fetchSearchAPIEntities(body);
+    if (!content) {
         return null;
-    } 
+    }
+    return content.hits.hits.map((hit) => {
+        return {
+            sennetId: hit._source.sennet_id,
+            labId: hit._source.lab_tissue_sample_id,
+            groupName: hit._source.group_name,
+            lastTouch: hit._source.last_touch, 
+        }
+    });
 }
