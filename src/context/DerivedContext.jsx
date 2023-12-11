@@ -20,6 +20,10 @@ export const DerivedProvider = ({children}) => {
     const [derivedDataset, setDerivedDataset] = useState(null)
     const [showVitessce, setShowVitessce] = useState(false)
 
+    const getDataType = (data) => {
+        return data.data_types ? data.data_types[0] : data.dataset_type
+    }
+
     // Load the correct Vitessce view config
     const set_vitessce_config = (data, dataset_id) => {
         const assayTypes = getDataTypes()
@@ -47,7 +51,7 @@ export const DerivedProvider = ({children}) => {
 
     const initVitessceConfig = async (data) => {
         const primary_assays = getDataTypesByProperty("primary", true)
-        let is_primary_dataset = primary_assays.includes(data.data_types[0]);
+        let is_primary_dataset = primary_assays.includes(getDataType(data));
         setIsPrimaryDataset(is_primary_dataset)
 
         // Determine whether to show the Vitessce visualizations and where to pull data from
@@ -55,7 +59,7 @@ export const DerivedProvider = ({children}) => {
         if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset)) {
             if (!is_primary_dataset) {
                 // Check that the assay type is supported by Vitessce
-                if (vitessceSupportedAssays.includes(data.data_types[0])) {
+                if (vitessceSupportedAssays.includes(getDataType(data))) {
                     setShowVitessce(true)
                     set_vitessce_config(data, data.uuid)
                 }
