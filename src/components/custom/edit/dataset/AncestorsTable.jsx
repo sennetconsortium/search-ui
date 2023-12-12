@@ -24,7 +24,7 @@ export default function AncestorsTable({formLabel, onChange, deleteAncestor, val
                 name: `${formLabel.upperCaseFirst()} ID`,
                 selector: row => row.sennet_id,
                 sortable: true,
-                format: col => <span>{col.sennet_id}<ClipboardCopy text={col.sennet_id} title={'Copy SenNet ID {text} to clipboard'} /></span>,
+                format: col => <span className='pt-1 d-block'>{col.sennet_id}<ClipboardCopy text={col.sennet_id} title={'Copy SenNet ID {text} to clipboard'} /></span>,
             },
             {
                 name: 'Entity Type',
