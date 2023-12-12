@@ -1,6 +1,6 @@
 import {createContext, useCallback, useState} from "react";
 import $ from "jquery";
-import {fetchEntity, getDataTypes, getDataTypesByProperty} from "../components/custom/js/functions";
+import {fetchEntity, getDataTypes, getDataTypesByProperty, getIsPrimaryDataset} from "../components/custom/js/functions";
 import {get_prov_info} from "../lib/services";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
@@ -27,7 +27,7 @@ export const DerivedProvider = ({children}) => {
     // Load the correct Vitessce view config
     const set_vitessce_config = (data, dataset_id) => {
         const assayTypes = getDataTypes()
-        data.data_types.forEach(assay => {
+        [data.dataset_type].forEach(assay => {
             switch (assay) {
                 case assayTypes['snRNA-seq']:
                 case assayTypes['scRNA-seq']:
@@ -51,7 +51,7 @@ export const DerivedProvider = ({children}) => {
 
     const initVitessceConfig = async (data) => {
         const primary_assays = getDataTypesByProperty("primary", true)
-        let is_primary_dataset = primary_assays.includes(getDataType(data));
+        let is_primary_dataset = getIsPrimaryDataset(data)   //primary_assays.includes(getDataType(data));
         setIsPrimaryDataset(is_primary_dataset)
 
         // Determine whether to show the Vitessce visualizations and where to pull data from
@@ -75,7 +75,7 @@ export const DerivedProvider = ({children}) => {
                         if (isDatasetStatusPassed(processed_dataset_statuses[i])) {
                             fetchEntity(processed_datasets[0]).then(processed_dataset => {
                                 // Check that the assay type is supported by Vitessce
-                                if (vitessceSupportedAssays.includes(processed_dataset.data_types[0])) {
+                                if (vitessceSupportedAssays.includes(getDataType(processed_dataset))) {
                                     setShowVitessce(true)
                                     setDerivedDataset(processed_dataset)
                                     set_vitessce_config(processed_dataset, processed_dataset.uuid)

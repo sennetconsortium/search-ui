@@ -10,7 +10,7 @@ import {
     cleanJson,
     equals,
     fetchEntity, getIdRegEx,
-    getRequestHeaders, isPrimaryAssay
+    getRequestHeaders
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
 import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'

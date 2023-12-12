@@ -11,8 +11,8 @@ import {
     cleanJson,
     equals,
     fetchEntity, fetchProtocols,
-    getDataTypesByProperty, getEntityViewUrl,
-    getRequestHeaders, getStatusColor, isPrimaryAssay
+    getDataTypesByProperty, getEntityViewUrl, getIsPrimaryDataset,
+    getRequestHeaders, getStatusColor,
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
 import DataTypes from '../../components/custom/edit/dataset/DataTypes'
@@ -111,7 +111,7 @@ export default function EditDataset() {
                         if (sub_types.length) {
                             constraintsDataTypes = cache.dataTypesObj.filter(data_type => sub_types.includes(data_type["data_type"])).map(data_type => data_type.data_type);
                             // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
-                            // $.extend(constraintsDataTypes, data_types)
+                            // $.extend(constraintsDataTypes, dataset_type)
                         }
                     } // end for
                     if ($.isEmptyObject(constraintsDataTypes)) {
@@ -156,7 +156,7 @@ export default function EditDataset() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data)
-                isPrimary.current = isPrimaryAssay(data)
+                isPrimary.current = getIsPrimaryDataset(data)
                 let immediate_ancestors = []
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     for (const ancestor of data.immediate_ancestors) {
@@ -169,7 +169,7 @@ export default function EditDataset() {
                 setValues({
                     'status': data.status,
                     'lab_dataset_id': data.lab_dataset_id,
-                    'data_types': [data.data_types[0]],
+                    'dataset_type': data.dataset_type,
                     'description': data.description,
                     'dataset_info': data.dataset_info,
                     'direct_ancestor_uuids': immediate_ancestors,
@@ -230,7 +230,7 @@ export default function EditDataset() {
         setValues({...values, status: response.status})
         setModalDetails({
             entity: cache.entities.dataset,
-            type: (response.data_types ? response.data_types[0] : null),
+            type: (response.dataset_type ? response.dataset_type : null),
             typeHeader: _t('Data Type'),
             response
         })

@@ -73,7 +73,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         for (let file of rawResponse.records.files) {
             if (!results.hasOwnProperty(file.dataset_uuid)) {
                 results[file.dataset_uuid] = {
-                    data_types: file.data_types,
+                    dataset_type: file.dataset_type,
                     dataset_sennet_id: file.dataset_sennet_id,
                     dataset_uuid: file.dataset_uuid,
                     donors: file.donors,
@@ -243,9 +243,9 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
 
         cols.push(
             {
-                name: 'Data Types',
+                name: 'Dataset Type',
                 selector: row => {
-                    let val = raw(row.data_types)
+                    let val = raw(row.dataset_types)
                     if (val) {
                         return Array.isArray(val) ? getUBKGFullName(val[0]) : val
                     }

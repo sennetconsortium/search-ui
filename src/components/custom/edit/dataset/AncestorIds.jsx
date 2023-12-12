@@ -56,7 +56,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
         // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
         const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false)
         valid_dataset_ancestor_config['searchQuery']['excludeFilters'].push({
-            keyword: "data_types.keyword",
+            keyword: "dataset_type.keyword",
             value: excludeNonPrimaryTypes
         });
     }, [])

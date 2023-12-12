@@ -86,7 +86,7 @@ export default function EditPublication() {
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
                     'lab_dataset_id': data.lab_dataset_id || data.title,
-                    'data_types': [data.data_types[0]],
+                    'dataset_type': data.dataset_type,
                     'description': data.description,
                     'dataset_info': data.dataset_info,
                     'direct_ancestor_uuids': immediate_ancestors,
@@ -162,7 +162,7 @@ export default function EditPublication() {
                 values['publication_status'] = publicationStatus
 
                 // Follow value population like HuBAMP
-                values['data_types'] = ['publication']
+                values['dataset_type'] = ['publication']
                 values['contains_human_genetic_sequences'] = false
 
                 if (!values['group_uuid'] && editMode === 'Register') {

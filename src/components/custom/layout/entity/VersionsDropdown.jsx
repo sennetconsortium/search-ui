@@ -16,7 +16,7 @@ function VersionsDropdown({data}) {
     const buildOptions = (r) => {
         let results = []
         for (let s of r.uuids) {
-            results.push({value: s.uuid, label: `${s.sennet_id} (${s.data_types[0]})`, revision: r})
+            results.push({value: s.uuid, label: `${s.sennet_id} (${s.dataset_type})`, revision: r})
         }
         return results
     }

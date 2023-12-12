@@ -40,7 +40,7 @@ function SearchEntities() {
     // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
     const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false)
     SEARCH_ENTITIES['searchQuery']['excludeFilters'].push({
-        keyword: "data_types.keyword",
+        keyword: "dataset_type.keyword",
         value: excludeNonPrimaryTypes
     });
 
