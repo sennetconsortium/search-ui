@@ -15,7 +15,7 @@ import {
     getRequestHeaders, getStatusColor,
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
-import DataTypes from '../../components/custom/edit/dataset/DataTypes'
+import DatasetType from '../../components/custom/edit/dataset/DatasetType'
 import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
 import Unauthorized from '../../components/custom/layout/Unauthorized'
 import AppFooter from '../../components/custom/layout/AppFooter'
@@ -488,8 +488,8 @@ export default function EditDataset() {
 
                                     {/*/!*Data Types*!/*/}
                                     {editMode &&
-                                        <DataTypes datasetTypes={dataTypes === null ? Object.values(cache.datasetTypes) : dataTypes}
-                                                   values={values} data={data} onChange={onChange}/>
+                                        <DatasetType datasetTypes={dataTypes === null ? Object.values(cache.datasetTypes) : dataTypes}
+                                                     values={values} data={data} onChange={onChange}/>
                                     }
 
                                     {/*<AttributesUpload setAttribute={setMetadata} entity={cache.entities.dataset} />*/}

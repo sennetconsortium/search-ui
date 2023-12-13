@@ -6,7 +6,7 @@ import Popover from 'react-bootstrap/Popover';
 import SenNetPopover from "../../../SenNetPopover";
 import {getUBKGFullName} from "../../js/functions";
 
-export default function DataTypes({datasetTypes, values, data, onChange}) {
+export default function DatasetType({datasetTypes, values, data, onChange}) {
     const [datasetTypeOtherHide, setDatasetTypeOtherHide] = useState('none')
 
     useEffect(() => {
