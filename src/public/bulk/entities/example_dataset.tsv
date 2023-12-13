@@ -1,4 +1,4 @@
-lab_id	ancestor_id	doi_abstract	human_gene_sequences	data_types
+lab_id	ancestor_id	doi_abstract	human_gene_sequences	dataset_type
 test_dst_01	SNT699.NTQV.839	single data type	TRUE	CODEX
 test_dst_02	"SNT459.GVQN.528, SNT699.NTQV.839"	2 good data types	FALSE	MIBI
 test_dst_03	SNT699.NTQV.839		FALSE	SASP
