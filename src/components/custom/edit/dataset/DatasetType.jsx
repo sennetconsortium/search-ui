@@ -1,55 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Col, Form, Row} from 'react-bootstrap';
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import SenNetPopover from "../../../SenNetPopover";
 import {getUBKGFullName} from "../../js/functions";
 
 export default function DatasetType({datasetTypes, values, data, onChange}) {
-    const [datasetTypeOtherHide, setDatasetTypeOtherHide] = useState('none')
-
-    useEffect(() => {
-        // Show data type other input if data type is 'other'
-        if (data.dataset_type === 'Other') {
-            setDatasetTypeOtherHide('')
-        }
-    }, [])
-
-
-    const handleDataTypeChange = (e, onChange) => {
-        // We may want to support setting multiple data types
-
-        // let old_data_types = [];
-        // if (this.props.values.data_types !== undefined) {
-        //     old_data_types = [...this.props.values.data_types]
-        // }
-        // old_data_types.push(e.target.value);
-        this.props.onChange(e, 'dataset_type', e.target.value);
-
-        //We are removing the ability to specify an "Other" data type
-
-        // // If data type is 'Other' then display the 'data_other' input group
-        // if (e.target.value === 'Other') {
-        //     //data Type Other set display and require
-        //     this.setState({datasetTypeOtherHide: ''})
-        //     document.getElementById("data_types_other").setAttribute("required", "")
-        //
-        // } else {
-        //     this.resetDataTypesOther(e, onChange);
-        //
-        // }
-    }
-
-    // Reset forms fields
-    const resetDataTypesOther = (e, onChange) => {
-        this.setState({datasetTypeOtherHide: 'none'})
-        document.getElementById("data_types_other").removeAttribute("required")
-        // Empty the value of the fields and trigger onChange
-        document.getElementById("data_types_other").value = "";
-        onChange(e, "data_types_other", "")
-    }
-
 
     return (
         //Data Types
@@ -57,7 +12,7 @@ export default function DatasetType({datasetTypes, values, data, onChange}) {
             <Form.Group className="mb-3" controlId="dataset_type">
                 <Form.Label>Dataset Type <span
                     className="required">* </span>
-                    <SenNetPopover className={'data_types'}
+                    <SenNetPopover className={'dataset_type'}
                                    text={<>The type of data contained in this <code>Dataset</code>. Choose from one
                                        of the available options.</>}>
                         <QuestionCircleFill/>
@@ -86,21 +41,6 @@ export default function DatasetType({datasetTypes, values, data, onChange}) {
                         </Form.Select>
                     )}
 
-            </Form.Group>
-
-            {/*Data Types Other*/}
-            <Form.Group as={Row} className="mb-3" id="data_types_other_group"
-                        style={{display: datasetTypeOtherHide}}>
-                <Form.Label column sm="2">Dataset Type Other <span
-                    className="required">*</span></Form.Label>
-                <Col sm="4">
-                    <Form.Control type="text" id="dataset_type_other"
-                                  onChange={e => {
-                                      onChange(e, e.target.id, e.target.value)
-                                  }}
-                                  defaultValue={data.data_types_other}
-                                  placeholder="Please specify"/>
-                </Col>
             </Form.Group>
         </>
     )
