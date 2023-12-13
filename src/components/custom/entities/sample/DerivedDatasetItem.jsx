@@ -32,8 +32,7 @@ export default class DerivedDatasetItem extends React.Component {
                                 return (
                                     <>
                                         <td>
-                                            {Array.isArray(this.state.descendant_data.data_types) ?
-                                                this.state.descendant_data.data_types.join(', ') : this.state.descendant_data.data_types}
+                                            {this.state.descendant_data.dataset_type}
                                         </td>
                                         <td>
                                             <span className={`${getStatusColor(this.state.descendant_data.status)} badge`}>
