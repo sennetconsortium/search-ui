@@ -4,7 +4,7 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import SenNetPopover from "../../../SenNetPopover";
 import {getUBKGFullName} from "../../js/functions";
 
-export default function DatasetType({datasetTypes, values, data, onChange}) {
+export default function DatasetType({datasetTypes, data, onChange}) {
 
     return (
         //Data Types
@@ -28,7 +28,8 @@ export default function DatasetType({datasetTypes, values, data, onChange}) {
                         </Form.Select>
                     ) : (
                         <Form.Select required aria-label="Dataset Type"
-                                     onChange={onChange}
+                                     onChange={(e) => onChange(e, 'dataset_type', e.target.value)}
+                                     name={'dataset_type'}
                                      defaultValue={data?.dataset_type}>
                             <option value="">----</option>
                             {datasetTypes.map(data_type => {
