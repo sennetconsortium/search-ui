@@ -22,6 +22,7 @@ export const DerivedProvider = ({children}) => {
 
     // Load the correct Vitessce view config
     const set_vitessce_config = (data, dataset_id) => {
+        // TODO: Review after change from data_types to dataset_type
         const assayTypes = getDataTypes()
         [data.dataset_type].forEach(assay => {
             switch (assay) {
