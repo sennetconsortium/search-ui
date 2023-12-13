@@ -29,9 +29,7 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
 import {
-    getEntityEndPoint,
     getIngestEndPoint,
-    getProtocolsToken,
     valid_dataset_ancestor_config
 } from "../../config/config";
 import AttributesUpload from "../../components/custom/edit/AttributesUpload";
@@ -39,7 +37,6 @@ import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
 import DatasetRevertButton from "../../components/custom/edit/dataset/DatasetRevertButton";
-import admin from "../admin";
 
 export default function EditDataset() {
     const {
@@ -110,6 +107,7 @@ export default function EditDataset() {
                         })
                         if (sub_types.length) {
                             constraintsDataTypes = cache.dataTypesObj.filter(data_type => sub_types.includes(data_type["data_type"])).map(data_type => data_type.data_type);
+                            console.log('Right here')
                             // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
                             // $.extend(constraintsDataTypes, dataset_type)
                         }
@@ -490,7 +488,7 @@ export default function EditDataset() {
 
                                     {/*/!*Data Types*!/*/}
                                     {editMode &&
-                                        <DataTypes data_types={dataTypes === null ? getDataTypesByProperty("primary", true) : dataTypes}
+                                        <DataTypes datasetTypes={dataTypes === null ? Object.values(cache.datasetTypes) : dataTypes}
                                                    values={values} data={data} onChange={onChange}/>
                                     }
 

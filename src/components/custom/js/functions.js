@@ -169,7 +169,7 @@ export function getDataTypesByProperty(property, value) {
 }
 
 export function getIsPrimaryDataset(data) {
-    return equals(data.creation_action, 'Create Dataset Activity')
+    return equals(data.dataset_category, 'primary') || equals(data.creation_action, 'Create Dataset Activity')
 }
 
 export function getDOIPattern() {
