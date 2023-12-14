@@ -25,7 +25,7 @@ export const DerivedProvider = ({children}) => {
         const assayTypes = getDataTypes()
 
         console.log(dataset_type)
-        switch (dataset_type[0]) {
+        switch (dataset_type) {
             case assayTypes['RNAseq']:
                 setVitessceConfig(rna_seq(dataset_id))
                 break
