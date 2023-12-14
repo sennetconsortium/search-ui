@@ -10,10 +10,15 @@ const connector = new SearchAPIConnector({
 export const SEARCH_ENTITIES = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
-        excludeFilters: [ {
-            keyword: "entity_type.keyword",
-            value: "Publication"
-        }
+        excludeFilters: [
+            {
+                keyword: "entity_type.keyword",
+                value: "Publication"
+            },
+            {
+                keyword: "dataset_category.keyword",
+                value: ["codcc-processed", "lab-processed"]
+            }
         ],
         facets: {
             entity_type: {

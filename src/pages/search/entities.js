@@ -36,13 +36,6 @@ function SearchEntities() {
         hasAuthenticationCookie
     } = useContext(AppContext);
 
-    // Return an array of data types that should be excluded from search
-    // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
-    SEARCH_ENTITIES['searchQuery']['excludeFilters'].push({
-        keyword: "dataset_category.keyword",
-        value: ["codcc-processed", "lab-processed"]
-    });
-
     // Define here because we need auth state from AppContext
     SEARCH_ENTITIES['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
         return hasAuthenticationCookie() && !isUnauthorized() && 
