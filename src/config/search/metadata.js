@@ -23,6 +23,10 @@ export const SEARCH_METADATA = {
                 keyword: "sample_category.keyword",
                 value: "Organ",
             },
+            {
+                keyword: "dataset_category.keyword",
+                value: ["codcc-processed", "lab-processed"]
+            }
         ],
         facets: {
             entity_type: {
