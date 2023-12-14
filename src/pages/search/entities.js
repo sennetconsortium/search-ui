@@ -38,10 +38,9 @@ function SearchEntities() {
 
     // Return an array of data types that should be excluded from search
     // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
-    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false)
     SEARCH_ENTITIES['searchQuery']['excludeFilters'].push({
-        keyword: "dataset_type.keyword",
-        value: excludeNonPrimaryTypes
+        keyword: "dataset_category.keyword",
+        value: ["codcc-processed", "lab-processed"]
     });
 
     // Define here because we need auth state from AppContext
