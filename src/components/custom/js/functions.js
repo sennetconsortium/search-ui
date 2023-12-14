@@ -168,6 +168,10 @@ export function getDataTypesByProperty(property, value) {
     return window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type[property] === value).map(data_type => data_type.data_type);
 }
 
+export function getIsPrimaryDataset(data) {
+    return equals(data.dataset_category, 'primary') || equals(data.creation_action, 'Create Dataset Activity')
+}
+
 export function getDOIPattern() {
     return "(^(http(s)?:\/\/)?dx.doi.org\/10.\\d{4,9}\/protocols\.io\..+)|(^(http(s)?:\/\/)?doi.org\/10.\\d{4,9}\/protocols\.io\..+)"
 }
@@ -306,27 +310,6 @@ export function checkMultipleFilterType(filters, field = 'entity_type') {
     }
 
     return hasMultipleType;
-}
-
-export function isPrimaryAssay(data, verifyAll = false) {
-    let dict = {}
-    let result = false
-    for (let assay of window.UBKG_CACHE.dataTypesObj) {
-        dict[assay.data_type] = assay.primary
-    }
-    for (let assay of data.data_types) {
-        if (dict[assay]) {
-            result = true
-            if (!verifyAll) {
-                return true
-            }
-        } else {
-            if (verifyAll) {
-                return false
-            }
-        }
-    }
-    return result;
 }
 
 export function cleanJson(json) {

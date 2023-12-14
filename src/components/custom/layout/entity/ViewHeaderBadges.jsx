@@ -52,7 +52,7 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                     ) : (
                         <h5 className={"title_badge"}>
                             <span className="badge bg-secondary ms-2">
-                                    {getUBKGFullName(data.data_types[0])}
+                                    {getUBKGFullName(data.dataset_type)}
                             </span>
                         </h5>
                     )

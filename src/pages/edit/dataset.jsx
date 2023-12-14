@@ -11,11 +11,11 @@ import {
     cleanJson,
     equals,
     fetchEntity, fetchProtocols,
-    getDataTypesByProperty, getEntityViewUrl,
-    getRequestHeaders, getStatusColor, isPrimaryAssay
+    getDataTypesByProperty, getEntityViewUrl, getIsPrimaryDataset,
+    getRequestHeaders, getStatusColor,
 } from '../../components/custom/js/functions'
 import AppNavbar from '../../components/custom/layout/AppNavbar'
-import DataTypes from '../../components/custom/edit/dataset/DataTypes'
+import DatasetType from '../../components/custom/edit/dataset/DatasetType'
 import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
 import Unauthorized from '../../components/custom/layout/Unauthorized'
 import AppFooter from '../../components/custom/layout/AppFooter'
@@ -29,9 +29,7 @@ import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
 import {
-    getEntityEndPoint,
     getIngestEndPoint,
-    getProtocolsToken,
     valid_dataset_ancestor_config
 } from "../../config/config";
 import AttributesUpload from "../../components/custom/edit/AttributesUpload";
@@ -39,7 +37,6 @@ import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
 import DatasetRevertButton from "../../components/custom/edit/dataset/DatasetRevertButton";
-import admin from "../admin";
 
 export default function EditDataset() {
     const {
@@ -110,8 +107,9 @@ export default function EditDataset() {
                         })
                         if (sub_types.length) {
                             constraintsDataTypes = cache.dataTypesObj.filter(data_type => sub_types.includes(data_type["data_type"])).map(data_type => data_type.data_type);
+                            console.log('Right here')
                             // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
-                            // $.extend(constraintsDataTypes, data_types)
+                            // $.extend(constraintsDataTypes, dataset_type)
                         }
                     } // end for
                     if ($.isEmptyObject(constraintsDataTypes)) {
@@ -156,7 +154,7 @@ export default function EditDataset() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data)
-                isPrimary.current = isPrimaryAssay(data)
+                isPrimary.current = getIsPrimaryDataset(data)
                 let immediate_ancestors = []
                 if (data.hasOwnProperty("immediate_ancestors")) {
                     for (const ancestor of data.immediate_ancestors) {
@@ -169,7 +167,7 @@ export default function EditDataset() {
                 setValues({
                     'status': data.status,
                     'lab_dataset_id': data.lab_dataset_id,
-                    'data_types': [data.data_types[0]],
+                    'dataset_type': data.dataset_type,
                     'description': data.description,
                     'dataset_info': data.dataset_info,
                     'direct_ancestor_uuids': immediate_ancestors,
@@ -230,7 +228,7 @@ export default function EditDataset() {
         setValues({...values, status: response.status})
         setModalDetails({
             entity: cache.entities.dataset,
-            type: (response.data_types ? response.data_types[0] : null),
+            type: (response.dataset_type ? response.dataset_type : null),
             typeHeader: _t('Data Type'),
             response
         })
@@ -490,8 +488,8 @@ export default function EditDataset() {
 
                                     {/*/!*Data Types*!/*/}
                                     {editMode &&
-                                        <DataTypes data_types={dataTypes === null ? getDataTypesByProperty("primary", true) : dataTypes}
-                                                   values={values} data={data} onChange={onChange}/>
+                                        <DatasetType datasetTypes={dataTypes === null ? Object.values(cache.datasetTypes) : dataTypes}
+                                                     values={values} data={data} onChange={onChange}/>
                                     }
 
                                     {/*<AttributesUpload setAttribute={setMetadata} entity={cache.entities.dataset} />*/}
