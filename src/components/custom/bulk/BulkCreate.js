@@ -388,7 +388,7 @@ export default function BulkCreate({
             typeCol = 'sample_category'
             labIdCol = 'lab_tissue_sample_id'
         } else {
-            typeCol = 'data_types'
+            typeCol = 'dataset_type'
             labIdCol = 'lab_dataset_id'
         }
         return {typeCol, labIdCol}

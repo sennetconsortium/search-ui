@@ -12,7 +12,7 @@ const sourceItems = [
     'sennet_id',
     'dataset_sennet_id',
     'checksum',
-    'data_types',
+    'dataset_type',
     'description',
     'dataset_uuid',
     'donors',
@@ -45,10 +45,10 @@ export const SEARCH_FILES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            data_types: {
-                label: 'Data Type',
+            dataset_type: {
+                label: 'Dataset Type',
                 type: 'value',
-                field: 'data_types.keyword',
+                field: 'dataset_type.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -72,7 +72,7 @@ export const SEARCH_FILES = {
             'organs.type': {type: 'value'},
             'samples.type': {type: 'value'},
             dataset_sennet_id: {type: 'value'},
-            data_types: {type: 'value'}
+            dataset_type: {type: 'value'}
         },
         source_fields: sourceItems,
     },

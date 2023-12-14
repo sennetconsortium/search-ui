@@ -115,9 +115,9 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
 
     const datasetColumns = [
         {
-            name: 'Data Types',
+            name: 'Dataset Type',
             selector: row => {
-                let val = raw(row.data_types)
+                let val = raw(row.dataset_type)
                 if (val) {
                     return Array.isArray(val) ? getUBKGFullName(val[0]) : val
                 }

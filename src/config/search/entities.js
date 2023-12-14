@@ -10,10 +10,15 @@ const connector = new SearchAPIConnector({
 export const SEARCH_ENTITIES = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
-        excludeFilters: [ {
-            keyword: "entity_type.keyword",
-            value: "Publication"
-        }
+        excludeFilters: [
+            {
+                keyword: "entity_type.keyword",
+                value: "Publication"
+            },
+            {
+                keyword: "dataset_category.keyword",
+                value: ["codcc-processed", "lab-processed"]
+            }
         ],
         facets: {
             entity_type: {
@@ -67,16 +72,16 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            data_types: {
-                label: 'Data Type',
+            dataset_type: {
+                label: 'Dataset Type',
                 type: 'value',
-                field: 'data_types.keyword',
+                field: 'dataset_type.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
             has_rui_information: {
-                label: 'Has Location Information',
+                label: 'Is Spatially Registered',
                 type: 'value',
                 field: 'has_rui_information.keyword',
                 isExpanded: false,
@@ -156,7 +161,8 @@ export const SEARCH_ENTITIES = {
             lab_name: {type: 'value'},
             lab_tissue_sample_id: {type: 'value'},
             source_type: {type: 'value'},
-            data_types: {type: 'value'},
+            dataset_type: {type: 'value'},
+            dataset_category: {type: 'value'},
             sample_category: {type: 'value'},
             lab_dataset_id: {type: 'value'},
             created_by_user_displayname: {type: 'value'},
@@ -182,7 +188,8 @@ export const SEARCH_ENTITIES = {
             'source_type',
             'source.source_type',
             'last_modified_timestamp',
-            'data_types',
+            'dataset_type',
+            'dataset_category',
             'status',
             'origin_sample.organ',
             'organ',
