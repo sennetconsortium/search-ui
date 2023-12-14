@@ -162,7 +162,7 @@ export default function EditPublication() {
                 values['publication_status'] = publicationStatus
 
                 // Follow value population like HuBAMP
-                values['dataset_type'] = ['publication']
+                values['dataset_type'] = ['Publication']
                 values['contains_human_genetic_sequences'] = false
 
                 if (!values['group_uuid'] && editMode === 'Register') {
