@@ -81,7 +81,7 @@ export const SEARCH_ENTITIES = {
                 isFilterable: false,
             },
             has_rui_information: {
-                label: 'Has Location Information',
+                label: 'Is Spatially Registered',
                 type: 'value',
                 field: 'has_rui_information.keyword',
                 isExpanded: false,
