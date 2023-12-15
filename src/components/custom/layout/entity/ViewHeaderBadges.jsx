@@ -13,7 +13,7 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
     const {cache} = useContext(AppContext)
 
     const getOrganRoute = (ruiCode) => {
-        return `${APP_ROUTES.organ}/${organDetails[ruiCode].urlParamName}`
+        return `${APP_ROUTES.organs}/${organDetails[ruiCode].urlParamName}`
     }
 
     return (

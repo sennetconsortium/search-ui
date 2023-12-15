@@ -6,5 +6,5 @@ export const APP_ROUTES = {
     logout: "/logout",
     notFound: "/404",
     sample: "/sample",
-    organ: "/organ",
+    organs: "/organs",
 };

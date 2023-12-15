@@ -47,7 +47,7 @@ const AllOrgans = () => {
                         <Col key={organ.ruiCode}>
                             <Link
                                 className="text-decoration-none"
-                                href={`${APP_ROUTES.organ}/${organ.urlParamName}`}
+                                href={`${APP_ROUTES.organs}/${organ.urlParamName}`}
                             >
                                 <OrganCard organ={organ} />
                             </Link>
