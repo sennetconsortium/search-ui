@@ -274,11 +274,18 @@ export const getDatasetQuantities = async () => {
                         "entity_type.keyword": "Dataset",
                     },
                 },
-                must_not: excludeNonPrimaryTypes.map((type) => ({
-                    term: {
-                        "data_types.keyword": type,
+                must_not: [
+                    {
+                        term: {
+                            "dataset_category.keyword": "codcc-processed"
+                        }
                     },
-                })),
+                    {
+                        term: {
+                            "dataset_category.keyword": "lab-processed"
+                        }
+                    }
+                ]
             },
         },
         aggs: {
@@ -314,17 +321,24 @@ export const getOrganDataTypeQuantities = async (organCode) => {
                         "origin_sample.organ.keyword": organCode,
                     }
                 },
-                must_not: excludeNonPrimaryTypes.map((type) => ({
-                    term: {
-                        "data_types.keyword": type,
+                must_not: [
+                    {
+                        term: {
+                            "dataset_category.keyword": "codcc-processed"
+                        }
                     },
-                }))
+                    {
+                        term: {
+                            "dataset_category.keyword": "lab-processed"
+                        }
+                    }
+                ]
             }
         },
         aggs: {
-            data_types: {
+            dataset_type: {
                 terms: {
-                    field: "data_types.keyword",
+                    field: "dataset_type.keyword",
                     size: 40
                 }
             }
@@ -334,7 +348,7 @@ export const getOrganDataTypeQuantities = async (organCode) => {
     if (!content) {
         return null;
     }
-    return content.aggregations["data_types"].buckets.reduce(
+    return content.aggregations["dataset_type"].buckets.reduce(
         (acc, bucket) => {
             acc[bucket.key] = bucket.doc_count;
             return acc;
