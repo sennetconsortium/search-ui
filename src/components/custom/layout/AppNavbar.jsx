@@ -1,7 +1,7 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
 import {getDataIngestBoardEndpoint, NAVBAR_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
-import React, {useContext, useState, useEffect} from 'react'
+import {useContext} from 'react'
 import AppContext from '../../../context/AppContext'
 import {equals} from "../js/functions";
 import {getCookie} from "cookies-next";
@@ -179,7 +179,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                                 </NavDropdown.Item>
                             }
                             <NavDropdown.Item key={`dd-organs`}
-                                              href='/organ'>
+                                              href={APP_ROUTES.organs}>
                                 <span>Organs</span>
                             </NavDropdown.Item>
                         </NavDropdown>

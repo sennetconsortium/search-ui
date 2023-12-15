@@ -134,7 +134,7 @@ function ViewSample() {
                                     <EntityViewHeader data={data} entity={cache.entities.sample.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}
                                                       uniqueHeader={data.sample_category}
-                                                      uniqueHeaderUrl={data.sample_category == "Organ" ? APP_ROUTES.organ : undefined}
+                                                      uniqueHeaderUrl={data.sample_category == "Organs" ? APP_ROUTES.organs : undefined}
                                     />
 
                                     <div className="row">
