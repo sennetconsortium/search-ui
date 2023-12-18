@@ -133,6 +133,8 @@ export function getUBKGFullName(term) {
     if (!window.UBKG_CACHE) return term
     if (term in window.UBKG_CACHE.organTypes) {
         return window.UBKG_CACHE.organTypes[term]
+    } else if (term in window.UBKG_CACHE.datasetTypes) {
+        return window.UBKG_CACHE.datasetTypes[term]
     } else if (window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type['data_type'] === term).length > 0) {
         return window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type['data_type'] === term).map(data_type => data_type.description)[0];
     } else {
