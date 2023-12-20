@@ -1,11 +1,12 @@
 import React, { useEffect, useContext } from 'react'
-import { APP_TITLE, getIngestLogin } from '../../config/config'
+import {APP_TITLE, getBanner, getIngestLogin} from '../../config/config'
 import { Row, Col, Container } from 'react-bootstrap'
 import AppNavbar from './layout/AppNavbar'
 import AppFooter from './layout/AppFooter'
 import Header from './layout/Header'
 import AppContext from '../../context/AppContext'
 import { goToSearch } from './js/functions'
+import SenNetBanner from "../SenNetBanner";
 
 function Login() {
     const loginUrl = getIngestLogin()
@@ -22,7 +23,8 @@ function Login() {
             <Header title={APP_TITLE} />
             <AppNavbar hidden={true} />
             <Container>
-                <Row className='mt-resp' style={{minHeight: '530px'}}>
+                <SenNetBanner />
+                <Row className={getBanner('login') ? '' : 'mt-resp'} style={{minHeight: '530px'}}>
                     <Col></Col>
                     <Col xs={10} lg={6}>
                         <div className={`card alert alert-info mt-4`}>
