@@ -6,51 +6,76 @@ import Button from 'react-bootstrap/Button';
 import {TrashFill} from "react-bootstrap-icons";
 import SenNetPopover from "../../../SenNetPopover";
 import ClipboardCopy from "../../../ClipboardCopy";
+import {getResponseList} from "../AttributesUpload";
+import DataTable from "react-data-table-component";
 
-export default class AncestorsTable extends React.Component {
-    deleteAncestor = async (e, ancestorId) => {
-        const old_uuids = [...this.props.values[this.props.controlId]]
+export default function AncestorsTable({formLabel, onChange, deleteAncestor, values, controlId, ancestors}) {
+    const _deleteAncestor = async (e, ancestorId) => {
+        const old_uuids = [...values[controlId]]
         let updated_uuids = old_uuids.filter(e => e !== ancestorId)
         console.log(updated_uuids)
-        this.props.onChange(e, this.props.controlId, updated_uuids);
-        this.props.deleteAncestor(ancestorId);
+        onChange(e, controlId, updated_uuids);
+        deleteAncestor(ancestorId);
     }
 
-    render() {
-        return (
-            <Table className={'table--ancestors'}>
-                <thead>
-                <tr>
-                    <th>{this.props.formLabel.upperCaseFirst()} ID</th>
-                    <th>Entity Type</th>
-                    <th>Subtype</th>
-                    <th>Lab ID</th>
-                    <th>Group Name</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {this.props.ancestors.map((ancestor, index) => {
-                    return (
-                        <tr key={index}>
-                            <td>{ancestor.sennet_id}<ClipboardCopy text={ancestor.sennet_id} title={'Copy SenNet ID {text} to clipboard'} /></td>
-                            <td>{ancestor.entity_type}</td>
-                            <td>{ancestor?.display_subtype}</td>
-                            <td>{ancestor?.lab_tissue_sample_id || ancestor?.lab_dataset_id}</td>
-                            <td>{ancestor.group_name}</td>
-                            <td><span className={`${getStatusColor(ancestor?.status)} badge`}>
-                                    <SenNetPopover text={getStatusDefinition(ancestor?.status)} className={`status-info-${ancestor.uuid}`}>{ancestor?.status}</SenNetPopover>
-                                </span>
-                            </td>
-                            <td><Button className="pt-0 pb-0" variant="link" onClick={() => this.deleteAncestor(this, ancestor.uuid)}><TrashFill
-                                color="red"/></Button></td>
-                        </tr>
-                    )
-                })}
-
-                </tbody>
-            </Table>
-        )
+    const tableColumns = () => {
+        return [
+            {
+                name: `${formLabel.upperCaseFirst()} ID`,
+                selector: row => row.sennet_id,
+                sortable: true,
+                format: col => <span className='pt-1 d-block'>{col.sennet_id}<ClipboardCopy text={col.sennet_id} title={'Copy SenNet ID {text} to clipboard'} /></span>,
+            },
+            {
+                name: 'Entity Type',
+                selector: row => row.entity_type,
+                sortable: true
+            },
+            {
+                name: 'Subtype',
+                selector: row => row?.display_subtype,
+                sortable: true
+            },
+            {
+                name: 'Lab ID',
+                selector: row => row?.lab_tissue_sample_id || row?.lab_dataset_id,
+                sortable: true
+            },
+            {
+                name: 'Group Name',
+                selector: row => row.group_name,
+                sortable: true
+            },
+            {
+                name: `Status`,
+                selector: row => row.status,
+                sortable: true,
+                format: col => {
+                    return <span className={`${getStatusColor(col?.status)} badge`}>
+                                <SenNetPopover text={getStatusDefinition(col?.status)} className={`status-info-${col.uuid}`}>{col?.status}</SenNetPopover>
+                            </span>
+                },
+            },
+            {
+                name: `Action`,
+                selector: row => null,
+                sortable: false,
+                format: col => {
+                    return <Button className="pt-0 pb-0" variant="link" onClick={(e) => _deleteAncestor(e, col.uuid)}><TrashFill
+                        color="red"/></Button>
+                },
+            },
+        ]
     }
+
+
+    return (
+        <div className={'table--ancestors'}>
+            <DataTable
+                columns={tableColumns()}
+                data={ancestors}
+                pagination />
+        </div>
+    )
+
 }
