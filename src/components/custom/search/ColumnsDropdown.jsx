@@ -13,21 +13,12 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, setTableColumns, c
         for (let out of e) {
             removeColumns[out.value] = true
         }
-        let cols = getTableColumns()
-        let filteredColumns = [cols[0]]
-        console.log('omit', cols, removeColumns)
-        for (let col of cols) {
-            if (!removeColumns[col.name] || col.ignoreRowClick) {
-                filteredColumns.push(col)
-            }
-        }
-        console.log('omit', filteredColumns)
-        setHiddenColumns(e)
-        setTableColumns(filteredColumns)
+        
+        setHiddenColumns(removeColumns)
     }
 
     const getColumnOptions = () => {
-        let allColumns = currentColumns.current
+        let allColumns = Array.from(currentColumns.current)
         allColumns.splice(0, 1)
         let cols = []
         for (let col of allColumns) {

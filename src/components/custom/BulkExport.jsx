@@ -96,7 +96,9 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
         let tableDataTSV = ''
         let _colName
         for (let col of _columns) {
-            tableDataTSV += `${col.name}\t`
+            if (!col.omit) {
+                tableDataTSV += `${col.name}\t`
+            }
         }
         tableDataTSV += "\n"
         let colVal;
@@ -109,10 +111,12 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
                 let id = raw(item.props.result.uuid)
                 if (isAll || selected[id]) {
                     for (let col of _columns) {
-                        row = item.props.result
-                        _colName = col.name
-                        colVal = col.selector(row) ? col.selector(row) : ''
-                        tableDataTSV += `${colVal}\t`
+                        if (!col.omit) {
+                            row = item.props.result
+                            _colName = col.name
+                            colVal = col.selector(row) ? col.selector(row) : ''
+                            tableDataTSV += `${colVal}\t`
+                        }
                     }
                     tableDataTSV += "\n"
                 }

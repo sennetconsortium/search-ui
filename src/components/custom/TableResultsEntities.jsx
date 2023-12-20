@@ -195,11 +195,10 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             cols = cols[typeIndex]
         }
 
-        if (tableColumns && tableColumns.length && applyColumnsFilters) {
-            for (let colFilter of applyColumnsFilters) {
-               // TODO: reset on filter change
+        if (applyColumnsFilters) {
+            for (let col of cols) {
+               col.omit = applyColumnsFilters[col.name]
             }
-            cols = Array.from(tableColumns)
         }
         currentColumns.current = cols;
         return cols;
