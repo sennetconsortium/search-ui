@@ -162,6 +162,10 @@ exclude_dataset_config['searchQuery']['excludeFilters'].push(
         keyword: "entity_type.keyword",
         value: "Upload"
     },
+    {
+        "keyword": "entity_type.keyword",
+        "value": "Collection"
+    }
 );
 exclude_dataset_config['searchQuery']['disjunctiveFacets'] = ["group_name", "created_by_user_displayname"]
 
