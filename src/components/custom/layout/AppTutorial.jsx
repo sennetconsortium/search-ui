@@ -23,6 +23,12 @@ function AppTutorial() {
         }
     }, [])
 
+    const seenTutorial = () => {
+        let expires = new Date()
+        expires.setDate(expires.getDate() + 60)
+        setCookie(cookieKey, true, {sameSite: 'Lax', expires})
+    }
+
     const handleTutorial = () => {
         setShowAlert(false)
         // Set a quick timeout to allow the alert to close
@@ -33,7 +39,7 @@ function AppTutorial() {
     }
     return (
         <>
-            <Alert variant="info" show={showAlert} onClose={() => setShowAlert(false)} dismissible className='text-center alert-hlf mb-4'>
+            <Alert variant="info" show={showAlert} onClose={() => {seenTutorial(); setShowAlert(false)}} dismissible className='text-center alert-hlf mb-4'>
                 <Alert.Heading><Binoculars /> Getting Started</Alert.Heading>
                 <p>Welcome to the SenNet Data Portal. Get a quick tour of different sections of the application.</p>
                 <a className='btn btn-primary' onClick={() => handleTutorial()}>Begin Tutorial Tour</a>
@@ -42,9 +48,8 @@ function AppTutorial() {
                 steps={steps}
                 scrollOffset={80}
                 callback={(res) => {
-                    console.log(res)
                         if (equals(res.action, 'reset')) {
-                            setCookie(cookieKey, true, {sameSite: 'Lax'})
+                            seenTutorial()
                         }
                     }
                 }
