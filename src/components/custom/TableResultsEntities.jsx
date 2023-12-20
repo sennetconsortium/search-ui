@@ -1,4 +1,4 @@
-import React, {useContext, useRef} from 'react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import PropTypes from 'prop-types'
 import {
     checkFilterType,
@@ -21,6 +21,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
     const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
     const currentColumns = useRef([])
+    const [tableColumns, setTableColumns] = useState(null)
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
@@ -158,7 +159,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         }
     ]
 
-    const getTableColumns = () => {
+    const getTableColumns = (applyColumnsFilters) => {
         let cols;
         if (checkFilterType(filters) === false) {
             cols = defaultColumns({});
@@ -193,6 +194,13 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             })
             cols = cols[typeIndex]
         }
+
+        if (tableColumns && tableColumns.length && applyColumnsFilters) {
+            for (let colFilter of applyColumnsFilters) {
+               // TODO: reset on filter change
+            }
+            cols = Array.from(tableColumns)
+        }
         currentColumns.current = cols;
         return cols;
     }
@@ -201,13 +209,18 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         return {sourceColumns, sampleColumns, datasetColumns, defaultColumns}
     }
 
+    useEffect(()=> {
+        setTableColumns(null)
+    }, [])
+
     // Prepare opsDict
     getOptions(children.length)
 
     return (
         <>
-            <TableResultsProvider getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
+            <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
+                    tableColumns={tableColumns} setTableColumns={setTableColumns}
                     getTableColumns={getTableColumns}
                 />
             </TableResultsProvider>

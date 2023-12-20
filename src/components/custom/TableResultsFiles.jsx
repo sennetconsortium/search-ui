@@ -42,6 +42,9 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const currentDatasetUuid = useRef(null)
     const selectedFilesModal = useRef({})
 
+    const [tableColumns, setTableColumns] = useState(null)
+    const [columnsDropdown, setColumnsDropdown] = useState([])
+
     useEffect(() => {
         const totalFileCount = rawResponse.records.files.length
         $('.sui-paging-info').append(` Datasets (<strong>${totalFileCount}</strong> Total Files)`)
@@ -305,6 +308,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 <br /><small className={'text-muted'}>Note: For transferring data to the local machine, the <a href={'https://www.globus.org/globus-connect-personal'} target='_blank' className={'lnk--ic'}>Globus Connect Personal (GCP)<BoxArrowUpRight/></a> endpoint must also be up and running.</small>
                 </> />
                 <ResultsBlock
+                    tableColumns={tableColumns} setTableColumns={setTableColumns}
                     tableClassName={'rdt_Results--Files'}
                     getTableColumns={getTableColumns}
                 />
