@@ -51,7 +51,7 @@ export const handleCheckAll = (setTotalSelected) => {
     getCheckAll().prop('checked', false)
 }
 
-function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst = 'uuid' }) {
+function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns, replaceFirst = 'uuid' }) {
 
     const [totalSelected, setTotalSelected] = useState(0)
 
@@ -215,6 +215,11 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
             actions = {
                 manifest: 'Manifest TXT'
             }
+        }
+
+        // Disable json output for now if there are hidden columns
+        if (hiddenColumns && Object.keys(hiddenColumns).length) {
+            delete actions['json']
         }
 
         return actions

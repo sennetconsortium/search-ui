@@ -41,9 +41,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const [showModalDownloadBtn, setShowModalDownloadBtn] = useState(false)
     const currentDatasetUuid = useRef(null)
     const selectedFilesModal = useRef({})
-
-    const [tableColumns, setTableColumns] = useState(null)
-    const [columnsDropdown, setColumnsDropdown] = useState([])
+    const [hiddenColumns, setHiddenColumns] = useState([])
 
     useEffect(() => {
         const totalFileCount = rawResponse.records.files.length
@@ -177,7 +175,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         if (!inModal) {
             cols.push({
                 ignoreRowClick: true,
-                name: <BulkExport onCheckAll={onCheckAll} data={results} raw={raw} columns={currentColumns} exportKind={'manifest'} />,
+                name: <BulkExport onCheckAll={onCheckAll} data={results} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} exportKind={'manifest'} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => row.id,
@@ -272,7 +270,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     }
 
 
-    const getTableColumns = () => {
+    const getTableColumns = (columnsToHide) => {
         let cols;
         if (checkFilterType(filters, fileTypeField) === false) {
             cols = defaultColumns({});
@@ -288,6 +286,14 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
             })
             cols = cols[typeIndex]
         }
+
+        if (columnsToHide) {
+            setHiddenColumns(columnsToHide)
+            for (let col of cols) {
+                col.omit = columnsToHide[col.name]
+            }
+        }
+
         currentColumns.current = cols;
         return cols;
     }
@@ -308,7 +314,6 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 <br /><small className={'text-muted'}>Note: For transferring data to the local machine, the <a href={'https://www.globus.org/globus-connect-personal'} target='_blank' className={'lnk--ic'}>Globus Connect Personal (GCP)<BoxArrowUpRight/></a> endpoint must also be up and running.</small>
                 </> />
                 <ResultsBlock
-                    tableColumns={tableColumns} setTableColumns={setTableColumns}
                     tableClassName={'rdt_Results--Files'}
                     getTableColumns={getTableColumns}
                 />

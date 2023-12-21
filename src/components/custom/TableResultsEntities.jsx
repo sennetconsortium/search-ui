@@ -21,7 +21,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
     const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
     const currentColumns = useRef([])
-    const [tableColumns, setTableColumns] = useState(null)
+    const [hiddenColumns, setHiddenColumns] = useState([])
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
@@ -34,7 +34,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         if (!inModal) {
             cols.push({
                 ignoreRowClick: true,
-                name: <BulkExport data={children} raw={raw} columns={currentColumns} />,
+                name: <BulkExport data={children} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => raw(row.sennet_id),
@@ -159,7 +159,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         }
     ]
 
-    const getTableColumns = (applyColumnsFilters) => {
+    const getTableColumns = (columnsToHide) => {
         let cols;
         if (checkFilterType(filters) === false) {
             cols = defaultColumns({});
@@ -195,9 +195,10 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             cols = cols[typeIndex]
         }
 
-        if (applyColumnsFilters) {
+        if (columnsToHide) {
+            setHiddenColumns(columnsToHide)
             for (let col of cols) {
-               col.omit = applyColumnsFilters[col.name]
+               col.omit = columnsToHide[col.name]
             }
         }
         currentColumns.current = cols;
@@ -208,10 +209,6 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         return {sourceColumns, sampleColumns, datasetColumns, defaultColumns}
     }
 
-    useEffect(()=> {
-        setTableColumns(null)
-    }, [])
-
     // Prepare opsDict
     getOptions(children.length)
 
@@ -219,7 +216,6 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         <>
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
-                    tableColumns={tableColumns} setTableColumns={setTableColumns}
                     getTableColumns={getTableColumns}
                 />
             </TableResultsProvider>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Select from 'react-select'
 
 
-function ColumnsDropdown({ getTableColumns, setHiddenColumns, setTableColumns, currentColumns }) {
+function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns }) {
     const handleChange = (e) => {
         if (e.length === (getTableColumns().length - 1)) {
             e.pop()
@@ -13,7 +13,7 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, setTableColumns, c
         for (let out of e) {
             removeColumns[out.value] = true
         }
-        
+
         setHiddenColumns(removeColumns)
     }
 
@@ -50,7 +50,7 @@ ColumnsDropdown.defaultProps = {}
 
 ColumnsDropdown.propTypes = {
     getTableColumns: PropTypes.func.isRequired,
-    setTableColumns: PropTypes.func.isRequired,
+    setHiddenColumns: PropTypes.func.isRequired,
 }
 
 export default ColumnsDropdown

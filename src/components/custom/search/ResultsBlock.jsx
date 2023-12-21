@@ -8,7 +8,7 @@ import {
 import TableResultsContext from "../../../context/TableResultsContext";
 import ColumnsDropdown from "./ColumnsDropdown";
 
-function ResultsBlock({getTableColumns, tableColumns, setTableColumns, disableRowClick, tableClassName}) {
+function ResultsBlock({getTableColumns, disableRowClick, tableClassName}) {
 
     const {
         getTableData,
@@ -36,18 +36,13 @@ function ResultsBlock({getTableColumns, tableColumns, setTableColumns, disableRo
     }, [])
 
 
-    const handleTableColumns = (cols) => {
-        currentColumns.current.current = cols
-        setTableColumns(cols)
-    }
-
     return (
         <>
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
                     {<ColumnsDropdown filters={filters} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
-                                      currentColumns={currentColumns.current} setTableColumns={handleTableColumns} />}
+                                      currentColumns={currentColumns.current} />}
                     <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={rows.length}  />
                 </div>
             </div>
