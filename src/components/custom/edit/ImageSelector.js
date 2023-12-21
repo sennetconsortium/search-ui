@@ -125,7 +125,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                 }
                 <SenNetPopover className={'image-selector'} placement={'top'} text={'Click here to attach a single image or multiple images'}>
                     <Button variant={'outline-primary rounded-0'} onClick={handleUploadImagesClick}>
-                        Upload Image Files
+                        Upload image files
                         <Paperclip className={'ms-2'}/>
                     </Button>
                 </SenNetPopover>

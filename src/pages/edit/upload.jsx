@@ -209,12 +209,14 @@ function EditUpload() {
                                                          schedule a <a target="_blank" href={"https://calendly.com/bhonick-psc/30min"}>Data Submission Office Hours</a> meeting with the
                                                          Curation team or email the Help Desk for guidance on
                                                          constructing an upload.
-                                                         <br></br><br></br>
-                                                         If a data provider would rather have SenNet IDs for their
-                                                         datasets as soon as possible, CODCC Curation recommends bulk
-                                                         dataset registration through <a
-                                                             href={getRootURL() + 'edit/bulk/dataset?action=register'}>this
-                                                             page</a>.</>}
+                                                         {/*<br></br><br></br>*/}
+                                                         {/*Temporarily removing this line*/}
+                                                         {/*If a data provider would rather have SenNet IDs for their*/}
+                                                         {/*datasets as soon as possible, CODCC Curation recommends bulk*/}
+                                                         {/*dataset registration through <a*/}
+                                                         {/*    href={getRootURL() + 'edit/bulk/dataset?action=register'}>this*/}
+                                                         {/*    page</a>.*/}
+                                                     </>}
                                                      icon={<ExclamationTriangleFill/>}/>
                                     }
                                     <Form noValidate validated={validated} onSubmit={handleSave} id={"upload-form"}>

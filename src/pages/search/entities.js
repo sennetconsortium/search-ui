@@ -23,6 +23,7 @@ import SearchDropdown from "../../components/custom/search/SearchDropdown";
 import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
 import InvalidToken from "../../components/custom/layout/InvalidToken";
 import AppTutorial from "../../components/custom/layout/AppTutorial";
+import SenNetBanner from "../../components/SenNetBanner";
 
 function SearchEntities() {
     const {
@@ -80,6 +81,7 @@ function SearchEntities() {
                             header={
                                 <>
                                     <div className="search-box-header js-gtm--search">
+                                        <SenNetBanner name={'searchEntities'} />
                                         <AppTutorial />
                                         <SearchBox
                                             view={({onChange, value, onSubmit}) => (

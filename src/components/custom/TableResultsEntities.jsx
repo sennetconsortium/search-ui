@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react'
+import React, {useContext, useRef, useState} from 'react'
 import PropTypes from 'prop-types'
 import {
     checkFilterType,
@@ -8,13 +8,15 @@ import {
 } from './js/functions'
 import AppContext from "../../context/AppContext"
 import log from 'loglevel'
-import Badge from 'react-bootstrap/Badge'
 import ClipboardCopy from "../ClipboardCopy";
 import BulkExport, {handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
 import ResultsBlock from "./search/ResultsBlock";
 import {TableResultsProvider} from "../../context/TableResultsContext";
 import SenNetPopover from "../SenNetPopover";
+import {Chip} from "@mui/material";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import AppModal from "../AppModal";
 
 function TableResultsEntities({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
 
@@ -22,12 +24,21 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
     const currentColumns = useRef([])
     const hiddenColumns = useRef(null)
+    const [showModal, setShowModal] = useState(false)
+    const [modalTitle, setModalTitle] = useState(null)
+    const [modalBody, setModalBody] = useState(null)
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
     const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid), {})
 
     const getId = (column) => column.id || column.sennet_id
+
+    const handleModal = (row) => {
+        setShowModal(true)
+        setModalBody(<span>{raw(row.description)}</span>)
+        setModalTitle(<h5>Description for <code>{raw(row.sennet_id)}</code><ClipboardCopy text={raw(row.sennet_id)} /></h5>)
+    }
 
     const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn, includeLabIdCol = true, includeGroupCol = true}) => {
         let cols = []
@@ -137,6 +148,19 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             name: 'Description',
             selector: row => raw(row.description),
             sortable: true,
+            format: (row) => {
+                const max = 100
+                const desc = raw(row.description)
+                if (!desc) {
+                    return null
+                }
+                return (<div>
+                    {desc.length > max ? desc.slice(0, max) : desc}
+                    {desc.length > max && <SenNetPopover text={'Read full details'} className={`popover-${getId(row)}`}>
+                        <Chip label={<MoreHorizIcon />} size="small" onClick={()=> handleModal(row)} />
+                    </SenNetPopover>}
+                </div>)
+            }
         },
         {
             name: 'Status',
@@ -217,6 +241,17 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
                     getTableColumns={getTableColumns}
+                />
+                <AppModal
+                    className={`modal--searchEntities`}
+                    modalSize={'xl'}
+                    showModal={showModal}
+                    modalTitle={modalTitle}
+                    modalBody={modalBody}
+                    handleClose={() => { setShowModal(false)}}
+                    showHomeButton={false}
+                    showCloseButton={true}
+                    closeButtonLabel={'Okay'}
                 />
             </TableResultsProvider>
         </>
