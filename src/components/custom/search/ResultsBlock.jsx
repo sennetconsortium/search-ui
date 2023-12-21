@@ -41,7 +41,7 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName}) {
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
-                    {<ColumnsDropdown filters={filters} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
+                    {rows.length > 0 && <ColumnsDropdown filters={filters} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
                                       currentColumns={currentColumns.current} />}
                     <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={rows.length}  />
                 </div>

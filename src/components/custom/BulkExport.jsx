@@ -217,8 +217,8 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
             }
         }
 
-        // Disable json output for now if there are hidden columns
-        if (hiddenColumns && Object.keys(hiddenColumns).length) {
+        // Disable json action output for now if there are hidden columns
+        if (hiddenColumns.current && Object.keys(hiddenColumns.current).length) {
             delete actions['json']
         }
 

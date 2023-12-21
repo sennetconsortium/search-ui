@@ -21,7 +21,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
     const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
     const currentColumns = useRef([])
-    const [hiddenColumns, setHiddenColumns] = useState([])
+    const hiddenColumns = useRef(null)
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
@@ -196,7 +196,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         }
 
         if (columnsToHide) {
-            setHiddenColumns(columnsToHide)
+            hiddenColumns.current = columnsToHide
             for (let col of cols) {
                col.omit = columnsToHide[col.name]
             }
