@@ -53,7 +53,7 @@ export const DerivedProvider = ({children}) => {
         const dataset_type = data.dataset_type = data.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
 
         // Set if primary based on the data_category: primary, component, codcc-processed, lab-processed
-        const is_primary_dataset = data.data_category === 'primary'
+        const is_primary_dataset = data.dataset_category === 'primary'
         setIsPrimaryDataset(is_primary_dataset)
 
         // Determine whether to show the Vitessce visualizations and where to pull data from
@@ -77,11 +77,11 @@ export const DerivedProvider = ({children}) => {
                         if (isDatasetStatusPassed(processed_dataset_statuses[i])) {
                             fetchEntity(processed_datasets[0]).then(processed_dataset => {
                                 // Check that the assay type is supported by Vitessce
-                                let processed_dataset_type =  re.exec(processed_dataset.dataset_type)
-                                if (vitessceSupportedAssays.includes(processed_dataset[0])) {
+                                let processed_dataset_type =  processed_dataset.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
+                                if (vitessceSupportedAssays.includes(processed_dataset_type)) {
                                     setShowVitessce(true)
                                     setDerivedDataset(processed_dataset)
-                                    set_vitessce_config(processed_dataset, processed_dataset.uuid, processed_dataset[0])
+                                    set_vitessce_config(processed_dataset, processed_dataset.uuid, processed_dataset_type)
                                 }
                             })
                             break;
