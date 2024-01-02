@@ -4,8 +4,9 @@ import Select from 'react-select'
 import $ from 'jquery'
 
 
-function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns }) {
+function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, defaultHiddenColumns = [] }) {
     const multiVals = useRef(null)
+    const loaded = useRef(false)
 
     const colourStyles = {
         multiValueRemove: (styles, { data }) => ({
@@ -33,6 +34,23 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns }) 
         setHiddenColumns(removeColumns)
     }
 
+    const handleDefaultHidden = (set = true) => {
+        let defaultHidden = null
+        if (!filters || !filters.length) {
+            loaded.current = true
+            let currentVals = []
+            defaultHidden = {}
+            for (let col of defaultHiddenColumns) {
+                currentVals.push({ value: col, label: col })
+                defaultHidden[col] = true
+            }
+            multiVals.current =  Array.from(currentVals)
+        } else {
+            multiVals.current = null
+        }
+        setHiddenColumns(defaultHidden)
+    }
+
     const getColumnOptions = () => {
         if (!currentColumns.current) return []
         let allColumns = Array.from(currentColumns.current)
@@ -50,9 +68,9 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns }) 
         // Have to listen to click from here instead of in handleClearFiltersClick
         // to manage value states of this independent component
         $('body').on('click', '.clear-filter-button', () => {
-            multiVals.current = null
-            setHiddenColumns(null)
+            handleDefaultHidden()
         })
+        handleDefaultHidden()
     }, [])
 
     return (

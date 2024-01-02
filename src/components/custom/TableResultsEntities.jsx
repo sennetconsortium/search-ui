@@ -93,6 +93,20 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         return cols;
     }
 
+    const reusableColumns = {
+        Status:  {
+            name: 'Status',
+            selector: row => raw(row.status),
+            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
+            sortable: true
+        },
+        Organ: {
+            name: 'Organ',
+            selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
+            sortable: true,
+        }
+    }
+
     const sourceColumns = [
         {
             name: 'Type',
@@ -107,11 +121,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
             sortable: true,
         },
-        {
-            name: 'Organ',
-            selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
-            sortable: true,
-        }
+        reusableColumns.Organ
     ]
 
     const datasetColumns = [
@@ -125,17 +135,8 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             },
             sortable: true,
         },
-        {
-            name: 'Organ',
-            selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
-            sortable: true,
-        },
-        {
-            name: 'Status',
-            selector: row => raw(row.status),
-            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
-            sortable: true
-        }
+        reusableColumns.Organ,
+        reusableColumns.Status
     ]
 
     const uploadColumns = [
@@ -162,12 +163,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 </div>)
             }
         },
-        {
-            name: 'Status',
-            selector: row => raw(row.status),
-            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
-            sortable: true
-        }
+        reusableColumns.Status
     ]
 
     const collectionColumns = [
@@ -187,6 +183,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         let cols;
         if (checkFilterType(filters) === false) {
             cols = defaultColumns({});
+            cols.push(reusableColumns.Status)
         } else {
             let typeIndex = 0;
             cols = filters.map((filter, index) => {
@@ -240,6 +237,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         <>
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
+                    defaultHiddenColumns={['Status']}
                     getTableColumns={getTableColumns}
                 />
                 <AppModal
