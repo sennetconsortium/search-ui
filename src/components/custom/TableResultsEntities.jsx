@@ -23,6 +23,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
     const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
     const currentColumns = useRef([])
+    const hiddenColumns = useRef(null)
     const [showModal, setShowModal] = useState(false)
     const [modalTitle, setModalTitle] = useState(null)
     const [modalBody, setModalBody] = useState(null)
@@ -44,7 +45,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         if (!inModal) {
             cols.push({
                 ignoreRowClick: true,
-                name: <BulkExport data={children} raw={raw} columns={currentColumns} />,
+                name: <BulkExport data={children} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => raw(row.sennet_id),
@@ -182,7 +183,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         }
     ]
 
-    const getTableColumns = () => {
+    const getTableColumns = (columnsToHide) => {
         let cols;
         if (checkFilterType(filters) === false) {
             cols = defaultColumns({});
@@ -217,6 +218,13 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             })
             cols = cols[typeIndex]
         }
+
+        if (columnsToHide) {
+            hiddenColumns.current = columnsToHide
+            for (let col of cols) {
+               col.omit = columnsToHide[col.name]
+            }
+        }
         currentColumns.current = cols;
         return cols;
     }
@@ -230,7 +238,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
 
     return (
         <>
-            <TableResultsProvider getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
+            <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
                     getTableColumns={getTableColumns}
                 />

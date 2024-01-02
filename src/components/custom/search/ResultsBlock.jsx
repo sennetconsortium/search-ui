@@ -6,6 +6,7 @@ import {
     PagingInfo
 } from "@elastic/react-search-ui";
 import TableResultsContext from "../../../context/TableResultsContext";
+import ColumnsDropdown from "./ColumnsDropdown";
 
 function ResultsBlock({getTableColumns, disableRowClick, tableClassName}) {
 
@@ -28,21 +29,27 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName}) {
         handlePageChange,
     } = useContext(TableResultsContext)
 
+    const [hiddenColumns, setHiddenColumns] = useState([])
+
     useEffect(() => {
+
     }, [])
+
 
     return (
         <>
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
+                    {rows.length > 0 && <ColumnsDropdown filters={filters} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
+                                      currentColumns={currentColumns.current} />}
                     <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={rows.length}  />
                 </div>
             </div>
 
             {<DataTable key={`results-${new Date().getTime()}`}
                         className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''} ${tableClassName}`}
-                        columns={getTableColumns()}
+                        columns={getTableColumns(hiddenColumns)}
                         data={getTableData()}
                         theme={'plain'}
                         defaultSortAsc={false}

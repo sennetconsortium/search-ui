@@ -7,13 +7,13 @@ import {handlePagingInfo} from "../components/custom/search/ResultsPerPage";
 import log from 'loglevel'
 const TableResultsContext = createContext({})
 
-export const TableResultsProvider = ({ children, getHotLink, rows, filters, onRowClicked, forData = false, raw, getId, inModal = false }) => {
+export const TableResultsProvider = ({ columnsRef, children, getHotLink, rows, filters, onRowClicked, forData = false, raw, getId, inModal = false }) => {
 
     const {isLoggedIn, cache} = useContext(AppContext)
     const hasLoaded = useRef(false)
     let pageData = []
     const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
-    const currentColumns = useRef([])
+    const currentColumns = useRef(columnsRef)
 
     const hasSearch = () => {
         return filters.length > 0 || $('#search').val()?.length > 0
