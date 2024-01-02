@@ -1,6 +1,12 @@
 import {createContext, useCallback, useState} from "react";
 import $ from "jquery";
-import {fetchEntity, getDataTypes, getDataTypesByProperty, getIsPrimaryDataset} from "../components/custom/js/functions";
+import {
+    fetchEntity,
+    getDatasetTypes,
+    getDataTypes,
+    getDataTypesByProperty,
+    getIsPrimaryDataset
+} from "../components/custom/js/functions";
 import {get_prov_info} from "../lib/services";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
@@ -22,18 +28,18 @@ export const DerivedProvider = ({children}) => {
 
     // Load the correct Vitessce view config
     const set_vitessce_config = (data, dataset_id, dataset_type) => {
-        const assayTypes = getDataTypes()
+        const datasetTypes = getDatasetTypes()
 
         console.log(dataset_type)
         switch (dataset_type) {
-            case assayTypes['RNAseq']:
+            case datasetTypes['RNAseq']:
                 setVitessceConfig(rna_seq(dataset_id))
                 break
-            case assayTypes['Light Sheet']:
-            case assayTypes['CODEX']:
+            case datasetTypes['Light Sheet']:
+            case datasetTypes['CODEX']:
                 setVitessceConfig(codex_config(dataset_id))
                 break
-            case assayTypes['Visium']:
+            case datasetTypes['Visium']:
                 setVitessceConfig(kuppe2022nature())
                 break
             default:
@@ -57,7 +63,7 @@ export const DerivedProvider = ({children}) => {
                 // Check that the assay type is supported by Vitessce
                 if (vitessceSupportedAssays.includes(dataset_type)) {
                     setShowVitessce(true)
-                    set_vitessce_config(data, data.uuid)
+                    set_vitessce_config(data, data.uuid, dataset_type)
                 }
 
             } else {
@@ -87,12 +93,14 @@ export const DerivedProvider = ({children}) => {
     }
 
     const vitessceSupportedAssays = (() => {
-        const assayTypes = getDataTypes()
+        const datasetTypes = getDatasetTypes()
         return [
-            assayTypes['RNAseq'],
-            assayTypes['CODEX'],
-            assayTypes['Light Sheet'],
-            assayTypes['Visium'],
+            datasetTypes['RNAseq'],
+            datasetTypes['RNAseq (with probes)'],
+            datasetTypes['CODEX'],
+            datasetTypes['Light Sheet'],
+            datasetTypes['Visium (with probes)'],
+            datasetTypes['Visium (no probes)'],
         ]
     })()
 
