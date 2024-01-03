@@ -104,23 +104,25 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             name: 'Organ',
             selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-        }
-    }
-
-    const sourceColumns = [
-        {
+        },
+        SourceType: {
             name: 'Type',
             selector: row => raw(row.source_type),
             sortable: true,
-        }
-    ]
-
-    const sampleColumns = [
-        {
+        },
+        SampleCategory: {
             name: 'Category',
             selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
             sortable: true,
         },
+    }
+
+    const sourceColumns = [
+        reusableColumns.SourceType
+    ]
+
+    const sampleColumns = [
+        reusableColumns.SampleCategory,
         reusableColumns.Organ
     ]
 
@@ -183,6 +185,8 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         let cols;
         if (checkFilterType(filters) === false) {
             cols = defaultColumns({});
+            cols.push(reusableColumns.SourceType)
+            cols.push(reusableColumns.SampleCategory)
             cols.push(reusableColumns.Status)
         } else {
             let typeIndex = 0;
@@ -219,7 +223,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         if (columnsToHide) {
             hiddenColumns.current = columnsToHide
             for (let col of cols) {
-               col.omit = columnsToHide[col.name]
+               col.omit = columnsToHide[col.name] || false
             }
         }
         currentColumns.current = cols;
@@ -237,7 +241,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         <>
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
-                    defaultHiddenColumns={['Status']}
+                    defaultHiddenColumns={['Status', 'Type', 'Category']}
                     getTableColumns={getTableColumns}
                 />
                 <AppModal
