@@ -115,6 +115,16 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
             sortable: true,
         },
+        DatasetType: {
+            name: 'Dataset Type',
+            selector: row => {
+                let val = raw(row.dataset_type)
+                if (val) {
+                    return Array.isArray(val) ? getUBKGFullName(val[0]) : val
+                }
+            },
+            sortable: true,
+        },
     }
 
     const sourceColumns = [
@@ -127,16 +137,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     ]
 
     const datasetColumns = [
-        {
-            name: 'Data Types',
-            selector: row => {
-                let val = raw(row.data_types)
-                if (val) {
-                    return Array.isArray(val) ? getUBKGFullName(val[0]) : val
-                }
-            },
-            sortable: true,
-        },
+        reusableColumns.DatasetType,
         reusableColumns.Organ,
         reusableColumns.Status
     ]
@@ -187,6 +188,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             cols = defaultColumns({});
             cols.push(reusableColumns.SourceType)
             cols.push(reusableColumns.SampleCategory)
+            cols.push(reusableColumns.DatasetType)
             cols.push(reusableColumns.Status)
         } else {
             let typeIndex = 0;
@@ -241,7 +243,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         <>
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
-                    defaultHiddenColumns={['Status', 'Type', 'Category']}
+                    defaultHiddenColumns={['Type', 'Category', 'Dataset Type', 'Status']}
                     getTableColumns={getTableColumns}
                 />
                 <AppModal
