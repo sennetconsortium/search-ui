@@ -264,7 +264,7 @@ const fetchSearchAPIEntities = async (body) => {
 }
 
 export async function fetchVitessceConfiguration(entity) {
-        // let headers = get_headers()
+    let headers = get_headers()
 
     // We only need uuid, status, dataset_type, files, and metadata.dag_provenance_list
     let modEntity = {}
@@ -277,7 +277,7 @@ export async function fetchVitessceConfiguration(entity) {
     const url = getIngestEndPoint() + ""
     const request_options = {
         method: 'GET',
-        // headers: headers
+        headers: headers
     }
     const response = await fetch(url, request_options)
     if (response.status === 200) {
