@@ -46,7 +46,7 @@ export async function check_valid_token() {
 export async function get_prov_info(dataset_uuid) {
     let headers = get_headers()
     const url = getEntityEndPoint() + "datasets/" + dataset_uuid + "/prov-info?format=json"
-        const request_options = {
+    const request_options = {
         method: 'GET',
         headers: headers
     }
@@ -261,6 +261,33 @@ const fetchSearchAPIEntities = async (body) => {
         console.error(error);
         return null;
     }
+}
+
+export async function fetchVitessceConfiguration(entity) {
+        // let headers = get_headers()
+
+    // We only need uuid, status, dataset_type, files, and metadata.dag_provenance_list
+    let modEntity = {}
+    modEntity['uuid'] = entity['uuid']
+    modEntity['status'] = entity['status']
+    modEntity['dataset_type'] = entity['dataset_type']
+    modEntity['files'] = entity['files']
+    modEntity['metadata'] = entity['metadata']
+
+    const url = getIngestEndPoint() + ""
+    const request_options = {
+        method: 'GET',
+        // headers: headers
+    }
+    const response = await fetch(url, request_options)
+    if (response.status === 200) {
+        return await response.json()
+    } else if (response.status === 400) {
+        // This is not a primary dataset so just return empty
+        return {}
+    }
+    log.error('error', response)
+    return {}
 }
 
 export const getDatasetQuantities = async () => {
