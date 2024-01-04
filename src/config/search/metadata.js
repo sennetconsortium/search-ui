@@ -23,6 +23,10 @@ export const SEARCH_METADATA = {
                 keyword: "sample_category.keyword",
                 value: "Organ",
             },
+            {
+                keyword: "dataset_category.keyword",
+                value: ["codcc-processed", "lab-processed"]
+            }
         ],
         facets: {
             entity_type: {
@@ -49,10 +53,10 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            data_types: {
-                label: 'Data Type',
+            dataset_type: {
+                label: 'Dataset Type',
                 type: 'value',
-                field: 'data_types.keyword',
+                field: 'dataset_type.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -372,7 +376,7 @@ export const SEARCH_METADATA = {
             entity_type: { type: 'value' },
             source_type: { type: 'value' },
             sample_category: { type: 'value' },
-            data_types: { type: 'value' },
+            dataset_type: { type: 'value' },
 
             // Source Human
             "source_mapped_metadata.sex": { type: 'value' },
@@ -414,7 +418,7 @@ export const SEARCH_METADATA = {
             'source_type',
             'source.source_type',
             'last_modified_timestamp',
-            'data_types',
+            'dataset_type',
             'status',
             'origin_sample.organ',
             'organ'

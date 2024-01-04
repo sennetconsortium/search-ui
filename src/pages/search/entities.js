@@ -37,14 +37,6 @@ function SearchEntities() {
         hasAuthenticationCookie
     } = useContext(AppContext);
 
-    // Return an array of data types that should be excluded from search
-    // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
-    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false)
-    SEARCH_ENTITIES['searchQuery']['excludeFilters'].push({
-        keyword: "data_types.keyword",
-        value: excludeNonPrimaryTypes
-    });
-
     // Define here because we need auth state from AppContext
     SEARCH_ENTITIES['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
         return hasAuthenticationCookie() && !isUnauthorized() && 

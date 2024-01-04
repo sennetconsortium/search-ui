@@ -1,6 +1,6 @@
 import {
     get_data_assays,
-    get_data_assays_obj,
+    get_data_assays_obj, get_dataset_types,
     get_entities,
     get_organ_types,
     get_sample_categories,
@@ -11,6 +11,7 @@ import {flipObj} from "../components/custom/js/functions";
 function useCache() {
 
     const fetchData = async () => {
+        const datasetTypes = await get_dataset_types()
         const dataTypes = await get_data_assays()
         const dataTypesObj = await get_data_assays_obj()
         const sampleCategories = await get_sample_categories()
@@ -22,7 +23,7 @@ function useCache() {
         //TODO Remove in the future
         // entities.publication = 'Publication'
         entities.collection = 'Collection'
-        const cache = {cache: {dataTypes, dataTypesObj, sampleCategories, organTypes, entities, sourceTypes, organTypesCodes}}
+        const cache = {cache: {dataTypes, dataTypesObj, datasetTypes, sampleCategories, organTypes, entities, sourceTypes, organTypesCodes}}
         window.UBKG_CACHE = cache.cache
         return cache
     }

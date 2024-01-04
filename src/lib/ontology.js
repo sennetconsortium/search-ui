@@ -61,6 +61,11 @@ export async function get_data_assays() {
     return add_other(assays)
 }
 
+export async function get_dataset_types() {
+    const list = await get_ontology_from_cache(getUbkgCodes().dataset_types) //C000001
+    return to_key_val(list)
+}
+
 export async function get_data_assays_obj() {
     const json = await get_ontology_from_cache(getUbkgCodes().data_assays)
     json.push({

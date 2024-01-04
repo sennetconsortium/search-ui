@@ -1,6 +1,12 @@
 import {createContext, useCallback, useState} from "react";
 import $ from "jquery";
-import {fetchEntity, getDataTypes, getDataTypesByProperty} from "../components/custom/js/functions";
+import {
+    fetchEntity,
+    getDatasetTypes,
+    getDataTypes,
+    getDataTypesByProperty,
+    getIsPrimaryDataset
+} from "../components/custom/js/functions";
 import {get_prov_info} from "../lib/services";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
@@ -20,38 +26,34 @@ export const DerivedProvider = ({children}) => {
     const [derivedDataset, setDerivedDataset] = useState(null)
     const [showVitessce, setShowVitessce] = useState(false)
 
-    const getDataType = (data) => {
-        return data.data_types ? data.data_types[0] : data.dataset_type
-    }
-
     // Load the correct Vitessce view config
-    const set_vitessce_config = (data, dataset_id) => {
-        const assayTypes = getDataTypes()
-        data.data_types.forEach(assay => {
-            switch (assay) {
-                case assayTypes['snRNA-seq']:
-                case assayTypes['scRNA-seq']:
-                case assayTypes['salmon_rnaseq_10x']:
-                case assayTypes['salmon_sn_rnaseq_10x']:
-                    setVitessceConfig(rna_seq(dataset_id))
-                    break
-                case assayTypes['codex_cytokit']:
-                case assayTypes['codex_cytokit_v1']:
-                case assayTypes['CODEX']:
-                    setVitessceConfig(codex_config(dataset_id))
-                    break
-                case assayTypes['Visium']:
-                    setVitessceConfig(kuppe2022nature())
-                    break
-                default:
-                    console.log(`No Vitessce config found for assay type: ${assay}`)
-            }
-        })
+    const set_vitessce_config = (data, dataset_id, dataset_type) => {
+        const datasetTypes = getDatasetTypes()
+
+        console.log(dataset_type)
+        switch (dataset_type) {
+            case datasetTypes['RNAseq']:
+                setVitessceConfig(rna_seq(dataset_id))
+                break
+            case datasetTypes['Light Sheet']:
+            case datasetTypes['CODEX']:
+                setVitessceConfig(codex_config(dataset_id))
+                break
+            case datasetTypes['Visium']:
+                setVitessceConfig(kuppe2022nature())
+                break
+            default:
+                console.log(`No Vitessce config found for assay type: ${dataset_type}`)
+        }
     }
 
     const initVitessceConfig = async (data) => {
-        const primary_assays = getDataTypesByProperty("primary", true)
-        let is_primary_dataset = primary_assays.includes(getDataType(data));
+        console.log("Testing vitessce")
+        // Remove anything in brackets from dataset_type (might need to update this for visium to include parenthesis)
+        const dataset_type = data.dataset_type = data.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
+
+        // Set if primary based on the data_category: primary, component, codcc-processed, lab-processed
+        const is_primary_dataset = data.dataset_category === 'primary'
         setIsPrimaryDataset(is_primary_dataset)
 
         // Determine whether to show the Vitessce visualizations and where to pull data from
@@ -59,9 +61,9 @@ export const DerivedProvider = ({children}) => {
         if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset)) {
             if (!is_primary_dataset) {
                 // Check that the assay type is supported by Vitessce
-                if (vitessceSupportedAssays.includes(getDataType(data))) {
+                if (vitessceSupportedAssays.includes(dataset_type)) {
                     setShowVitessce(true)
-                    set_vitessce_config(data, data.uuid)
+                    set_vitessce_config(data, data.uuid, dataset_type)
                 }
 
             } else {
@@ -75,10 +77,11 @@ export const DerivedProvider = ({children}) => {
                         if (isDatasetStatusPassed(processed_dataset_statuses[i])) {
                             fetchEntity(processed_datasets[0]).then(processed_dataset => {
                                 // Check that the assay type is supported by Vitessce
-                                if (vitessceSupportedAssays.includes(processed_dataset.data_types[0])) {
+                                let processed_dataset_type =  processed_dataset.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
+                                if (vitessceSupportedAssays.includes(processed_dataset_type)) {
                                     setShowVitessce(true)
                                     setDerivedDataset(processed_dataset)
-                                    set_vitessce_config(processed_dataset, processed_dataset.uuid)
+                                    set_vitessce_config(processed_dataset, processed_dataset.uuid, processed_dataset_type)
                                 }
                             })
                             break;
@@ -90,13 +93,14 @@ export const DerivedProvider = ({children}) => {
     }
 
     const vitessceSupportedAssays = (() => {
-        const assayTypes = getDataTypes()
+        const datasetTypes = getDatasetTypes()
         return [
-            assayTypes['salmon_rnaseq_10x'],
-            assayTypes['salmon_sn_rnaseq_10x'],
-            assayTypes['codex_cytokit'],
-            assayTypes['codex_cytokit_v1'],
-            assayTypes['Visium'],
+            datasetTypes['RNAseq'],
+            datasetTypes['RNAseq (with probes)'],
+            datasetTypes['CODEX'],
+            datasetTypes['Light Sheet'],
+            datasetTypes['Visium (with probes)'],
+            datasetTypes['Visium (no probes)'],
         ]
     })()
 
