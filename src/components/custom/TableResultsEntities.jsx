@@ -27,6 +27,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     const [showModal, setShowModal] = useState(false)
     const [modalTitle, setModalTitle] = useState(null)
     const [modalBody, setModalBody] = useState(null)
+    const defaultHiddenColumns = {SourceType:'Type', SampleCategory:'Category', DatasetType:'Dataset Type', Status:'Status'}
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
@@ -200,10 +201,10 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         let cols;
         if (checkFilterType(filters) === false) {
             cols = defaultColumns({});
-            cols.push(reusableColumns.SourceType)
-            cols.push(reusableColumns.SampleCategory)
-            cols.push(reusableColumns.DatasetType)
-            cols.push(reusableColumns.Status)
+            for (let colKey of Object.keys(defaultHiddenColumns)) {
+                reusableColumns[colKey].omit = true
+                cols.push(reusableColumns[colKey])
+            }
         } else {
             let typeIndex = 0;
             cols = filters.map((filter, index) => {
@@ -257,7 +258,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         <>
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
-                    defaultHiddenColumns={['Type', 'Category', 'Dataset Type', 'Status']}
+                    defaultHiddenColumns={Object.values(defaultHiddenColumns)}
                     getTableColumns={getTableColumns}
                 />
                 <AppModal

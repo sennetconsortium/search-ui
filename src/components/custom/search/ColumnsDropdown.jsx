@@ -1,10 +1,10 @@
-import {useRef, useEffect} from 'react'
+import {useRef, useEffect, useCallback} from 'react'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
 import $ from 'jquery'
 
 
-function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, defaultHiddenColumns = [] }) {
+function ColumnsDropdown({ getTableColumns, hiddenColumns, setHiddenColumns, currentColumns, filters, defaultHiddenColumns = [] }) {
     const multiVals = useRef(null)
 
     const colourStyles = {
@@ -32,36 +32,25 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
         setHiddenColumns(removeColumns)
     }
 
-    const handleDefaultHidden = (set = true) => {
-        let defaultHidden = null
-        let currentShowing = {}
-        
-        if (!filters || !filters.length) {
-            for (let col of currentColumns.current) {
-                if (col.omit === false && !col.ignoreRowClick) {
-                    currentShowing[col.name] = true
-                }
-            }
+    const handleDefaultHidden = () => {
 
+        let defaultHidden = null
+
+        if (!filters || !filters.length) {
             let currentVals = []
             defaultHidden = {}
             for (let col of defaultHiddenColumns) {
-                if (!currentShowing[col]) {
-                    currentVals.push({ value: col, label: col })
-                }
-                defaultHidden[col] = true  
+                currentVals.push({ value: col, label: col })
+                defaultHidden[col] = true
             }
             multiVals.current =  Array.from(currentVals)
         } else {
             multiVals.current = null
         }
-        if (set) {
-            setHiddenColumns(defaultHidden)
-        }  
+        setHiddenColumns(defaultHidden)
     }
 
     const getColumnOptions = () => {
-        handleDefaultHidden(false)
         if (!currentColumns.current) return []
         let allColumns = Array.from(currentColumns.current)
         allColumns.splice(0, 1)
@@ -81,13 +70,10 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
         $('body').on('click', clearBtnSelector, () => {
             handleDefaultHidden()
         })
-       
+
         handleDefaultHidden()
-        if (!filters || !filters.length) {
-            $(clearBtnSelector).trigger('click')
-        }
         
-    }, [])
+    }, [multiVals, filters])
 
     return (
 
