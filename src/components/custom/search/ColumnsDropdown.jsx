@@ -5,7 +5,7 @@ import $ from 'jquery'
 import {parseJson} from "../../../lib/services";
 
 
-function ColumnsDropdown({ getTableColumns, hiddenColumns, setHiddenColumns, currentColumns, filters, defaultHiddenColumns = [] }) {
+function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, defaultHiddenColumns = [] }) {
     const multiVals = useRef(null)
     const STORE_KEY = 'lastHiddenColumns'
 
