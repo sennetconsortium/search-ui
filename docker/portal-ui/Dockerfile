@@ -15,8 +15,8 @@ COPY . .
 # Update to latest npm
 # Copy the entrypoint script and make it executible
 # Clean all yum cache
-RUN yum install https://rpm.nodesource.com/pub_18.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y && \
-    yum install nodejs -y --setopt=nodesource-nodejs.module_hotfixes=1 && \
+RUN curl -fsSL https://rpm.nodesource.com/setup_18.x | bash - && \
+    yum install -y nodejs && \
     npm install npm@latest -g && \
     cp /usr/src/app/entrypoint.sh /usr/local/bin/entrypoint.sh && \
     chmod +x /usr/local/bin/entrypoint.sh && \
