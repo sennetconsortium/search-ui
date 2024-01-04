@@ -27,8 +27,9 @@ export const DerivedProvider = ({children}) => {
     const [showVitessce, setShowVitessce] = useState(false)
 
     // Load the correct Vitessce view config
-    const set_vitessce_config = (data, dataset_id, dataset_type) => {
-        setVitessceConfig(fetchVitessceConfiguration(data))
+    const set_vitessce_config = async (data, dataset_id, dataset_type) => {
+        const config = await fetchVitessceConfiguration(data)
+        setVitessceConfig(config)
         // const datasetTypes = getDatasetTypes()
         //
         // console.log(dataset_type)
@@ -64,7 +65,7 @@ export const DerivedProvider = ({children}) => {
                 // Check that the assay type is supported by Vitessce
                 if (vitessceSupportedAssays.includes(dataset_type)) {
                     setShowVitessce(true)
-                    set_vitessce_config(data, data.uuid, dataset_type)
+                    await set_vitessce_config(data, data.uuid, dataset_type)
                 }
 
             } else {
