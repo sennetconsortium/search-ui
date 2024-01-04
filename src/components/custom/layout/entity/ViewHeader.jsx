@@ -43,7 +43,7 @@ EntityViewHeaderButtons.propTypes = {
     hasWritePrivilege: PropTypes.bool.isRequired
 }
 
-function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
+function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader, uniqueHeaderUrl}) {
     const {_t, cache} = useContext(AppContext)
 
     return (
@@ -55,7 +55,10 @@ function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
             </h3>
             <div className="row mb-2">
                 <div className="col-md-6 col-sm-12 entity_subtitle icon_inline">
-                    <ViewHeaderBadges data={data} uniqueHeader={uniqueHeader} hasWritePrivilege={hasWritePrivilege}/>
+                    <ViewHeaderBadges data={data} 
+                                      uniqueHeader={uniqueHeader}
+                                      uniqueHeaderUrl={uniqueHeaderUrl}
+                                      hasWritePrivilege={hasWritePrivilege}/>
                 </div>
 
                 <div className="col-md-6 col-sm-12">
@@ -71,7 +74,9 @@ function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader}) {
 EntityViewHeader.propTypes = {
     entity: PropTypes.string.isRequired,
     data: PropTypes.object.isRequired,
-    hasWritePrivilege: PropTypes.bool.isRequired
+    hasWritePrivilege: PropTypes.bool.isRequired,
+    uniqueHeader: PropTypes.string,
+    uniqueHeaderUrl: PropTypes.string,
 }
 
 export {EntityViewHeader, EntityViewHeaderButtons}

@@ -17,6 +17,7 @@ import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import SidebarBtn from "../components/SidebarBtn";
 import Metadata from "../components/custom/entities/Metadata";
+import {APP_ROUTES} from "../config/constants";
 
 function ViewSample() {
     const router = useRouter()
@@ -132,7 +133,9 @@ function ViewSample() {
 
                                     <EntityViewHeader data={data} entity={cache.entities.sample.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}
-                                                      uniqueHeader={data.sample_category}/>
+                                                      uniqueHeader={data.sample_category}
+                                                      uniqueHeaderUrl={data.sample_category == "Organs" ? APP_ROUTES.organs : undefined}
+                                    />
 
                                     <div className="row">
                                         <div className="col-12">

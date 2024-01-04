@@ -81,6 +81,10 @@ export async function get_data_assays_obj() {
     return json
 }
 
+export async function getOrgans() {
+    return get_ontology_from_cache(getUbkgCodes().organ_types)
+}
+
 export async function get_organ_types() {
     let list = await get_ontology_from_cache(getUbkgCodes().organ_types)
     list = to_key_val(list, false,'rui_code')

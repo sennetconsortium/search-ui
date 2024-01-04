@@ -1,5 +1,6 @@
-import {getAuth, getEntityEndPoint, getGlobusToken, getIngestEndPoint, getUUIDEndpoint} from "../config/config";
 import log from "loglevel";
+import { getDataTypesByProperty } from "../components/custom/js/functions";
+import { getAuth, getEntityEndPoint, getGlobusToken, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "../config/config";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
@@ -238,4 +239,162 @@ export const uploadFile = async file => {
     } catch (error) {
         throw Error('413')
     }
+}
+
+const fetchSearchAPIEntities = async (body) => {
+    const token = getAuth();
+    const headers = get_json_header()
+    if (token) {
+        headers.append("Authorization", `Bearer ${token}`)
+    }
+    try {
+        const res = await fetch(`${getSearchEndPoint()}/entities/search`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+            return null;
+        }
+        return res.json();
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+export const getDatasetQuantities = async () => {
+    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false);
+    const body = {
+        size: 0,
+        query: {
+            bool: {
+                filter: {
+                    term: {
+                        "entity_type.keyword": "Dataset",
+                    },
+                },
+                must_not: [
+                    {
+                        term: {
+                            "dataset_category.keyword": "codcc-processed"
+                        }
+                    },
+                    {
+                        term: {
+                            "dataset_category.keyword": "lab-processed"
+                        }
+                    }
+                ]
+            },
+        },
+        aggs: {
+            "origin_sample.organ": {
+                terms: {
+                    field: "origin_sample.organ.keyword",
+                    size: 40,
+                },
+            },
+        },
+    };
+    const content = await fetchSearchAPIEntities(body);
+    if (!content) {
+        return null;
+    }
+    return content.aggregations["origin_sample.organ"].buckets.reduce(
+        (acc, bucket) => {
+            acc[bucket.key] = bucket.doc_count;
+            return acc;
+        },
+        {}
+    );
+};
+
+export const getOrganDataTypeQuantities = async (organCode) => {
+    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false);
+    const body = {
+        size: 0,
+        query: {
+            bool: {
+                filter: {
+                    term: {
+                        "origin_sample.organ.keyword": organCode,
+                    }
+                },
+                must_not: [
+                    {
+                        term: {
+                            "dataset_category.keyword": "codcc-processed"
+                        }
+                    },
+                    {
+                        term: {
+                            "dataset_category.keyword": "lab-processed"
+                        }
+                    }
+                ]
+            }
+        },
+        aggs: {
+            dataset_type: {
+                terms: {
+                    field: "dataset_type.keyword",
+                    size: 40
+                }
+            }
+        }
+    }
+    const content = await fetchSearchAPIEntities(body);
+    if (!content) {
+        return null;
+    }
+    return content.aggregations["dataset_type"].buckets.reduce(
+        (acc, bucket) => {
+            acc[bucket.key] = bucket.doc_count;
+            return acc;
+        },
+        {}
+    );
+}
+
+export const getSamplesByOrgan = async (ruiCode) => {
+    const body = {
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "term": {
+                            "entity_type.keyword": "Sample"
+                        }
+                    },
+                    {
+                        "term": {
+                            "organ.keyword": ruiCode
+                        }
+                    }
+                ]
+            }
+        },
+        "_source": {
+            "includes": [
+                "sennet_id",
+                "lab_tissue_sample_id",
+                "group_name",
+                "last_touch"
+            ]
+        }
+    }
+    const content = await fetchSearchAPIEntities(body);
+    if (!content) {
+        return null;
+    }
+    return content.hits.hits.map((hit) => {
+        return {
+            uuid: hit._id,
+            sennetId: hit._source.sennet_id,
+            labId: hit._source.lab_tissue_sample_id,
+            groupName: hit._source.group_name,
+            lastTouch: hit._source.last_touch, 
+        }
+    });
 }
