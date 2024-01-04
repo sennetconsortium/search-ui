@@ -48,6 +48,9 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
             </div>
 
             {<DataTable key={`results-${new Date().getTime()}`}
+                        onColumnOrderChange={cols => {
+                            currentColumns.current.current = cols
+                        }}
                         className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''} ${tableClassName}`}
                         columns={getTableColumns(hiddenColumns)}
                         data={getTableData()}
