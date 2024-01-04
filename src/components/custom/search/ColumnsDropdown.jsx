@@ -1,10 +1,10 @@
-import {useRef, useEffect, useState} from 'react'
+import {useRef, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
 import $ from 'jquery'
 
 
-function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns }) {
+function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, defaultHiddenColumns = [] }) {
     const multiVals = useRef(null)
 
     const colourStyles = {
@@ -19,7 +19,6 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns }) 
 
     const handleChange = (e) => {
         multiVals.current = e
-
         // Prevent user from removing all columns
         if (e.length === (getTableColumns().length - 1)) {
             e.pop()
@@ -33,7 +32,36 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns }) 
         setHiddenColumns(removeColumns)
     }
 
+    const handleDefaultHidden = (set = true) => {
+        let defaultHidden = null
+        let currentShowing = {}
+        
+        if (!filters || !filters.length) {
+            for (let col of currentColumns.current) {
+                if (col.omit === false && !col.ignoreRowClick) {
+                    currentShowing[col.name] = true
+                }
+            }
+
+            let currentVals = []
+            defaultHidden = {}
+            for (let col of defaultHiddenColumns) {
+                if (!currentShowing[col]) {
+                    currentVals.push({ value: col, label: col })
+                }
+                defaultHidden[col] = true  
+            }
+            multiVals.current =  Array.from(currentVals)
+        } else {
+            multiVals.current = null
+        }
+        if (set) {
+            setHiddenColumns(defaultHidden)
+        }  
+    }
+
     const getColumnOptions = () => {
+        handleDefaultHidden(false)
         if (!currentColumns.current) return []
         let allColumns = Array.from(currentColumns.current)
         allColumns.splice(0, 1)
@@ -47,12 +75,18 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns }) 
     }
 
     useEffect(() => {
+        const clearBtnSelector = '.clear-filter-button'
         // Have to listen to click from here instead of in handleClearFiltersClick
         // to manage value states of this independent component
-        $('body').on('click', '.clear-filter-button', () => {
-            multiVals.current = null
-            setHiddenColumns(null)
+        $('body').on('click', clearBtnSelector, () => {
+            handleDefaultHidden()
         })
+       
+        handleDefaultHidden()
+        if (!filters || !filters.length) {
+            $(clearBtnSelector).trigger('click')
+        }
+        
     }, [])
 
     return (

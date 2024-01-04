@@ -44,6 +44,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         let cols = []
         if (!inModal) {
             cols.push({
+                id: 'bulkExport',
                 ignoreRowClick: true,
                 name: <BulkExport data={children} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} />,
                 width: '100px',
@@ -59,6 +60,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 name: 'SenNet ID',
                 selector: row => raw(row.sennet_id),
                 sortable: true,
+                reorder: true,
                 format: column => inModal ? raw(column.sennet_id) : <span data-field='sennet_id'><a href={getHotLink(column)}>{raw(column.sennet_id)}</a> <ClipboardCopy text={raw(column.sennet_id)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
             },
         )
@@ -67,6 +69,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 name: 'Entity Type',
                 selector: row => raw(row.entity_type),
                 sortable: true,
+                reorder: true,
                 format: row => <span data-field='entity_type'>{raw(row.entity_type)}</span>,
             })
         }
@@ -78,6 +81,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 },
                 format: row => <span data-field='lab_id'>{raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)}</span>,
                 sortable: true,
+                reorder: true,
             })
         }
         cols = cols.concat(columns)
@@ -86,6 +90,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 name: 'Group',
                 selector: row => raw(row.group_name),
                 sortable: true,
+                reorder: true,
                 format: row => <span data-field='group_name'>{getGroupName({group_name: raw(row.group_name), group_uuid: raw(row.group_uuid)})}</span>,
             })
         }
@@ -93,29 +98,33 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         return cols;
     }
 
-    const sourceColumns = [
-        {
-            name: 'Type',
-            selector: row => raw(row.source_type),
+    const reusableColumns = {
+        Status:  {
+            name: 'Status',
+            selector: row => raw(row.status),
+            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
             sortable: true,
-        }
-    ]
-
-    const sampleColumns = [
-        {
-            name: 'Category',
-            selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
-            sortable: true,
+            reorder: true,
         },
-        {
+        Organ: {
             name: 'Organ',
             selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-        }
-    ]
-
-    const datasetColumns = [
-        {
+            reorder: true,
+        },
+        SourceType: {
+            name: 'Type',
+            selector: row => raw(row.source_type),
+            sortable: true,
+            reorder: true,
+        },
+        SampleCategory: {
+            name: 'Category',
+            selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
+            sortable: true,
+            reorder: true,
+        },
+        DatasetType: {
             name: 'Dataset Type',
             selector: row => {
                 let val = raw(row.dataset_type)
@@ -124,18 +133,23 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 }
             },
             sortable: true,
+            reorder: true,
         },
-        {
-            name: 'Organ',
-            selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
-            sortable: true,
-        },
-        {
-            name: 'Status',
-            selector: row => raw(row.status),
-            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
-            sortable: true
-        }
+    }
+
+    const sourceColumns = [
+        reusableColumns.SourceType
+    ]
+
+    const sampleColumns = [
+        reusableColumns.SampleCategory,
+        reusableColumns.Organ
+    ]
+
+    const datasetColumns = [
+        reusableColumns.DatasetType,
+        reusableColumns.Organ,
+        reusableColumns.Status
     ]
 
     const uploadColumns = [
@@ -143,11 +157,13 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             name: 'Title',
             selector: row => raw(row.title),
             sortable: true,
+            reorder: true,
         },
         {
             name: 'Description',
             selector: row => raw(row.description),
             sortable: true,
+            reorder: true,
             format: (row) => {
                 const max = 100
                 const desc = raw(row.description)
@@ -162,12 +178,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 </div>)
             }
         },
-        {
-            name: 'Status',
-            selector: row => raw(row.status),
-            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
-            sortable: true
-        }
+        reusableColumns.Status
     ]
 
     const collectionColumns = [
@@ -175,11 +186,13 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             name: 'Title',
             selector: row => raw(row.title),
             sortable: true,
+            reorder: true,
         },
         {
             name: 'Description',
             selector: row => raw(row.description),
             sortable: true,
+            reorder: true,
         }
     ]
 
@@ -187,6 +200,10 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         let cols;
         if (checkFilterType(filters) === false) {
             cols = defaultColumns({});
+            cols.push(reusableColumns.SourceType)
+            cols.push(reusableColumns.SampleCategory)
+            cols.push(reusableColumns.DatasetType)
+            cols.push(reusableColumns.Status)
         } else {
             let typeIndex = 0;
             cols = filters.map((filter, index) => {
@@ -222,7 +239,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         if (columnsToHide) {
             hiddenColumns.current = columnsToHide
             for (let col of cols) {
-               col.omit = columnsToHide[col.name]
+               col.omit = columnsToHide[col.name] || false
             }
         }
         currentColumns.current = cols;
@@ -240,6 +257,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         <>
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
+                    defaultHiddenColumns={['Type', 'Category', 'Dataset Type', 'Status']}
                     getTableColumns={getTableColumns}
                 />
                 <AppModal

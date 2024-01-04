@@ -83,10 +83,18 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
         }
     }
 
+    const findExportColumn = () => {
+        let _columns = columns.current
+        for (let i = 0; i < _columns.length; i++) {
+            if (equals(_columns[i].id.toString(), 'bulkExport')) return i
+        }
+    }
+
     const generateTSVData = (selected, isAll) => {
         let _columns = columns.current
         if (replaceFirst) {
-            _columns[0] = {
+            const index = findExportColumn() || 0
+            _columns[index] = {
                 name: replaceFirst.toUpperCase(),
                 selector: row => raw(row[replaceFirst]),
                 sortable: true,

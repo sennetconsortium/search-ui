@@ -174,6 +174,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         let cols = []
         if (!inModal) {
             cols.push({
+                id: 'bulkExport',
                 ignoreRowClick: true,
                 name: <BulkExport onCheckAll={onCheckAll} data={results} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} exportKind={'manifest'} />,
                 width: '100px',
@@ -190,6 +191,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 width: '200px',
                 selector: row => raw(row.dataset_sennet_id),
                 sortable: true,
+                reorder: true,
                 format: column => inModal ? raw(column.dataset_sennet_id) : <span data-field='dataset_sennet_id'><a href={getHotLink(column)}>{raw(column.dataset_sennet_id)}</a> <ClipboardCopy text={raw(column.dataset_sennet_id)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
             }
         )
@@ -200,6 +202,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 minWidth: '50%',
                 selector: row => raw(row.description),
                 sortable: true,
+                reorder: true,
                 format: (row) => {
                     let paths = []
                     let i = 0
@@ -238,6 +241,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     }
                 },
                 sortable: true,
+                reorder: true,
             }
         )
 
@@ -252,6 +256,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     }
                 },
                 sortable: true,
+                reorder: true,
             }
         )
 
@@ -260,6 +265,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 name: 'Size',
                 selector: row => raw(row.size),
                 sortable: true,
+                reorder: true,
                 format: row => <span>{formatByteSize(raw(row.size))}</span>
             }
         )

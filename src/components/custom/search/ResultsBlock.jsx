@@ -8,7 +8,7 @@ import {
 import TableResultsContext from "../../../context/TableResultsContext";
 import ColumnsDropdown from "./ColumnsDropdown";
 
-function ResultsBlock({getTableColumns, disableRowClick, tableClassName}) {
+function ResultsBlock({getTableColumns, disableRowClick, tableClassName, defaultHiddenColumns}) {
 
     const {
         getTableData,
@@ -41,13 +41,16 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName}) {
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
-                    {rows.length > 0 && <ColumnsDropdown filters={filters} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
+                    {rows.length > 0 && <ColumnsDropdown filters={filters} defaultHiddenColumns={defaultHiddenColumns} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
                                       currentColumns={currentColumns.current} />}
                     <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={rows.length}  />
                 </div>
             </div>
 
             {<DataTable key={`results-${new Date().getTime()}`}
+                        onColumnOrderChange={cols => {
+                            currentColumns.current.current = cols
+                        }}
                         className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''} ${tableClassName}`}
                         columns={getTableColumns(hiddenColumns)}
                         data={getTableData()}
