@@ -7,7 +7,7 @@ import {
     getDataTypesByProperty,
     getIsPrimaryDataset
 } from "../components/custom/js/functions";
-import {get_prov_info} from "../lib/services";
+import {get_prov_info, fetchVitessceConfiguration} from "../lib/services";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
 import {kuppe2022nature} from "../vitessce-view-config/kuppe_2022_nature";
@@ -27,24 +27,10 @@ export const DerivedProvider = ({children}) => {
     const [showVitessce, setShowVitessce] = useState(false)
 
     // Load the correct Vitessce view config
-    const set_vitessce_config = (data, dataset_id, dataset_type) => {
-        const datasetTypes = getDatasetTypes()
-
-        console.log(dataset_type)
-        switch (dataset_type) {
-            case datasetTypes['RNAseq']:
-                setVitessceConfig(rna_seq(dataset_id))
-                break
-            case datasetTypes['Light Sheet']:
-            case datasetTypes['CODEX']:
-                setVitessceConfig(codex_config(dataset_id))
-                break
-            case datasetTypes['Visium']:
-                setVitessceConfig(kuppe2022nature())
-                break
-            default:
-                console.log(`No Vitessce config found for assay type: ${dataset_type}`)
-        }
+    const set_vitessce_config = async (data, dataset_id, dataset_type) => {
+        fetchVitessceConfiguration(data).then(config => {
+            setVitessceConfig(config)
+        })
     }
 
     const initVitessceConfig = async (data) => {
@@ -63,7 +49,7 @@ export const DerivedProvider = ({children}) => {
                 // Check that the assay type is supported by Vitessce
                 if (vitessceSupportedAssays.includes(dataset_type)) {
                     setShowVitessce(true)
-                    set_vitessce_config(data, data.uuid, dataset_type)
+                    await set_vitessce_config(data, data.uuid, dataset_type)
                 }
 
             } else {

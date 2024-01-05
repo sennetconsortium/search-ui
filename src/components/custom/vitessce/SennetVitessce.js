@@ -7,6 +7,7 @@ import MuiAlert from "@mui/material/Alert";
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import SenNetAccordion from "../layout/SenNetAccordion";
+import Spinner from "../Spinner";
 
 export const SennetVitessce = ({data}) => {
     const Vitessce = React.lazy(() => import ('./VitessceWrapper.js'))
@@ -109,8 +110,13 @@ export const SennetVitessce = ({data}) => {
                     </MuiAlert>
                 </Snackbar>
                 <Suspense fallback={<div>Loading...</div>}>
-                    {vitessceConfig &&
-                        <Vitessce config={vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
+                    {vitessceConfig ?
+                        (
+                            <Vitessce config={vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
+                        )
+                        : (
+                             <Spinner/>
+                        )
                     }
                 </Suspense>
             </SenNetAccordion>
