@@ -4,7 +4,7 @@ import Description from "../components/custom/entities/sample/Description";
 import MetadataTable from "../components/custom/entities/MetadataTable";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {equals, getRequestHeaders} from "../components/custom/js/functions";
+import {eq, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -98,8 +98,8 @@ function ViewSource() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
-                                            {!!((equals(data.source_type, cache.sourceTypes.Mouse) && data.metadata && Object.keys(data.metadata).length) ||
-                                                    (equals(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata && Object.keys(data.source_mapped_metadata).length)) &&
+                                            {!!((eq(data.source_type, cache.sourceTypes.Mouse) && data.metadata && Object.keys(data.metadata).length) ||
+                                                    (eq(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata && Object.keys(data.source_mapped_metadata).length)) &&
                                                 <li className="nav-item">
                                                     <a href="#Metadata"
                                                        className="nav-link"
@@ -143,10 +143,10 @@ function ViewSource() {
 
                                             {/*Metadata*/}
                                             {/*Humans have their metadata inside "source_mapped_metadata" while mice have theirs inside "metadata"*/}
-                                            {!!((equals(data.source_type, cache.sourceTypes.Mouse) && data.metadata && Object.keys(data.metadata).length) ||
-                                                    (equals(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata && Object.keys(data.source_mapped_metadata).length)) &&
+                                            {!!((eq(data.source_type, cache.sourceTypes.Mouse) && data.metadata && Object.keys(data.metadata).length) ||
+                                                    (eq(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata && Object.keys(data.source_mapped_metadata).length)) &&
                                                 <Fragment>
-                                                    {equals(data.source_type, cache.sourceTypes.Mouse) ? (
+                                                    {eq(data.source_type, cache.sourceTypes.Mouse) ? (
                                                         <Metadata data={data} metadata={data.metadata}/>
                                                     ) : (
                                                         <Metadata data={data} metadata={data.source_mapped_metadata}/>

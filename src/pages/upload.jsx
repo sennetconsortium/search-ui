@@ -4,7 +4,7 @@ import Description from "../components/custom/entities/sample/Description";
 import MetadataTable from "../components/custom/entities/MetadataTable";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {equals, getRequestHeaders} from "../components/custom/js/functions";
+import {eq, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";

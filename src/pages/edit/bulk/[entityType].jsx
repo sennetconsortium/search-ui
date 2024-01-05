@@ -9,7 +9,7 @@ import Spinner from "../../../components/custom/Spinner";
 import AppContext from "../../../context/AppContext";
 import NotFound from "../../../components/custom/NotFound";
 import AppFooter from "../../../components/custom/layout/AppFooter";
-import {equals} from "../../../components/custom/js/functions";
+import {eq} from "../../../components/custom/js/functions";
 
 export default function EditBulk() {
     const {cache, supportedMetadata} = useContext(AppContext)

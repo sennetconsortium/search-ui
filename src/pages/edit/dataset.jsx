@@ -9,7 +9,7 @@ import log from 'loglevel'
 import {get_headers, update_create_dataset} from '../../lib/services'
 import {
     cleanJson,
-    equals,
+    eq,
     fetchEntity, fetchProtocols,
     getDataTypesByProperty, getEntityViewUrl,
     getRequestHeaders, getStatusColor, isPrimaryAssay
@@ -104,7 +104,7 @@ export default function EditDataset() {
 
                         let sub_types = []
                         currentConstraints.forEach(constraint => {
-                            if (equals(constraint.entity_type, cache.entities.dataset)) {
+                            if (eq(constraint.entity_type, cache.entities.dataset)) {
                                 sub_types = sub_types.concat(constraint.sub_type || [])
                             }
                         })
@@ -184,7 +184,7 @@ export default function EditDataset() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (equals(router.query.uuid, 'register')) {
+            if (eq(router.query.uuid, 'register')) {
                 setData(true)
                 setEditMode("Register")
             } else {
@@ -261,7 +261,7 @@ export default function EditDataset() {
             let viewResult
             let uri
             for (const ancestor of data.ancestors) {
-                if (equals(ancestor.entity_type, cache.entities.source) || equals(ancestor.entity_type, cache.entities.sample)) {
+                if (eq(ancestor.entity_type, cache.entities.source) || eq(ancestor.entity_type, cache.entities.sample)) {
                     uri = ancestor.protocol_url
                     apiResult = await fetchProtocols(uri)
                     if (!apiResult) {
@@ -500,7 +500,7 @@ export default function EditDataset() {
 
                                         {getCancelBtn('dataset')}
 
-                                        {!equals(data['status'], 'Processing') &&
+                                        {!eq(data['status'], 'Processing') &&
                                             <SenNetPopover text={<>Save changes to this <code>Dataset</code>.</>} className={'save-button'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--save"
                                                         className={'me-2'}
@@ -512,7 +512,7 @@ export default function EditDataset() {
                                         }
 
                                         {/*If the status for the Dataset is 'New' then allow the user to mark this as 'Submitted'*/}
-                                        {!equals(data['status'], 'Processing') && isPrimary.current && isEditMode() && equals(data['status'], 'New') &&
+                                        {!eq(data['status'], 'Processing') && isPrimary.current && isEditMode() && eq(data['status'], 'New') &&
                                             <SenNetPopover text={<>Mark this <code>Dataset</code> as "Submitted" and ready for processing.</>} className={'submit-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Submit"}
@@ -533,7 +533,7 @@ export default function EditDataset() {
                                          If a user is a data admin and the status is either 'New' or 'Submitted' allow this Dataset to be
                                          processed via the pipeline.
                                          */}
-                                         {!equals(data['status'], 'Processing') && isPrimary.current && adminGroup && isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Submitted')) &&
+                                         {!eq(data['status'], 'Processing') && isPrimary.current && adminGroup && isEditMode() && (eq(data['status'], 'New') || eq(data['status'], 'Submitted')) &&
                                             <SenNetPopover text={<>Process this <code>Dataset</code> via the Ingest Pipeline.</>} className={'process-dataset'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Process"}
@@ -544,7 +544,7 @@ export default function EditDataset() {
                                             </SenNetPopover>
                                         }
 
-                                        {!equals(data['status'], 'Processing') && isPrimary.current && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) && <SenNetPopover
+                                        {!eq(data['status'], 'Processing') && isPrimary.current && adminGroup && isEditMode() && (eq(data['status'], 'Error') || eq(data['status'], 'Invalid') || eq(data['status'], 'Submitted')) && <SenNetPopover
                                             text={<>Revert this <code>Dataset</code> back to <span className={`${getStatusColor('New')} badge`}>New</span> or <span className={`${getStatusColor('Submitted')} badge`}>Submitted</span>  status.
                                                </>}
                                             className={'revert-button'}>

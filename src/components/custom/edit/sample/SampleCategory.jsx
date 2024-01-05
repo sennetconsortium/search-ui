@@ -3,7 +3,7 @@ import {Col, Form, Row} from 'react-bootstrap';
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import SenNetPopover from "../../../SenNetPopover";
 import AppContext from "../../../../context/AppContext";
-import {equals} from "../../js/functions";
+import {eq} from "../../js/functions";
 
 function SampleCategory({
                             organ_group_hide,
@@ -16,7 +16,7 @@ function SampleCategory({
     const {cache} = useContext(AppContext)
     const handleSampleCategoryChange = (e, onChange) => {
         // If sample category is 'Organ' then display the organ type input group
-        if (equals(e.target.value, cache.sampleCategories.Organ)) {
+        if (eq(e.target.value, cache.sampleCategories.Organ)) {
             //Organ Type set display and require
             set_organ_group_hide('')
             document.getElementById("organ").setAttribute("required", "")

@@ -3,7 +3,7 @@ import {getCookie, setCookie} from "cookies-next";
 import TutorialSteps from "./TutorialSteps";
 import AppContext from "../../../context/AppContext";
 import Joyride from "react-joyride";
-import {equals} from "../js/functions";
+import {eq} from "../js/functions";
 import {Alert} from 'react-bootstrap'
 import {Binoculars} from "react-bootstrap-icons";
 
@@ -48,7 +48,7 @@ function AppTutorial() {
                 steps={steps}
                 scrollOffset={80}
                 callback={(res) => {
-                        if (equals(res.action, 'reset')) {
+                        if (eq(res.action, 'reset')) {
                             seenTutorial()
                         }
                     }

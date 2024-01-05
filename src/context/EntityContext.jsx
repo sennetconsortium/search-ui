@@ -8,7 +8,7 @@ import log from 'loglevel'
 import {APP_ROUTES} from '../config/constants'
 import AppModal from '../components/AppModal'
 import AppContext from './AppContext'
-import {equals, fetchProtocols, getHeaders} from "../components/custom/js/functions";
+import {eq, fetchProtocols, getHeaders} from "../components/custom/js/functions";
 import {getEntityEndPoint} from "../config/config";
 import {BoxArrowUpRight} from "react-bootstrap-icons";
 import {Button} from 'react-bootstrap'
@@ -118,10 +118,10 @@ export const EntityProvider = ({ children }) => {
     const buildConstraint = (entity, constraint = [], key = 'ancestors') => {
         const entityType = entity.entity_type.toLowerCase()
         let body = {entity_type: cache.entities[entityType]}
-        if (equals(entityType, cache.entities.sample)) {
+        if (eq(entityType, cache.entities.sample)) {
             const sample_category = entity.sample_category.toLowerCase()
             body['sub_type'] = [sample_category]
-            if (equals(sample_category, cache.sampleCategories.Organ)) {
+            if (eq(sample_category, cache.sampleCategories.Organ)) {
                 body['sub_type_val'] = [entity.organ]
             }
         }
