@@ -29,7 +29,7 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
         handlePageChange,
     } = useContext(TableResultsContext)
 
-    const [hiddenColumns, setHiddenColumns] = useState([])
+    const [hiddenColumns, setHiddenColumns] = useState(null)
 
     useEffect(() => {
 

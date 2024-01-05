@@ -2,10 +2,12 @@ import {useRef, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import Select from 'react-select'
 import $ from 'jquery'
+import {parseJson} from "../../../lib/services";
 
 
 function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, defaultHiddenColumns = [] }) {
     const multiVals = useRef(null)
+    const STORE_KEY = 'lastHiddenColumns'
 
     const colourStyles = {
         multiValueRemove: (styles, { data }) => ({
@@ -15,6 +17,13 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
                 color: 'white',
             },
         }),
+    }
+    const updateStore = (cols) => {
+        if (cols) {
+            //Store what the user last did in the event they navigate away from 'no facets selected' search results view
+            //Upon return, user doesn't need to reconfigure table until they click Clear Filters
+            localStorage.setItem(STORE_KEY, JSON.stringify(cols))
+        }
     }
 
     const handleChange = (e) => {
@@ -30,38 +39,31 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
         }
 
         setHiddenColumns(removeColumns)
+        updateStore(removeColumns)
     }
 
-    const handleDefaultHidden = (set = true) => {
+    const handleDefaultHidden = () => {
         let defaultHidden = null
-        let currentShowing = {}
-        
         if (!filters || !filters.length) {
-            for (let col of currentColumns.current) {
-                if (col.omit === false && !col.ignoreRowClick) {
-                    currentShowing[col.name] = true
-                }
-            }
-
             let currentVals = []
             defaultHidden = {}
+            let lastHiddenColumns = parseJson(localStorage.getItem(STORE_KEY))
+            let isHiddenColumn
             for (let col of defaultHiddenColumns) {
-                if (!currentShowing[col]) {
+                isHiddenColumn = lastHiddenColumns ? lastHiddenColumns[col] : true
+                if (isHiddenColumn) {
                     currentVals.push({ value: col, label: col })
+                    defaultHidden[col] = true
                 }
-                defaultHidden[col] = true  
             }
             multiVals.current =  Array.from(currentVals)
         } else {
             multiVals.current = null
         }
-        if (set) {
-            setHiddenColumns(defaultHidden)
-        }  
+        setHiddenColumns(defaultHidden)
     }
 
     const getColumnOptions = () => {
-        handleDefaultHidden(false)
         if (!currentColumns.current) return []
         let allColumns = Array.from(currentColumns.current)
         allColumns.splice(0, 1)
@@ -79,15 +81,13 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
         // Have to listen to click from here instead of in handleClearFiltersClick
         // to manage value states of this independent component
         $('body').on('click', clearBtnSelector, () => {
+            localStorage.setItem(STORE_KEY, null)
             handleDefaultHidden()
         })
-       
+
         handleDefaultHidden()
-        if (!filters || !filters.length) {
-            $(clearBtnSelector).trigger('click')
-        }
         
-    }, [])
+    }, [multiVals, filters])
 
     return (
 
@@ -108,11 +108,16 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
     )
 }
 
-ColumnsDropdown.defaultProps = {}
+ColumnsDropdown.defaultProps = {
+    defaultHiddenColumns: []
+}
 
 ColumnsDropdown.propTypes = {
     getTableColumns: PropTypes.func.isRequired,
     setHiddenColumns: PropTypes.func.isRequired,
+    currentColumns: PropTypes.object,
+    filters: PropTypes.array,
+    defaultHiddenColumns: PropTypes.array
 }
 
 export default ColumnsDropdown
