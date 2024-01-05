@@ -1,4 +1,4 @@
-import {getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
+import {COLS_ORDER_KEY, getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
 import {APP_ROUTES} from "../../../config/constants";
 import log from "loglevel";
 import fetchJsonp from "fetch-jsonp";
@@ -422,24 +422,33 @@ export const flipObj = (obj) => {
 export const matchArrayOrder = (ordering, data, key1 = 'name', key2 = 'id') => {
     if (!ordering) return data
     let map = {}
-    if (Array.isArray(ordering)) {
-        for (let i=0; i < ordering.length; i++) {
-            map[ordering[i]] = i
+    let val
+    let result = []
+    if (Array.isArray(data)) {
+        for (let i=0; i < data.length; i++) {
+            val = eq(typeof data[i][key1], 'string') ? data[i][key1] : data[i][key2]
+            map[val] = i
         }
     } else {
-        map = ordering
+        map = data
     }
-    if (Object.keys(map).length !== data.length) return data
 
-    let val, index, item
-    for (let i=0; i < data.length; i++) {
-        val = eq(typeof data[i][key1], 'string') ? data[i][key1] : data[i][key2]
-        index = map[val]
+    if (Object.keys(map).length !== ordering.length) return data
+    let index, item
+    for (let i = 0; i < ordering.length; i++) {
+        index = map[ordering[i]]
         item = data[index]
-        // swap
-        data[index] = data[i]
-        data[i] = item
+        result.push(data[index])
+
     }
-    return data
+    return result
 }
 
+
+export const deleteFromLocalStorage = (needle, fn = 'endsWith') => {
+    Object.keys(localStorage)
+        .filter(x =>
+            x[fn](needle))
+        .forEach(x =>
+            localStorage.removeItem(x))
+}

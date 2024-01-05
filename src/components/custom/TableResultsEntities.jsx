@@ -215,13 +215,13 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             let typeIndex = 0;
             cols = filters.map((filter, index) => {
                 let columns = []
-                tableContext.current = filter.values[0]
                 if (filter.field === 'entity_type') {
                     typeIndex = index
                     const hasOneEntity = filter.values.length === 1
                     const entityType = filter.values[0]
                     let includeLabIdCol = true
                     let includeGroupCol = true
+                    tableContext.current = entityType
                     if (hasOneEntity && eq(entityType, cache.entities.source)) {
                         columns = sourceColumns
                     } else if (hasOneEntity && eq(entityType, cache.entities.sample)) {
@@ -251,7 +251,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                col.omit = columnsToHide[col.name] || false
             }
         }
-        matchArrayOrder(parseJson(localStorage.getItem(COLS_ORDER_KEY(`entities.${tableContext.current}`))), cols)
+        cols = matchArrayOrder(parseJson(localStorage.getItem(COLS_ORDER_KEY(`entities.${tableContext.current}`))), cols)
         currentColumns.current = cols;
         return cols;
     }
@@ -263,11 +263,13 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     // Prepare opsDict
     getOptions(children.length)
 
+    const getSearchContext = () => `entities.${tableContext.current}`
+
     return (
         <>
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
-                    searchContext={`entities.${tableContext.current}`}
+                    searchContext={getSearchContext}
                     defaultHiddenColumns={Object.values(defaultHiddenColumns)}
                     getTableColumns={getTableColumns}
                 />
