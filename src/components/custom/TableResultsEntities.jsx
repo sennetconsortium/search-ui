@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import {
     checkFilterType,
     checkMultipleFilterType,
-    displayBodyHeader, equals, getEntityViewUrl, getUBKGFullName,
-    getStatusColor, getStatusDefinition
+    displayBodyHeader, eq, getEntityViewUrl, getUBKGFullName,
+    getStatusColor, getStatusDefinition, matchArrayOrder
 } from './js/functions'
 import AppContext from "../../context/AppContext"
 import log from 'loglevel'
@@ -17,6 +17,8 @@ import SenNetPopover from "../SenNetPopover";
 import {Chip} from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import AppModal from "../AppModal";
+import {parseJson} from "../../lib/services";
+import {COLS_ORDER_KEY} from "../../config/config";
 
 function TableResultsEntities({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
 
@@ -215,16 +217,16 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                     const entityType = filter.values[0]
                     let includeLabIdCol = true
                     let includeGroupCol = true
-                    if (hasOneEntity && equals(entityType, cache.entities.source)) {
+                    if (hasOneEntity && eq(entityType, cache.entities.source)) {
                         columns = sourceColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.sample)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.sample)) {
                         columns = sampleColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.dataset)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.dataset)) {
                         columns = datasetColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.upload)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.upload)) {
                         includeLabIdCol = false
                         columns = uploadColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.collection)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.collection)) {
                         includeLabIdCol = false
                         includeGroupCol = false
                         columns = collectionColumns
@@ -243,6 +245,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                col.omit = columnsToHide[col.name] || false
             }
         }
+        matchArrayOrder(parseJson(localStorage.getItem(COLS_ORDER_KEY('entities'))), cols)
         currentColumns.current = cols;
         return cols;
     }

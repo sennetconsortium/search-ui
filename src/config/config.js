@@ -188,3 +188,5 @@ export function FilterIsSelected(fieldName, value) {
         );
     };
 }
+
+export const COLS_ORDER_KEY = (context) => `${context}.columnsOrder`

@@ -374,7 +374,7 @@ export function urlify(text, blank = true, max = 40) {
     })
 }
 
-export function equals(s1, s2, insensitive = true) {
+export function eq(s1, s2, insensitive = true) {
     let res = s1 === s2
     if (insensitive && s1 !== undefined && s2 !== undefined) {
         res = s1.toLowerCase() === s2.toLowerCase()
@@ -417,5 +417,29 @@ export const flipObj = (obj) => {
         ret[obj[key]] = key;
         return ret;
     }, {})
+}
+
+export const matchArrayOrder = (ordering, data, key1 = 'name', key2 = 'id') => {
+    if (!ordering) return data
+    let map = {}
+    if (Array.isArray(ordering)) {
+        for (let i=0; i < ordering.length; i++) {
+            map[ordering[i]] = i
+        }
+    } else {
+        map = ordering
+    }
+    if (Object.keys(map).length !== data.length) return data
+
+    let val, index, item
+    for (let i=0; i < data.length; i++) {
+        val = eq(typeof data[i][key1], 'string') ? data[i][key1] : data[i][key2]
+        index = map[val]
+        item = data[index]
+        // swap
+        data[index] = data[i]
+        data[i] = item
+    }
+    return data
 }
 
