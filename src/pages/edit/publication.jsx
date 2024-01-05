@@ -9,7 +9,7 @@ import log from 'loglevel'
 import {update_create_entity} from '../../lib/services'
 import {
     cleanJson,
-    equals,
+    eq,
     fetchEntity,
     getRequestHeaders
 } from '../../components/custom/js/functions'
@@ -97,7 +97,7 @@ export default function EditPublication() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (equals(router.query.uuid, 'register')) {
+            if (eq(router.query.uuid, 'register')) {
                 setData(true)
                 setEditMode("Register")
             } else {

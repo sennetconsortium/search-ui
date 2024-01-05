@@ -7,7 +7,7 @@ import SampleCategory from "../../components/custom/edit/sample/SampleCategory";
 import AncestorInformationBox from "../../components/custom/entities/sample/AncestorInformationBox";
 import log from "loglevel";
 import {
-    cleanJson, equals,
+    cleanJson, eq,
     fetchEntity,
     getDOIPattern,
     getRequestHeaders
@@ -86,7 +86,7 @@ function EditSample() {
                     const provenance_constraints = body.description[0].description
                     let sub_types = []
                     provenance_constraints.forEach(constraint => {
-                        if (equals(constraint.entity_type, cache.entities.sample)) {
+                        if (eq(constraint.entity_type, cache.entities.sample)) {
                             sub_types = sub_types.concat(constraint.sub_type || [])
                         }
                     })
@@ -133,7 +133,7 @@ function EditSample() {
                 checkProtocolUrl(data.protocol_url)
 
                 // Show organ input group if sample category is 'organ'
-                if (equals(data.sample_category, cache.sampleCategories.Organ)) {
+                if (eq(data.sample_category, cache.sampleCategories.Organ)) {
                     set_organ_group_hide('')
                 }
 
@@ -175,7 +175,7 @@ function EditSample() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (equals(router.query.uuid, 'register')) {
+            if (eq(router.query.uuid, 'register')) {
                 setData(true)
                 setEditMode("Register")
             } else {

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import {
     checkFilterType,
     checkMultipleFilterType,
-    displayBodyHeader, equals, getEntityViewUrl, getUBKGFullName,
-    getStatusColor, getStatusDefinition
+    displayBodyHeader, eq, getEntityViewUrl, getUBKGFullName,
+    getStatusColor, getStatusDefinition, matchArrayOrder
 } from './js/functions'
 import AppContext from "../../context/AppContext"
 import log from 'loglevel'
@@ -17,6 +17,8 @@ import SenNetPopover from "../SenNetPopover";
 import {Chip} from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import AppModal from "../AppModal";
+import {parseJson} from "../../lib/services";
+import {COLS_ORDER_KEY} from "../../config/config";
 
 function TableResultsEntities({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
 
@@ -28,6 +30,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     const [modalTitle, setModalTitle] = useState(null)
     const [modalBody, setModalBody] = useState(null)
     const defaultHiddenColumns = {SourceType:'Type', SampleCategory:'Category', DatasetType:'Dataset Type', Status:'Status'}
+    const tableContext = useRef(null)
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
@@ -200,6 +203,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     const getTableColumns = (columnsToHide) => {
         let cols;
         if (checkFilterType(filters) === false) {
+            tableContext.current = 'default'
             cols = defaultColumns({});
             for (let colKey of Object.keys(defaultHiddenColumns)) {
                 reusableColumns[colKey].omit = true
@@ -209,26 +213,28 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             let typeIndex = 0;
             cols = filters.map((filter, index) => {
                 let columns = []
+                tableContext.current = filter.values[0]
                 if (filter.field === 'entity_type') {
                     typeIndex = index
                     const hasOneEntity = filter.values.length === 1
                     const entityType = filter.values[0]
                     let includeLabIdCol = true
                     let includeGroupCol = true
-                    if (hasOneEntity && equals(entityType, cache.entities.source)) {
+                    if (hasOneEntity && eq(entityType, cache.entities.source)) {
                         columns = sourceColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.sample)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.sample)) {
                         columns = sampleColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.dataset)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.dataset)) {
                         columns = datasetColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.upload)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.upload)) {
                         includeLabIdCol = false
                         columns = uploadColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.collection)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.collection)) {
                         includeLabIdCol = false
                         includeGroupCol = false
                         columns = collectionColumns
                     } else {
+                        tableContext.current = 'multi'
                         log.debug('Table Results', hasMultipleEntityTypes)
                     }
                     return defaultColumns({hasMultipleEntityTypes, columns, includeLabIdCol, includeGroupCol});
@@ -243,6 +249,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                col.omit = columnsToHide[col.name] || false
             }
         }
+        matchArrayOrder(parseJson(localStorage.getItem(COLS_ORDER_KEY(`entities.${tableContext.current}`))), cols)
         currentColumns.current = cols;
         return cols;
     }
@@ -258,6 +265,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         <>
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
+                    searchContext={`entities.${tableContext.current}`}
                     defaultHiddenColumns={Object.values(defaultHiddenColumns)}
                     getTableColumns={getTableColumns}
                 />

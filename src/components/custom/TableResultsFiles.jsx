@@ -4,7 +4,7 @@ import {
     autoBlobDownloader,
     checkFilterType,
     checkMultipleFilterType, formatByteSize, getEntityViewUrl,
-    getUBKGFullName,
+    getUBKGFullName, matchArrayOrder,
 } from './js/functions'
 import BulkExport, {getCheckAll, getCheckboxes, handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
@@ -20,7 +20,8 @@ import {Chip} from "@mui/material";
 import SenNetPopover from "../SenNetPopover";
 import AppModal from "../AppModal";
 import FileTreeView from "./entities/dataset/FileTreeView";
-import {FILE_KEY_SEPARATOR} from "../../config/config";
+import {COLS_ORDER_KEY, FILE_KEY_SEPARATOR} from "../../config/config";
+import {parseJson} from "../../lib/services";
 
 const downloadSizeAttr = 'data-download-size'
 export const clearDownloadSizeLabel = () => {
@@ -42,6 +43,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const currentDatasetUuid = useRef(null)
     const selectedFilesModal = useRef({})
     const hiddenColumns = useRef(null)
+    const tableContext = useRef(null)
 
     useEffect(() => {
         const totalFileCount = rawResponse.records.files.length
@@ -279,6 +281,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const getTableColumns = (columnsToHide) => {
         let cols;
         if (checkFilterType(filters, fileTypeField) === false) {
+            tableContext.current = 'default'
             cols = defaultColumns({});
         } else {
             let typeIndex = 0;
@@ -286,7 +289,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 let columns = []
                 if (filter.field === fileTypeField) {
                     typeIndex = index
-
+                    tableContext.current = filter.values[0]
                     return defaultColumns({hasMultipleFileTypes: hasMultipleFileTypes, columns});
                 }
             })
@@ -300,6 +303,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
             }
         }
 
+        matchArrayOrder(parseJson(localStorage.getItem(COLS_ORDER_KEY(`files.${tableContext.current}`))), cols)
         currentColumns.current = cols;
         return cols;
     }
@@ -320,6 +324,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 <br /><small className={'text-muted'}>Note: For transferring data to the local machine, the <a href={'https://www.globus.org/globus-connect-personal'} target='_blank' className={'lnk--ic'}>Globus Connect Personal (GCP)<BoxArrowUpRight/></a> endpoint must also be up and running.</small>
                 </> />
                 <ResultsBlock
+                    searchContext={`files.${tableContext.current}`}
                     tableClassName={'rdt_Results--Files'}
                     getTableColumns={getTableColumns}
                 />

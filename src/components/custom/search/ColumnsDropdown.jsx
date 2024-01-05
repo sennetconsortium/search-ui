@@ -3,11 +3,12 @@ import PropTypes from 'prop-types'
 import Select from 'react-select'
 import $ from 'jquery'
 import {parseJson} from "../../../lib/services";
+import {COLS_ORDER_KEY} from "../../../config/config";
 
 
-function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, defaultHiddenColumns = [] }) {
+function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, searchContext, defaultHiddenColumns = [] }) {
     const multiVals = useRef(null)
-    const STORE_KEY = 'lastHiddenColumns'
+    const STORE_KEY = `${searchContext}.lastHiddenColumns`
 
     const colourStyles = {
         multiValueRemove: (styles, { data }) => ({
@@ -81,7 +82,8 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
         // Have to listen to click from here instead of in handleClearFiltersClick
         // to manage value states of this independent component
         $('body').on('click', clearBtnSelector, () => {
-            localStorage.setItem(STORE_KEY, null)
+            localStorage.removeItem(STORE_KEY)
+            localStorage.removeItem(COLS_ORDER_KEY(searchContext))
             handleDefaultHidden()
         })
 

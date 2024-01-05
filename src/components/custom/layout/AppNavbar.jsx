@@ -3,7 +3,7 @@ import {getDataIngestBoardEndpoint, NAVBAR_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
 import {useContext} from 'react'
 import AppContext from '../../../context/AppContext'
-import {equals} from "../js/functions";
+import {eq} from "../js/functions";
 import {getCookie} from "cookies-next";
 
 const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
@@ -46,7 +46,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
     }
 
     const formatRegisterUrl = (entity, range) => {
-        if (equals(entity, 'upload') || equals(range, 'single')) {
+        if (eq(entity, 'upload') || eq(range, 'single')) {
             return `/edit/${entity}?uuid=register`
         } else {
             return `/edit/bulk/${entity}?action=register`
@@ -92,21 +92,21 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                                     </NavDropdown.Item>
 
                                     <div className={'submenu'} id={`submenu-md-${range}`}>
-                                        {equals(range, 'single') && supportedSingleRegister().map((entity) => (
+                                        {eq(range, 'single') && supportedSingleRegister().map((entity) => (
                                             <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
-                                                {equals(entity, cache.entities.upload) ? 'Data Upload' : _t(entity)}
+                                                {eq(entity, cache.entities.upload) ? 'Data Upload' : _t(entity)}
                                             </NavDropdown.Item>
                                         ))}
 
-                                        {equals(range, 'single') && adminGroup && adminSupportedSingleRegister().map((entity) => (
+                                        {eq(range, 'single') && adminGroup && adminSupportedSingleRegister().map((entity) => (
                                             <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
                                                 {_t(entity)}
                                             </NavDropdown.Item>
                                         ))}
 
-                                        {equals(range, 'bulk') && supportedBulkRegister().map((entity) => (
+                                        {eq(range, 'bulk') && supportedBulkRegister().map((entity) => (
                                             <NavDropdown.Item key={entity} href={formatRegisterUrl(entity, range)}>
-                                                {equals(entity, 'upload') ? 'Data (IDs and Data Files)' : equals(entity, 'dataset') ? 'Data (IDs Only)' : `${entity}s`}
+                                                {eq(entity, 'upload') ? 'Data (IDs and Data Files)' : eq(entity, 'dataset') ? 'Data (IDs Only)' : `${entity}s`}
                                             </NavDropdown.Item>
                                         ))}
                                     </div>

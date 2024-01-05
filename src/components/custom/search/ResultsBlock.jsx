@@ -7,8 +7,10 @@ import {
 } from "@elastic/react-search-ui";
 import TableResultsContext from "../../../context/TableResultsContext";
 import ColumnsDropdown from "./ColumnsDropdown";
+import {eq} from '../js/functions'
+import {COLS_ORDER_KEY} from "../../../config/config";
 
-function ResultsBlock({getTableColumns, disableRowClick, tableClassName, defaultHiddenColumns}) {
+function ResultsBlock({getTableColumns, disableRowClick, tableClassName, defaultHiddenColumns, searchContext}) {
 
     const {
         getTableData,
@@ -41,7 +43,7 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
             <div className='sui-layout-main-header'>
                 <div className='sui-layout-main-header__inner'>
                     <PagingInfo />
-                    {rows.length > 0 && <ColumnsDropdown filters={filters} defaultHiddenColumns={defaultHiddenColumns} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
+                    {rows.length > 0 && <ColumnsDropdown searchContext={searchContext} filters={filters} defaultHiddenColumns={defaultHiddenColumns} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
                                       currentColumns={currentColumns.current} />}
                     <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={rows.length}  />
                 </div>
@@ -50,6 +52,8 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
             {<DataTable key={`results-${new Date().getTime()}`}
                         onColumnOrderChange={cols => {
                             currentColumns.current.current = cols
+                            const headers = cols.map((col) => eq(typeof col.name, 'string') ? col.name : col.id)
+                            localStorage.setItem(COLS_ORDER_KEY(searchContext), JSON.stringify(headers))
                         }}
                         className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''} ${tableClassName}`}
                         columns={getTableColumns(hiddenColumns)}
@@ -70,11 +74,13 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
 }
 
 ResultsBlock.defaultProps = {
-    tableClassName: ''
+    tableClassName: '',
+    searchContext: 'entities'
 }
 
 ResultsBlock.propTypes = {
-    tableClassName: PropTypes.string
+    tableClassName: PropTypes.string,
+    searchContext: PropTypes.string
 }
 
 export default ResultsBlock

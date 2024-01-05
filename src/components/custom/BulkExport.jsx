@@ -3,7 +3,7 @@ import $ from "jquery";
 import Dropdown from 'react-bootstrap/Dropdown'
 import PropTypes from "prop-types";
 import SenNetPopover from "../SenNetPopover";
-import {autoBlobDownloader, equals} from "./js/functions";
+import {autoBlobDownloader, eq} from "./js/functions";
 
 export const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
 
@@ -86,7 +86,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
     const findExportColumn = () => {
         let _columns = columns.current
         for (let i = 0; i < _columns.length; i++) {
-            if (equals(_columns[i].id.toString(), 'bulkExport')) return i
+            if (eq(_columns[i].id.toString(), 'bulkExport')) return i
         }
     }
 
@@ -219,7 +219,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
             json: 'JSON',
             tsv: 'TSV'
         }
-        if (equals(exportKind, 'manifest')) {
+        if (eq(exportKind, 'manifest')) {
             actions = {
                 manifest: 'Manifest TXT'
             }
@@ -234,9 +234,9 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
     }
 
     const popoverText = (fileType) => {
-        if (equals(fileType, 'json')) {
+        if (eq(fileType, 'json')) {
             return <>Exports all properties associated with selected entities in JSON format.</>
-        } else if (equals(fileType, 'tsv')) {
+        } else if (eq(fileType, 'tsv')) {
             return <>Exports search result table information for selected entities in tab-separated values format.</>
         } else {
             return <>Exports to HuBMAP CLT manifest format.</>

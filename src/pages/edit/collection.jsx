@@ -8,7 +8,7 @@ import log from 'loglevel'
 import { update_create_entity} from '../../lib/services'
 import {
     cleanJson,
-    equals,
+    eq,
     fetchEntity, getIdRegEx,
     getRequestHeaders
 } from '../../components/custom/js/functions'
@@ -127,7 +127,7 @@ export default function EditCollection() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (equals(router.query.uuid, 'register')) {
+            if (eq(router.query.uuid, 'register')) {
                 setData(true)
                 setEditMode("Register")
             } else {
@@ -160,7 +160,7 @@ export default function EditCollection() {
                     setErrorMessage(entity["error"])
                 }
             } else {
-                if (equals(entity.entity_type, cache.entities.dataset)) {
+                if (eq(entity.entity_type, cache.entities.dataset)) {
                     newDatasets.push(entity)
                 } else {
                     if (isBulkHandling.current) {
@@ -314,7 +314,7 @@ export default function EditCollection() {
         setCreators(resp)
         let _contacts = []
         for (let creator of resp?.description?.records) {
-            if (equals(creator.is_contact, 'true')) {
+            if (eq(creator.is_contact, 'true')) {
                 _contacts.push(creator)
             }
         }

@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import SenNetPopover from "../../SenNetPopover";
-import {equals} from "../js/functions";
+import {eq} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import Tab from 'react-bootstrap/Tab';
 import Nav from 'react-bootstrap/Nav';
@@ -88,7 +88,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                             {/*We want to reverse the ordering of this array so that the furthest ancestor is on the left*/}
                             {data.ancestors.reverse().map((ancestor, index, array) => {
                                     // The source nav link
-                                    if (equals(ancestor.entity_type, cache.entities.source)) {
+                                    if (eq(ancestor.entity_type, cache.entities.source)) {
                                         if ((ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) ||
                                             (ancestor.metadata && Object.keys(ancestor.metadata).length)) {
                                             return (
@@ -96,14 +96,14 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                             )
                                         }
                                         // the sample nav link
-                                    } else if (equals(ancestor.entity_type, cache.entities.sample)) {
+                                    } else if (eq(ancestor.entity_type, cache.entities.sample)) {
                                         if (ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
                                             return (
                                                 popoverCommon(index, 'sample', ancestor)
                                             )
                                         }
                                         // The dataset nav link
-                                    } else if (equals(ancestor.entity_type, cache.entities.dataset)) {
+                                    } else if (eq(ancestor.entity_type, cache.entities.dataset)) {
                                         if (ancestor.metadata && Object.keys(ancestor.metadata).length && 'metadata' in ancestor.metadata) {
                                             return (
                                                 popoverCommon(index, 'dataset', ancestor)
@@ -125,13 +125,13 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                             {data.ancestors.reverse().map((ancestor, index, array) => {
                                 // Handle human source table
                                 // Human sources have their metadata inside "source_mapped_metadata"
-                                if (equals(ancestor.entity_type, cache.entities.source) && equals(ancestor.source_type, cache.sourceTypes.Human)) {
+                                if (eq(ancestor.entity_type, cache.entities.source) && eq(ancestor.source_type, cache.sourceTypes.Human)) {
                                     if (ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) {
                                         return (
                                             tabPaneCommon('0', index, ancestor, ancestor.source_mapped_metadata)
                                         )
                                     }
-                                } else if (!equals(ancestor.entity_type, cache.entities.dataset) && ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
+                                } else if (!eq(ancestor.entity_type, cache.entities.dataset) && ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
                                     // Handle mouse source and sample table
                                     // Mice sources and all samples have their metadata inside "metadata"
                                     return (
