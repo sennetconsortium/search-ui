@@ -28,25 +28,9 @@ export const DerivedProvider = ({children}) => {
 
     // Load the correct Vitessce view config
     const set_vitessce_config = async (data, dataset_id, dataset_type) => {
-        const config = await fetchVitessceConfiguration(data)
-        setVitessceConfig(config)
-        // const datasetTypes = getDatasetTypes()
-        //
-        // console.log(dataset_type)
-        // switch (dataset_type) {
-        //     case datasetTypes['RNAseq']:
-        //         setVitessceConfig(rna_seq(dataset_id))
-        //         break
-        //     case datasetTypes['Light Sheet']:
-        //     case datasetTypes['CODEX']:
-        //         setVitessceConfig(codex_config(dataset_id))
-        //         break
-        //     case datasetTypes['Visium']:
-        //         setVitessceConfig(kuppe2022nature())
-        //         break
-        //     default:
-        //         console.log(`No Vitessce config found for assay type: ${dataset_type}`)
-        // }
+        fetchVitessceConfiguration(data).then(config => {
+            setVitessceConfig(config)
+        })
     }
 
     const initVitessceConfig = async (data) => {
