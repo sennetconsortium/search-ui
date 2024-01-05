@@ -205,9 +205,11 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         if (checkFilterType(filters) === false) {
             tableContext.current = 'default'
             cols = defaultColumns({});
-            for (let colKey of Object.keys(defaultHiddenColumns)) {
-                reusableColumns[colKey].omit = true
-                cols.push(reusableColumns[colKey])
+            if (!filters || !filters.length) {
+                for (let colKey of Object.keys(defaultHiddenColumns)) {
+                    reusableColumns[colKey].omit = true
+                    cols.push(reusableColumns[colKey])
+                }
             }
         } else {
             let typeIndex = 0;
