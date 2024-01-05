@@ -30,6 +30,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     const [modalTitle, setModalTitle] = useState(null)
     const [modalBody, setModalBody] = useState(null)
     const defaultHiddenColumns = {SourceType:'Type', SampleCategory:'Category', DatasetType:'Dataset Type', Status:'Status'}
+    const tableContext = useRef(null)
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
@@ -202,6 +203,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     const getTableColumns = (columnsToHide) => {
         let cols;
         if (checkFilterType(filters) === false) {
+            tableContext.current = 'default'
             cols = defaultColumns({});
             for (let colKey of Object.keys(defaultHiddenColumns)) {
                 reusableColumns[colKey].omit = true
@@ -211,6 +213,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             let typeIndex = 0;
             cols = filters.map((filter, index) => {
                 let columns = []
+                tableContext.current = filter.values[0]
                 if (filter.field === 'entity_type') {
                     typeIndex = index
                     const hasOneEntity = filter.values.length === 1
@@ -231,6 +234,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                         includeGroupCol = false
                         columns = collectionColumns
                     } else {
+                        tableContext.current = 'multi'
                         log.debug('Table Results', hasMultipleEntityTypes)
                     }
                     return defaultColumns({hasMultipleEntityTypes, columns, includeLabIdCol, includeGroupCol});
@@ -245,7 +249,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                col.omit = columnsToHide[col.name] || false
             }
         }
-        matchArrayOrder(parseJson(localStorage.getItem(COLS_ORDER_KEY('entities'))), cols)
+        matchArrayOrder(parseJson(localStorage.getItem(COLS_ORDER_KEY(`entities.${tableContext.current}`))), cols)
         currentColumns.current = cols;
         return cols;
     }
@@ -261,6 +265,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         <>
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
+                    searchContext={`entities.${tableContext.current}`}
                     defaultHiddenColumns={Object.values(defaultHiddenColumns)}
                     getTableColumns={getTableColumns}
                 />

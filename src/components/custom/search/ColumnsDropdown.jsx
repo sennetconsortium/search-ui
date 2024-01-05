@@ -82,8 +82,8 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
         // Have to listen to click from here instead of in handleClearFiltersClick
         // to manage value states of this independent component
         $('body').on('click', clearBtnSelector, () => {
-            localStorage.setItem(STORE_KEY, null)
-            localStorage.setItem(COLS_ORDER_KEY(searchContext), null)
+            localStorage.removeItem(STORE_KEY)
+            localStorage.removeItem(COLS_ORDER_KEY(searchContext))
             handleDefaultHidden()
         })
 
