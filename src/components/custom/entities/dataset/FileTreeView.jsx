@@ -177,8 +177,8 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                 id="file-search"
                 onSubmit={(e) => e.preventDefault()}
             >
-                <Row className={"mb-4"}>
-                    <Form.Group as={Col} md={6}>
+                <Row className="mb-4">
+                    <Form.Group as={Col} xl={6} lg={12}>
                         <InputGroup>
                             <Form.Control
                                 onChange={(e) => handleFileSearchInputChange(e, filterOptions)}
@@ -197,7 +197,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         </InputGroup>
                     </Form.Group>
 
-                    {showQAButton && <Form.Group as={Col} md={3}>
+                    {showQAButton && <Form.Group as={Col} xl={3} lg={6} className="mt-xl-0 mt-md-2">
                         <ToggleButton
                             className="rounded-0 w-100"
                             id="toggle-check-qa"
@@ -211,7 +211,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         </ToggleButton>
                     </Form.Group> }
 
-                    {showDataProductButton && <Form.Group as={Col} md={3}>
+                    {showDataProductButton && <Form.Group as={Col} xl={3} lg={6} className="mt-xl-0 mt-md-2">
                         <ToggleButton
                             className="rounded-0 w-100"
                             id="toggle-check-data-product"
