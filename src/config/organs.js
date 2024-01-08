@@ -78,7 +78,7 @@ export const organDetails = {
         urlParamName: "lymph-nodes",
     },
     MU: {
-        icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-skin.svg",
+        icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-trachea.svg",
         ruiCode: "MU",
         searchUrl: organSearchUrl("MU"),
         urlParamName: "muscle",
@@ -112,5 +112,29 @@ export const organDetails = {
         ruiCode: "SK",
         searchUrl: organSearchUrl("SK"),
         urlParamName: "skin",
+    },
+    BX: {
+        icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-bone-marrow.svg",
+        ruiCode: "BX",
+        searchUrl: organSearchUrl("BX"),
+        urlParamName: "bone",
+    },
+    TH: {
+        icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-thymus.svg",
+        ruiCode: "TH",
+        searchUrl: organSearchUrl("TH"),
+        urlParamName: "thymus",
+    },
+    HT: {
+        icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-heart.svg",
+        ruiCode: "HT",
+        searchUrl: organSearchUrl("HT"),
+        urlParamName: "heart",
+    },
+    OT: {
+        icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-united.svg",
+        ruiCode: "OT",
+        searchUrl: organSearchUrl("OT"),
+        urlParamName: "other",
     },
 };
