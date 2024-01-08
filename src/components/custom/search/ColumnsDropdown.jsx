@@ -4,11 +4,12 @@ import Select from 'react-select'
 import $ from 'jquery'
 import {parseJson} from "../../../lib/services";
 import {COLS_ORDER_KEY} from "../../../config/config";
+import {deleteFromLocalStorage} from "../js/functions";
 
 
 function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, searchContext, defaultHiddenColumns = [] }) {
     const multiVals = useRef(null)
-    const STORE_KEY = `${searchContext}.lastHiddenColumns`
+    const STORE_KEY = `.lastHiddenColumns`
 
     const colourStyles = {
         multiValueRemove: (styles, { data }) => ({
@@ -23,7 +24,7 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
         if (cols) {
             //Store what the user last did in the event they navigate away from 'no facets selected' search results view
             //Upon return, user doesn't need to reconfigure table until they click Clear Filters
-            localStorage.setItem(STORE_KEY, JSON.stringify(cols))
+            localStorage.setItem(`${searchContext()}${STORE_KEY}`, JSON.stringify(cols))
         }
     }
 
@@ -82,8 +83,8 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
         // Have to listen to click from here instead of in handleClearFiltersClick
         // to manage value states of this independent component
         $('body').on('click', clearBtnSelector, () => {
-            localStorage.removeItem(STORE_KEY)
-            localStorage.removeItem(COLS_ORDER_KEY(searchContext))
+            deleteFromLocalStorage(STORE_KEY)
+            deleteFromLocalStorage(COLS_ORDER_KEY(''))
             handleDefaultHidden()
         })
 
@@ -119,7 +120,8 @@ ColumnsDropdown.propTypes = {
     setHiddenColumns: PropTypes.func.isRequired,
     currentColumns: PropTypes.object,
     filters: PropTypes.array,
-    defaultHiddenColumns: PropTypes.array
+    defaultHiddenColumns: PropTypes.array,
+    searchContext: PropTypes.func
 }
 
 export default ColumnsDropdown

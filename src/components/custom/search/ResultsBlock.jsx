@@ -53,7 +53,7 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
                         onColumnOrderChange={cols => {
                             currentColumns.current.current = cols
                             const headers = cols.map((col) => eq(typeof col.name, 'string') ? col.name : col.id)
-                            localStorage.setItem(COLS_ORDER_KEY(searchContext), JSON.stringify(headers))
+                            localStorage.setItem(COLS_ORDER_KEY(searchContext()), JSON.stringify(headers))
                         }}
                         className={`rdt_Results ${!inModal ? 'rdt_Results--hascheckboxes' : ''} ${tableClassName}`}
                         columns={getTableColumns(hiddenColumns)}
@@ -75,12 +75,15 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
 
 ResultsBlock.defaultProps = {
     tableClassName: '',
-    searchContext: 'entities'
+    defaultHiddenColumns: []
 }
 
 ResultsBlock.propTypes = {
+    getTableColumns: PropTypes.func.isRequired,
+    disableRowClick: PropTypes.bool,
     tableClassName: PropTypes.string,
-    searchContext: PropTypes.string
+    defaultHiddenColumns: PropTypes.array,
+    searchContext: PropTypes.func
 }
 
 export default ResultsBlock
