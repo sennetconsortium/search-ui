@@ -3,7 +3,7 @@ import {useRouter} from 'next/router';
 import {Alert, Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {cleanJson, equals, getRequestHeaders, getStatusColor} from "../../components/custom/js/functions";
+import {cleanJson, eq, getRequestHeaders, getStatusColor} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {update_create_dataset} from "../../lib/services";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
@@ -92,7 +92,7 @@ function EditUpload() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (equals(router.query.uuid, 'register')) {
+            if (eq(router.query.uuid, 'register')) {
                 setData(true)
                 setEditMode("Register")
             } else {
@@ -272,7 +272,7 @@ function EditUpload() {
                                             {getCancelBtn('upload')}
 
 
-                                            {!equals(data['status'], 'Processing') && !equals(data['status'], 'Reorganized') &&
+                                            {!eq(data['status'], 'Processing') && !eq(data['status'], 'Reorganized') &&
                                                 <SenNetPopover text={<>Save changes to this <code>Upload</code>.</>}
                                                                className={'save-button'}>
                                                     <Button variant="outline-primary rounded-0 js-btn--save"
@@ -284,7 +284,7 @@ function EditUpload() {
                                                 </SenNetPopover>
                                             }
 
-                                            {!equals(data['status'], 'Processing') && isEditMode() && (equals(data['status'], 'New') || equals(data['status'], 'Valid')) &&
+                                            {!eq(data['status'], 'Processing') && isEditMode() && (eq(data['status'], 'New') || eq(data['status'], 'Valid')) &&
                                                 <SenNetPopover
                                                     text={<>Mark this <code>Upload</code> as "Submitted" and ready for
                                                         reorganizing.</>} className={'submit-dataset'}>
@@ -305,7 +305,7 @@ function EditUpload() {
                                                 </SenNetPopover>
                                             }
 
-                                            {adminGroup && isEditMode() && !(equals(data['status'], 'Processing') || equals(data['status'], 'Reorganized')) &&
+                                            {adminGroup && isEditMode() && !(eq(data['status'], 'Processing') || eq(data['status'], 'Reorganized')) &&
                                                 <SenNetPopover
                                                     text={<>Validate upload.
                                                     </>}
@@ -324,7 +324,7 @@ function EditUpload() {
                                                         onClick={handleValidate} disableSubmit={disableSubmit}/>
                                                 </SenNetPopover>}
 
-                                            {!equals(data['status'], 'Processing') && adminGroup && isEditMode() && (equals(data['status'], 'Valid') || equals(data['status'], 'Submitted')) &&
+                                            {!eq(data['status'], 'Processing') && adminGroup && isEditMode() && (eq(data['status'], 'Valid') || eq(data['status'], 'Submitted')) &&
                                                 <SenNetPopover
                                                     text={<>Reorganize this <code>Upload</code>.
                                                     </>}
@@ -343,7 +343,7 @@ function EditUpload() {
                                                         onClick={handleReorganize} disableSubmit={disableSubmit}/>
                                                 </SenNetPopover>}
 
-                                            {!equals(data['status'], 'Processing') && adminGroup && isEditMode() && (equals(data['status'], 'Error') || equals(data['status'], 'Invalid') || equals(data['status'], 'Submitted')) &&
+                                            {!eq(data['status'], 'Processing') && adminGroup && isEditMode() && (eq(data['status'], 'Error') || eq(data['status'], 'Invalid') || eq(data['status'], 'Submitted')) &&
                                                 <SenNetPopover
                                                     text={<>Revert this <code>Upload</code> back to <span
                                                         className={`${getStatusColor('New')} badge`}>New</span> or <span

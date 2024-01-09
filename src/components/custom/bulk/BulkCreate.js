@@ -21,7 +21,7 @@ import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
 import {tableColumns, getErrorList} from "../edit/AttributesUpload";
 import DataTable from 'react-data-table-component';
-import {createDownloadUrl, equals} from "../js/functions";
+import {createDownloadUrl, eq} from "../js/functions";
 import AppContext from "../../../context/AppContext";
 import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
 import SenNetAlert from "../../SenNetAlert";
@@ -364,8 +364,8 @@ export default function BulkCreate({
 
             for (let row of data) {
                 for (let col of columns) {
-                    _colName = equals(col.name, 'lab_id') ? labIdCol : col.name
-                    _colName = equals(col.name, 'organ_type') ? 'organ' : _colName
+                    _colName = eq(col.name, 'lab_id') ? labIdCol : col.name
+                    _colName = eq(col.name, 'organ_type') ? 'organ' : _colName
                     colVal = row[_colName] ? row[_colName] : ''
                     tableDataTSV += `${colVal}\t`
                 }
@@ -381,10 +381,10 @@ export default function BulkCreate({
     function getColNames() {
         let typeCol;
         let labIdCol
-        if (equals(entityType, cache.entities.source)) {
+        if (eq(entityType, cache.entities.source)) {
             typeCol = 'source_type'
             labIdCol = 'lab_source_id'
-        } else if (equals(entityType, cache.entities.sample)) {
+        } else if (eq(entityType, cache.entities.sample)) {
             typeCol = 'sample_category'
             labIdCol = 'lab_tissue_sample_id'
         } else {
@@ -425,7 +425,7 @@ export default function BulkCreate({
 
         let columns = getDefaultModalTableCols()
 
-        if (equals(entityType, cache.entities.sample)) {
+        if (eq(entityType, cache.entities.sample)) {
             columns.push({
                 name: 'organ_type',
                 selector: row => row.organ ? row.organ : '',
@@ -536,7 +536,7 @@ export default function BulkCreate({
         return lowercase ? verb.toLowerCase() : verb
     }
 
-    const isMouse = () => equals(subType, cache.sourceTypes.Mouse)
+    const isMouse = () => eq(subType, cache.sourceTypes.Mouse)
 
     const getTitle = () => {
         const entity = cache.entities[entityType]
@@ -600,7 +600,7 @@ export default function BulkCreate({
                                       submissions.</>}
                                      icon={<ExclamationTriangleFill/>}/>
 
-                    {equals(entityType, cache.entities.dataset) &&
+                    {eq(entityType, cache.entities.dataset) &&
                         <SenNetAlert variant={'warning'}
                                      text={<>This page is intended for registering datasets in bulk. This process will
                                          yield individual SenNet IDs and Globus locations per dataset. Data providers

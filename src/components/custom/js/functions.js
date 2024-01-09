@@ -1,4 +1,4 @@
-import {getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
+import {COLS_ORDER_KEY, getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
 import {APP_ROUTES} from "../../../config/constants";
 import log from "loglevel";
 import fetchJsonp from "fetch-jsonp";
@@ -363,7 +363,7 @@ export function urlify(text, blank = true, max = 40) {
     })
 }
 
-export function equals(s1, s2, insensitive = true) {
+export function eq(s1, s2, insensitive = true) {
     let res = s1 === s2
     if (insensitive && s1 !== undefined && s2 !== undefined) {
         res = s1.toLowerCase() === s2.toLowerCase()
@@ -408,3 +408,36 @@ export const flipObj = (obj) => {
     }, {})
 }
 
+export const matchArrayOrder = (ordering, data, key1 = 'name', key2 = 'id') => {
+    if (!ordering) return data
+    let map = {}
+    let val
+    let result = []
+    if (Array.isArray(data)) {
+        for (let i=0; i < data.length; i++) {
+            val = eq(typeof data[i][key1], 'string') ? data[i][key1] : data[i][key2]
+            map[val] = i
+        }
+    } else {
+        map = data
+    }
+
+    if (Object.keys(map).length !== ordering.length) return data
+    let index, item
+    for (let i = 0; i < ordering.length; i++) {
+        index = map[ordering[i]]
+        item = data[index]
+        result.push(data[index])
+
+    }
+    return result
+}
+
+
+export const deleteFromLocalStorage = (needle, fn = 'endsWith') => {
+    Object.keys(localStorage)
+        .filter(x =>
+            x[fn](needle))
+        .forEach(x =>
+            localStorage.removeItem(x))
+}

@@ -9,7 +9,7 @@ import DataTable from 'react-data-table-component';
 import $ from 'jquery'
 import { get_auth_header } from "../../../lib/services";
 import SenNetPopover, {SenPopoverOptions} from "../../SenNetPopover";
-import {equals, urlify} from "../js/functions";
+import {eq, urlify} from "../js/functions";
 
 const handleErrorRow = (row) => {
     let err = row.error
@@ -210,7 +210,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
     }
 
     const getTooltip = () => {
-        if (equals(attribute, 'metadata')) {
+        if (eq(attribute, 'metadata')) {
             return <span>Click here to upload and validate your <code>{entity}</code> metadata TSV file for submission.<br />
                             <small className='popover-note text-muted'>For example TSV schemas, please see the <a href={getSchemaUrl()}>docs</a>.</small></span>
         } else {

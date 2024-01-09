@@ -4,7 +4,7 @@ import {
     autoBlobDownloader,
     checkFilterType,
     checkMultipleFilterType, formatByteSize, getEntityViewUrl,
-    getUBKGFullName,
+    getUBKGFullName, matchArrayOrder,
 } from './js/functions'
 import BulkExport, {getCheckAll, getCheckboxes, handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
@@ -20,7 +20,8 @@ import {Chip} from "@mui/material";
 import SenNetPopover from "../SenNetPopover";
 import AppModal from "../AppModal";
 import FileTreeView from "./entities/dataset/FileTreeView";
-import {FILE_KEY_SEPARATOR} from "../../config/config";
+import {COLS_ORDER_KEY, FILE_KEY_SEPARATOR} from "../../config/config";
+import {parseJson} from "../../lib/services";
 
 const downloadSizeAttr = 'data-download-size'
 export const clearDownloadSizeLabel = () => {
@@ -41,6 +42,8 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     const [showModalDownloadBtn, setShowModalDownloadBtn] = useState(false)
     const currentDatasetUuid = useRef(null)
     const selectedFilesModal = useRef({})
+    const hiddenColumns = useRef(null)
+    const tableContext = useRef(null)
 
     useEffect(() => {
         const totalFileCount = rawResponse.records.files.length
@@ -173,8 +176,9 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         let cols = []
         if (!inModal) {
             cols.push({
+                id: 'bulkExport',
                 ignoreRowClick: true,
-                name: <BulkExport onCheckAll={onCheckAll} data={results} raw={raw} columns={currentColumns} exportKind={'manifest'} />,
+                name: <BulkExport onCheckAll={onCheckAll} data={results} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} exportKind={'manifest'} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => row.id,
@@ -189,6 +193,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 width: '200px',
                 selector: row => raw(row.dataset_sennet_id),
                 sortable: true,
+                reorder: true,
                 format: column => inModal ? raw(column.dataset_sennet_id) : <span data-field='dataset_sennet_id'><a href={getHotLink(column)}>{raw(column.dataset_sennet_id)}</a> <ClipboardCopy text={raw(column.dataset_sennet_id)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
             }
         )
@@ -199,6 +204,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 minWidth: '50%',
                 selector: row => raw(row.description),
                 sortable: true,
+                reorder: true,
                 format: (row) => {
                     let paths = []
                     let i = 0
@@ -237,6 +243,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     }
                 },
                 sortable: true,
+                reorder: true,
             }
         )
 
@@ -251,6 +258,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     }
                 },
                 sortable: true,
+                reorder: true,
             }
         )
 
@@ -259,6 +267,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 name: 'Size',
                 selector: row => raw(row.size),
                 sortable: true,
+                reorder: true,
                 format: row => <span>{formatByteSize(raw(row.size))}</span>
             }
         )
@@ -269,9 +278,10 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     }
 
 
-    const getTableColumns = () => {
+    const getTableColumns = (columnsToHide) => {
         let cols;
         if (checkFilterType(filters, fileTypeField) === false) {
+            tableContext.current = 'default'
             cols = defaultColumns({});
         } else {
             let typeIndex = 0;
@@ -279,12 +289,21 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                 let columns = []
                 if (filter.field === fileTypeField) {
                     typeIndex = index
-
+                    tableContext.current = filter.values[0]
                     return defaultColumns({hasMultipleFileTypes: hasMultipleFileTypes, columns});
                 }
             })
             cols = cols[typeIndex]
         }
+
+        if (columnsToHide) {
+            hiddenColumns.current = columnsToHide
+            for (let col of cols) {
+                col.omit = columnsToHide[col.name]
+            }
+        }
+
+        matchArrayOrder(parseJson(localStorage.getItem(COLS_ORDER_KEY(`files.${tableContext.current}`))), cols)
         currentColumns.current = cols;
         return cols;
     }
@@ -298,13 +317,14 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
 
     return (
         <>
-            <TableResultsProvider getId={getId} rows={results} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
+            <TableResultsProvider columnsRef={currentColumns} getId={getId} rows={results} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <SenNetAlert variant={'warning'} className="clt-alert"
                              text=<>In order to download the files that are included in the manifest file,&nbsp;
                     <a href="https://github.com/x-atlas-consortia/clt" target='_blank' className={'lnk--ic'}>install <BoxArrowUpRight/></a> the CLT and <a href="https://docs.sennetconsortium.org/libraries/clt/">follow the instructions</a> for how to use it with the manifest file.
                 <br /><small className={'text-muted'}>Note: For transferring data to the local machine, the <a href={'https://www.globus.org/globus-connect-personal'} target='_blank' className={'lnk--ic'}>Globus Connect Personal (GCP)<BoxArrowUpRight/></a> endpoint must also be up and running.</small>
                 </> />
                 <ResultsBlock
+                    searchContext={`files.${tableContext.current}`}
                     tableClassName={'rdt_Results--Files'}
                     getTableColumns={getTableColumns}
                 />

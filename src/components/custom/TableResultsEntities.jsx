@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import {
     checkFilterType,
     checkMultipleFilterType,
-    displayBodyHeader, equals, getEntityViewUrl, getUBKGFullName,
-    getStatusColor, getStatusDefinition
+    displayBodyHeader, eq, getEntityViewUrl, getUBKGFullName,
+    getStatusColor, getStatusDefinition, matchArrayOrder
 } from './js/functions'
 import AppContext from "../../context/AppContext"
 import log from 'loglevel'
@@ -17,15 +17,20 @@ import SenNetPopover from "../SenNetPopover";
 import {Chip} from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import AppModal from "../AppModal";
+import {parseJson} from "../../lib/services";
+import {COLS_ORDER_KEY} from "../../config/config";
 
 function TableResultsEntities({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
 
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
     const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
     const currentColumns = useRef([])
+    const hiddenColumns = useRef(null)
     const [showModal, setShowModal] = useState(false)
     const [modalTitle, setModalTitle] = useState(null)
     const [modalBody, setModalBody] = useState(null)
+    const defaultHiddenColumns = {SourceType:'Type', SampleCategory:'Category', DatasetType:'Dataset Type', Status:'Status'}
+    const tableContext = useRef(null)
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
 
@@ -43,8 +48,9 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         let cols = []
         if (!inModal) {
             cols.push({
+                id: 'bulkExport',
                 ignoreRowClick: true,
-                name: <BulkExport data={children} raw={raw} columns={currentColumns} />,
+                name: <BulkExport data={children} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => raw(row.sennet_id),
@@ -58,6 +64,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 name: 'SenNet ID',
                 selector: row => raw(row.sennet_id),
                 sortable: true,
+                reorder: true,
                 format: column => inModal ? raw(column.sennet_id) : <span data-field='sennet_id'><a href={getHotLink(column)}>{raw(column.sennet_id)}</a> <ClipboardCopy text={raw(column.sennet_id)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
             },
         )
@@ -66,6 +73,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 name: 'Entity Type',
                 selector: row => raw(row.entity_type),
                 sortable: true,
+                reorder: true,
                 format: row => <span data-field='entity_type'>{raw(row.entity_type)}</span>,
             })
         }
@@ -77,6 +85,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 },
                 format: row => <span data-field='lab_id'>{raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)}</span>,
                 sortable: true,
+                reorder: true,
             })
         }
         cols = cols.concat(columns)
@@ -85,6 +94,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 name: 'Group',
                 selector: row => raw(row.group_name),
                 sortable: true,
+                reorder: true,
                 format: row => <span data-field='group_name'>{getGroupName({group_name: raw(row.group_name), group_uuid: raw(row.group_uuid)})}</span>,
             })
         }
@@ -92,29 +102,33 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         return cols;
     }
 
-    const sourceColumns = [
-        {
-            name: 'Type',
-            selector: row => raw(row.source_type),
+    const reusableColumns = {
+        Status:  {
+            name: 'Status',
+            selector: row => raw(row.status),
+            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
             sortable: true,
-        }
-    ]
-
-    const sampleColumns = [
-        {
-            name: 'Category',
-            selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
-            sortable: true,
+            reorder: true,
         },
-        {
+        Organ: {
             name: 'Organ',
             selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
-        }
-    ]
-
-    const datasetColumns = [
-        {
+            reorder: true,
+        },
+        SourceType: {
+            name: 'Type',
+            selector: row => raw(row.source_type),
+            sortable: true,
+            reorder: true,
+        },
+        SampleCategory: {
+            name: 'Category',
+            selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : null,
+            sortable: true,
+            reorder: true,
+        },
+        DatasetType: {
             name: 'Dataset Type',
             selector: row => {
                 let val = raw(row.dataset_type)
@@ -123,18 +137,23 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 }
             },
             sortable: true,
+            reorder: true,
         },
-        {
-            name: 'Organ',
-            selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
-            sortable: true,
-        },
-        {
-            name: 'Status',
-            selector: row => raw(row.status),
-            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
-            sortable: true
-        }
+    }
+
+    const sourceColumns = [
+        reusableColumns.SourceType
+    ]
+
+    const sampleColumns = [
+        reusableColumns.SampleCategory,
+        reusableColumns.Organ
+    ]
+
+    const datasetColumns = [
+        reusableColumns.DatasetType,
+        reusableColumns.Organ,
+        reusableColumns.Status
     ]
 
     const uploadColumns = [
@@ -142,11 +161,13 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             name: 'Title',
             selector: row => raw(row.title),
             sortable: true,
+            reorder: true,
         },
         {
             name: 'Description',
             selector: row => raw(row.description),
             sortable: true,
+            reorder: true,
             format: (row) => {
                 const max = 100
                 const desc = raw(row.description)
@@ -161,12 +182,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 </div>)
             }
         },
-        {
-            name: 'Status',
-            selector: row => raw(row.status),
-            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
-            sortable: true
-        }
+        reusableColumns.Status
     ]
 
     const collectionColumns = [
@@ -174,18 +190,27 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             name: 'Title',
             selector: row => raw(row.title),
             sortable: true,
+            reorder: true,
         },
         {
             name: 'Description',
             selector: row => raw(row.description),
             sortable: true,
+            reorder: true,
         }
     ]
 
-    const getTableColumns = () => {
+    const getTableColumns = (columnsToHide) => {
         let cols;
         if (checkFilterType(filters) === false) {
+            tableContext.current = 'default'
             cols = defaultColumns({});
+            if (!filters || !filters.length) {
+                for (let colKey of Object.keys(defaultHiddenColumns)) {
+                    reusableColumns[colKey].omit = true
+                    cols.push(reusableColumns[colKey])
+                }
+            }
         } else {
             let typeIndex = 0;
             cols = filters.map((filter, index) => {
@@ -196,20 +221,22 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                     const entityType = filter.values[0]
                     let includeLabIdCol = true
                     let includeGroupCol = true
-                    if (hasOneEntity && equals(entityType, cache.entities.source)) {
+                    tableContext.current = entityType
+                    if (hasOneEntity && eq(entityType, cache.entities.source)) {
                         columns = sourceColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.sample)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.sample)) {
                         columns = sampleColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.dataset)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.dataset)) {
                         columns = datasetColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.upload)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.upload)) {
                         includeLabIdCol = false
                         columns = uploadColumns
-                    } else if (hasOneEntity && equals(entityType, cache.entities.collection)) {
+                    } else if (hasOneEntity && eq(entityType, cache.entities.collection)) {
                         includeLabIdCol = false
                         includeGroupCol = false
                         columns = collectionColumns
                     } else {
+                        tableContext.current = 'multi'
                         log.debug('Table Results', hasMultipleEntityTypes)
                     }
                     return defaultColumns({hasMultipleEntityTypes, columns, includeLabIdCol, includeGroupCol});
@@ -217,6 +244,14 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             })
             cols = cols[typeIndex]
         }
+
+        if (columnsToHide) {
+            hiddenColumns.current = columnsToHide
+            for (let col of cols) {
+               col.omit = columnsToHide[col.name] || false
+            }
+        }
+        cols = matchArrayOrder(parseJson(localStorage.getItem(COLS_ORDER_KEY(`entities.${tableContext.current}`))), cols)
         currentColumns.current = cols;
         return cols;
     }
@@ -228,10 +263,14 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     // Prepare opsDict
     getOptions(children.length)
 
+    const getSearchContext = () => `entities.${tableContext.current}`
+
     return (
         <>
-            <TableResultsProvider getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
+            <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
+                    searchContext={getSearchContext}
+                    defaultHiddenColumns={Object.values(defaultHiddenColumns)}
                     getTableColumns={getTableColumns}
                 />
                 <AppModal

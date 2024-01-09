@@ -3,7 +3,7 @@ import $ from "jquery";
 import Dropdown from 'react-bootstrap/Dropdown'
 import PropTypes from "prop-types";
 import SenNetPopover from "../SenNetPopover";
-import {autoBlobDownloader, equals} from "./js/functions";
+import {autoBlobDownloader, eq} from "./js/functions";
 
 export const getCheckboxes = () => $('.rdt_TableBody [type=checkbox]')
 
@@ -51,7 +51,7 @@ export const handleCheckAll = (setTotalSelected) => {
     getCheckAll().prop('checked', false)
 }
 
-function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst = 'uuid' }) {
+function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns, replaceFirst = 'uuid' }) {
 
     const [totalSelected, setTotalSelected] = useState(0)
 
@@ -83,10 +83,18 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
         }
     }
 
+    const findExportColumn = () => {
+        let _columns = columns.current
+        for (let i = 0; i < _columns.length; i++) {
+            if (eq(_columns[i].id.toString(), 'bulkExport')) return i
+        }
+    }
+
     const generateTSVData = (selected, isAll) => {
         let _columns = columns.current
         if (replaceFirst) {
-            _columns[0] = {
+            const index = findExportColumn() || 0
+            _columns[index] = {
                 name: replaceFirst.toUpperCase(),
                 selector: row => raw(row[replaceFirst]),
                 sortable: true,
@@ -96,7 +104,9 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
         let tableDataTSV = ''
         let _colName
         for (let col of _columns) {
-            tableDataTSV += `${col.name}\t`
+            if (!col.omit) {
+                tableDataTSV += `${col.name}\t`
+            }
         }
         tableDataTSV += "\n"
         let colVal;
@@ -109,10 +119,12 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
                 let id = raw(item.props.result.uuid)
                 if (isAll || selected[id]) {
                     for (let col of _columns) {
-                        row = item.props.result
-                        _colName = col.name
-                        colVal = col.selector(row) ? col.selector(row) : ''
-                        tableDataTSV += `${colVal}\t`
+                        if (!col.omit) {
+                            row = item.props.result
+                            _colName = col.name
+                            colVal = col.selector(row) ? col.selector(row) : ''
+                            tableDataTSV += `${colVal}\t`
+                        }
                     }
                     tableDataTSV += "\n"
                 }
@@ -207,19 +219,24 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, replaceFirst =
             json: 'JSON',
             tsv: 'TSV'
         }
-        if (equals(exportKind, 'manifest')) {
+        if (eq(exportKind, 'manifest')) {
             actions = {
                 manifest: 'Manifest TXT'
             }
+        }
+
+        // Disable json action output for now if there are hidden columns
+        if (hiddenColumns.current && Object.keys(hiddenColumns.current).length) {
+            delete actions['json']
         }
 
         return actions
     }
 
     const popoverText = (fileType) => {
-        if (equals(fileType, 'json')) {
+        if (eq(fileType, 'json')) {
             return <>Exports all properties associated with selected entities in JSON format.</>
-        } else if (equals(fileType, 'tsv')) {
+        } else if (eq(fileType, 'tsv')) {
             return <>Exports search result table information for selected entities in tab-separated values format.</>
         } else {
             return <>Exports to HuBMAP CLT manifest format.</>

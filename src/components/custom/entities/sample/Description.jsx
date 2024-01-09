@@ -3,7 +3,7 @@ import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import AppContext from "../../../../context/AppContext";
-import {equals, formatCitation} from "../../js/functions";
+import {eq, formatCitation} from "../../js/functions";
 import {BoxArrowUpRight, QuestionCircleFill} from "react-bootstrap-icons";
 import {InfoRounded} from "@mui/icons-material";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
@@ -18,7 +18,7 @@ export default function Description({data, doiData, labId, primaryDateTitle, pri
                 {data && data?.description &&
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
-                            <Card.Subtitle>{(equals(data.entity_type, cache.entities.upload) || equals(data.entity_type, 'Collection')) ? 'Description' : 'DOI Abstract'}</Card.Subtitle>
+                            <Card.Subtitle>{(eq(data.entity_type, cache.entities.upload) || eq(data.entity_type, 'Collection')) ? 'Description' : 'DOI Abstract'}</Card.Subtitle>
                             <Card.Text>{data.description}</Card.Text>
                         </Card.Body>
                     </Card>
@@ -39,7 +39,7 @@ export default function Description({data, doiData, labId, primaryDateTitle, pri
                     {isLoggedIn() && data && labId &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
-                                <Card.Subtitle>{equals(data.entity_type, cache.entities.upload) ? 'Title': 'Lab ID'}</Card.Subtitle>
+                                <Card.Subtitle>{eq(data.entity_type, cache.entities.upload) ? 'Title': 'Lab ID'}</Card.Subtitle>
                                 <Card.Text>{labId}</Card.Text>
                             </Card.Body>
                         </Card>

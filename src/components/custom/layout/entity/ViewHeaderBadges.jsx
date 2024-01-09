@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import {displayBodyHeader, equals, getStatusColor, getStatusDefinition, getUBKGFullName} from "../../js/functions";
+import {displayBodyHeader, eq, getStatusColor, getStatusDefinition, getUBKGFullName} from "../../js/functions";
 import React, {Fragment, useContext} from "react";
 import AppContext from "../../../../context/AppContext";
 import SenNetPopover from "../../../SenNetPopover";
@@ -25,7 +25,7 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                            href={`/${data.entity_type.toLowerCase()}?uuid=${data.uuid}`}>{displayBodyHeader(data.sennet_id)}</a>
                     </h5>
 
-                    {!equals(data.entity_type, cache.entities.dataset) ? (
+                    {!eq(data.entity_type, cache.entities.dataset) ? (
                         <Fragment>
                             <h5 className={"title_badge"}>
                                 <span className="badge bg-secondary ms-2">

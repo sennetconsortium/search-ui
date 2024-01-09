@@ -3,7 +3,7 @@ import {useRouter} from 'next/router';
 import {Button, Form} from 'react-bootstrap';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {cleanJson, equals, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
+import {cleanJson, eq, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {update_create_entity} from "../../lib/services";
 import SourceType from "../../components/custom/edit/source/SourceType";
@@ -98,7 +98,7 @@ function EditSource() {
         }
 
         if (router.query.hasOwnProperty("uuid")) {
-            if (equals(router.query.uuid, 'register')) {
+            if (eq(router.query.uuid, 'register')) {
                 setData(true)
                 setEditMode("Register")
             } else {
@@ -161,13 +161,13 @@ function EditSource() {
 
     const curatorHandledMetadata = () => {
         // TODO: check about Human Organoid
-        return equals(values.source_type, cache.sourceTypes.Human)
+        return eq(values.source_type, cache.sourceTypes.Human)
     }
 
     const metadataNote = () => {
         let text = []
 
-        const notEq = !equals(data.source_type, values.source_type)
+        const notEq = !eq(data.source_type, values.source_type)
         const className = values.metadata ? 'mt-2 d-block' : ''
         const curatorMessage = <span key={'md-curator'} className={className}><code>{values.source_type} Source</code> metadata must be sent through the <a href={`mailto:help@sennetconsortium.org`}>curator</a>. <br /></span>
         const noSupportMessage = <span key={'md-no-support'} className={className}>This <code>Source</code> type <code>{values.source_type}</code> does not offer metadata submission support.</span>
@@ -281,7 +281,7 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    { values && supportsMetadata() && <AttributesUpload setAttribute={setMetadata} entity={cache.entities.source} subType={equals(values.source_type, cache.sourceTypes.Mouse) ? "murine" :   values.source_type} />}
+                                    { values && supportsMetadata() && <AttributesUpload setAttribute={setMetadata} entity={cache.entities.source} subType={eq(values.source_type, cache.sourceTypes.Mouse) ? "murine" :   values.source_type} />}
                                     <div className={'d-flex flex-row-reverse'}>
                                         {getCancelBtn('source')}
                                         <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}

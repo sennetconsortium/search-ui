@@ -2,7 +2,7 @@ import React, {useContext} from 'react'
 import AppContext from '../../../../context/AppContext'
 import {Button, Stack} from 'react-bootstrap';
 import {FiletypeJson} from 'react-bootstrap-icons';
-import {equals} from "../../js/functions";
+import {eq} from "../../js/functions";
 import PropTypes from 'prop-types'
 import ClipboardCopy from "../../../ClipboardCopy";
 import {ViewHeaderBadges} from "./ViewHeaderBadges";
@@ -30,7 +30,7 @@ const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
                             variant="outline-primary rounded-0"><FiletypeJson/></Button>
                 </SenNetPopover>
 
-                {equals(entity, cache.entities.dataset) && data.multi_revisions && <VersionsDropdown data={data}/>}
+                {eq(entity, cache.entities.dataset) && data.multi_revisions && <VersionsDropdown data={data}/>}
             </Stack>
 
         </div>
