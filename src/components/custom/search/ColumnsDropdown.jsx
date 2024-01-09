@@ -49,7 +49,7 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
         if (!filters || !filters.length) {
             let currentVals = []
             defaultHidden = {}
-            let lastHiddenColumns = parseJson(localStorage.getItem(STORE_KEY))
+            let lastHiddenColumns = parseJson(localStorage.getItem(`${searchContext()}${STORE_KEY}`))
             let isHiddenColumn
             for (let col of defaultHiddenColumns) {
                 isHiddenColumn = lastHiddenColumns ? lastHiddenColumns[col] : true
