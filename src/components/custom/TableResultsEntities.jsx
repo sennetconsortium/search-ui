@@ -32,7 +32,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
     const defaultHiddenColumns = {SourceType:'Type', SampleCategory:'Category', DatasetType:'Dataset Type', Status:'Status'}
     const tableContext = useRef(null)
 
-    const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw : null)
+    const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw || '' : '')
 
     const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid), {})
 
@@ -118,7 +118,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
         },
         SourceType: {
             name: 'Type',
-            selector: row => raw(row.source_type) || '',
+            selector: row => raw(row.source_type),
             sortable: true,
             reorder: true,
         },
@@ -134,6 +134,8 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 let val = raw(row.dataset_type)
                 if (val) {
                     return Array.isArray(val) ? getUBKGFullName(val[0]) : val
+                } else {
+                    return ''
                 }
             },
             sortable: true,
