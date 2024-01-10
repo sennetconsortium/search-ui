@@ -1,6 +1,6 @@
 .rdt {
   &_Results {
-    [data-column-id="2"] {
+    [data-column-id="2"].rdt_TableCol {
       min-width: 185px;
     }
     .MuiChip-sizeSmall {
@@ -49,6 +49,9 @@
       &_Table {
         font-family: var(--bs-font-sans-serif);
         &Body {
+          [data-column-id="2"] {
+            min-width: 185px;
+          }
           [role="cell"] {
             font-size: 14px;
             padding-top: .4rem;
