@@ -9,6 +9,7 @@ import TableResultsContext from "../../../context/TableResultsContext";
 import ColumnsDropdown from "./ColumnsDropdown";
 import {eq} from '../js/functions'
 import {COLS_ORDER_KEY} from "../../../config/config";
+import Spinner from '../Spinner';
 
 function ResultsBlock({getTableColumns, disableRowClick, tableClassName, defaultHiddenColumns, searchContext}) {
 
@@ -29,6 +30,7 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
         handleRowsPerPageChange,
         handleOnRowClicked,
         handlePageChange,
+        isLoading,
     } = useContext(TableResultsContext)
 
     const [hiddenColumns, setHiddenColumns] = useState(null)
@@ -68,7 +70,10 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
                         onRowClicked={!disableRowClick ? handleOnRowClicked : undefined}
                         paginationPerPage={resultsPerPage}
                         paginationRowsPerPageOptions={Object.keys(opsDict)}
-                        pagination/>}
+                        pagination
+                        progressPending={isLoading}
+                        progressComponent={<Spinner />}
+                />}
         </>
     )
 }

@@ -5,11 +5,13 @@ import {RESULTS_PER_PAGE} from "../config/config";
 import {createTheme} from "react-data-table-component";
 import {handlePagingInfo} from "../components/custom/search/ResultsPerPage";
 import log from 'loglevel'
+import SearchUIContext from "search-ui/components/core/SearchUIContext";
 const TableResultsContext = createContext({})
 
 export const TableResultsProvider = ({ columnsRef, children, getHotLink, rows, filters, onRowClicked, forData = false, raw, getId, inModal = false }) => {
 
     const {isLoggedIn, cache} = useContext(AppContext)
+    const {isLoading} = useContext(SearchUIContext)
     const hasLoaded = useRef(false)
     let pageData = []
     const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
@@ -98,7 +100,8 @@ export const TableResultsProvider = ({ columnsRef, children, getHotLink, rows, f
         handleRowsPerPageChange,
         handleOnRowClicked,
         handlePageChange,
-        noResultsMessage
+        noResultsMessage,
+        isLoading,
     }}>
         { children }
     </TableResultsContext.Provider>
