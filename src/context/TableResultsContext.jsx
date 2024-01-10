@@ -10,7 +10,7 @@ const TableResultsContext = createContext({})
 
 export const TableResultsProvider = ({ columnsRef, children, getHotLink, rows, filters, onRowClicked, forData = false, raw, getId, inModal = false }) => {
 
-    const {isLoggedIn, cache} = useContext(AppContext)
+    const {isLoggedIn} = useContext(AppContext)
     const {isLoading} = useContext(SearchUIContext)
     const hasLoaded = useRef(false)
     let pageData = []
