@@ -189,4 +189,6 @@ export function FilterIsSelected(fieldName, value) {
     };
 }
 
-export const COLS_ORDER_KEY = (context) => `${context}.columnsOrder`
+export const STORAGE_KEY = (key = '') => `sn-portal.${key}`
+
+export const COLS_ORDER_KEY = (context = '') => `${context}.columnsOrder`

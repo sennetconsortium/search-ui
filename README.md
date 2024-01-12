@@ -118,3 +118,29 @@ The react component is `src/components/custom/edit/sample/rui/RUIIntegration.js`
 The tool is only available for human `Block` tissue samples with an ancestor of `Organ`
 
 The `Register location` button will display on the edit sample page and launch the CCF-RUI tool.
+
+## Content Management
+### Banner
+Currently, two locations offer adding a banner via the `.env` file without having to rebuild the image. These are:
+```
+NEXT_PUBLIC_BANNER_LOGIN # This is located before the Login section
+NEXT_PUBLIC_BANNER_SEARCH_ENTITIES # Located right before the main search results area
+```
+These environment variables take a json object with the following properties:
+
+| Property                  | Type          | Description                                                                                                         |
+|---------------------------|---------------|---------------------------------------------------------------------------------------------------------------------|
+| **theme**                 | *enum string* | `['info', 'danger', 'warning']`                                                                                     |
+| **title**                 | *html string* | A title for the `Alert`, which is the actual banner. (Going forward we will call this just 'banner'.)               |
+| **content**               | *html string* | The main banner content.                                                                                            |
+| **dismissible**           | *boolean*     | Add a close button to the banner.                                                                                   |
+| **keepDismissed**         | *boolean*     | Keep the banner dismissed on close. The banner will show again on refresh if this is set to `false` or `undefined`. |
+| **className**             | *string*      | A class name for the banner.                                                                                        |
+| **innerClassName**        | *string*      | A class name for inner wrapper of the banner.                                                                       |
+| **outerWrapperClassName** | *string*      | A class name for the div that wraps the banner.                                                                     |
+| **beforeBanner**          | *html string* | Set some content before the banner.                                                                                 |
+| **beforeBannerClassName** | *string*      | Set a class name on div of `beforeBanner`.                                                                          |
+| **afterBanner**           | *html string* | Set some content after the banner.                                                                                  |
+| **afterBannerClassName**  | *string*      | Set a class name on div of `afterBanner`.                                                                           |
+| **sectionClassName**      | *string*      | A class name for the `c-SenNetBanner` section.                                                                      |
+| **ariaLabel**             | *string*      | For accessibility, add a unique label to the `c-AppBanner` section                                                  |
