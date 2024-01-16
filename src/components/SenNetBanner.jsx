@@ -10,7 +10,7 @@ function SenNetBanner({name}) {
     const STORE_KEY = STORAGE_KEY(`banner.${name}.dismissed`)
 
     const handleCloseBanner = () => {
-        if (banner.dismissible) {
+        if (banner?.dismissible) {
             setShowBanner(false)
             if (banner.keepDismissed) {
                 localStorage.setItem(STORE_KEY, true)
@@ -21,7 +21,7 @@ function SenNetBanner({name}) {
     useEffect(() => {
         const _banner = getBanner(name)
         setBanner(_banner)
-        if (_banner.keepDismissed && localStorage.getItem(STORE_KEY)) {
+        if (_banner?.keepDismissed && localStorage.getItem(STORE_KEY)) {
             setDismissed(true)
         }
     }, [])
