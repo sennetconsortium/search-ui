@@ -143,4 +143,4 @@ These environment variables take a json object with the following properties:
 | **afterBanner**           | *html string* | Set some content after the banner.                                                                                  |
 | **afterBannerClassName**  | *string*      | Set a class name on div of `afterBanner`.                                                                           |
 | **sectionClassName**      | *string*      | A class name for the `c-SenNetBanner` section.                                                                      |
-| **ariaLabel**             | *string*      | For accessibility, add a unique label to the `c-AppBanner` section                                                  |
+| **ariaLabel**             | *string*      | For accessibility, add a unique label to the `c-SenNetBanner` section                                               |
