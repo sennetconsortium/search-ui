@@ -11,7 +11,7 @@ import {
 } from '../lib/services'
 import {deleteCookies} from "../lib/auth";
 import {APP_ROUTES} from "../config/constants";
-import {getUIPassword} from "../config/config";
+import {getUIPassword, STORAGE_KEY} from "../config/config";
 import Swal from 'sweetalert2'
 import AppModal from "../components/AppModal";
 import Spinner from "../components/custom/Spinner";
@@ -33,7 +33,7 @@ export const AppProvider = ({ cache, children }) => {
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const router = useRouter()
     const authKey = 'isAuthenticated'
-    const pageKey = 'userPage'
+    const pageKey = STORAGE_KEY('userPage')
 
     useEffect(() => {
         // Should only include: '/', '/search', '/logout', '/login', '/404'

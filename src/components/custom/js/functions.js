@@ -434,10 +434,12 @@ export const matchArrayOrder = (ordering, data, key1 = 'name', key2 = 'id') => {
 }
 
 
-export const deleteFromLocalStorage = (needle, fn = 'endsWith') => {
+export const deleteFromLocalStorage = (needle, fn = 'startsWith') => {
     Object.keys(localStorage)
         .filter(x =>
             x[fn](needle))
         .forEach(x =>
             localStorage.removeItem(x))
 }
+
+export const deleteFromLocalStorageWithSuffix = (needle) => deleteFromLocalStorage(needle, 'endsWidth')
