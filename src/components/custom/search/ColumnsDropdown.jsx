@@ -4,7 +4,7 @@ import Select from 'react-select'
 import $ from 'jquery'
 import {parseJson} from "../../../lib/services";
 import {COLS_ORDER_KEY} from "../../../config/config";
-import {deleteFromLocalStorage} from "../js/functions";
+import {deleteFromLocalStorageWithSuffix} from "../js/functions";
 
 
 function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, searchContext, defaultHiddenColumns = [] }) {
@@ -83,8 +83,8 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
         // Have to listen to click from here instead of in handleClearFiltersClick
         // to manage value states of this independent component
         $('body').on('click', clearBtnSelector, () => {
-            deleteFromLocalStorage(STORE_KEY)
-            deleteFromLocalStorage(COLS_ORDER_KEY(''))
+            deleteFromLocalStorageWithSuffix(STORE_KEY)
+            deleteFromLocalStorageWithSuffix(COLS_ORDER_KEY())
             handleDefaultHidden()
         })
 

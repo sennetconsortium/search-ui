@@ -1,6 +1,7 @@
 import {deleteCookie, setCookie} from "cookies-next";
 import {Sui} from "search-ui/lib/search-tools";
-import {getCookieDomain} from "../config/config";
+import {getCookieDomain, STORAGE_KEY} from "../config/config";
+import {deleteFromLocalStorage} from "../components/custom/js/functions";
 
 export function deleteCookies() {
     setCookie('isAuthenticated', false, {sameSite: "Lax"})
@@ -8,6 +9,6 @@ export function deleteCookies() {
     deleteCookie('info', {path: '/', domain: getCookieDomain(), sameSite: "Lax"})
     deleteCookie('user')
     deleteCookie('adminUIAuthorized')
-    localStorage.removeItem('userPage')
+    deleteFromLocalStorage(STORAGE_KEY())
     Sui.clearFilters()
 }
