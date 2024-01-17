@@ -18,12 +18,20 @@ import {Tree} from 'primereact/tree';
 import 'primeicons/primeicons.css';
 
 export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid: 'uuid'},
-                                 loadDerived = true, treeViewOnly = false, className = '', showQAButton = true}) => {
+                                 loadDerived = true, treeViewOnly = false, className = '', showQAButton = true, showDataProductButton = true}) => {
+    const filterByValues = {
+        default: "label",
+        qa: "data.is_qa_qc",
+        dataProduct: "data.is_data_product"
+    }
+
     const [status, setStatus] = useState(null)
     const [filepath, setFilepath] = useState(null)
     const [treeData, setTreeData] = useState(null)
-    const [checked, setChecked] = useState(false)
+    const [qaChecked, setQAChecked] = useState(false)
+    const [dataProductChecked, setDataProductChecked] = useState(false)
     const [hasData, setHasData] = useState(false)
+    const [filterBy, setFilterBy] = useState(filterByValues.default)
 
     const formRef = useRef(null)
 
@@ -73,31 +81,64 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
     }
 
     const handleSearchResetButtonClick = (options) => {
+        setFilterBy(filterByValues.default)
+        setQAChecked(false)
+        setDataProductChecked(false)
         formRef.current.reset()
-        options.reset();
-        setChecked(false)
+        options.reset()
     }
 
     const handleFileSearchInputChange = (event, options) => {
-        options.filter(event);
-        if (checked) {
-            setChecked(false)
-        }
+        setFilterBy(filterByValues.default)
+        setQAChecked(false)
+        setDataProductChecked(false)
+        options.filter(event)
     }
 
     const showHideQa = (event, options) => {
         if (event.currentTarget.checked) {
-            event.target.value = "true"
-            options.filter(event);
+            setFilterBy(filterByValues.qa)
+            options.filter(event)
         } else {
             handleSearchResetButtonClick(options)
         }
+        setDataProductChecked(false)
+        formRef.current.reset()
+    }
+
+    const showHideDataProduct = (event, options) => {
+        if (event.currentTarget.checked) {
+            setFilterBy(filterByValues.dataProduct)
+            options.filter(event)
+        } else {
+            handleSearchResetButtonClick(options)
+        }
+        setQAChecked(false)
         formRef.current.reset()
     }
 
     const handleQAToggleButtonClick = (event, options) => {
-        setChecked(event.currentTarget.checked)
+        setQAChecked(event.currentTarget.checked)
         showHideQa(event, options)
+    }
+
+    const handleDataProductToggleButtonClick = (event, options) => {
+        setDataProductChecked(event.currentTarget.checked)
+        showHideDataProduct(event, options)
+    }
+
+    const getBadgeViews = (node) => {
+        const badges = {
+            QA: node.data.is_qa_qc === "true",
+            "Data Product": node.data.is_data_product === "true",
+        }
+        return <>
+            {Object.entries(badges).map(([label, hasBadge]) => { 
+                return hasBadge
+                    ? <span className="badge bg-secondary mx-2"> {label}</span>
+                    : null
+            })}
+        </>
     }
 
     const nodeTemplate = (node, options) => {
@@ -110,7 +151,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                             <a target="_blank"
                                className={"icon_inline"}
                                href={`${getAssetsEndpoint()}${node.data.uuid}/${node.data.rel_path}?token=${getAuth()}`}><span
-                                className="me-1">{node.label}</span>
+                               className="me-1">{node.label}</span>
                             </a>
                             <SenNetPopover className={`file-${node.label}`}
                                            trigger={SenPopoverOptions.triggers.hover}
@@ -118,8 +159,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                             </SenNetPopover>
                         </Col>
                         <Col md={2} sm={2} className={"text-end"}>
-                            {node.data.is_qa_qc === "true" ? (
-                                <span className="badge bg-secondary mx-2"> QA</span>) : (<></>)}
+                            {getBadgeViews(node)}
                         </Col>
                         <Col md={2} sm={2} className={"text-end"}>
                             {formatByteSize(node.data.size)}
@@ -137,8 +177,8 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                 id="file-search"
                 onSubmit={(e) => e.preventDefault()}
             >
-                <Row className={"mb-4"}>
-                    <Form.Group as={Col} md={6}>
+                <Row className="mb-4">
+                    <Form.Group as={Col} xl={6} lg={12}>
                         <InputGroup>
                             <Form.Control
                                 onChange={(e) => handleFileSearchInputChange(e, filterOptions)}
@@ -157,17 +197,31 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         </InputGroup>
                     </Form.Group>
 
-                    {showQAButton && <Form.Group as={Col} md={4}>
+                    {showQAButton && <Form.Group as={Col} xl={3} lg={6} className="mt-xl-0 mt-md-2">
                         <ToggleButton
-                            className="rounded-0"
-                            id="toggle-check"
+                            className="rounded-0 w-100"
+                            id="toggle-check-qa"
                             type="checkbox"
                             variant="outline-primary"
-                            checked={checked}
-                            value="1"
+                            checked={qaChecked}
+                            value="true"
                             onChange={(e) => handleQAToggleButtonClick(e, filterOptions)}
                         >
                             Show QA files only
+                        </ToggleButton>
+                    </Form.Group> }
+
+                    {showDataProductButton && <Form.Group as={Col} xl={3} lg={6} className="mt-xl-0 mt-md-2">
+                        <ToggleButton
+                            className="rounded-0 w-100"
+                            id="toggle-check-data-product"
+                            type="checkbox"
+                            variant="outline-primary"
+                            checked={dataProductChecked}
+                            value="true"
+                            onChange={(e) => handleDataProductToggleButtonClick(e, filterOptions)}
+                        >
+                            Show Data Product files only
                         </ToggleButton>
                     </Form.Group> }
                 </Row>
@@ -188,6 +242,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                 rel_path: file.rel_path,
                 description: file.description || file.rel_path,
                 is_qa_qc: file?.is_qa_qc?.toString(),
+                is_data_product: file?.is_data_product?.toString(),
                 size: file.size
             }
         };
@@ -237,6 +292,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                             rel_path: file.rel_path,
                             description: file.description || file.rel_path,
                             is_qa_qc: file?.is_qa_qc,
+                            is_data_product: file?.is_data_product,
                             size: file.size
                         }
                     })
@@ -265,7 +321,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
             value={treeData}
             nodeTemplate={nodeTemplate}
             filter={true}
-            filterBy={"label,data.is_qa_qc"}
+            filterBy={filterBy}
             filterTemplate={filterTemplate}
             onExpand={onExpand}
             onCollapse={onCollapse}

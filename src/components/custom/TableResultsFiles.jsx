@@ -337,6 +337,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     modalBody={
                         <FileTreeView data={treeViewData}
                         showQAButton={false}
+                        showDataProductButton={false}
                         selection={{mode: 'checkbox', value: fileSelection, setValue: handleFileSelection, args: treeViewData }}
                         keys={{files: 'list', uuid: 'dataset_uuid'}}
                         loadDerived={false}
