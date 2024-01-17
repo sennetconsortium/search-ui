@@ -442,4 +442,4 @@ export const deleteFromLocalStorage = (needle, fn = 'startsWith') => {
             localStorage.removeItem(x))
 }
 
-export const deleteFromLocalStorageWithSuffix = (needle) => deleteFromLocalStorage(needle, 'endsWidth')
+export const deleteFromLocalStorageWithSuffix = (needle) => deleteFromLocalStorage(needle, 'endsWith')
