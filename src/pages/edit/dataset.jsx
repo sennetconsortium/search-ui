@@ -51,7 +51,6 @@ export default function EditDataset() {
         showModal, setShowModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
-        metadata, setMetadata,
         dataAccessPublic, setDataAccessPublic,
         getEntityConstraints,
         getSampleEntityConstraints,
@@ -173,8 +172,7 @@ export default function EditDataset() {
                     'direct_ancestor_uuids': immediate_ancestors,
                     'assigned_to_group_name': data.assigned_to_group_name,
                     'ingest_task': data.ingest_task,
-                    'contains_human_genetic_sequences': data.contains_human_genetic_sequences,
-                    'metadata': data.metadata
+                    'contains_human_genetic_sequences': data.contains_human_genetic_sequences
                 })
                 setEditMode("Edit")
                 setDataAccessPublic(data.data_access_level === 'public')
@@ -329,11 +327,6 @@ export default function EditDataset() {
             } else {
 
                 log.debug("Form is valid")
-
-                if(!_.isEmpty(metadata)) {
-                    values["metadata"] = metadata.metadata
-                    values["metadata"]['pathname'] = metadata.pathname
-                }
 
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
                 if (values['group_uuid'] === null && editMode === 'Register') {
@@ -492,8 +485,6 @@ export default function EditDataset() {
                                                      values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    {/*<AttributesUpload setAttribute={setMetadata} entity={cache.entities.dataset} />*/}
-                                    
                                     <div className={'d-flex flex-row-reverse'}>
 
                                         {getCancelBtn('dataset')}
