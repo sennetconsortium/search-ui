@@ -28,7 +28,7 @@ export const DerivedProvider = ({children}) => {
 
     // Load the correct Vitessce view config
     const set_vitessce_config = async (data, dataset_id, dataset_type) => {
-        fetchVitessceConfiguration(data).then(config => {
+        fetchVitessceConfiguration(dataset_id).then(config => {
             setVitessceConfig(config)
         }).catch(error => {
             console.error(error)
