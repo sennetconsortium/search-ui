@@ -1,0 +1,9 @@
+{
+  "default": {
+    "content": "This banner matches the width of the Login section. Can include html tags in any property marked as type <code>html str</code> in the documentation. Like: <a href='https://github.com/sennetconsortium/portal-ui?tab=readme-ov-file#content-management'>Git Hub Docs</a>"
+  },
+  "login": {
+    "sectionClassName" : "col-lg-6 col-10 mx-auto mt-3",
+    "content": "Use the above classes to get a banner div same width as login section. Remove this login.content property in order to use default.content."
+  }
+}

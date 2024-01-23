@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react'
-import {APP_TITLE, getBanner, getIngestLogin} from '../../config/config'
+import {APP_TITLE, getIngestLogin} from '../../config/config'
 import { Row, Col, Container } from 'react-bootstrap'
 import AppNavbar from './layout/AppNavbar'
 import AppFooter from './layout/AppFooter'
@@ -10,7 +10,7 @@ import SenNetBanner from "../SenNetBanner";
 
 function Login() {
     const loginUrl = getIngestLogin()
-    const { _t, isLoggedIn } = useContext(AppContext)
+    const { _t, isLoggedIn, banners } = useContext(AppContext)
 
     useEffect(() => {
         if (isLoggedIn()) {
@@ -24,7 +24,7 @@ function Login() {
             <AppNavbar hidden={true} />
             <Container>
                 <SenNetBanner />
-                <Row className={getBanner('login') ? '' : 'mt-resp'} style={{minHeight: '530px'}}>
+                <Row className={(banners?.login || banners?.default) ? '' : 'mt-resp'} style={{minHeight: '530px'}}>
                     <Col></Col>
                     <Col xs={10} lg={6}>
                         <div className={`card alert alert-info mt-4`}>

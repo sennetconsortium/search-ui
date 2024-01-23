@@ -143,16 +143,6 @@ export function getCookieDomain() {
     return process.env.NEXT_PUBLIC_COOKIE_DOMAIN
 }
 
-export function getBanner(key) {
-
-    const banners = {
-        login: process.env.NEXT_PUBLIC_BANNER_LOGIN,
-        searchEntities: process.env.NEXT_PUBLIC_BANNER_SEARCH_ENTITIES,
-    }
-    const banner = key ? banners[key] : null
-    return parseJson(banner)
-}
-
 export const RESULTS_PER_PAGE = [10, 20, 30, 50, 100]
 
 //Config options to exclude datasets from results

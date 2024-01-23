@@ -1,0 +1,8 @@
+.c-SenNetBanner {
+  &.sui-layout-body {
+    &:after {
+      content: none;
+    }
+    margin-bottom: 30px;
+  }
+}
