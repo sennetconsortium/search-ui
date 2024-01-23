@@ -47,7 +47,7 @@ function BodyContent({ handleChangeAncestor }) {
     )
 }
 
-export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd, onShowModal,
+export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd, onShowModal, formLabelPlural,
                                         formLabel = 'ancestor', controlId = 'direct_ancestor_uuids'}) {
     const [showHideModal, setShowHideModal] = useState(false)
 
@@ -101,7 +101,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
 
     return (
         <>
-            <Form.Label>{`${formLabel.upperCaseFirst()}(s)`} <span
+            <Form.Label>{`${formLabelPlural ? formLabelPlural.upperCaseFirst() : `${formLabel.upperCaseFirst()}(s)`}`} <span
                 className="required">* </span>
                 <SenNetPopover className={controlId} text={<>
                     The SenNet ID(s) of ancestor samples or data from which this data was derived. At least one

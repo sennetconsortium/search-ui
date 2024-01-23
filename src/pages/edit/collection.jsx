@@ -69,14 +69,20 @@ export default function EditCollection() {
     const [bulkAddBtnTooltip, setBulkAddBtnTooltip] = useState(bulkAddBtnTooltipDefault)
     const [bulkAddTextareaVal, setBulkAddTextareaVal] = useState(null)
     const headers =  ['version', 'affiliation', 'first_name', 'last_name', 'middle_name_or_initial', 'name', 'orcid_id']
+    const supportedEntities = [cache.entities.dataset, cache.entities.sample, cache.entities.source]
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
             // TODO: maybe we want to add to entity-api constraints for Collection instead of hard coding here ...
-            valid_dataset_ancestor_config['searchQuery']['includeFilters'] = [{
-                "keyword": "entity_type.keyword",
-                "value": "Dataset"
-            }]
+            let searchFilters = []
+            for (let e of supportedEntities) {
+                searchFilters.push({
+                    "keyword": "entity_type.keyword",
+                    "value": e
+                    }
+                )
+            }
+            valid_dataset_ancestor_config['searchQuery']['includeFilters'] = searchFilters
         }
 
         fetchAncestorConstraints()
@@ -100,13 +106,13 @@ export default function EditCollection() {
             } else {
                 setData(data)
                 //isPrimary.current = isPrimaryAssay(data)
-                let dataset_uuids = []
+                let entity_uuids = []
 
-                if (data.hasOwnProperty("datasets")) {
+                if (data.hasOwnProperty("entities")) {
                     for (const ancestor of data.datasets) {
-                        dataset_uuids.push(ancestor.uuid)
+                        entity_uuids.push(ancestor.uuid)
                     }
-                    await fetchLinkedDataset(dataset_uuids)
+                    await fetchLinkedDataset(entity_uuids)
                 }
 
                 if (data.contacts) {
@@ -117,7 +123,7 @@ export default function EditCollection() {
                 setValues({
                     'title': data.title,
                     'description': data.description,
-                    'dataset_uuids': dataset_uuids,
+                    'entity_uuids': entity_uuids,
                     'contacts': data.contacts,
                     'creators': data.creators
                 })
@@ -160,7 +166,8 @@ export default function EditCollection() {
                     setErrorMessage(entity["error"])
                 }
             } else {
-                if (eq(entity.entity_type, cache.entities.dataset)) {
+                //TODO:
+                if (supportedEntities.includes(entity.entity_type)) {
                     newDatasets.push(entity)
                 } else {
                     if (isBulkHandling.current) {
@@ -214,7 +221,7 @@ export default function EditCollection() {
         } else {
 
             event.preventDefault();
-            if (values['dataset_uuids'] === undefined || values['dataset_uuids'].length === 0) {
+            if (values['entity_uuids'] === undefined || values['entity_uuids'].length === 0) {
                 event.stopPropagation();
                 setDisableSubmit(false);
             } else {
@@ -240,7 +247,7 @@ export default function EditCollection() {
     };
 
     const showBulkAdd = () => {
-        setBulkAddBtnTooltip(<span>Add your comma separated SenNet ids or uuids, and then click this button to bulk add <code>Datasets</code> to the <code>Collection</code>.</span>)
+        setBulkAddBtnTooltip(<span>Add your comma separated SenNet ids or uuids, and then click this button to bulk add <code>Entities</code> to the <code>Collection</code>.</span>)
         setBulkAddField(true)
     }
 
@@ -303,7 +310,7 @@ export default function EditCollection() {
             }
             let datasets = await fetchLinkedDataset(validIds, errMsg)
             if (datasets.length) {
-                onChange(null, 'dataset_uuids', datasets.map((item) => item.uuid))
+                onChange(null, 'entity_uuids', datasets.map((item) => item.uuid))
             }
         }
 
@@ -353,15 +360,15 @@ export default function EditCollection() {
                                 <Form noValidate validated={validated} id="collection-form">
 
                                     {/*Linked Datasets*/}
-                                    <AncestorIds controlId={'dataset_uuids'}
+                                    <AncestorIds controlId={'entity_uuids'}
                                                  otherWithAdd={<>&nbsp; &nbsp;
                                                     <SenNetPopover
                                                         placement={SenPopoverOptions.placement.top}
                                                         trigger={SenPopoverOptions.triggers.hoverOnClickOff}
-                                                        className={`c-metadataUpload__popover--dataset_uuids`}
+                                                        className={`c-metadataUpload__popover--entity_uuids`}
                                                         text={bulkAddBtnTooltip}
                                                     ><Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkAdd} aria-controls='js-modal'>
-                                                        Bulk add datasets <PlusLg/>
+                                                        Bulk add entities <PlusLg/>
                                                     </Button></SenNetPopover>
 
                                         <Tooltip
@@ -374,7 +381,7 @@ export default function EditCollection() {
                                             disableFocusListener
                                             disableHoverListener
                                             disableTouchListener
-                                            title={<><span role='button' aria-label='Close bulk add dataset tooltip' className='tooltip-close'
+                                            title={<><span role='button' aria-label='Close bulk add entity tooltip' className='tooltip-close'
                                                            onClick={()=> {setBulkPopover(false)}}><CloseIcon />
                                                     </span>
                                                 <div className={'tooltip-content'}>{bulkErrorMessage}</div>
@@ -395,14 +402,14 @@ export default function EditCollection() {
                                                  placement={SenPopoverOptions.placement.bottom}
                                                  trigger={SenPopoverOptions.triggers.hover}
                                                  className={`c-metadataUpload__popover--btnAdd`}
-                                                 text={<span>Click here to bulk add <code>Datasets</code> to the <code>Collection</code></span>}
+                                                 text={<span>Click here to bulk add <code>Entities</code> to the <code>Collection</code></span>}
                                              >
-                                                 <span role='button' aria-label={'Bulk add Datasets to the Collection'} onClick={handleBulkAdd}
+                                                 <span role='button' aria-label={'Bulk add Entities to the Collection'} onClick={handleBulkAdd}
                                                        className={`btn-add ${bulkAddField && bulkAddTextareaVal ? 'is-visible' : ''}`}> <CheckIcon />
                                                  </span>
                                              </SenNetPopover>}
                                     </>}
-                                                 formLabel={'dataset'} values={values} ancestors={ancestors} onChange={onChange}
+                                                 formLabel={'entity'} formLabelPlural={'entities'} values={values} ancestors={ancestors} onChange={onChange}
                                                  onShowModal={clearBulkPopover}
                                                  fetchAncestors={fetchLinkedDataset} deleteAncestor={deleteLinkedDataset}/>
 
