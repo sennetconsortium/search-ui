@@ -109,10 +109,10 @@ export default function EditCollection() {
                 let entity_uuids = []
 
                 if (data.hasOwnProperty("entities")) {
-                    for (const ancestor of data.datasets) {
+                    for (const ancestor of data.entities) {
                         entity_uuids.push(ancestor.uuid)
                     }
-                    await fetchLinkedDataset(entity_uuids)
+                    await fetchLinkedEntity(entity_uuids)
                 }
 
                 if (data.contacts) {
@@ -148,7 +148,7 @@ export default function EditCollection() {
         }
     }, [router]);
 
-    async function fetchLinkedDataset(datasetUuids, errMsgs) {
+    async function fetchLinkedEntity(datasetUuids, errMsgs) {
         let newDatasets = []
         if (ancestors) {
             newDatasets = [...ancestors];
@@ -190,12 +190,12 @@ export default function EditCollection() {
         return newDatasets
     }
 
-    const deleteLinkedDataset = (uuid) => {
-        const prevDatasets = [...ancestors];
-        log.debug(prevDatasets)
-        let updatedDatasets = prevDatasets.filter(e => e.uuid !== uuid);
-        setAncestors(updatedDatasets);
-        log.debug(updatedDatasets);
+    const deleteLinkedEntity = (uuid) => {
+        const prevEntities = [...ancestors];
+        log.debug(prevEntities)
+        let updatedEntities = prevEntities.filter(e => e.uuid !== uuid);
+        setAncestors(updatedEntities);
+        log.debug(updatedEntities);
     }
 
     const modalResponse = (response) => {
@@ -308,7 +308,7 @@ export default function EditCollection() {
             if (invalidFormat.length) {
                 errMsg = <>{errMsg}<span>Invalid dataset{invalidFormat.length > 1 ? 's': ''} id format <code>{invalidFormat.join(',')}</code>.</span></>
             }
-            let datasets = await fetchLinkedDataset(validIds, errMsg)
+            let datasets = await fetchLinkedEntity(validIds, errMsg)
             if (datasets.length) {
                 onChange(null, 'entity_uuids', datasets.map((item) => item.uuid))
             }
@@ -411,7 +411,7 @@ export default function EditCollection() {
                                     </>}
                                                  formLabel={'entity'} formLabelPlural={'entities'} values={values} ancestors={ancestors} onChange={onChange}
                                                  onShowModal={clearBulkPopover}
-                                                 fetchAncestors={fetchLinkedDataset} deleteAncestor={deleteLinkedDataset}/>
+                                                 fetchAncestors={fetchLinkedEntity} deleteAncestor={deleteLinkedEntity}/>
 
                                     {/*/!*Lab Name or ID*!/*/}
                                     <EntityFormGroup label='Title' placeholder='The title of the collection'
