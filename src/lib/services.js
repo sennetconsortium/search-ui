@@ -262,24 +262,12 @@ const fetchSearchAPIEntities = async (body) => {
     }
 }
 
-export async function fetchVitessceConfiguration(entity) {
+export async function fetchVitessceConfiguration(datasetId) {
     const headers = get_headers()
-
-    // We only need uuid, status, dataset_type, files, and metadata.dag_provenance_list
-    let modEntity = {}
-    modEntity['uuid'] = entity['uuid']
-    modEntity['entity_type'] = entity['entity_type']
-    modEntity['status'] = entity['status']
-    // TODO: the rules engine currently doesn't work with dataset_type
-    modEntity['data_types'] = entity['data_types']
-    modEntity['files'] = entity['files']
-    modEntity['metadata'] = entity['metadata']
-
-    const url = getIngestEndPoint() + "vitessce/config"
+    const url = getIngestEndPoint() + "vitessce/" + datasetId
     const request_options = {
-        method: 'POST',
+        method: 'GET',
         headers: headers,
-        body: JSON.stringify(modEntity),
     }
     const response = await fetch(url, request_options)
     if (response.status === 200) {
