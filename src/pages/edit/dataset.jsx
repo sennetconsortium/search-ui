@@ -36,7 +36,7 @@ import AttributesUpload from "../../components/custom/edit/AttributesUpload";
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
-import DatasetRevertButton from "../../components/custom/edit/dataset/DatasetRevertButton";
+import DatasetRevertButton, {statusRevertTooltip} from "../../components/custom/edit/dataset/DatasetRevertButton";
 
 export default function EditDataset() {
     const {
@@ -533,9 +533,8 @@ export default function EditDataset() {
                                             </SenNetPopover>
                                         }
 
-                                        {!eq(data['status'], 'Processing') && isPrimary.current && adminGroup && isEditMode() && (eq(data['status'], 'Error') || eq(data['status'], 'Invalid') || eq(data['status'], 'Submitted')) && <SenNetPopover
-                                            text={<>Revert this <code>Dataset</code> back to <span className={`${getStatusColor('New')} badge`}>New</span> or <span className={`${getStatusColor('Submitted')} badge`}>Submitted</span>  status.
-                                               </>}
+                                        {!['Processing', 'Published', 'Reorganized'].contains(data['status']) && isPrimary.current && adminGroup && isEditMode()  && <SenNetPopover
+                                            text={statusRevertTooltip(cache.entities.dataset)}
                                             className={'revert-button'}>
                                                 <DatasetRevertButton data={data} onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
                                         </SenNetPopover>

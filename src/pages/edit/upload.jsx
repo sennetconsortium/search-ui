@@ -18,7 +18,7 @@ import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import SenNetPopover from "../../components/SenNetPopover";
 import $ from "jquery";
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
-import DatasetRevertButton from "../../components/custom/edit/dataset/DatasetRevertButton";
+import DatasetRevertButton, {statusRevertTooltip} from "../../components/custom/edit/dataset/DatasetRevertButton";
 import SenNetAlert from "../../components/SenNetAlert";
 import {getRootURL} from "../../config/config";
 import {ExclamationTriangleFill} from "react-bootstrap-icons";
@@ -343,12 +343,9 @@ function EditUpload() {
                                                         onClick={handleReorganize} disableSubmit={disableSubmit}/>
                                                 </SenNetPopover>}
 
-                                            {!eq(data['status'], 'Processing') && adminGroup && isEditMode() && (eq(data['status'], 'Error') || eq(data['status'], 'Invalid') || eq(data['status'], 'Submitted')) &&
+                                            {!['Processing', 'Published', 'Reorganized'].contains(data['status']) && adminGroup && isEditMode() &&
                                                 <SenNetPopover
-                                                    text={<>Revert this <code>Upload</code> back to <span
-                                                        className={`${getStatusColor('New')} badge`}>New</span> or <span
-                                                        className={`${getStatusColor('Submitted')} badge`}>Submitted</span> status.
-                                                    </>}
+                                                    text={statusRevertTooltip(cache.entities.upload)}
                                                     className={'revert-button'}>
                                                     <DatasetRevertButton data={data} onClick={handleRevert}
                                                                          disableSubmit={disableSubmit}

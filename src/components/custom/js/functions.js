@@ -397,6 +397,9 @@ Object.assign(Array.prototype, {
                 }
                 return 0
         })
+    },
+    contains(needle, insensitive = true) {
+        return this.some((i) => eq(i, needle, insensitive))
     }
 })
 
