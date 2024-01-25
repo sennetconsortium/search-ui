@@ -343,7 +343,7 @@ function EditUpload() {
                                                         onClick={handleReorganize} disableSubmit={disableSubmit}/>
                                                 </SenNetPopover>}
 
-                                            {!eq(data['status'], 'Processing') && adminGroup && isEditMode() &&
+                                            {!['Processing', 'Published', 'Reorganized'].contains(data['status']) && adminGroup && isEditMode() &&
                                                 <SenNetPopover
                                                     text={statusRevertTooltip(cache.entities.upload)}
                                                     className={'revert-button'}>

@@ -542,7 +542,7 @@ export default function EditDataset() {
                                             </SenNetPopover>
                                         }
 
-                                        {!eq(data['status'], 'Processing') && isPrimary.current && adminGroup && isEditMode()  && <SenNetPopover
+                                        {!['Processing', 'Published', 'Reorganized'].contains(data['status']) && isPrimary.current && adminGroup && isEditMode()  && <SenNetPopover
                                             text={statusRevertTooltip(cache.entities.dataset)}
                                             className={'revert-button'}>
                                                 <DatasetRevertButton data={data} onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
