@@ -15,11 +15,13 @@ import {AppProvider} from '../context/AppContext'
 import {deleteCookies} from "../lib/auth";
 import useCache from "../hooks/useCache";
 import Spinner from "../components/custom/Spinner";
+import useContent from "../hooks/useContent";
 
 function MyApp({Component, pageProps}) {
     const router = useRouter()
     const [cache, setCache] = useState(null)
     const caching = useCache()
+    const {banners} = useContent()
     useGoogleTagManager()
 
     useEffect(() => {
@@ -48,7 +50,7 @@ function MyApp({Component, pageProps}) {
     } else {
         return (
             <ErrorBoundary>
-                <AppProvider cache={cache} >
+                <AppProvider cache={cache} banners={banners} >
                     {withWrapper(<Component {...pageProps} />)}
                 </AppProvider>
             </ErrorBoundary>

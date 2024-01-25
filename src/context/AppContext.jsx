@@ -18,7 +18,7 @@ import Spinner from "../components/custom/Spinner";
 
 const AppContext = createContext()
 
-export const AppProvider = ({ cache, children }) => {
+export const AppProvider = ({ cache, banners, children }) => {
     const [isBusy, setIsBusy] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
@@ -309,6 +309,7 @@ export const AppProvider = ({ cache, children }) => {
                 login,
                 _t,
                 cache,
+                banners,
                 router,
                 filterImageFilesToAdd,
                 uiAdminAuthorized,
