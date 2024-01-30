@@ -6,14 +6,18 @@ function useContent() {
     const [banners, setBanners] = useState({})
 
     const loadBanners = async () => {
-        let res = await fetch(
-            `content/banners/index.json`,
-            get_json_header()
-        )
-        if (res.ok) {
-            return await res.json()
-        } else {
-            console.log(`%c No banners config file found.`, `background: #222; color: red`)
+        try {
+            let res = await fetch(
+                `content/banners/index.json`,
+                get_json_header()
+            )
+            if (res.ok) {
+                return await res.json()
+            } else {
+                console.log(`%c No banners config file found.`, `background: #222; color: red`)
+            }
+        } catch (e) {
+            console.error(e)
         }
         return {}
     }
