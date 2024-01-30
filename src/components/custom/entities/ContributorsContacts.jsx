@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import DataTable, { createTheme } from 'react-data-table-component'
-import {BoxArrowUpRight} from "react-bootstrap-icons";
 import SenNetAccordion from "../layout/SenNetAccordion";
 
 function ContributorsContacts({data, title}) {
@@ -21,7 +20,8 @@ function ContributorsContacts({data, title}) {
                 name: 'ORCID',
                 selector: row => row.orcid_id,
                 sortable: true,
-                format: column => <a className='lnk--ic' href={`https://orcid.org/${column.orcid_id}`}>{column.orcid_id} <BoxArrowUpRight/></a>,
+                format: column => <a className='lnk--ic' href={`https://orcid.org/${column.orcid_id}`}>{column.orcid_id}
+                    <i className="bi bi-box-arrow-up-right"></i></a>,
             }
         ]
     }

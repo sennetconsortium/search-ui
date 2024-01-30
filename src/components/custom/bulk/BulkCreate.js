@@ -13,7 +13,6 @@ import Box from "@mui/material/Box";
 import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
 import {Row, Col, Stack} from "react-bootstrap";
-import {Download, ArrowRightSquareFill, ExclamationTriangleFill} from "react-bootstrap-icons";
 import {getDocsRootURL, getIngestEndPoint, getRootURL} from "../../../config/config";
 import Spinner from "../Spinner";
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -459,10 +458,12 @@ export default function BulkCreate({
             <Row key='modal-download-area' className={'mt-4 pull-right'}>
                 <Stack direction='horizontal' gap={3}>
                     <a role={'button'} className={'btn btn-outline-success rounded-0'}
-                       href={downloadURL} download={`${file.name}`}>Download registered data <Download /></a>
+                       href={downloadURL} download={`${file.name}`}>Download registered data <i
+                        className="bi bi-download"></i></a>
                     {(categories.length === 1) &&
-                        <a className={'btn btn-primary rounded-0'} href={`/edit/bulk/${entityType}?action=metadata&category=${categories[0]}`}>
-                        Continue to metadata upload <ArrowRightSquareFill />
+                        <a className={'btn btn-primary rounded-0'}
+                           href={`/edit/bulk/${entityType}?action=metadata&category=${categories[0]}`}>
+                            Continue to metadata upload <i className="bi bi-arrow-right-square-fill"></i>
                         </a>
                     }
                 </Stack>
@@ -503,12 +504,16 @@ export default function BulkCreate({
             <Row key="modal-download-area" className={'mt-4 pull-right'}>
                 <Stack direction="horizontal" gap={3}>
                     { bulkSuccess.passes.length > 0 &&
-                    <a role={'button'} title={'Download successfully uploaded metadata details'} className={'btn btn-outline-success rounded-0'}
-                       href={downloadURLPasses} download={`${file.name.replace('.tsv', '-success.tsv')}`}>Download upload data <Download /></a>
+                        <a role={'button'} title={'Download successfully uploaded metadata details'}
+                           className={'btn btn-outline-success rounded-0'}
+                           href={downloadURLPasses} download={`${file.name.replace('.tsv', '-success.tsv')}`}>Download
+                            upload data <i className="bi bi-download"></i></a>
                     }
                     { bulkSuccess.fails.length > 0 &&
-                        <a role={'button'} title={'Download unsuccessfully uploaded metadata details'} className={'btn btn-outline-danger rounded-0'}
-                               href={downloadURLFails} download={`${file.name.replace('.tsv', '-fails.tsv')}`}>Download failed uploads data <Download /></a>
+                        <a role={'button'} title={'Download unsuccessfully uploaded metadata details'}
+                           className={'btn btn-outline-danger rounded-0'}
+                           href={downloadURLFails} download={`${file.name.replace('.tsv', '-fails.tsv')}`}>Download
+                            failed uploads data <i className="bi bi-download"></i></a>
                     }
                 </Stack>
             </Row>
@@ -598,7 +603,7 @@ export default function BulkCreate({
                                   text={<>Please limit the number of rows (excluding headers) containing data to 30 for
                                       processing purposes. If necessary, you may need to register entities via multiple
                                       submissions.</>}
-                                     icon={<ExclamationTriangleFill/>}/>
+                                     icon={<i className="bi bi-exclamation-triangle-fill"></i>}/>
 
                     {eq(entityType, cache.entities.dataset) &&
                         <SenNetAlert variant={'warning'}
@@ -609,7 +614,7 @@ export default function BulkCreate({
                                          If a data provider would prefer to transfer their data files in bulk, CODCC Curation
                                          recommends creating an upload through <a
                                              href={getRootURL() + 'edit/upload?uuid=register'}>this page</a>.</>}
-                                     icon={<ExclamationTriangleFill/>}/>
+                                     icon={<i className="bi bi-exclamation-triangle-fill"></i>}/>
                     }
                     <div className={'p-4 text-center'}>
                         To register multiple items at one time, upload a <code>TSV</code> file in the format specified by the example file.<br/>

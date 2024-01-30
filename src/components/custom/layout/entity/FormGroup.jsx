@@ -1,7 +1,6 @@
 import React, {useContext} from 'react'
 import { Form } from 'react-bootstrap'
 import PropTypes from 'prop-types'
-import { QuestionCircleFill } from 'react-bootstrap-icons'
 import AppContext from '../../../../context/AppContext'
 import SenNetPopover from "../../../SenNetPopover";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -16,7 +15,7 @@ function EntityFormGroup({ controlId, label, text, onChange, value, type, placeh
         <Form.Group className={`mb-3 form-group ${className}`} controlId={controlId}>
             <Form.Label>{_t(label)} {isRequired && <span className="required">* </span>}
                 <SenNetPopover text={text} trigger={popoverTrigger} className={`popover-${controlId}`}>
-                    <QuestionCircleFill/>
+                    <i className="bi bi-question-circle-fill"></i>
                 </SenNetPopover>
 
             </Form.Label>

@@ -10,7 +10,6 @@ import AppModal from '../components/AppModal'
 import AppContext from './AppContext'
 import {eq, fetchProtocols, getHeaders} from "../components/custom/js/functions";
 import {getEntityEndPoint} from "../config/config";
-import {BoxArrowUpRight} from "react-bootstrap-icons";
 import {Button} from 'react-bootstrap'
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -145,7 +144,7 @@ export const EntityProvider = ({ children }) => {
                 note = <span key={'md-0'}>Metadata for this <code>{entity}</code> exists. </span>
                 break
             case 1:
-                note = <span key={'md-1'}>You may view it via <a target='_blank' className={'js-btn--json lnk--ic'} href={`/api/json/${entity.toLowerCase()}?uuid=${data.uuid}`}> the full entity JSON  <BoxArrowUpRight/></a>. </span>
+                note = <span key={'md-1'}>You may view it via <a target='_blank' className={'js-btn--json lnk--ic'} href={`/api/json/${entity.toLowerCase()}?uuid=${data.uuid}`}> the full entity JSON  <i className="bi bi-box-arrow-up-right"></i></a>. </span>
                 break
             case 2:
                 let prop = `${entity.toLowerCase()}_${field}`

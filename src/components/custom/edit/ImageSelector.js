@@ -1,6 +1,5 @@
 import React, {useState, useRef} from 'react'
 import {Button, Badge, Alert, Form, InputGroup, CloseButton, OverlayTrigger, Tooltip} from 'react-bootstrap';
-import {Paperclip} from "react-bootstrap-icons";
 import {uploadFile} from "../../../lib/services";
 import SenNetPopover from "../../SenNetPopover";
 
@@ -126,7 +125,7 @@ export default function ImageSelector({ editMode, values, setValues, imageByteAr
                 <SenNetPopover className={'image-selector'} placement={'top'} text={'Click here to attach a single image or multiple images'}>
                     <Button variant={'outline-primary rounded-0'} onClick={handleUploadImagesClick}>
                         Upload image files
-                        <Paperclip className={'ms-2'}/>
+                        <i className={'bi bi-paperclip ms-2'}/>
                     </Button>
                 </SenNetPopover>
             </div>

@@ -5,7 +5,6 @@ import {Layout} from "@elastic/react-search-ui-views";
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {PlusLg, QuestionCircleFill, Search} from "react-bootstrap-icons";
 import {valid_dataset_ancestor_config} from "../../../../config/config";
 import {TableResultsEntities} from '../../TableResultsEntities'
 import AncestorsTable from "./AncestorsTable";
@@ -107,7 +106,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
                     The SenNet ID(s) of ancestor samples or data from which this data was derived. At least one
                     ancestor is required, but multiple may be specified.
                 </>}>
-                    <QuestionCircleFill/>
+                    <i className="bi bi-question-circle-fill"></i>
                 </SenNetPopover>
             </Form.Label>
             <Form.Group controlId="direct_ancestor_uuids">
@@ -127,7 +126,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
 
             <InputGroup className="mb-3 ancestor-ctas" id="direct_ancestor_uuid_button">
                 <Button variant="outline-primary rounded-0 mt-1" onClick={showModal} aria-controls='js-modal'>
-                    Add another {formLabel} <PlusLg/>
+                    Add another {formLabel} <i className="bi bi-plus-lg"></i>
                 </Button>
                 {otherWithAdd}
             </InputGroup>
@@ -160,7 +159,8 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
                                                             autoFocus={true}
                                                         />
                                                         <InputGroup.Text
-                                                            className={"transparent"}><Search/></InputGroup.Text>
+                                                            className={"transparent"}><i
+                                                            className="bi bi-search"></i></InputGroup.Text>
                                                         <Button variant="outline-primary"
                                                                 className={"rounded-1"}
                                                                 onClick={e => handleSearchFormSubmit(e, onSubmit)}>Search</Button>
