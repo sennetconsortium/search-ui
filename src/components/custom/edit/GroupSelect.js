@@ -1,5 +1,4 @@
 import React, {useContext} from 'react';
-import {QuestionCircleFill} from "react-bootstrap-icons";
 import {Form} from 'react-bootstrap';
 import SenNetPopover from "../../SenNetPopover";
 import AppContext from "../../../context/AppContext";
@@ -14,7 +13,7 @@ const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural, popover,
                 <Form.Label>{title}{required &&<span
                     className="required">*</span>}
                     <SenNetPopover className={'group_uuid'} text={popover}>
-                        &nbsp;<QuestionCircleFill/>
+                        &nbsp;<i className="bi bi-question-circle-fill"></i>
                     </SenNetPopover>
 
                 </Form.Label>

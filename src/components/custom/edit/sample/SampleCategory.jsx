@@ -1,6 +1,5 @@
 import React, {useContext} from 'react';
 import {Col, Form, Row} from 'react-bootstrap';
-import {QuestionCircleFill} from "react-bootstrap-icons";
 import SenNetPopover from "../../../SenNetPopover";
 import AppContext from "../../../../context/AppContext";
 import {eq} from "../../js/functions";
@@ -49,7 +48,7 @@ function SampleCategory({
                             type <code>{cache.sourceTypes.Human}</code> or <code>{cache.sourceTypes['Human Organoid']}</code>,
                             when the block has been sourced from a RUI supported organ.</small>
                     </>}>
-                        <QuestionCircleFill/>
+                        <i className="bi bi-question-circle-fill"></i>
                     </SenNetPopover>
 
                 </Form.Label>

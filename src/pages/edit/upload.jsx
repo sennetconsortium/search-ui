@@ -20,8 +20,6 @@ import $ from "jquery";
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
 import DatasetRevertButton, {statusRevertTooltip} from "../../components/custom/edit/dataset/DatasetRevertButton";
 import SenNetAlert from "../../components/SenNetAlert";
-import {getRootURL} from "../../config/config";
-import {ExclamationTriangleFill} from "react-bootstrap-icons";
 
 
 function EditUpload() {
@@ -216,7 +214,7 @@ function EditUpload() {
                                                          {/*    href={getRootURL() + 'edit/bulk/dataset?action=register'}>this*/}
                                                          {/*    page</a>.*/}
                                                      </>}
-                                                     icon={<ExclamationTriangleFill/>}/>
+                                                     icon={<i class="bi bi-exclamation-triangle-fill"></i>}/>
                                     }
                                     <Form noValidate validated={validated} onSubmit={handleSave} id={"upload-form"}>
                                         {/*Group select*/}

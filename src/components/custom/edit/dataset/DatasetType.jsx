@@ -1,6 +1,5 @@
 import React from 'react';
 import {Col, Form, Row} from 'react-bootstrap';
-import {QuestionCircleFill} from "react-bootstrap-icons";
 import SenNetPopover from "../../../SenNetPopover";
 import {getUBKGFullName} from "../../js/functions";
 
@@ -15,7 +14,7 @@ export default function DatasetType({datasetTypes, data, onChange}) {
                     <SenNetPopover className={'dataset_type'}
                                    text={<>The type of data contained in this <code>Dataset</code>. Choose from one
                                        of the available options.</>}>
-                        <QuestionCircleFill/>
+                        <i className={'bi bi-question-circle-fill'}></i>
                     </SenNetPopover>
                 </Form.Label>
 

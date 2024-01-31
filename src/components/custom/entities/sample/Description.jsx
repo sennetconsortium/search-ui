@@ -4,7 +4,6 @@ import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import AppContext from "../../../../context/AppContext";
 import {eq, formatCitation} from "../../js/functions";
-import {BoxArrowUpRight, QuestionCircleFill} from "react-bootstrap-icons";
 import {InfoRounded} from "@mui/icons-material";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 
@@ -28,7 +27,7 @@ export default function Description({data, doiData, labId, primaryDateTitle, pri
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
                             <Card.Subtitle>Citation <SenNetPopover text={<span>Citation is provided in NLM format. If the DataCite page is provided, select from the <i>Cite as</i> drop down alternate ways to cite.</span>} trigger={SenPopoverOptions.triggers.hover} className={`popover-citation`}>
-                                <QuestionCircleFill/>
+                                <i className="bi bi-question-circle-fill"></i>
                             </SenNetPopover></Card.Subtitle>
                             <Card.Text>{doiData && <span>{formatCitation(doiData, data.doi_url)}</span>}</Card.Text>
                         </Card.Body>

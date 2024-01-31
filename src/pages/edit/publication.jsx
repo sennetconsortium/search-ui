@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.css'
 import {Button, Form} from 'react-bootstrap'
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
-import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
 import {update_create_entity} from '../../lib/services'
 import {
@@ -251,7 +250,7 @@ export default function EditPublication() {
                                             <Form.Label>{_t('Publication Status')} <span
                                                 className="required">* </span>
                                                 <SenNetPopover className={'publication_status'} text={'Has this Publication been Published?'}>
-                                                    <QuestionCircleFill/>
+                                                    <i className="bi bi-question-circle-fill"></i>
                                                 </SenNetPopover>
 
                                             </Form.Label>

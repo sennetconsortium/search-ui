@@ -12,7 +12,6 @@ import ResultsBlock from "./search/ResultsBlock";
 import {TableResultsProvider} from "../../context/TableResultsContext";
 import $ from 'jquery'
 import SenNetAlert from "../SenNetAlert";
-import {BoxArrowUpRight} from "react-bootstrap-icons";
 import ClipboardCopy from "../ClipboardCopy";
 import 'primeicons/primeicons.css';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -320,8 +319,13 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
             <TableResultsProvider columnsRef={currentColumns} getId={getId} rows={results} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <SenNetAlert variant={'warning'} className="clt-alert"
                              text=<>In order to download the files that are included in the manifest file,&nbsp;
-                    <a href="https://github.com/x-atlas-consortia/clt" target='_blank' className={'lnk--ic'}>install <BoxArrowUpRight/></a> the CLT and <a href="https://docs.sennetconsortium.org/libraries/clt/">follow the instructions</a> for how to use it with the manifest file.
-                <br /><small className={'text-muted'}>Note: For transferring data to the local machine, the <a href={'https://www.globus.org/globus-connect-personal'} target='_blank' className={'lnk--ic'}>Globus Connect Personal (GCP)<BoxArrowUpRight/></a> endpoint must also be up and running.</small>
+                <a href="https://github.com/x-atlas-consortia/clt" target='_blank' className={'lnk--ic'}>install <i
+                    className="bi bi-box-arrow-up-right"></i></a> the CLT and <a
+                    href="https://docs.sennetconsortium.org/libraries/clt/">follow the instructions</a> for how to use it with the manifest file.
+                <br /><small className={'text-muted'}>Note: For transferring data to the local machine, the <a
+                    href={'https://www.globus.org/globus-connect-personal'} target='_blank' className={'lnk--ic'}>Globus
+                    Connect Personal (GCP)<i className="bi bi-box-arrow-up-right"></i></a> endpoint must also be up and
+                    running.</small>
                 </> />
                 <ResultsBlock
                     searchContext={`files.${tableContext.current}`}

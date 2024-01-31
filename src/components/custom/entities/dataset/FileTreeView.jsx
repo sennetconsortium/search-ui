@@ -1,5 +1,4 @@
 import React, {Fragment, useContext, useEffect, useRef, useState} from 'react';
-import {BoxArrowUpRight, EnvelopeFill, InfoCircleFill, Search, X} from 'react-bootstrap-icons';
 import Card from 'react-bootstrap/Card';
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import Link from "next/link";
@@ -155,7 +154,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                             </a>
                             <SenNetPopover className={`file-${node.label}`}
                                            trigger={SenPopoverOptions.triggers.hover}
-                                           text={`${node.data.description}`}><InfoCircleFill/>
+                                           text={`${node.data.description}`}><i className="bi bi-info-circle-fill"></i>
                             </SenNetPopover>
                         </Col>
                         <Col md={2} sm={2} className={"text-end"}>
@@ -187,12 +186,12 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                             />
                             <InputGroup.Text 
                                 className={"transparent"}>
-                                <Search/>
+                                <i className="bi bi-search"></i>
                             </InputGroup.Text>
                             <Button
                                 label="Reset"
                                 onClick={() => handleSearchResetButtonClick(filterOptions)}>
-                                <X/>
+                                <i className="bi bi-x"></i>
                             </Button>
                         </InputGroup>
                     </Form.Group>
@@ -341,7 +340,8 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                             target="_blank"
                             href={filepath}
                             className="icon_inline"><span
-                            className="me-1">{data.sennet_id} Globus</span> <BoxArrowUpRight/></a></p>}
+                            className="me-1">{data.sennet_id} Globus</span> <i className="bi bi-box-arrow-up-right"></i></a>
+                    </p>}
 
                 {status > 200 &&
                     <p className={'fw-light fs-6 mb-2'}>Access to the files on the Globus Research Management system is restricted. You may
@@ -352,7 +352,8 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         Consortium "Protected Data Group".
                         Such protected data will be available via dbGaP in the future.
                         If you believe this to be an error, please contact <a className={'lnk--ic'}
-                                                                              href={'mailto:help@sennetconsortium.org'}>help@sennetconsortium.org <EnvelopeFill/></a>
+                                                                              href={'mailto:help@sennetconsortium.org'}>help@sennetconsortium.org <i
+                            className="bi bi-envelope-fill"></i></a>
                     </p>}
             </Card>
 

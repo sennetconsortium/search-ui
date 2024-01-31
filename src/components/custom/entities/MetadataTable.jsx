@@ -1,6 +1,5 @@
 import React from 'react';
 import {Container, Row,} from 'react-bootstrap'
-import {Download} from "react-bootstrap-icons";
 import {createDownloadUrl, tableDataToTSV} from "../js/functions";
 import DataTable from "react-data-table-component";
 import {ViewHeaderBadges} from "../layout/entity/ViewHeaderBadges";
@@ -47,7 +46,7 @@ export default class MetadataTable extends React.Component {
                               role='button'
                               aria-label='Download Metadata'
                               title='Download Metadata'>
-                            <Download/>
+                            <i className="bi bi-download"></i>
                         </span>
                             </a>
                         </div>
