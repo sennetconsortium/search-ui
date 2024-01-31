@@ -20,7 +20,8 @@ function StatusError({text, error, title}) {
 
 StatusError.defaultProps = {
     className: '',
-    title: 'Copy error message to clipboard'
+    title: 'Copy error message to clipboard',
+    error: 'An error occurred'
 }
 
 StatusError.propTypes = {
