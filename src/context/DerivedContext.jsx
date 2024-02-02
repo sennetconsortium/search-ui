@@ -1,4 +1,4 @@
-import {createContext, useCallback, useState} from "react";
+import {createContext, useCallback, useState, useRef} from "react";
 import $ from "jquery";
 import {
     fetchEntity,
@@ -11,6 +11,7 @@ import {get_prov_info, fetchVitessceConfiguration} from "../lib/services";
 import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
 import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
 import {kuppe2022nature} from "../vitessce-view-config/kuppe_2022_nature";
+import useVitessceEncoder from "../hooks/useVitessceEncoder";
 
 const DerivedContext = createContext({})
 
@@ -25,6 +26,8 @@ export const DerivedProvider = ({children}) => {
     const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
     const [derivedDataset, setDerivedDataset] = useState(null)
     const [showVitessce, setShowVitessce] = useState(false)
+    const {vitessceConfigFromUrl, encodeConfigToUrl} = useVitessceEncoder({})
+    const vitessceParams = useRef(null)
 
     // Load the correct Vitessce view config
     const set_vitessce_config = async (data, dataset_id, dataset_type) => {
@@ -117,6 +120,10 @@ export const DerivedProvider = ({children}) => {
     }, []);
     //endregion
 
+    const setVitessceStateDebounced = (val) => {
+        vitessceParams.current = encodeConfigToUrl(val)
+    }
+
     return <DerivedContext.Provider value={{
         initVitessceConfig,
         showVitessce,
@@ -133,6 +140,8 @@ export const DerivedProvider = ({children}) => {
         isFullscreen,
         setIsFullscreen,
         expandVitessceToFullscreen,
+        vitessceConfigFromUrl, vitessceParams,
+        setVitessceStateDebounced
     }}>
         {children}
     </DerivedContext.Provider>
