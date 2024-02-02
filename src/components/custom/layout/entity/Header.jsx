@@ -18,7 +18,12 @@ function EntityHeader({entity, data, isEditMode, values, showGroup = true, admin
             <h4>{isEditMode ? 'Edit' : 'Register'} {entity} {values && values.status && <span className={`${getStatusColor(values.status)} badge`}><SenNetPopover placement={'bottom'} text={getStatusDefinition(values.status)} className={'status-info'}>{values.status}</SenNetPopover></span>}</h4>
         </Row>
         {adminGroup && (data.pipeline_message || data.validation_message) && (eq(data['status'], 'Error') || eq(data['status'], 'Invalid')) &&
-            <SenNetAlert className={"h6"} variant={'warning'} text={data.pipeline_message || data.validation_message} icon={<ExclamationTriangleFill/>}/>
+            <SenNetAlert className={"h6"} variant={'warning'}
+                         text={data.pipeline_message ? (
+                             <span style={{whiteSpace: 'pre-wrap'}} dangerouslySetInnerHTML={{__html: data.pipeline_message}}/>) : (
+                             <span style={{whiteSpace: 'pre-wrap'}} dangerouslySetInnerHTML={{__html: data.validation_message}}/>)}
+                         icon={<ExclamationTriangleFill/>}
+            />
         }
         {isEditMode &&
             <>
