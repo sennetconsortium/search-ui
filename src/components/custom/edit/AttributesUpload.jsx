@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState, useRef} from 'react'
 import PropTypes from 'prop-types'
 import {Button, Form} from 'react-bootstrap';
-import {CheckCircleFill, XCircleFill, Download, Paperclip} from "react-bootstrap-icons";
 import {InputGroup} from 'react-bootstrap';
 import {getIngestEndPoint} from "../../../config/config";
 import log from 'loglevel'
@@ -234,16 +233,17 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
                 >
                     <Button variant={'outline-primary rounded-0'} onClick={handleUploadMetadataClick}>
                         Upload {attribute.toLowerCase()} file
-                        <Paperclip className={'ms-2'}/>
+                        <i className={'bi bi-paperclip ms-2'}/>
                     </Button>
                 </SenNetPopover>
 
 
                 <span className={`c-metadataUpload__meta js-fileInfo ${error ? `has-error  ${validationError ? 'has-hover' : ''}` : ''}`}>
-                    {error && <XCircleFill color='#842029' />}
-                    {success && <CheckCircleFill color='#0d6efd' />}
+                    {error && <i className="bi bi-x-circle-fill" style={{color:'#842029'}}></i>}
+                    {success && <i className="bi bi-check-circle-fill" style={{color:'#0d6efd'}}></i>}
                     <small role={validationError ? 'button' : null} onClick={downloadDetails} title={`${validationError ? 'Download error report' : ''}`}>
-                        <span className={'c-metadataUpload__fileStatus'}>{fileStatus}</span> {validationError && <Download />}
+                        <span className={'c-metadataUpload__fileStatus'}>{fileStatus}</span> {validationError &&
+                        <i className="bi bi-download"></i>}
                         {isValidating && <span className="spinner spinner-border ic alert alert-info"></span>}
                     </small>
                 </span>

@@ -1,7 +1,6 @@
 import {Alert} from 'react-bootstrap'
-import {ShieldShaded} from 'react-bootstrap-icons'
 
-const SenNetAlert = ({ className, variant = 'danger', icon = <ShieldShaded />, text }) => {
+const SenNetAlert = ({className, variant = 'danger', icon = <i className="bi bi-shield-shaded"></i>, text}) => {
 
     return (
         <Alert variant={variant}>

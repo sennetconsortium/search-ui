@@ -1,5 +1,4 @@
 import React, {Fragment, useContext, useEffect, useState} from 'react';
-import {BoxArrowUpRight, EnvelopeFill, QuestionCircleFill} from 'react-bootstrap-icons';
 import {fetchGlobusFilepath} from "../../../../lib/services";
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
@@ -35,7 +34,7 @@ export const Files = ({data}) => {
                                 className="me-1">{row.rel_path}</span>
                             </a>
                             <SenNetPopover className={`file-${index}`}
-                                           text={`${row.description}`}><QuestionCircleFill/>
+                                           text={`${row.description}`}><i className="bi bi-question-circle-fill"></i>
                             </SenNetPopover>
 
                         </span>
@@ -111,7 +110,7 @@ export const Files = ({data}) => {
                                 target="_blank"
                                 href={filepath}
                                 className="icon_inline"><span
-                                className="me-1">{data.sennet_id}</span> <BoxArrowUpRight/></a></p>}
+                                className="me-1">{data.sennet_id}</span> <i className="bi bi-box-arrow-up-right"></i></a></p>}
 
                     {status > 200 &&
                         <p>Access to the files on the Globus Research Management system is restricted. You may
@@ -122,7 +121,8 @@ export const Files = ({data}) => {
                             Consortium "Protected Data Group".
                             Such protected data will be available via dbGaP in the future.
                             If you believe this to be an error, please contact <a className={'lnk--ic'}
-                                                                                  href={'mailto:help@sennetconsortium.org'}>help@sennetconsortium.org <EnvelopeFill/></a>
+                                                                                  href={'mailto:help@sennetconsortium.org'}>help@sennetconsortium.org <i
+                                className="bi bi-envelope-fill"></i></a>
                         </p>}
                 </Card.Body>
             </Card>

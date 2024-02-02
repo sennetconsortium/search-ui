@@ -100,9 +100,9 @@ function ViewCollection() {
                                                    data-bs-parent="#sidebar">Contacts</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="#Datasets"
+                                                <a href="#Entities"
                                                    className="nav-link "
-                                                   data-bs-parent="#sidebar">Datasets</a>
+                                                   data-bs-parent="#sidebar">Entities</a>
                                             </li>
                                             <li className="nav-item">
                                                 <a href="#Creators"
@@ -136,8 +136,8 @@ function ViewCollection() {
                                             {/*Contacts*/}
                                             <ContributorsContacts title={'Contacts'} data={data.contacts} />
 
-                                            {/*Datasets*/}
-                                            <Datasets data={data.datasets} />
+                                            {/*Entities*/}
+                                            <Datasets data={data.entities || data.datasets} label={'Entities'} />
 
                                             {/*Creators*/}
                                             <ContributorsContacts title={'Creators'} data={data.creators} />

@@ -2,7 +2,6 @@ import {COLS_ORDER_KEY, getAuth, getProtocolsToken, getRootURL} from "../../../c
 import {APP_ROUTES} from "../../../config/constants";
 import log from "loglevel";
 import fetchJsonp from "fetch-jsonp";
-import {BoxArrowUpRight} from "react-bootstrap-icons";
 import React from "react";
 
 export function getHeaders() {
@@ -72,9 +71,11 @@ export function formatCitation(data, url) {
     result.push(<span key={`${data}-publisher`}>. {data.attributes?.publisher}. {data.attributes.publicationYear}.</span>)
     return <>
         {result}
-        <span> Available from: <br /><a className='lnk--ic' href={url}>{url} <BoxArrowUpRight/></a></span>
-        <hr />
-        <span><a className='lnk--ic' href={`https://commons.datacite.org/${url.replace('https://', '')}`}>View the DataCite page <BoxArrowUpRight/></a></span>
+        <span> Available from: <br /><a className='lnk--ic' href={url}>{url} <i
+            className="bi bi-box-arrow-down-right"></i></a></span>
+        <hr/>
+        <span><a className='lnk--ic' href={`https://commons.datacite.org/${url.replace('https://', '')}`}>View the DataCite page<i
+            className="bi bi-box-arrow-down-right"></i></a></span>
     </>
 }
 

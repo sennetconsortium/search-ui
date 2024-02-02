@@ -1,7 +1,5 @@
 import React from 'react';
 import {fetchEntity, getStatusColor} from "../../js/functions";
-import {BoxArrowUpRight} from "react-bootstrap-icons";
-import Badge from 'react-bootstrap/Badge';
 
 export default class DerivedDatasetItem extends React.Component {
     constructor(props) {
@@ -24,7 +22,7 @@ export default class DerivedDatasetItem extends React.Component {
                     <tr key={"descendant_data_" + this.props.index}>
                         <td>
                             <a href={`/dataset?uuid=${this.state.descendant_data.uuid}`} className="icon_inline">
-                                <span className="me-1">{this.state.descendant_data.sennet_id}</span> <BoxArrowUpRight/>
+                                <span className="me-1">{this.state.descendant_data.sennet_id}</span> <i className="bi bi-box-arrow-up-right"></i>
                             </a>
                         </td>
                         {(() => {
