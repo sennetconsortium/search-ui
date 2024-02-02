@@ -1,12 +1,8 @@
 import React from 'react';
-import {Table} from 'react-bootstrap';
 import {getStatusColor, getStatusDefinition} from "../../js/functions";
-import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
-import {TrashFill} from "react-bootstrap-icons";
 import SenNetPopover from "../../../SenNetPopover";
 import ClipboardCopy from "../../../ClipboardCopy";
-import {getResponseList} from "../AttributesUpload";
 import DataTable from "react-data-table-component";
 
 export default function AncestorsTable({formLabel, onChange, deleteAncestor, values, controlId, ancestors}) {
@@ -61,8 +57,8 @@ export default function AncestorsTable({formLabel, onChange, deleteAncestor, val
                 selector: row => null,
                 sortable: false,
                 format: col => {
-                    return <Button className="pt-0 pb-0" variant="link" onClick={(e) => _deleteAncestor(e, col.uuid)}><TrashFill
-                        color="red"/></Button>
+                    return <Button className="pt-0 pb-0" variant="link" onClick={(e) => _deleteAncestor(e, col.uuid)}><i className={'bi bi-trash-fill'}
+                        style={{color:"red"}}/></Button>
                 },
             },
         ]

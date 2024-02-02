@@ -33,7 +33,6 @@ import ImageSelector from "../../components/custom/edit/ImageSelector";
 import SenNetAlert from "../../components/SenNetAlert";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
-import {BoxArrowUpRight} from "react-bootstrap-icons";
 import $ from "jquery";
 
 
@@ -468,7 +467,7 @@ function EditSample() {
                                                      onBlur={_onBlur}
                                                      text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see: <a
                                                          href="https://www.protocols.io/." target='_blank'
-                                                         className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>}/>
+                                                         className='lnk--ic'>https://www.protocols.io/ <i className="bi bi-box-arrow-up-right"></i></a>.</span>}/>
 
                                     {/*/!*Lab Sample ID*!/*/}
                                     <EntityFormGroup label='Lab Sample ID' placeholder='A non-PHI ID or deidentified name used by the lab when referring to the specimen'

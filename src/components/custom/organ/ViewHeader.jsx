@@ -1,4 +1,3 @@
-import { BoxArrowUpRight } from "react-bootstrap-icons";
 
 const OrganViewHeader = ({ organ }) => {
     return (
@@ -19,7 +18,7 @@ const OrganViewHeader = ({ organ }) => {
                                 {organ.organUberon}
                             </a>
                             &nbsp;
-                            <BoxArrowUpRight className="lnk--white" />
+                            <i className="bi bi-box-arrow-up-right lnk--white"></i>
                         </span>
                     </h5>
                 </div>

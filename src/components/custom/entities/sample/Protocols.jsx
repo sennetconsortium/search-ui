@@ -1,6 +1,5 @@
 import React, {Fragment} from 'react';
 import {fetchProtocols,  getClickableLink} from "../../js/functions";
-import {BoxArrowUpRight} from "react-bootstrap-icons";
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
 
@@ -36,7 +35,7 @@ export default class Protocols extends React.Component {
                         <Card.Text>
                             <a href={getClickableLink(this.props.protocol_url)}
                                className="icon_inline" target="_blank"><span
-                                className="me-1">{this.props.protocol_url}</span> <BoxArrowUpRight/></a>
+                                className="me-1">{this.props.protocol_url}</span> <i className="bi bi-box-arrow-up-right"></i></a>
                         </Card.Text>
                     </Card.Body>
                 </Card>
@@ -53,7 +52,7 @@ export default class Protocols extends React.Component {
                                         {author.username != "" ? (
                                                 <a href={`https://www.protocols.io/researchers/${author.username}`}
                                                    className="icon_inline" target="_blank">
-                                                    <span className="me-1">{author.name}</span> <BoxArrowUpRight/>
+                                                    <span className="me-1">{author.name}</span> <i className="bi bi-box-arrow-up-right"></i>
                                                 </a>
                                             ) :
                                             <>{author.name}</>

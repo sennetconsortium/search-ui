@@ -5,7 +5,6 @@ import AppContext from "../../../context/AppContext";
 import Joyride from "react-joyride";
 import {eq} from "../js/functions";
 import {Alert} from 'react-bootstrap'
-import {Binoculars} from "react-bootstrap-icons";
 
 function AppTutorial() {
     const {isLoggedIn} = useContext(AppContext)
@@ -40,7 +39,7 @@ function AppTutorial() {
     return (
         <>
             <Alert variant="info" show={showAlert} onClose={() => {seenTutorial(); setShowAlert(false)}} dismissible className='text-center alert-hlf mb-4'>
-                <Alert.Heading><Binoculars /> Getting Started</Alert.Heading>
+                <Alert.Heading><i className="bi bi-binoculars"></i>Getting Started</Alert.Heading>
                 <p>Welcome to the SenNet Data Portal. Get a quick tour of different sections of the application.</p>
                 <a className='btn btn-primary' onClick={() => handleTutorial()}>Begin Tutorial Tour</a>
             </Alert>

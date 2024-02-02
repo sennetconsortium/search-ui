@@ -1,5 +1,4 @@
 import React, {useContext} from 'react';
-import {EnvelopeFill} from "react-bootstrap-icons";
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
@@ -25,7 +24,7 @@ export default function Attribution({ data }) {
                             <a href={`mailto:${data.created_by_user_email}`}
                                className="icon_inline"><span
                                 className="me-1">{data.created_by_user_email}</span>
-                                <EnvelopeFill/></a>
+                                <i className="bi bi-envelope-fill"></i></a>
                         </Card.Text>
                     </Card.Body>
                 </Card>
