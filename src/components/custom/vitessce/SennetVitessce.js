@@ -82,7 +82,7 @@ export const SennetVitessce = ({data}) => {
                                     <OverlayTrigger placement={'top'}
                                                     overlay={<Tooltip>Switch to light theme</Tooltip>}>
                                         <i style={{cursor: 'pointer'}} onClick={() => setVitessceTheme('light')}
-                                             className={'bi bi-sun-fill m-2'} color="royalblue" size={24} title="Light mode"/>
+                                             className={'bi bi-sun m-2'} color="royalblue" size={24} title="Light mode"/>
                                     </OverlayTrigger>
                                     <OverlayTrigger placement={'top'} overlay={<Tooltip>Switch to dark theme</Tooltip>}>
                                         <i style={{cursor: 'pointer'}} onClick={() => setVitessceTheme('dark')}
