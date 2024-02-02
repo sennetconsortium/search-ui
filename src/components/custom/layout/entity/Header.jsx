@@ -5,7 +5,6 @@ import HipaaModal from "../../edit/sample/HipaaModal";
 import {eq, getStatusColor, getStatusDefinition} from "../../js/functions";
 import ClipboardCopy from "../../../ClipboardCopy";
 import SenNetAlert from "../../../SenNetAlert";
-import {ExclamationTriangleFill} from 'react-bootstrap-icons'
 import SenNetPopover from "../../../SenNetPopover";
 import EntityContext from "../../../../context/EntityContext";
 
@@ -22,7 +21,7 @@ function EntityHeader({entity, data, isEditMode, values, showGroup = true, admin
                          text={data.pipeline_message ? (
                              <span style={{whiteSpace: 'pre-wrap'}} dangerouslySetInnerHTML={{__html: data.pipeline_message}}/>) : (
                              <span style={{whiteSpace: 'pre-wrap'}} dangerouslySetInnerHTML={{__html: data.validation_message}}/>)}
-                         icon={<ExclamationTriangleFill/>}
+                         icon={<i className="bi bi-exclamation-triangle-fill"></i>}
             />
         }
         {isEditMode &&

@@ -3,7 +3,6 @@ import {Row, Col} from 'react-bootstrap'
 import AppContext from "../../../context/AppContext";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import {BoxArrowUpRight} from 'react-bootstrap-icons';
 
 const AppFooter = () => {
     const {_t} = useContext(AppContext)
@@ -53,7 +52,10 @@ const AppFooter = () => {
                             <Col sm={2}>
                                 <ul className="pb-3 mb-3 nav--menu" aria-label='Funding Menu'>
                                     <li className="nav-item"><span className='nav-item-h'>Funding</span></li>
-                                    <li className="nav-item"><a className='lnk--ic' href="https://commonfund.nih.gov/senescence">NIH Common Fund <BoxArrowUpRight/></a></li>
+                                    <li className="nav-item"><a className='lnk--ic'
+                                                                href="https://commonfund.nih.gov/senescence">NIH Common
+                                        Fund <i
+                                            className="bi bi-box-arrow-up-right"/></a></li>
                                 </ul>
                             </Col>
                         </Row>

@@ -18,7 +18,6 @@ import DerivedContext, {DerivedProvider} from "../context/DerivedContext";
 
 import SidebarBtn from "../components/SidebarBtn";
 import SenNetAccordion from "../components/custom/layout/SenNetAccordion";
-import {BoxArrowUpRight} from "react-bootstrap-icons";
 
 
 
@@ -192,7 +191,7 @@ function ViewPublication() {
                                                         </thead>
                                                         <tbody>
                                                         <tr>
-                                                            <td><a href={data.publication_url} className={'lnk--ic pl-0'}>{data.publication_url} <BoxArrowUpRight/></a></td>
+                                                            <td><a href={data.publication_url} className={'lnk--ic pl-0'}>{data.publication_url} <i className="bi bi-box-arrow-up-right"></i></a></td>
                                                         </tr>
                                                         </tbody>
                                                     </Table>
@@ -206,7 +205,7 @@ function ViewPublication() {
                                                         </thead>
                                                         <tbody>
                                                         <tr>
-                                                            <td><a href={data.publication_doi} className={'lnk--ic pl-0'}>{data.publication_doi} <BoxArrowUpRight/></a></td>
+                                                            <td><a href={data.publication_doi} className={'lnk--ic pl-0'}>{data.publication_doi} <i className="bi bi-box-arrow-up-right"></i></a></td>
                                                         </tr>
                                                         </tbody>
                                                     </Table> }

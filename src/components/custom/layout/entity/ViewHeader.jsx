@@ -1,7 +1,6 @@
 import React, {useContext} from 'react'
 import AppContext from '../../../../context/AppContext'
 import {Button, Stack} from 'react-bootstrap';
-import {FiletypeJson} from 'react-bootstrap-icons';
 import {eq} from "../../js/functions";
 import PropTypes from 'prop-types'
 import ClipboardCopy from "../../../ClipboardCopy";
@@ -27,7 +26,7 @@ const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
                     <Button target='_blank' aria-label={`View JSON of the ${cache.entities[entity]}`}
                             className={`${hasWritePrivilege ? "mx-2" : ""} js-btn--json`}
                             href={`/api/json/${entity}?uuid=${data.uuid}`}
-                            variant="outline-primary rounded-0"><FiletypeJson/></Button>
+                            variant="outline-primary rounded-0"><i className="bi bi-filetype-json"></i></Button>
                 </SenNetPopover>
 
                 {eq(entity, cache.entities.dataset) && data.multi_revisions && <VersionsDropdown data={data}/>}

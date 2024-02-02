@@ -1,6 +1,5 @@
 import {useContext, useEffect, useState} from 'react'
 import {Form} from 'react-bootstrap';
-import {QuestionCircleFill} from 'react-bootstrap-icons'
 import SenNetPopover from '../../../SenNetPopover'
 import AppContext from '../../../../context/AppContext'
 
@@ -20,7 +19,7 @@ function SourceType( { data, onChange } ) {
                         The type of this <code>Source</code>. Choose from one of the available options.<br />
                         <small className='popover-note text-muted'>Note: CCF Registration User Interface (CCF-RUI) tool is only available for <code>{cache.sourceTypes.Human}</code> and <code>{cache.sourceTypes['Human Organoid']}</code> types.</small>
                     </>}>
-                        <QuestionCircleFill/>
+                        <i className="bi bi-question-circle-fill"></i>
                     </SenNetPopover>
                 </Form.Label>
 

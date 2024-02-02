@@ -32,7 +32,6 @@ import SenNetPopover, {SenPopoverOptions} from "../../components/SenNetPopover"
 import AttributesUpload, {getResponseList} from "../../components/custom/edit/AttributesUpload";
 import DataTable from "react-data-table-component";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import {PlusLg} from "react-bootstrap-icons";
 import Tooltip from '@mui/material/Tooltip';
 import {Zoom, Popper} from "@mui/material";
 import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
@@ -367,11 +366,13 @@ export default function EditCollection() {
                                                         trigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                                         className={`c-metadataUpload__popover--entity_uuids`}
                                                         text={bulkAddBtnTooltip}
-                                                    ><Button variant="outline-secondary rounded-0 mt-1" onClick={!bulkAddField ? showBulkAdd : handleBulkAdd} aria-controls='js-modal'>
-                                                        Bulk add entities <PlusLg/>
+                                                    ><Button variant="outline-secondary rounded-0 mt-1"
+                                                             onClick={!bulkAddField ? showBulkAdd : handleBulkAdd}
+                                                             aria-controls='js-modal'>
+                                                        Bulk add entities <i className="bi bi-plus-lg"></i>
                                                     </Button></SenNetPopover>
 
-                                        <Tooltip
+                                                     <Tooltip
                                             PopperProps={{
                                                 disablePortal: true,
                                             }}
