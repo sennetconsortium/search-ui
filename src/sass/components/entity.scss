@@ -10,8 +10,12 @@
 
 .icon_inline {
   display: inline-flex !important;
+  flex-wrap: wrap;
   align-items: center;
   text-decoration: none;
+  @include md-mx {
+    margin-bottom: 1em;
+  }
 }
 
 .entity_body {
