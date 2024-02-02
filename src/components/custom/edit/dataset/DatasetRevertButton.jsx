@@ -5,7 +5,7 @@ import {Button, Form, Badge} from 'react-bootstrap'
 import {getStatusColor} from "../../js/functions";
 
 export const supportedReverStatuses = () => {
-    const statuses = ['New', 'Valid', 'Invalid', 'QA', 'Submitted']
+    const statuses = ['New', 'Valid', 'Invalid', 'QA', 'Submitted', 'Incomplete']
     return {
         Upload: statuses,
         Dataset: statuses
@@ -54,7 +54,7 @@ function DatasetRevertButton({disableSubmit, onClick, onStatusChange, data}) {
                                      onChange={e => onStatusChange(e, e.target.id, e.target.value)}>
                             <option value="">----</option>
                             {supportedReverStatuses()[data.entity_type].map((status) =>{
-                                return <option>{status}</option>
+                                return <option key={status}>{status}</option>
                             })}
                         </Form.Select>
                     </Form.Group>
