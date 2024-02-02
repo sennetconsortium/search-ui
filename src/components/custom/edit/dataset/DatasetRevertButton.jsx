@@ -16,8 +16,10 @@ export const statusRevertTooltip = (entity) => {
     const statuses = supportedReverStatuses()[entity]
     const results = []
     for (let i = 0; i < statuses.length; i++) {
-        const sep = i === statuses.length - 1 ? 'or ' : ', '
-        results.push(<span key={`revert-status-${statuses[i]}`}><span className={`${getStatusColor(statuses[i])} badge`}>{statuses[i]}</span>{sep}</span>)
+        const atEnd = i === statuses.length - 1
+        const sep = atEnd ? '' : ', '
+        const pre = atEnd ? 'or ' : ''
+        results.push(<span key={`revert-status-${statuses[i]}`}>{pre}<span className={`${getStatusColor(statuses[i])} badge`}>{statuses[i]}</span>{sep}</span>)
     }
 
     return (<>Revert this <code>{entity}</code> back to {results} status.</>)
