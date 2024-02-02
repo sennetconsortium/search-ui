@@ -22,8 +22,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
 
     const supportedSingleRegister = () => {
         let entities = Object.keys(cache.entities)
-        {/*Temporarily disabling single dataset registration*/}
-        let notSupported = ['publication entity', 'upload', 'organ', 'collection', 'dataset']
+        let notSupported = ['publication entity', 'upload', 'organ', 'collection']
         return entities.filter(entity => !notSupported.includes(entity))
     }
 
@@ -35,8 +34,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
 
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
-        {/*Temporarily disabling bulk dataset registration*/}
-        let notSupported = ['publication entity', 'organ', 'collection', 'dataset']
+        let notSupported = ['publication entity', 'organ', 'collection']
         entities = entities.filter(entity => !notSupported.includes(entity))
 
         const elem = entities.shift()
