@@ -21,7 +21,6 @@ import ImageSelector from "../../components/custom/edit/ImageSelector";
 import SenNetAlert from "../../components/SenNetAlert";
 import AttributesUpload from "../../components/custom/edit/AttributesUpload";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
-import {BoxArrowUpRight} from "react-bootstrap-icons";
 import $ from "jquery";
 
 
@@ -188,7 +187,7 @@ function EditSource() {
                 text.push(curatorMessage)
                 {/* text.push(<span>//TODO: confirm fields for Human and upload to docs.sennetconsortium.org */}
                 {/*<small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;*/}
-                {/*    <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <BoxArrowUpRight/></a>.*/}
+                {/*    <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <i className="bi bi-box-arrow-up-right"></i></a>.*/}
                 {/*</small><br /></span>)*/}
             }
             return text
@@ -262,7 +261,7 @@ function EditSource() {
                                         controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
                                                      className={warningClasses.protocol_url}
                                                      warningText={<>The supplied protocols.io DOI URL, formatting is correct but does not resolve. This will need to be corrected for any <code>Dataset</code> submission that uses this entity as an ancestor.</>}
-                                                     onChange={onChange} onBlur={_onBlur} text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <BoxArrowUpRight/></a>.</span>} />
+                                                     onChange={onChange} onBlur={_onBlur} text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <i className="bi bi-box-arrow-up-right"></i></a>.</span>} />
 
                                     {/*/!*Description*!/*/}
                                     <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}

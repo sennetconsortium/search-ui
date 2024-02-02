@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.css'
 import {Button, Form, Badge} from 'react-bootstrap'
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
-import {QuestionCircleFill} from 'react-bootstrap-icons'
 import log from 'loglevel'
 import {get_headers, update_create_dataset} from '../../lib/services'
 import {
@@ -446,7 +445,7 @@ export default function EditDataset() {
                                             <Form.Label>{_t('Human Gene Sequences')} <span
                                                 className="required">* </span>
                                                 <SenNetPopover className={'contains_human_genetic_sequences'} text={'Does this data contain any human genetic sequences?'}>
-                                                    <QuestionCircleFill/>
+                                                    <i className="bi bi-question-circle-fill"></i>
                                                 </SenNetPopover>
 
                                             </Form.Label>

@@ -5,7 +5,6 @@ import {Layout} from "@elastic/react-search-ui-views";
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import {exclude_dataset_config, valid_dataset_ancestor_config} from "../../../../config/config";
 import {TableResultsEntities} from '../../TableResultsEntities';
 import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
@@ -79,7 +78,7 @@ export default class AncestorId extends React.Component {
                     <SenNetPopover className={'direct_ancestor_uuid'}
                                    text={<>The SenNet ID of the entity that this <code>Sample</code> came from. Must be
                                        another <code>Sample</code> or <code>Source</code>.</>}>
-                        <QuestionCircleFill/>
+                        <i className="bi bi-question-circle-fill"></i>
                     </SenNetPopover>
                 </Form.Label>
                 <InputGroup className="mb-3" id="direct_ancestor_uuid">
@@ -89,7 +88,7 @@ export default class AncestorId extends React.Component {
                                   onChange={e => this.props.onChange(e, e.target.id, e.target.value)}
                                   defaultValue={this.props.source?.sennet_id}/>
                     <Button variant="primary" onClick={this.showModal}>
-                        <Search/>
+                        <i className="bi bi-search"></i>
                     </Button>
                 </InputGroup>
 
@@ -119,7 +118,7 @@ export default class AncestorId extends React.Component {
                                                                 autoFocus={true}
                                                             />
                                                             <InputGroup.Text
-                                                                className={"transparent"}><Search/></InputGroup.Text>
+                                                                className={"transparent"}><i className="bi bi-search"></i></InputGroup.Text>
                                                             <Button variant="outline-primary"
                                                                     className={"rounded-0"}
                                                                     onClick={e => this.handleSearchFormSubmit(e, onSubmit)}>Search</Button>

@@ -14,7 +14,6 @@ import Spinner from "../../components/custom/Spinner";
 import AppContext from "../../context/AppContext";
 import SelectedFilters from "../../components/custom/layout/SelectedFilters";
 import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
-import {Search} from "react-bootstrap-icons";
 import SelectedFacets from "../../components/custom/search/SelectedFacets";
 import SearchUIContainer from "search-ui/components/core/SearchUIContainer";
 import FacetsContent from "../../components/custom/search/FacetsContent";
@@ -76,7 +75,8 @@ function SearchMetadata() {
                                                                     autoFocus={false}
                                                                 />
                                                                 <InputGroup.Text
-                                                                    className={"transparent"}><Search/></InputGroup.Text>
+                                                                    className={"transparent"}><i
+                                                                    className="bi bi-search"></i></InputGroup.Text>
                                                                 <Button variant="outline-primary"
                                                                         className={"rounded-1"}
                                                                         onClick={e => handleSearchFormSubmit(e, onSubmit)}>{_t('Search')}</Button>

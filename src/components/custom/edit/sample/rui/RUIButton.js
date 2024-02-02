@@ -1,5 +1,4 @@
 import React, {useState, useContext} from 'react';
-import {Check2Circle, QuestionCircleFill} from "react-bootstrap-icons";
 import RUIModal from "./RUIModal";
 import {Button, Form, OverlayTrigger, Popover} from 'react-bootstrap';
 import AppContext from "../../../../../context/AppContext";
@@ -32,13 +31,13 @@ const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
                                 </Popover.Body>
                             </Popover>}
                     >
-                        <QuestionCircleFill/>
+                        <i className="bi bi-question-circle-fill"></i>
                     </OverlayTrigger>
                     {
                         ruiLocation &&
                         <>
                             <span>{' '}</span>
-                            <Check2Circle color={'green'}/>
+                            <i className={'bi bi-check2-circle'} style={{color:'green'}}/>
                         </>
                     }
 
