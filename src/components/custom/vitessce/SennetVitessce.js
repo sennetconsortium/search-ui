@@ -26,7 +26,8 @@ export const SennetVitessce = ({data}) => {
         isPrimaryDataset,
         derivedDataset,
         vitessceParams,
-        setVitessceStateDebounced
+        setVitessceConfigState,
+        getUrlByLengthMaximums
     } = useContext(DerivedContext)
 
 
@@ -62,9 +63,7 @@ export const SennetVitessce = ({data}) => {
                                 </Tooltip>
                             }>
                             <i className={'bi bi-share'} style={{cursor: 'pointer'}} color="royalblue" size={24} onClick={() => {
-                                let url = document.location.href.split('#')[0]
-                                url = vitessceParams.current ? url + '#' + vitessceParams.current : url
-                                navigator.clipboard.writeText(url)
+                                navigator.clipboard.writeText(getUrlByLengthMaximums(vitessceParams.current))
                                 setShowCopiedToClipboard(true)
                             }} onMouseLeave={() => setShowCopiedToClipboard(false)}/>
                         </OverlayTrigger>
@@ -118,7 +117,7 @@ export const SennetVitessce = ({data}) => {
                 <Suspense fallback={<div>Loading...</div>}>
                     {vitessceConfigFromUrl || vitessceConfig ?
                         (
-                            <Vitessce onConfigChange={setVitessceStateDebounced} config={vitessceConfigFromUrl || vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
+                            <Vitessce onConfigChange={setVitessceConfigState} config={vitessceConfigFromUrl || vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
                         )
                         : (
                              <Spinner/>

@@ -12,6 +12,14 @@ function useVitessceEncoder() {
     const VERSION_QUERY_STRING = 'vitessce_conf_version';
     const LENGTH_QUERY_STRING = 'vitessce_conf_length';
 
+    const MAX_BROWSER_URL_LENGTHS = {
+        Chrome: 32779,
+        Other: 2047,
+        Edge: 2047,
+        Safari: 65000,
+        Firefox: 65000,
+    };
+
     function decodeURLParamsToConf(queryString) {
         const params = new URLSearchParams(queryString.replace('#', '&'));
         const compressedConfString = params.get(VITESSCE_CONF_QUERY_STRING);
@@ -28,10 +36,25 @@ function useVitessceEncoder() {
         log.error('Unrecognized URL Param Version');
     }
 
+    function whichBrowser() {
+        const agent = navigator.userAgent;
+        if (agent.includes('Chrome')) return 'Chrome';
+        else if (agent.includes('Firefox')) return 'Firefox';
+        else if (agent.includes('Safari')) return 'Safari';
+        else if (agent.includes('Edge')) return 'Edge';
+        else return 'Other';
+    }
+
+    function  getUrlByLengthMaximums(params, base) {
+        base = base || document.location.href.split('#')[0]
+        const url = `${base}#${params}`
+        const browser = whichBrowser()
+        return (url.length > MAX_BROWSER_URL_LENGTHS[browser]) ? base : url
+    }
+
     function encodeConfigToUrl(_config) {
         const compressedConf = compressToEncodedURIComponent(JSON.stringify(_config));
         const newParams = `${LENGTH_QUERY_STRING}=${compressedConf.length}&${VERSION_QUERY_STRING}=${CURRENT_VERSION}&${VITESSCE_CONF_QUERY_STRING}=${compressedConf}`;
-        //TODO: check if url is passed browser limit
         setUrl(newParams)
         log.info('VitParams', newParams)
         return newParams
@@ -45,7 +68,7 @@ function useVitessceEncoder() {
     }, [])
 
     //const url = encodeConfInUrl(config, fn)
-    return {encodeConfigToUrl, decodeURLParamsToConf, vitessceConfigFromUrl, url}
+    return {encodeConfigToUrl, decodeURLParamsToConf, vitessceConfigFromUrl, url,  getUrlByLengthMaximums}
 }
 
 export default useVitessceEncoder

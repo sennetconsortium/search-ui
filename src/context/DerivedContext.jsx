@@ -26,7 +26,7 @@ export const DerivedProvider = ({children}) => {
     const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
     const [derivedDataset, setDerivedDataset] = useState(null)
     const [showVitessce, setShowVitessce] = useState(false)
-    const {vitessceConfigFromUrl, encodeConfigToUrl} = useVitessceEncoder({})
+    const {vitessceConfigFromUrl, encodeConfigToUrl, getUrlByLengthMaximums} = useVitessceEncoder({})
     const vitessceParams = useRef(null)
 
     // Load the correct Vitessce view config
@@ -120,7 +120,7 @@ export const DerivedProvider = ({children}) => {
     }, []);
     //endregion
 
-    const setVitessceStateDebounced = (val) => {
+    const setVitessceConfigState = (val) => {
         vitessceParams.current = encodeConfigToUrl(val)
     }
 
@@ -141,7 +141,7 @@ export const DerivedProvider = ({children}) => {
         setIsFullscreen,
         expandVitessceToFullscreen,
         vitessceConfigFromUrl, vitessceParams,
-        setVitessceStateDebounced
+        setVitessceConfigState, getUrlByLengthMaximums
     }}>
         {children}
     </DerivedContext.Provider>
