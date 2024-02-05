@@ -1,4 +1,4 @@
-import React, {Suspense, useContext} from "react";
+import React, {Suspense, useContext, useState} from "react";
 import DerivedContext from "../../../context/DerivedContext";
 import Link from "next/link";
 import {Snackbar} from "@mui/material";
@@ -15,6 +15,7 @@ export const SennetVitessce = ({data}) => {
         vitessceTheme,
         setVitessceTheme,
         vitessceConfig,
+        vitessceConfigFromUrl,
         showCopiedToClipboard,
         setShowCopiedToClipboard,
         showExitFullscreenMessage,
@@ -23,8 +24,12 @@ export const SennetVitessce = ({data}) => {
         setIsFullscreen,
         expandVitessceToFullscreen,
         isPrimaryDataset,
-        derivedDataset
+        derivedDataset,
+        vitessceParams,
+        setVitessceStateDebounced
     } = useContext(DerivedContext)
+
+
 
     return <>
         {showVitessce &&
@@ -57,7 +62,9 @@ export const SennetVitessce = ({data}) => {
                                 </Tooltip>
                             }>
                             <i className={'bi bi-share'} style={{cursor: 'pointer'}} color="royalblue" size={24} onClick={() => {
-                                navigator.clipboard.writeText(document.location.href)
+                                let url = document.location.href.split('#')[0]
+                                url = vitessceParams.current ? url + '#' + vitessceParams.current : url
+                                navigator.clipboard.writeText(url)
                                 setShowCopiedToClipboard(true)
                             }} onMouseLeave={() => setShowCopiedToClipboard(false)}/>
                         </OverlayTrigger>
@@ -109,9 +116,9 @@ export const SennetVitessce = ({data}) => {
                     </MuiAlert>
                 </Snackbar>
                 <Suspense fallback={<div>Loading...</div>}>
-                    {vitessceConfig ?
+                    {vitessceConfigFromUrl || vitessceConfig ?
                         (
-                            <Vitessce config={vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
+                            <Vitessce onConfigChange={setVitessceStateDebounced} config={vitessceConfigFromUrl || vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
                         )
                         : (
                              <Spinner/>
