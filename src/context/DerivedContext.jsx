@@ -30,9 +30,11 @@ export const DerivedProvider = ({children}) => {
     const set_vitessce_config = async (data, dataset_id, dataset_type) => {
         fetchVitessceConfiguration(dataset_id).then(config => {
             setVitessceConfig(config)
+            setShowVitessce(true)
         }).catch(error => {
             console.error(error)
             setVitessceConfig("")
+            setShowVitessce(false)
         })
     }
 
@@ -49,11 +51,12 @@ export const DerivedProvider = ({children}) => {
         //Check that this dataset has a valid status and has descendants or if we know this isn't a primary dataset
         if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset)) {
             if (!is_primary_dataset) {
-                // Check that the assay type is supported by Vitessce
-                if (vitessceSupportedAssays.includes(dataset_type)) {
-                    setShowVitessce(true)
-                    await set_vitessce_config(data, data.uuid, dataset_type)
-                }
+                 await set_vitessce_config(data, data.uuid, dataset_type)
+                // // Check that the assay type is supported by Vitessce
+                // if (vitessceSupportedAssays.includes(dataset_type)) {
+                //     setShowVitessce(true)
+                //     await set_vitessce_config(data, data.uuid, dataset_type)
+                // }
 
             } else {
                 //Call `/prov-info` and check if processed datasets are returned
@@ -80,18 +83,6 @@ export const DerivedProvider = ({children}) => {
             }
         }
     }
-
-    const vitessceSupportedAssays = (() => {
-        const datasetTypes = getDatasetTypes()
-        return [
-            datasetTypes['RNAseq'],
-            datasetTypes['RNAseq (with probes)'],
-            datasetTypes['CODEX'],
-            datasetTypes['Light Sheet'],
-            datasetTypes['Visium (with probes)'],
-            datasetTypes['Visium (no probes)'],
-        ]
-    })()
 
     const isDatasetStatusPassed = data => {
         if(data.hasOwnProperty('status')) {
