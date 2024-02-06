@@ -28,7 +28,6 @@ export const DerivedProvider = ({children}) => {
     }
 
     const initVitessceConfig = async (data) => {
-        console.log("Testing vitessce")
         // Remove anything in brackets from dataset_type (might need to update this for visium to include parenthesis)
         const dataset_type = data.dataset_type = data.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
 
