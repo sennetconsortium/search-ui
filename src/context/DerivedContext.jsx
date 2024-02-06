@@ -1,17 +1,7 @@
 import {createContext, useCallback, useState, useRef} from "react";
 import $ from "jquery";
-import {
-    fetchEntity,
-    getDatasetTypes,
-    getDataTypes,
-    getDataTypesByProperty,
-    getIsPrimaryDataset
-} from "../components/custom/js/functions";
-import {get_prov_info, fetchVitessceConfiguration} from "../lib/services";
-import {rna_seq} from "../vitessce-view-config/rna-seq/rna-seq-vitessce-config";
-import {codex_config} from "../vitessce-view-config/codex/codex-vitessce-config";
-import {kuppe2022nature} from "../vitessce-view-config/kuppe_2022_nature";
-import useVitessceEncoder from "../hooks/useVitessceEncoder";
+import {fetchEntity} from "../components/custom/js/functions";
+import {fetchVitessceConfiguration, get_prov_info} from "../lib/services";
 
 const DerivedContext = createContext({})
 
@@ -40,7 +30,6 @@ export const DerivedProvider = ({children}) => {
     }
 
     const initVitessceConfig = async (data) => {
-        console.log("Testing vitessce")
         // Remove anything in brackets from dataset_type (might need to update this for visium to include parenthesis)
         const dataset_type = data.dataset_type = data.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
 
@@ -52,11 +41,8 @@ export const DerivedProvider = ({children}) => {
         //Check that this dataset has a valid status and has descendants or if we know this isn't a primary dataset
         if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset)) {
             if (!is_primary_dataset) {
-                // Check that the assay type is supported by Vitessce
-                if (vitessceSupportedAssays.includes(dataset_type)) {
-                    setShowVitessce(true)
-                    await set_vitessce_config(data, data.uuid, dataset_type)
-                }
+                setShowVitessce(true)
+                await set_vitessce_config(data, data.uuid, dataset_type)
 
             } else {
                 //Call `/prov-info` and check if processed datasets are returned
@@ -69,12 +55,10 @@ export const DerivedProvider = ({children}) => {
                         if (isDatasetStatusPassed(processed_dataset_statuses[i])) {
                             fetchEntity(processed_datasets[0]).then(processed_dataset => {
                                 // Check that the assay type is supported by Vitessce
-                                let processed_dataset_type =  processed_dataset.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
-                                if (vitessceSupportedAssays.includes(processed_dataset_type)) {
-                                    setShowVitessce(true)
-                                    setDerivedDataset(processed_dataset)
-                                    set_vitessce_config(processed_dataset, processed_dataset.uuid, processed_dataset_type)
-                                }
+                                let processed_dataset_type = processed_dataset.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
+                                setShowVitessce(true)
+                                setDerivedDataset(processed_dataset)
+                                set_vitessce_config(processed_dataset, processed_dataset.uuid, processed_dataset_type)
                             })
                             break;
                         }
@@ -84,20 +68,8 @@ export const DerivedProvider = ({children}) => {
         }
     }
 
-    const vitessceSupportedAssays = (() => {
-        const datasetTypes = getDatasetTypes()
-        return [
-            datasetTypes['RNAseq'],
-            datasetTypes['RNAseq (with probes)'],
-            datasetTypes['CODEX'],
-            datasetTypes['Light Sheet'],
-            datasetTypes['Visium (with probes)'],
-            datasetTypes['Visium (no probes)'],
-        ]
-    })()
-
     const isDatasetStatusPassed = data => {
-        if(data.hasOwnProperty('status')) {
+        if (data.hasOwnProperty('status')) {
             return data.status === "QA" || data.status === 'Published'
         } else {
             return data === "QA" || data === 'Published'
