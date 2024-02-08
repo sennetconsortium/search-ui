@@ -28,19 +28,20 @@ export async function update_create_dataset(uuid, body, action = "Edit", entityT
 }
 
 export async function check_valid_token() {
+    const token = getAuth();
     let headers = new Headers();
-    headers.append("Authorization", "Basic " + getGlobusToken())
-    headers.append("Content-Type", "application/x-www-form-urlencoded")
+    headers.append("Authorization", "Bearer " + token)
 
-    let formBody = 'token=' + getAuth()
-
-    let url = "https://auth.globus.org/v2/oauth2/token/introspect"
-    return await call_service(formBody, url, "POST", headers).then((response) => {
-        return response.active
-    }).catch(error => {
-        log.error('error', error)
+    try {
+        const res = await fetch("/api/auth/token", {
+            method: 'GET',
+            headers: headers
+        });
+        const status = res.status
+        return status == 200;
+    } catch {
         return false
-    })
+    }
 }
 
 export async function get_prov_info(dataset_uuid) {
