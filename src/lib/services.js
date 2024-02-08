@@ -1,6 +1,6 @@
 import log from "loglevel";
 import { getDataTypesByProperty } from "../components/custom/js/functions";
-import { getAuth, getEntityEndPoint, getGlobusToken, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "../config/config";
+import { getAuth, getEntityEndPoint, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "../config/config";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
