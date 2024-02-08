@@ -1,9 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import log from "loglevel";
-import {fetchDataCite, fetchProtocols, getProtocolId, getRequestHeaders} from "../components/custom/js/functions";
+import {fetchDataCite, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
 import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
@@ -15,7 +14,6 @@ import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "../context/DerivedContext";
 import SidebarBtn from "../components/SidebarBtn";
 import {useRouter} from "next/router";
-import Protocols from "../components/custom/entities/sample/Protocols";
 import Datasets from "../components/custom/entities/collection/Datasets";
 
 

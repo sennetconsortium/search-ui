@@ -280,7 +280,7 @@ export const AppProvider = ({ cache, banners, children }) => {
 
         if (!uiAuthCookie) {
             const result = await promptForUIPasscode()
-            if (result.value === atob(getUIPassword())) {
+            if (result.value === atob(process.env.UI_PSWD)) {
                 setCookie('adminUIAuthorized', true, {sameSite: "Lax"})
                 setUIAuthorized(true)
             } else {

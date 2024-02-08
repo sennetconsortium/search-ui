@@ -1,5 +1,5 @@
 import React, {Fragment} from 'react';
-import {fetchProtocols,  getClickableLink} from "../../js/functions";
+import {fetchProtocols, getClickableLink} from "../../js/functions";
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
 

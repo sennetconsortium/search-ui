@@ -50,15 +50,6 @@ export function getProtocolId(protocolUrl) {
     return regex.exec(protocolUrl)
 }
 
-export async function fetchProtocol(protocolUrl) {
-    log.info(protocolUrl)
-    return await fetch(protocolUrl,
-        {
-            headers: new Headers({Authorization: 'Bearer ' + getProtocolsToken()})
-        }
-    );
-}
-
 export function formatCitation(data, url) {
     let result = []
     const creators = data.attributes.creators;
@@ -92,13 +83,13 @@ export async function fetchDataCite(protocolUrl) {
 
 export async function fetchProtocols(protocolUrl) {
     if (!protocolUrl) return null
-    const response = await fetchProtocol('https://www.protocols.io/api/v4/protocols/' + getProtocolId(protocolUrl))
+
+    const response = await fetch("/api/protocol?uri=" + encodeURIComponent(protocolUrl));
 
     if (!response.ok) {
         return null
     }
-    const protocol = await response.json();
-    return protocol.payload;
+    return await response.json();
 }
 
 export function createDownloadUrl(fileStr, fileType) {
