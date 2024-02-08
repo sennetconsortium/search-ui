@@ -28,10 +28,8 @@ export const SennetVitessce = ({data}) => {
         derivedDataset,
         vitessceParams,
         setVitessceConfigState,
-        getUrlByLengthMaximums
+        getUrlByLengthMaximums, encodeConfigToUrl
     } = useContext(DerivedContext)
-
-    const { encodeConfigToUrl } = useVitessceEncoder({})
 
     return <>
         {showVitessce &&

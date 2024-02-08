@@ -142,7 +142,7 @@ export const DerivedProvider = ({children}) => {
         setIsFullscreen,
         expandVitessceToFullscreen,
         vitessceConfigFromUrl, vitessceParams,
-        setVitessceConfigState, getUrlByLengthMaximums
+        setVitessceConfigState, getUrlByLengthMaximums, encodeConfigToUrl
     }}>
         {children}
     </DerivedContext.Provider>
