@@ -280,12 +280,24 @@ export const AppProvider = ({ cache, banners, children }) => {
 
         if (!uiAuthCookie) {
             const result = await promptForUIPasscode()
-            if (result.value === atob(process.env.UI_PSWD)) {
-                setCookie('adminUIAuthorized', true, {sameSite: "Lax"})
-                setUIAuthorized(true)
-            } else {
-                await checkUIPassword()
-            }
+
+            const formData = new URLSearchParams();
+            formData.append('password', result.value)
+            await fetch("/api/auth/ui", {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData.toString()
+            }).then(async response => {
+                if (response.status === 200) {
+                    setCookie('adminUIAuthorized', true, {sameSite: "Lax"})
+                    setUIAuthorized(true)
+                } else {
+                    await checkUIPassword()
+                }
+            })
+
         } else {
             setUIAuthorized(true)
         }
