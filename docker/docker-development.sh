@@ -86,8 +86,8 @@ else
         # Copy over the source code
         mkdir portal-ui/src
         cp -r ../src/* portal-ui/src
-        # Also explicitly copy the .env file
-        cp ../src/.env portal-ui/src
+        # Also explicitly copy the .env.local file
+        cp ../src/.env.local portal-ui/src
 
         docker-compose -f docker-compose.yml -f docker-compose.development.yml -p portal-ui build
     elif [ "$1" = "start" ]; then
