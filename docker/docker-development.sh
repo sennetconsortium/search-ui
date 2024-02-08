@@ -62,7 +62,7 @@ else
     if [ "$2" = "check" ]; then
         # Bash array
         config_paths=(
-            '../src/.env'
+            '../src/.env.local'
         )
 
         for pth in "${config_paths[@]}"; do
