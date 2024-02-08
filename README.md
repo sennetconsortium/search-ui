@@ -42,7 +42,7 @@ $ npm run run
 
 ## Docker deployment
 
-For docker deployment, first create `.env` file base on `example.env` file in the same `src` directory.
+For docker deployment, first create `.env.local` file base on `example.env` file in the same `src` directory.
 
 ### Docker build for DEV development
 
