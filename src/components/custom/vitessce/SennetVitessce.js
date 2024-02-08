@@ -7,6 +7,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import SenNetAccordion from "../layout/SenNetAccordion";
 import Spinner from "../Spinner";
+import useVitessceEncoder from "../../../hooks/useVitessceEncoder";
 
 export const SennetVitessce = ({data}) => {
     const Vitessce = React.lazy(() => import ('./VitessceWrapper.js'))
@@ -26,10 +27,9 @@ export const SennetVitessce = ({data}) => {
         isPrimaryDataset,
         derivedDataset,
         vitessceParams,
-        setVitessceStateDebounced
+        setVitessceConfigState,
+        getUrlByLengthMaximums, encodeConfigToUrl
     } = useContext(DerivedContext)
-
-
 
     return <>
         {showVitessce &&
@@ -62,9 +62,8 @@ export const SennetVitessce = ({data}) => {
                                 </Tooltip>
                             }>
                             <i className={'bi bi-share'} style={{cursor: 'pointer'}} color="royalblue" size={24} onClick={() => {
-                                let url = document.location.href.split('#')[0]
-                                url = vitessceParams.current ? url + '#' + vitessceParams.current : url
-                                navigator.clipboard.writeText(url)
+                                const params = encodeConfigToUrl(vitessceParams.current)
+                                navigator.clipboard.writeText(getUrlByLengthMaximums(params))
                                 setShowCopiedToClipboard(true)
                             }} onMouseLeave={() => setShowCopiedToClipboard(false)}/>
                         </OverlayTrigger>
@@ -118,7 +117,7 @@ export const SennetVitessce = ({data}) => {
                 <Suspense fallback={<div>Loading...</div>}>
                     {vitessceConfigFromUrl || vitessceConfig ?
                         (
-                            <Vitessce onConfigChange={setVitessceStateDebounced} config={vitessceConfigFromUrl || vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
+                            <Vitessce onConfigChange={setVitessceConfigState} config={vitessceConfigFromUrl || vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
                         )
                         : (
                              <Spinner/>
