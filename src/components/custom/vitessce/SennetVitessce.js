@@ -7,6 +7,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import SenNetAccordion from "../layout/SenNetAccordion";
 import Spinner from "../Spinner";
+import useVitessceEncoder from "../../../hooks/useVitessceEncoder";
 
 export const SennetVitessce = ({data}) => {
     const Vitessce = React.lazy(() => import ('./VitessceWrapper.js'))
@@ -30,7 +31,7 @@ export const SennetVitessce = ({data}) => {
         getUrlByLengthMaximums
     } = useContext(DerivedContext)
 
-
+    const { encodeConfigToUrl } = useVitessceEncoder({})
 
     return <>
         {showVitessce &&
@@ -63,7 +64,8 @@ export const SennetVitessce = ({data}) => {
                                 </Tooltip>
                             }>
                             <i className={'bi bi-share'} style={{cursor: 'pointer'}} color="royalblue" size={24} onClick={() => {
-                                navigator.clipboard.writeText(getUrlByLengthMaximums(vitessceParams.current))
+                                const params = encodeConfigToUrl(vitessceParams.current)
+                                navigator.clipboard.writeText(getUrlByLengthMaximums(params))
                                 setShowCopiedToClipboard(true)
                             }} onMouseLeave={() => setShowCopiedToClipboard(false)}/>
                         </OverlayTrigger>

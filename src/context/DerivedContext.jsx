@@ -121,7 +121,8 @@ export const DerivedProvider = ({children}) => {
     //endregion
 
     const setVitessceConfigState = (val) => {
-        vitessceParams.current = encodeConfigToUrl(val)
+        vitessceParams.current = val
+        setShowVitessce(true)
     }
 
     return <DerivedContext.Provider value={{
