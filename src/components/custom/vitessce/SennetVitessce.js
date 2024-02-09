@@ -1,4 +1,4 @@
-import React, {Suspense, useContext} from "react";
+import React, {Suspense, useContext, useState} from "react";
 import DerivedContext from "../../../context/DerivedContext";
 import Link from "next/link";
 import {Snackbar} from "@mui/material";
@@ -7,6 +7,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import SenNetAccordion from "../layout/SenNetAccordion";
 import Spinner from "../Spinner";
+import useVitessceEncoder from "../../../hooks/useVitessceEncoder";
 
 export const SennetVitessce = ({data}) => {
     const Vitessce = React.lazy(() => import ('./VitessceWrapper.js'))
@@ -15,6 +16,7 @@ export const SennetVitessce = ({data}) => {
         vitessceTheme,
         setVitessceTheme,
         vitessceConfig,
+        vitessceConfigFromUrl,
         showCopiedToClipboard,
         setShowCopiedToClipboard,
         showExitFullscreenMessage,
@@ -23,7 +25,10 @@ export const SennetVitessce = ({data}) => {
         setIsFullscreen,
         expandVitessceToFullscreen,
         isPrimaryDataset,
-        derivedDataset
+        derivedDataset,
+        vitessceParams,
+        setVitessceConfigState,
+        getUrlByLengthMaximums, encodeConfigToUrl
     } = useContext(DerivedContext)
 
     return <>
@@ -57,7 +62,8 @@ export const SennetVitessce = ({data}) => {
                                 </Tooltip>
                             }>
                             <i className={'bi bi-share'} style={{cursor: 'pointer'}} color="royalblue" size={24} onClick={() => {
-                                navigator.clipboard.writeText(document.location.href)
+                                const params = encodeConfigToUrl(vitessceParams.current)
+                                navigator.clipboard.writeText(getUrlByLengthMaximums(params))
                                 setShowCopiedToClipboard(true)
                             }} onMouseLeave={() => setShowCopiedToClipboard(false)}/>
                         </OverlayTrigger>
@@ -109,9 +115,9 @@ export const SennetVitessce = ({data}) => {
                     </MuiAlert>
                 </Snackbar>
                 <Suspense fallback={<div>Loading...</div>}>
-                    {vitessceConfig ?
+                    {vitessceConfigFromUrl || vitessceConfig ?
                         (
-                            <Vitessce config={vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
+                            <Vitessce onConfigChange={setVitessceConfigState} config={vitessceConfigFromUrl || vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
                         )
                         : (
                              <Spinner/>

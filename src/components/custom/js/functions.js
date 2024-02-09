@@ -1,7 +1,6 @@
 import {COLS_ORDER_KEY, getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
 import {APP_ROUTES} from "../../../config/constants";
 import log from "loglevel";
-import fetchJsonp from "fetch-jsonp";
 import React from "react";
 
 export function getHeaders() {
