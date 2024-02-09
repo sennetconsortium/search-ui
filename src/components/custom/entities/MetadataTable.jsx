@@ -2,7 +2,6 @@ import React from 'react';
 import {Container, Row,} from 'react-bootstrap'
 import {createDownloadUrl, tableDataToTSV} from "../js/functions";
 import DataTable from "react-data-table-component";
-import {ViewHeaderBadges} from "../layout/entity/ViewHeaderBadges";
 
 export default class MetadataTable extends React.Component {
     constructor(props) {
