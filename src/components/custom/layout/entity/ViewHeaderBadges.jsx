@@ -51,7 +51,7 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                         </Fragment>
                     ) : (
                         <h5 className={"title_badge"}>
-                            <span className="badge bg-secondary">
+                            <span className="badge bg-secondary me-2">
                                     {getUBKGFullName(data.dataset_type)}
                             </span>
                         </h5>
