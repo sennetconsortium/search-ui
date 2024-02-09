@@ -201,6 +201,9 @@ export function getStatusDefinition(status) {
         status = status.toUpperCase();
         switch (status) {
             case 'NEW':
+                msg = <span>The Globus directory is ready for data upload.</span>
+                break;
+            case 'INCOMPLETE':
                 msg = <span>The data provider has begun to upload data but is not ready for validation or processing via the ingest pipeline.</span>
                 break;
             case 'VALID':
@@ -243,6 +246,9 @@ export function getStatusColor(status) {
         switch (status.toUpperCase()) {
             case "NEW":
                 badge_class = "badge-purple";
+                break;
+            case "INCOMPLETE":
+                badge_class = "badge-warning";
                 break;
             case "REOPENED":
                 badge_class = "badge-purple";

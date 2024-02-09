@@ -5,7 +5,7 @@ import {Button, Form, Badge} from 'react-bootstrap'
 import {getStatusColor} from "../../js/functions";
 
 export const supportedReverStatuses = () => {
-    const statuses = ['New', 'Valid', 'Invalid', 'QA', 'Submitted']
+    const statuses = ['New', 'Valid', 'Invalid', 'QA', 'Submitted', 'Incomplete']
     return {
         Upload: statuses,
         Dataset: statuses
@@ -16,8 +16,10 @@ export const statusRevertTooltip = (entity) => {
     const statuses = supportedReverStatuses()[entity]
     const results = []
     for (let i = 0; i < statuses.length; i++) {
-        const sep = i === statuses.length - 1 ? 'or ' : ', '
-        results.push(<span key={`revert-status-${statuses[i]}`}><span className={`${getStatusColor(statuses[i])} badge`}>{statuses[i]}</span>{sep}</span>)
+        const atEnd = i === statuses.length - 1
+        const sep = atEnd ? '' : ', '
+        const pre = atEnd ? 'or ' : ''
+        results.push(<span key={`revert-status-${statuses[i]}`}>{pre}<span className={`${getStatusColor(statuses[i])} badge`}>{statuses[i]}</span>{sep}</span>)
     }
 
     return (<>Revert this <code>{entity}</code> back to {results} status.</>)
@@ -54,7 +56,7 @@ function DatasetRevertButton({disableSubmit, onClick, onStatusChange, data}) {
                                      onChange={e => onStatusChange(e, e.target.id, e.target.value)}>
                             <option value="">----</option>
                             {supportedReverStatuses()[data.entity_type].map((status) =>{
-                                return <option>{status}</option>
+                                return <option key={status}>{status}</option>
                             })}
                         </Form.Select>
                     </Form.Group>
