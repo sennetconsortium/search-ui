@@ -9,7 +9,7 @@ import {get_headers, update_create_dataset} from '../../lib/services'
 import {
     cleanJson,
     eq,
-    fetchEntity,
+    fetchEntity, fetchProtocols,
     getDataTypesByProperty, getEntityViewUrl, getIsPrimaryDataset,
     getRequestHeaders, getStatusColor,
 } from '../../components/custom/js/functions'

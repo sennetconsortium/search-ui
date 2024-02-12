@@ -1,4 +1,4 @@
-import {createContext, useCallback, useState, useRef} from "react";
+import {createContext, useCallback, useRef, useState} from "react";
 import $ from "jquery";
 import {fetchEntity} from "../components/custom/js/functions";
 import {fetchVitessceConfiguration, get_prov_info} from "../lib/services";
