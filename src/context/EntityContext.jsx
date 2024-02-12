@@ -8,7 +8,7 @@ import log from 'loglevel'
 import {APP_ROUTES} from '../config/constants'
 import AppModal from '../components/AppModal'
 import AppContext from './AppContext'
-import {eq, getHeaders} from "../components/custom/js/functions";
+import {eq, fetchProtocols, getHeaders} from "../components/custom/js/functions";
 import {getEntityEndPoint} from "../config/config";
 import {Button} from 'react-bootstrap'
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
