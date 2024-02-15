@@ -292,12 +292,15 @@ export default function EditDataset() {
     const handleProcessing = async () => {
         let result = await checkDoi()
         if (result) {
+            let canContinue = true
             // Ensure this is populated #1226
             const containsSequences= values['contains_human_genetic_sequences']
             if (containsSequences === null || containsSequences === undefined) {
                 if (data.contains_human_genetic_sequences !== null && data.contains_human_genetic_sequences === undefined) {
                     values['contains_human_genetic_sequences'] = data.contains_human_genetic_sequences
+
                 } else {
+                    canContinue = false
                     setHasUnexpectedError(true)
                     log.error(`The Dataset ${router.query.uuid} is missing contains_human_genetic_sequences`)
                     toggleBusyOverlay(false)
@@ -309,18 +312,20 @@ export default function EditDataset() {
                     setShowModal(true)
                 }
             }
-            const requestOptions = {
-                method: 'PUT',
-                headers: get_headers(),
-                body: JSON.stringify(values)
+            if (canContinue) {
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: get_headers(),
+                    body: JSON.stringify(values)
+                }
+                const submitDatasetUrl = getIngestEndPoint() + 'datasets/' + data['uuid'] + '/submit'
+                setShowModal(false)
+                toggleBusyOverlay(true, <><code>Process</code> the <code>Dataset</code></>)
+                const response = await fetch(submitDatasetUrl, requestOptions)
+                let submitResult = await response.text()
+                toggleBusyOverlay(false)
+                setSubmissionModal(submitResult, !response.ok)
             }
-            const submitDatasetUrl = getIngestEndPoint() + 'datasets/' + data['uuid'] + '/submit'
-            setShowModal(false)
-            toggleBusyOverlay(true, <><code>Process</code> the <code>Dataset</code></>)
-            const response = await fetch(submitDatasetUrl, requestOptions)
-            let submitResult = await response.text()
-            toggleBusyOverlay(false)
-            setSubmissionModal(submitResult, !response.ok)
         }
 
     }
