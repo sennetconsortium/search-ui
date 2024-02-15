@@ -56,9 +56,8 @@ export const EntityProvider = ({ children }) => {
 
     const goToEntity = () => {
         if (!hasSubmissionError) {
-            router.push(`/edit/${response.entity_type.toLowerCase()}?uuid=${response.uuid}`)
+            window.location = `/edit/${response.entity_type.toLowerCase()}?uuid=${response.uuid}`
         }
-        setShowModal(false)
     }
 
     const handleClose = () => {
