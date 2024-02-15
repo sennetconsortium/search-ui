@@ -299,6 +299,7 @@ export default function EditDataset() {
                     values['contains_human_genetic_sequences'] = data.contains_human_genetic_sequences
                 } else {
                     setHasUnexpectedError(true)
+                    log.error(`The Dataset ${router.query.uuid} is missing contains_human_genetic_sequences`)
                     toggleBusyOverlay(false)
                     const error = <span>An unexpected error occurred while handling <code>contains_human_genetic_sequences</code>. Please refresh the page and try again.</span>
                     setModalDetails({
