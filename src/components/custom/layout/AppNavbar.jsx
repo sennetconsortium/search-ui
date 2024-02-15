@@ -1,14 +1,18 @@
 import {Container, Nav, Navbar, NavDropdown} from 'react-bootstrap'
 import {getDataIngestBoardEndpoint, NAVBAR_TITLE} from '../../../config/config'
 import {APP_ROUTES} from '../../../config/constants'
-import {useContext} from 'react'
+import {useContext, useEffect} from 'react'
 import AppContext from '../../../context/AppContext'
 import {eq} from "../js/functions";
-import {getCookie} from "cookies-next";
+import {deleteCookie, getCookie} from "cookies-next";
 
 const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
-    const {_t, isLoggedIn, logout, cache, supportedMetadata, adminGroup} = useContext(AppContext)
+    const {_t, isLoggedIn, logout, cache, supportedMetadata, adminGroup, tutorialTrigger, setTutorialTrigger} = useContext(AppContext)
     const userEmail = (isLoggedIn() ? JSON.parse(atob(getCookie('info')))['email'] : "")
+    const tutorialCookieKey = 'tutorialCompleted_'
+
+    useEffect(() => {
+    }, [tutorialTrigger])
 
     const handleSession = (e) => {
         e.preventDefault()
@@ -51,6 +55,16 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
         }
     }
 
+    const  deleteTutorialCookies = () => {
+        deleteCookie(`${tutorialCookieKey}true`)
+        deleteCookie(`${tutorialCookieKey}false`)
+        setTutorialTrigger(tutorialTrigger+1)
+    }
+
+    const getShowTutorialLink = () => {
+        const tutorialCompleted = getCookie(`${tutorialCookieKey}${isLoggedIn()}`)
+        return tutorialCompleted || false
+    }
 
     return (
         <Navbar
@@ -188,6 +202,12 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                                              variant={'primary'}
                                              title={userEmail}
                                              id="nav-dropdown--user">
+                                    <NavDropdown.Item id={`dd-user-tutorial`} key={`dd-user-tutorial`}
+                                                      hidden={!getShowTutorialLink()}
+                                                      href='#'
+                                                      onClick={(e) => deleteTutorialCookies(e)}>
+                                        {_t('Show Tutorial')}
+                                    </NavDropdown.Item>
                                     <NavDropdown.Item key={`dd-user-logout`}
                                                       hidden={signoutHidden}
                                                       href='#'
