@@ -195,6 +195,7 @@ export const EntityProvider = ({ children }) => {
             }
             body.push(<span key='bdy-4'><strong>{_t('SenNet ID')}:</strong> {response.sennet_id} <ClipboardCopy text={response.sennet_id} /> </span>)
             setModalBody(body)
+            setValues({...values, 'contains_human_genetic_sequences': response.contains_human_genetic_sequences})
             setResponse(response)
         } else {
             const verb = isEditMode() ? 'Updating' : 'Registering'
