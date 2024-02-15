@@ -53,7 +53,7 @@ export default function EditDataset() {
         dataAccessPublic, setDataAccessPublic,
         getEntityConstraints,
         getSampleEntityConstraints,
-        buildConstraint, successIcon, errIcon, getCancelBtn
+        buildConstraint, successIcon, errIcon, getCancelBtn, setHasUnexpectedError
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
     const router = useRouter()
@@ -292,6 +292,22 @@ export default function EditDataset() {
     const handleProcessing = async () => {
         let result = await checkDoi()
         if (result) {
+            // Ensure this is populated #1226
+            const containsSequences= values['contains_human_genetic_sequences']
+            if (containsSequences === null || containsSequences === undefined) {
+                if (data.contains_human_genetic_sequences !== null && data.contains_human_genetic_sequences === undefined) {
+                    values['contains_human_genetic_sequences'] = data.contains_human_genetic_sequences
+                } else {
+                    setHasUnexpectedError(true)
+                    toggleBusyOverlay(false)
+                    const error = <span>An unexpected error occurred while handling <code>contains_human_genetic_sequences</code>. Please refresh the page and try again.</span>
+                    setModalDetails({
+                        entity: cache.entities.dataset,
+                        response: {error}
+                    })
+                    setShowModal(true)
+                }
+            }
             const requestOptions = {
                 method: 'PUT',
                 headers: get_headers(),

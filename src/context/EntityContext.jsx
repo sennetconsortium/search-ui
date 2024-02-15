@@ -32,6 +32,7 @@ export const EntityProvider = ({ children }) => {
     const [modalTitle, setModalTitle] = useState(null)
     const [hasSubmissionError, setHasSubmissionError] = useState(false)
     const [disableSubmit, setDisableSubmit] = useState(false)
+    const [hasUnexpectedError, setHasUnexpectedError] = useState(false)
     const [dataAccessPublic, setDataAccessPublic] = useState(null)
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const [selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid] =
@@ -68,6 +69,7 @@ export const EntityProvider = ({ children }) => {
         setShowModal(false)
     }
     const handleHome = () => router.push(APP_ROUTES.search)
+    const refreshPage = () => window.location = location.href
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -184,6 +186,7 @@ export const EntityProvider = ({ children }) => {
         setDisableSubmit(false)
 
         if ('uuid' in response) {
+            setHasUnexpectedError(false)
             const verb = isEditMode() ? 'Updated' : 'Registered'
             setHasSubmissionError(false)
             let body = []
@@ -216,6 +219,7 @@ export const EntityProvider = ({ children }) => {
 
     const setCheckDoiModal = (body) => {
         setHasSubmissionError(false)
+        setHasUnexpectedError(false)
         setShowModal(true)
         setModalTitle(<span><span className={'title-text'}>Validating DOI URLs of ancestor entities ...</span></span>)
         setModalBody(body)
@@ -267,8 +271,9 @@ export const EntityProvider = ({ children }) => {
             modalTitle={modalTitle}
             modalBody={<div>{modalBody}</div>}
             handleClose={isEditMode() ? handleClose : goToEntity}
-            handleHome={handleHome}
+            handleHome={hasUnexpectedError ? refreshPage : handleHome}
             showCloseButton={showCloseButton}
+            actionButtonLabel={hasUnexpectedError ? 'Refresh page' : undefined}
             closeButtonLabel={'Edit form'}
         />
     }
@@ -297,7 +302,7 @@ export const EntityProvider = ({ children }) => {
                 dataAccessPublic, setDataAccessPublic,
                 getEntityConstraints, getSampleEntityConstraints, buildConstraint,
                 checkMetadata, getMetadataNote, successIcon, errIcon, checkProtocolUrl,
-                warningClasses, setWarningClasses, getCancelBtn
+                warningClasses, setWarningClasses, getCancelBtn, setHasUnexpectedError
             }}
         >
             {children}
