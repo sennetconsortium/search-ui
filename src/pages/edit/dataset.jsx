@@ -174,6 +174,7 @@ export default function EditDataset() {
                     'contains_human_genetic_sequences': data.contains_human_genetic_sequences
                 })
                 setEditMode("Edit")
+                setContainsHumanGeneticSequences(data.contains_human_genetic_sequences)
                 setDataAccessPublic(data.data_access_level === 'public')
             }
         }
