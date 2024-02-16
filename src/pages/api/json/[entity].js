@@ -1,24 +1,20 @@
-import {getRootURL} from "../../../config/config";
+import {getAuth, getRootURL} from "../../../config/config";
 import {getCookie, hasCookie} from "cookies-next";
 import {formatMessageForCloudwatch} from "../find";
+import {get_auth_header, get_headers_from_req, get_json_header} from "../../../lib/services";
 
 export default async function handler(req, res) {
     console.log('JSON API STARTING...')
     const uuid = req.query.uuid
-    let auth = req.headers.authorization
-    let myHeaders = new Headers();
+    let auth = get_auth_header({req, res})
+    let headers = get_json_header(get_headers_from_req(req.headers, auth))
 
-    if (req.headers.authorization === undefined && hasCookie("groups_token", {req, res})) {
-        auth = "Bearer " + getCookie("groups_token", {req, res})
-        myHeaders.append("Authorization", auth);
-    }
-
-    myHeaders.append("Content-Type", "application/json");
     let requestOptions = {
         method: 'GET',
-        headers: myHeaders
+        headers: headers
     }
-    console.log('sample: getting data...', uuid)
+
+    console.log('Getting data...', uuid)
     await fetch(getRootURL() + "api/find?uuid=" + uuid, requestOptions)
         .then(response => response.json())
         .then(result => {
