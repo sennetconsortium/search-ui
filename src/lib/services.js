@@ -1,6 +1,7 @@
 import log from "loglevel";
 import { getDataTypesByProperty } from "../components/custom/js/functions";
 import { getAuth, getEntityEndPoint, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "../config/config";
+import {getCookie} from "cookies-next";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
@@ -63,15 +64,29 @@ export async function get_prov_info(dataset_uuid) {
     return {}
 }
 
+export function get_headers_from_req(reqHeaders, headers) {
+    headers = headers || new Headers();
+    for (let h in reqHeaders) {
+        headers.set(h.upperCaseFirst(), reqHeaders[h])
+    }
+    return headers;
+}
+
 export function get_json_header(headers) {
     headers = headers || new Headers();
     headers.append("Content-Type", "application/json");
     return headers;
 }
 
-export function get_auth_header() {
+export function get_auth_header(ops = {}) {
     const headers = new Headers();
-    headers.append("Authorization", "Bearer " + getAuth())
+    try {
+        let auth = getAuth()
+        auth = (!auth || !auth.length) ? getCookie('groups_token', ops) : auth
+        headers.append("Authorization", "Bearer " + auth)
+    }catch (e) {
+        console.error(e)
+    }
     return headers;
 }
 
