@@ -28,7 +28,7 @@
     "provenance-ui": "github:sennetconsortium/provenance-ui#main",
     "react-data-table-component": "^7.5.3",
     "react-helmet-async": "^2.0.3",
-    "react-idle-timer": "^5.4.2",
+    "react-idle-timer": "^5.7.2",
     "react-joyride": "^2.7.0",
     "react-toastify": "^9.1.1",
     "sass": "^1.57.1",
