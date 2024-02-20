@@ -5,6 +5,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import {deleteCookies} from "../lib/auth";
 import {getIngestEndPoint, IDLE_TIMEOUT} from "../config/config";
 import {useRouter} from "next/router";
+import {getCookie} from "cookies-next";
 
 const timeout = IDLE_TIMEOUT
 const promptBeforeIdle = 60000 // 1 minute
@@ -13,6 +14,8 @@ export default function IdleTimerPopup() {
     const router = useRouter()
     const [remaining, setRemaining] = useState(timeout)
     const [open, setOpen] = useState(false)
+
+    const isAuthorized = () => getCookie('isAuthenticated')
 
     const onIdle = () => {
         setOpen(false)
@@ -27,7 +30,9 @@ export default function IdleTimerPopup() {
     }
 
     const onPrompt = () => {
-        setOpen(true)
+        if (isAuthorized()) {
+            setOpen(true)
+        }
     }
 
     const { getRemainingTime, activate } = useIdleTimer({
@@ -36,7 +41,8 @@ export default function IdleTimerPopup() {
         onPrompt,
         timeout,
         promptBeforeIdle,
-        throttle: 500
+        throttle: 500,
+        crossTab: true
     })
 
     useEffect(() => {
