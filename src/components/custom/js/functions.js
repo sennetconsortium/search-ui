@@ -62,10 +62,10 @@ export function formatCitation(data, url) {
     return <>
         {result}
         <span> Available from: <br /><a className='lnk--ic' href={url}>{url} <i
-            className="bi bi-box-arrow-down-right"></i></a></span>
+            className="bi bi-box-arrow-up-right"></i></a></span>
         <hr/>
         <span><a className='lnk--ic' href={`https://commons.datacite.org/${url.replace('https://', '')}`}>View the DataCite page<i
-            className="bi bi-box-arrow-down-right"></i></a></span>
+            className="bi bi-box-arrow-up-right"></i></a></span>
     </>
 }
 

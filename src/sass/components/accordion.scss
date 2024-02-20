@@ -44,4 +44,10 @@
     max-height: 530px;
     overflow-y: auto;
   }
+
+  &#Summary{
+    .accordion-button {
+      background: none !important;
+    }
+  }
 }
