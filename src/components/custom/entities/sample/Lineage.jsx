@@ -66,6 +66,7 @@ export default class Lineage extends React.Component {
             <DataTable
                 columns={this.columns}
                 data={this.data}
+                fixedHeader={true}
                 pagination/>
         )
     }

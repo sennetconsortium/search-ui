@@ -99,6 +99,7 @@ export const Files = ({data}) => {
                     }
                     <DataTable columns={tableColumns}
                                data={tableData}
+                               fixedHeader={true}
                                pagination/>
                 </Card>
             }
