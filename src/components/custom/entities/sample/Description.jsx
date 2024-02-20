@@ -23,7 +23,7 @@ export default function Description({data, doiData, labId, primaryDateTitle, pri
                     </Card>
                 }
 
-                {data && data?.doi_url &&
+                {data && data?.doi_url && doiData &&
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
                             <Card.Subtitle>Citation <SenNetPopover text={<span>Citation is provided in NLM format. If the DataCite page is provided, select from the <i>Cite as</i> drop down alternate ways to cite.</span>} trigger={SenPopoverOptions.triggers.hover} className={`popover-citation`}>
