@@ -6,16 +6,15 @@ import log from 'loglevel'
 import ErrorBoundary from '../components/custom/error/ErrorBoundary'
 import React, {useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
-import {useIdleTimer} from 'react-idle-timer'
 import {getCookie} from 'cookies-next'
-import {getIngestEndPoint, getLogLevel, IDLE_TIMEOUT} from '../config/config'
+import {getIngestEndPoint, getLogLevel} from '../config/config'
 import useGoogleTagManager from '../hooks/useGoogleTagManager'
 import addons from "../components/custom/js/addons/addons"
 import {AppProvider} from '../context/AppContext'
-import {deleteCookies} from "../lib/auth";
 import useCache from "../hooks/useCache";
 import Spinner from "../components/custom/Spinner";
 import useContent from "../hooks/useContent";
+import IdleTimerPopup from "../components/IdleTimerPopup";
 
 function MyApp({Component, pageProps}) {
     const router = useRouter()
@@ -33,15 +32,6 @@ function MyApp({Component, pageProps}) {
         }).catch((error) => console.error(error))
     }, [])
 
-    const onIdle = () => {
-        deleteCookies()
-        // Call Ingest API logout to revoke token
-        fetch(getIngestEndPoint() + 'logout').then()
-        router.push('/')
-    }
-
-    const idleTimer = useIdleTimer({timeout: IDLE_TIMEOUT, onIdle})
-
     log.setLevel(getLogLevel())
 
     const withWrapper = Component.withWrapper || ((page) => page)
@@ -52,6 +42,7 @@ function MyApp({Component, pageProps}) {
             <ErrorBoundary>
                 <AppProvider cache={cache} banners={banners} >
                     {withWrapper(<Component {...pageProps} />)}
+                    <IdleTimerPopup />
                 </AppProvider>
             </ErrorBoundary>
         )
