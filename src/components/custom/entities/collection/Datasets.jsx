@@ -15,7 +15,7 @@ function Datasets({ data, label }) {
 
     return (
         <SenNetAccordion title={label}>
-            <DataTable columns={getColumns()} data={data} pagination />
+            <DataTable columns={getColumns()} data={data} pagination fixedHeader={true} />
         </SenNetAccordion>
     )
 }
