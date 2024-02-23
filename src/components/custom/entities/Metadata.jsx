@@ -57,11 +57,11 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
     const tabPaneCommon = (pre, index, data, metadata) => {
         return (
             <Tab.Pane key={`tabpane-${pre}-${index}`} eventKey={data.sennet_id}>
-                <MetadataTable metadataKey={""} data={data}
-                               metadata={metadata}
+                <MetadataTable data={data}
                                filename={data.sennet_id}
-                               setHeaderBadges={setHeaderBadges}
-                />
+                               metadataKey={""}
+                               metadata={metadata}
+                               setHeaderBadges={setHeaderBadges}/>
             </Tab.Pane>
         )
     }
@@ -118,8 +118,11 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                             {!!(metadata && Object.keys(metadata).length) &&
                                 // The metatable table for the current entity
                                 <Tab.Pane eventKey={data.sennet_id}>
-                                    <MetadataTable metadataKey={""} metadata={metadata}
-                                                   filename={data.sennet_id} setHeaderBadges={setHeaderBadges}/>
+                                    <MetadataTable data={data}
+                                                   filename={data.sennet_id}
+                                                   metadata={metadata}
+                                                   metadataKey={""} 
+                                                   setHeaderBadges={setHeaderBadges}/>
                                 </Tab.Pane>
                             }
                             {data.ancestors.reverse().map((ancestor, index, array) => {
@@ -149,7 +152,10 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                     </Tab.Container>
                 ) :
                 (
-                    <MetadataTable metadata={metadata} metadataKey="" filename={data.sennet_id}
+                    <MetadataTable data={data}
+                                   filename={data.sennet_id}
+                                   metadata={metadata}
+                                   metadataKey=""
                                    setHeaderBadges={setHeaderBadges}/>
                 )
             }
