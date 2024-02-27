@@ -66,6 +66,7 @@ export default function MetadataTable({data, metadata, metadataKey, filename}) {
                     <DataTable columns={columns}
                                data={filteredItems}
                                subHeader
+                               fixedHeader={true}
                                subHeaderComponent={searchBarComponent}
                                pagination/>
                 )
