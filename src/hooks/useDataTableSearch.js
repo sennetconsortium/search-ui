@@ -1,9 +1,8 @@
-import React, {useContext, useEffect, useState, useMemo} from 'react'
-import PropTypes from 'prop-types'
+import React, {useEffect, useState, useMemo} from 'react'
 
-import {Button, Form, Row, Container, Col} from 'react-bootstrap'
+import {Button, Form} from 'react-bootstrap'
 
-const FilterComponent = ({ filterText, onFilter, onClear, fieldsToSearch }) => (
+const FilterComponent = ({ filterText, onFilter, onClear }) => (
     <>
         <Form.Control defaultValue={filterText} onChange={onFilter}/>
         <Button type="button" onClick={onClear}>X</Button>
@@ -43,7 +42,7 @@ function useDataTableSearch(data,  idField, fieldsToSearch = []) {
         };
 
         return (
-            <FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} fieldsToSearch={fieldsToSearch} />
+            <FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} />
         );
     }, [filterText, resetPaginationToggle]);
 
