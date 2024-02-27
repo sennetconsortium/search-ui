@@ -1,11 +1,16 @@
 import React, {useEffect, useState, useMemo} from 'react'
 
-import {Button, Form} from 'react-bootstrap'
+import {Button, Form, InputGroup, Col, Row} from 'react-bootstrap'
 
 const FilterComponent = ({ filterText, onFilter, onClear }) => (
     <>
-        <Form.Control defaultValue={filterText} onChange={onFilter}/>
-        <Button type="button" onClick={onClear}>X</Button>
+        <Form.Group as={Col}>
+            <InputGroup>
+                <Form.Control defaultValue={filterText} onChange={onFilter}/>
+                <InputGroup.Text className={"transparent"}><i className="bi bi-search"></i></InputGroup.Text>
+                <Button type="button" onClick={onClear} label={'Reset'}><i className="bi bi-x"></i></Button>
+            </InputGroup>
+        </Form.Group>
     </>
 );
 
