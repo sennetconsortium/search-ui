@@ -81,6 +81,9 @@
         width: 97%;
         border-bottom-right-radius: 0;
         border-top-right-radius: 0;
+        @include md-mx {
+          width: 90%;
+        }
       }
       button {
         border-bottom-left-radius: 0;
