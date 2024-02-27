@@ -73,6 +73,7 @@ function SourceDataTable({ metadata }) {
             customStyles={tableStyles}
             data={groupSourceMappedMetadata(metadata)}
             expandableRows
+            fixedHeader={true}
             expandableRowExpanded={() => true}
             expandableRowsComponent={tableRow}
             expandOnRowClicked/>
