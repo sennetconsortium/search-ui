@@ -62,36 +62,36 @@ export const SEARCH_METADATA = {
                 isFilterable: false,
             },            
             // Source Human
-            "source_mapped_metadata.sex": {
+            "source_mapped_metadata.sex.value": {
                 label: 'Sex',
                 type: 'value',
-                field: 'source_mapped_metadata.sex.keyword',
+                field: 'source_mapped_metadata.sex.value.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            "source_mapped_metadata.race": {
+            "source_mapped_metadata.race.value": {
                 label: 'Race',
                 type: 'value',
-                field: 'source_mapped_metadata.race.keyword',
+                field: 'source_mapped_metadata.race.value.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            "source_mapped_metadata.age_value": {
+            "source_mapped_metadata.age.value": {
                 label: 'Age',
                 type: 'range',
-                field: 'source_mapped_metadata.age_value',
+                field: 'source_mapped_metadata.age.value',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
                 uiRange: [0, 100],
             },
-            "source_mapped_metadata.body_mass_index_value": {
+            "source_mapped_metadata.body_mass_index.value": {
                 label: 'Body Mass Index',
                 type: 'range',
-                field: 'source_mapped_metadata.body_mass_index_value',
+                field: 'source_mapped_metadata.body_mass_index.value',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
