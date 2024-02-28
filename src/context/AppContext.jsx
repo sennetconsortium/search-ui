@@ -35,6 +35,8 @@ export const AppProvider = ({ cache, banners, children }) => {
     const authKey = 'isAuthenticated'
     const pageKey = STORAGE_KEY('userPage')
 
+    const [tutorialTrigger, setTutorialTrigger] = useState(0)
+
     useEffect(() => {
         // Should only include: '/', '/search', '/logout', '/login', '/404'
         const noRedirectTo = Object.values(APP_ROUTES)
@@ -333,6 +335,7 @@ export const AppProvider = ({ cache, banners, children }) => {
                 getGroupName,
                 getBusyOverlay,
                 toggleBusyOverlay,
+                tutorialTrigger, setTutorialTrigger,
             }}
         >
             {children}

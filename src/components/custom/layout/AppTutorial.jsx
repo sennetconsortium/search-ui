@@ -7,7 +7,7 @@ import {eq} from "../js/functions";
 import {Alert} from 'react-bootstrap'
 
 function AppTutorial() {
-    const {isLoggedIn} = useContext(AppContext)
+    const {isLoggedIn, tutorialTrigger, setTutorialTrigger} = useContext(AppContext)
     const [steps, setSteps] = useState([])
     const [runTutorial, setRunTutorial] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
@@ -20,11 +20,12 @@ function AppTutorial() {
             setShowAlert(true)
             setSteps(TutorialSteps(isLoggedIn()))
         }
-    }, [])
+    }, [tutorialTrigger])
 
     const seenTutorial = () => {
         let expires = new Date()
         expires.setDate(expires.getDate() + 60)
+        setTutorialTrigger(tutorialTrigger + 1)
         setCookie(cookieKey, true, {sameSite: 'Lax', expires})
     }
 
