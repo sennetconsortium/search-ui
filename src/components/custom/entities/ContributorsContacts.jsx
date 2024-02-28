@@ -28,7 +28,7 @@ function ContributorsContacts({data, title}) {
 
     return (
         <SenNetAccordion title={title}>
-            <DataTable columns={getColumns()} data={data} pagination />
+            <DataTable columns={getColumns()} data={data} pagination fixedHeader={true} />
         </SenNetAccordion>
 
     )

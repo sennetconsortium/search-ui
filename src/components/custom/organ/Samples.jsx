@@ -75,7 +75,7 @@ const Samples = ({ id, ruiCode }) => {
                 </Link>
             </div>
             {samples != null && (
-                <DataTable columns={columns} data={samples} pagination />
+                <DataTable columns={columns} data={samples} fixedHeader={true} pagination />
             )}
         </SenNetAccordion>
     );

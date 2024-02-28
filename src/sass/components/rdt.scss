@@ -73,6 +73,11 @@
       }
     }
   }
-
+  &_TableRow {
+    .has-supIcon {
+      display: inline-block;
+      padding: 5px 0;
+    }
+  }
 
 }

@@ -65,7 +65,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
                 selector: row => raw(row.sennet_id),
                 sortable: true,
                 reorder: true,
-                format: column => inModal ? raw(column.sennet_id) : <span data-field='sennet_id'><a href={getHotLink(column)}>{raw(column.sennet_id)}</a> <ClipboardCopy text={raw(column.sennet_id)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
+                format: column => inModal ? raw(column.sennet_id) : <span data-field='sennet_id' className='has-supIcon'><a href={getHotLink(column)}>{raw(column.sennet_id)}</a> <ClipboardCopy text={raw(column.sennet_id)} title={'Copy SenNet ID {text} to clipboard'} /></span>,
             },
         )
         if (hasMultipleEntityTypes) {

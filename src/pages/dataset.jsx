@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestHeaders} from "../components/custom/js/functions";
+import {fetchDataCite, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -23,6 +23,7 @@ import Upload from "../components/custom/entities/dataset/Upload";
 
 function ViewDataset() {
     const [data, setData] = useState(null)
+    const [doiData, setDoiData] = useState(null)
     const [ancestorHasMetadata, setAncestorHasMetadata] = useState(false)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
@@ -59,6 +60,8 @@ function ViewDataset() {
             } else {
                 // set state with the result
                 setData(data);
+                const doi = await fetchDataCite(data.doi_url)
+                setDoiData(doi?.data)
                 for (const ancestor of data.ancestors) {
                     console.log(ancestor)
                     if (ancestor.metadata && Object.keys(ancestor.metadata).length) {
@@ -185,6 +188,7 @@ function ViewDataset() {
                                                 primaryDateTitle={data.published_timestamp ? ("Publication Date") : ("Creation Date")}
                                                 primaryDate={data.published_timestamp ? (data.published_timestamp) : (data.created_timestamp)}
                                                 labId={data.lab_dataset_id}
+                                                doiData={doiData}
                                                 secondaryDateTitle="Last Touch"
                                                 secondaryDate={data.last_modified_timestamp}
                                                 data={data}/>

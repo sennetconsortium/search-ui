@@ -53,6 +53,7 @@ export default class MetadataTable extends React.Component {
                 </Row>
                 <DataTable columns={this.columns}
                            data={this.data}
+                           fixedHeader={true}
                            pagination/>
             </Container>
         )

@@ -72,7 +72,7 @@ const DataTypeQuantities = ({ id, ruiCode }) => {
                 </Link>
             </div>
             {dataTypes != null && (
-                <DataTable columns={columns} data={dataTypes} pagination />
+                <DataTable columns={columns} data={dataTypes} fixedHeader={true} pagination />
             )}
         </SenNetAccordion>
     );
