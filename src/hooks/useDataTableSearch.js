@@ -27,7 +27,7 @@ function useDataTableSearch(data,  idField, fieldsToSearch = []) {
             for (let d of data) {
                 if (!dict[d[idField]] || !idField) {
                     if (d[searchIndex] && d[searchIndex].toLowerCase().includes(filterText.toLowerCase())) {
-                        results.push(d);
+                        if (results.indexOf(d) === -1) results.push(d);
                         if (idField) {
                             dict[d[idField]] = true;
                         }
