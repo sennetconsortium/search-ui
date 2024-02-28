@@ -1,7 +1,6 @@
 import React, {Fragment, useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import Description from "../components/custom/entities/sample/Description";
-import MetadataTable from "../components/custom/entities/MetadataTable";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {eq, getRequestHeaders} from "../components/custom/js/functions";
@@ -25,7 +24,7 @@ function ViewSource() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext);
+    const {isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -62,8 +61,6 @@ function ViewSource() {
             setData(null);
         }
     }, [router]);
-
-    console.log("Test cache in source: ", cache)
 
     if ((isAuthorizing() || isUnauthorized()) && !data) {
         return (

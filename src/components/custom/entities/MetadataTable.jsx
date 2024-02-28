@@ -3,8 +3,9 @@ import {Container, Row} from 'react-bootstrap'
 import {createDownloadUrl, tableDataToTSV} from "../js/functions";
 import DataTable from "react-data-table-component";
 import useDataTableSearch from "../../../hooks/useDataTableSearch";
+import SourceDataTable from "./source/SourceDataTable";
 
-export default function MetadataTable({metadata, metadataKey, filename}) {
+export default function MetadataTable({data, metadata, metadataKey, filename}) {
     let columns = [
         {
             name: 'Key',
@@ -18,17 +19,27 @@ export default function MetadataTable({metadata, metadataKey, filename}) {
         }
     ];
 
-    let data = [];
-    Object.entries(metadata).map(([key, value]) => {
-        data.push({
-            key: metadataKey + key,
-            value: Array.isArray(value) ? value.join(', ') : value
+    let tableData = [];
+    let metadataValues = metadata;
+    if (data.source_type === 'Human') {
+        // Human sources metadata needs to be restructured for TSV file
+        metadataValues = Object.values(metadata).reduce((acc, value) => {
+            acc[value.key_display] = value.value_display;
+            return acc;
+        }, {});
+    } else {
+        Object.entries(metadata).map(([key, value]) => {
+            tableData.push({
+                key: metadataKey + key,
+                value: Array.isArray(value) ? value.join(', ') : value
+            })
         })
-    })
+    }
 
-    const tableDataTSV = tableDataToTSV(metadata);
+    const {filteredItems, filterText, searchBarComponent} = useDataTableSearch(tableData, null, ['value', 'key'])
+
+    const tableDataTSV = tableDataToTSV(metadataValues);
     const downloadURL = createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
-    const {filteredItems, filterText, searchBarComponent} = useDataTableSearch(data, null, ['value', 'key'])
     return (
         <Container fluid={true} className={'rdt-container-wrap'}>
             <Row className="mb-2">
@@ -47,12 +58,19 @@ export default function MetadataTable({metadata, metadataKey, filename}) {
                     </div>
                 </div>
             </Row>
-            <DataTable columns={columns}
-                       data={filteredItems}
-                       fixedHeader={true}
-                       subHeader
-                       subHeaderComponent={searchBarComponent}
-                       pagination/>
+            {data.source_type === 'Human' ?
+                (
+                    <SourceDataTable metadata={metadata}/>
+                ) :
+                (
+                    <DataTable columns={columns}
+                               data={filteredItems}
+                               subHeader
+                               fixedHeader={true}
+                               subHeaderComponent={searchBarComponent}
+                               pagination/>
+                )
+            }
         </Container>
     )
 }
