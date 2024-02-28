@@ -4,7 +4,7 @@ import AppContext from '../context/AppContext'
 import PropTypes from "prop-types"
 
 const AppModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, showCloseButton, closeButtonLabel,
-                      showHomeButton, children, modalSize, className, actionBtnClassName, actionButtonLabel}) => {
+                      showHomeButton, children, modalSize, className, actionBtnClassName, actionButtonLabel, secBtnClassName}) => {
     const [size, setSize] = useState(modalSize)
     const {_t} = useContext(AppContext)
     return (
@@ -24,7 +24,7 @@ const AppModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, sh
                 </Modal.Body>
                 {(showCloseButton || showHomeButton) && <Modal.Footer>
                     {showCloseButton &&
-                        <Button variant="outline-secondary rounded-0" onClick={handleClose || closeModal}>
+                        <Button variant="outline-secondary rounded-0" className={secBtnClassName}  onClick={handleClose}>
                             {_t(closeButtonLabel)}
                         </Button>
                     }
@@ -44,6 +44,7 @@ AppModal.defaultProps = {
     showHomeButton: true,
     closeButtonLabel: 'Close',
     actionButtonClassName: '',
+    secBtnClassName: '',
     actionButtonLabel: 'Home page'
 }
 

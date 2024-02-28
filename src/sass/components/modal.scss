@@ -24,6 +24,13 @@
         border-color: $col-err-bdr;
       }
     }
+
+    &.is-warning-outline {
+      .modal-content {
+        color: $col-warn-txt;
+        border-color: $col-warn-bdr;
+      }
+    }
   }
   &-full {
     .modal-dialog {
