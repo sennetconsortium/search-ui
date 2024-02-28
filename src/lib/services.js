@@ -389,24 +389,24 @@ export const getOrganDataTypeQuantities = async (organCode) => {
 
 export const getSamplesByOrgan = async (ruiCode) => {
     const body = {
-        "query": {
-            "bool": {
-                "filter": [
+        query: {
+            bool: {
+                filter: [
                     {
-                        "term": {
+                        term: {
                             "entity_type.keyword": "Sample"
                         }
                     },
                     {
-                        "term": {
+                        term: {
                             "organ.keyword": ruiCode
                         }
                     }
                 ]
             }
         },
-        "_source": {
-            "includes": [
+        _source: {
+            includes: [
                 "sennet_id",
                 "lab_tissue_sample_id",
                 "group_name",
