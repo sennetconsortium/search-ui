@@ -405,6 +405,7 @@ export const getSamplesByOrgan = async (ruiCode) => {
                 ]
             }
         },
+        size: 10000,
         _source: {
             includes: [
                 "sennet_id",
