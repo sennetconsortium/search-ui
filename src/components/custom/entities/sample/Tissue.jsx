@@ -1,17 +1,26 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Table, Card} from 'react-bootstrap';
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import {displayBodyHeader, getUBKGFullName} from "../../js/functions";
 import DataTable from "react-data-table-component";
+import {Chip, Avatar, Stack} from "@mui/material";
+import {organDetails} from "../../../../config/organs";
+import AppContext from "../../../../context/AppContext";
 
 export default function Tissue({ data }) {
+    const {cache} = useContext(AppContext)
 
     const columns = [
         {
             name: 'Organ',
             selector: row => getUBKGFullName(row.origin_sample?.organ),
             width: '120px',
-            format: row => <a href={`/organs/${getUBKGFullName(row.origin_sample?.organ).toLowerCase()}`}>{getUBKGFullName(row.origin_sample?.organ)}</a>,
+            format: row => {
+                const name = getUBKGFullName(row.origin_sample?.organ)
+                const code = cache.organTypesCodes[name]
+                const icon = organDetails[code].icon || organDetails.OT.icon
+                return <Chip className={'no-focus bg--none lnk--txt'} avatar={<Avatar alt={name} src={icon} />} label={name} onClick={()=> window.location = `/organs/${name.toLowerCase()}`} />
+            },
         },
         {
             name: 'Category',
@@ -31,12 +40,30 @@ export default function Tissue({ data }) {
         }
     ]
 
-        return (
+    const anatomicalLocations = () => {
+        let result = []
+        for (let r of data.rui_location_anatomical_locations) {
+            result.push(<span key={r}><Chip label={r} size='small'  /></span>)
+        }
+        return result;
+    }
+
+    return (
+        <>
             <SenNetAccordion title={'Tissue'}>
                 <Card border='0' className='mb-2 pb-2'>
                     <DataTable columns={columns} data={[data]} />
                 </Card>
             </SenNetAccordion>
-        )
+
+            <SenNetAccordion title={'Anatomical Locations'} id={'anatomical-locations'}>
+                <Card border='0' className='mb-2 pb-2'>
+                    <Stack direction="row" spacing={1}>
+                    {anatomicalLocations()}
+                    </Stack>
+                </Card>
+            </SenNetAccordion>
+        </>
+    )
 
 }

@@ -5,6 +5,10 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus,
   @include mx-focus;
 }
 
+.no-focus:focus {
+  outline: none !important;
+}
+
 html {
   scroll-padding-top: 61px;
 }
@@ -66,6 +70,13 @@ p {
   }
 }
 
+.lnk--txt{
+  color: var(--bs-link-color) !important;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .text-right {
   text-align: right;
 }
@@ -80,6 +91,10 @@ p {
 
 .bg--entityWhite {
   background-color: #fcfcfc;
+}
+
+.bg--none {
+  background: none !important;
 }
 
 .mt-resp {
