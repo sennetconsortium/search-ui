@@ -88,6 +88,14 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            rui_location_anatomical_locations: {
+                label: 'Anatomical Locations',
+                type: 'value',
+                field: 'rui_location_anatomical_locations.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
             status: {
                 label: 'Status',
                 type: 'value',
@@ -137,6 +145,7 @@ export const SEARCH_ENTITIES = {
             "origin_sample.organ": FilterIsSelected('entity_type', 'Dataset'),
             // Only show 'organ' facet if 'Sample' is selected from the entity type facet
             organ: FilterIsSelected('entity_type', 'Sample'),
+            rui_location_anatomical_locations: FilterIsSelected('entity_type', 'Sample'),
 
             sample_category: FilterIsSelected('entity_type', 'Sample'),
 
@@ -171,6 +180,7 @@ export const SEARCH_ENTITIES = {
             status: {type: 'value'},
             'ancestors.title': {type: 'value'},
             organ: {type: 'value'},
+            rui_location_anatomical_locations: {type: 'value'},
             // "mapped_metadata.race": {type: "value"},
             // "mapped_metadata.sex": {type: "value"},
         },
@@ -195,7 +205,8 @@ export const SEARCH_ENTITIES = {
             'organ',
             'title',
             'description',
-            'group_uuid'
+            'group_uuid',
+            'rui_location_anatomical_locations'
         ],
     },
     initialState: {
