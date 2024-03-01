@@ -53,16 +53,18 @@ export default function Tissue({ data }) {
             <SenNetAccordion title={'Tissue'}>
                 <Card border='0' className='mb-2 pb-2'>
                     <DataTable columns={columns} data={[data]} />
+
+                    <SenNetAccordion className={'mt-3'} title={'Anatomical Locations'} id={'anatomical-locations'}>
+                        <Card border='0' className='mb-2 pb-2'>
+                            <Stack direction="row" spacing={1}>
+                                {anatomicalLocations()}
+                            </Stack>
+                        </Card>
+                    </SenNetAccordion>
                 </Card>
             </SenNetAccordion>
 
-            <SenNetAccordion title={'Anatomical Locations'} id={'anatomical-locations'}>
-                <Card border='0' className='mb-2 pb-2'>
-                    <Stack direction="row" spacing={1}>
-                    {anatomicalLocations()}
-                    </Stack>
-                </Card>
-            </SenNetAccordion>
+
         </>
     )
 
