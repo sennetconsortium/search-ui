@@ -275,6 +275,7 @@ function Provenance({nodeData}) {
 
         const setContainerSize = () => setMaxGraphWidth((window.outerWidth - 200) + 'px')
         window.onresize = () =>  setContainerSize()
+        setContainerSize()
 
         log.debug('Result from fetch', data)
 
