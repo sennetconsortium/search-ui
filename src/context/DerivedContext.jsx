@@ -54,7 +54,7 @@ export const DerivedProvider = ({children}) => {
                     // Iterate over processed datasets and check that the status is valid
                     for (let i = 0; i < processed_dataset_statuses.length; i++) {
                         if (isDatasetStatusPassed(processed_dataset_statuses[i])) {
-                            fetchEntity(processed_datasets[0]).then(processed_dataset => {
+                            fetchEntity(processed_datasets[i]).then(processed_dataset => {
                                 // Check that the assay type is supported by Vitessce
                                 let processed_dataset_type = processed_dataset.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
                                 setShowVitessce(true)
