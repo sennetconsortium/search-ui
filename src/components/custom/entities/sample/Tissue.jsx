@@ -14,13 +14,13 @@ export default function Tissue({ data }) {
         {
             name: 'Organ',
             selector: row => getUBKGFullName(row.origin_sample?.organ),
-            width: '20%',
+            width: '30%',
             wrap: true,
             format: row => {
                 const name = getUBKGFullName(row.origin_sample?.organ)
                 const code = cache.organTypesCodes[name]
                 const icon = organDetails[code].icon || organDetails.OT.icon
-                return <Chip className={'no-focus bg--none lnk--txt'} avatar={<Avatar alt={name} src={icon} />} label={name} onClick={()=> window.location = `/organs/${name.toLowerCase()}`} />
+                return <span title={name}><Chip className={'no-focus bg--none lnk--txt'} avatar={<Avatar alt={name} src={icon} />} label={name} onClick={()=> window.location = `/organs/${name.toLowerCase()}`} /></span>
             },
         },
         {
