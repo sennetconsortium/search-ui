@@ -15,6 +15,7 @@ export default function Tissue({ data }) {
             name: 'Organ',
             selector: row => getUBKGFullName(row.origin_sample?.organ),
             width: '200px',
+            wrap: true,
             format: row => {
                 const name = getUBKGFullName(row.origin_sample?.organ)
                 const code = cache.organTypesCodes[name]
@@ -43,7 +44,7 @@ export default function Tissue({ data }) {
     const anatomicalLocations = () => {
         let result = []
         for (let r of data.rui_location_anatomical_locations) {
-            result.push(<span key={r.label}><Chip label={r.label} size='small' onClick={() => window.location = r.purl}  /></span>)
+            result.push(<span key={r.label}><Chip label={r.label} size='small' onClick={() => window.open(r.purl, '_blank')}  /></span>)
         }
         return result;
     }
