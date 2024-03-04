@@ -14,7 +14,8 @@ export default function Tissue({ data }) {
         {
             name: 'Organ',
             selector: row => getUBKGFullName(row.origin_sample?.organ),
-            width: '120px',
+            width: '200px',
+            wrap: true,
             format: row => {
                 const name = getUBKGFullName(row.origin_sample?.organ)
                 const code = cache.organTypesCodes[name]
@@ -33,7 +34,7 @@ export default function Tissue({ data }) {
         {
             name: 'Tissue Location',
             selector: row => row.rui_location,
-            omit: data.rui_location.length <= 0,
+            omit: data && data.rui_location ? data.rui_location?.length <= 0 : true,
             format: row => {
                 return <div>The <a href={`/api/json?view=${btoa(row.rui_location)}`} target={'_blank'}>spatial coordinates of this sample</a> have been registered and it can be found in the <a target={'_blank'} href={'/ccf-eui'}>Common Coordinate Framework Exploration User Interface</a>.</div>
             }
@@ -43,7 +44,7 @@ export default function Tissue({ data }) {
     const anatomicalLocations = () => {
         let result = []
         for (let r of data.rui_location_anatomical_locations) {
-            result.push(<span key={r}><Chip label={r} size='small'  /></span>)
+            result.push(<span key={r.label}><Chip label={r.label} size='small' onClick={() => window.open(r.purl, '_blank')}  /></span>)
         }
         return result;
     }
@@ -52,15 +53,15 @@ export default function Tissue({ data }) {
         <>
             <SenNetAccordion title={'Tissue'}>
                 <Card border='0' className='mb-2 pb-2'>
-                    <DataTable columns={columns} data={[data]} />
+                    <DataTable className={'rdt_Table--puffy'} columns={columns} data={[data]} />
 
-                    <SenNetAccordion className={'mt-3 accordion-nested'} title={'Anatomical Locations'} id={'anatomical-locations'}>
+                    {data && data.rui_location_anatomical_locations && <SenNetAccordion className={'mt-3 accordion-nested'} title={'Anatomical Locations'} id={'anatomical-locations'}>
                         <Card border='0' className='mb-2 pb-2'>
-                            <Stack direction="row" spacing={1}>
+                             <Stack direction="row" spacing={1}>
                                 {anatomicalLocations()}
                             </Stack>
                         </Card>
-                    </SenNetAccordion>
+                    </SenNetAccordion>}
                 </Card>
             </SenNetAccordion>
 

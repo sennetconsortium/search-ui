@@ -56,4 +56,13 @@
   .accordion-header span {
     font-size: 85%;
   }
+
+  .MuiStack-root {
+    flex-wrap: wrap;
+    > span {
+      margin-left: 0;
+      margin-right: 8px;
+      line-height: 1.9;
+    }
+  }
 }
