@@ -18,6 +18,7 @@ import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import SidebarBtn from "../components/SidebarBtn";
 import Metadata from "../components/custom/entities/Metadata";
 import {APP_ROUTES} from "../config/constants";
+import Tissue from "../components/custom/entities/sample/Tissue";
 
 function ViewSample() {
     const router = useRouter()
@@ -107,6 +108,11 @@ function ViewSample() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
+                                            <li className="nav-item">
+                                                <a href="#Tissue"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Tissue</a>
+                                            </li>
                                              {!!((data.metadata && Object.keys(data.metadata).length) || ancestorHasMetadata) &&
                                                 <li className="nav-item">
                                                     <a href="#Metadata"
@@ -150,6 +156,11 @@ function ViewSample() {
                                             {/*Provenance*/}
                                             {data &&
                                                 <Provenance nodeData={data}/>
+                                            }
+
+                                            {/*Tissue*/}
+                                            {data &&
+                                                <Tissue data={data} />
                                             }
 
                                             {/*Metadata*/}

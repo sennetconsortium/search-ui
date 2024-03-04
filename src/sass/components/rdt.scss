@@ -94,4 +94,10 @@
     }
   }
 
+  &_Table--puffy {
+    .rdt_TableCell > div {
+      padding: 5px 0;
+    }
+  }
+
 }
