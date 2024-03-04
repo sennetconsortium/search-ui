@@ -43,7 +43,7 @@ export default function Tissue({ data }) {
     const anatomicalLocations = () => {
         let result = []
         for (let r of data.rui_location_anatomical_locations) {
-            result.push(<span key={r}><Chip label={r} size='small'  /></span>)
+            result.push(<span key={r.label}><Chip label={r.label} size='small' onClick={() => window.location = r.purl}  /></span>)
         }
         return result;
     }
