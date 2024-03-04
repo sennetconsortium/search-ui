@@ -23,6 +23,7 @@ function Provenance({nodeData}) {
     const [loading, setLoading] = useState(true)
     const [treeData, setTreeData] = useState(null)
     const [showModal, setShowModal] = useState(false)
+    const [maxGraphWidth, setMaxGraphWidth] = useState('500px')
     const initialized = useRef(false)
     const activityHidden = useRef(true)
     const svgTranslate = useRef({})
@@ -272,6 +273,9 @@ function Provenance({nodeData}) {
         const itemId = data.uuid;
         const graphOps = {token, url}
 
+        const setContainerSize = () => setMaxGraphWidth((window.outerWidth - 200) + 'px')
+        window.onresize = () =>  setContainerSize()
+
         log.debug('Result from fetch', data)
 
         const handleResult = async (result) => {
@@ -375,7 +379,7 @@ function Provenance({nodeData}) {
                 variant="pills"
             >
                 <Tab eventKey="graph" title="Graph" >
-                    {!loading && <ProvenanceUI options={options} data={treeData}/>}
+                    {!loading && <div style={{maxWidth: maxGraphWidth}}><ProvenanceUI options={options} data={treeData}/></div>}
                     {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId} otherLegend={otherLegend} />}
                     {loading && <Spinner/>}
                     <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
