@@ -14,7 +14,7 @@ export default function Tissue({ data }) {
         {
             name: 'Organ',
             selector: row => getUBKGFullName(row.origin_sample?.organ),
-            width: '200px',
+            width: '20%',
             wrap: true,
             format: row => {
                 const name = getUBKGFullName(row.origin_sample?.organ)
@@ -26,7 +26,7 @@ export default function Tissue({ data }) {
         {
             name: 'Category',
             selector: row => row.sample_category,
-            width: '200px',
+            width: '20%',
             format: row => {
                 return <span>{row.sample_category ? displayBodyHeader(row.sample_category) : ''}</span>
             }
@@ -34,6 +34,8 @@ export default function Tissue({ data }) {
         {
             name: 'Tissue Location',
             selector: row => row.rui_location,
+            wrap: true,
+            width: '50%',
             omit: data && data.rui_location ? data.rui_location?.length <= 0 : true,
             format: row => {
                 return <div>The <a href={`/api/json?view=${btoa(row.rui_location)}`} target={'_blank'}>spatial coordinates of this sample</a> have been registered and it can be found in the <a target={'_blank'} href={'/ccf-eui'}>Common Coordinate Framework Exploration User Interface</a>.</div>
