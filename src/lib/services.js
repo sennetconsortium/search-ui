@@ -1,5 +1,4 @@
 import log from "loglevel";
-import { getDataTypesByProperty } from "../components/custom/js/functions";
 import { getAuth, getEntityEndPoint, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "../config/config";
 import {getCookie} from "cookies-next";
 
@@ -297,7 +296,6 @@ export async function fetchVitessceConfiguration(datasetId) {
 }
 
 export const getDatasetQuantities = async () => {
-    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false);
     const body = {
         size: 0,
         query: {
@@ -344,7 +342,6 @@ export const getDatasetQuantities = async () => {
 };
 
 export const getOrganDataTypeQuantities = async (organCode) => {
-    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false);
     const body = {
         size: 0,
         query: {
@@ -392,24 +389,25 @@ export const getOrganDataTypeQuantities = async (organCode) => {
 
 export const getSamplesByOrgan = async (ruiCode) => {
     const body = {
-        "query": {
-            "bool": {
-                "filter": [
+        query: {
+            bool: {
+                filter: [
                     {
-                        "term": {
+                        term: {
                             "entity_type.keyword": "Sample"
                         }
                     },
                     {
-                        "term": {
+                        term: {
                             "organ.keyword": ruiCode
                         }
                     }
                 ]
             }
         },
-        "_source": {
-            "includes": [
+        size: 10000,
+        _source: {
+            includes: [
                 "sennet_id",
                 "lab_tissue_sample_id",
                 "group_name",
