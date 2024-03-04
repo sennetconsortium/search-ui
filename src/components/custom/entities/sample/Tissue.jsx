@@ -53,7 +53,7 @@ export default function Tissue({ data }) {
         <>
             <SenNetAccordion title={'Tissue'}>
                 <Card border='0' className='mb-2 pb-2'>
-                    <DataTable columns={columns} data={[data]} />
+                    <DataTable className={'rdt_Table--puffy'} columns={columns} data={[data]} />
 
                     <SenNetAccordion className={'mt-3 accordion-nested'} title={'Anatomical Locations'} id={'anatomical-locations'}>
                         <Card border='0' className='mb-2 pb-2'>
