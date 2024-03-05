@@ -5,27 +5,31 @@ import AppFooter from "../../components/custom/layout/AppFooter";
 import Header from "../../components/custom/layout/Header";
 import AppContext from "../../context/AppContext";
 import {APP_TITLE} from "../../config/config";
-import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
-import Unauthorized from "../../components/custom/layout/Unauthorized";
+import {SpinnerEl} from "../../components/custom/Spinner";
 import {toast} from "react-toastify";
-
+import NotFound from '../../components/custom/NotFound';
 
 function Login() {
-    const { _t, isUnauthorized, isAuthorizing, checkUIPassword, uiAdminAuthorized } = useContext(AppContext)
+    const { _t, isUnauthorized, checkUIAdminStatus } = useContext(AppContext)
 
     const [busy, setBusy] = useState(false)
+    const [uiAdminAuthorized, setUIAdminAuthorized] = useState(false)
 
     useEffect(() => {
-        if (!uiAdminAuthorized) {
-            checkUIPassword()
-        }
+        checkUIAdminStatus()
+            .then((authorized) => {
+                setUIAdminAuthorized(authorized)
+            })
+            .catch(() => {
+                setUIAdminAuthorized(false)
+            })
     }, [])
 
-    const clearCache = async (e) => {
+    const clearCache = async () => {
         const url = '/api/ontology'
         try {
             setBusy(true)
-            const response = await toast.promise(
+            await toast.promise(
                 fetch(url, { method: 'DELETE' }),
                 {
                     pending: 'Attempting to clear cache...',
@@ -39,12 +43,9 @@ function Login() {
         setBusy(false)
     }
 
-    if (isAuthorizing() || isUnauthorized() || uiAdminAuthorized === false) {
-        return (
-            isAuthorizing() ? <Spinner /> : <Unauthorized/>
-        )
+    if (isUnauthorized() || uiAdminAuthorized === false) {
+        return <NotFound />
     } else {
-
         return (
             <div>
                 <Header title={APP_TITLE}/>
