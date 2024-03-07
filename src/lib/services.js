@@ -82,7 +82,8 @@ export function get_auth_header(ops = {}) {
     try {
         let auth = getAuth()
         auth = (!auth || !auth.length) ? getCookie('groups_token', ops) : auth
-        headers.append("Authorization", "Bearer " + auth)
+        if (auth)
+            headers.append("Authorization", "Bearer " + auth)
     }catch (e) {
         console.error(e)
     }
