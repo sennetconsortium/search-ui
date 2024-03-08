@@ -4,7 +4,8 @@ import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import Header from "../../components/custom/layout/Header";
 import AppContext from "../../context/AppContext";
-import {APP_TITLE, getIngestLogin} from "../../config/config";
+import {APP_TITLE} from "../../config/config";
+import {APP_ROUTES} from "../../config/constants";
 import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
 import {toast} from "react-toastify";
 import Unauthorized from '../../components/custom/layout/Unauthorized';
@@ -30,8 +31,7 @@ function Login() {
 
     useEffect(() => {
         if (isUnauthorized()) {
-            const loginUrl = getIngestLogin()
-            router.push(loginUrl)
+            router.push(APP_ROUTES.login)
             return
         }
     }, [authorized])
