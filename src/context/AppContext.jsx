@@ -5,14 +5,14 @@ import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import {
     check_valid_token,
+    get_auth_header,
     get_read_write_privileges,
     get_user_write_groups,
     has_data_admin_privs
 } from '../lib/services'
 import {deleteCookies} from "../lib/auth";
 import {APP_ROUTES} from "../config/constants";
-import {getUIPassword, STORAGE_KEY} from "../config/config";
-import Swal from 'sweetalert2'
+import {getIngestEndPoint, STORAGE_KEY} from "../config/config";
 import AppModal from "../components/AppModal";
 import Spinner from "../components/custom/Spinner";
 
@@ -28,7 +28,6 @@ export const AppProvider = ({ cache, banners, children }) => {
     const [validToken, setValidToken] = useState(null)
     const [adminGroup, setAdminGroup] = useState(null)
     const [isRegisterHidden, setIsRegisterHidden] = useState(false)
-    const [uiAdminAuthorized, setUIAuthorized] = useState(false)
     const [sidebarVisible, setSidebarVisible] = useState(false)
     const [userWriteGroups, setUserWriteGroups] = useState([])
     const router = useRouter()
@@ -68,7 +67,7 @@ export const AppProvider = ({ cache, banners, children }) => {
                 } else {
                     setValidToken(false)
                 }
-            }).catch((error) => setValidToken(false));
+            }).catch(() => setValidToken(false));
         } else {
             setValidToken(true)
         }
@@ -256,52 +255,14 @@ export const AppProvider = ({ cache, banners, children }) => {
         setSidebarVisible(!sidebarVisible)
     }
 
-    const promptForUIPasscode = async () => {
-        const result = await Swal.fire({
-            customClass: {
-                container: 'c-help',
-                title: 'c-help__title',
-                confirmButton: 'c-help__btn'
-            },
-            width: 500,
-            title: `Password Prompt`,
-            input: 'password',
-            inputLabel: 'Please enter admin password to continue...',
-            inputValue: '',
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'You need to write something!'
-                }
-            }
-        })
-        return result
-    }
-
-    const checkUIPassword = async () => {
-        const uiAuthCookie = getCookie('adminUIAuthorized')
-
-        if (!uiAuthCookie) {
-            const result = await promptForUIPasscode()
-
-            const formData = new URLSearchParams();
-            formData.append('password', result.value)
-            await fetch("/api/auth/ui", {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: formData.toString()
-            }).then(async response => {
-                if (response.status === 200) {
-                    setCookie('adminUIAuthorized', true, {sameSite: "Lax"})
-                    setUIAuthorized(true)
-                } else {
-                    await checkUIPassword()
-                }
-            })
-
-        } else {
-            setUIAuthorized(true)
+    const checkUIAdminStatus = async () => {
+        try {
+            const headers = get_auth_header()
+            let res  = await fetch(`${getIngestEndPoint()}privs/has-data-admin`, {method:'GET', headers})
+            let data = res.ok ? await res.json() : {has_data_admin_privs: false}
+            return data.has_data_admin_privs
+        } catch {
+            return false
         }
     }
     
@@ -326,8 +287,7 @@ export const AppProvider = ({ cache, banners, children }) => {
                 banners,
                 router,
                 filterImageFilesToAdd,
-                uiAdminAuthorized,
-                checkUIPassword,
+                checkUIAdminStatus,
                 supportedMetadata,
                 handleSidebar,
                 sidebarVisible,
