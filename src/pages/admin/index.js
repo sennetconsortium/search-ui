@@ -5,27 +5,42 @@ import AppFooter from "../../components/custom/layout/AppFooter";
 import Header from "../../components/custom/layout/Header";
 import AppContext from "../../context/AppContext";
 import {APP_TITLE} from "../../config/config";
+import {APP_ROUTES} from "../../config/constants";
 import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
-import Unauthorized from "../../components/custom/layout/Unauthorized";
 import {toast} from "react-toastify";
-
+import Unauthorized from '../../components/custom/layout/Unauthorized';
 
 function Login() {
-    const { _t, isUnauthorized, isAuthorizing, checkUIPassword, uiAdminAuthorized } = useContext(AppContext)
+    const { _t, authorized, isUnauthorized, checkUIAdminStatus, router} = useContext(AppContext)
 
     const [busy, setBusy] = useState(false)
+    const [uiAdminAuthorized, setUIAdminAuthorized] = useState({
+        authorized: false,
+        loading: true,
+    })
 
     useEffect(() => {
-        if (!uiAdminAuthorized) {
-            checkUIPassword()
-        }
+        checkUIAdminStatus()
+        .then((adminUnauthorized) => {
+            setUIAdminAuthorized({
+                authorized: adminUnauthorized,
+                loading: false,
+            })
+        })
     }, [])
 
-    const clearCache = async (e) => {
+    useEffect(() => {
+        if (isUnauthorized()) {
+            router.push(APP_ROUTES.login)
+            return
+        }
+    }, [authorized])
+
+    const clearCache = async () => {
         const url = '/api/ontology'
         try {
             setBusy(true)
-            const response = await toast.promise(
+            await toast.promise(
                 fetch(url, { method: 'DELETE' }),
                 {
                     pending: 'Attempting to clear cache...',
@@ -39,42 +54,43 @@ function Login() {
         setBusy(false)
     }
 
-    if (isAuthorizing() || isUnauthorized() || uiAdminAuthorized === false) {
-        return (
-            isAuthorizing() ? <Spinner /> : <Unauthorized/>
-        )
-    } else {
-
-        return (
-            <div>
-                <Header title={APP_TITLE}/>
-                <AppNavbar hidden={true}/>
-                <Container>
-                    <Row md={12} className={'mt-3 mb-3'}>
-                        <h4>{_t(`Administrative`)}</h4>
-                    </Row>
-                    <Row>
-                        <Col>
-                            <Card className={'px-2 py-2 tooly'} style={{width: '18rem'}}>
-                                <Card.Img variant="top" src="clear-cache.jpeg"/>
-                                <Card.Body className={'mt-2 mb-2'}>
-                                    <Card.Title>Clear Cache</Card.Title>
-                                    <Card.Text>
-                                        Quickly refresh ontology cache.
-                                    </Card.Text>
-                                    <Row>
-                                        <Col sm={10}><Button variant="primary" onClick={clearCache}>Clear Cache</Button></Col>
-                                        <Col sm={2}>{busy && <SpinnerEl />}</Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-                </Container>
-                <AppFooter />
-            </div>
-        )
+    if (!authorized || uiAdminAuthorized.loading) {
+        return <Spinner />
     }
+
+    if (!uiAdminAuthorized.authorized) {
+        return <Unauthorized />
+    }
+
+    return (
+        <div>
+            <Header title={APP_TITLE}/>
+            <AppNavbar hidden={true}/>
+            <Container>
+                <Row md={12} className={'mt-3 mb-3'}>
+                    <h4>{_t(`Administrative`)}</h4>
+                </Row>
+                <Row>
+                    <Col>
+                        <Card className={'px-2 py-2 tooly'} style={{width: '18rem'}}>
+                            <Card.Img variant="top" src="clear-cache.jpeg"/>
+                            <Card.Body className={'mt-2 mb-2'}>
+                                <Card.Title>Clear Cache</Card.Title>
+                                <Card.Text>
+                                    Quickly refresh ontology cache.
+                                </Card.Text>
+                                <Row>
+                                    <Col sm={10}><Button variant="primary" onClick={clearCache}>Clear Cache</Button></Col>
+                                    <Col sm={2}>{busy && <SpinnerEl />}</Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
+            </Container>
+            <AppFooter />
+        </div>
+    )
 }
 
 export default Login

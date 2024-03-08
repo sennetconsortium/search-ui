@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react'
 import {get_json_header} from "../lib/services";
+import log from 'loglevel'
 
 function useContent() {
 
@@ -14,10 +15,10 @@ function useContent() {
             if (res.ok) {
                 return await res.json()
             } else {
-                console.log(`%c No banners config file found.`, `background: #222; color: red`)
+                log.debug(`%c No banners config file found.`, `background: #222; color: red`)
             }
         } catch (e) {
-            console.error(e)
+            log.debug('Error loading banner', e)
         }
         return {}
     }
