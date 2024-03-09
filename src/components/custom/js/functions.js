@@ -176,7 +176,8 @@ export function getDOIPattern() {
 export function formatByteSize(bytes, decimals = 2) {
     if (!+bytes) return '0 Bytes'
 
-    const k = 1024
+    // This uses metric instead of binary (1024)
+    const k = 1000
     const dm = decimals < 0 ? 0 : decimals
     const sizes = ['Bytes', 'kB', 'MB', 'GB', 'TB']
 
