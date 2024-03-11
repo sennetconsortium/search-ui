@@ -278,6 +278,14 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            "metadata.storage_temperature": {
+                label: 'Storage Temperature',
+                type: 'value',
+                field: 'metadata.storage_temperature.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
 
             // Dataset
             "metadata.metadata.assay_category": {
@@ -370,38 +378,7 @@ export const SEARCH_METADATA = {
             "metadata.metadata.acquisition_instrument_vendor": FilterIsSelected('entity_type', 'Dataset'),
         },
         search_fields: {
-            // Do not put any fields that elastic search categorizes as a number. This will cause the search to fail.
-            sennet_id: {type: 'value'},
-
-            entity_type: { type: 'value' },
-            source_type: { type: 'value' },
-            sample_category: { type: 'value' },
-            dataset_type: { type: 'value' },
-
-            // Source Human
-            "source_mapped_metadata.sex": { type: 'value' },
-            "source_mapped_metadata.race": { type: 'value' },
-
-            // Source Mouse
-            "metadata.strain": { type: 'value' },
-            "metadata.sex": { type: 'value' },
-            "metadata.euthanization_method": { type: 'value' },
-
-            // Sample Suspension
-            "metadata.suspension_entity": { type: 'value' },
-
-            // Sample General
-            "metadata.preparation_media": { type: 'value' },
-            "metadata.preparation_condition": { type: 'value' },
-            "metadata.storage_media": { type: 'value' },
-            "metadata.storage_method": { type: 'value' },
-
-            // Dataset
-            "metadata.metadata.assay_category": { type: 'value' },
-            "metadata.metadata.analyte_class": { type: 'value' },
-            "metadata.metadata.operator": { type: 'value' },
-            "metadata.metadata.acquisition_instrument_model": { type: 'value' },
-            "metadata.metadata.acquisition_instrument_vendor": { type: 'value' },
+            all_text: {type: 'value'},
         },
         source_fields: [
             'sennet_id',
@@ -474,6 +451,13 @@ export const SEARCH_METADATA = {
             description: 'Suspension samples of all entity types, enrichment, and preparation conditions.',
             entityType: 'sample',
             queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Sample&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=sample_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=Suspension&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+        },
+        {
+            title: 'All Nucleic Datasets',
+            description: 'Datasets with the nucleic acid and protein analyte class.',
+            entityType: 'dataset',
+            queryString: 'size=n_10000_n&filters[0][field]=entity_type&filters[0][values][0]=Dataset&filters[0][type]=any&filters[1][field]=metadata.metadata.analyte_class&filters[1][values][0]=Nucleic acid and protein&filters[1][type]=any&sort[0][field]=last_modified_timestamp&sort[0][direction]=desc'
+
         },
         {
             title: 'All RNA Datasets',
