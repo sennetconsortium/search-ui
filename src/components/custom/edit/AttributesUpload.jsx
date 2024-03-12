@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState, useRef} from 'react'
 import PropTypes from 'prop-types'
 import {Button, Form} from 'react-bootstrap';
 import {InputGroup} from 'react-bootstrap';
-import {getIngestEndPoint} from "../../../config/config";
+import {getDocsRootURL, getIngestEndPoint} from "../../../config/config";
 import log from 'loglevel'
 import DataTable from 'react-data-table-component';
 import $ from 'jquery'
@@ -203,9 +203,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
     }
 
     const getSchemaUrl = () => {
-        let url = 'https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/#'
-        url += entity
-        return url.toLowerCase()
+        return `${getDocsRootURL()}libraries/ingest-validation-tools/schemas/`
     }
 
     const getTooltip = () => {

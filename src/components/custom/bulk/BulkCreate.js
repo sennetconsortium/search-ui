@@ -566,7 +566,7 @@ export default function BulkCreate({
         const url = new URL(getDocsRootURL());
         url.pathname = isMetadata ? 'libraries/ingest-validation-tools/schemas' : 'registration/bulk-registration'
         const _subType = isMouse() ? 'murine' : subType
-        url.pathname += isMetadata ? `/${entityType}-${_subType.toLowerCase()}` : `/${entityType}`
+        url.pathname += isMetadata ? `/` : `/${entityType}`
         return url.href
     }
 
@@ -596,7 +596,7 @@ export default function BulkCreate({
                         >
                             <FileDownloadIcon/> {' '} <span>EXAMPLE.TSV {isCedarSupported() && <span>(CEDAR)</span>}</span>
                         </a>
-                        {isCedarSupported() && <small className='fs-xs'><br />Or download <a download href={`/bulk/${getFilename().toLowerCase()}.tsv`}>legacy example.tsv</a></small>}
+
                     </div>
                     <h1 className={'text-center'}>{getTitle()}</h1>
                      <SenNetAlert variant={'warning'}
