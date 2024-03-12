@@ -203,7 +203,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
     }
 
     const getSchemaUrl = () => {
-        return `${getDocsRootURL()}metadata`
+        return `${getDocsRootURL()}libraries/ingest-validation-tools/schemas/`
     }
 
     const getTooltip = () => {
