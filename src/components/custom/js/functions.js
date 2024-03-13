@@ -279,6 +279,9 @@ export function getStatusColor(status) {
             case "SUBMITTED":
                 badge_class = "badge-info";
                 break;
+            case "COMPLETE":
+                badge_class = "badge-success";
+                break;
             default:
                 break;
         }

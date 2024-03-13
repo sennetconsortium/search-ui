@@ -293,4 +293,10 @@
 .sui-columns-toggle {
   position: absolute !important;
   right: 120px;
+  z-index: 1000;
+}
+
+.sui-react-select {
+  position: relative;
+  z-index: 1000;
 }
