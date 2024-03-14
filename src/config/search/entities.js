@@ -161,6 +161,12 @@ export const SEARCH_ENTITIES = {
             source_type: FilterIsSelected('entity_type', 'Source'),
         },
         search_fields: {
+            "sennet_id^4": {type: 'value'},
+            "group_name^3": {type: 'value'},
+            "dataset_type^2": {type: 'value'},
+            "sample_category^2": {type: 'value'},
+            "entity_type^2": {type: 'value'},
+            "status^2": {type: 'value'},
             all_text: {type: 'value'},
         },
         source_fields: [
