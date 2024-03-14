@@ -13,6 +13,10 @@ import ColumnsDropdown from "../../components/custom/search/ColumnsDropdown";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import {RESULTS_PER_PAGE} from "../../config/config";
 import {ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
+import AppModal from "../../components/AppModal";
+import {tableColumns} from "../../components/custom/edit/AttributesUpload";
+import Swal from 'sweetalert2'
+
 function ViewJobs({children}) {
 
 
@@ -23,11 +27,14 @@ function ViewJobs({children}) {
     const currentColumns = useRef([])
     const [hiddenColumns, setHiddenColumns] = useState(null)
     const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
+    const [showModal, setShowModal] = useState(false)
+    const [modalBody, setModalBody] = useState(null)
+    const [modalTitle, setModalTitle] = useState(null)
 
     const getAction = (row) => {
         const status = row.status
         let actions = []
-        const isValidate = row.hitPath.includes('/bulk/validate')
+        const isValidate = row.hit_path.includes('/bulk/validate')
         if (eq(status, 'Complete')) {
 
             if (!row.errors.length && isValidate) {
@@ -55,14 +62,61 @@ function ViewJobs({children}) {
         }
     }
 
+    const handleDelete = (row) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This cannot be undone once deleted.',
+            dangerMode: true,
+            buttons: true,
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            customClass: {
+                cancelButton: 'btn btn-secondary',
+                confirmButton: 'btn btn-danger',
+            },
+            didOpen: () => {
+                // run when swal is opened...
+            },
+            didClose: () => {
+                // run when swal is closed...
+            }
+        }).then(result => {
+            if (result.isConfirmed) {
+                // Delete
+            }
+        }).catch(error => {
+            // when promise rejected...
+        });
+    }
+
+    const handleAction = (action, row) => {
+        console.log(action)
+        if (eq(action, 'Delete')) {
+            handleDelete(row)
+        } else if (eq(action, 'Register')) {
+
+        } else if (eq(action, 'Cancel')) {
+
+        } else {
+           window.location = `/edit/bulk/${row.entity}?action=metadata&category=${row.subType}`
+        }
+    }
+
     const getActionUI = (row) => {
         const actions = getAction(row)
         let ui = [];
         for (let action of actions) {
-            ui.push(<Button key={action} variant={getVariant(action)} className={'mx-1'} size="sm">{action}</Button>)
+            ui.push(<Button key={action} variant={getVariant(action)} className={'mx-1'} size="sm" onClick={() => handleAction(action, row)}>{action}</Button>)
         }
 
         return ui
+    }
+
+    const handleViewErrorDetails = (row) => {
+        const columns = tableColumns()
+        setShowModal(true)
+        setModalTitle(<h3>Task Error Details</h3>)
+        setModalBody(<div className={'table-responsive has-error'}><DataTable columns={columns} data={row.errors} pagination /></div> )
     }
 
     const getTableColumns = (hiddenColumns) => {
@@ -91,7 +145,7 @@ function ViewJobs({children}) {
                             {row.status}
                         </SenNetPopover>
                         </span>
-                            {eq(row.status, 'Error') && <a className={'mx-2'} href={'#'}><small>View details</small></a>}
+                            {eq(row.status, 'Error') && <a className={'mx-2'} href={'#'} onClick={() => handleViewErrorDetails(row)}><small>View details</small></a>}
                     </div>
 
                     )
@@ -132,42 +186,14 @@ function ViewJobs({children}) {
         currentColumns.current = cols;
         return cols;
     }
+    const fetchData = async () => {
+        const response = await fetch('/api/socket', getHeaders())
+        const data = await response.json();
+
+        setData(data)
+    }
 
     useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch('/api/socket', getHeaders())
-            const data = await response.json();
-
-            setData([{
-                run_id: 'SOME UUID 0',
-                description: 'Validating somethings',
-                status: 'Complete',
-                hitPath: '/bulk/validate',
-                errors: []
-            },
-            {
-                run_id: 'SOME UUID 1',
-                description: 'Validating somethings',
-                status: 'Error',
-                hitPath: '/bulk/validate',
-                errors: [1,3]
-            },
-            {
-                run_id: 'SOME UUID 2',
-                description: 'Registering somethings',
-                status: 'Complete',
-                hitPath: '/bulk/register',
-                errors: []
-            },
-            {
-                run_id: 'SOME UUID 3',
-                description: 'Validating somethings',
-                status: 'Processing',
-                hitPath: '/bulk/validate',
-                errors: []
-            }])
-        }
-
         fetchData()
     }, [])
 
@@ -197,13 +223,14 @@ function ViewJobs({children}) {
                     <Row>
                     <div className='sui-layout-main-header mt-4 mb-4'>
                         <div className='sui-layout-main-header__inner'>
-                            <div><Button variant={'outline-primary'}><i className={'bi bi-arrow-clockwise mx-1'} role={'presentation'}></i>Refresh</Button></div>
+                            <div><Button variant={'outline-primary'} onClick={fetchData}><i className={'bi bi-arrow-clockwise mx-1'} role={'presentation'}></i>Refresh</Button></div>
                             {data.length > 0 && <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
                                                                  currentColumns={currentColumns} />}
                             <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={data.length}  />
                         </div>
                     </div>
                     <DataTable columns={getTableColumns(hiddenColumns)} data={data} fixedHeader={true} pagination />
+                        <AppModal showHomeButton={false} showCloseButton={true} handleClose={() => setShowModal(false)} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
                     </Row>
                 </Container>}
                 </>
