@@ -96,6 +96,14 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            metadata: {
+                label: 'Has Metadata',
+                type: 'exists',
+                field: 'metadata',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
             status: {
                 label: 'Status',
                 type: 'value',
@@ -191,7 +199,7 @@ export const SEARCH_ENTITIES = {
             'title',
             'description',
             'group_uuid',
-            'rui_location_anatomical_locations.label'
+            'rui_location_anatomical_locations.label',
         ],
     },
     initialState: {
