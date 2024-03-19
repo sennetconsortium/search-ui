@@ -199,7 +199,7 @@ export const SEARCH_ENTITIES = {
             'title',
             'description',
             'group_uuid',
-            'rui_location_anatomical_locations.label',
+            'rui_location_anatomical_locations.label'
         ],
     },
     initialState: {
