@@ -10,12 +10,13 @@ import {eq, getHeaders, getStatusColor, getStatusDefinition} from "../../compone
 import SenNetPopover from "../../components/SenNetPopover";
 import DataTable from "react-data-table-component";
 import ColumnsDropdown from "../../components/custom/search/ColumnsDropdown";
-import { Col, Container, Row, Button } from "react-bootstrap";
+import { Col, Container, Row, Button, Form, InputGroup } from "react-bootstrap";
 import {RESULTS_PER_PAGE} from "../../config/config";
 import {ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
 import AppModal from "../../components/AppModal";
 import {tableColumns} from "../../components/custom/edit/AttributesUpload";
 import Swal from 'sweetalert2'
+import useDataTableSearch from "../../hooks/useDataTableSearch";
 
 function ViewJobs({children}) {
 
@@ -30,6 +31,18 @@ function ViewJobs({children}) {
     const [showModal, setShowModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
+
+    const onKeydown = (e) => {
+        if (eq(e.key, 'enter')) {
+            const params = new URLSearchParams(window.location.search)
+            params.set('q', e.target.value);
+            const query = params.toString()
+            window.history.pushState(null, null, `?${query}`)
+        }
+    }
+
+    const {filteredItems, setFilterText, searchBarComponent} = useDataTableSearch(
+        {data, fieldsToSearch: ['task_id', 'description', 'status'], className: 'has-extraPadding', onKeydown})
 
     const getAction = (row) => {
         const status = row.status
@@ -204,13 +217,18 @@ function ViewJobs({children}) {
     }
     const fetchData = async () => {
         const response = await fetch('/api/socket', getHeaders())
-        const data = await response.json();
-
-        setData(data)
+        const _data = await response.json();
+        setData(_data)
     }
 
     useEffect(() => {
+        console.log('JOBS')
         fetchData()
+        const q = router.query.q
+        if (q) {
+            setFilterText(q)
+        }
+
     }, [])
 
     const searchContext = () => `jobs-queue`
@@ -236,16 +254,28 @@ function ViewJobs({children}) {
                         </div>
                     </Row>
 
+
                     <Row>
-                    <div className='sui-layout-main-header mt-4 mb-4'>
-                        <div className='sui-layout-main-header__inner'>
-                            <div><Button variant={'outline-primary'} onClick={fetchData}><i className={'bi bi-arrow-clockwise mx-1'} role={'presentation'}></i>Refresh</Button></div>
-                            {data.length > 0 && <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
-                                                                 currentColumns={currentColumns} />}
-                            <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={data.length}  />
-                        </div>
-                    </div>
-                    <DataTable columns={getTableColumns(hiddenColumns)} data={data} fixedHeader={true} pagination />
+
+                    <DataTable
+                        columns={getTableColumns(hiddenColumns)}
+                        data={filteredItems}
+                        fixedHeader={true}
+                        subHeader
+                        subHeaderComponent={
+                        <>
+                        {searchBarComponent}
+                            <div className='sui-layout-main-header mt-4 mb-4'>
+                                <div className='sui-layout-main-header__inner'>
+                                    <div><Button variant={'outline-primary'} onClick={fetchData}><i className={'bi bi-arrow-clockwise mx-1'} role={'presentation'}></i>Refresh</Button></div>
+                                    {data.length > 0 && <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
+                                                                         currentColumns={currentColumns} />}
+                                    <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={data.length}  />
+                                </div>
+                            </div>
+                        </>
+                        }
+                        pagination />
                         <AppModal showHomeButton={false} showCloseButton={true} handleClose={() => setShowModal(false)} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
                     </Row>
                 </Container>}

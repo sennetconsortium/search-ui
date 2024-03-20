@@ -300,3 +300,14 @@
   position: relative;
   z-index: 1000;
 }
+
+.sui-filterableComponent {
+  .form-control {
+    border-radius: 0;
+  }
+  &.has-extraPadding {
+    .form-control {
+      padding: 10px;
+    }
+  }
+}
