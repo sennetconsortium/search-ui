@@ -11,12 +11,13 @@ import SenNetPopover from "../../components/SenNetPopover";
 import DataTable from "react-data-table-component";
 import ColumnsDropdown from "../../components/custom/search/ColumnsDropdown";
 import { Col, Container, Row, Button, Form, InputGroup } from "react-bootstrap";
-import {RESULTS_PER_PAGE} from "../../config/config";
+import {getIngestEndPoint, RESULTS_PER_PAGE} from "../../config/config";
 import {ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
 import AppModal from "../../components/AppModal";
 import {tableColumns} from "../../components/custom/edit/AttributesUpload";
 import Swal from 'sweetalert2'
 import useDataTableSearch from "../../hooks/useDataTableSearch";
+import {callService} from "../../lib/services";
 
 function ViewJobs({children}) {
 
@@ -47,7 +48,7 @@ function ViewJobs({children}) {
     const getAction = (row) => {
         const status = row.status
         let actions = []
-        const isValidate = row.description.includes('validation')
+        const isValidate = row.description?.toLowerCase().includes('validation')
         if (eq(status, 'Complete')) {
             if (!row.errors.length && isValidate) {
                 actions.push('Register')
@@ -101,14 +102,17 @@ function ViewJobs({children}) {
         });
     }
 
-    const handleAction = (action, row) => {
+    const handleAction = (e, action, row) => {
         console.log(action)
         if (eq(action, 'Delete')) {
             handleDelete(row)
         } else if (eq(action, 'Register')) {
 
         } else if (eq(action, 'Cancel')) {
+            e.target.disabled = true
+            callService(null, getIngestEndPoint() + `/tasks/${row.task_id}/cancel`, 'PUT').then((res) =>{
 
+            })
         } else {
            window.location = `/edit/bulk/${row.entity}?action=metadata&category=${row.subType}`
         }
@@ -118,7 +122,7 @@ function ViewJobs({children}) {
         const actions = getAction(row)
         let ui = [];
         for (let action of actions) {
-            ui.push(<Button key={action} variant={getVariant(action)} className={'mx-1'} size="sm" onClick={() => handleAction(action, row)}>{action}</Button>)
+            ui.push(<Button key={action} variant={getVariant(action)} className={'mx-1'} size="sm" onClick={(e) => handleAction(e, action, row)}>{action}</Button>)
         }
 
         return ui

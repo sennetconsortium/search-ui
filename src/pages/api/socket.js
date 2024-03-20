@@ -5,25 +5,27 @@ import {get_auth_header, get_headers_from_req, get_json_header} from "../../lib/
 export default async function handler(req, res) {
 
     if (req.method === 'GET') {
-        // const ws = new WebSocket(`ws://${getIngestEndPoint()}job-queue`)
+        //TODO: to be completed when realtime updates are available
+        // const ws = new WebSocket(`ws://${getIngestEndPoint()}jobs`)
         //
         // ws.on('message', function message(data) {
         //     console.log('received: %s', data);
         //     res.status(200).json(data)
         // })
 
+        //TODO: remove after feature complete
         let tempData = [{
             task_id: 'SOME UUID 0',
             started_timestamp: 1710364245519,
             ended_timestamp: 1710365103528,
-            description: 'Validating somethings',
+            description: 'Validation of somethings',
             status: 'Complete',
             hit_path: '/bulk/validate',
             errors: []
         },
         {
             task_id: 'SOME UUID 1',
-            description: 'Validating somethings',
+            description: 'Validation of somethings',
             started_timestamp: 1710364245519,
             ended_timestamp: 1710365103528,
             status: 'Error',
@@ -50,7 +52,7 @@ export default async function handler(req, res) {
             task_id: 'SOME UUID 3',
             started_timestamp: 1710254243315,
             ended_timestamp: 1710365103528,
-            description: 'Validating somethings',
+            description: 'Validation of somethings',
             status: 'Processing',
             hit_path: '/bulk/validate',
             errors: []
@@ -60,7 +62,7 @@ export default async function handler(req, res) {
         let headers = get_json_header(get_headers_from_req(req.headers, auth))
         let response  = await fetch(`${getIngestEndPoint()}tasks`, {method:'GET', headers})
         let json = response.ok ? await response.json() : []
-        res.status(response.status).json(json)
+        res.status(response.status).json(tempData)
     } else {
         res.status(404).json([])
     }
