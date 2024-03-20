@@ -34,9 +34,8 @@ function ViewJobs({children}) {
     const getAction = (row) => {
         const status = row.status
         let actions = []
-        const isValidate = row.hit_path.includes('/bulk/validate')
+        const isValidate = row.description.includes('validation')
         if (eq(status, 'Complete')) {
-
             if (!row.errors.length && isValidate) {
                 actions.push('Register')
             }
@@ -112,28 +111,45 @@ function ViewJobs({children}) {
         return ui
     }
 
+    const flatten = (array) => {
+        if (!Array.isArray(array)) return [array]
+        if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
+        let result = []
+        for (let item of array) {
+            for (let k in item) {
+                if (Array.isArray(item[k]) && item[k].length && item[k][0].row === undefined) {
+                    result = flatten(item[k])
+                } else {
+                    result = result.concat(item[k])
+                }
+            }
+        }
+        return result
+    }
+
     const handleViewErrorDetails = (row) => {
         const columns = tableColumns()
+        let errors = flatten(row.errors)
         setShowModal(true)
         setModalTitle(<h3>Task Error Details</h3>)
-        setModalBody(<div className={'table-responsive has-error'}><DataTable columns={columns} data={row.errors} pagination /></div> )
+        setModalBody(<div className={'table-responsive has-error'}><DataTable columns={columns} data={errors} pagination /></div> )
     }
 
     const getTableColumns = (hiddenColumns) => {
         let cols = [
             {
-                name: 'Run ID',
-                selector: row => row.run_id,
+                name: 'Task ID',
+                selector: row => row.task_id,
                 sortable: true,
                 reorder: true,
-                format: row => <span data-field='run_id'>{row.run_id}</span>,
+                format: row => <span data-field='task_id'>{row.task_id}</span>,
             },
             {
                 name: 'Description',
                 selector: row => row.description,
                 sortable: true,
                 reorder: true,
-                format: row => <span data-field='run_id'>{row.description}</span>,
+                format: row => <span data-field='task_id'>{row.description}</span>,
             },
             {
                 name: 'Status',
@@ -141,7 +157,7 @@ function ViewJobs({children}) {
                 format: (row) => {
                     return (<div>
                         <span className={`${getStatusColor(row.status)} badge`}>
-                        <SenNetPopover text={getStatusDefinition(row.status)} className={`status-info-${row.run_id}`}>
+                        <SenNetPopover text={getStatusDefinition(row.status)} className={`status-info-${row.task_id}`}>
                             {row.status}
                         </SenNetPopover>
                         </span>
@@ -155,19 +171,19 @@ function ViewJobs({children}) {
             },
             {
                 name: 'Start Date',
-                selector: row => row.created_timestamp,
+                selector: row => row.started_timestamp,
                 sortable: true,
                 reorder: true,
                 omit: true,
-                format: row => <span data-field='start-date'>{new Date(row.created_timestamp).toLocaleDateString()}</span>,
+                format: row => <span data-field='start-date'>{new Date(row.started_timestamp).toLocaleDateString()}</span>,
             },
             {
                 name: 'End Date',
-                selector: row => row.updated_timestamp,
+                selector: row => row.ended_timestamp,
                 sortable: true,
                 reorder: true,
                 omit: true,
-                format: row => <span data-field='action'>{new Date(row.updated_timestamp).toLocaleDateString()}</span>,
+                format: row => <span data-field='action'>{new Date(row.ended_timestamp).toLocaleDateString()}</span>,
             },
             {
                 name: 'Action',
@@ -199,7 +215,7 @@ function ViewJobs({children}) {
 
     const searchContext = () => `jobs-queue`
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
+    if ((isAuthorizing() || isUnauthorized()) || !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )

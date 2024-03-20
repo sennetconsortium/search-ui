@@ -13,19 +13,19 @@ export default async function handler(req, res) {
         // })
 
         let tempData = [{
-            run_id: 'SOME UUID 0',
-            created_timestamp: 1710364245519,
-            updated_timestamp: 1710365103528,
+            task_id: 'SOME UUID 0',
+            started_timestamp: 1710364245519,
+            ended_timestamp: 1710365103528,
             description: 'Validating somethings',
             status: 'Complete',
             hit_path: '/bulk/validate',
             errors: []
         },
         {
-            run_id: 'SOME UUID 1',
+            task_id: 'SOME UUID 1',
             description: 'Validating somethings',
-            created_timestamp: 1710364245519,
-            updated_timestamp: 1710365103528,
+            started_timestamp: 1710364245519,
+            ended_timestamp: 1710365103528,
             status: 'Error',
             hit_path: '/bulk/validate',
             errors: [{
@@ -38,18 +38,18 @@ export default async function handler(req, res) {
             }]
         },
         {
-            run_id: 'SOME UUID 2',
+            task_id: 'SOME UUID 2',
             description: 'Registering somethings',
-            created_timestamp: 1710364245517,
-            updated_timestamp: 1710365103528,
+            started_timestamp: 1710364245517,
+            ended_timestamp: 1710365103528,
             status: 'Complete',
             hit_path: '/bulk/register',
             errors: []
         },
         {
-            run_id: 'SOME UUID 3',
-            created_timestamp: 1710254243315,
-            updated_timestamp: 1710365103528,
+            task_id: 'SOME UUID 3',
+            started_timestamp: 1710254243315,
+            ended_timestamp: 1710365103528,
             description: 'Validating somethings',
             status: 'Processing',
             hit_path: '/bulk/validate',
@@ -58,9 +58,9 @@ export default async function handler(req, res) {
 
         let auth = get_auth_header({req, res})
         let headers = get_json_header(get_headers_from_req(req.headers, auth))
-        let response  = await fetch(`${getIngestEndPoint()}job-queue`, {method:'GET', headers})
+        let response  = await fetch(`${getIngestEndPoint()}tasks`, {method:'GET', headers})
         let json = response.ok ? await response.json() : []
-        res.status(response.status).json(tempData)
+        res.status(response.status).json(json)
     } else {
         res.status(404).json([])
     }
