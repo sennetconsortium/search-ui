@@ -17,13 +17,16 @@ import AppModal from "../../components/AppModal";
 import {tableColumns} from "../../components/custom/edit/AttributesUpload";
 import Swal from 'sweetalert2'
 import useDataTableSearch from "../../hooks/useDataTableSearch";
-import {callService} from "../../lib/services";
+import {callService, get_headers} from "../../lib/services";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
 function ViewJobs({children}) {
 
 
     const [data, setData] = useState([])
     const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
+    const [errorModal, setErrorModal] = useState(false)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const currentColumns = useRef([])
@@ -44,6 +47,10 @@ function ViewJobs({children}) {
 
     const {filteredItems, setFilterText, searchBarComponent} = useDataTableSearch(
         {data, fieldsToSearch: ['task_id', 'description', 'status'], className: 'has-extraPadding', onKeydown})
+
+    const successIcon = () => <TaskAltIcon color={'success'} />
+
+    const errIcon = () => <WarningAmberIcon sx={{color: '#842029'}} />
 
     const getAction = (row) => {
         const status = row.status
@@ -75,7 +82,7 @@ function ViewJobs({children}) {
         }
     }
 
-    const handleDelete = (row) => {
+    const handleDelete = (e, row) => {
         Swal.fire({
             title: 'Are you sure?',
             text: 'This cannot be undone once deleted.',
@@ -95,6 +102,7 @@ function ViewJobs({children}) {
             }
         }).then(result => {
             if (result.isConfirmed) {
+                handleResponseModal(e, row, getIngestEndPoint() + `/tasks/${row.task_id}/delete`, 'DELETE', 'deleted')
                 // Delete
             }
         }).catch(error => {
@@ -102,17 +110,38 @@ function ViewJobs({children}) {
         });
     }
 
+    const handleResponseModal = (e, row, url, method, verb) => {
+        fetch(getIngestEndPoint() + `/tasks/${row.task_id}/cancel`, {
+            method: method,
+            headers: get_headers(),
+        }).then((res) =>{
+            setErrorModal(false)
+            setShowModal(true)
+            setModalTitle(<h3>{successIcon()} Job {verb}</h3>)
+            setModalBody(<div>The job has been {verb}.</div> )
+        }).catch((err)=>{
+            e.target.disabled = false
+            setErrorModal(true)
+            setShowModal(true)
+            setModalTitle(<h3>{errIcon()} Job failed to be {verb}</h3>)
+            setModalBody(
+                <div>The job could not be {verb}. REASON:
+                    <div>
+                        <code>{err.message}</code>
+                    </div>
+            </div> )
+        })
+    }
+
     const handleAction = (e, action, row) => {
         console.log(action)
         if (eq(action, 'Delete')) {
-            handleDelete(row)
+            handleDelete(e, row)
         } else if (eq(action, 'Register')) {
 
         } else if (eq(action, 'Cancel')) {
             e.target.disabled = true
-            callService(null, getIngestEndPoint() + `/tasks/${row.task_id}/cancel`, 'PUT').then((res) =>{
-
-            })
+            handleResponseModal(e, row, getIngestEndPoint() + `/tasks/${row.task_id}/cancel`, 'PUT', 'cancelled')
         } else {
            window.location = `/edit/bulk/${row.entity}?action=metadata&category=${row.subType}`
         }
@@ -146,6 +175,7 @@ function ViewJobs({children}) {
 
     const handleViewErrorDetails = (row) => {
         const columns = tableColumns()
+        setErrorModal(false)
         let errors = flatten(row.errors)
         setShowModal(true)
         setModalTitle(<h3>Task Error Details</h3>)
@@ -280,7 +310,7 @@ function ViewJobs({children}) {
                         </>
                         }
                         pagination />
-                        <AppModal showHomeButton={false} showCloseButton={true} handleClose={() => setShowModal(false)} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
+                        <AppModal className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`} showHomeButton={false} showCloseButton={true} handleClose={() => setShowModal(false)} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
                     </Row>
                 </Container>}
                 </>
