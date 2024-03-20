@@ -232,7 +232,7 @@ function ViewJobs({children}) {
                 {data && !error && <Container fluid className="mb-5 d-block">
                     <Row>
                         <div className="py-4 bd-highlight">
-                            <h2 className="m-0 flex-grow-1 bd-highlight">Current Tasks</h2>
+                            <h2 className="m-0 flex-grow-1 bd-highlight">Current Jobs</h2>
                         </div>
                     </Row>
 

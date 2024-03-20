@@ -210,8 +210,8 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                                     </NavDropdown.Item>
                                     <NavDropdown.Item key={`dd-user-jobs`}
                                                       hidden={signoutHidden}
-                                                      href='/user/tasks'>
-                                        {_t('Current Tasks')}
+                                                      href='/user/jobs'>
+                                        {_t('Current Jobs')}
                                     </NavDropdown.Item>
                                     <NavDropdown.Item key={`dd-user-logout`}
                                                       hidden={signoutHidden}
