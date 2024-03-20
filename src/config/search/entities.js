@@ -96,6 +96,14 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            metadata: {
+                label: 'Has Metadata',
+                type: 'exists',
+                field: 'metadata',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
             status: {
                 label: 'Status',
                 type: 'value',
