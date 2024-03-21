@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
         //TODO: remove after feature complete
         let tempData = [{
-            task_id: 'SOME UUID 0',
+            job_id: 'SOME UUID 0',
             started_timestamp: 1710364245519,
             ended_timestamp: 1710365103528,
             description: 'Validation of somethings',
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
             errors: []
         },
         {
-            task_id: 'SOME UUID 1',
+            job_id: 'SOME UUID 1',
             description: 'Validation of somethings',
             started_timestamp: 1710364245519,
             ended_timestamp: 1710365103528,
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
             }]
         },
         {
-            task_id: 'SOME UUID 2',
+            job_id: 'SOME UUID 2',
             description: 'Registering somethings',
             started_timestamp: 1710364245517,
             ended_timestamp: 1710365103528,
@@ -49,7 +49,7 @@ export default async function handler(req, res) {
             errors: []
         },
         {
-            task_id: 'SOME UUID 3',
+            job_id: 'SOME UUID 3',
             started_timestamp: 1710254243315,
             ended_timestamp: 1710365103528,
             description: 'Validation of somethings',

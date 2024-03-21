@@ -46,7 +46,7 @@ function ViewJobs({children}) {
     }
 
     const {filteredItems, setFilterText, searchBarComponent} = useDataTableSearch(
-        {data, fieldsToSearch: ['task_id', 'description', 'status'], className: 'has-extraPadding', onKeydown})
+        {data, fieldsToSearch: ['job_id', 'description', 'status'], className: 'has-extraPadding', onKeydown})
 
     const successIcon = () => <TaskAltIcon color={'success'} />
 
@@ -102,7 +102,7 @@ function ViewJobs({children}) {
             }
         }).then(result => {
             if (result.isConfirmed) {
-                handleResponseModal(e, row, getIngestEndPoint() + `/tasks/${row.task_id}/delete`, 'DELETE', 'deleted')
+                handleResponseModal(e, row, getIngestEndPoint() + `/jobs/${row.job_id}/delete`, 'DELETE', 'deleted')
                 // Delete
             }
         }).catch(error => {
@@ -111,7 +111,7 @@ function ViewJobs({children}) {
     }
 
     const handleResponseModal = (e, row, url, method, verb) => {
-        fetch(getIngestEndPoint() + `/tasks/${row.task_id}/cancel`, {
+        fetch(getIngestEndPoint() + `/jobs/${row.job_id}/cancel`, {
             method: method,
             headers: get_headers(),
         }).then((res) =>{
@@ -141,7 +141,7 @@ function ViewJobs({children}) {
 
         } else if (eq(action, 'Cancel')) {
             e.target.disabled = true
-            handleResponseModal(e, row, getIngestEndPoint() + `/tasks/${row.task_id}/cancel`, 'PUT', 'cancelled')
+            handleResponseModal(e, row, getIngestEndPoint() + `/jobs/${row.job_id}/cancel`, 'PUT', 'cancelled')
         } else {
            window.location = `/edit/bulk/${row.entity}?action=metadata&category=${row.subType}`
         }
@@ -185,18 +185,18 @@ function ViewJobs({children}) {
     const getTableColumns = (hiddenColumns) => {
         let cols = [
             {
-                name: 'Task ID',
-                selector: row => row.task_id,
+                name: 'Job ID',
+                selector: row => row.job_id,
                 sortable: true,
                 reorder: true,
-                format: row => <span data-field='task_id'>{row.task_id}</span>,
+                format: row => <span data-field='job_id'>{row.job_id}</span>,
             },
             {
                 name: 'Description',
                 selector: row => row.description,
                 sortable: true,
                 reorder: true,
-                format: row => <span data-field='task_id'>{row.description}</span>,
+                format: row => <span data-field='job_id'>{row.description}</span>,
             },
             {
                 name: 'Status',
@@ -204,7 +204,7 @@ function ViewJobs({children}) {
                 format: (row) => {
                     return (<div>
                         <span className={`${getStatusColor(row.status)} badge`}>
-                        <SenNetPopover text={getStatusDefinition(row.status)} className={`status-info-${row.task_id}`}>
+                        <SenNetPopover text={getStatusDefinition(row.status)} className={`status-info-${row.job_id}`}>
                             {row.status}
                         </SenNetPopover>
                         </span>
