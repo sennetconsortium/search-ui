@@ -6,7 +6,12 @@ import Header from "../../components/custom/layout/Header";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppContext from "../../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import {eq, getHeaders, getStatusColor, getStatusDefinition} from "../../components/custom/js/functions";
+import {
+    eq,
+    getHeaders,
+    getJobStatusDefinition,
+    getStatusColor,
+} from "../../components/custom/js/functions";
 import SenNetPopover from "../../components/SenNetPopover";
 import DataTable from "react-data-table-component";
 import ColumnsDropdown from "../../components/custom/search/ColumnsDropdown";
@@ -57,13 +62,13 @@ function ViewJobs({children}) {
         let actions = []
         const isValidate = row.description?.toLowerCase().includes('validation')
         if (eq(status, 'Complete')) {
-            if (!row.errors.length && isValidate) {
+            if (!row.errors?.length && isValidate) {
                 actions.push('Register')
             }
             actions.push('Delete')
-        } else if (eq(status, 'Error') && row.errors.length && isValidate) {
+        } else if (eq(status, 'Error') && row.errors && isValidate) {
             actions.push('Resubmit')
-        } else if (eq(status, 'Processing')) {
+        } else if (eq(status, 'Started')) {
             actions.push('Cancel')
         }
         return actions
@@ -82,7 +87,7 @@ function ViewJobs({children}) {
         }
     }
 
-    const handleDelete = (e, row) => {
+    const handleDelete = (e, row, action) => {
         Swal.fire({
             title: 'Are you sure?',
             text: 'This cannot be undone once deleted.',
@@ -102,7 +107,7 @@ function ViewJobs({children}) {
             }
         }).then(result => {
             if (result.isConfirmed) {
-                handleResponseModal(e, row, getIngestEndPoint() + `/jobs/${row.job_id}/delete`, 'DELETE', 'deleted')
+                handleResponseModal(e, row, getIngestEndPoint() + `/jobs/${row.job_id}`, 'DELETE', action, 'deleted')
                 // Delete
             }
         }).catch(error => {
@@ -110,20 +115,35 @@ function ViewJobs({children}) {
         });
     }
 
-    const handleResponseModal = (e, row, url, method, verb) => {
-        fetch(getIngestEndPoint() + `/jobs/${row.job_id}/cancel`, {
+    const handleResponseModal = (e, row, url, method, action, verb) => {
+        fetch(url, {
             method: method,
             headers: get_headers(),
         }).then((res) =>{
             setErrorModal(false)
             setShowModal(true)
             setModalTitle(<h3>{successIcon()} Job {verb}</h3>)
-            setModalBody(<div>The job has been {verb}.</div> )
+            setModalBody(<div>The job has been {verb}.</div>)
+            if (eq(action, 'delete')) {
+                let _data = data.filter((item) => item.job_id !== row.job_id)
+                setData(_data)
+            }
+
+            if (eq(action, 'cancel')) {
+                data.forEach((item) => {
+                    if (item.job_id === row.job_id) {
+                        item.status = 'Canceled'
+                    }
+                })
+                setData([...data])
+            }
+
         }).catch((err)=>{
             e.target.disabled = false
             setErrorModal(true)
             setShowModal(true)
             setModalTitle(<h3>{errIcon()} Job failed to be {verb}</h3>)
+
             setModalBody(
                 <div>The job could not be {verb}. REASON:
                     <div>
@@ -141,9 +161,9 @@ function ViewJobs({children}) {
 
         } else if (eq(action, 'Cancel')) {
             e.target.disabled = true
-            handleResponseModal(e, row, getIngestEndPoint() + `/jobs/${row.job_id}/cancel`, 'PUT', 'cancelled')
+            handleResponseModal(e, row, getIngestEndPoint() + `/jobs/${row.job_id}/cancel`, 'PUT', action, 'cancelled')
         } else {
-           window.location = `/edit/bulk/${row.entity}?action=metadata&category=${row.subType}`
+           window.location = row.referrer?.path
         }
     }
 
@@ -158,7 +178,13 @@ function ViewJobs({children}) {
     }
 
     const flatten = (array) => {
-        if (!Array.isArray(array)) return [array]
+        if (!Array.isArray(array)) {
+            if (!array.error) {
+                return [{error: array.message  || array}]
+            } else {
+                return [array]
+            }
+        }
         if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
         let result = []
         for (let item of array) {
@@ -204,7 +230,7 @@ function ViewJobs({children}) {
                 format: (row) => {
                     return (<div>
                         <span className={`${getStatusColor(row.status)} badge`}>
-                        <SenNetPopover text={getStatusDefinition(row.status)} className={`status-info-${row.job_id}`}>
+                        <SenNetPopover text={getJobStatusDefinition(row.status)} className={`status-info-${row.job_id}`}>
                             {row.status}
                         </SenNetPopover>
                         </span>

@@ -50,6 +50,7 @@ export default function BulkCreate({
     const [selectedGroup, setSelectedGroup] = useState(null)
     const [showModal, setShowModal] = useState(true)
     const {cache, supportedMetadata} = useContext(AppContext)
+    const socketEnabled = false
 
     const ColorlibConnector = styled(StepConnector)(({theme}) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -158,7 +159,10 @@ export default function BulkCreate({
         formData.append('entity_type', cache.entities[entityType])
         formData.append('sub_type', subType)
         formData.append('validate_uuids', '1')
-        formData.append('ui_type', 'gui')
+        formData.append('referrer', JSON.stringify({
+            type: 'validate',
+            path: window.location.pathname + window.location.search
+        }))
         const requestOptions = {
             method: 'POST',
             headers: get_auth_header(),
@@ -171,11 +175,15 @@ export default function BulkCreate({
             const errorList = getErrorList(data)
             setErrorMessage(errorList)
         } else {
-            setBulkResponse(data.description)
+            setBulkResponse(data.description || data)
             setValidationSuccess(true)
             setIsNextButtonDisabled(false)
         }
         setIsLoading(false)
+    }
+
+    function toJobsPage() {
+        setBulkSuccess({fails:[], passes:[]})
     }
 
     async function metadataCommit() {
@@ -288,9 +296,12 @@ export default function BulkCreate({
         if (getStepsLength() === 3) {
             if (activeStep === 0) {
                 metadataValidation()
-            } else if (activeStep === 1) {
-                metadataCommit()
-            } else if (activeStep === 2) {
+            }
+            else if (activeStep === 1) {
+                toJobsPage()
+                //metadataCommit()
+            }
+            else if (activeStep === 2) {
                 handleReset()
                 return
             }
@@ -527,6 +538,11 @@ export default function BulkCreate({
         return `${cache.entities[entityType]}s${inner} ${getVerb(true, true)}`
     }
 
+    function getModalJQTitle() {
+        const inner = isMetadata ? "' Metadata" : ""
+        return `${cache.entities[entityType]}s${inner} sent to job queue`
+    }
+
     function getModalBody() {
         return isMetadata ? getMetadataModalBody() : getEntityModalBody()
     }
@@ -649,10 +665,22 @@ export default function BulkCreate({
                             Validation successful please continue onto the next step
                         </Alert>}
                     {
-                        isAtLastStep() && !errorMessage && bulkSuccess &&
+                        isAtLastStep() && !errorMessage && bulkSuccess && socketEnabled &&
                         <AppModal
                             modalTitle={getModalTitle()}
                             modalBody={getModalBody()}
+                            modalSize='lg'
+                            showModal={showModal}
+                            handleHome={handleHome}
+                            handleClose={() => setShowModal(false)}
+                            showCloseButton={true}
+                        />
+                    }
+                    {
+                        isAtLastStep() && !errorMessage && bulkSuccess && !socketEnabled &&
+                        <AppModal
+                            modalTitle={getModalJQTitle()}
+                            modalBody={<div>To view the status of this job and other jobs, please view <a href={`/user/jobs?q=${bulkResponse?.job_id}`}>Current Jobs</a> page.</div>}
                             modalSize='lg'
                             showModal={showModal}
                             handleHome={handleHome}

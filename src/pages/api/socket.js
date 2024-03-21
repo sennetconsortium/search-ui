@@ -60,9 +60,10 @@ export default async function handler(req, res) {
 
         let auth = get_auth_header({req, res})
         let headers = get_json_header(get_headers_from_req(req.headers, auth))
-        let response  = await fetch(`${getIngestEndPoint()}tasks`, {method:'GET', headers})
+        //let response1  = await fetch(`${getIngestEndPoint()}jobs/flush`, {method:'DELETE', headers})
+        let response  = await fetch(`${getIngestEndPoint()}jobs`, {method:'GET', headers})
         let json = response.ok ? await response.json() : []
-        res.status(response.status).json(tempData)
+        res.status(response.status).json(json)
     } else {
         res.status(404).json([])
     }

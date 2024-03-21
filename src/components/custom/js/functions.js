@@ -230,39 +230,72 @@ export function getStatusDefinition(status) {
     return msg;
 }
 
+export function getJobStatusDefinition(status) {
+    let msg
+    if (status) {
+        status = status.toUpperCase();
+        switch (status) {
+            case 'QUEUED':
+                msg = <span>Queued in the rq service.</span>
+                break;
+            case 'COMPLETE':
+                msg = <span>Job returned successfully.</span>
+                break;
+            case 'ERROR':
+                msg = <span>Job returned with errors.</span>
+                break;
+            case 'FAILED':
+                msg = <span>Exception thrown in job.</span>
+                break;
+            case 'STARTED':
+                msg = <span>Job started.</span>
+                break;
+            case 'STOPPED':
+                msg = <span>Job stopped.</span>
+                break;
+            case 'CANCELED':
+                msg = <span>Job cancelled.</span>
+                break;
+            default:
+                msg = <span>The job has been {status}.</span>
+                break;
+        }
+    }
+    return msg;
+}
+
 export function getStatusColor(status) {
     let badge_class = '';
 
     if (status) {
         switch (status.toUpperCase()) {
             case "NEW":
-                badge_class = "badge-purple";
-                break;
-            case "INCOMPLETE":
-                badge_class = "badge-warning";
-                break;
             case "REOPENED":
                 badge_class = "badge-purple";
                 break;
-            case "REORGANIZED":
-                badge_class = "badge-info";
-                break;
-            case "VALID":
-                badge_class = "badge-success";
+            case "INCOMPLETE":
+            case "CANCELED":
+            case "STOPPED":
+                badge_class = "badge-warning";
                 break;
             case "INVALID":
+            case "ERROR":
+            case "FAILED":
                 badge_class = "badge-danger";
                 break;
             case "QA":
+            case "REORGANIZED":
+            case "SUBMITTED":
                 badge_class = "badge-info";
                 break;
             case "LOCKED":
-                badge_class = "badge-secondary";
-                break;
             case "PROCESSING":
+            case "STARTED":
                 badge_class = "badge-secondary";
                 break;
             case "PUBLISHED":
+            case "COMPLETE":
+            case "VALID":
                 badge_class = "badge-success";
                 break;
             case "UNPUBLISHED":
@@ -270,17 +303,9 @@ export function getStatusColor(status) {
                 break;
             case "DEPRECATED":
                 break;
-            case "ERROR":
-                badge_class = "badge-danger";
-                break;
             case "HOLD":
+            case "QUEUED":
                 badge_class = "badge-dark";
-                break;
-            case "SUBMITTED":
-                badge_class = "badge-info";
-                break;
-            case "COMPLETE":
-                badge_class = "badge-success";
                 break;
             default:
                 break;
