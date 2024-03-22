@@ -259,8 +259,13 @@ function EditSample() {
 
             // Manually set ancestor organs when ancestor is updated via modal
             let ancestor_organ = []
+            console.log("setting ancestor organ")
             if (source.hasOwnProperty("organ")) {
                 ancestor_organ.push(source['organ'])
+            } else if(source.hasOwnProperty("origin_sample")) {
+                if(source.origin_sample.hasOwnProperty("organ")){
+                    ancestor_organ.push(source.origin_sample['organ'])
+                }
             }
             setAncestorOrgan(ancestor_organ)
             setAncestorSource([getSourceType(source)])
