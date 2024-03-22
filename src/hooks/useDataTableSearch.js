@@ -14,7 +14,7 @@ const FilterComponent = ({ filterText, onFilter, onClear, className, onKeydown }
     </>
 );
 
-function useDataTableSearch({data,  idField, onKeydown, fieldsToSearch = [], className = ''}) {
+function useDataTableSearch({data, onKeydown, fieldsToSearch = [], className = ''}) {
     useEffect(() => {
     }, [])
 
@@ -22,17 +22,11 @@ function useDataTableSearch({data,  idField, onKeydown, fieldsToSearch = [], cla
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
     const filteredItems = () => {
         let results = []
-        let dict = {};
         for (let searchIndex of fieldsToSearch) {
             for (let d of data) {
-                if (!dict[d[idField]] || !idField) {
-                    console.log(filterText)
-                    if (d[searchIndex] && d[searchIndex].toLowerCase().includes(filterText?.toLowerCase())) {
-                        if (results.indexOf(d) === -1) results.push(d);
-                        if (idField) {
-                            dict[d[idField]] = true;
-                        }
-                    }
+                console.log('filter', d, data)
+                if (d[searchIndex] && d[searchIndex]?.toLowerCase().includes(filterText?.toLowerCase())) {
+                    if (results.indexOf(d) === -1) results.push(d);
                 }
             }
         }
