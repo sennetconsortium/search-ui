@@ -20,7 +20,7 @@ import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
 import {tableColumns, getErrorList} from "../edit/AttributesUpload";
 import DataTable from 'react-data-table-component';
-import {createDownloadUrl, eq} from "../js/functions";
+import {createDownloadUrl, eq, getStatusColor} from "../js/functions";
 import AppContext from "../../../context/AppContext";
 import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
 import SenNetAlert from "../../SenNetAlert";
@@ -50,7 +50,8 @@ export default function BulkCreate({
     const [selectedGroup, setSelectedGroup] = useState(null)
     const [showModal, setShowModal] = useState(true)
     const {cache, supportedMetadata} = useContext(AppContext)
-    const socketEnabled = false
+    const [jobData, setJobData] = useState(null)
+    let intervalTimer;
 
     const ColorlibConnector = styled(StepConnector)(({theme}) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -152,6 +153,27 @@ export default function BulkCreate({
         return `${getIngestEndPoint()}metadata/validate`
     }
 
+    const getMetadataRegistrationUrl = () => {
+        return `${getIngestEndPoint()}metadata/register`
+    }
+
+    const mimicSocket = (data) => {
+        clearInterval(intervalTimer)
+        intervalTimer = setInterval(async () => {
+            let res = await fetch(`/api/jobs/${data.job_id}`)
+            let job = await res.json()
+            setJobData(job)
+            if (eq(job.status, 'Complete')) {
+                setIsLoading(false)
+                setValidationSuccess(true)
+                setIsNextButtonDisabled(false)
+            }
+            if (['error', 'fail'].contains(job.status)) {
+                setIsLoading(false)
+            }
+        }, 1000)
+    }
+
     async function metadataValidation() {
         setIsLoading(true)
         const formData = new FormData()
@@ -176,17 +198,11 @@ export default function BulkCreate({
             setErrorMessage(errorList)
         } else {
             setBulkResponse(data.description || data)
-            setValidationSuccess(true)
-            setIsNextButtonDisabled(false)
+            mimicSocket(data)
         }
-        setIsLoading(false)
     }
 
-    function toJobsPage() {
-        setBulkSuccess({fails:[], passes:[]})
-    }
-
-    async function metadataCommit() {
+    async function metadataCommit0() {
         let passes = []
         let fails = []
         let row = 0
@@ -207,6 +223,25 @@ export default function BulkCreate({
         }
         setIsLoading(false)
         setBulkSuccess({fails, passes})
+    }
+
+    async function metadataCommit() {
+        clearInterval(intervalTimer)
+        setIsLoading(true)
+        const requestOptions = {
+            method: 'POST',
+            headers: get_auth_header(),
+            body: JSON.stringify({
+                job_id: jobData.job_id,
+                refferer: {
+                    type: 'register',
+                    path: jobData.refferer.path + `&job_id=${jobData.job_id}`
+                }
+            })
+        }
+        let response = fetch(getMetadataRegistrationUrl(), requestOptions)
+        const data = await response.json()
+        setIsLoading(false)
     }
 
     // This makes a request to ingest-api, validating the upload
@@ -298,8 +333,7 @@ export default function BulkCreate({
                 metadataValidation()
             }
             else if (activeStep === 1) {
-                toJobsPage()
-                //metadataCommit()
+                metadataCommit()
             }
             else if (activeStep === 2) {
                 handleReset()
@@ -538,11 +572,6 @@ export default function BulkCreate({
         return `${cache.entities[entityType]}s${inner} ${getVerb(true, true)}`
     }
 
-    function getModalJQTitle() {
-        const inner = isMetadata ? "' Metadata" : ""
-        return `${cache.entities[entityType]}s${inner} sent to job queue`
-    }
-
     function getModalBody() {
         return isMetadata ? getMetadataModalBody() : getEntityModalBody()
     }
@@ -594,6 +623,16 @@ export default function BulkCreate({
         return <>
             See the <a className='link' href={docsUrl}>{type} Bulk {action}</a> page for further details.
         </>
+    }
+
+    const getSocketStatusDetails = () => {
+        const hasFailed = ['error', 'fail'].contains(jobData.status)
+        return (<div>
+            <div>Request sent to job queue with a current status of <span className={`${getStatusColor(jobData.status)} badge`}>{jobData.status}</span>.</div>
+
+            {!hasFailed && <div>You may remain on this page until the job has a <span className={`${getStatusColor('complete')} badge`}>Complete</span> status.</div>}
+            <div>You {!hasFailed ? 'can also' : 'must'} further handle this job (and other jobs) by viewing the <a href={`/user/jobs?q=${bulkResponse?.job_id}`}>current jobs</a> page.</div>
+        </div>)
     }
 
     return (
@@ -660,27 +699,21 @@ export default function BulkCreate({
                             <DataTable columns={tableColumns('`')} data={errorMessage.data ? errorMessage.data : errorMessage} pagination />
                         </div>
                     }
+
                     {activeStep === 1 && !errorMessage && validationSuccess &&
                         <Alert severity="success" sx={{m: 2}}>
-                            Validation successful please continue onto the next step
+                         <div>Validation successful please continue onto the next step</div>
+                        </Alert>}
+
+                    {activeStep === 1 && !errorMessage && jobData && !validationSuccess &&
+                        <Alert severity="info" sx={{m: 2}}>
+                            {getSocketStatusDetails()}
                         </Alert>}
                     {
-                        isAtLastStep() && !errorMessage && bulkSuccess && socketEnabled &&
+                        isAtLastStep() && !errorMessage && bulkSuccess &&
                         <AppModal
                             modalTitle={getModalTitle()}
                             modalBody={getModalBody()}
-                            modalSize='lg'
-                            showModal={showModal}
-                            handleHome={handleHome}
-                            handleClose={() => setShowModal(false)}
-                            showCloseButton={true}
-                        />
-                    }
-                    {
-                        isAtLastStep() && !errorMessage && bulkSuccess && !socketEnabled &&
-                        <AppModal
-                            modalTitle={getModalJQTitle()}
-                            modalBody={<div>To view the status of this job and other jobs, please view <a href={`/user/jobs?q=${bulkResponse?.job_id}`}>Current Jobs</a> page.</div>}
                             modalSize='lg'
                             showModal={showModal}
                             handleHome={handleHome}
