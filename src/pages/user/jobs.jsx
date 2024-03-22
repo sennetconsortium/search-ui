@@ -40,6 +40,7 @@ function ViewJobs({children}) {
     const [showModal, setShowModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
+    let intervalTimer
 
     const onKeydown = (e) => {
         if (eq(e.key, 'enter')) {
@@ -68,6 +69,7 @@ function ViewJobs({children}) {
             actions.push('Delete')
         } else if (eq(status, 'Error') && row.errors && isValidate) {
             actions.push('Resubmit')
+            actions.push('Delete')
         } else if (eq(status, 'Started')) {
             actions.push('Cancel')
         }
@@ -115,28 +117,44 @@ function ViewJobs({children}) {
         });
     }
 
-    const handleResponseModal = (e, row, url, method, action, verb) => {
+    const updateTableData = async (row, res, action) => {
+        let job = await res.json()
+        if (eq(action, 'delete')) {
+            let _data = data.filter((item) => item.job_id !== row.job_id)
+            setData(_data)
+        }
+
+        if (eq(action, 'register')) {
+            fetch(`/api/jobs/${job.job_id}`).then(async (res)=>{
+                let jobInfo = await res.json()
+                setData([...data, jobInfo])
+            }).catch((err)=>{
+
+            })
+        }
+
+        if (eq(action, 'cancel')) {
+            data.forEach((item) => {
+                if (item.job_id === row.job_id) {
+                    item.status = 'Canceled'
+                }
+            })
+            setData([...data])
+        }
+    }
+
+    const handleResponseModal = (e, row, url, method, action, verb, body = {}) => {
         fetch(url, {
             method: method,
             headers: get_headers(),
+            body: JSON.stringify(body)
         }).then((res) =>{
             setErrorModal(false)
             setShowModal(true)
             setModalTitle(<h3>{successIcon()} Job {verb}</h3>)
             setModalBody(<div>The job has been {verb}.</div>)
-            if (eq(action, 'delete')) {
-                let _data = data.filter((item) => item.job_id !== row.job_id)
-                setData(_data)
-            }
 
-            if (eq(action, 'cancel')) {
-                data.forEach((item) => {
-                    if (item.job_id === row.job_id) {
-                        item.status = 'Canceled'
-                    }
-                })
-                setData([...data])
-            }
+            updateTableData(row, res, action)
 
         }).catch((err)=>{
             e.target.disabled = false
@@ -154,11 +172,15 @@ function ViewJobs({children}) {
     }
 
     const handleAction = (e, action, row) => {
-        console.log(action)
-        if (eq(action, 'Delete')) {
-            handleDelete(e, row)
-        } else if (eq(action, 'Register')) {
 
+        if (eq(action, 'Delete')) {
+            handleDelete(e, row, action)
+        } else if (eq(action, 'Register')) {
+            e.target.disabled = true
+            const pathName = row.referrer?.path.includes('action=metadata') ? `metadata/register` : `entities/register`
+            handleResponseModal(e, row, getIngestEndPoint() + pathName, 'POST', action, 'registered',
+                {job_id: row.job_id, referrer: {type: 'register', path: row.referrer?.path + `&job_id=${row.job_id}`
+                }})
         } else if (eq(action, 'Cancel')) {
             e.target.disabled = true
             handleResponseModal(e, row, getIngestEndPoint() + `/jobs/${row.job_id}/cancel`, 'PUT', action, 'cancelled')
@@ -208,6 +230,12 @@ function ViewJobs({children}) {
         setModalBody(<div className={'table-responsive has-error'}><DataTable columns={columns} data={errors} pagination /></div> )
     }
 
+    const getJobType = (row) => {
+        let type = row.referrer.type
+        type = eq(type, 'validate') ? 'validation' : 'registration'
+        return row.referrer?.path?.includes('action=metadata') ? `Metadata ${type}` : `Entity ${type}`
+    }
+
     const getTableColumns = (hiddenColumns) => {
         let cols = [
             {
@@ -222,7 +250,7 @@ function ViewJobs({children}) {
                 selector: row => row.description,
                 sortable: true,
                 reorder: true,
-                format: row => <span data-field='job_id'>{row.description}</span>,
+                format: row => <span data-field='job_id' title={row.description}>{row.description}</span>,
             },
             {
                 name: 'Status',
@@ -241,6 +269,14 @@ function ViewJobs({children}) {
                 },
                 sortable: true,
                 reorder: true,
+            },
+            {
+                name: 'Type',
+                selector: row => getJobType(row),
+                sortable: true,
+                reorder: true,
+                omit: true,
+                format: row => <span data-field='type'>{getJobType(row)}</span>,
             },
             {
                 name: 'Start Date',
@@ -276,14 +312,17 @@ function ViewJobs({children}) {
         return cols;
     }
     const fetchData = async () => {
-        const response = await fetch('/api/socket', getHeaders())
+        const response = await fetch('/api/jobs', getHeaders())
         const _data = await response.json();
         setData(_data)
     }
 
     useEffect(() => {
-        console.log('JOBS')
-        fetchData()
+        clearInterval(intervalTimer)
+        intervalTimer = setInterval(()=>{
+            fetchData()
+        }, 1000)
+
         const q = router.query.q
         if (q) {
             setFilterText(q)
@@ -313,7 +352,6 @@ function ViewJobs({children}) {
                             <h2 className="m-0 flex-grow-1 bd-highlight">Current Jobs</h2>
                         </div>
                     </Row>
-
 
                     <Row>
 
