@@ -9,8 +9,6 @@ export default async function handler(req, res) {
     let response;
     if (eq(req.method, 'GET')) {
         response  = await fetch(`${getIngestEndPoint()}jobs/${jobId}`, {method:'GET', headers})
-    } else if (eq(req.method, 'PUT')) {
-
     } else {
 
     }

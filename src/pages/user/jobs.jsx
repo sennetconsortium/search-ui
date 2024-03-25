@@ -5,7 +5,6 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import Header from "../../components/custom/layout/Header";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppContext from "../../context/AppContext";
-import Alert from 'react-bootstrap/Alert';
 import {
     eq,
     getHeaders,
@@ -15,32 +14,32 @@ import {
 import SenNetPopover from "../../components/SenNetPopover";
 import DataTable from "react-data-table-component";
 import ColumnsDropdown from "../../components/custom/search/ColumnsDropdown";
-import { Col, Container, Row, Button, Form, InputGroup } from "react-bootstrap";
+import {Container, Row, Button} from "react-bootstrap";
 import {getIngestEndPoint, RESULTS_PER_PAGE} from "../../config/config";
 import {ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
 import AppModal from "../../components/AppModal";
 import {tableColumns} from "../../components/custom/edit/AttributesUpload";
 import Swal from 'sweetalert2'
 import useDataTableSearch from "../../hooks/useDataTableSearch";
-import {callService, get_headers} from "../../lib/services";
+import {get_headers} from "../../lib/services";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-function ViewJobs({children}) {
+function ViewJobs({isAdmin = false}) {
 
 
     const [data, setData] = useState([])
     const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
     const [errorModal, setErrorModal] = useState(false)
-    const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState(null)
     const currentColumns = useRef([])
     const [hiddenColumns, setHiddenColumns] = useState(null)
     const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
     const [showModal, setShowModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
+    const [modalSize, setModalSize] = useState('lg')
     const intervalTimer = useRef(null)
+    const hasLoaded = useRef(false)
 
     const onKeydown = (e) => {
         if (eq(e.key, 'enter')) {
@@ -89,27 +88,49 @@ function ViewJobs({children}) {
         }
     }
 
-    const handleDelete = (e, row, action) => {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'This cannot be undone once deleted.',
-            dangerMode: true,
-            buttons: true,
-            showCancelButton: true,
-            confirmButtonText: 'Delete',
-            customClass: {
-                cancelButton: 'btn btn-secondary',
-                confirmButton: 'btn btn-danger',
-            },
-            didOpen: () => {
-                // run when swal is opened...
-            },
-            didClose: () => {
-                // run when swal is closed...
+    const deleteConfig = {
+        title: 'Are you sure?',
+        text: 'This cannot be undone once deleted.',
+        dangerMode: true,
+        buttons: true,
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        customClass: {
+            cancelButton: 'btn btn-secondary',
+            confirmButton: 'btn btn-danger',
+        }
+    }
+
+    const flushAllData = () => {
+        Swal.fire(deleteConfig).then(result => {
+            if (result.isConfirmed && isAdmin) {
+                fetch(getIngestEndPoint() + `jobs/flush`).then(async (res)=>{
+                    setErrorModal(false)
+                    setShowModal(true)
+                    setModalTitle(<h3>{successIcon()} Jobs flushed</h3>)
+                    setModalBody(<div>All jobs have been flushed.</div>)
+                }).catch((err)=>{
+                    setErrorModal(true)
+                    setShowModal(true)
+                    setModalTitle(<h3>{errIcon()} Jobs failed to be deleted.</h3>)
+
+                    setModalBody(
+                        <div>The jobs could not be flushed. REASON:
+                            <div>
+                                <code>{err.message}</code>
+                            </div>
+                        </div> )
+                })
             }
-        }).then(result => {
+        }).catch(error => {
+            // when promise rejected...
+        });
+    }
+
+    const handleSingleJobDeletion = (e, row, action) => {
+        Swal.fire(deleteConfig).then(result => {
             if (result.isConfirmed) {
-                handleResponseModal(e, row, getIngestEndPoint() + `/jobs/${row.job_id}`, 'DELETE', action, 'deleted')
+                handleResponseModal(e, row, getIngestEndPoint() + `jobs/${row.job_id}`, 'DELETE', action, 'deleted')
                 // Delete
             }
         }).catch(error => {
@@ -125,12 +146,11 @@ function ViewJobs({children}) {
         }
 
         if (eq(action, 'register')) {
-            fetch(`/api/jobs/${job.job_id}`).then(async (res)=>{
-                let jobInfo = await res.json()
+            let registerRes = await fetch(`/api/jobs/${job.job_id}`)
+            if (registerRes.ok) {
+                let jobInfo = await registerRes.json()
                 setData([...data, jobInfo])
-            }).catch((err)=>{
-
-            })
+            }
         }
 
         if (eq(action, 'cancel')) {
@@ -144,6 +164,7 @@ function ViewJobs({children}) {
     }
 
     const handleResponseModal = (e, row, url, method, action, verb, body = {}) => {
+        setModalSize('lg')
         fetch(url, {
             method: method,
             headers: get_headers(),
@@ -161,7 +182,6 @@ function ViewJobs({children}) {
             setErrorModal(true)
             setShowModal(true)
             setModalTitle(<h3>{errIcon()} Job failed to be {verb}</h3>)
-
             setModalBody(
                 <div>The job could not be {verb}. REASON:
                     <div>
@@ -174,7 +194,7 @@ function ViewJobs({children}) {
     const handleAction = (e, action, row) => {
 
         if (eq(action, 'Delete')) {
-            handleDelete(e, row, action)
+            handleSingleJobDeletion(e, row, action)
         } else if (eq(action, 'Register')) {
             e.target.disabled = true
             const pathName = row.referrer?.path.includes('action=metadata') ? `metadata/register` : `entities/register`
@@ -221,13 +241,14 @@ function ViewJobs({children}) {
         return result
     }
 
-    const handleViewErrorDetails = (row) => {
+    const handleViewErrorDetailsModal = (row) => {
         const columns = tableColumns()
         setErrorModal(false)
         let errors = flatten(row.errors)
         console.log('ERROR ROW', row, errors)
         setShowModal(true)
-        setModalTitle(<h3>Task Error Details</h3>)
+        setModalTitle(<h3>Job Error Details</h3>)
+        setModalSize('xl')
         setModalBody(<div className={'table-responsive has-error'}><DataTable columns={columns} data={errors} pagination /></div> )
     }
 
@@ -263,7 +284,7 @@ function ViewJobs({children}) {
                             {row.status}
                         </SenNetPopover>
                         </span>
-                            {eq(row.status, 'Error') && <a className={'mx-2'} href={'#'} onClick={() => handleViewErrorDetails(row)}><small>View details</small></a>}
+                            {eq(row.status, 'Error') && <a className={'mx-2'} href={'#'} onClick={() => handleViewErrorDetailsModal(row)}><small>View details</small></a>}
                     </div>
 
                     )
@@ -304,6 +325,18 @@ function ViewJobs({children}) {
             }
         ]
 
+        if (isAdmin) {
+            cols.splice(1, 0,
+                {
+                    name: 'User Id',
+                    selector: row => row.user_id,
+                    sortable: true,
+                    reorder: true,
+                    format: row => <span data-field='action'>{row.user_id}</span>,
+                }
+            )
+        }
+
         if (hiddenColumns) {
             for (let col of cols) {
                 col.omit = hiddenColumns[col.name] || false
@@ -327,6 +360,8 @@ function ViewJobs({children}) {
 
     useEffect(() => {
         mimicSocket()
+        fetchData()
+        hasLoaded.current = true
 
         document.addEventListener('visibilitychange', () => {
             if (eq(document.visibilityState,'visible')) {
@@ -345,21 +380,19 @@ function ViewJobs({children}) {
 
     const searchContext = () => `jobs-queue`
 
-    if ((isAuthorizing() || isUnauthorized()) || !data) {
+    if (isUnauthorized() || !hasLoaded.current) {
         return (
-            data == null ? <Spinner/> : <Unauthorized/>
+            hasLoaded.current === false ? <Spinner/> : <Unauthorized/>
         )
     } else {
         return (
             <>
-                {data && <Header title={`User | Jobs | SenNet`}></Header>}
+                {data && <Header title={`${isAdmin ? 'Admin' : 'User'} | Jobs | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
-                {error &&
-                    <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
-                }
-                {data && !error && <Container fluid className="mb-5 d-block">
+
+                {data && <Container fluid className="mb-5 d-block">
                     <Row>
                         <div className="py-4 bd-highlight">
                             <h2 className="m-0 flex-grow-1 bd-highlight">Current Jobs</h2>
@@ -378,8 +411,11 @@ function ViewJobs({children}) {
                         {searchBarComponent}
                             <div className='sui-layout-main-header mt-4 mb-4'>
                                 <div className='sui-layout-main-header__inner'>
-                                    <div><Button variant={'outline-primary'} onClick={fetchData}><i className={'bi bi-arrow-clockwise mx-1'} role={'presentation'}></i>Refresh</Button></div>
-                                    {data.length > 0 && <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
+                                    <div><Button variant={'outline-primary'} onClick={fetchData}><i className={'bi bi-arrow-clockwise mx-1'} role={'presentation'}></i>Refresh</Button>
+                                        {isAdmin && <Button variant={'outline-danger'} className='mx-2' onClick={flushAllData}><i className={'bi bi-trash mx-1'} role={'presentation'}></i>Flush All</Button>}
+                                    </div>
+
+                                    {data.length > 0 && <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date', 'Type']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
                                                                          currentColumns={currentColumns} />}
                                     <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={data.length}  />
                                 </div>
@@ -387,7 +423,7 @@ function ViewJobs({children}) {
                         </>
                         }
                         pagination />
-                        <AppModal className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`} showHomeButton={false} showCloseButton={true} handleClose={() => setShowModal(false)} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
+                        <AppModal modalSize={modalSize} className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`} showHomeButton={false} showCloseButton={true} handleClose={() => setShowModal(false)} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
                     </Row>
                 </Container>}
                 </>
