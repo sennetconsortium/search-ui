@@ -40,7 +40,7 @@ function ViewJobs({children}) {
     const [showModal, setShowModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
-    let intervalTimer
+    const intervalTimer = useRef(null)
 
     const onKeydown = (e) => {
         if (eq(e.key, 'enter')) {
@@ -222,6 +222,7 @@ function ViewJobs({children}) {
     }
 
     const handleViewErrorDetails = (row) => {
+        console.log('ERROR ROW', row)
         const columns = tableColumns()
         setErrorModal(false)
         let errors = flatten(row.errors)
@@ -318,8 +319,8 @@ function ViewJobs({children}) {
     }
 
     useEffect(() => {
-        clearInterval(intervalTimer)
-        intervalTimer = setInterval(()=>{
+        clearInterval(intervalTimer.current)
+        intervalTimer.current = setInterval(()=>{
             fetchData()
         }, 1000)
 

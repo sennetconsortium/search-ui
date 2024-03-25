@@ -13,7 +13,7 @@ import Box from "@mui/material/Box";
 import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
 import {Row, Col, Stack} from "react-bootstrap";
-import {getDocsRootURL, getIngestEndPoint, getRootURL} from "../../../config/config";
+import {getDocsRootURL, getEntityEndPoint, getIngestEndPoint, getRootURL} from "../../../config/config";
 import Spinner from "../Spinner";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
@@ -51,7 +51,7 @@ export default function BulkCreate({
     const [showModal, setShowModal] = useState(true)
     const {cache, supportedMetadata} = useContext(AppContext)
     const [jobData, setJobData] = useState(null)
-    let intervalTimer;
+    const intervalTimer = useRef(null);
 
     const ColorlibConnector = styled(StepConnector)(({theme}) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -157,21 +157,48 @@ export default function BulkCreate({
         return `${getIngestEndPoint()}metadata/register`
     }
 
-    const mimicSocket = (data) => {
-        clearInterval(intervalTimer)
-        intervalTimer = setInterval(async () => {
+    const mimicSocket = (data, cb) => {
+        clearInterval(intervalTimer.current)
+        intervalTimer.current = setInterval(async () => {
             let res = await fetch(`/api/jobs/${data.job_id}`)
             let job = await res.json()
             setJobData(job)
             if (eq(job.status, 'Complete')) {
                 setIsLoading(false)
-                setValidationSuccess(true)
+                if (!cb) {
+                    setValidationSuccess(true)
+                } else {
+                    cb(job)
+                }
                 setIsNextButtonDisabled(false)
             }
             if (['error', 'fail'].contains(job.status)) {
                 setIsLoading(false)
             }
         }, 1000)
+    }
+
+    async function metadataCommitComplete(data) {
+        let passes = []
+        let fails = []
+        clearInterval(intervalTimer.current)
+        for (let item of data.results) {
+            const requestOptions = {
+                method: 'GET',
+                headers: get_auth_header(),
+            }
+            let {typeCol, labIdCol} = getColNames()
+            const response = await fetch(`${getEntityEndPoint()}entities/${item.uuid}`, requestOptions)
+            let entity = await response.json()
+            let result = {uuid: item.uuid, sennet_id: entity.sennet_id, [labIdCol]: entity[labIdCol], [typeCol]: entity[typeCol]}
+            if (item.success){
+                passes.push(result)
+            } else {
+                fails.push(result)
+            }
+        }
+        setIsLoading(false)
+        setBulkSuccess({fails, passes})
     }
 
     async function metadataValidation() {
@@ -226,21 +253,22 @@ export default function BulkCreate({
     }
 
     async function metadataCommit() {
-        clearInterval(intervalTimer)
+        clearInterval(intervalTimer.current)
         setIsLoading(true)
         const requestOptions = {
             method: 'POST',
-            headers: get_auth_header(),
+            headers: get_headers(),
             body: JSON.stringify({
                 job_id: jobData.job_id,
-                refferer: {
+                referrer: {
                     type: 'register',
-                    path: jobData.refferer.path + `&job_id=${jobData.job_id}`
+                    path: jobData.referrer.path + `&job_id=${jobData.job_id}`
                 }
             })
         }
-        let response = fetch(getMetadataRegistrationUrl(), requestOptions)
+        let response = await fetch(getMetadataRegistrationUrl(), requestOptions)
         const data = await response.json()
+        mimicSocket(data, metadataCommitComplete)
         setIsLoading(false)
     }
 
@@ -352,6 +380,8 @@ export default function BulkCreate({
     }
 
     const handleBack = () => {
+        clearInterval(intervalTimer.current)
+        setJobData(null)
         setIsNextButtonDisabled(true)
         setError(null)
         setErrorMessage(null)
