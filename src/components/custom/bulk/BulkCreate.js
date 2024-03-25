@@ -157,6 +157,8 @@ export default function BulkCreate({
         return `${getIngestEndPoint()}metadata/register`
     }
 
+    const jobHasFailed = (job) => ['error', 'failed'].contains(job.status)
+
     const mimicSocket = (data, cb) => {
         clearInterval(intervalTimer.current)
         intervalTimer.current = setInterval(async () => {
@@ -172,7 +174,8 @@ export default function BulkCreate({
                 }
                 setIsNextButtonDisabled(false)
             }
-            if (['error', 'fail'].contains(job.status)) {
+            if (jobHasFailed(job)) {
+                clearInterval(intervalTimer.current)
                 setIsLoading(false)
             }
         }, 1000)
@@ -224,7 +227,7 @@ export default function BulkCreate({
             const errorList = getErrorList(data)
             setErrorMessage(errorList)
         } else {
-            setBulkResponse(data.description || data)
+            setBulkResponse(data)
             mimicSocket(data)
         }
     }
@@ -656,7 +659,7 @@ export default function BulkCreate({
     }
 
     const getSocketStatusDetails = () => {
-        const hasFailed = ['error', 'fail'].contains(jobData.status)
+        const hasFailed = jobHasFailed(jobData)
         return (<div>
             <div>Request sent to job queue with a current status of <span className={`${getStatusColor(jobData.status)} badge`}>{jobData.status}</span>.</div>
 

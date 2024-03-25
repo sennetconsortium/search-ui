@@ -11,7 +11,7 @@ import SenNetPopover, {SenPopoverOptions} from "../../SenNetPopover";
 import {eq, urlify} from "../js/functions";
 
 const handleErrorRow = (row) => {
-    let err = row.error
+    let err = row.error || row.message
     if (typeof row.error === 'object') {
         err = err.msg
         if (row.error.data) {

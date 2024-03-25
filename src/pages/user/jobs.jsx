@@ -222,10 +222,10 @@ function ViewJobs({children}) {
     }
 
     const handleViewErrorDetails = (row) => {
-        console.log('ERROR ROW', row)
         const columns = tableColumns()
         setErrorModal(false)
         let errors = flatten(row.errors)
+        console.log('ERROR ROW', row, errors)
         setShowModal(true)
         setModalTitle(<h3>Task Error Details</h3>)
         setModalBody(<div className={'table-responsive has-error'}><DataTable columns={columns} data={errors} pagination /></div> )
@@ -318,11 +318,23 @@ function ViewJobs({children}) {
         setData(_data)
     }
 
-    useEffect(() => {
+    const mimicSocket = () => {
         clearInterval(intervalTimer.current)
         intervalTimer.current = setInterval(()=>{
             fetchData()
         }, 1000)
+    }
+
+    useEffect(() => {
+        mimicSocket()
+
+        document.addEventListener('visibilitychange', () => {
+            if (eq(document.visibilityState,'visible')) {
+                mimicSocket()
+            } else {
+                clearInterval(intervalTimer.current)
+            }
+        })
 
         const q = router.query.q
         if (q) {

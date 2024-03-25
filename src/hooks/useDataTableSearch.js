@@ -24,7 +24,6 @@ function useDataTableSearch({data, onKeydown, fieldsToSearch = [], className = '
         let results = []
         for (let searchIndex of fieldsToSearch) {
             for (let d of data) {
-                console.log('filter', d, data)
                 if (d[searchIndex] && d[searchIndex]?.toLowerCase().includes(filterText?.toLowerCase())) {
                     if (results.indexOf(d) === -1) results.push(d);
                 }
