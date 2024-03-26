@@ -293,12 +293,12 @@
 .sui-columns-toggle {
   position: absolute !important;
   right: 120px;
-  z-index: 1000;
+  z-index: 900; //must be lower than navbar but above fixed header in DataTable
 }
 
 .sui-react-select {
   position: relative;
-  z-index: 1000;
+  z-index: 900; //must be lower than navbar but above fixed header in DataTable
 }
 
 .sui-filterableComponent {

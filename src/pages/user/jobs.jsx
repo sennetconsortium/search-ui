@@ -16,7 +16,7 @@ import DataTable from "react-data-table-component";
 import ColumnsDropdown from "../../components/custom/search/ColumnsDropdown";
 import {Container, Row, Button} from "react-bootstrap";
 import {getIngestEndPoint, RESULTS_PER_PAGE} from "../../config/config";
-import {ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
+import {getOptions, handlePagingInfo, opsDict, ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
 import AppModal from "../../components/AppModal";
 import {tableColumns} from "../../components/custom/edit/AttributesUpload";
 import Swal from 'sweetalert2'
@@ -29,6 +29,7 @@ function ViewJobs({isAdmin = false}) {
 
 
     const [data, setData] = useState([])
+    const [timestamp, setTimestamp] = useState(null)
     const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
     const [errorModal, setErrorModal] = useState(false)
     const currentColumns = useRef([])
@@ -329,10 +330,10 @@ function ViewJobs({isAdmin = false}) {
             cols.splice(1, 0,
                 {
                     name: 'User Id',
-                    selector: row => row.user_id,
+                    selector: row => row.user?.email || '',
                     sortable: true,
                     reorder: true,
-                    format: row => <span data-field='action'>{row.user_id}</span>,
+                    format: row => <span data-field='user_email'>{row.user?.email}</span>,
                 }
             )
         }
@@ -347,7 +348,7 @@ function ViewJobs({isAdmin = false}) {
     }
     const fetchData = async () => {
         const response = await fetch('/api/jobs', getHeaders())
-        const _data = await response.json();
+        const _data = await response.json()
         setData(_data)
     }
 
@@ -360,8 +361,11 @@ function ViewJobs({isAdmin = false}) {
 
     useEffect(() => {
         mimicSocket()
-        fetchData()
-        hasLoaded.current = true
+
+        if (!hasLoaded.current) {
+            fetchData()
+            hasLoaded.current = true
+        }
 
         document.addEventListener('visibilitychange', () => {
             if (eq(document.visibilityState,'visible')) {
@@ -379,6 +383,17 @@ function ViewJobs({isAdmin = false}) {
     }, [])
 
     const searchContext = () => `jobs-queue`
+
+    getOptions(filteredItems.length)
+
+    const handleResultsPerPage = (val) => {
+        setResultsPerPage(val)
+        setTimestamp(new Date().getTime())
+    }
+
+    const handleRowsPerPageChange = (currentRowsPerPage, currentPage) => {
+        setResultsPerPage(currentRowsPerPage)
+    }
 
     if (isUnauthorized() || !hasLoaded.current) {
         return (
@@ -402,6 +417,7 @@ function ViewJobs({isAdmin = false}) {
                     <Row>
 
                     <DataTable
+                        key={`results-${timestamp}`} //unique key on ResultsPerPage change is required for DataTable update on paginationPerPage value
                         columns={getTableColumns(hiddenColumns)}
                         data={filteredItems}
                         fixedHeader={true}
@@ -415,13 +431,16 @@ function ViewJobs({isAdmin = false}) {
                                         {isAdmin && <Button variant={'outline-danger'} className='mx-2' onClick={flushAllData}><i className={'bi bi-trash mx-1'} role={'presentation'}></i>Flush All</Button>}
                                     </div>
 
-                                    {data.length > 0 && <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date', 'Type']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
+                                    {filteredItems.length > 0 && <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date', 'Type']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
                                                                          currentColumns={currentColumns} />}
-                                    <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={data.length}  />
+                                    <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={handleResultsPerPage} totalRows={filteredItems.length}  />
                                 </div>
                             </div>
                         </>
                         }
+                        onChangeRowsPerPage={handleRowsPerPageChange}
+                        paginationPerPage={resultsPerPage}
+                        paginationRowsPerPageOptions={Object.keys(opsDict)}
                         pagination />
                         <AppModal modalSize={modalSize} className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`} showHomeButton={false} showCloseButton={true} handleClose={() => setShowModal(false)} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
                     </Row>
