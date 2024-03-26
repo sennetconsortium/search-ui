@@ -37,9 +37,11 @@ function useDataTableSearch({data, onKeydown, fieldsToSearch = [], className = '
                 setResetPaginationToggle(!resetPaginationToggle)
                 setFilterText('')
                 const params = new URLSearchParams(window.location.search)
-                params.delete('q')
-                const query = params.toString()
-                window.history.pushState(null, null, `${query.length ? `?${query}` : window.location.pathname}`)
+                if (params.get('q')) {
+                    params.delete('q')
+                    const query = params.toString()
+                    window.history.pushState(null, null, `${query.length ? `?${query}` : window.location.pathname}`)
+                }
             }
         };
 
