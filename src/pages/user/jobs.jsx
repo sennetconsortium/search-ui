@@ -231,19 +231,24 @@ function ViewJobs({isAdmin = false}) {
         if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
         let result = []
         for (let item of array) {
-            for (let k in item) {
-                if (Array.isArray(item[k]) && item[k].length && item[k][0].row === undefined) {
-                    result = flatten(item[k])
-                } else {
-                    result = result.concat(item[k])
+            if (item.description && item.description.error) {
+                result.push(item.description)
+            } else {
+                for (let k in item) {
+                    if (Array.isArray(item[k]) && item[k].length && item[k][0].row === undefined) {
+                        result = flatten(item[k])
+                    } else {
+                        result = result.concat(item[k])
+                    }
                 }
             }
+
         }
         return result
     }
 
     const handleViewErrorDetailsModal = (row) => {
-        const columns = tableColumns()
+        const columns = tableColumns(['`', '"', "'"])
         setErrorModal(false)
         let errors = flatten(row.errors)
         console.log('ERROR ROW', row, errors)
