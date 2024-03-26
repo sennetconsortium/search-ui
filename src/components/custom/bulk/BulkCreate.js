@@ -20,7 +20,7 @@ import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
 import {tableColumns, getErrorList} from "../edit/AttributesUpload";
 import DataTable from 'react-data-table-component';
-import {createDownloadUrl, eq, getStatusColor} from "../js/functions";
+import {createDownloadUrl, eq, getHeaders, getStatusColor} from "../js/functions";
 import AppContext from "../../../context/AppContext";
 import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
 import SenNetAlert from "../../SenNetAlert";
@@ -162,7 +162,7 @@ export default function BulkCreate({
     const mimicSocket = (data, cb) => {
         clearInterval(intervalTimer.current)
         intervalTimer.current = setInterval(async () => {
-            let res = await fetch(`/api/jobs/${data.job_id}`)
+            let res = await fetch(getIngestEndPoint() + `jobs/${data.job_id}`, {method: 'GET', headers: getHeaders()})
             let job = await res.json()
             setJobData(job)
             if (eq(job.status, 'Complete')) {

@@ -10,6 +10,7 @@ import {
     getHeaders,
     getJobStatusDefinition,
     getStatusColor,
+    THEME
 } from "../../components/custom/js/functions";
 import SenNetPopover from "../../components/SenNetPopover";
 import DataTable from "react-data-table-component";
@@ -41,6 +42,8 @@ function ViewJobs({isAdmin = false}) {
     const [modalSize, setModalSize] = useState('lg')
     const intervalTimer = useRef(null)
     const hasLoaded = useRef(false)
+    const colorMap = useRef({})
+    let usedColors = {}
 
     const onKeydown = (e) => {
         if (eq(e.key, 'enter')) {
@@ -58,12 +61,36 @@ function ViewJobs({isAdmin = false}) {
 
     const errIcon = () => <WarningAmberIcon sx={{color: '#842029'}} />
 
+    const randomColor = () => {
+        let col;
+        do {
+            col = THEME.randomColor()
+            if (!usedColors[col.color]) {
+                usedColors[col.color] = true;
+            }
+        } while (!usedColors[col.color])
+        return col;
+    }
+
+    const hasRegistered = (row) => {
+        if (colorMap.current[row.job_id]) return true
+        for (let item of data) {
+           if (item.referrer.path.includes(row.job_id) && eq(item.referrer.type, 'register')) {
+               let color = randomColor()
+               colorMap.current[row.job_id] = color
+               colorMap.current[item.job_id] = color
+               return true
+           }
+        }
+        return null
+    }
+
     const getAction = (row) => {
         const status = row.status
         let actions = []
-        const isValidate = row.description?.toLowerCase().includes('validation')
+        const isValidate = eq(row.referrer.type, 'validate')
         if (eq(status, 'Complete')) {
-            if (!row.errors?.length && isValidate) {
+            if (!row.errors?.length && isValidate && !hasRegistered(row)) {
                 actions.push('Register')
             }
             actions.push('Delete')
@@ -102,10 +129,15 @@ function ViewJobs({isAdmin = false}) {
         }
     }
 
+    const urlPrefix = () => {
+        const pre = isAdmin ? 'admin/jobs' : 'jobs'
+        return getIngestEndPoint() + pre
+    }
+
     const flushAllData = () => {
         Swal.fire(deleteConfig).then(result => {
             if (result.isConfirmed && isAdmin) {
-                fetch(getIngestEndPoint() + `jobs/flush`).then(async (res)=>{
+                fetch(urlPrefix() + `/flush`, {method: 'DELETE', headers: getHeaders()}).then(async (res)=>{
                     setErrorModal(false)
                     setShowModal(true)
                     setModalTitle(<h3>{successIcon()} Jobs flushed</h3>)
@@ -131,7 +163,7 @@ function ViewJobs({isAdmin = false}) {
     const handleSingleJobDeletion = (e, row, action) => {
         Swal.fire(deleteConfig).then(result => {
             if (result.isConfirmed) {
-                handleResponseModal(e, row, getIngestEndPoint() + `jobs/${row.job_id}`, 'DELETE', action, 'deleted')
+                handleResponseModal(e, row, urlPrefix() + `/${row.job_id}`, 'DELETE', action, 'deleted')
                 // Delete
             }
         }).catch(error => {
@@ -147,7 +179,7 @@ function ViewJobs({isAdmin = false}) {
         }
 
         if (eq(action, 'register')) {
-            let registerRes = await fetch(`/api/jobs/${job.job_id}`)
+            let registerRes = await fetch(urlPrefix() + `/${row.job_id}`)
             if (registerRes.ok) {
                 let jobInfo = await registerRes.json()
                 setData([...data, jobInfo])
@@ -204,7 +236,7 @@ function ViewJobs({isAdmin = false}) {
                 }})
         } else if (eq(action, 'Cancel')) {
             e.target.disabled = true
-            handleResponseModal(e, row, getIngestEndPoint() + `/jobs/${row.job_id}/cancel`, 'PUT', action, 'cancelled')
+            handleResponseModal(e, row, urlPrefix() + `/${row.job_id}/cancel`, 'PUT', action, 'cancelled')
         } else {
            window.location = row.referrer?.path
         }
@@ -251,7 +283,6 @@ function ViewJobs({isAdmin = false}) {
         const columns = tableColumns(['`', '"', "'"])
         setErrorModal(false)
         let errors = flatten(row.errors)
-        console.log('ERROR ROW', row, errors)
         setShowModal(true)
         setModalTitle(<h3>Job Error Details</h3>)
         setModalSize('xl')
@@ -304,7 +335,12 @@ function ViewJobs({isAdmin = false}) {
                 sortable: true,
                 reorder: true,
                 omit: true,
-                format: row => <span data-field='type'>{getJobType(row)}</span>,
+                format: row => {
+                    hasRegistered(row)
+                    let pack = colorMap.current[row.job_id]
+                    let color = pack?.color || 'lightgrey'
+                    return <span data-field='type' className={`badge`} title={`${pack ? 'This job has a corresponding job of same badge color' : ''}`} style={{backgroundColor: color, color: pack?.light ? 'black' : 'white'}}>{getJobType(row)}</span>
+                },
             },
             {
                 name: 'Start Date',
@@ -352,7 +388,7 @@ function ViewJobs({isAdmin = false}) {
         return cols;
     }
     const fetchData = async () => {
-        const response = await fetch('/api/jobs', getHeaders())
+        const response = await fetch(urlPrefix(), {method: 'GET', headers: getHeaders()})
         const _data = await response.json()
         setData(_data)
     }
@@ -361,7 +397,7 @@ function ViewJobs({isAdmin = false}) {
         clearInterval(intervalTimer.current)
         intervalTimer.current = setInterval(()=>{
             fetchData()
-        }, 1000)
+        }, 3000)
     }
 
     useEffect(() => {
