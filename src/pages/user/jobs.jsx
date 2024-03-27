@@ -10,31 +10,36 @@ import {
     getHeaders,
     getJobStatusDefinition,
     getStatusColor,
-    THEME
+    THEME,
+    getJobTypeColor
 } from "../../components/custom/js/functions";
 import SenNetPopover from "../../components/SenNetPopover";
 import DataTable from "react-data-table-component";
 import ColumnsDropdown from "../../components/custom/search/ColumnsDropdown";
-import {Container, Row, Button} from "react-bootstrap";
+import {Container, Row, Button, Form} from "react-bootstrap";
 import {getIngestEndPoint, RESULTS_PER_PAGE} from "../../config/config";
 import {getOptions, handlePagingInfo, opsDict, ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
 import AppModal from "../../components/AppModal";
 import {tableColumns} from "../../components/custom/edit/AttributesUpload";
 import Swal from 'sweetalert2'
 import useDataTableSearch from "../../hooks/useDataTableSearch";
-import {get_headers} from "../../lib/services";
+import {get_headers, parseJson} from "../../lib/services";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import Stack from '@mui/material/Stack';
 
 function ViewJobs({isAdmin = false}) {
 
+    const searchContext = () => `${isAdmin ? 'admin' : 'user'}.jobs-queue`
+    const rowSettingKey = searchContext() + '.rowSetting'
 
     const [data, setData] = useState([])
     const [timestamp, setTimestamp] = useState(null)
-    const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
+    const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache, adminGroup} = useContext(AppContext)
     const [errorModal, setErrorModal] = useState(false)
     const currentColumns = useRef([])
     const [hiddenColumns, setHiddenColumns] = useState(null)
+    const [rowColoring, setRowColoring] = useState(eq(localStorage.getItem(rowSettingKey), 'true'))
     const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
     const [showModal, setShowModal] = useState(false)
     const [modalBody, setModalBody] = useState(null)
@@ -314,6 +319,7 @@ function ViewJobs({isAdmin = false}) {
             {
                 name: 'Status',
                 selector: row => row.status,
+                width: '150px',
                 format: (row) => {
                     return (<div>
                         <span className={`${getStatusColor(row.status)} badge`}>
@@ -336,15 +342,17 @@ function ViewJobs({isAdmin = false}) {
                 reorder: true,
                 omit: true,
                 format: row => {
-                    hasRegistered(row)
-                    let pack = colorMap.current[row.job_id]
-                    let color = pack?.color || 'lightgrey'
-                    return <span data-field='type' className={`badge`} title={`${pack ? 'This job has a corresponding job of same badge color' : ''}`} style={{backgroundColor: color, color: pack?.light ? 'black' : 'white'}}>{getJobType(row)}</span>
+                    return <span data-field='type' className={`badge`}
+                                 style={{backgroundColor: getJobTypeColor(getJobType(row)),
+                                     color: 'black',
+                                     padding: '6px', borderRadius: '2px',
+                                     minWidth: '122px'}}>{getJobType(row)}</span>
                 },
             },
             {
                 name: 'Start Date',
                 selector: row => row.started_timestamp,
+                width: '150px',
                 sortable: true,
                 reorder: true,
                 omit: true,
@@ -353,6 +361,7 @@ function ViewJobs({isAdmin = false}) {
             {
                 name: 'End Date',
                 selector: row => row.ended_timestamp,
+                width: '150px',
                 sortable: true,
                 reorder: true,
                 omit: true,
@@ -423,8 +432,6 @@ function ViewJobs({isAdmin = false}) {
 
     }, [])
 
-    const searchContext = () => `jobs-queue`
-
     getOptions(filteredItems.length)
 
     const handleResultsPerPage = (val) => {
@@ -435,6 +442,24 @@ function ViewJobs({isAdmin = false}) {
     const handleRowsPerPageChange = (currentRowsPerPage, currentPage) => {
         setResultsPerPage(currentRowsPerPage)
     }
+
+    const updateRowColoring = () => {
+        localStorage.setItem(rowSettingKey, (!rowColoring).toString())
+        setRowColoring(!rowColoring)
+    }
+
+    const condStyles = [
+        {
+            when: row => {
+
+                return (colorMap.current[row.job_id] !== undefined) && rowColoring
+            },
+            style: row => {
+                const {r, g, b, light} = colorMap.current[row.job_id]
+                return ({ backgroundColor: `rgba(${r}, ${g}, ${b}, 0.1)`, color: 'black' })
+            },
+        },
+    ];
 
     if (isUnauthorized() || !hasLoaded.current) {
         return (
@@ -472,9 +497,19 @@ function ViewJobs({isAdmin = false}) {
                                         {isAdmin && <Button variant={'outline-danger'} className='mx-2' onClick={flushAllData}><i className={'bi bi-trash mx-1'} role={'presentation'}></i>Flush All</Button>}
                                     </div>
 
-                                    {filteredItems.length > 0 && <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date', 'Type']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
-                                                                         currentColumns={currentColumns} />}
-                                    <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={handleResultsPerPage} totalRows={filteredItems.length}  />
+                                    <Stack className={'sui-stack'} direction="row" spacing={2}>
+                                        <span className='mx-1 btn-illusion-secondary'><Form.Check
+                                            style={{display: 'inline-block'}}
+                                            onChange={updateRowColoring}
+                                            defaultChecked={rowColoring}
+                                            type="switch"
+                                            id="custom-switch"
+                                            label="Color code linked jobs"
+                                        /></span>
+                                        {filteredItems.length > 0 && <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date', 'Type']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
+                                                                                      currentColumns={currentColumns} />}
+                                        <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={handleResultsPerPage} totalRows={filteredItems.length}  />
+                                    </Stack>
                                 </div>
                             </div>
                         </>
@@ -482,6 +517,7 @@ function ViewJobs({isAdmin = false}) {
                         onChangeRowsPerPage={handleRowsPerPageChange}
                         paginationPerPage={resultsPerPage}
                         paginationRowsPerPageOptions={Object.keys(opsDict)}
+                        conditionalRowStyles={condStyles}
                         pagination />
                         <AppModal modalSize={modalSize} className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`} showHomeButton={false} showCloseButton={true} handleClose={() => setShowModal(false)} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
                     </Row>

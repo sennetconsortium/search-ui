@@ -264,6 +264,23 @@ export function getJobStatusDefinition(status) {
     return msg;
 }
 
+export function getJobTypeColor(type) {
+    if (type) {
+        switch (type.toLowerCase()) {
+            case "metadata validation":
+                return '#ffc766'
+            case "metadata registration":
+                return '#fcea7e'
+            case "entity validation":
+                return '#3b6b23'
+            case "entity registration":
+                return '#47991f'
+            default:
+                break;
+        }
+    }
+}
+
 export function getStatusColor(status) {
     let badge_class = '';
 
@@ -474,23 +491,27 @@ export const deleteFromLocalStorage = (needle, fn = 'startsWith') => {
 export const deleteFromLocalStorageWithSuffix = (needle) => deleteFromLocalStorage(needle, 'endsWith')
 
 export const THEME = {
-    isLightColor: (color) => {
+    getRGB: (color) => {
         color = +("0x" + color.slice(1).replace(
             color.length < 5 && /./g, '$&$&'));
 
         let r = color >> 16;
         let g = color >> 8 & 255;
         let b = color & 255;
-
+        return {r, g, b}
+    },
+    isLightColor: (color) => {
+        const {r, g, b} = THEME.getRGB(color)
         let hsp = Math.sqrt(0.299 * (r * r) + 0.587 * (g * g) + 0.114 * (b * b))
         return hsp > 127.5
     },
     randomColor: () => {
-        let hexTab = "5555556789ABCDEF";
-        let r = hexTab[ Math.floor( Math.random() * 16) ];
-        let g = hexTab[ Math.floor( Math.random() * 16) ];
-        let b = hexTab[ Math.floor( Math.random() * 16) ];
-        let color = "#" + r + g + b
-        return {color, light: THEME.isLightColor(color)};
+        let hexTab = "5553336789ABCDE0";
+        let r1 = hexTab[ Math.floor( Math.random() * 16) ];
+        let g1 = hexTab[ Math.floor( Math.random() * 16) ];
+        let b1 = hexTab[ Math.floor( Math.random() * 16) ];
+        let color = "#" + r1 + g1 + b1
+        const {r, g, b} = THEME.getRGB(color)
+        return {color, light: THEME.isLightColor(color), r, g, b};
     },
 }

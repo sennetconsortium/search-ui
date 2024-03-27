@@ -1,13 +1,17 @@
 import ViewJobs from "../../user/jobs";
 import {useContext} from "react";
 import AppContext from "../../../context/AppContext";
+import Spinner from "../../../components/custom/Spinner";
 
 
 function ViewJobsAdmin() {
     const {adminGroup} = useContext(AppContext)
 
     return (
-        <ViewJobs isAdmin={adminGroup || false} />
+        <>
+            {adminGroup && <ViewJobs isAdmin={adminGroup} />}
+            {!adminGroup && <Spinner/>}
+        </>
     )
 }
 
