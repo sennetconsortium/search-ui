@@ -494,10 +494,10 @@ function ViewJobs({isAdmin = false}) {
                             <div className='sui-layout-main-header mt-4 mb-4'>
                                 <div className='sui-layout-main-header__inner'>
                                     <div><Button variant={'outline-primary'} onClick={fetchData}><i className={'bi bi-arrow-clockwise mx-1'} role={'presentation'}></i>Refresh</Button>
-                                        {isAdmin && <Button variant={'outline-danger'} className='mx-2' onClick={flushAllData}><i className={'bi bi-trash mx-1'} role={'presentation'}></i>Flush All</Button>}
+                                        {isAdmin && filteredItems.length > 0 && <Button variant={'outline-danger'} className='mx-2' onClick={flushAllData}><i className={'bi bi-trash mx-1'} role={'presentation'}></i>Flush All</Button>}
                                     </div>
 
-                                    <Stack className={'sui-stack'} direction="row" spacing={2}>
+                                    {filteredItems.length > 0 && <Stack className={'sui-stack'} direction="row" spacing={2}>
                                         <span className='mx-1 btn-illusion-secondary'><Form.Check
                                             style={{display: 'inline-block'}}
                                             onChange={updateRowColoring}
@@ -506,10 +506,10 @@ function ViewJobs({isAdmin = false}) {
                                             id="custom-switch"
                                             label="Color code linked jobs"
                                         /></span>
-                                        {filteredItems.length > 0 && <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date', 'Type']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
-                                                                                      currentColumns={currentColumns} />}
+                                        <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date', 'Type']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
+                                                                                      currentColumns={currentColumns} />
                                         <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={handleResultsPerPage} totalRows={filteredItems.length}  />
-                                    </Stack>
+                                    </Stack>}
                                 </div>
                             </div>
                         </>
