@@ -327,7 +327,7 @@ function ViewJobs({isAdmin = false}) {
                             {row.status}
                         </SenNetPopover>
                         </span>
-                            {eq(row.status, 'Error') && <a className={'mx-2'} href={'#'} onClick={() => handleViewErrorDetailsModal(row)}><small>View details</small></a>}
+                            {['error', 'failed'].contains(row.status) && <a className={'mx-2'} href={'#'} onClick={() => handleViewErrorDetailsModal(row)}><small>View details</small></a>}
                     </div>
 
                     )
