@@ -25,8 +25,8 @@ export function getAuth() {
 }
 
 // Organs not supported by the CCF-RUI Tool are:
-// Adipose, Blood, Bone Marrow, Breast, Muscle, and Other
-export const nonSupportedRuiOrgans = ['AD', 'BD', 'BM', 'BS', 'MU', 'OT']
+// Adipose, Blood, Bone Marrow, Muscle, and Other
+export const nonSupportedRuiOrgans = ['AD', 'BD', 'BM', 'MU', 'OT']
 export const supportedRuiSources = ['Human', 'Human Organoid']
 
 export function valuesRuiSupported(values, dict) {
