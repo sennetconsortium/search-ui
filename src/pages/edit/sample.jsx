@@ -260,6 +260,10 @@ function EditSample() {
             let ancestor_organ = []
             if (source.hasOwnProperty("organ")) {
                 ancestor_organ.push(source['organ'])
+            } else if(source.hasOwnProperty("origin_sample")) {
+                if(source.origin_sample.hasOwnProperty("organ")){
+                    ancestor_organ.push(source.origin_sample['organ'])
+                }
             }
             setAncestorOrgan(ancestor_organ)
             setAncestorSource([getSourceType(source)])
