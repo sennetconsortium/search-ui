@@ -185,8 +185,6 @@ export default function BulkCreate({
         setIsLoading(true)
         for (let resp of bulkResponse.data) {
             let item = resp.description
-            item.metadata['pathname'] = bulkResponse.pathname
-            item.metadata['file_row'] = row
             let {typeCol, labIdCol} = getColNames()
             let response = await update_create_entity(item.uuid, {metadata: item.metadata, [typeCol]: item[typeCol]}, 'Edit', entityType)
             let result = {uuid: item.uuid, sennet_id: item.sennet_id, [labIdCol]: item[labIdCol], [typeCol]: item[typeCol]}
