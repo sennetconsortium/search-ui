@@ -4,7 +4,9 @@ import {getCookie} from "cookies-next";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
-export async function update_create_entity(uuid, body, action = "Edit", entity_type = null, headers) {
+export async function update_create_entity(uuid, body, action = "Edit", entity_type = null) {
+    let headers = get_headers()
+    headers = get_x_sennet_header(headers)
     let raw = JSON.stringify(body)
     let url = getEntityEndPoint() + "entities/" + (action === 'Register' ? entity_type : uuid)
     let method = (action === 'Register' ? "POST" : "PUT")
@@ -14,9 +16,7 @@ export async function update_create_entity(uuid, body, action = "Edit", entity_t
 
 export async function update_create_dataset(uuid, body, action = "Edit", entityType = 'datasets') {
     if (action === 'Edit') {
-        let headers = get_headers()
-        headers = get_x_sennet_header(headers)
-        return update_create_entity(uuid, body, action, null, headers);
+        return update_create_entity(uuid, body, action, null);
     } else {
         let raw = JSON.stringify(body)
         let url = getIngestEndPoint() + entityType + (action === 'Register' ? '' : `/${uuid}/${action}`)
