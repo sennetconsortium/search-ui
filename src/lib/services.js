@@ -98,7 +98,7 @@ export function get_x_sennet_header(headers) {
 
 export function get_headers() {
     const headers = get_auth_header();
-    return get_json_header(headers);
+    return get_json_header(get_x_sennet_header(headers));
 }
 
 export async function fetchGlobusFilepath(sennet_id) {

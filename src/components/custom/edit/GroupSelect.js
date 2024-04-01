@@ -24,7 +24,7 @@ const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural, popover,
                     {
                         (groups.sortOnProperty('displayname')).map(group => {
                             return (
-                                <option key={group.uuid} value={group[optionValueProp]} selected={group[optionValueProp] === value }>
+                                <option key={group.uuid} value={group[optionValueProp]} selected={value ? group[optionValueProp] === value : undefined }>
                                     {group.displayname}
                                 </option>
                             )
