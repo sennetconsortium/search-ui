@@ -49,10 +49,9 @@ function EditSample() {
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
-        metadata, setMetadata,
         dataAccessPublic, setDataAccessPublic,
         getSampleEntityConstraints,
-        checkMetadata, getMetadataNote, checkProtocolUrl,
+        getMetadataNote, checkProtocolUrl,
         warningClasses, getCancelBtn
     } = useContext(EntityContext)
     const {_t, cache, filterImageFilesToAdd} = useContext(AppContext)
@@ -311,7 +310,7 @@ function EditSample() {
             if (imageFilesToRemove.length !== 0) {
                 values['image_files_to_remove'] = imageFilesToRemove
             }
-            
+
             if (thumbnailFileToAdd && thumbnailFileToAdd.temp_file_id !== undefined) {
                 values['thumbnail_file_to_add'] = thumbnailFileToAdd
             }
@@ -319,12 +318,12 @@ function EditSample() {
             if (thumbnailFileToRemove) {
                 values['thumbnail_file_to_remove'] = thumbnailFileToRemove
             }
-            
+
             // Remove empty strings
             let json = cleanJson(values);
             let uuid = data.uuid
 
-            checkMetadata('sample_category', supportsMetadata())
+
             await update_create_entity(uuid, json, editMode, cache.entities.sample).then((response) => {
                 setModalDetails({
                     entity: cache.entities.sample, type: response.sample_category,
@@ -491,8 +490,8 @@ function EditSample() {
                                                  text='Upload de-identified images and thumbnails only' />
 
                                     {/* Images */}
-                                    <ImageSelector editMode={editMode} 
-                                                   values={values} 
+                                    <ImageSelector editMode={editMode}
+                                                   values={values}
                                                    setValues={setValues}
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
@@ -502,7 +501,7 @@ function EditSample() {
                                                        values={values}
                                                        setValues={setValues}/>
 
-                                    { values.sample_category && supportsMetadata() && <AttributesUpload setAttribute={setMetadata} entity={cache.entities.sample} subType={values.sample_category}  /> }
+
                                     <div className={'d-flex flex-row-reverse'}>
                                         {getCancelBtn('sample')}
                                         <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
