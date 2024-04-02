@@ -16,7 +16,7 @@ import {
 import SenNetPopover from "../../components/SenNetPopover";
 import DataTable from "react-data-table-component";
 import ColumnsDropdown from "../../components/custom/search/ColumnsDropdown";
-import {Container, Row, Button, Form} from "react-bootstrap";
+import {Container, Row, Button, Form, Alert} from "react-bootstrap";
 import {getIngestEndPoint, RESULTS_PER_PAGE} from "../../config/config";
 import {getOptions, handlePagingInfo, opsDict, ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
 import AppModal from "../../components/AppModal";
@@ -479,19 +479,31 @@ function ViewJobs({isAdmin = false}) {
     } else {
         return (
             <>
-                {data && <Header title={`${isAdmin ? 'Admin' : 'User'} | Jobs | SenNet`}></Header>}
+                {data && <Header title={`${isAdmin ? 'Admin' : 'User'} | Job Dashboard | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
 
-                {data && <Container fluid className="mb-5 d-block">
+                {data && <Container fluid className="mb-5 d-block sui-jobs-dashboard">
                     <Row>
                         <div className="py-4 bd-highlight">
-                            <h2 className="m-0 flex-grow-1 bd-highlight">Current Jobs</h2>
+                            <h2 className="m-0 flex-grow-1 bd-highlight">Job Dashboard</h2>
                         </div>
                     </Row>
 
                     <Row>
+
+                     <div className='container'>
+                         <Alert variant={'info'} >
+                             <div>
+                                 <p>This dashboard provides an overview of the job queue and is used to tracked queued, completed,
+                                     jobs in progress. Users can submit new jobs via the wizard by visiting any link under "Register entity -&gt; Bulk" or "Upload metadata" at the top of the page.</p>
+
+                                 <p>Once validation of the submitted TSV is complete, users can click on the "Register" button
+                                     located under the Action column to finalize entity registration or metadata upload.</p>
+                             </div>
+                         </Alert>
+                     </div>
 
                     <DataTable
                         key={`results-${timestamp}`} //unique key on ResultsPerPage change is required for DataTable update on paginationPerPage value
