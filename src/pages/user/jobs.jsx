@@ -300,6 +300,13 @@ function ViewJobs({isAdmin = false}) {
         return row.referrer?.path?.includes('action=metadata') ? `Metadata ${type}` : `Entity ${type}`
     }
 
+    const getDescriptionModal = (row) => {
+        setModalSize('lg')
+        setModalTitle(<h4>Job Description</h4>)
+        setModalBody(<div>{row.description}<div className={'mt-3'}><small>Job ID: <code>{row.job_id}</code></small></div></div>)
+        setShowModal(true)
+    }
+
     const getTableColumns = (hiddenColumns) => {
         let cols = [
             {
@@ -314,7 +321,11 @@ function ViewJobs({isAdmin = false}) {
                 selector: row => row.description,
                 sortable: true,
                 reorder: true,
-                format: row => <span data-field='job_id' title={row.description}>{row.description}</span>,
+                format: row => <div style={{cursor: 'pointer'}} data-field='job_id' title={row.description} onClick={()=>getDescriptionModal(row)}>
+                    <SenNetPopover text={<>Click to view full description.</>} className={`desc-info-${row.job_id}`}>
+                        {row.description}
+                    </SenNetPopover>
+                </div>,
             },
             {
                 name: 'Status',
@@ -507,7 +518,7 @@ function ViewJobs({isAdmin = false}) {
                                             label="Color code linked jobs"
                                         /></span>
                                         <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date', 'Type']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
-                                                                                      currentColumns={currentColumns} />
+                                                                                      currentColumns={currentColumns} deleteFirst={false} />
                                         <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={handleResultsPerPage} totalRows={filteredItems.length}  />
                                     </Stack>}
                                 </div>
