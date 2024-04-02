@@ -355,7 +355,7 @@ function ViewJobs({isAdmin = false}) {
                 format: row => {
                     return <span data-field='type' className={`badge`}
                                  style={{backgroundColor: getJobTypeColor(getJobType(row)),
-                                     color: 'black',
+                                     color: 'white',
                                      padding: '6px', borderRadius: '2px',
                                      minWidth: '122px'}}>{getJobType(row)}</span>
                 },
