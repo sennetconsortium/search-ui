@@ -159,7 +159,7 @@ export default function BulkCreate({
 
     const jobHasFailed = (job) => ['error', 'failed'].contains(job.status)
 
-    const mimicSocket = (data, cb) => {
+    const mimicSocket = (data, {cb, cbFail}) => {
         clearInterval(intervalTimer.current)
         intervalTimer.current = setInterval(async () => {
             let res = await fetch(getIngestEndPoint() + `jobs/${data.job_id}`, {method: 'GET', headers: getHeaders()})
@@ -176,12 +176,15 @@ export default function BulkCreate({
             }
             if (jobHasFailed(job)) {
                 clearInterval(intervalTimer.current)
+                if (cbFail) {
+                    cbFail(job)
+                }
                 setIsLoading(false)
             }
         }, 1000)
     }
 
-    async function metadataCommitComplete(data) {
+    async function fetchEntities(data) {
         let passes = []
         let fails = []
         clearInterval(intervalTimer.current)
@@ -201,7 +204,27 @@ export default function BulkCreate({
             }
         }
         setIsLoading(false)
+        console.log('FETCH ENT', fails, passes)
+        return {fails, passes}
+    }
+
+    async function metadataCommitComplete(data) {
+        const {fails, passes} = await fetchEntities(data)
         setBulkSuccess({fails, passes})
+    }
+
+    function getValidateReferrer() {
+        return {
+            type: 'validate',
+            path: window.location.pathname + window.location.search
+        }
+    }
+
+    function getRegisterReferrer() {
+        return {
+            type: 'register',
+            path: jobData.referrer.path + `&job_id=${jobData.job_id}`
+        }
     }
 
     async function metadataValidation() {
@@ -211,10 +234,7 @@ export default function BulkCreate({
         formData.append('entity_type', cache.entities[entityType])
         formData.append('sub_type', subType)
         formData.append('validate_uuids', '1')
-        formData.append('referrer', JSON.stringify({
-            type: 'validate',
-            path: window.location.pathname + window.location.search
-        }))
+        formData.append('referrer', JSON.stringify(getValidateReferrer()))
         const requestOptions = {
             method: 'POST',
             headers: get_auth_header(),
@@ -222,14 +242,8 @@ export default function BulkCreate({
         }
         const response = await fetch(getMetadataValidationUrl(), requestOptions)
         const data = await response.json()
-        if (!response.ok) {
-            setError({1: true})
-            const errorList = getErrorList(data)
-            setErrorMessage(errorList)
-        } else {
-            setBulkResponse(data)
-            mimicSocket(data)
-        }
+        setBulkResponse(data)
+        mimicSocket(data, {})
     }
 
     async function metadataCommit() {
@@ -240,16 +254,24 @@ export default function BulkCreate({
             headers: get_headers(),
             body: JSON.stringify({
                 job_id: jobData.job_id,
-                referrer: {
-                    type: 'register',
-                    path: jobData.referrer.path + `&job_id=${jobData.job_id}`
-                }
+                referrer: getRegisterReferrer()
             })
         }
         let response = await fetch(getMetadataRegistrationUrl(), requestOptions)
         const data = await response.json()
-        mimicSocket(data, metadataCommitComplete)
+        mimicSocket(data, {cb: metadataCommitComplete})
         setIsLoading(false)
+    }
+
+    async function entityRegistrationComplete(data) {
+        const {fails, passes} = await fetchEntities(data)
+        setBulkSuccess({fails, passes})
+    }
+
+    function entityRegistrationFail(data) {
+        setError(getStepsLength() === 3 ? {2: true} : {3: true})
+        setIsNextButtonDisabled(true)
+        setErrorMessage(Object.values(data.errors))
     }
 
     // This makes a request to ingest-api, validating the upload
@@ -257,6 +279,7 @@ export default function BulkCreate({
         setIsLoading(true)
         const formData = new FormData()
         formData.append('file', file)
+        formData.append('referrer', JSON.stringify(getValidateReferrer()))
         const requestOptions = {
             method: 'POST',
             headers: get_auth_header(),
@@ -264,20 +287,14 @@ export default function BulkCreate({
         }
         const response = await fetch(getEntityValidationUrl(), requestOptions)
         const data = await response.json()
-        if (!response.ok) {
-            setError({1: true})
-            setErrorMessage(data.description)
-        } else {
-            setTempId(data.description.temp_id)
-            setValidationSuccess(true)
-            setIsNextButtonDisabled(false)
-        }
-        setIsLoading(false)
+        setBulkResponse(data)
+        setTempId(data.temp_id)
+        mimicSocket(data, {})
     }
 
     async function entityRegistration() {
         setIsLoading(true)
-        const body = {temp_id: tempId, group_uuid: selectedGroup}
+        const body = {temp_id: tempId, group_uuid: selectedGroup, job_id: jobData.job_id, referrer: getRegisterReferrer()}
         const requestOptions = {
             method: 'POST',
             headers: get_headers(),
@@ -285,16 +302,7 @@ export default function BulkCreate({
         }
         const response = await fetch(getEntityRegistrationUrl(), requestOptions)
         const data = await response.json()
-        if (!response.ok) {
-            setError(getStepsLength() === 3 ? {2: true} : {3: true})
-            setIsNextButtonDisabled(true)
-            setErrorMessage(Object.values(data.description))
-        } else {
-            setBulkSuccess(true)
-            setBulkResponse(data.description)
-            setIsNextButtonDisabled(false)
-        }
-        setIsLoading(false)
+        mimicSocket(data, {cb: entityRegistrationComplete, cbFail: entityRegistrationFail})
     }
 
     function getUserWriteGroupsLength() {
@@ -474,7 +482,7 @@ export default function BulkCreate({
 
     function getEntityModalBody() {
         let body = []
-        body.push(<p key={'modal-subtitle'}><strong>Group Name:</strong>  {bulkResponse[1].group_name}</p>)
+        body.push(<p key={'modal-subtitle'}><strong>Group Name:</strong>  {bulkSuccess.passes[0].group_name}</p>)
         let {typeCol, labIdCol} = getColNames()
 
         let columns = getDefaultModalTableCols()
@@ -488,11 +496,10 @@ export default function BulkCreate({
             })
         }
 
-        let tableData = Object.values(bulkResponse)
-        const downloadURL = generateTSVData(columns, labIdCol, bulkResponse)
+        const downloadURL = generateTSVData(columns, labIdCol, bulkSuccess.passes)
 
         body.push(
-            <DataTable key={'success-table'} columns={columns} data={tableData} pagination />
+            <DataTable key={'success-table'} columns={columns} data={bulkSuccess.passes} pagination />
         )
 
         const isBulkMetadataSupported = (cat) => {
