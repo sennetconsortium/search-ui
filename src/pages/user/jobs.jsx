@@ -314,6 +314,7 @@ function ViewJobs({isAdmin = false}) {
                 selector: row => row.job_id,
                 sortable: true,
                 reorder: true,
+                maxWidth: '350px',
                 format: row => <span data-field='job_id'>{row.job_id}</span>,
             },
             {
@@ -330,7 +331,7 @@ function ViewJobs({isAdmin = false}) {
             {
                 name: 'Status',
                 selector: row => row.status,
-                width: '150px',
+                width: '180px',
                 format: (row) => {
                     return (<div>
                         <span className={`${getStatusColor(row.status)} badge`}>
@@ -352,6 +353,7 @@ function ViewJobs({isAdmin = false}) {
                 sortable: true,
                 reorder: true,
                 omit: true,
+                width: '170px',
                 format: row => {
                     return <span data-field='type' className={`badge`}
                                  style={{backgroundColor: getJobTypeColor(getJobType(row)),
@@ -363,20 +365,34 @@ function ViewJobs({isAdmin = false}) {
             {
                 name: 'Start Date',
                 selector: row => row.started_timestamp,
-                width: '150px',
+                width: '180px',
                 sortable: true,
                 reorder: true,
                 omit: true,
-                format: row => <span data-field='start-date'>{new Date(row.started_timestamp).toLocaleDateString()}</span>,
+                format: row => {
+                    const date = new Date(row.started_timestamp)
+                    return (
+                        <span data-field='start-date'>
+                            {date.toLocaleDateString()} {date.toLocaleTimeString()}
+                        </span>
+                    )
+                },
             },
             {
                 name: 'End Date',
                 selector: row => row.ended_timestamp,
-                width: '150px',
+                width: '180px',
                 sortable: true,
                 reorder: true,
                 omit: true,
-                format: row => <span data-field='action'>{new Date(row.ended_timestamp).toLocaleDateString()}</span>,
+                format: row => {
+                    const date = new Date(row.ended_timestamp)
+                    return (
+                        <span data-field='end-date'>
+                            {date.toLocaleDateString()} {date.toLocaleTimeString()}
+                        </span>
+                    )
+                },
             },
             {
                 name: 'Action',
