@@ -530,6 +530,8 @@ function ViewJobs({isAdmin = false}) {
 
                                  <p>Once validation of the submitted TSV is complete, users can click on the "Register" button
                                      located under the Action column to finalize entity registration or metadata upload.</p>
+
+                                 <p>Validation and registration jobs of the same file are linked and this relationship can be shown and grouped in the table by enabling "Color code linked jobs"</p>
                              </div>
                          </Alert>
                      </div>
