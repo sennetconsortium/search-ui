@@ -7,7 +7,7 @@ import {COLS_ORDER_KEY} from "../../../config/config";
 import {deleteFromLocalStorageWithSuffix} from "../js/functions";
 
 
-function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, searchContext, defaultHiddenColumns = [] }) {
+function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, filters, searchContext, defaultHiddenColumns = [] , deleteFirst = true}) {
     const multiVals = useRef(null)
     const STORE_KEY = `.lastHiddenColumns`
 
@@ -68,7 +68,9 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
     const getColumnOptions = () => {
         if (!currentColumns.current) return []
         let allColumns = Array.from(currentColumns.current)
-        allColumns.splice(0, 1)
+        if (deleteFirst) {
+            allColumns.splice(0, 1)
+        }
         let cols = []
         for (let col of allColumns) {
             if (!col.ignoreRowClick) {

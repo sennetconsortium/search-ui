@@ -268,9 +268,9 @@ export function getJobTypeColor(type) {
     if (type) {
         switch (type.toLowerCase()) {
             case "metadata validation":
-                return '#ffc766'
+                return '#dc8e07'
             case "metadata registration":
-                return '#fcea7e'
+                return '#9d8700'
             case "entity validation":
                 return '#3b6b23'
             case "entity registration":
