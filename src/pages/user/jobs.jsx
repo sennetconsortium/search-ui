@@ -395,12 +395,21 @@ function ViewJobs({isAdmin = false}) {
                 },
             },
             {
+                name: <span><i className={'color-wheel'}></i></span>,
+                id: 'rowColoring',
+                sortable: true,
+                width: '100px',
+                omit: rowColoring,
+                selector: row => colorMap.current[row.job_id]?.color || '0',
+                format: row => <></>
+            },
+            {
                 name: 'Action',
                 selector: row => getAction(row),
                 sortable: true,
                 reorder: true,
                 format: row => <span data-field='action'>{getActionUI(row)}</span>,
-            }
+            },
         ]
 
         if (isAdmin) {
@@ -417,7 +426,11 @@ function ViewJobs({isAdmin = false}) {
 
         if (hiddenColumns) {
             for (let col of cols) {
-                col.omit = hiddenColumns[col.name] || false
+                if (eq(col.id, 'rowColoring')) {
+                    col.omit = rowColoring === false ? true : hiddenColumns[col.name]
+                } else {
+                    col.omit = hiddenColumns[col.name] || false
+                }
             }
         }
         currentColumns.current = cols;
