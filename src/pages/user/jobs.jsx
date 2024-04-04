@@ -268,6 +268,16 @@ function ViewJobs({isAdmin = false}) {
             }
         }
         if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
+
+        if (Array.isArray(array) && array.length && array[0].message !== undefined) {
+            array.forEach((item) => {
+                item.id = item.index
+                item.error = item.message
+            })
+            array = array.filter((item) => !item.success)
+            return array
+        }
+
         let result = []
         for (let item of array) {
             if (item.description && item.description.error) {
