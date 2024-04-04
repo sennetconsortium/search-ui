@@ -29,6 +29,10 @@ export default function EditBulk() {
     const isMetadata = router.query['action'] === 'metadata'
     let result
 
+    if (eq(entityType, cache.entities.dataset)) {
+        window.location = '/edit/upload?uuid=register'
+    }
+
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>

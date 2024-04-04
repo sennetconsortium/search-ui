@@ -22,9 +22,7 @@ import {tableColumns, getErrorList} from "../edit/AttributesUpload";
 import DataTable from 'react-data-table-component';
 import {createDownloadUrl, eq, getHeaders, getStatusColor} from "../js/functions";
 import AppContext from "../../../context/AppContext";
-import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
-import SenNetAlert from "../../SenNetAlert";
-
+import {get_headers, get_auth_header} from "../../../lib/services";
 
 export default function BulkCreate({
                                        entityType,
@@ -102,11 +100,11 @@ export default function BulkCreate({
     function ColorlibStepIcon(props) {
         const {active, completed, className} = props;
         let icons
-        if (userWriteGroups && getUserWriteGroupsLength() > 1) {
+        if (userWriteGroups && getUserWriteGroupsLength() > 1 && !isMetadata) {
             icons = {
                 1: <AttachFileIcon/>,
-                2: <VerifiedIcon/>,
-                3: <GroupsIcon/>,
+                2: <GroupsIcon/>,
+                3: <VerifiedIcon/>,
                 4: <DoneOutlineIcon/>,
             }
         } else {
@@ -130,9 +128,7 @@ export default function BulkCreate({
                 setSteps(stepLabels)
             } else {
                 let extraSteps = Array.from(stepLabels)
-                const lastStep = extraSteps.pop()
-                extraSteps.push('Select group')
-                extraSteps.push(lastStep)
+                extraSteps.splice(1, 0, 'Select group')
                 setSteps(extraSteps)
             }
         }
@@ -280,6 +276,7 @@ export default function BulkCreate({
         const formData = new FormData()
         formData.append('file', file)
         formData.append('referrer', JSON.stringify(getValidateReferrer()))
+        formData.append('group_uuid', selectedGroup)
         const requestOptions = {
             method: 'POST',
             headers: get_auth_header(),
@@ -294,6 +291,7 @@ export default function BulkCreate({
 
     async function entityRegistration() {
         setIsLoading(true)
+        //TODO: remove group_uuid
         const body = {temp_id: tempId, group_uuid: selectedGroup, job_id: jobData.job_id, referrer: getRegisterReferrer()}
         const requestOptions = {
             method: 'POST',
@@ -642,6 +640,10 @@ export default function BulkCreate({
         </>
     }
 
+    const isValidationStep = () => {
+        return (isMetadata && activeStep === 1) || (activeStep === 2)
+    }
+
     const getSocketStatusDetails = () => {
         const hasFailed = jobHasFailed(jobData)
         return (<div>
@@ -671,23 +673,7 @@ export default function BulkCreate({
 
                     </div>
                     <h1 className={'text-center'}>{getTitle()}</h1>
-                     <SenNetAlert variant={'warning'}
-                                  text={<>Please limit the number of rows (excluding headers) containing data to 30 for
-                                      processing purposes. If necessary, you may need to register entities via multiple
-                                      submissions.</>}
-                                     icon={<i className="bi bi-exclamation-triangle-fill"></i>}/>
 
-                    {eq(entityType, cache.entities.dataset) &&
-                        <SenNetAlert variant={'warning'}
-                                     text={<>This page is intended for registering datasets in bulk. This process will
-                                         yield individual SenNet IDs and Globus locations per dataset. Data providers
-                                         will need to transfer their data files to each dataset individually.
-                                         <br></br><br></br>
-                                         If a data provider would prefer to transfer their data files in bulk, CODCC Curation
-                                         recommends creating an upload through <a
-                                             href={getRootURL() + 'edit/upload?uuid=register'}>this page</a>.</>}
-                                     icon={<i className="bi bi-exclamation-triangle-fill"></i>}/>
-                    }
                     <div className={'p-4 text-center'}>
                         To register multiple items at one time, upload a <code>TSV</code> file in the format specified by the example file.<br/>
                         {getDocsText()}
@@ -717,12 +703,12 @@ export default function BulkCreate({
                         </div>
                     }
 
-                    {activeStep === 1 && !errorMessage && validationSuccess &&
+                    {isValidationStep() && !errorMessage && validationSuccess &&
                         <Alert severity="success" sx={{m: 2}}>
                          <div>Validation successful please continue onto the next step</div>
                         </Alert>}
 
-                    {activeStep === 1 && !errorMessage && jobData && !validationSuccess &&
+                    {isValidationStep() && !errorMessage && jobData && !validationSuccess &&
                         <Alert severity="info" sx={{m: 2}}>
                             {getSocketStatusDetails()}
                         </Alert>}
@@ -739,7 +725,7 @@ export default function BulkCreate({
                         />
                     }
                     {
-                        !isMetadata && activeStep === 2 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
+                        !isMetadata && activeStep === 1 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
                         <Grid container className={'text-center mt-5'}>
                             <Grid item xs></Grid>
                             <Grid item xs>

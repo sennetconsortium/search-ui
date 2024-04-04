@@ -270,11 +270,11 @@ export function getJobTypeColor(type) {
             case "metadata validation":
                 return '#dc8e07'
             case "metadata registration":
-                return '#9d8700'
+                return '#dc8e07'
             case "entity validation":
                 return '#3b6b23'
             case "entity registration":
-                return '#47991f'
+                return '#3b6b23'
             default:
                 break;
         }
