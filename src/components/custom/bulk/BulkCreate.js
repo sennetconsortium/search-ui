@@ -500,7 +500,7 @@ export default function BulkCreate({
         if (eq(entityType, cache.entities.sample)) {
             columns.push({
                 name: 'organ_type',
-                selector: row => row.organ ? row.organ : '',
+                selector: row => row.organ_type ? row.organ_type : '',
                 sortable: true,
                 width: '150px'
             })
@@ -662,7 +662,7 @@ export default function BulkCreate({
             <div>Request {jobData.referrer && <span>to <code>{jobData.referrer?.type}</code> {isMetadata ? 'metadata' : 'entities'}</span>} sent to job queue with a current status of <span className={`${getStatusColor(jobData.status)} badge`}>{jobData.status}</span>.</div>
 
             {!hasFailed && <div>You may remain on this page until the job has a <span className={`${getStatusColor('complete')} badge`}>Complete</span> status.</div>}
-            <div>You {!hasFailed ? 'can also' : 'must'} further handle this job (and other jobs) by viewing the <a href={`/user/jobs?q=${jobData?.job_id}`}>current jobs</a> page.</div>
+            <div>You {!hasFailed ? 'can also' : 'must'} further handle this job (and other jobs) by viewing the <a href={`/user/jobs?q=${jobData?.job_id}`}>Job Dashboard</a> page.</div>
         </div>)
     }
 
@@ -751,7 +751,7 @@ export default function BulkCreate({
                         <Grid item xs>
                             <Button
                                 variant={'outline-dark rounded-0'}
-                                disabled={activeStep === 0 || activeStep === getStepsLength() - 1}
+                                disabled={activeStep === 0 || activeStep === getStepsLength() - 1 || isValidationStep()}
                                 onClick={handleBack}
                             >
                                 Back
