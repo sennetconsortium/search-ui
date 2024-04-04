@@ -12,17 +12,16 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
-import {Row, Col, Stack} from "react-bootstrap";
-import {getDocsRootURL, getEntityEndPoint, getIngestEndPoint, getRootURL} from "../../../config/config";
+import {Row, Stack} from "react-bootstrap";
+import {getDocsRootURL, getEntityEndPoint, getIngestEndPoint} from "../../../config/config";
 import Spinner from "../Spinner";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
-import {tableColumns, getErrorList} from "../edit/AttributesUpload";
 import DataTable from 'react-data-table-component';
 import {createDownloadUrl, eq, getHeaders, getStatusColor} from "../js/functions";
 import AppContext from "../../../context/AppContext";
-import {get_headers, get_auth_header} from "../../../lib/services";
+import {get_headers, get_auth_header, get_json_header} from "../../../lib/services";
 
 export default function BulkCreate({
                                        entityType,
@@ -36,12 +35,10 @@ export default function BulkCreate({
     const [activeStep, setActiveStep] = useState(0)
     const [file, setFile] = useState(null)
     const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(true)
-    const [tempId, setTempId] = useState(null)
     const [error, setError] = useState(null)
-    const [errorMessage, setErrorMessage] = useState(null)
+    const [isInSocket, setIsInSocket] = useState(false)
     const [validationSuccess, setValidationSuccess] = useState(null)
     const [bulkSuccess, setBulkSuccess] = useState(null)
-    const [bulkResponse, setBulkResponse] = useState([])
     const [isLoading, setIsLoading] = useState(null)
     const stepLabels = ['Attach Your File', 'Review Validation', 'Complete']
     const [steps, setSteps] = useState(stepLabels)
@@ -49,7 +46,7 @@ export default function BulkCreate({
     const [showModal, setShowModal] = useState(true)
     const {cache, supportedMetadata} = useContext(AppContext)
     const [jobData, setJobData] = useState(null)
-    const intervalTimer = useRef(null);
+    const intervalTimer = useRef(null)
 
     const ColorlibConnector = styled(StepConnector)(({theme}) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -137,6 +134,15 @@ export default function BulkCreate({
         }
     }, [userWriteGroups])
 
+    const clearSocket = () => {
+        clearInterval(intervalTimer.current)
+        setIsInSocket(false)
+    }
+
+    const getEntitiesFetchUrl = () => {
+        return `${getEntityEndPoint()}entities/dashboard/${entityType.upperCaseFirst()}`
+    }
+
     const getEntityValidationUrl = () => {
         return `${getIngestEndPoint()}${entityType}s/bulk/validate`
     }
@@ -155,17 +161,23 @@ export default function BulkCreate({
 
     const jobHasFailed = (job) => ['error', 'failed'].contains(job.status)
 
+    const updateValidationSuccess = (data) => setValidationSuccess(true)
+
     const mimicSocket = (data, {cb, cbFail}) => {
-        clearInterval(intervalTimer.current)
+        clearSocket()
+        setJobData(data)
+        setIsInSocket(true)
+        setValidationSuccess(null)
+
+        //TODO: stop use of setInterval; extract code within interval callback when actual server side socket is implemented
         intervalTimer.current = setInterval(async () => {
             let res = await fetch(getIngestEndPoint() + `jobs/${data.job_id}`, {method: 'GET', headers: getHeaders()})
             let job = await res.json()
             setJobData(job)
             if (eq(job.status, 'Complete')) {
                 setIsLoading(false)
-                if (!cb) {
-                    setValidationSuccess(true)
-                } else {
+                clearInterval(intervalTimer.current)
+                if (cb) {
                     cb(job)
                 }
                 setIsNextButtonDisabled(false)
@@ -184,23 +196,28 @@ export default function BulkCreate({
         let passes = []
         let fails = []
         clearInterval(intervalTimer.current)
-        for (let item of data.results) {
-            const requestOptions = {
-                method: 'GET',
-                headers: get_auth_header(),
-            }
-            let {typeCol, labIdCol} = getColNames()
-            const response = await fetch(`${getEntityEndPoint()}entities/${item.uuid}`, requestOptions)
-            let entity = await response.json()
-            let result = {uuid: item.uuid, sennet_id: entity.sennet_id, [labIdCol]: entity[labIdCol], [typeCol]: entity[typeCol]}
-            if (item.success){
-                passes.push(result)
-            } else {
-                fails.push(result)
-            }
+
+        const succeededUuids = (data.results.filter((r) => r.success)).map((r) => r.uuid)
+        const failedUuids = (data.results.filter((r) => !r.success)).map((r) => r.uuid)
+
+        let requestOptions = {
+            method: 'PUT',
+            headers:  get_json_header(get_auth_header()),
+            body: JSON.stringify({entity_ids: succeededUuids})
         }
+
+        if (succeededUuids.length) {
+            let response = await fetch(getEntitiesFetchUrl(), requestOptions)
+            passes = await response.json()
+        }
+
+        if (failedUuids.length) {
+            requestOptions.body = JSON.stringify({entity_ids: failedUuids})
+            let response = await fetch(getEntitiesFetchUrl(), requestOptions)
+            fails = await response.json()
+        }
+
         setIsLoading(false)
-        console.log('FETCH ENT', fails, passes)
         return {fails, passes}
     }
 
@@ -238,12 +255,11 @@ export default function BulkCreate({
         }
         const response = await fetch(getMetadataValidationUrl(), requestOptions)
         const data = await response.json()
-        setBulkResponse(data)
-        mimicSocket(data, {})
+        mimicSocket(data, {cb: updateValidationSuccess})
     }
 
     async function metadataCommit() {
-        clearInterval(intervalTimer.current)
+        clearSocket()
         setIsLoading(true)
         const requestOptions = {
             method: 'POST',
@@ -265,9 +281,8 @@ export default function BulkCreate({
     }
 
     function entityRegistrationFail(data) {
-        setError(getStepsLength() === 3 ? {2: true} : {3: true})
+        setError(getStepsLength() === 4 ? {3: true} : {2: true})
         setIsNextButtonDisabled(true)
-        setErrorMessage(Object.values(data.errors))
     }
 
     // This makes a request to ingest-api, validating the upload
@@ -284,15 +299,13 @@ export default function BulkCreate({
         }
         const response = await fetch(getEntityValidationUrl(), requestOptions)
         const data = await response.json()
-        setBulkResponse(data)
-        setTempId(data.temp_id)
-        mimicSocket(data, {})
+        mimicSocket(data, {cb: updateValidationSuccess})
     }
 
     async function entityRegistration() {
+        clearSocket()
         setIsLoading(true)
-        //TODO: remove group_uuid
-        const body = {temp_id: tempId, group_uuid: selectedGroup, job_id: jobData.job_id, referrer: getRegisterReferrer()}
+        const body = {job_id: jobData.job_id, referrer: getRegisterReferrer()}
         const requestOptions = {
             method: 'POST',
             headers: get_headers(),
@@ -318,21 +331,22 @@ export default function BulkCreate({
 
     const onRegisterNext = () => {
         setIsNextButtonDisabled(true)
-        if (getStepsLength() === 3) {
-            if (activeStep === 0) {
+
+        if (getStepsLength() === 4) {
+            if (activeStep === 1) {
                 entityValidation()
-            } else if (activeStep === 1) {
-                entityRegistration()
             } else if (activeStep === 2) {
+                entityRegistration()
+            } else if (activeStep === 3) {
                 handleReset()
                 return
             }
         } else {
             if (activeStep === 0) {
                 entityValidation()
-            } else if (activeStep === 2) {
+            } else if (activeStep === 1) {
                 entityRegistration()
-            } else if (activeStep === 3) {
+            } else if (activeStep === 2) {
                 handleReset()
                 return
             }
@@ -366,11 +380,10 @@ export default function BulkCreate({
     }
 
     const handleBack = () => {
-        clearInterval(intervalTimer.current)
+        clearSocket()
         setJobData(null)
         setIsNextButtonDisabled(true)
         setError(null)
-        setErrorMessage(null)
         setFile(null)
         setSelectedGroup(null)
         if (activeStep !== 0) {
@@ -379,16 +392,16 @@ export default function BulkCreate({
     }
 
     const handleReset = () => {
+        clearSocket()
         setActiveStep(0)
-        setTempId(null)
         setError(null)
         setFile(null)
-        setErrorMessage(null)
         setValidationSuccess(null)
         setBulkSuccess(null)
         setIsNextButtonDisabled(true)
         setSelectedGroup(null)
         setShowModal(true)
+        setJobData(null)
     }
 
     function handleFileChange(event) {
@@ -477,10 +490,9 @@ export default function BulkCreate({
         ]
     }
 
-
     function getEntityModalBody() {
         let body = []
-        body.push(<p key={'modal-subtitle'}><strong>Group Name:</strong>  {bulkSuccess.passes[0].group_name}</p>)
+        body.push(<p key={'modal-subtitle'}><strong>Group Name:</strong>  {bulkSuccess.passes[0]?.group_name}</p>)
         let {typeCol, labIdCol} = getColNames()
 
         let columns = getDefaultModalTableCols()
@@ -506,7 +518,7 @@ export default function BulkCreate({
         }
 
         let categoriesSet = new Set()
-        Object.values(bulkResponse).map(each => {
+        bulkSuccess.passes.map(each => {
             if (isBulkMetadataSupported(each[typeCol])) {
                 categoriesSet.add(each[typeCol])
             }
@@ -641,16 +653,16 @@ export default function BulkCreate({
     }
 
     const isValidationStep = () => {
-        return (isMetadata && activeStep === 1) || (activeStep === 2)
+        return (isMetadata && activeStep === 1) || (getStepsLength() === 4 ? activeStep === 2 : activeStep === 1)
     }
 
     const getSocketStatusDetails = () => {
         const hasFailed = jobHasFailed(jobData)
         return (<div>
-            <div>Request sent to job queue with a current status of <span className={`${getStatusColor(jobData.status)} badge`}>{jobData.status}</span>.</div>
+            <div>Request {jobData.referrer && <span>to <code>{jobData.referrer?.type}</code> {isMetadata ? 'metadata' : 'entities'}</span>} sent to job queue with a current status of <span className={`${getStatusColor(jobData.status)} badge`}>{jobData.status}</span>.</div>
 
             {!hasFailed && <div>You may remain on this page until the job has a <span className={`${getStatusColor('complete')} badge`}>Complete</span> status.</div>}
-            <div>You {!hasFailed ? 'can also' : 'must'} further handle this job (and other jobs) by viewing the <a href={`/user/jobs?q=${bulkResponse?.job_id}`}>current jobs</a> page.</div>
+            <div>You {!hasFailed ? 'can also' : 'must'} further handle this job (and other jobs) by viewing the <a href={`/user/jobs?q=${jobData?.job_id}`}>current jobs</a> page.</div>
         </div>)
     }
 
@@ -697,23 +709,19 @@ export default function BulkCreate({
                         }
                     </Stepper>
                     {isLoading && <Spinner/>}
-                    {
-                        errorMessage && <div className='c-metadataUpload__table table-responsive has-error'>
-                            <DataTable columns={tableColumns('`')} data={errorMessage.data ? errorMessage.data : errorMessage} pagination />
-                        </div>
-                    }
 
-                    {isValidationStep() && !errorMessage && validationSuccess &&
+                    {isValidationStep() && validationSuccess &&
                         <Alert severity="success" sx={{m: 2}}>
                          <div>Validation successful please continue onto the next step</div>
                         </Alert>}
 
-                    {isValidationStep() && !errorMessage && jobData && !validationSuccess &&
+                    {isInSocket && jobData && !validationSuccess &&
                         <Alert severity="info" sx={{m: 2}}>
                             {getSocketStatusDetails()}
-                        </Alert>}
+                        </Alert> }
+
                     {
-                        isAtLastStep() && !errorMessage && bulkSuccess &&
+                        isAtLastStep() && bulkSuccess &&
                         <AppModal
                             modalTitle={getModalTitle()}
                             modalBody={getModalBody()}

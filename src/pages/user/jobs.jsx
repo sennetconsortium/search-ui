@@ -59,6 +59,8 @@ function ViewJobs({isAdmin = false}) {
         }
     }
 
+    const jobHasFailed = (job) => ['error', 'failed'].contains(job.status)
+
     const {filteredItems, setFilterText, searchBarComponent} = useDataTableSearch(
         {data, fieldsToSearch: ['job_id', 'description', 'status'], className: 'has-extraPadding', onKeydown})
 
@@ -99,7 +101,7 @@ function ViewJobs({isAdmin = false}) {
                 actions.push('Register')
             }
             actions.push('Delete')
-        } else if (eq(status, 'Error') && row.errors && isValidate) {
+        } else if (jobHasFailed(row) && row.errors && isValidate) {
             actions.push('Resubmit')
             actions.push('Delete')
         } else if (eq(status, 'Started')) {
@@ -339,7 +341,7 @@ function ViewJobs({isAdmin = false}) {
                             {row.status}
                         </SenNetPopover>
                         </span>
-                            {['error', 'failed'].contains(row.status) && <a className={'mx-2'} href={'#'} onClick={() => handleViewErrorDetailsModal(row)}><small>View details</small></a>}
+                            {jobHasFailed(row) && <a className={'mx-2'} href={'#'} onClick={() => handleViewErrorDetailsModal(row)}><small>View details</small></a>}
                     </div>
 
                     )
