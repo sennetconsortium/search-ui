@@ -22,9 +22,7 @@ import {tableColumns, getErrorList} from "../edit/AttributesUpload";
 import DataTable from 'react-data-table-component';
 import {createDownloadUrl, eq, getHeaders, getStatusColor} from "../js/functions";
 import AppContext from "../../../context/AppContext";
-import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
-import SenNetAlert from "../../SenNetAlert";
-
+import {get_headers, get_auth_header} from "../../../lib/services";
 
 export default function BulkCreate({
                                        entityType,
