@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react'
 import PropTypes from 'prop-types'
-import Spinner from "../../components/custom/Spinner";
+import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
 import Unauthorized from "../../components/custom/layout/Unauthorized";
 import Header from "../../components/custom/layout/Header";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
@@ -231,13 +231,18 @@ function ViewJobs({isAdmin = false}) {
         })
     }
 
+    const getEntityRegisterPath = (row) => {
+        let entityType = row.referrer?.path.split('/edit/bulk/')[1]?.split('?action=register')[0]
+        return `${entityType}s/bulk/register`
+    }
+
     const handleAction = (e, action, row) => {
 
         if (eq(action, 'Delete')) {
             handleSingleJobDeletion(e, row, action)
         } else if (eq(action, 'Register')) {
             e.target.disabled = true
-            const pathName = row.referrer?.path.includes('action=metadata') ? `metadata/register` : `entities/register`
+            const pathName = row.referrer?.path.includes('action=metadata') ? `metadata/register` : getEntityRegisterPath(row)
             handleResponseModal(e, row, getIngestEndPoint() + pathName, 'POST', action, 'registered',
                 {job_id: row.job_id, referrer: {type: 'register', path: row.referrer?.path + `&job_id=${row.job_id}`
                 }})
@@ -272,6 +277,7 @@ function ViewJobs({isAdmin = false}) {
         if (Array.isArray(array) && array.length && array[0].message !== undefined) {
             array.forEach((item) => {
                 item.id = item.index
+                item.row = item.index
                 item.error = item.message
             })
             array = array.filter((item) => !item.success)
@@ -351,6 +357,7 @@ function ViewJobs({isAdmin = false}) {
                             {row.status}
                         </SenNetPopover>
                         </span>
+                            {eq(row.status, 'started') && <span style={{position: 'absolute', marginLeft: '5px', marginTop: '2px'}}><SpinnerEl /></span>}
                             {jobHasFailed(row) && <a className={'mx-2'} href={'#'} onClick={() => handleViewErrorDetailsModal(row)}><small>View details</small></a>}
                     </div>
 
