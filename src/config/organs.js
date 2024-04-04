@@ -71,10 +71,10 @@ export const organDetails = {
         searchUrl: organSearchUrl("RL"),
         urlParamName: "right-lung",
     },
-    LN: {
+    LY: {
         icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-lymph-nodes.svg",
-        ruiCode: "LN",
-        searchUrl: organSearchUrl("LN"),
+        ruiCode: "LY",
+        searchUrl: organSearchUrl("LY"),
         urlParamName: "lymph-nodes",
     },
     MU: {
