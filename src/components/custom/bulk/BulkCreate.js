@@ -500,7 +500,7 @@ export default function BulkCreate({
         if (eq(entityType, cache.entities.sample)) {
             columns.push({
                 name: 'organ_type',
-                selector: row => row.organ ? row.organ : '',
+                selector: row => row.organ_type ? row.organ_type : '',
                 sortable: true,
                 width: '150px'
             })
