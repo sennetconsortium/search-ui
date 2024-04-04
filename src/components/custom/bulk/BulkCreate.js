@@ -751,7 +751,7 @@ export default function BulkCreate({
                         <Grid item xs>
                             <Button
                                 variant={'outline-dark rounded-0'}
-                                disabled={activeStep === 0 || activeStep === getStepsLength() - 1}
+                                disabled={activeStep === 0 || activeStep === getStepsLength() - 1 || isValidationStep()}
                                 onClick={handleBack}
                             >
                                 Back
