@@ -35,7 +35,6 @@ export default function BulkCreate({
     const [activeStep, setActiveStep] = useState(0)
     const [file, setFile] = useState(null)
     const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(true)
-    const [tempId, setTempId] = useState(null)
     const [error, setError] = useState(null)
     const [isInSocket, setIsInSocket] = useState(false)
     const [validationSuccess, setValidationSuccess] = useState(null)
@@ -140,6 +139,10 @@ export default function BulkCreate({
         setIsInSocket(false)
     }
 
+    const getEntitiesFetchUrl = () => {
+        return `${getEntityEndPoint()}entities/dashboard/${entityType.upperCaseFirst()}`
+    }
+
     const getEntityValidationUrl = () => {
         return `${getIngestEndPoint()}${entityType}s/bulk/validate`
     }
@@ -158,11 +161,13 @@ export default function BulkCreate({
 
     const jobHasFailed = (job) => ['error', 'failed'].contains(job.status)
 
+    const updateValidationSuccess = (data) => setValidationSuccess(true)
+
     const mimicSocket = (data, {cb, cbFail}) => {
         clearSocket()
         setJobData(data)
         setIsInSocket(true)
-        setValidationSuccess(false)
+        setValidationSuccess(null)
 
         //TODO: stop use of setInterval; extract code within interval callback when actual server side socket is implemented
         intervalTimer.current = setInterval(async () => {
@@ -171,9 +176,8 @@ export default function BulkCreate({
             setJobData(job)
             if (eq(job.status, 'Complete')) {
                 setIsLoading(false)
-                if (!cb) {
-                    setValidationSuccess(true)
-                } else {
+                clearInterval(intervalTimer.current)
+                if (cb) {
                     cb(job)
                 }
                 setIsNextButtonDisabled(false)
@@ -191,7 +195,8 @@ export default function BulkCreate({
     async function fetchEntities(data) {
         let passes = []
         let fails = []
-        clearSocket()
+        clearInterval(intervalTimer.current)
+
         const succeededUuids = (data.results.filter((r) => r.success)).map((r) => r.uuid)
         const failedUuids = (data.results.filter((r) => !r.success)).map((r) => r.uuid)
 
@@ -201,16 +206,14 @@ export default function BulkCreate({
             body: JSON.stringify({entity_ids: succeededUuids})
         }
 
-        const urlBase = `${getEntityEndPoint()}entities/dashboard/`
-
         if (succeededUuids.length) {
-            let response = await fetch(`${urlBase}${entityType.upperCaseFirst()}`, requestOptions)
+            let response = await fetch(getEntitiesFetchUrl(), requestOptions)
             passes = await response.json()
         }
 
         if (failedUuids.length) {
             requestOptions.body = JSON.stringify({entity_ids: failedUuids})
-            let response = await fetch(`${urlBase}${entityType.upperCaseFirst()}`, requestOptions)
+            let response = await fetch(getEntitiesFetchUrl(), requestOptions)
             fails = await response.json()
         }
 
@@ -252,7 +255,7 @@ export default function BulkCreate({
         }
         const response = await fetch(getMetadataValidationUrl(), requestOptions)
         const data = await response.json()
-        mimicSocket(data, {})
+        mimicSocket(data, {cb: updateValidationSuccess})
     }
 
     async function metadataCommit() {
@@ -296,14 +299,13 @@ export default function BulkCreate({
         }
         const response = await fetch(getEntityValidationUrl(), requestOptions)
         const data = await response.json()
-        setTempId(data.temp_id)
-        mimicSocket(data, {})
+        mimicSocket(data, {cb: updateValidationSuccess})
     }
 
     async function entityRegistration() {
+        clearSocket()
         setIsLoading(true)
-        //TODO: remove group_uuid
-        const body = {temp_id: tempId, group_uuid: selectedGroup, job_id: jobData.job_id, referrer: getRegisterReferrer()}
+        const body = {job_id: jobData.job_id, referrer: getRegisterReferrer()}
         const requestOptions = {
             method: 'POST',
             headers: get_headers(),
@@ -390,8 +392,8 @@ export default function BulkCreate({
     }
 
     const handleReset = () => {
+        clearSocket()
         setActiveStep(0)
-        setTempId(null)
         setError(null)
         setFile(null)
         setValidationSuccess(null)
