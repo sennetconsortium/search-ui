@@ -20,7 +20,7 @@ export default function Tissue({ data }) {
                 const name = getUBKGFullName(row.origin_sample?.organ)
                 const code = cache.organTypesCodes[name]
                 const icon = organDetails[code].icon || organDetails.OT.icon
-                return <span title={name}><Chip className={'no-focus bg--none lnk--txt'} avatar={<Avatar alt={name} src={icon} />} label={name} onClick={()=> window.location = `/organs/${name.toLowerCase()}`} /></span>
+                return <span title={name}><Chip className={'no-focus bg--none lnk--txt'} avatar={<Avatar alt={name} src={icon} />} label={name} onClick={()=> window.location = `/organs/${organDetails[code].urlParamName}`} /></span>
             },
         },
         {
