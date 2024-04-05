@@ -236,7 +236,7 @@ function EditUpload() {
                                                 controlId={'assigned_to_group_name'}
                                                 popover={<>The group responsible for the next step in the data ingest process.</>}
                                                 data={data}
-                                                value={values.assigned_to_group_name}
+                                                value={data.assigned_to_group_name}
                                                 groups={userWriteGroups.map(item => {if (item.data_provider) return item})}
                                                 onGroupSelectChange={onChange}
                                                 entity_type={'dataset'}/>
