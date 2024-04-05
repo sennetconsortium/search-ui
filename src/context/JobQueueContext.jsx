@@ -164,7 +164,7 @@ export const JobQueueProvider = ({ children }) => {
         )
 
         const isBulkMetadataSupported = (cat) => {
-            let supported = supportedMetadata()[cache.entities[entityType]]
+            let supported = supportedMetadata()[cache.entities[entity]]
             return supported ? supported.categories.includes(cat) : false
         }
 
@@ -185,7 +185,7 @@ export const JobQueueProvider = ({ children }) => {
                         className="bi bi-download"></i></a>
                     {(categories.length === 1) &&
                         <a className={'btn btn-primary rounded-0'}
-                           href={`/edit/bulk/${entityType}?action=metadata&category=${categories[0]}`}>
+                           href={`/edit/bulk/${entity}?action=metadata&category=${categories[0]}`}>
                             Continue to metadata upload <i className="bi bi-arrow-right-square-fill"></i>
                         </a>
                     }
