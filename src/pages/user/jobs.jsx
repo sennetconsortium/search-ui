@@ -402,7 +402,7 @@ function ViewJobs({isAdmin = false}) {
                         </SenNetPopover>
                         </span>
                             {eq(row.status, 'started') && <span style={{position: 'absolute', marginLeft: '5px', marginTop: '2px'}}><SpinnerEl /></span>}
-                            {(jobHasFailed(row) || (jobCompleted(row) && isRegisterJob(row))) && <a className={'mx-2'} href={'#'} onClick={async () => await getViewDetailsModal(row)}><small>View details</small></a>}
+                            {(jobHasFailed(row) || (jobCompleted(row) && isRegisterJob(row))) && <a className={'mx-2'} href={'javascript:;'} onClick={async () => await getViewDetailsModal(row)}><small>View details</small></a>}
                     </div>
 
                     )
