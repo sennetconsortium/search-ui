@@ -18,7 +18,7 @@ import DataTable from "react-data-table-component";
 import ColumnsDropdown from "../../components/custom/search/ColumnsDropdown";
 import {Container, Row, Button, Form, Alert} from "react-bootstrap";
 import {getIngestEndPoint, RESULTS_PER_PAGE} from "../../config/config";
-import {getOptions, handlePagingInfo, opsDict, ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
+import {getOptions, opsDict, ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
 import AppModal from "../../components/AppModal";
 import {tableColumns} from "../../components/custom/edit/AttributesUpload";
 import Swal from 'sweetalert2'
@@ -27,15 +27,18 @@ import {get_headers, parseJson} from "../../lib/services";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import Stack from '@mui/material/Stack';
+import JobQueueContext, {JobQueueProvider} from "../../context/JobQueueContext";
 
 function ViewJobs({isAdmin = false}) {
 
     const searchContext = () => `${isAdmin ? 'admin' : 'user'}.jobs-queue`
     const rowSettingKey = searchContext() + '.rowSetting'
+    const {intervalTimer, jobHasFailed, getEntityModalBody, getMetadataModalBody,
+        fetchEntities, setBulkData, setEntityType, setFile, file, entityType, bulkData} = useContext(JobQueueContext)
 
     const [data, setData] = useState([])
     const [timestamp, setTimestamp] = useState(null)
-    const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache, adminGroup} = useContext(AppContext)
+    const {router, isRegisterHidden, isUnauthorized} = useContext(AppContext)
     const [errorModal, setErrorModal] = useState(false)
     const currentColumns = useRef([])
     const [hiddenColumns, setHiddenColumns] = useState(null)
@@ -45,10 +48,11 @@ function ViewJobs({isAdmin = false}) {
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [modalSize, setModalSize] = useState('lg')
-    const intervalTimer = useRef(null)
+    const currentRow = useRef(null)
     const hasLoaded = useRef(false)
     const colorMap = useRef({})
     let usedColors = {}
+
 
     const onKeydown = (e) => {
         if (eq(e.key, 'enter')) {
@@ -59,14 +63,14 @@ function ViewJobs({isAdmin = false}) {
         }
     }
 
-    const jobHasFailed = (job) => ['error', 'failed'].contains(job.status)
-
     const {filteredItems, setFilterText, searchBarComponent} = useDataTableSearch(
         {data, fieldsToSearch: ['job_id', 'description', 'status'], className: 'has-extraPadding', onKeydown})
 
     const successIcon = () => <TaskAltIcon color={'success'} />
 
     const errIcon = () => <WarningAmberIcon sx={{color: '#842029'}} />
+
+    const getEntityType = (row) => row.referrer?.path.split('/edit/bulk/')[1]?.split('?action')[0]
 
     const randomColor = () => {
         let col;
@@ -232,8 +236,7 @@ function ViewJobs({isAdmin = false}) {
     }
 
     const getEntityRegisterPath = (row) => {
-        let entityType = row.referrer?.path.split('/edit/bulk/')[1]?.split('?action=register')[0]
-        return `${entityType}s/bulk/register`
+        return `${getEntityType(row)}s/bulk/register`
     }
 
     const handleAction = (e, action, row) => {
@@ -305,6 +308,7 @@ function ViewJobs({isAdmin = false}) {
     const handleViewErrorDetailsModal = (row) => {
         const columns = tableColumns(['`', '"', "'"])
         setErrorModal(false)
+        setEntityType(getEntityType(row))
         let errors = flatten(row.errors)
         setShowModal(true)
         setModalTitle(<h3>Job Error Details</h3>)
@@ -312,17 +316,57 @@ function ViewJobs({isAdmin = false}) {
         setModalBody(<div className={'table-responsive has-error'}><DataTable columns={columns} data={errors} pagination /></div> )
     }
 
+    const isMetadata = (row) => row.referrer?.path?.includes('action=metadata')
+
     const getJobType = (row) => {
         let type = row.referrer.type
         type = eq(type, 'validate') ? 'validation' : 'registration'
-        return row.referrer?.path?.includes('action=metadata') ? `Metadata ${type}` : `Entity ${type}`
+        return isMetadata(row) ? `Metadata ${type}` : `Entity ${type}`
     }
+
+    const isRegisterJob = (row) => eq(row.referrer.type, 'register')
+
+    const jobCompleted = (row) => eq(row.status, 'complete')
 
     const getDescriptionModal = (row) => {
         setModalSize('lg')
+        setEntityType(getEntityType(row))
         setModalTitle(<h4>Job Description</h4>)
         setModalBody(<div>{row.description}<div className={'mt-3'}><small>Job ID: <code>{row.job_id}</code></small></div></div>)
         setShowModal(true)
+    }
+
+    const closeModal = () => {
+        setBulkData(null)
+        setShowModal(false)
+    }
+
+    const handleViewRegisterDetailsModal = async (row) => {
+        currentRow.current = row
+        const entity = getEntityType(row)
+        setEntityType(entity)
+        const _file = {name: row.job_id + '.tsv'}
+        setModalTitle(<h3>{getJobType(row)} job completion details</h3>)
+        setModalSize('xl')
+
+        const data = await fetchEntities(currentRow.current, {clearFetch: false, entity })
+
+        if (isMetadata(currentRow.current)) {
+            setModalBody(getMetadataModalBody(data, {_file, entity}))
+        } else {
+            setModalBody(getEntityModalBody(data, {_file, entity}))
+        }
+        setShowModal(true)
+
+    }
+
+    const getViewDetailsModal = async (row) => {
+        setEntityType(null)
+        if (jobHasFailed(row)) {
+            handleViewErrorDetailsModal(row)
+        } else {
+            await handleViewRegisterDetailsModal(row)
+        }
     }
 
     const getTableColumns = (hiddenColumns) => {
@@ -358,7 +402,7 @@ function ViewJobs({isAdmin = false}) {
                         </SenNetPopover>
                         </span>
                             {eq(row.status, 'started') && <span style={{position: 'absolute', marginLeft: '5px', marginTop: '2px'}}><SpinnerEl /></span>}
-                            {jobHasFailed(row) && <a className={'mx-2'} href={'#'} onClick={() => handleViewErrorDetailsModal(row)}><small>View details</small></a>}
+                            {(jobHasFailed(row) || (jobCompleted(row) && isRegisterJob(row))) && <a className={'mx-2'} href={'#'} onClick={async () => await getViewDetailsModal(row)}><small>View details</small></a>}
                     </div>
 
                     )
@@ -469,7 +513,7 @@ function ViewJobs({isAdmin = false}) {
     }
 
     useEffect(() => {
-        mimicSocket()
+        //mimicSocket()
 
         if (!hasLoaded.current) {
             fetchData()
@@ -478,7 +522,7 @@ function ViewJobs({isAdmin = false}) {
 
         document.addEventListener('visibilitychange', () => {
             if (eq(document.visibilityState,'visible')) {
-                mimicSocket()
+                //mimicSocket()
             } else {
                 clearInterval(intervalTimer.current)
             }
@@ -489,7 +533,7 @@ function ViewJobs({isAdmin = false}) {
             setFilterText(q)
         }
 
-    }, [])
+    }, [entityType])
 
     getOptions(filteredItems.length)
 
@@ -592,7 +636,7 @@ function ViewJobs({isAdmin = false}) {
                         paginationRowsPerPageOptions={Object.keys(opsDict)}
                         conditionalRowStyles={condStyles}
                         pagination />
-                        <AppModal modalSize={modalSize} className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`} showHomeButton={false} showCloseButton={true} handleClose={() => setShowModal(false)} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
+                        {entityType && <AppModal modalSize={modalSize} className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`} showHomeButton={false} showCloseButton={true} handleClose={() => closeModal()} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />}
                     </Row>
                 </Container>}
                 </>
@@ -607,3 +651,7 @@ ViewJobs.propTypes = {
 }
 
 export default ViewJobs
+
+ViewJobs.withWrapper = function (page) {
+    return <JobQueueProvider>{page}</JobQueueProvider>
+}

@@ -3,13 +3,13 @@ import BulkCreate from "../../../components/custom/bulk/BulkCreate";
 import AppNavbar from "../../../components/custom/layout/AppNavbar";
 import Unauthorized from "../../../components/custom/layout/Unauthorized";
 import {useRouter} from 'next/router'
-import {getIngestEndPoint} from "../../../config/config";
 import EntityContext, {EntityProvider} from "../../../context/EntityContext";
 import Spinner from "../../../components/custom/Spinner";
 import AppContext from "../../../context/AppContext";
 import NotFound from "../../../components/custom/NotFound";
 import AppFooter from "../../../components/custom/layout/AppFooter";
 import {eq} from "../../../components/custom/js/functions";
+import {JobQueueProvider} from "../../../context/JobQueueContext";
 import Header from "../../../components/custom/layout/Header";
 
 export default function EditBulk() {
@@ -59,11 +59,11 @@ export default function EditBulk() {
 
                 <AppNavbar/>
                 <BulkCreate
-                    entityType={entityType}
-                    subType={subType}
+                    entity={entityType}
+                    sub={subType}
                     userWriteGroups={userWriteGroups}
                     handleHome={handleHome}
-                    isMetadata={isMetadata}
+                    forMetadata={isMetadata}
                 />
                 <AppFooter />
             </>
@@ -77,6 +77,6 @@ export default function EditBulk() {
 }
 
 EditBulk.withWrapper = function (page) {
-    return <EntityProvider>{page}</EntityProvider>
+    return <EntityProvider><JobQueueProvider>{page}</JobQueueProvider></EntityProvider>
 }
 
