@@ -34,7 +34,7 @@ function ViewJobs({isAdmin = false}) {
     const searchContext = () => `${isAdmin ? 'admin' : 'user'}.jobs-queue`
     const rowSettingKey = searchContext() + '.rowSetting'
     const {intervalTimer, jobHasFailed, getEntityModalBody, getMetadataModalBody,
-        fetchEntities, setBulkData, setEntityType, setFile, file, entityType, bulkData} = useContext(JobQueueContext)
+        fetchEntities} = useContext(JobQueueContext)
 
     const [data, setData] = useState([])
     const [timestamp, setTimestamp] = useState(null)
@@ -308,7 +308,6 @@ function ViewJobs({isAdmin = false}) {
     const handleViewErrorDetailsModal = (row) => {
         const columns = tableColumns(['`', '"', "'"])
         setErrorModal(false)
-        setEntityType(getEntityType(row))
         let errors = flatten(row.errors)
         setShowModal(true)
         setModalTitle(<h3>Job Error Details</h3>)
@@ -330,38 +329,33 @@ function ViewJobs({isAdmin = false}) {
 
     const getDescriptionModal = (row) => {
         setModalSize('lg')
-        setEntityType(getEntityType(row))
         setModalTitle(<h4>Job Description</h4>)
         setModalBody(<div>{row.description}<div className={'mt-3'}><small>Job ID: <code>{row.job_id}</code></small></div></div>)
         setShowModal(true)
     }
 
     const closeModal = () => {
-        setBulkData(null)
         setShowModal(false)
     }
 
     const handleViewRegisterDetailsModal = async (row) => {
         currentRow.current = row
-        const entity = getEntityType(row)
-        setEntityType(entity)
+        const entityType = getEntityType(row)
         const _file = {name: row.job_id + '.tsv'}
         setModalTitle(<h3>{getJobType(row)} job completion details</h3>)
         setModalSize('xl')
-
-        const data = await fetchEntities(currentRow.current, {clearFetch: false, entity })
+        const data = await fetchEntities(currentRow.current, {clearFetch: false, entityType })
 
         if (isMetadata(currentRow.current)) {
-            setModalBody(getMetadataModalBody(data, {_file, entity}))
+            setModalBody(getMetadataModalBody(data, {_file, entityType}))
         } else {
-            setModalBody(getEntityModalBody(data, {_file, entity}))
+            setModalBody(getEntityModalBody(data, {_file, entityType}))
         }
         setShowModal(true)
 
     }
 
     const getViewDetailsModal = async (row) => {
-        setEntityType(null)
         if (jobHasFailed(row)) {
             handleViewErrorDetailsModal(row)
         } else {
@@ -533,7 +527,7 @@ function ViewJobs({isAdmin = false}) {
             setFilterText(q)
         }
 
-    }, [entityType])
+    }, [])
 
     getOptions(filteredItems.length)
 
@@ -636,7 +630,7 @@ function ViewJobs({isAdmin = false}) {
                         paginationRowsPerPageOptions={Object.keys(opsDict)}
                         conditionalRowStyles={condStyles}
                         pagination />
-                        {entityType && <AppModal modalSize={modalSize} className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`} showHomeButton={false} showCloseButton={true} handleClose={() => closeModal()} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />}
+                        <AppModal modalSize={modalSize} className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`} showHomeButton={false} showCloseButton={true} handleClose={() => closeModal()} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
                     </Row>
                 </Container>}
                 </>

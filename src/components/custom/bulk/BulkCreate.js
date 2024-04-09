@@ -23,11 +23,11 @@ import {get_headers, get_auth_header} from "../../../lib/services";
 import JobQueueContext from "../../../context/JobQueueContext";
 
 export default function BulkCreate({
-                                       entity,
-                                       sub,
+                                       entityType,
+                                       subType,
                                        userWriteGroups,
                                        handleHome,
-                                       forMetadata=false,
+                                       isMetadata=false,
                                    }) {
     const buttonVariant = "btn btn-outline-primary rounded-0"
     const inputFileRef = useRef(null)
@@ -47,12 +47,7 @@ export default function BulkCreate({
         file, setFile,
         fetchEntities,
         jobHasFailed,
-        entityType,
-        subType,
-        setEntityType,
-        setSubType,
         setIsMetadata,
-        isMetadata,
         getVerb,
         getEntityModalBody,
         getMetadataModalBody} = useContext(JobQueueContext)
@@ -129,9 +124,7 @@ export default function BulkCreate({
     }
 
     useEffect(() => {
-        setEntityType(entity)
-        setSubType(sub)
-        setIsMetadata(forMetadata)
+        setIsMetadata(isMetadata)
         if (userWriteGroups && getUserWriteGroupsLength() > 1) {
             if (isMetadata) {
                 setSteps(stepLabels)
@@ -199,7 +192,7 @@ export default function BulkCreate({
     }
 
     async function metadataCommitComplete(data) {
-        const {fails, passes} = await fetchEntities(data, {})
+        const {fails, passes} = await fetchEntities(data, {entityType})
         setBulkData({fails, passes})
     }
 
@@ -253,7 +246,7 @@ export default function BulkCreate({
     }
 
     async function entityRegistrationComplete(data) {
-        const {fails, passes} = await fetchEntities(data, {})
+        const {fails, passes} = await fetchEntities(data, {entityType})
         setBulkData({fails, passes})
     }
 
@@ -405,7 +398,7 @@ export default function BulkCreate({
     }
 
     function getModalBody() {
-        return isMetadata ? getMetadataModalBody(null, {}) : getEntityModalBody(null, {})
+        return isMetadata ? getMetadataModalBody(null, {entityType}) : getEntityModalBody(null, {entityType})
     }
 
     const isAtLastStep = () => {
