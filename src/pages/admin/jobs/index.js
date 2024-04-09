@@ -1,7 +1,8 @@
 import ViewJobs from "../../user/jobs";
-import {useContext} from "react";
+import React, {useContext} from "react";
 import AppContext from "../../../context/AppContext";
 import Spinner from "../../../components/custom/Spinner";
+import {JobQueueProvider} from "../../../context/JobQueueContext";
 
 
 function ViewJobsAdmin() {
@@ -17,3 +18,7 @@ function ViewJobsAdmin() {
 
 
 export default ViewJobsAdmin
+
+ViewJobsAdmin.withWrapper = function (page) {
+    return <JobQueueProvider>{page}</JobQueueProvider>
+}
