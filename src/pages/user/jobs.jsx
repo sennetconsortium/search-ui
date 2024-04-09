@@ -421,6 +421,7 @@ function ViewJobs({isAdmin = false}) {
             },
             {
                 name: 'Start Date',
+                id: 'started_timestamp',
                 selector: row => row.started_timestamp,
                 width: '180px',
                 sortable: true,
@@ -507,7 +508,7 @@ function ViewJobs({isAdmin = false}) {
     }
 
     useEffect(() => {
-        //mimicSocket()
+        mimicSocket()
 
         if (!hasLoaded.current) {
             fetchData()
@@ -516,7 +517,7 @@ function ViewJobs({isAdmin = false}) {
 
         document.addEventListener('visibilitychange', () => {
             if (eq(document.visibilityState,'visible')) {
-                //mimicSocket()
+                mimicSocket()
             } else {
                 clearInterval(intervalTimer.current)
             }
@@ -598,6 +599,8 @@ function ViewJobs({isAdmin = false}) {
                         columns={getTableColumns(hiddenColumns)}
                         data={filteredItems}
                         fixedHeader={true}
+                        defaultSortFieldId={'started_timestamp'}
+                        defaultSortAsc={false}
                         subHeader
                         subHeaderComponent={
                         <>
