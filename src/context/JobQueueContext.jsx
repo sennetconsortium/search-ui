@@ -91,7 +91,7 @@ export const JobQueueProvider = ({ children }) => {
         let requestOptions = {
             method: 'PUT',
             headers:  get_json_header(get_auth_header()),
-            body: JSON.stringify({entity_ids: succeededUuids})
+            body: JSON.stringify({entity_uuids: succeededUuids})
         }
 
         if (succeededUuids.length) {
@@ -100,7 +100,7 @@ export const JobQueueProvider = ({ children }) => {
         }
 
         if (failedUuids.length) {
-            requestOptions.body = JSON.stringify({entity_ids: failedUuids})
+            requestOptions.body = JSON.stringify({entity_uuids: failedUuids})
             let response = await fetch(getEntitiesFetchUrl(entity), requestOptions)
             fails = await response.json()
         }
