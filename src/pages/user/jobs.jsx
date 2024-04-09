@@ -342,15 +342,22 @@ function ViewJobs({isAdmin = false}) {
         currentRow.current = row
         const entityType = getEntityType(row)
         const _file = {name: row.job_id + '.tsv'}
+        setErrorModal(false)
         setModalTitle(<h3>{getJobType(row)} job completion details</h3>)
         setModalSize('xl')
         const data = await fetchEntities(currentRow.current, {clearFetch: false, entityType })
 
-        if (isMetadata(currentRow.current)) {
-            setModalBody(getMetadataModalBody(data, {_file, entityType}))
+        if ((data.passes && data.passes.length) || (data.fails && data.fails.length)) {
+            if (isMetadata(currentRow.current)) {
+                setModalBody(getMetadataModalBody(data, {_file, entityType}))
+            } else {
+                setModalBody(getEntityModalBody(data, {_file, entityType}))
+            }
         } else {
-            setModalBody(getEntityModalBody(data, {_file, entityType}))
+            setErrorModal(true)
+            setModalBody(<div>The requested entities no longer exist.</div>)
         }
+
         setShowModal(true)
 
     }
