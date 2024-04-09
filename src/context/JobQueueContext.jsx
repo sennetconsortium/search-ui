@@ -11,8 +11,6 @@ const JobQueueContext = createContext()
 export const JobQueueProvider = ({ children }) => {
     const intervalTimer = useRef(null)
     const [isLoading, setIsLoading] = useState(null)
-    const [entityType, setEntityType] = useState(null)
-    const [subType, setSubType] = useState(null)
     const {cache, supportedMetadata} = useContext(AppContext)
     const [file, setFile] = useState(null)
     const [isMetadata, setIsMetadata] = useState(false)
@@ -25,19 +23,17 @@ export const JobQueueProvider = ({ children }) => {
 
     const jobHasFailed = (job) => ['error', 'failed'].contains(job.status)
 
-    const getEntitiesFetchUrl = (entity) => {
-        entity = entity || entityType
-        return `${getEntityEndPoint()}entities/dashboard/${entity?.upperCaseFirst()}`
+    const getEntitiesFetchUrl = (entityType) => {
+        return `${getEntityEndPoint()}entities/dashboard/${entityType?.upperCaseFirst()}`
     }
 
-    function getColNames(entity) {
-        entity = entity || entityType
+    function getColNames(entityType) {
         let typeCol;
         let labIdCol
-        if (eq(entity, cache.entities.source)) {
+        if (eq(entityType, cache.entities.source)) {
             typeCol = 'source_type'
             labIdCol = 'lab_source_id'
-        } else if (eq(entity, cache.entities.sample)) {
+        } else if (eq(entityType, cache.entities.sample)) {
             typeCol = 'sample_category'
             labIdCol = 'lab_tissue_sample_id'
         } else {
@@ -47,9 +43,8 @@ export const JobQueueProvider = ({ children }) => {
         return {typeCol, labIdCol}
     }
 
-    function getDefaultModalTableCols(entity) {
-        entity = entity || entityType
-        let {typeCol, labIdCol} = getColNames(entity)
+    function getDefaultModalTableCols(entityType) {
+        let {typeCol, labIdCol} = getColNames(entityType)
         return [{
             name: 'lab_id',
             selector: row => row[labIdCol],
@@ -77,7 +72,7 @@ export const JobQueueProvider = ({ children }) => {
         return lowercase ? verb.toLowerCase() : verb
     }
 
-    const fetchEntities = async (data, {clearFetch = true, entity}) => {
+    const fetchEntities = async (data, {clearFetch = true, entityType}) => {
         let passes = []
         let fails = []
 
@@ -95,13 +90,13 @@ export const JobQueueProvider = ({ children }) => {
         }
 
         if (succeededUuids.length) {
-            let response = await fetch(getEntitiesFetchUrl(entity), requestOptions)
+            let response = await fetch(getEntitiesFetchUrl(entityType), requestOptions)
             passes = await response.json()
         }
 
         if (failedUuids.length) {
             requestOptions.body = JSON.stringify({entity_uuids: failedUuids})
-            let response = await fetch(getEntitiesFetchUrl(entity), requestOptions)
+            let response = await fetch(getEntitiesFetchUrl(entityType), requestOptions)
             fails = await response.json()
         }
 
@@ -137,18 +132,17 @@ export const JobQueueProvider = ({ children }) => {
         return createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
     }
 
-    const getEntityModalBody = (data, {_file, entity}) => {
+    const getEntityModalBody = (data, {_file, entityType}) => {
         _file = _file || file
         data = data || bulkData
-        entity = entity || entityType
         let body = []
         body.push(<p key={'modal-subtitle'}><strong>Group Name:</strong>  {data.passes[0]?.group_name}</p>)
-        let {typeCol, labIdCol} = getColNames(entity)
+        let {typeCol, labIdCol} = getColNames(entityType)
 
-        let columns = getDefaultModalTableCols(entity)
+        let columns = getDefaultModalTableCols(entityType)
 
-        console.log('ENT', entity, eq(entity, cache.entities.sample))
-        if (eq(entity, cache.entities.sample)) {
+        console.log('ENT', entityType, eq(entityType, cache.entities.sample))
+        if (eq(entityType, cache.entities.sample)) {
             columns.push({
                 name: 'organ_type',
                 selector: row => row.organ_type ? row.organ_type : '',
@@ -164,7 +158,7 @@ export const JobQueueProvider = ({ children }) => {
         )
 
         const isBulkMetadataSupported = (cat) => {
-            let supported = supportedMetadata()[cache.entities[entity]]
+            let supported = supportedMetadata()[cache.entities[entityType]]
             return supported ? supported.categories.includes(cat) : false
         }
 
@@ -185,7 +179,7 @@ export const JobQueueProvider = ({ children }) => {
                         className="bi bi-download"></i></a>
                     {(categories.length === 1) &&
                         <a className={'btn btn-primary rounded-0'}
-                           href={`/edit/bulk/${entity}?action=metadata&category=${categories[0]}`}>
+                           href={`/edit/bulk/${entityType}?action=metadata&category=${categories[0]}`}>
                             Continue to metadata upload <i className="bi bi-arrow-right-square-fill"></i>
                         </a>
                     }
@@ -195,21 +189,20 @@ export const JobQueueProvider = ({ children }) => {
         return body;
     }
 
-    const getMetadataModalBody = (data, {_file, entity}) => {
+    const getMetadataModalBody = (data, {_file, entityType}) => {
         _file = _file || file
         data = data || bulkData
-        entity = entity || entityType
         let body = []
 
         let prefix = data.fails.length && !data.passes.length ? 'None' : 'Some';
         let sentencePre = data.fails.length ? `${prefix} of your ` : 'Your ';
 
         body.push(
-            <p key={'modal-subtitle'}>{sentencePre} <code>{cache.entities[entity]}s'</code> metadata were {getVerb(true, true)}.</p>
+            <p key={'modal-subtitle'}>{sentencePre} <code>{cache.entities[entityType]}s'</code> metadata were {getVerb(true, true)}.</p>
         )
 
-        let {typeCol, labIdCol} = getColNames(entity)
-        let columns = getDefaultModalTableCols(entity)
+        let {typeCol, labIdCol} = getColNames(entityType)
+        let columns = getDefaultModalTableCols(entityType)
 
         if (data.passes.length) {
             body.push(
@@ -255,8 +248,6 @@ export const JobQueueProvider = ({ children }) => {
                 isLoading, setIsLoading,
                 fetchEntities,
                 getDefaultModalTableCols,
-                entityType, setEntityType,
-                subType, setSubType,
                 file, setFile,
                 bulkData, setBulkData,
                 isMetadata, setIsMetadata,

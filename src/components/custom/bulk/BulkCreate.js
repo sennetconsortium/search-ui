@@ -47,8 +47,6 @@ export default function BulkCreate({
         file, setFile,
         fetchEntities,
         jobHasFailed,
-        setEntityType,
-        setSubType,
         setIsMetadata,
         getVerb,
         getEntityModalBody,
@@ -126,8 +124,6 @@ export default function BulkCreate({
     }
 
     useEffect(() => {
-        setEntityType(entityType)
-        setSubType(subType)
         setIsMetadata(isMetadata)
         if (userWriteGroups && getUserWriteGroupsLength() > 1) {
             if (isMetadata) {
@@ -196,7 +192,7 @@ export default function BulkCreate({
     }
 
     async function metadataCommitComplete(data) {
-        const {fails, passes} = await fetchEntities(data, {entity: entityType})
+        const {fails, passes} = await fetchEntities(data, {entityType})
         setBulkData({fails, passes})
     }
 
@@ -250,7 +246,7 @@ export default function BulkCreate({
     }
 
     async function entityRegistrationComplete(data) {
-        const {fails, passes} = await fetchEntities(data, {})
+        const {fails, passes} = await fetchEntities(data, {entityType})
         setBulkData({fails, passes})
     }
 
@@ -402,7 +398,7 @@ export default function BulkCreate({
     }
 
     function getModalBody() {
-        return isMetadata ? getMetadataModalBody(null, {entity: entityType}) : getEntityModalBody(null, {entity: entityType})
+        return isMetadata ? getMetadataModalBody(null, {entityType}) : getEntityModalBody(null, {entityType})
     }
 
     const isAtLastStep = () => {
