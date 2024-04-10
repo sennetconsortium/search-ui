@@ -342,15 +342,22 @@ function ViewJobs({isAdmin = false}) {
         currentRow.current = row
         const entityType = getEntityType(row)
         const _file = {name: row.job_id + '.tsv'}
+        setErrorModal(false)
         setModalTitle(<h3>{getJobType(row)} job completion details</h3>)
         setModalSize('xl')
         const data = await fetchEntities(currentRow.current, {clearFetch: false, entityType })
 
-        if (isMetadata(currentRow.current)) {
-            setModalBody(getMetadataModalBody(data, {_file, entityType}))
+        if ((data.passes && data.passes.length) || (data.fails && data.fails.length)) {
+            if (isMetadata(currentRow.current)) {
+                setModalBody(getMetadataModalBody(data, {_file, entityType}))
+            } else {
+                setModalBody(getEntityModalBody(data, {_file, entityType}))
+            }
         } else {
-            setModalBody(getEntityModalBody(data, {_file, entityType}))
+            setErrorModal(true)
+            setModalBody(<div>The requested entities no longer exist.</div>)
         }
+
         setShowModal(true)
 
     }
@@ -583,7 +590,7 @@ function ViewJobs({isAdmin = false}) {
                      <div className='container'>
                          <Alert variant={'info'} >
                              <div>
-                                 <p>This dashboard provides an overview of the job queue and is used to tracked queued, completed,
+                                 <p>This dashboard provides an overview of the job queue and is used to track queued, completed, and
                                      jobs in progress. Users can submit new jobs via the wizard by visiting any link under "Register entity -&gt; Bulk" or "Upload metadata" at the top of the page.</p>
 
                                  <p>Once validation of the submitted TSV is complete, users can click on the "Register" button
