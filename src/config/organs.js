@@ -71,10 +71,10 @@ export const organDetails = {
         searchUrl: organSearchUrl("RL"),
         urlParamName: "right-lung",
     },
-    LN: {
+    LY: {
         icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-lymph-nodes.svg",
-        ruiCode: "LN",
-        searchUrl: organSearchUrl("LN"),
+        ruiCode: "LY",
+        searchUrl: organSearchUrl("LY"),
         urlParamName: "lymph-nodes",
     },
     MU: {
@@ -106,6 +106,12 @@ export const organDetails = {
         ruiCode: "PL",
         searchUrl: organSearchUrl("PL"),
         urlParamName: "placenta",
+    },
+    SC: {
+        icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-spinal-cord.svg",
+        ruiCode: "SC",
+        searchUrl: organSearchUrl("SC"),
+        urlParamName: "spinal-cord",
     },
     SK: {
         icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-skin.svg",

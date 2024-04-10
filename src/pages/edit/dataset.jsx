@@ -169,8 +169,8 @@ export default function EditDataset() {
                     'description': data.description,
                     'dataset_info': data.dataset_info,
                     'direct_ancestor_uuids': immediate_ancestors,
-                    'assigned_to_group_name': data.assigned_to_group_name,
-                    'ingest_task': data.ingest_task,
+                    'assigned_to_group_name': adminGroup ? data.assigned_to_group_name : undefined,
+                    'ingest_task': adminGroup ? data.ingest_task : undefined,
                     'contains_human_genetic_sequences': data.contains_human_genetic_sequences
                 })
                 setEditMode("Edit")
@@ -398,7 +398,7 @@ export default function EditDataset() {
                                             controlId={'assigned_to_group_name'}
                                             popover={<>The group responsible for the next step in the data ingest process.</>}
                                             data={data}
-                                            value={values.assigned_to_group_name}
+                                            value={data.assigned_to_group_name}
                                             groups={userWriteGroups.map(item => {if (item.data_provider) return item})}
                                             onGroupSelectChange={onChange}
                                             entity_type={'dataset'}/>
