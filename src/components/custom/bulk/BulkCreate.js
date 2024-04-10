@@ -12,19 +12,15 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {Button} from "react-bootstrap";
 import {Alert, Container, Grid} from "@mui/material";
-import {Row, Col, Stack} from "react-bootstrap";
-import {getDocsRootURL, getIngestEndPoint, getRootURL} from "../../../config/config";
-import Spinner from "../Spinner";
+import {getDocsRootURL, getIngestEndPoint} from "../../../config/config";
+import Spinner, {SpinnerEl} from "../Spinner";
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupSelect from "../edit/GroupSelect";
 import AppModal from "../../AppModal";
-import {tableColumns, getErrorList} from "../edit/AttributesUpload";
-import DataTable from 'react-data-table-component';
-import {createDownloadUrl, eq} from "../js/functions";
+import {eq, getHeaders, getStatusColor} from "../js/functions";
 import AppContext from "../../../context/AppContext";
-import {get_headers, get_auth_header, update_create_entity} from "../../../lib/services";
-import SenNetAlert from "../../SenNetAlert";
-
+import {get_headers, get_auth_header} from "../../../lib/services";
+import JobQueueContext from "../../../context/JobQueueContext";
 
 export default function BulkCreate({
                                        entityType,
@@ -36,20 +32,25 @@ export default function BulkCreate({
     const buttonVariant = "btn btn-outline-primary rounded-0"
     const inputFileRef = useRef(null)
     const [activeStep, setActiveStep] = useState(0)
-    const [file, setFile] = useState(null)
     const [isNextButtonDisabled, setIsNextButtonDisabled] = useState(true)
-    const [tempId, setTempId] = useState(null)
     const [error, setError] = useState(null)
-    const [errorMessage, setErrorMessage] = useState(null)
+    const [isInSocket, setIsInSocket] = useState(false)
     const [validationSuccess, setValidationSuccess] = useState(null)
-    const [bulkSuccess, setBulkSuccess] = useState(null)
-    const [bulkResponse, setBulkResponse] = useState([])
-    const [isLoading, setIsLoading] = useState(null)
     const stepLabels = ['Attach Your File', 'Review Validation', 'Complete']
     const [steps, setSteps] = useState(stepLabels)
     const [selectedGroup, setSelectedGroup] = useState(null)
     const [showModal, setShowModal] = useState(true)
-    const {cache, supportedMetadata} = useContext(AppContext)
+    const {cache} = useContext(AppContext)
+    const [jobData, setJobData] = useState(null)
+    const { intervalTimer,
+        isLoading, setIsLoading, bulkData, setBulkData,
+        file, setFile,
+        fetchEntities,
+        jobHasFailed,
+        setIsMetadata,
+        getVerb,
+        getEntityModalBody,
+        getMetadataModalBody} = useContext(JobQueueContext)
 
     const ColorlibConnector = styled(StepConnector)(({theme}) => ({
         [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -100,11 +101,11 @@ export default function BulkCreate({
     function ColorlibStepIcon(props) {
         const {active, completed, className} = props;
         let icons
-        if (userWriteGroups && getUserWriteGroupsLength() > 1) {
+        if (userWriteGroups && getUserWriteGroupsLength() > 1 && !isMetadata) {
             icons = {
                 1: <AttachFileIcon/>,
-                2: <VerifiedIcon/>,
-                3: <GroupsIcon/>,
+                2: <GroupsIcon/>,
+                3: <VerifiedIcon/>,
                 4: <DoneOutlineIcon/>,
             }
         } else {
@@ -123,14 +124,13 @@ export default function BulkCreate({
     }
 
     useEffect(() => {
+        setIsMetadata(isMetadata)
         if (userWriteGroups && getUserWriteGroupsLength() > 1) {
             if (isMetadata) {
                 setSteps(stepLabels)
             } else {
                 let extraSteps = Array.from(stepLabels)
-                const lastStep = extraSteps.pop()
-                extraSteps.push('Select group')
-                extraSteps.push(lastStep)
+                extraSteps.splice(1, 0, 'Select group')
                 setSteps(extraSteps)
             }
         }
@@ -138,6 +138,11 @@ export default function BulkCreate({
             setSelectedGroup(userWriteGroups[0].uuid)
         }
     }, [userWriteGroups])
+
+    const clearSocket = () => {
+        clearInterval(intervalTimer.current)
+        setIsInSocket(false)
+    }
 
     const getEntityValidationUrl = () => {
         return `${getIngestEndPoint()}${entityType}s/bulk/validate`
@@ -151,6 +156,60 @@ export default function BulkCreate({
         return `${getIngestEndPoint()}metadata/validate`
     }
 
+    const getMetadataRegistrationUrl = () => {
+        return `${getIngestEndPoint()}metadata/register`
+    }
+
+    const updateValidationSuccess = (data) => setValidationSuccess(true)
+
+    const mimicSocket = (data, {cb, cbFail}) => {
+        clearSocket()
+        setJobData(data)
+        setIsInSocket(true)
+        setValidationSuccess(null)
+
+        //TODO: stop use of setInterval; extract code within interval callback when actual server side socket is implemented
+        intervalTimer.current = setInterval(async () => {
+            let res = await fetch(getIngestEndPoint() + `jobs/${data.job_id}`, {method: 'GET', headers: getHeaders()})
+            let job = await res.json()
+            setJobData(job)
+            if (eq(job.status, 'Complete')) {
+                setIsLoading(false)
+                clearInterval(intervalTimer.current)
+                if (cb) {
+                    cb(job)
+                }
+                setIsNextButtonDisabled(false)
+            }
+            if (jobHasFailed(job)) {
+                clearInterval(intervalTimer.current)
+                if (cbFail) {
+                    cbFail(job)
+                }
+                setIsLoading(false)
+            }
+        }, 1000)
+    }
+
+    async function metadataCommitComplete(data) {
+        const {fails, passes} = await fetchEntities(data, {entityType})
+        setBulkData({fails, passes})
+    }
+
+    function getValidateReferrer() {
+        return {
+            type: 'validate',
+            path: window.location.pathname + window.location.search
+        }
+    }
+
+    function getRegisterReferrer() {
+        return {
+            type: 'register',
+            path: jobData.referrer.path + `&job_id=${jobData.job_id}`
+        }
+    }
+
     async function metadataValidation() {
         setIsLoading(true)
         const formData = new FormData()
@@ -158,7 +217,7 @@ export default function BulkCreate({
         formData.append('entity_type', cache.entities[entityType])
         formData.append('sub_type', subType)
         formData.append('validate_uuids', '1')
-        formData.append('ui_type', 'gui')
+        formData.append('referrer', JSON.stringify(getValidateReferrer()))
         const requestOptions = {
             method: 'POST',
             headers: get_auth_header(),
@@ -166,37 +225,34 @@ export default function BulkCreate({
         }
         const response = await fetch(getMetadataValidationUrl(), requestOptions)
         const data = await response.json()
-        if (!response.ok) {
-            setError({1: true})
-            const errorList = getErrorList(data)
-            setErrorMessage(errorList)
-        } else {
-            setBulkResponse(data.description)
-            setValidationSuccess(true)
-            setIsNextButtonDisabled(false)
+        mimicSocket(data, {cb: updateValidationSuccess})
+    }
+
+    async function metadataRegister() {
+        clearSocket()
+        setIsLoading(true)
+        const requestOptions = {
+            method: 'POST',
+            headers: get_headers(),
+            body: JSON.stringify({
+                job_id: jobData.job_id,
+                referrer: getRegisterReferrer()
+            })
         }
+        let response = await fetch(getMetadataRegistrationUrl(), requestOptions)
+        const data = await response.json()
+        mimicSocket(data, {cb: metadataCommitComplete})
         setIsLoading(false)
     }
 
-    async function metadataCommit() {
-        let passes = []
-        let fails = []
-        let row = 0
-        setIsLoading(true)
-        for (let resp of bulkResponse.data) {
-            let item = resp.description
-            let {typeCol, labIdCol} = getColNames()
-            let response = await update_create_entity(item.uuid, {metadata: item.metadata, [typeCol]: item[typeCol]}, 'Edit', entityType)
-            let result = {uuid: item.uuid, sennet_id: item.sennet_id, [labIdCol]: item[labIdCol], [typeCol]: item[typeCol]}
-            if (!response.error){
-                passes.push(result)
-            } else {
-                fails.push(result)
-            }
-            row++
-        }
-        setIsLoading(false)
-        setBulkSuccess({fails, passes})
+    async function entityRegistrationComplete(data) {
+        const {fails, passes} = await fetchEntities(data, {entityType})
+        setBulkData({fails, passes})
+    }
+
+    function entityRegistrationFail(data) {
+        setError(getStepsLength() === 4 ? {3: true} : {2: true})
+        setIsNextButtonDisabled(true)
     }
 
     // This makes a request to ingest-api, validating the upload
@@ -204,6 +260,8 @@ export default function BulkCreate({
         setIsLoading(true)
         const formData = new FormData()
         formData.append('file', file)
+        formData.append('referrer', JSON.stringify(getValidateReferrer()))
+        formData.append('group_uuid', selectedGroup)
         const requestOptions = {
             method: 'POST',
             headers: get_auth_header(),
@@ -211,20 +269,13 @@ export default function BulkCreate({
         }
         const response = await fetch(getEntityValidationUrl(), requestOptions)
         const data = await response.json()
-        if (!response.ok) {
-            setError({1: true})
-            setErrorMessage(data.description)
-        } else {
-            setTempId(data.description.temp_id)
-            setValidationSuccess(true)
-            setIsNextButtonDisabled(false)
-        }
-        setIsLoading(false)
+        mimicSocket(data, {cb: updateValidationSuccess})
     }
 
     async function entityRegistration() {
+        clearSocket()
         setIsLoading(true)
-        const body = {temp_id: tempId, group_uuid: selectedGroup}
+        const body = {job_id: jobData.job_id, referrer: getRegisterReferrer()}
         const requestOptions = {
             method: 'POST',
             headers: get_headers(),
@@ -232,16 +283,7 @@ export default function BulkCreate({
         }
         const response = await fetch(getEntityRegistrationUrl(), requestOptions)
         const data = await response.json()
-        if (!response.ok) {
-            setError(getStepsLength() === 3 ? {2: true} : {3: true})
-            setIsNextButtonDisabled(true)
-            setErrorMessage(Object.values(data.description))
-        } else {
-            setBulkSuccess(true)
-            setBulkResponse(data.description)
-            setIsNextButtonDisabled(false)
-        }
-        setIsLoading(false)
+        mimicSocket(data, {cb: entityRegistrationComplete, cbFail: entityRegistrationFail})
     }
 
     function getUserWriteGroupsLength() {
@@ -257,23 +299,24 @@ export default function BulkCreate({
         setIsNextButtonDisabled(false)
     }
 
-    const onRegisterNext = () => {
+    const onEntityNext = () => {
         setIsNextButtonDisabled(true)
-        if (getStepsLength() === 3) {
-            if (activeStep === 0) {
+
+        if (getStepsLength() === 4) {
+            if (activeStep === 1) {
                 entityValidation()
-            } else if (activeStep === 1) {
-                entityRegistration()
             } else if (activeStep === 2) {
+                entityRegistration()
+            } else if (activeStep === 3) {
                 handleReset()
                 return
             }
         } else {
             if (activeStep === 0) {
                 entityValidation()
-            } else if (activeStep === 2) {
+            } else if (activeStep === 1) {
                 entityRegistration()
-            } else if (activeStep === 3) {
+            } else if (activeStep === 2) {
                 handleReset()
                 return
             }
@@ -286,9 +329,11 @@ export default function BulkCreate({
         if (getStepsLength() === 3) {
             if (activeStep === 0) {
                 metadataValidation()
-            } else if (activeStep === 1) {
-                metadataCommit()
-            } else if (activeStep === 2) {
+            }
+            else if (activeStep === 1) {
+                metadataRegister()
+            }
+            else if (activeStep === 2) {
                 handleReset()
                 return
             }
@@ -300,14 +345,15 @@ export default function BulkCreate({
         if (isMetadata) {
             onMetadataNext()
         } else {
-            onRegisterNext()
+            onEntityNext()
         }
     }
 
     const handleBack = () => {
+        clearSocket()
+        setJobData(null)
         setIsNextButtonDisabled(true)
         setError(null)
-        setErrorMessage(null)
         setFile(null)
         setSelectedGroup(null)
         if (activeStep !== 0) {
@@ -316,16 +362,16 @@ export default function BulkCreate({
     }
 
     const handleReset = () => {
+        clearSocket()
         setActiveStep(0)
-        setTempId(null)
         setError(null)
         setFile(null)
-        setErrorMessage(null)
         setValidationSuccess(null)
-        setBulkSuccess(null)
+        setBulkData(null)
         setIsNextButtonDisabled(true)
         setSelectedGroup(null)
         setShowModal(true)
+        setJobData(null)
     }
 
     function handleFileChange(event) {
@@ -346,197 +392,17 @@ export default function BulkCreate({
         return error !== null && error[index] !== null && error[index] === true
     }
 
-    function generateTSVData(columns, labIdCol, data) {
-        let tableDataTSV = ''
-        let _colName
-        for (let col of columns) {
-            tableDataTSV += `${col.name}\t`
-        }
-        tableDataTSV += "\n"
-        let colVal;
-        try {
-            if (!Array.isArray(data)) {
-                data = Object.values(data)
-            }
-
-            for (let row of data) {
-                for (let col of columns) {
-                    _colName = eq(col.name, 'lab_id') ? labIdCol : col.name
-                    _colName = eq(col.name, 'organ_type') ? 'organ' : _colName
-                    colVal = row[_colName] ? row[_colName] : ''
-                    tableDataTSV += `${colVal}\t`
-                }
-                tableDataTSV += "\n"
-            }
-        } catch (e) {
-            console.error(e);
-        }
-
-        return createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
-    }
-
-    function getColNames() {
-        let typeCol;
-        let labIdCol
-        if (eq(entityType, cache.entities.source)) {
-            typeCol = 'source_type'
-            labIdCol = 'lab_source_id'
-        } else if (eq(entityType, cache.entities.sample)) {
-            typeCol = 'sample_category'
-            labIdCol = 'lab_tissue_sample_id'
-        } else {
-            typeCol = 'dataset_type'
-            labIdCol = 'lab_dataset_id'
-        }
-        return {typeCol, labIdCol}
-    }
-
-    function getDefaultModalTableCols() {
-        let {typeCol, labIdCol} = getColNames()
-        return [{
-            name: 'lab_id',
-            selector: row => row[labIdCol],
-            sortable: true,
-            width: '150px'
-            },
-            {
-                name: 'sennet_id',
-                selector: row => row.sennet_id,
-                sortable: true,
-                width: '170px'
-            },
-            {
-                name: typeCol,
-                selector: row => row[typeCol],
-                sortable: true,
-                width: '160px'
-            }
-        ]
-    }
-
-
-    function getEntityModalBody() {
-        let body = []
-        body.push(<p key={'modal-subtitle'}><strong>Group Name:</strong>  {bulkResponse[1].group_name}</p>)
-        let {typeCol, labIdCol} = getColNames()
-
-        let columns = getDefaultModalTableCols()
-
-        if (eq(entityType, cache.entities.sample)) {
-            columns.push({
-                name: 'organ_type',
-                selector: row => row.organ ? row.organ : '',
-                sortable: true,
-                width: '150px'
-            })
-        }
-
-        let tableData = Object.values(bulkResponse)
-        const downloadURL = generateTSVData(columns, labIdCol, bulkResponse)
-
-        body.push(
-            <DataTable key={'success-table'} columns={columns} data={tableData} pagination />
-        )
-
-        const isBulkMetadataSupported = (cat) => {
-            let supported = supportedMetadata()[cache.entities[entityType]]
-            return supported ? supported.categories.includes(cat) : false
-        }
-
-        let categoriesSet = new Set()
-        Object.values(bulkResponse).map(each => {
-            if (isBulkMetadataSupported(each[typeCol])) {
-                categoriesSet.add(each[typeCol])
-            }
-        })
-
-        const categories = Array.from(categoriesSet)
-
-        body.push(
-            <Row key='modal-download-area' className={'mt-4 pull-right'}>
-                <Stack direction='horizontal' gap={3}>
-                    <a role={'button'} className={'btn btn-outline-success rounded-0'}
-                       href={downloadURL} download={`${file.name}`}>Download registered data <i
-                        className="bi bi-download"></i></a>
-                    {(categories.length === 1) &&
-                        <a className={'btn btn-primary rounded-0'}
-                           href={`/edit/bulk/${entityType}?action=metadata&category=${categories[0]}`}>
-                            Continue to metadata upload <i className="bi bi-arrow-right-square-fill"></i>
-                        </a>
-                    }
-                </Stack>
-            </Row>
-        )
-        return body;
-    }
-
-    function getMetadataModalBody() {
-        let body = []
-
-        let prefix = bulkSuccess.fails.length && !bulkSuccess.passes.length ? 'None' : 'Some';
-        let sentencePre = bulkSuccess.fails.length ? `${prefix} of your ` : 'Your ';
-
-        body.push(
-            <p key={'modal-subtitle'}>{sentencePre} <code>{cache.entities[entityType]}s'</code> metadata were {getVerb(true, true)}.</p>
-        )
-
-        let {typeCol, labIdCol} = getColNames()
-        let columns = getDefaultModalTableCols()
-
-        if (bulkSuccess.passes.length) {
-            body.push(
-                <DataTable key={'success-table'} columns={columns} data={bulkSuccess.passes} pagination/>
-            )
-        }
-        if (bulkSuccess.fails.length) {
-            body.push(
-                <div className='c-metadataUpload__table table-responsive has-error'>
-                    <DataTable key={'fail-table'} columns={columns} data={bulkSuccess.fails} pagination />
-                </div>
-            )
-        }
-
-        const downloadURLPasses = generateTSVData(columns, labIdCol, bulkSuccess.passes)
-        const downloadURLFails = generateTSVData(columns, labIdCol, bulkSuccess.fails)
-        body.push(
-            <Row key="modal-download-area" className={'mt-4 pull-right'}>
-                <Stack direction="horizontal" gap={3}>
-                    { bulkSuccess.passes.length > 0 &&
-                        <a role={'button'} title={'Download successfully uploaded metadata details'}
-                           className={'btn btn-outline-success rounded-0'}
-                           href={downloadURLPasses} download={`${file.name.replace('.tsv', '-success.tsv')}`}>Download
-                            upload data <i className="bi bi-download"></i></a>
-                    }
-                    { bulkSuccess.fails.length > 0 &&
-                        <a role={'button'} title={'Download unsuccessfully uploaded metadata details'}
-                           className={'btn btn-outline-danger rounded-0'}
-                           href={downloadURLFails} download={`${file.name.replace('.tsv', '-fails.tsv')}`}>Download
-                            failed uploads data <i className="bi bi-download"></i></a>
-                    }
-                </Stack>
-            </Row>
-        )
-
-        return body
-    }
-
     function getModalTitle() {
         const inner = isMetadata ? "' Metadata" : ""
         return `${cache.entities[entityType]}s${inner} ${getVerb(true, true)}`
     }
 
     function getModalBody() {
-        return isMetadata ? getMetadataModalBody() : getEntityModalBody()
+        return isMetadata ? getMetadataModalBody(null, {entityType}) : getEntityModalBody(null, {entityType})
     }
 
     const isAtLastStep = () => {
         return (activeStep === 2 && getStepsLength() === 3 || activeStep === 3 && getStepsLength() === 4)
-    }
-
-    const getVerb = (past = false, lowercase = false) => {
-        let verb = isMetadata ? 'Upload' : 'Register'
-        verb = past ? `${verb}ed` : verb
-        return lowercase ? verb.toLowerCase() : verb
     }
 
     const isMouse = () => eq(subType, cache.sourceTypes.Mouse)
@@ -578,6 +444,25 @@ export default function BulkCreate({
         </>
     }
 
+    const isValidationStep = () => {
+        return (isMetadata && activeStep === 1) || (getStepsLength() === 4 ? activeStep === 2 : activeStep === 1)
+    }
+
+    const getSocketStatusDetails = () => {
+        const hasFailed = jobHasFailed(jobData)
+        return (<div>
+            <div>Request {jobData.referrer && <span>to <code>{jobData.referrer?.type}</code> {isMetadata ? 'metadata' : 'entities'}</span>} sent to job queue with a current status of &nbsp;
+                <span style={{position: 'relative'}}>
+                    <span className={`${getStatusColor(jobData.status)} badge`}>{jobData.status}</span>
+                    {eq(jobData.status, 'started') && <span style={{ position: 'absolute', right: '-18px', marginTop: '5px'}}><SpinnerEl /></span>}
+                </span>
+            </div>
+
+            {!hasFailed && <div>You may remain on this page until the job has a <span className={`${getStatusColor('complete')} badge`}>Complete</span> status.</div>}
+            <div>You {!hasFailed ? 'can also' : 'must'} further handle this job (and other jobs) by viewing the <a href={`/user/jobs?q=${jobData?.job_id}`}>Job Dashboard</a> page.</div>
+        </div>)
+    }
+
     return (
         <div className='main-wrapper' data-js-ada='modal'>
             <Container sx={{mt: 5}}>
@@ -597,23 +482,7 @@ export default function BulkCreate({
 
                     </div>
                     <h1 className={'text-center'}>{getTitle()}</h1>
-                     <SenNetAlert variant={'warning'}
-                                  text={<>Please limit the number of rows (excluding headers) containing data to 30 for
-                                      processing purposes. If necessary, you may need to register entities via multiple
-                                      submissions.</>}
-                                     icon={<i className="bi bi-exclamation-triangle-fill"></i>}/>
 
-                    {eq(entityType, cache.entities.dataset) &&
-                        <SenNetAlert variant={'warning'}
-                                     text={<>This page is intended for registering datasets in bulk. This process will
-                                         yield individual SenNet IDs and Globus locations per dataset. Data providers
-                                         will need to transfer their data files to each dataset individually.
-                                         <br></br><br></br>
-                                         If a data provider would prefer to transfer their data files in bulk, CODCC Curation
-                                         recommends creating an upload through <a
-                                             href={getRootURL() + 'edit/upload?uuid=register'}>this page</a>.</>}
-                                     icon={<i className="bi bi-exclamation-triangle-fill"></i>}/>
-                    }
                     <div className={'p-4 text-center'}>
                         To register multiple items at one time, upload a <code>TSV</code> file in the format specified by the example file.<br/>
                         {getDocsText()}
@@ -637,17 +506,19 @@ export default function BulkCreate({
                         }
                     </Stepper>
                     {isLoading && <Spinner/>}
-                    {
-                        errorMessage && <div className='c-metadataUpload__table table-responsive has-error'>
-                            <DataTable columns={tableColumns('`')} data={errorMessage.data ? errorMessage.data : errorMessage} pagination />
-                        </div>
-                    }
-                    {activeStep === 1 && !errorMessage && validationSuccess &&
+
+                    {isValidationStep() && validationSuccess &&
                         <Alert severity="success" sx={{m: 2}}>
-                            Validation successful please continue onto the next step
+                         <div>Validation successful please continue onto the next step</div>
                         </Alert>}
+
+                    {isInSocket && jobData && !validationSuccess &&
+                        <Alert severity="info" sx={{m: 2}}>
+                            {getSocketStatusDetails()}
+                        </Alert> }
+
                     {
-                        isAtLastStep() && !errorMessage && bulkSuccess &&
+                        isAtLastStep() && bulkData &&
                         <AppModal
                             modalTitle={getModalTitle()}
                             modalBody={getModalBody()}
@@ -659,7 +530,7 @@ export default function BulkCreate({
                         />
                     }
                     {
-                        !isMetadata && activeStep === 2 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
+                        !isMetadata && activeStep === 1 && userWriteGroups && getUserWriteGroupsLength() > 1 &&
                         <Grid container className={'text-center mt-5'}>
                             <Grid item xs></Grid>
                             <Grid item xs>
@@ -677,7 +548,7 @@ export default function BulkCreate({
                         <Grid item xs>
                             <Button
                                 variant={'outline-dark rounded-0'}
-                                disabled={activeStep === 0 || activeStep === getStepsLength() - 1}
+                                disabled={activeStep === 0 || activeStep === getStepsLength() - 1 || isValidationStep()}
                                 onClick={handleBack}
                             >
                                 Back

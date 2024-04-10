@@ -3,7 +3,6 @@ import BulkCreate from "../../../components/custom/bulk/BulkCreate";
 import AppNavbar from "../../../components/custom/layout/AppNavbar";
 import Unauthorized from "../../../components/custom/layout/Unauthorized";
 import {useRouter} from 'next/router'
-import {getIngestEndPoint} from "../../../config/config";
 import EntityContext, {EntityProvider} from "../../../context/EntityContext";
 import Spinner from "../../../components/custom/Spinner";
 import AppContext from "../../../context/AppContext";
@@ -11,6 +10,7 @@ import NotFound from "../../../components/custom/NotFound";
 import AppFooter from "../../../components/custom/layout/AppFooter";
 import {eq} from "../../../components/custom/js/functions";
 import Header from "../../../components/custom/layout/Header";
+import {JobQueueProvider} from "../../../context/JobQueueContext";
 
 export default function EditBulk() {
     const {cache, supportedMetadata} = useContext(AppContext)
@@ -28,6 +28,10 @@ export default function EditBulk() {
     let subType = router.query['category']
     const isMetadata = router.query['action'] === 'metadata'
     let result
+
+    if (eq(entityType, cache.entities.dataset)) {
+        window.location = '/edit/upload?uuid=register'
+    }
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
@@ -73,6 +77,6 @@ export default function EditBulk() {
 }
 
 EditBulk.withWrapper = function (page) {
-    return <EntityProvider>{page}</EntityProvider>
+    return <EntityProvider><JobQueueProvider>{page}</JobQueueProvider></EntityProvider>
 }
 
