@@ -9,8 +9,8 @@ import AppContext from "../../../context/AppContext";
 import NotFound from "../../../components/custom/NotFound";
 import AppFooter from "../../../components/custom/layout/AppFooter";
 import {eq} from "../../../components/custom/js/functions";
-import {JobQueueProvider} from "../../../context/JobQueueContext";
 import Header from "../../../components/custom/layout/Header";
+import {JobQueueProvider} from "../../../context/JobQueueContext";
 
 export default function EditBulk() {
     const {cache, supportedMetadata} = useContext(AppContext)
