@@ -51,7 +51,8 @@ export default function EditBulk() {
         }
         if (isSupported()) {
             result = <>
-                <Header title={`Bulk ${entityType.upperCaseFirst()}${subType ? ' '+subType : ''} | ${isMetadata ? 'Metadata' : 'Entity'} | SenNet`}></Header>
+                <Header title={`Bulk Register ${isMetadata ? `Metadata | ${subType.upperCaseFirst()}` : entityType.upperCaseFirst()} | SenNet`}></Header>
+
                 <AppNavbar/>
                 <BulkCreate
                     entityType={entityType}
