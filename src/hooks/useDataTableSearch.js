@@ -22,6 +22,7 @@ function useDataTableSearch({data, onKeydown, fieldsToSearch = [], className = '
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
     const filteredItems = () => {
         let results = []
+        if (!data || !Array.isArray(data)) return []
         for (let searchIndex of fieldsToSearch) {
             for (let d of data) {
                 if (d[searchIndex] && d[searchIndex]?.toLowerCase().includes(filterText?.toLowerCase())) {
