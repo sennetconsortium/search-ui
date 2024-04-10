@@ -590,7 +590,7 @@ function ViewJobs({isAdmin = false}) {
                      <div className='container'>
                          <Alert variant={'info'} >
                              <div>
-                                 <p>This dashboard provides an overview of the job queue and is used to tracked queued, completed,
+                                 <p>This dashboard provides an overview of the job queue and is used to track queued, completed, and
                                      jobs in progress. Users can submit new jobs via the wizard by visiting any link under "Register entity -&gt; Bulk" or "Upload metadata" at the top of the page.</p>
 
                                  <p>Once validation of the submitted TSV is complete, users can click on the "Register" button

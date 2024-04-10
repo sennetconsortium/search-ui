@@ -9,6 +9,7 @@ import AppContext from "../../../context/AppContext";
 import NotFound from "../../../components/custom/NotFound";
 import AppFooter from "../../../components/custom/layout/AppFooter";
 import {eq} from "../../../components/custom/js/functions";
+import Header from "../../../components/custom/layout/Header";
 import {JobQueueProvider} from "../../../context/JobQueueContext";
 
 export default function EditBulk() {
@@ -54,6 +55,8 @@ export default function EditBulk() {
         }
         if (isSupported()) {
             result = <>
+                <Header title={`Bulk Register ${isMetadata ? `Metadata | ${subType.upperCaseFirst()}` : entityType.upperCaseFirst()} | SenNet`}></Header>
+
                 <AppNavbar/>
                 <BulkCreate
                     entityType={entityType}

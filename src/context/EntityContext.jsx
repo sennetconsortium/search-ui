@@ -38,7 +38,6 @@ export const EntityProvider = ({ children }) => {
         useState(null)
 
     const [response, setResponse] = useState()
-    const [metadata, setMetadata] = useState({})
     const [warningClasses, setWarningClasses] = useState({})
 
     const isUnauthorized = () => {
@@ -158,27 +157,6 @@ export const EntityProvider = ({ children }) => {
         return note;
     }
 
-    const checkMetadata = (subTypeKey, supportsMetadata) => {
-        if(!_.isEmpty(metadata)) {
-            if (supportsMetadata) {
-                values["metadata"] = metadata.metadata[0]
-                values["metadata"]["pathname"] = metadata.pathname
-            } else {
-                values["metadata"] = {}
-            }
-        } else {
-            if (isEditMode()) {
-                //TODO: Remove. This is just for entries with previous metadata to facilitate expected testing.
-                if (values.metadata && !values.metadata.pathname) {
-                    values["metadata"] = {}
-                }
-                if (data[subTypeKey] !== values[subTypeKey] || !supportsMetadata) {
-                    values["metadata"] = {}
-                }
-            }
-        }
-    }
-
     const setModalDetails = ({entity, type, typeHeader, response}) => {
         setShowModal(true)
         setDisableSubmit(false)
@@ -294,10 +272,9 @@ export const EntityProvider = ({ children }) => {
                 userWriteGroups, setUserWriteGroups, onChange, editMode, setEditMode,
                 selectedUserWriteGroupUuid, setSelectedUserWriteGroupUuid,
                 disableSubmit, setDisableSubmit,
-                metadata, setMetadata,
                 dataAccessPublic, setDataAccessPublic,
                 getEntityConstraints, getSampleEntityConstraints, buildConstraint,
-                checkMetadata, getMetadataNote, successIcon, errIcon, checkProtocolUrl,
+                getMetadataNote, successIcon, errIcon, checkProtocolUrl,
                 warningClasses, setWarningClasses, getCancelBtn
             }}
         >

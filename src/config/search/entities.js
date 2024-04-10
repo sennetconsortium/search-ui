@@ -29,37 +29,11 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            // Used for when "Dataset" is selected to show related organs
-            "origin_sample.organ": {
-                label: 'Organ',
-                type: 'value',
-                field: 'origin_sample.organ.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
             // Used for when "Sample" is selected to show organs
-            organ: {
-                label: 'Organ',
-                type: 'value',
-                field: 'organ.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
             source_type: {
                 label: 'Source Type',
                 type: 'value',
                 field: 'source_type.keyword',
-                filterType: 'any',
-                isExpanded: false,
-                isFilterable: false,
-            },
-            // Used for when "Dataset/Sample" is selected to show related sources
-            "source.source_type": {
-                label: 'Source Type',
-                type: 'value',
-                field: 'source.source_type.keyword',
                 filterType: 'any',
                 isExpanded: false,
                 isFilterable: false,
@@ -80,6 +54,32 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            organ: {
+                label: 'Organ',
+                type: 'value',
+                field: 'organ.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            // Used for when "Dataset" or Sample Block/Section/Suspension is selected to show related organs
+            "origin_sample.organ": {
+                label: 'Organ',
+                type: 'value',
+                field: 'origin_sample.organ.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+             // Used for when "Dataset/Sample" is selected to show related sources
+            "source.source_type": {
+                label: 'Source Type',
+                type: 'value',
+                field: 'source.source_type.keyword',
+                filterType: 'any',
+                isExpanded: false,
+                isFilterable: false,
+            },
             has_rui_information: {
                 label: 'Is Spatially Registered',
                 type: 'value',
@@ -92,6 +92,14 @@ export const SEARCH_ENTITIES = {
                 label: 'Anatomical Locations',
                 type: 'value',
                 field: 'rui_location_anatomical_locations.label.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            metadata: {
+                label: 'Has Metadata',
+                type: 'exists',
+                field: 'metadata',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -141,8 +149,15 @@ export const SEARCH_ENTITIES = {
         },
         disjunctiveFacets: [],
         conditionalFacets: {
-            // Only show 'origin_sample.organ' facet if 'Dataset' is selected from the entity type facet
-            "origin_sample.organ": FilterIsSelected('entity_type', 'Dataset'),
+            // Show 'origin_sample.organ' facet if 'Dataset' or Sample Block/Section/Suspension is selected
+            "origin_sample.organ": ({filters}) => {
+                 return filters.some(
+                    (filter) =>
+                        (filter.field === 'entity_type' && filter.values.includes('Dataset')) ||
+                        (filter.field === 'sample_category' && (filter.values.includes('Block') ||
+                                filter.values.includes('Section') || filter.values.includes('Suspension')))
+                )
+            },
             // Only show 'organ' facet if 'Sample' is selected from the entity type facet
             organ: FilterIsSelected('entity_type', 'Sample'),
             'rui_location_anatomical_locations.label': FilterIsSelected('entity_type', 'Sample'),
@@ -161,6 +176,12 @@ export const SEARCH_ENTITIES = {
             source_type: FilterIsSelected('entity_type', 'Source'),
         },
         search_fields: {
+            "sennet_id^4": {type: 'value'},
+            "group_name^3": {type: 'value'},
+            "dataset_type^2": {type: 'value'},
+            "sample_category^2": {type: 'value'},
+            "entity_type^2": {type: 'value'},
+            "status^2": {type: 'value'},
             all_text: {type: 'value'},
         },
         source_fields: [
