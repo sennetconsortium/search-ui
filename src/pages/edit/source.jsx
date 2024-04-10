@@ -37,7 +37,7 @@ function EditSource() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
-        metadata, setMetadata, checkMetadata, getMetadataNote, checkProtocolUrl,
+        getMetadataNote, checkProtocolUrl,
         warningClasses, getCancelBtn } = useContext(EntityContext)
     const { _t, filterImageFilesToAdd, cache } = useContext(AppContext)
 
@@ -134,7 +134,6 @@ function EditSource() {
             let json = cleanJson(values);
             let uuid = data.uuid
 
-            checkMetadata('source_type', supportsMetadata())
 
             await update_create_entity(uuid, json, editMode, cache.entities.source).then((response) => {
                 setModalDetails({entity: cache.entities.source, type: response.source_type, typeHeader: _t('Source Type'), response})
@@ -280,7 +279,6 @@ function EditSource() {
                                                    imageByteArray={imageByteArray}
                                                    setImageByteArray={setImageByteArray}/>
 
-                                    { values && supportsMetadata() && <AttributesUpload setAttribute={setMetadata} entity={cache.entities.source} subType={eq(values.source_type, cache.sourceTypes.Mouse) ? "murine" :   values.source_type} />}
                                     <div className={'d-flex flex-row-reverse'}>
                                         {getCancelBtn('source')}
                                         <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
