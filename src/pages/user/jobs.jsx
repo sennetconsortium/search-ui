@@ -28,7 +28,7 @@ import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import Stack from '@mui/material/Stack';
 import JobQueueContext, {JobQueueProvider} from "../../context/JobQueueContext";
-import Joyride from "react-joyride";
+import Joyride, {STATUS} from "react-joyride";
 import {TUTORIAL_THEME} from "../../config/constants";
 import JobDashboardTutorialSteps from "../../components/custom/layout/JobDashboardTutorialSteps";
 
@@ -577,6 +577,14 @@ function ViewJobs({isAdmin = false}) {
         setTutorial({...tutorial, run: true})
     }
 
+    const handleFinishTutorial = (data) => {
+        const { status, type } = data;
+        const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
+        if (finishedStatuses.includes(status)) {
+            setTutorial({...tutorial, run: false})
+        }
+    }
+
     if (isUnauthorized() || !hasLoaded.current) {
         return (
             hasLoaded.current === false ? <Spinner/> : <Unauthorized/>
@@ -605,6 +613,7 @@ function ViewJobs({isAdmin = false}) {
                              run={tutorial.run}
                              showProgress={true}
                              showSkipButton={true}
+                             callback={handleFinishTutorial}
                              locale={{last: 'Finish Tutorial'}}
                              continuous
                              styles={TUTORIAL_THEME}
