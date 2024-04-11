@@ -8,3 +8,15 @@ export const APP_ROUTES = {
     sample: "/sample",
     organs: "/organs",
 };
+
+
+export const TUTORIAL_THEME = {
+    options: {
+        arrowColor: '#ffffff',
+        backgroundColor: '#ffffff',
+        primaryColor: '#0d6efd',
+        textColor: 'rgba(0, 0, 0, 0.87)',
+        width: 900,
+        zIndex: 1000,
+    }
+}
