@@ -5,6 +5,7 @@ import AppContext from "../../../context/AppContext";
 import Joyride from "react-joyride";
 import {eq} from "../js/functions";
 import {Alert} from 'react-bootstrap'
+import {TUTORIAL_THEME} from "../../../config/constants";
 
 function AppTutorial() {
     const {isLoggedIn, tutorialTrigger, setTutorialTrigger} = useContext(AppContext)
@@ -58,16 +59,7 @@ function AppTutorial() {
                 showSkipButton={true}
                 locale={{last: 'Finish Tutorial'}}
                 continuous
-                styles={{
-                    options: {
-                        arrowColor: '#ffffff',
-                        backgroundColor: '#ffffff',
-                        primaryColor: '#0d6efd',
-                        textColor: 'rgba(0, 0, 0, 0.87)',
-                        width: 900,
-                        zIndex: 1000,
-                    }
-                }}
+                styles={TUTORIAL_THEME}
             />}
         </>
     )

@@ -28,6 +28,9 @@ import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import Stack from '@mui/material/Stack';
 import JobQueueContext, {JobQueueProvider} from "../../context/JobQueueContext";
+import Joyride, {STATUS} from "react-joyride";
+import {TUTORIAL_THEME} from "../../config/constants";
+import JobDashboardTutorialSteps from "../../components/custom/layout/JobDashboardTutorialSteps";
 
 function ViewJobs({isAdmin = false}) {
 
@@ -48,6 +51,8 @@ function ViewJobs({isAdmin = false}) {
     const [modalBody, setModalBody] = useState(null)
     const [modalTitle, setModalTitle] = useState(null)
     const [modalSize, setModalSize] = useState('lg')
+    const [tutorial, setTutorial] = useState({run: false, step: 0, steps: []})
+
     const currentRow = useRef(null)
     const hasLoaded = useRef(false)
     const colorMap = useRef({})
@@ -362,7 +367,8 @@ function ViewJobs({isAdmin = false}) {
 
     }
 
-    const getViewDetailsModal = async (row) => {
+    const getViewDetailsModal = async (e, row) => {
+        e.preventDefault()
         if (jobHasFailed(row)) {
             handleViewErrorDetailsModal(row)
         } else {
@@ -403,7 +409,7 @@ function ViewJobs({isAdmin = false}) {
                         </SenNetPopover>
                         </span>
                             {eq(row.status, 'started') && <span style={{position: 'absolute', marginLeft: '5px', marginTop: '2px'}}><SpinnerEl /></span>}
-                            {(jobHasFailed(row) || (jobCompleted(row) && isRegisterJob(row))) && <a className={'mx-2'} href={'javascript:;'} onClick={async () => await getViewDetailsModal(row)}><small>View details</small></a>}
+                            {(jobHasFailed(row) || (jobCompleted(row) && isRegisterJob(row))) && <a className={'mx-2'} href={'#'} onClick={(e) => getViewDetailsModal(e, row)}><small>View details</small></a>}
                     </div>
 
                     )
@@ -419,11 +425,8 @@ function ViewJobs({isAdmin = false}) {
                 omit: true,
                 width: '170px',
                 format: row => {
-                    return <span data-field='type' className={`badge`}
-                                 style={{backgroundColor: getJobTypeColor(getJobType(row)),
-                                     color: 'white',
-                                     padding: '6px', borderRadius: '2px',
-                                     minWidth: '122px'}}>{getJobType(row)}</span>
+                    return <span data-field='type' className={`badge badge-block`}
+                                 style={{backgroundColor: getJobTypeColor(getJobType(row))}}>{getJobType(row)}</span>
                 },
             },
             {
@@ -537,6 +540,10 @@ function ViewJobs({isAdmin = false}) {
 
     }, [])
 
+    useEffect(() => {
+        setTutorial({...tutorial, steps: JobDashboardTutorialSteps({getVariant, data: filteredItems})})
+    }, [data])
+
     getOptions(filteredItems.length)
 
     const handleResultsPerPage = (val) => {
@@ -566,6 +573,18 @@ function ViewJobs({isAdmin = false}) {
         },
     ];
 
+    const handleTutorial = () => {
+        setTutorial({...tutorial, run: true})
+    }
+
+    const handleFinishTutorial = (data) => {
+        const { status, type } = data;
+        const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
+        if (finishedStatuses.includes(status)) {
+            setTutorial({...tutorial, run: false})
+        }
+    }
+
     if (isUnauthorized() || !hasLoaded.current) {
         return (
             hasLoaded.current === false ? <Spinner/> : <Unauthorized/>
@@ -588,15 +607,29 @@ function ViewJobs({isAdmin = false}) {
                     <Row>
 
                      <div className='container'>
+                         {tutorial.steps.length > 0 && <Joyride
+                             steps={tutorial.steps}
+                             scrollOffset={80}
+                             run={tutorial.run}
+                             showProgress={true}
+                             showSkipButton={true}
+                             callback={handleFinishTutorial}
+                             locale={{last: 'Finish Tutorial'}}
+                             continuous
+                             styles={TUTORIAL_THEME}
+                         />}
+
                          <Alert variant={'info'} >
                              <div>
                                  <p>This dashboard provides an overview of the job queue and is used to track queued, completed, and
-                                     jobs in progress. Users can submit new jobs via the wizard by visiting any link under "Register entity -&gt; Bulk" or "Upload metadata" at the top of the page.</p>
+                                     jobs in progress. Users can initiate new jobs via the wizard by visiting any link under "Register entity -&gt; Bulk" or "Upload metadata" at the top of the page.</p>
 
                                  <p>Once validation of the submitted TSV is complete, users can click on the "Register" button
                                      located under the Action column to finalize entity registration or metadata upload.</p>
 
                                  <p>Validation and registration jobs of the same file are linked and this relationship can be shown and grouped in the table by enabling "Color code linked jobs"</p>
+
+                                 <button className='btn btn-primary' onClick={() => handleTutorial()}>Begin Tutorial Tour</button>
                              </div>
                          </Alert>
                      </div>
@@ -614,7 +647,7 @@ function ViewJobs({isAdmin = false}) {
                         {searchBarComponent}
                             <div className='sui-layout-main-header mt-4 mb-4'>
                                 <div className='sui-layout-main-header__inner'>
-                                    <div><Button variant={'outline-primary'} onClick={fetchData}><i className={'bi bi-arrow-clockwise mx-1'} role={'presentation'}></i>Refresh</Button>
+                                    <div><Button variant={'outline-primary'} onClick={fetchData}><i className={'bi bi-arrow-clockwise mx-1 refresh-jobs'} role={'presentation'}></i>Refresh</Button>
                                         {isAdmin && filteredItems.length > 0 && <Button variant={'outline-danger'} className='mx-2' onClick={flushAllData}><i className={'bi bi-trash mx-1'} role={'presentation'}></i>Flush All</Button>}
                                     </div>
 
