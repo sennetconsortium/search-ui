@@ -286,7 +286,7 @@ function BulkExport({ data, raw, columns, filters, exportKind, onCheckAll, hidde
                         ...
                     </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
+                    <Dropdown.Menu className={`${getMenuItems().length > 2 ? 'menu--lg' : ''}`}>
                         <div className={'dropdown-item'} key={`export-all`}>Export all to&nbsp;
                             {getMenuItems('all')}
                             </div>

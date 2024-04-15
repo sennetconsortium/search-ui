@@ -237,6 +237,9 @@
     &-menu {
       z-index: 10 !important;
       min-width: 180px;
+      &.menu--lg {
+        min-width: 290px;
+      }
     }
     &-item {
       &:active {
