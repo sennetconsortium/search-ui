@@ -220,10 +220,13 @@ function ViewJobs({isAdmin = false}) {
             headers: get_headers(),
             body: JSON.stringify(body)
         }).then((res) =>{
-            setErrorModal(false)
-            setShowModal(true)
-            setModalTitle(<h3>{successIcon()} Job {verb}</h3>)
-            setModalBody(<div>The job has been {verb}.</div>)
+
+            if (!eq(action, 'register')) {
+                setErrorModal(false)
+                setShowModal(true)
+                setModalTitle(<h3>{successIcon()} Job {verb}</h3>)
+                setModalBody(<div>The job has been {verb}.</div>)
+            }
 
             updateTableData(row, res, action)
 
@@ -274,20 +277,22 @@ function ViewJobs({isAdmin = false}) {
     }
 
     const flatten = (array) => {
+        const getErrorVal = (r) => r.message || r.description || (eq(typeof r, 'object') ? JSON.stringify(r) : r + "")
+
         if (!Array.isArray(array)) {
             if (!array.error) {
-                return [{error: array.message  || array}]
+                return [{error: getErrorVal(array)}]
             } else {
                 return [array]
             }
         }
         if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
 
-        if (Array.isArray(array) && array.length && array[0].message !== undefined) {
+        if (Array.isArray(array) && array.length && array[0].error === undefined) {
             array.forEach((item) => {
                 item.id = item.index
                 item.row = item.index
-                item.error = item.message
+                item.error = getErrorVal(item)
             })
             array = array.filter((item) => !item.success)
             return array
