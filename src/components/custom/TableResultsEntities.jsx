@@ -20,11 +20,11 @@ import AppModal from "../AppModal";
 import {parseJson} from "../../lib/services";
 import {COLS_ORDER_KEY} from "../../config/config";
 
-function TableResultsEntities({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
+function TableResultsEntities({children, filters, onRowClicked, currentColumns, forData = false, rowFn, inModal = false}) {
 
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
     const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
-    const currentColumns = useRef([])
+    currentColumns = currentColumns || useRef([])
     const hiddenColumns = useRef(null)
     const [showModal, setShowModal] = useState(false)
     const [modalTitle, setModalTitle] = useState(null)

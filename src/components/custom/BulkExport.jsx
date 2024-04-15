@@ -55,6 +55,8 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
 
     const [totalSelected, setTotalSelected] = useState(0)
 
+    const getId = (column) => column.id || column.sennet_id || column.uuid
+
     useEffect(() => {
         $('.clear-filter-button').on('click', ()=>{
             setTotalSelected(0)
@@ -86,7 +88,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
     const findExportColumn = () => {
         let _columns = columns.current
         for (let i = 0; i < _columns.length; i++) {
-            if (eq(_columns[i].id.toString(), 'bulkExport')) return i
+            if (eq(getId(_columns[i])?.toString(), 'bulkExport')) return i
         }
     }
 
@@ -116,11 +118,11 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
             }
             let row
             for (let item of data) {
-                let id = raw(item.props.result.uuid)
+                row = item.props ? item.props.result : item
+                let id = raw(row.uuid)
                 if (isAll || selected[id]) {
                     for (let col of _columns) {
                         if (!col.omit) {
-                            row = item.props.result
                             _colName = col.name
                             colVal = col.selector(row) ? col.selector(row) : ''
                             tableDataTSV += `${colVal}\t`
@@ -166,7 +168,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
         const $checkboxes = getCheckboxes()
         let selected = {}
         let results = []
-        let fileName = raw(atIndex(0).id) + ' - ' + raw(atIndex(data.length - 1).id)
+        let fileName = raw(getId(atIndex(0))) + ' - ' + raw(getId(atIndex(data.length - 1)))
         let lastSelected, val
 
         if (!isAll) {
