@@ -51,11 +51,11 @@ export const handleCheckAll = (setTotalSelected) => {
     getCheckAll().prop('checked', false)
 }
 
-function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns, replaceFirst = 'uuid' }) {
+function BulkExport({ data, raw, columns, filters, exportKind, onCheckAll, hiddenColumns, replaceFirst = 'uuid' }) {
 
     const [totalSelected, setTotalSelected] = useState(0)
 
-    const getId = (column) => column.id || column.sennet_id || column.uuid
+    const getId = (column) => column.id || column.uuid
 
     useEffect(() => {
         $('.clear-filter-button').on('click', ()=>{
@@ -145,12 +145,15 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
                 data = Object.values(data)
             }
             for (let item of data) {
-                let id = raw(item.id)
+                let id = item.props ? raw(item.props.result.uuid) : raw(item.uuid)
                 if (isAll || selected[id]) {
-                    for (let subItem of item.list) {
-                        manifestData += `${raw(subItem.dataset_uuid)} /${raw(subItem.rel_path)}\n`
+                    if (item.list) {
+                        for (let subItem of item.list) {
+                            manifestData += `${raw(subItem.dataset_uuid)} /${raw(subItem.rel_path)}\n`
+                        }
+                    } else {
+                        manifestData += `${id} /${raw(item.rel_path)}\n`
                     }
-
                 }
             }
         } catch (e) {
@@ -188,7 +191,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
         }
 
         for (let i = 0; i < data.length; i++) {
-            let id = raw(atIndex(i).id)
+            let id = raw(getId(atIndex(i)))
 
             if (isAll || selected[id]) {
                 results.push(atIndex(i))
@@ -224,6 +227,15 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
         if (eq(exportKind, 'manifest')) {
             actions = {
                 manifest: 'Manifest TXT'
+            }
+        }
+
+        if (filters) {
+            for (let f of filters) {
+                if (eq(f.field, 'entity_type') && f.values.contains('dataset')) {
+                    actions.manifest = 'Manifest TXT'
+                    break
+                }
             }
         }
 

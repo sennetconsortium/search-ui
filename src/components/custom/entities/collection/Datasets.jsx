@@ -9,7 +9,7 @@ function Datasets({ data, label }) {
     const currentColumns = useRef([])
     const getColumns = () => {
         const hasMultipleEntityTypes = !eq(label, 'Datasets')
-        const {datasetColumns, defaultColumns} = TableResultsEntities({currentColumns, children: data, forData: true, rowFn: (row) => row ? row : null})
+        const {datasetColumns, defaultColumns} = TableResultsEntities({filters: [{field: 'entity_type', values: ['Dataset']}], currentColumns, children: data, forData: true, rowFn: (row) => row ? row : ''})
         let cols = defaultColumns({hasMultipleEntityTypes, columns: datasetColumns, _isLoggedIn: true})
         currentColumns.current = cols
         return cols

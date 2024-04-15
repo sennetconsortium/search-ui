@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import PropTypes from 'prop-types'
 import {
     checkFilterType,
@@ -34,9 +34,14 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw || '' : '')
 
+    useEffect(() => {
+        // Reset this since on filter change the hidden columns dropdown gets reset on ln63 ColumnsDropdown
+        hiddenColumns.current = {}
+    }, [filters])
+
     const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid), {})
 
-    const getId = (column) => column.id || column.sennet_id
+    const getId = (column) => column.id || column.uuid
 
     const handleModal = (row) => {
         setShowModal(true)
@@ -50,7 +55,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
             cols.push({
                 id: 'bulkExport',
                 ignoreRowClick: true,
-                name: <BulkExport data={children} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} />,
+                name: <BulkExport filters={filters} data={children} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => raw(row.sennet_id),
