@@ -5,6 +5,7 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import Header from "../../components/custom/layout/Header";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppContext from "../../context/AppContext";
+import LinearProgress from '@mui/material/LinearProgress';
 import {
     eq,
     getHeaders,
@@ -23,7 +24,7 @@ import AppModal from "../../components/AppModal";
 import {tableColumns} from "../../components/custom/edit/AttributesUpload";
 import Swal from 'sweetalert2'
 import useDataTableSearch from "../../hooks/useDataTableSearch";
-import {get_headers, parseJson} from "../../lib/services";
+import {get_headers} from "../../lib/services";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import Stack from '@mui/material/Stack';
@@ -219,10 +220,13 @@ function ViewJobs({isAdmin = false}) {
             headers: get_headers(),
             body: JSON.stringify(body)
         }).then((res) =>{
-            setErrorModal(false)
-            setShowModal(true)
-            setModalTitle(<h3>{successIcon()} Job {verb}</h3>)
-            setModalBody(<div>The job has been {verb}.</div>)
+
+            if (!eq(action, 'register')) {
+                setErrorModal(false)
+                setShowModal(true)
+                setModalTitle(<h3>{successIcon()} Job {verb}</h3>)
+                setModalBody(<div>The job has been {verb}.</div>)
+            }
 
             updateTableData(row, res, action)
 
@@ -273,20 +277,22 @@ function ViewJobs({isAdmin = false}) {
     }
 
     const flatten = (array) => {
+        const getErrorVal = (r) => r.message || r.description || (eq(typeof r, 'object') ? JSON.stringify(r) : r + "")
+
         if (!Array.isArray(array)) {
             if (!array.error) {
-                return [{error: array.message  || array}]
+                return [{error: getErrorVal(array)}]
             } else {
                 return [array]
             }
         }
         if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
 
-        if (Array.isArray(array) && array.length && array[0].message !== undefined) {
+        if (Array.isArray(array) && array.length && array[0].error === undefined) {
             array.forEach((item) => {
                 item.id = item.index
                 item.row = item.index
-                item.error = item.message
+                item.error = getErrorVal(item)
             })
             array = array.filter((item) => !item.success)
             return array
@@ -400,16 +406,18 @@ function ViewJobs({isAdmin = false}) {
             {
                 name: 'Status',
                 selector: row => row.status,
-                width: '180px',
+                width: '190px',
                 format: (row) => {
-                    return (<div>
+                    const hasStarted = eq(row.status, 'started')
+                    return (<div className={'p-2'}>
                         <span className={`${getStatusColor(row.status)} badge`}>
-                        <SenNetPopover text={getJobStatusDefinition(row.status)} className={`status-info-${row.job_id}`}>
+                         <SenNetPopover text={getJobStatusDefinition(row.status)} className={`status-info-${row.job_id}`}>
                             {row.status}
                         </SenNetPopover>
                         </span>
-                            {eq(row.status, 'started') && <span style={{position: 'absolute', marginLeft: '5px', marginTop: '2px'}}><SpinnerEl /></span>}
+                            {hasStarted && !isRegisterJob(row) && <span style={{position: 'absolute', marginLeft: '5px', marginTop: '2px'}}><SpinnerEl /></span>}
                             {(jobHasFailed(row) || (jobCompleted(row) && isRegisterJob(row))) && <a className={'mx-2'} href={'#'} onClick={(e) => getViewDetailsModal(e, row)}><small>View details</small></a>}
+                            {hasStarted && isRegisterJob(row) && <span className={'mt-2'} style={{display: 'block'}}><LinearProgress variant="determinate" value={row.progress} /> <small>{row.progress}%</small></span>}
                     </div>
 
                     )
