@@ -24,7 +24,7 @@ import AppModal from "../../components/AppModal";
 import {tableColumns} from "../../components/custom/edit/AttributesUpload";
 import Swal from 'sweetalert2'
 import useDataTableSearch from "../../hooks/useDataTableSearch";
-import {get_headers, parseJson} from "../../lib/services";
+import {get_headers} from "../../lib/services";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import Stack from '@mui/material/Stack';
