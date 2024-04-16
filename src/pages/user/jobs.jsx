@@ -213,7 +213,7 @@ function ViewJobs({isAdmin = false}) {
         }
 
         if (eq(action, 'register')) {
-            let registerRes = await fetch(urlPrefix() + `/${row.job_id}`)
+            let registerRes = await fetch(urlPrefix() + `/${row.job_id}`, {headers: get_headers()})
             if (registerRes.ok) {
                 let jobInfo = await registerRes.json()
                 setData([...data, jobInfo])
