@@ -35,14 +35,14 @@ export const DerivedProvider = ({children}) => {
         const dataset_type = data.dataset_type = data.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
 
         // Set if primary based on the data_category: primary, component, codcc-processed, lab-processed
-        const is_primary_dataset = data.dataset_category === 'primary'
+        const is_primary_dataset = (data.dataset_category === 'primary' || data.dataset_category === 'component')
+        console.log(is_primary_dataset)
         setIsPrimaryDataset(is_primary_dataset)
 
         // Determine whether to show the Vitessce visualizations and where to pull data from
         //Check that this dataset has a valid status and has descendants or if we know this isn't a primary dataset
         if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset)) {
-            // Add a check if this is a component dataset
-            if (!is_primary_dataset && data.dataset_category !== 'component') {
+            if (!is_primary_dataset) {
                 setShowVitessce(true)
                 await set_vitessce_config(data, data.uuid, dataset_type)
 
