@@ -253,7 +253,14 @@ function BulkExport({ data, raw, columns, filters, exportKind, onCheckAll, hidde
         } else if (eq(fileType, 'tsv')) {
             return <>Exports search result table information for selected entities in tab-separated values format.</>
         } else {
-            return <>Exports to SenNet CLT manifest format.</>
+            return <>Exports to SenNet CLT manifest format.
+                <br />
+                <small className={'text-muted'}>Note: In order to download the files that are included in the manifest file,&nbsp;
+                <a href="https://github.com/x-atlas-consortia/clt" target='_blank' className={'lnk--ic'}>install <i
+                    className="bi bi-box-arrow-up-right"></i></a> the CLT and <a target='_blank' className={'lnk--ic'}
+                        href="https://docs.sennetconsortium.org/libraries/clt/">follow the instructions<i
+                        className="bi bi-box-arrow-up-right"></i></a> for how to use it with the manifest file.</small>
+            </>
         }
     }
 
