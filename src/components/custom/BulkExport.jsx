@@ -51,9 +51,11 @@ export const handleCheckAll = (setTotalSelected) => {
     getCheckAll().prop('checked', false)
 }
 
-function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns, replaceFirst = 'uuid' }) {
+function BulkExport({ data, raw, columns, filters, exportKind, onCheckAll, hiddenColumns, replaceFirst = 'uuid' }) {
 
     const [totalSelected, setTotalSelected] = useState(0)
+
+    const getId = (column) => column.id || column.uuid
 
     useEffect(() => {
         $('.clear-filter-button').on('click', ()=>{
@@ -86,7 +88,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
     const findExportColumn = () => {
         let _columns = columns.current
         for (let i = 0; i < _columns.length; i++) {
-            if (eq(_columns[i].id.toString(), 'bulkExport')) return i
+            if (eq(getId(_columns[i])?.toString(), 'bulkExport')) return i
         }
     }
 
@@ -116,11 +118,11 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
             }
             let row
             for (let item of data) {
-                let id = raw(item.props.result.uuid)
+                row = item.props ? item.props.result : item
+                let id = raw(row.uuid)
                 if (isAll || selected[id]) {
                     for (let col of _columns) {
                         if (!col.omit) {
-                            row = item.props.result
                             _colName = col.name
                             colVal = col.selector(row) ? col.selector(row) : ''
                             tableDataTSV += `${colVal}\t`
@@ -143,12 +145,15 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
                 data = Object.values(data)
             }
             for (let item of data) {
-                let id = raw(item.id)
+                let id = item.props ? raw(item.props.result.uuid) : raw(item.uuid)
                 if (isAll || selected[id]) {
-                    for (let subItem of item.list) {
-                        manifestData += `${raw(subItem.dataset_uuid)} /${raw(subItem.rel_path)}\n`
+                    if (item.list) {
+                        for (let subItem of item.list) {
+                            manifestData += `${raw(subItem.dataset_uuid)} /${raw(subItem.rel_path)}\n`
+                        }
+                    } else {
+                        manifestData += `${id} /${raw(item.rel_path)}\n`
                     }
-
                 }
             }
         } catch (e) {
@@ -166,7 +171,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
         const $checkboxes = getCheckboxes()
         let selected = {}
         let results = []
-        let fileName = raw(atIndex(0).id) + ' - ' + raw(atIndex(data.length - 1).id)
+        let fileName = raw(getId(atIndex(0))) + ' - ' + raw(getId(atIndex(data.length - 1)))
         let lastSelected, val
 
         if (!isAll) {
@@ -186,7 +191,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
         }
 
         for (let i = 0; i < data.length; i++) {
-            let id = raw(atIndex(i).id)
+            let id = raw(getId(atIndex(i)))
 
             if (isAll || selected[id]) {
                 results.push(atIndex(i))
@@ -225,6 +230,15 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
             }
         }
 
+        if (filters) {
+            for (let f of filters) {
+                if (eq(f.field, 'entity_type') && f.values.contains('dataset')) {
+                    actions.manifest = 'Manifest TXT'
+                    break
+                }
+            }
+        }
+
         // Disable json action output for now if there are hidden columns
         if (hiddenColumns.current && Object.keys(hiddenColumns.current).length) {
             delete actions['json']
@@ -239,7 +253,14 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
         } else if (eq(fileType, 'tsv')) {
             return <>Exports search result table information for selected entities in tab-separated values format.</>
         } else {
-            return <>Exports to HuBMAP CLT manifest format.</>
+            return <>Exports to SenNet CLT manifest format.
+                <br />
+                <small className={'text-muted'}>Note: In order to download the files that are included in the manifest file,&nbsp;
+                <a href="https://github.com/x-atlas-consortia/clt" target='_blank' className={'lnk--ic'}>install <i
+                    className="bi bi-box-arrow-up-right"></i></a> the CLT and <a target='_blank' className={'lnk--ic'}
+                        href="https://docs.sennetconsortium.org/libraries/clt/">follow the instructions<i
+                        className="bi bi-box-arrow-up-right"></i></a> for how to use it with the manifest file.</small>
+            </>
         }
     }
 
@@ -272,7 +293,7 @@ function BulkExport({ data, raw, columns, exportKind, onCheckAll, hiddenColumns,
                         ...
                     </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
+                    <Dropdown.Menu className={`${getMenuItems().length > 2 ? 'menu--lg' : ''}`}>
                         <div className={'dropdown-item'} key={`export-all`}>Export all to&nbsp;
                             {getMenuItems('all')}
                             </div>
