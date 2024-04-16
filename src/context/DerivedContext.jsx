@@ -41,7 +41,8 @@ export const DerivedProvider = ({children}) => {
         // Determine whether to show the Vitessce visualizations and where to pull data from
         //Check that this dataset has a valid status and has descendants or if we know this isn't a primary dataset
         if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset)) {
-            if (!is_primary_dataset) {
+            // Add a check if this is a component dataset
+            if (!is_primary_dataset && data.dataset_category !== 'component') {
                 setShowVitessce(true)
                 await set_vitessce_config(data, data.uuid, dataset_type)
 
