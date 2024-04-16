@@ -253,7 +253,7 @@ function BulkExport({ data, raw, columns, filters, exportKind, onCheckAll, hidde
         } else if (eq(fileType, 'tsv')) {
             return <>Exports search result table information for selected entities in tab-separated values format.</>
         } else {
-            return <>Exports to HuBMAP CLT manifest format.</>
+            return <>Exports to SenNet CLT manifest format.</>
         }
     }
 
