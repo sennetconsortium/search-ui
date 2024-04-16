@@ -91,14 +91,31 @@ function ViewJobs({isAdmin = false}) {
 
     const hasRegistered = (row) => {
         if (colorMap.current[row.job_id]) return true
-        for (let item of data) {
-           if (item.referrer.path.includes(row.job_id) && eq(item.referrer.type, 'register')) {
-               let color = randomColor()
-               colorMap.current[row.job_id] = color
-               colorMap.current[item.job_id] = color
-               return true
-           }
+
+        // check the validation job for a register_job_id prob
+        const registerJobId = row.register_job_id
+        const createColorMap = (item) => {
+            let color = randomColor()
+            colorMap.current[row.job_id] = color
+            colorMap.current[item.job_id] = color
+            return true
         }
+
+        if (registerJobId) {
+            for (let item of data) {
+                if (eq(item.job_id, registerJobId)) {
+                    return createColorMap(item)
+                }
+            }
+        }
+
+        // For backwards compatibility only, since old jobs prior to feature change may not have a register_job_id attached
+        for (let item of data) {
+            if (item.referrer.path.includes(row.job_id) && eq(item.referrer.type, 'register')) {
+                return createColorMap(item)
+            }
+        }
+
         return null
     }
 
@@ -196,7 +213,7 @@ function ViewJobs({isAdmin = false}) {
         }
 
         if (eq(action, 'register')) {
-            let registerRes = await fetch(urlPrefix() + `/${row.job_id}`)
+            let registerRes = await fetch(urlPrefix() + `/${row.job_id}`, {headers: get_headers()})
             if (registerRes.ok) {
                 let jobInfo = await registerRes.json()
                 setData([...data, jobInfo])
