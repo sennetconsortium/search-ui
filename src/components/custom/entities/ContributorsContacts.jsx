@@ -18,9 +18,9 @@ function ContributorsContacts({data, title}) {
             },
             {
                 name: 'ORCID',
-                selector: row => row.orcid_id,
+                selector: row => row.orcid,
                 sortable: true,
-                format: column => <a className='lnk--ic' href={`https://orcid.org/${column.orcid_id}`}>{column.orcid_id}
+                format: row => <a className='lnk--ic' href={`https://orcid.org/${row.orcid}`}>{row.orcid}
                     <i className="bi bi-box-arrow-up-right"></i></a>,
             }
         ]
