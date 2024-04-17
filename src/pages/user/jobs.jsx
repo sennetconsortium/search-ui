@@ -372,6 +372,8 @@ function ViewJobs({isAdmin = false}) {
         const _file = {name: row.job_id + '.tsv'}
         setErrorModal(false)
         setModalTitle(<h3>{getJobType(row)} job completion details</h3>)
+        setShowModal(true)
+        setModalBody(<div><Spinner /></div>)
         setModalSize('xl')
         const data = await fetchEntities(currentRow.current, {clearFetch: false, entityType })
 
@@ -385,9 +387,6 @@ function ViewJobs({isAdmin = false}) {
             setErrorModal(true)
             setModalBody(<div>The requested entities no longer exist.</div>)
         }
-
-        setShowModal(true)
-
     }
 
     const getViewDetailsModal = async (e, row) => {
