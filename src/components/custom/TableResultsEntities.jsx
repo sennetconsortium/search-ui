@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import PropTypes from 'prop-types'
 import {
     checkFilterType,
@@ -20,11 +20,11 @@ import AppModal from "../AppModal";
 import {parseJson} from "../../lib/services";
 import {COLS_ORDER_KEY} from "../../config/config";
 
-function TableResultsEntities({children, filters, onRowClicked, forData = false, rowFn, inModal = false}) {
+function TableResultsEntities({children, filters, onRowClicked, currentColumns, forData = false, rowFn, inModal = false}) {
 
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
     const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
-    const currentColumns = useRef([])
+    currentColumns = currentColumns || useRef([])
     const hiddenColumns = useRef(null)
     const [showModal, setShowModal] = useState(false)
     const [modalTitle, setModalTitle] = useState(null)
@@ -34,9 +34,14 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
 
     const raw = rowFn ? rowFn : ((obj) => obj ? obj.raw || '' : '')
 
+    useEffect(() => {
+        // Reset this since on filter change the hidden columns dropdown gets reset on ln63 ColumnsDropdown
+        hiddenColumns.current = {}
+    }, [filters])
+
     const getHotLink = (row) => getEntityViewUrl(raw(row.entity_type)?.toLowerCase(), raw(row.uuid), {})
 
-    const getId = (column) => column.id || column.sennet_id
+    const getId = (column) => column.id || column.uuid
 
     const handleModal = (row) => {
         setShowModal(true)
@@ -50,7 +55,7 @@ function TableResultsEntities({children, filters, onRowClicked, forData = false,
             cols.push({
                 id: 'bulkExport',
                 ignoreRowClick: true,
-                name: <BulkExport data={children} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} />,
+                name: <BulkExport filters={filters} data={children} raw={raw} hiddenColumns={hiddenColumns} columns={currentColumns} />,
                 width: '100px',
                 className: 'text-center',
                 selector: row => raw(row.sennet_id),
