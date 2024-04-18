@@ -160,9 +160,24 @@ export default function BulkCreate({
         return `${getIngestEndPoint()}metadata/register`
     }
 
-    const updateValidationSuccess = (data) => setValidationSuccess(true)
+    const hasAlreadyRegistered = (data) => {
+        if (!data) return false
+        return data.register_job_id !== undefined && data.register_job_id !== null
+    }
 
-    const mimicSocket = (data, {cb, cbFail}) => {
+    const checkIfHasRegistered = (data) => {
+        setValidationSuccess(true)
+        if (hasAlreadyRegistered(data)) {
+            setIsNextButtonDisabled(true)
+        }
+    }
+
+    const updateValidationSuccess = (data) => {
+        setValidationSuccess(true)
+        mimicSocket(data, {cbAll: checkIfHasRegistered})
+    }
+
+    const mimicSocket = (data, {cb, cbFail, cbAll}) => {
         clearSocket()
         setJobData(data)
         setIsInSocket(true)
@@ -175,7 +190,6 @@ export default function BulkCreate({
             setJobData(job)
             if (eq(job.status, 'Complete')) {
                 setIsLoading(false)
-                clearInterval(intervalTimer.current)
                 if (cb) {
                     cb(job)
                 }
@@ -187,6 +201,9 @@ export default function BulkCreate({
                     cbFail(job)
                 }
                 setIsLoading(false)
+            }
+            if (cbAll) {
+                cbAll(job)
             }
         }, 1000)
     }
@@ -306,7 +323,9 @@ export default function BulkCreate({
             if (activeStep === 1) {
                 entityValidation()
             } else if (activeStep === 2) {
-                entityRegistration()
+                if (!hasAlreadyRegistered(jobData)) {
+                    entityRegistration()
+                }
             } else if (activeStep === 3) {
                 handleReset()
                 return
@@ -315,7 +334,9 @@ export default function BulkCreate({
             if (activeStep === 0) {
                 entityValidation()
             } else if (activeStep === 1) {
-                entityRegistration()
+                if (!hasAlreadyRegistered(jobData)) {
+                    entityRegistration()
+                }
             } else if (activeStep === 2) {
                 handleReset()
                 return
@@ -331,7 +352,9 @@ export default function BulkCreate({
                 metadataValidation()
             }
             else if (activeStep === 1) {
-                metadataRegister()
+                if (!hasAlreadyRegistered(jobData)) {
+                    metadataRegister()
+                }
             }
             else if (activeStep === 2) {
                 handleReset()
@@ -448,6 +471,8 @@ export default function BulkCreate({
         return (isMetadata && activeStep === 1) || (getStepsLength() === 4 ? activeStep === 2 : activeStep === 1)
     }
 
+    const jobDashboardUrl = (id) => `/user/jobs?q=${id}`
+
     const getSocketStatusDetails = () => {
         const hasFailed = jobHasFailed(jobData)
         return (<div>
@@ -459,7 +484,7 @@ export default function BulkCreate({
             </div>
 
             {!hasFailed && <div>You may remain on this page until the job has a <span className={`${getStatusColor('complete')} badge`}>Complete</span> status.</div>}
-            <div>You {!hasFailed ? 'can also' : 'must'} further handle this job (and other jobs) by viewing the <a href={`/user/jobs?q=${jobData?.job_id}`}>Job Dashboard</a> page.</div>
+            <div>You {!hasFailed ? 'can also' : 'must'} further handle this job (and other jobs) by viewing the <a href={jobDashboardUrl(jobData?.job_id)}>Job Dashboard</a> page.</div>
         </div>)
     }
 
@@ -507,12 +532,17 @@ export default function BulkCreate({
                     </Stepper>
                     {isLoading && <Spinner/>}
 
-                    {isValidationStep() && validationSuccess &&
+                    {isValidationStep() && validationSuccess && !hasAlreadyRegistered(jobData) &&
                         <Alert severity="success" sx={{m: 2}}>
                          <div>Validation successful please continue onto the next step</div>
                         </Alert>}
 
-                    {isInSocket && jobData && !validationSuccess &&
+                    {jobData && hasAlreadyRegistered(jobData) &&
+                        <Alert severity="warning" sx={{m: 2}}>
+                            <div>The validation job has already been registered. The job is available at the <a href={jobDashboardUrl(jobData?.register_job_id)}>Job Dashboard</a></div>
+                        </Alert>}
+
+                    {isInSocket && jobData && !validationSuccess && !hasAlreadyRegistered(jobData) &&
                         <Alert severity="info" sx={{m: 2}}>
                             {getSocketStatusDetails()}
                         </Alert> }

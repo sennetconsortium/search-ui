@@ -12,7 +12,6 @@ function AppTutorial() {
     const [steps, setSteps] = useState([])
     const [runTutorial, setRunTutorial] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
-    const [stepIndex, setStepIndex] = useState(0)
     const cookieKey = `tutorialCompleted_${isLoggedIn()}`
 
     useEffect(() => {
