@@ -134,12 +134,22 @@ function EditUpload() {
             event.preventDefault();
             log.debug("Form is valid")
 
+            const assignedToGroupName = values['assigned_to_group_name']
+            const ingestTask = values['ingest_task']
             if (values['group_uuid'] === null && !isEditMode()) {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
             // Remove empty strings
             let json = cleanJson(values);
+
+            if (adminGroup && assignedToGroupName?.isEmpty()) {
+                json['assigned_to_group_name'] = null
+            }
+
+            if (adminGroup && ingestTask?.isEmpty()) {
+                json['ingest_task'] = ''
+            }
 
             handlePut(editMode, json)
         }

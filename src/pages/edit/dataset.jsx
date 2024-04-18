@@ -328,6 +328,8 @@ export default function EditDataset() {
 
                 log.debug("Form is valid")
 
+                const assignedToGroupName = values['assigned_to_group_name']
+                const ingestTask = values['ingest_task']
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
                 if (values['group_uuid'] === null && editMode === 'Register') {
                     values['group_uuid'] = selectedUserWriteGroupUuid
@@ -340,6 +342,14 @@ export default function EditDataset() {
                 // Prevent the 400 bad request error on same status
                 if (eq(json.status, values.status)) {
                     delete json['status']
+                }
+
+                if (adminGroup && assignedToGroupName?.isEmpty()) {
+                    json['assigned_to_group_name'] = null
+                }
+
+                if (adminGroup && ingestTask?.isEmpty()) {
+                    json['ingest_task'] = ''
                 }
 
                 await update_create_dataset(uuid, json, editMode).then((response) => {

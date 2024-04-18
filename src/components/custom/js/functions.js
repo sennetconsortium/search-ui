@@ -423,6 +423,9 @@ Object.assign(String.prototype, {
     },
     stripTags() {
         return this.replace(/(<([^>]+)>)/gi, "")
+    },
+    isEmpty() {
+        return (eq(typeof this, 'string') && !this.length)
     }
 })
 
