@@ -21,7 +21,8 @@ function useCache() {
         const organTypesCodes = flipObj(organTypes)
 
         //TODO Remove in the future
-        // entities.publication = 'Publication'
+        delete entities['publication entity']
+        entities.publication = 'Publication'
         entities.collection = 'Collection'
         const cache = {cache: {dataTypes, dataTypesObj, datasetTypes, sampleCategories, organTypes, entities, sourceTypes, organTypesCodes}}
         window.UBKG_CACHE = cache.cache

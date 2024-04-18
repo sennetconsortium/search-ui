@@ -332,9 +332,15 @@ export default function EditDataset() {
                 if (values['group_uuid'] === null && editMode === 'Register') {
                     values['group_uuid'] = selectedUserWriteGroupUuid
                 }
+
                 // Remove empty strings
                 let json = cleanJson(values);
                 let uuid = data.uuid
+
+                // Prevent the 400 bad request error on same status
+                if (eq(json.status, values.status)) {
+                    delete json['status']
+                }
 
                 await update_create_dataset(uuid, json, editMode).then((response) => {
                     modalResponse(response)

@@ -152,7 +152,6 @@ export default function EditPublication() {
                 event.stopPropagation();
                 setDisableSubmit(false);
             } else {
-                debugger
                 log.debug("Form is valid")
 
                 values.issue = values.issue ? Number(values.issue) : null
@@ -161,7 +160,7 @@ export default function EditPublication() {
                 values['publication_status'] = publicationStatus
 
                 // Follow value population like HuBAMP
-                values['dataset_type'] = ['Publication']
+                // values['dataset_type'] = 'Publication'
                 values['contains_human_genetic_sequences'] = false
 
                 if (!values['group_uuid'] && editMode === 'Register') {
