@@ -36,6 +36,7 @@ import Tooltip from '@mui/material/Tooltip';
 import {Zoom, Popper} from "@mui/material";
 import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
 import {CheckIcon} from "primereact/icons/check";
+import NotFound from "../../components/custom/NotFound";
 
 export default function EditCollection() {
     const {
@@ -326,6 +327,9 @@ export default function EditCollection() {
         }
         setContacts({description: {records: _contacts, headers: resp.description.headers}})
     }
+
+    // TODO: remove this return when ready to support
+    return <NotFound />
 
     // TODO: May see a brief flash of this Unauthorized view ...
     if (!isAuthorizing() && !adminGroup) {

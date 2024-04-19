@@ -27,6 +27,7 @@ import Alert from 'react-bootstrap/Alert';
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import {valid_dataset_ancestor_config} from "../../config/config";
+import NotFound from "../../components/custom/NotFound";
 
 export default function EditPublication() {
     const {
@@ -193,6 +194,9 @@ export default function EditPublication() {
     function handlePublicationStatusNo() {
         setPublicationStatus(false)
     }
+
+    // TODO: remove this return when ready to support
+    return <NotFound />
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
