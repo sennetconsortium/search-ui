@@ -46,22 +46,19 @@ export const JobQueueProvider = ({ children }) => {
     function getDefaultModalTableCols(entityType) {
         let {typeCol, labIdCol} = getColNames(entityType)
         return [{
-            name: 'lab_id',
-            selector: row => row[labIdCol],
-            sortable: true,
-            width: '150px'
-        },
+                name: 'lab_id',
+                selector: row => row[labIdCol],
+                sortable: true,
+            },
             {
                 name: 'sennet_id',
                 selector: row => row.sennet_id,
                 sortable: true,
-                width: '170px'
             },
             {
                 name: typeCol,
                 selector: row => row[typeCol],
                 sortable: true,
-                width: '160px'
             }
         ]
     }
@@ -147,7 +144,6 @@ export const JobQueueProvider = ({ children }) => {
                 name: 'organ_type',
                 selector: row => row.organ_type ? row.organ_type : '',
                 sortable: true,
-                width: '150px'
             })
         }
 
