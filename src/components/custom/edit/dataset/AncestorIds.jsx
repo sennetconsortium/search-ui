@@ -47,7 +47,7 @@ function BodyContent({ handleChangeAncestor }) {
 }
 
 export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd, onShowModal, formLabelPlural,
-                                        formLabel = 'ancestor', controlId = 'direct_ancestor_uuids'}) {
+                                        formLabel = 'ancestor', controlId = 'direct_ancestor_uuids', dataset_category}) {
     const [showHideModal, setShowHideModal] = useState(false)
 
     useEffect(() => {
@@ -121,11 +121,12 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
             {/*Ancestor Information Box*/}
             {ancestors && ancestors.length !== 0 &&
                 <AncestorsTable controlId={controlId} formLabel={formLabel} values={values} onChange={onChange}
-                                ancestors={ancestors} deleteAncestor={deleteAncestor}/>
+                                ancestors={ancestors} deleteAncestor={deleteAncestor} dataset_category={dataset_category}/>
             }
 
+            {/*Disable the button if the dataset is not 'primary'*/}
             <InputGroup className="mb-3 ancestor-ctas" id="direct_ancestor_uuid_button">
-                <Button variant="outline-primary rounded-0 mt-1" onClick={showModal} aria-controls='js-modal'>
+                <Button variant="outline-primary rounded-0 mt-1" onClick={showModal} aria-controls='js-modal' disabled={dataset_category!=='primary'}>
                     Add another {formLabel} <i className="bi bi-plus-lg"></i>
                 </Button>
                 {otherWithAdd}

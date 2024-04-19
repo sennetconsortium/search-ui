@@ -227,7 +227,7 @@ export default function EditDataset() {
         setModalDetails({
             entity: cache.entities.dataset,
             type: (response.dataset_type ? response.dataset_type : null),
-            typeHeader: _t('Data Type'),
+            typeHeader: _t('Dataset Type'),
             response
         })
     }
@@ -332,9 +332,17 @@ export default function EditDataset() {
                 if (values['group_uuid'] === null && editMode === 'Register') {
                     values['group_uuid'] = selectedUserWriteGroupUuid
                 }
+
                 // Remove empty strings
-                let json = cleanJson(values);
+                let json = cleanJson({...values});
                 let uuid = data.uuid
+
+                 // Remove 'status' from values. Not a field to pass to Entity API for a normal update of Dataset
+                delete json['status']
+                // If dataset is not `primary` then don't send direct_ancestor_uuids
+                if (data.dataset_category !== 'primary') {
+                    delete json['direct_ancestor_uuids']
+                }
 
                 await update_create_dataset(uuid, json, editMode).then((response) => {
                     modalResponse(response)
@@ -415,7 +423,7 @@ export default function EditDataset() {
                                     {/*Ancestor IDs*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
-                                        <AncestorIds values={values} ancestors={ancestors} onChange={onChange}
+                                        <AncestorIds values={values} ancestors={ancestors} onChange={onChange} dataset_category={data.dataset_category}
                                                      fetchAncestors={fetchAncestors} deleteAncestor={deleteAncestor}/>
                                     }
 
