@@ -328,6 +328,8 @@ export default function EditDataset() {
 
                 log.debug("Form is valid")
 
+                const assignedToGroupName = values['assigned_to_group_name']
+                const ingestTask = values['ingest_task']
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
                 if (values['group_uuid'] === null && editMode === 'Register') {
                     values['group_uuid'] = selectedUserWriteGroupUuid
@@ -336,6 +338,14 @@ export default function EditDataset() {
                 // Remove empty strings
                 let json = cleanJson({...values});
                 let uuid = data.uuid
+
+                if (adminGroup && assignedToGroupName?.isEmpty()) {
+                    json['assigned_to_group_name'] = ''
+                }
+
+                if (adminGroup && ingestTask?.isEmpty()) {
+                    json['ingest_task'] = ''
+                }
 
                  // Remove 'status' from values. Not a field to pass to Entity API for a normal update of Dataset
                 delete json['status']

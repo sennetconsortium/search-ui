@@ -134,12 +134,27 @@ function EditUpload() {
             event.preventDefault();
             log.debug("Form is valid")
 
+            const assignedToGroupName = values['assigned_to_group_name']
+            const ingestTask = values['ingest_task']
             if (values['group_uuid'] === null && !isEditMode()) {
                 values['group_uuid'] = selectedUserWriteGroupUuid
             }
 
             // Remove empty strings
             let json = cleanJson(values);
+
+            // Prevent the 400 bad request error on same status
+            if (eq(json.status, values.status)) {
+                delete json['status']
+            }
+
+            if (adminGroup && assignedToGroupName?.isEmpty()) {
+                json['assigned_to_group_name'] = ''
+            }
+
+            if (adminGroup && ingestTask?.isEmpty()) {
+                json['ingest_task'] = ''
+            }
 
             handlePut(editMode, json)
         }

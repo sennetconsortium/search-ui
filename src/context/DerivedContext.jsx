@@ -54,7 +54,7 @@ export const DerivedProvider = ({children}) => {
                     const processed_datasets = prov_info['processed_dataset_uuid']
                     const processed_dataset_statuses = prov_info['processed_dataset_status']
                     // Iterate over processed datasets and check that the status is valid
-                    for (let i = 0; i < processed_dataset_statuses.length; i++) {
+                    for (let i = 0; i < processed_dataset_statuses?.length; i++) {
                         if (isDatasetStatusPassed(processed_dataset_statuses[i])) {
                             fetchEntity(processed_datasets[i]).then(processed_dataset => {
                                 // Check that the assay type is supported by Vitessce

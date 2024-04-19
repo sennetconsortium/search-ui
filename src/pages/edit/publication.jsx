@@ -27,6 +27,7 @@ import Alert from 'react-bootstrap/Alert';
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import {valid_dataset_ancestor_config} from "../../config/config";
+import NotFound from "../../components/custom/NotFound";
 
 export default function EditPublication() {
     const {
@@ -152,7 +153,6 @@ export default function EditPublication() {
                 event.stopPropagation();
                 setDisableSubmit(false);
             } else {
-                debugger
                 log.debug("Form is valid")
 
                 values.issue = values.issue ? Number(values.issue) : null
@@ -161,7 +161,7 @@ export default function EditPublication() {
                 values['publication_status'] = publicationStatus
 
                 // Follow value population like HuBAMP
-                values['dataset_type'] = ['Publication']
+                // values['dataset_type'] = 'Publication'
                 values['contains_human_genetic_sequences'] = false
 
                 if (!values['group_uuid'] && editMode === 'Register') {
@@ -194,6 +194,9 @@ export default function EditPublication() {
     function handlePublicationStatusNo() {
         setPublicationStatus(false)
     }
+
+    // TODO: remove this return when ready to support
+    return <NotFound />
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
@@ -284,6 +287,15 @@ export default function EditPublication() {
                                                      isRequired={true}
                                                      onChange={onChange}
                                                      text={<>The URL at the publishers server for print/pre-print (http(s)://[alpha-numeric-string].[alpha-numeric-string].[...]</>}/>
+
+                                    {/*/!*Publication Date*!/*/}
+                                    <EntityFormGroup label='Publication Date' controlId='publication_date'
+                                                     isRequired={true}
+                                                     type={'date'}
+                                                     placeholder={'mm/dd/YYYY'}
+                                                     value={data.publication_date}
+                                                     onChange={onChange}
+                                                     text={<>The date of the publication.</>}/>
 
                                     {/*/!*Publication DOI*!/*/}
                                     <EntityFormGroup label='Publication DOI' controlId='publication_doi'

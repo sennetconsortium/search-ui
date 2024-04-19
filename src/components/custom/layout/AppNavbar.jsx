@@ -26,19 +26,19 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
 
     const supportedSingleRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication entity', 'upload', 'organ', 'collection', 'dataset']
+        let notSupported = ['publication', 'upload', 'organ', 'collection', 'dataset']
         return entities.filter(entity => !notSupported.includes(entity))
     }
 
     const adminSupportedSingleRegister = () => {
         let entities = Object.keys(cache.entities)
-        let adminOnly = ['collection']
+        let adminOnly = []
         return entities.filter(entity => adminOnly.includes(entity))
     }
 
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication entity', 'organ', 'collection', 'dataset']
+        let notSupported = ['publication', 'organ', 'collection', 'dataset']
         entities = entities.filter(entity => !notSupported.includes(entity))
 
         const elem = entities.shift()
