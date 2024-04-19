@@ -284,6 +284,15 @@ export default function EditPublication() {
                                                      onChange={onChange}
                                                      text={<>The URL at the publishers server for print/pre-print (http(s)://[alpha-numeric-string].[alpha-numeric-string].[...]</>}/>
 
+                                    {/*/!*Publication Date*!/*/}
+                                    <EntityFormGroup label='Publication Date' controlId='publication_date'
+                                                     isRequired={true}
+                                                     type={'date'}
+                                                     placeholder={'mm/dd/YYYY'}
+                                                     value={data.publication_date}
+                                                     onChange={onChange}
+                                                     text={<>The date of the publication.</>}/>
+
                                     {/*/!*Publication DOI*!/*/}
                                     <EntityFormGroup label='Publication DOI' controlId='publication_doi'
                                                      value={data.publication_doi}
