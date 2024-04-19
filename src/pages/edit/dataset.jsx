@@ -345,7 +345,7 @@ export default function EditDataset() {
                 }
 
                 if (adminGroup && assignedToGroupName?.isEmpty()) {
-                    json['assigned_to_group_name'] = null
+                    json['assigned_to_group_name'] = ''
                 }
 
                 if (adminGroup && ingestTask?.isEmpty()) {

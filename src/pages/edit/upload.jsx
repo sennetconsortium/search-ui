@@ -143,8 +143,13 @@ function EditUpload() {
             // Remove empty strings
             let json = cleanJson(values);
 
+            // Prevent the 400 bad request error on same status
+            if (eq(json.status, values.status)) {
+                delete json['status']
+            }
+
             if (adminGroup && assignedToGroupName?.isEmpty()) {
-                json['assigned_to_group_name'] = null
+                json['assigned_to_group_name'] = ''
             }
 
             if (adminGroup && ingestTask?.isEmpty()) {
