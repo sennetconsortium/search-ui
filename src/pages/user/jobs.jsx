@@ -5,6 +5,8 @@ import Unauthorized from "../../components/custom/layout/Unauthorized";
 import Header from "../../components/custom/layout/Header";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppContext from "../../context/AppContext";
+import LinearProgress from '@mui/material/LinearProgress';
+import log from 'loglevel'
 import {
     eq,
     getHeaders,
@@ -23,7 +25,7 @@ import AppModal from "../../components/AppModal";
 import {tableColumns} from "../../components/custom/edit/AttributesUpload";
 import Swal from 'sweetalert2'
 import useDataTableSearch from "../../hooks/useDataTableSearch";
-import {get_headers, parseJson} from "../../lib/services";
+import {get_headers} from "../../lib/services";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import Stack from '@mui/material/Stack';
@@ -90,14 +92,31 @@ function ViewJobs({isAdmin = false}) {
 
     const hasRegistered = (row) => {
         if (colorMap.current[row.job_id]) return true
-        for (let item of data) {
-           if (item.referrer.path.includes(row.job_id) && eq(item.referrer.type, 'register')) {
-               let color = randomColor()
-               colorMap.current[row.job_id] = color
-               colorMap.current[item.job_id] = color
-               return true
-           }
+
+        // check the validation job for a register_job_id prob
+        const registerJobId = row.register_job_id
+        const createColorMap = (item) => {
+            let color = randomColor()
+            colorMap.current[row.job_id] = color
+            colorMap.current[item.job_id] = color
+            return true
         }
+
+        if (registerJobId) {
+            for (let item of data) {
+                if (eq(item.job_id, registerJobId)) {
+                    return createColorMap(item)
+                }
+            }
+        }
+
+        // For backwards compatibility only, since old jobs prior to feature change may not have a register_job_id attached
+        for (let item of data) {
+            if (item.referrer.path.includes(row.job_id) && eq(item.referrer.type, 'register')) {
+                return createColorMap(item)
+            }
+        }
+
         return null
     }
 
@@ -139,6 +158,7 @@ function ViewJobs({isAdmin = false}) {
         buttons: true,
         showCancelButton: true,
         confirmButtonText: 'Delete',
+        cancelButtonText: 'Keep',
         customClass: {
             cancelButton: 'btn btn-secondary',
             confirmButton: 'btn btn-danger',
@@ -173,6 +193,23 @@ function ViewJobs({isAdmin = false}) {
             }
         }).catch(error => {
             // when promise rejected...
+            log.info(`flushAllData ${error}`)
+        });
+    }
+
+    const handleSingleJobCancellation = (e, row, action) => {
+        let cancelConfig = JSON.parse(JSON.stringify(deleteConfig))
+        cancelConfig.text = 'This cannot be undone once cancelled.'
+        cancelConfig.confirmButtonText = 'Cancel'
+        cancelConfig.customClass = {
+            confirmButton: 'btn btn-warning',
+        }
+        Swal.fire(cancelConfig).then(result => {
+            if (result.isConfirmed) {
+                handleResponseModal(e, row, urlPrefix() + `/${row.job_id}/cancel`, 'PUT', action, 'cancelled')
+            }
+        }).catch(error => {
+            log.info(`handleSingleJobCancellation ${error}`)
         });
     }
 
@@ -180,10 +217,9 @@ function ViewJobs({isAdmin = false}) {
         Swal.fire(deleteConfig).then(result => {
             if (result.isConfirmed) {
                 handleResponseModal(e, row, urlPrefix() + `/${row.job_id}`, 'DELETE', action, 'deleted')
-                // Delete
             }
         }).catch(error => {
-            // when promise rejected...
+            log.info(`handleSingleJobDeletion ${error}`)
         });
     }
 
@@ -195,7 +231,7 @@ function ViewJobs({isAdmin = false}) {
         }
 
         if (eq(action, 'register')) {
-            let registerRes = await fetch(urlPrefix() + `/${row.job_id}`)
+            let registerRes = await fetch(urlPrefix() + `/${row.job_id}`, {headers: get_headers()})
             if (registerRes.ok) {
                 let jobInfo = await registerRes.json()
                 setData([...data, jobInfo])
@@ -219,10 +255,13 @@ function ViewJobs({isAdmin = false}) {
             headers: get_headers(),
             body: JSON.stringify(body)
         }).then((res) =>{
-            setErrorModal(false)
-            setShowModal(true)
-            setModalTitle(<h3>{successIcon()} Job {verb}</h3>)
-            setModalBody(<div>The job has been {verb}.</div>)
+
+            if (!eq(action, 'register')) {
+                setErrorModal(false)
+                setShowModal(true)
+                setModalTitle(<h3>{successIcon()} Job {verb}</h3>)
+                setModalBody(<div>The job has been {verb}.</div>)
+            }
 
             updateTableData(row, res, action)
 
@@ -255,8 +294,7 @@ function ViewJobs({isAdmin = false}) {
                 {job_id: row.job_id, referrer: {type: 'register', path: row.referrer?.path + `&job_id=${row.job_id}`
                 }})
         } else if (eq(action, 'Cancel')) {
-            e.target.disabled = true
-            handleResponseModal(e, row, urlPrefix() + `/${row.job_id}/cancel`, 'PUT', action, 'cancelled')
+            handleSingleJobCancellation(e, row, action)
         } else {
            window.location = row.referrer?.path
         }
@@ -273,20 +311,22 @@ function ViewJobs({isAdmin = false}) {
     }
 
     const flatten = (array) => {
+        const getErrorVal = (r) => r.message || r.description || (eq(typeof r, 'object') ? JSON.stringify(r) : r + "")
+
         if (!Array.isArray(array)) {
             if (!array.error) {
-                return [{error: array.message  || array}]
+                return [{error: getErrorVal(array)}]
             } else {
                 return [array]
             }
         }
         if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
 
-        if (Array.isArray(array) && array.length && array[0].message !== undefined) {
+        if (Array.isArray(array) && array.length && array[0].error === undefined) {
             array.forEach((item) => {
                 item.id = item.index
                 item.row = item.index
-                item.error = item.message
+                item.error = getErrorVal(item)
             })
             array = array.filter((item) => !item.success)
             return array
@@ -349,6 +389,8 @@ function ViewJobs({isAdmin = false}) {
         const _file = {name: row.job_id + '.tsv'}
         setErrorModal(false)
         setModalTitle(<h3>{getJobType(row)} job completion details</h3>)
+        setShowModal(true)
+        setModalBody(<div><Spinner /></div>)
         setModalSize('xl')
         const data = await fetchEntities(currentRow.current, {clearFetch: false, entityType })
 
@@ -362,9 +404,6 @@ function ViewJobs({isAdmin = false}) {
             setErrorModal(true)
             setModalBody(<div>The requested entities no longer exist.</div>)
         }
-
-        setShowModal(true)
-
     }
 
     const getViewDetailsModal = async (e, row) => {
@@ -400,16 +439,18 @@ function ViewJobs({isAdmin = false}) {
             {
                 name: 'Status',
                 selector: row => row.status,
-                width: '180px',
+                width: '190px',
                 format: (row) => {
-                    return (<div>
+                    const hasStarted = eq(row.status, 'started')
+                    return (<div className={'p-2'}>
                         <span className={`${getStatusColor(row.status)} badge`}>
-                        <SenNetPopover text={getJobStatusDefinition(row.status)} className={`status-info-${row.job_id}`}>
+                         <SenNetPopover text={getJobStatusDefinition(row.status)} className={`status-info-${row.job_id}`}>
                             {row.status}
                         </SenNetPopover>
                         </span>
-                            {eq(row.status, 'started') && <span style={{position: 'absolute', marginLeft: '5px', marginTop: '2px'}}><SpinnerEl /></span>}
+                            {hasStarted && !isRegisterJob(row) && <span style={{position: 'absolute', marginLeft: '5px', marginTop: '2px'}}><SpinnerEl /></span>}
                             {(jobHasFailed(row) || (jobCompleted(row) && isRegisterJob(row))) && <a className={'mx-2'} href={'#'} onClick={(e) => getViewDetailsModal(e, row)}><small>View details</small></a>}
+                            {hasStarted && isRegisterJob(row) && <span className={'mt-2'} style={{display: 'block'}}><LinearProgress variant="determinate" value={row.progress} /> <small>{row.progress}%</small></span>}
                     </div>
 
                     )
