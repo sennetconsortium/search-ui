@@ -6,6 +6,7 @@ import Header from "../../components/custom/layout/Header";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppContext from "../../context/AppContext";
 import LinearProgress from '@mui/material/LinearProgress';
+import log from 'loglevel'
 import {
     eq,
     getHeaders,
@@ -157,6 +158,7 @@ function ViewJobs({isAdmin = false}) {
         buttons: true,
         showCancelButton: true,
         confirmButtonText: 'Delete',
+        cancelButtonText: 'Keep',
         customClass: {
             cancelButton: 'btn btn-secondary',
             confirmButton: 'btn btn-danger',
@@ -191,6 +193,23 @@ function ViewJobs({isAdmin = false}) {
             }
         }).catch(error => {
             // when promise rejected...
+            log.info(`flushAllData ${error}`)
+        });
+    }
+
+    const handleSingleJobCancellation = (e, row, action) => {
+        let cancelConfig = JSON.parse(JSON.stringify(deleteConfig))
+        cancelConfig.text = 'This cannot be undone once cancelled.'
+        cancelConfig.confirmButtonText = 'Cancel'
+        cancelConfig.customClass = {
+            confirmButton: 'btn btn-warning',
+        }
+        Swal.fire(cancelConfig).then(result => {
+            if (result.isConfirmed) {
+                handleResponseModal(e, row, urlPrefix() + `/${row.job_id}/cancel`, 'PUT', action, 'cancelled')
+            }
+        }).catch(error => {
+            log.info(`handleSingleJobCancellation ${error}`)
         });
     }
 
@@ -198,10 +217,9 @@ function ViewJobs({isAdmin = false}) {
         Swal.fire(deleteConfig).then(result => {
             if (result.isConfirmed) {
                 handleResponseModal(e, row, urlPrefix() + `/${row.job_id}`, 'DELETE', action, 'deleted')
-                // Delete
             }
         }).catch(error => {
-            // when promise rejected...
+            log.info(`handleSingleJobDeletion ${error}`)
         });
     }
 
@@ -276,8 +294,7 @@ function ViewJobs({isAdmin = false}) {
                 {job_id: row.job_id, referrer: {type: 'register', path: row.referrer?.path + `&job_id=${row.job_id}`
                 }})
         } else if (eq(action, 'Cancel')) {
-            e.target.disabled = true
-            handleResponseModal(e, row, urlPrefix() + `/${row.job_id}/cancel`, 'PUT', action, 'cancelled')
+            handleSingleJobCancellation(e, row, action)
         } else {
            window.location = row.referrer?.path
         }
