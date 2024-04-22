@@ -520,7 +520,7 @@ export default function EditDataset() {
 
                                         {/*If the status for the Dataset is 'New' then allow the user to mark this as 'Submitted'*/}
                                         {!eq(data['status'], 'Processing') && isPrimary.current && isEditMode() && eq(data['status'], 'New') &&
-                                            <SenNetPopover text={<>Mark this <code>Dataset</code> as "Submitted" and ready for processing.</>} className={'submit-dataset'}>
+                                            <SenNetPopover text={<>Mark this <code>Dataset</code> as "Submitted" and ready for processing.</>} className={'initiate-dataset-submission'}>
                                                 <DatasetSubmissionButton
                                                     btnLabel={"Submit"}
                                                     modalBody={<div><p>By clicking "Submit" this <code>Dataset</code> will
@@ -541,8 +541,9 @@ export default function EditDataset() {
                                          processed via the pipeline.
                                          */}
                                          {!eq(data['status'], 'Processing') && isPrimary.current && adminGroup && isEditMode() && (eq(data['status'], 'New') || eq(data['status'], 'Submitted')) &&
-                                            <SenNetPopover text={<>Process this <code>Dataset</code> via the Ingest Pipeline.</>} className={'process-dataset'}>
+                                            <SenNetPopover text={<>Process this <code>Dataset</code> via the Ingest Pipeline.</>} className={'initiate-dataset-processing'}>
                                                 <DatasetSubmissionButton
+                                                    actionBtnClassName={'js-btn--process'}
                                                     btnLabel={"Process"}
                                                     modalBody={<div><p>By clicking "Process" this <code>Dataset</code> will
                                                         be processed via the Ingest Pipeline and its status set
@@ -553,7 +554,7 @@ export default function EditDataset() {
 
                                         {!['Processing', 'Published', 'Reorganized'].contains(data['status']) && isPrimary.current && adminGroup && isEditMode()  && <SenNetPopover
                                             text={statusRevertTooltip(cache.entities.dataset)}
-                                            className={'revert-button'}>
+                                            className={'initiate-dataset-status-change'}>
                                                 <DatasetRevertButton data={data} onClick={handleRevert} disableSubmit={disableSubmit} onStatusChange={onChange} />
                                         </SenNetPopover>
                                         }
