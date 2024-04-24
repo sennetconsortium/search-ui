@@ -5,37 +5,17 @@ import AppFooter from "../../components/custom/layout/AppFooter";
 import Header from "../../components/custom/layout/Header";
 import AppContext from "../../context/AppContext";
 import {APP_TITLE} from "../../config/config";
-import {APP_ROUTES} from "../../config/constants";
 import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
 import {toast} from "react-toastify";
 import Unauthorized from '../../components/custom/layout/Unauthorized';
 import {Grid} from "@mui/material";
+import AdminContext, {AdminProvider} from "../../context/AdminContext";
 
-function Login() {
-    const { _t, authorized, isUnauthorized, checkUIAdminStatus, router} = useContext(AppContext)
+function AdminIndex() {
+    const { _t, authorized} = useContext(AppContext)
 
     const [busy, setBusy] = useState(false)
-    const [uiAdminAuthorized, setUIAdminAuthorized] = useState({
-        authorized: false,
-        loading: true,
-    })
-
-    useEffect(() => {
-        checkUIAdminStatus()
-        .then((adminUnauthorized) => {
-            setUIAdminAuthorized({
-                authorized: adminUnauthorized,
-                loading: false,
-            })
-        })
-    }, [])
-
-    useEffect(() => {
-        if (isUnauthorized()) {
-            router.push(APP_ROUTES.login)
-            return
-        }
-    }, [authorized])
+    const { uiAdminAuthorized } = useContext(AdminContext)
 
     const clearCache = async () => {
         const url = '/api/ontology'
@@ -131,4 +111,9 @@ function Login() {
     )
 }
 
-export default Login
+export default AdminIndex
+
+
+AdminIndex.withWrapper = function (page) {
+    return <AdminProvider>{page}</AdminProvider>
+}

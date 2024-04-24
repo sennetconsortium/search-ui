@@ -3,15 +3,25 @@ import React, {useContext} from "react";
 import AppContext from "../../../context/AppContext";
 import Spinner from "../../../components/custom/Spinner";
 import {JobQueueProvider} from "../../../context/JobQueueContext";
+import Unauthorized from "../../../components/custom/layout/Unauthorized";
+import AdminContext, {AdminProvider} from "../../../context/AdminContext";
 
 
 function ViewJobsAdmin() {
-    const {adminGroup} = useContext(AppContext)
+    const {adminGroup, authorized} = useContext(AppContext)
+    const { uiAdminAuthorized } = useContext(AdminContext)
+
+    if (!authorized || uiAdminAuthorized.loading) {
+        return <Spinner />
+    }
+
+    if (!uiAdminAuthorized.authorized) {
+        return <Unauthorized />
+    }
 
     return (
         <>
             {adminGroup && <ViewJobs isAdmin={adminGroup} />}
-            {!adminGroup && <Spinner/>}
         </>
     )
 }
@@ -20,5 +30,5 @@ function ViewJobsAdmin() {
 export default ViewJobsAdmin
 
 ViewJobsAdmin.withWrapper = function (page) {
-    return <JobQueueProvider>{page}</JobQueueProvider>
+    return <AdminProvider><JobQueueProvider>{page}</JobQueueProvider></AdminProvider>
 }
