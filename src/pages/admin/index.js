@@ -5,17 +5,14 @@ import AppFooter from "../../components/custom/layout/AppFooter";
 import Header from "../../components/custom/layout/Header";
 import AppContext from "../../context/AppContext";
 import {APP_TITLE} from "../../config/config";
-import {APP_ROUTES} from "../../config/constants";
 import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
 import {toast} from "react-toastify";
 import Unauthorized from '../../components/custom/layout/Unauthorized';
 import {Grid} from "@mui/material";
 import AdminContext, {AdminProvider} from "../../context/AdminContext";
-import {JobQueueProvider} from "../../context/JobQueueContext";
-import ViewJobsAdmin from "./jobs";
 
 function AdminIndex() {
-    const { _t, authorized, isUnauthorized, checkUIAdminStatus, router} = useContext(AppContext)
+    const { _t, authorized} = useContext(AppContext)
 
     const [busy, setBusy] = useState(false)
     const { uiAdminAuthorized } = useContext(AdminContext)

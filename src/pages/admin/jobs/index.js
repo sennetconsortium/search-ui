@@ -1,9 +1,8 @@
 import ViewJobs from "../../user/jobs";
-import React, {useContext, useEffect} from "react";
+import React, {useContext} from "react";
 import AppContext from "../../../context/AppContext";
 import Spinner from "../../../components/custom/Spinner";
 import {JobQueueProvider} from "../../../context/JobQueueContext";
-import {APP_ROUTES} from "../../../config/constants";
 import Unauthorized from "../../../components/custom/layout/Unauthorized";
 import AdminContext, {AdminProvider} from "../../../context/AdminContext";
 
