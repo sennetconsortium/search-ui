@@ -5,22 +5,24 @@ import Spinner from "../../../components/custom/Spinner";
 import {JobQueueProvider} from "../../../context/JobQueueContext";
 import {APP_ROUTES} from "../../../config/constants";
 import Unauthorized from "../../../components/custom/layout/Unauthorized";
+import AdminContext, {AdminProvider} from "../../../context/AdminContext";
 
 
 function ViewJobsAdmin() {
-    const {adminGroup, isLoggedIn, router} = useContext(AppContext)
+    const {adminGroup, authorized} = useContext(AppContext)
+    const { uiAdminAuthorized } = useContext(AdminContext)
 
-    useEffect(() => {
-        if (!isLoggedIn()) {
-            router.push(APP_ROUTES.login)
-            return
-        }
-    }, [])
+    if (!authorized || uiAdminAuthorized.loading) {
+        return <Spinner />
+    }
+
+    if (!uiAdminAuthorized.authorized) {
+        return <Unauthorized />
+    }
 
     return (
         <>
             {adminGroup && <ViewJobs isAdmin={adminGroup} />}
-            {isLoggedIn() && !adminGroup && <Unauthorized />}
         </>
     )
 }
@@ -29,5 +31,5 @@ function ViewJobsAdmin() {
 export default ViewJobsAdmin
 
 ViewJobsAdmin.withWrapper = function (page) {
-    return <JobQueueProvider>{page}</JobQueueProvider>
+    return <AdminProvider><JobQueueProvider>{page}</JobQueueProvider></AdminProvider>
 }

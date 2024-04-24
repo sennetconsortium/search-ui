@@ -10,32 +10,15 @@ import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
 import {toast} from "react-toastify";
 import Unauthorized from '../../components/custom/layout/Unauthorized';
 import {Grid} from "@mui/material";
+import AdminContext, {AdminProvider} from "../../context/AdminContext";
+import {JobQueueProvider} from "../../context/JobQueueContext";
+import ViewJobsAdmin from "./jobs";
 
-function Login() {
+function AdminIndex() {
     const { _t, authorized, isUnauthorized, checkUIAdminStatus, router} = useContext(AppContext)
 
     const [busy, setBusy] = useState(false)
-    const [uiAdminAuthorized, setUIAdminAuthorized] = useState({
-        authorized: false,
-        loading: true,
-    })
-
-    useEffect(() => {
-        checkUIAdminStatus()
-        .then((adminUnauthorized) => {
-            setUIAdminAuthorized({
-                authorized: adminUnauthorized,
-                loading: false,
-            })
-        })
-    }, [])
-
-    useEffect(() => {
-        if (isUnauthorized()) {
-            router.push(APP_ROUTES.login)
-            return
-        }
-    }, [authorized])
+    const { uiAdminAuthorized } = useContext(AdminContext)
 
     const clearCache = async () => {
         const url = '/api/ontology'
@@ -131,4 +114,9 @@ function Login() {
     )
 }
 
-export default Login
+export default AdminIndex
+
+
+AdminIndex.withWrapper = function (page) {
+    return <AdminProvider>{page}</AdminProvider>
+}
