@@ -169,7 +169,7 @@ class GoogleTagManager extends Addon {
         const className = $el.attr('class')
         this.event = 'cta'
         let action
-        const actions = ['json', 'submit', 'login', 'save', 'revert', 'validate', 'reorganize']
+        const actions = ['json', 'submit', 'login', 'save', 'revert', 'validate', 'reorganize', 'process']
         if (className) {
             for (let i = 0; i < actions.length; i++) {
                 if (className.includes(actions[i])){
@@ -220,8 +220,9 @@ class GoogleTagManager extends Addon {
             data.entity = this.entities[entities[pos]]
             const actions = ['register', 'edit']
             for (let action of actions) {
-                if (this.router.route.indexOf(action) !== -1) {
+                if (window.location.href.indexOf(action) !== -1) {
                     data.action = action
+                    break
                 }
             }
             data.uuid = this.getUuid()

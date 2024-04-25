@@ -300,7 +300,7 @@ function EditUpload() {
                                             {!eq(data['status'], 'Processing') && isEditMode() && (eq(data['status'], 'New') || eq(data['status'], 'Valid')) &&
                                                 <SenNetPopover
                                                     text={<>Mark this <code>Upload</code> as "Submitted" and ready for
-                                                        reorganizing.</>} className={'submit-dataset'}>
+                                                        reorganizing.</>} className={'initiate-upload-submission'}>
                                                     <DatasetSubmissionButton
                                                         btnLabel={"Submit"}
                                                         modalBody={<div><p>By clicking "Submit"
@@ -322,7 +322,7 @@ function EditUpload() {
                                                 <SenNetPopover
                                                     text={<>Validate upload.
                                                     </>}
-                                                    className={'validate-button'}>
+                                                    className={'initiate-upload-validation'}>
                                                     <DatasetSubmissionButton
                                                         actionBtnClassName={'js-btn--validate'}
                                                         btnLabel={"Validate"}
@@ -341,7 +341,7 @@ function EditUpload() {
                                                 <SenNetPopover
                                                     text={<>Reorganize this <code>Upload</code>.
                                                     </>}
-                                                    className={'reorganize-button'}>
+                                                    className={'initiate-upload-reorganization'}>
                                                     <DatasetSubmissionButton
                                                         actionBtnClassName={'js-btn--reorganize'}
                                                         btnLabel={"Reorganize"}
@@ -359,7 +359,7 @@ function EditUpload() {
                                             {!['Processing', 'Published', 'Reorganized'].contains(data['status']) && adminGroup && isEditMode() &&
                                                 <SenNetPopover
                                                     text={statusRevertTooltip(cache.entities.upload)}
-                                                    className={'revert-button'}>
+                                                    className={'initiate-upload-status-change'}>
                                                     <DatasetRevertButton data={data} onClick={handleRevert}
                                                                          disableSubmit={disableSubmit}
                                                                          onStatusChange={onChange}/>
