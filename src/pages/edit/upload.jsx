@@ -184,6 +184,8 @@ function EditUpload() {
         handlePut('reorganize')
     }
 
+    const isAdminOrHasValue = (key) => (data[key] || adminGroup)
+
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
@@ -243,9 +245,10 @@ function EditUpload() {
                                         }
 
                                         {
-                                            !(userWriteGroups.length === 1) && isEditMode() && adminGroup &&
+                                            !(userWriteGroups.length === 1) && isAdminOrHasValue('assigned_to_group_name') && isEditMode() &&
                                             <GroupSelect
                                                 optionValueProp={'displayname'}
+                                                isDisabled={!adminGroup}
                                                 title={'Assigned to Group Name'}
                                                 required={false}
                                                 controlId={'assigned_to_group_name'}
@@ -258,8 +261,9 @@ function EditUpload() {
                                         }
 
                                         {/*/!*Ingest*!/*/}
-                                        {isEditMode() && adminGroup &&
+                                        {isEditMode() && isAdminOrHasValue('ingest_task') &&
                                             <EntityFormGroup label='Ingest Task'
+                                                             isDisabled={!adminGroup}
                                                              type={'textarea'}
                                                              controlId='ingest_task' value={data.ingest_task}
                                                              onChange={onChange}
