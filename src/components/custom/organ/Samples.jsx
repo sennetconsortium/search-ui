@@ -1,12 +1,16 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
-import { getSamplesByOrgan } from "../../../lib/services";
-import SenNetAccordion from "../layout/SenNetAccordion";
 import { APP_ROUTES } from "../../../config/constants";
+import useLocalSettings from "../../../hooks/useLocalSettings";
+import { getSamplesByOrgan } from "../../../lib/services";
 import ClipboardCopy from "../../ClipboardCopy";
+import SenNetAccordion from "../layout/SenNetAccordion";
 
 const Samples = ({ id, ruiCode }) => {
+    const router = useRouter();
+    const {setLocalSettings} = useLocalSettings();
     const [samples, setSamples] = useState(null);
 
     useEffect(() => {
@@ -64,12 +68,23 @@ const Samples = ({ id, ruiCode }) => {
         `filters%5B1%5D%5Bvalues%5D%5B0%5D=${ruiCode}&filters%5B1%5D%5Btype%5D=any&` +
         "sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc";
 
+    const handleSearchPageClick = (e) => {
+        e.preventDefault();
+        // Expand the relevant facets on the search page
+        setLocalSettings("entities", {
+            "entity_type": { isExpanded: true },
+            "organ": { isExpanded: true },
+        })
+        router.push(searchUrl);
+    }
+
     return (
         <SenNetAccordion id={id} title="Samples" afterTitle={undefined}>
             <div className="d-flex flex-row-reverse">
                 <Link
                     className="btn btn-outline-primary rounded-0"
-                    href={searchUrl}
+                    href=""
+                    onClick={handleSearchPageClick}
                 >
                     View on search page
                 </Link>
