@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import ClipboardCopy from "../../../ClipboardCopy";
 import {ViewHeaderBadges} from "./ViewHeaderBadges";
 import SenNetPopover from "../../../SenNetPopover";
-import VersionsDropdown from "./VersionsDropdown";
+import VersionDropdown from "./VersionDropdown";
 
 const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
     const {_t, cache} = useContext(AppContext)
@@ -29,7 +29,9 @@ const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
                             variant="outline-primary rounded-0"><i className="bi bi-filetype-json"></i></Button>
                 </SenNetPopover>
 
-                {eq(entity, cache.entities.dataset) && data.multi_revisions && <VersionsDropdown data={data}/>}
+                {eq(entity, cache.entities.dataset) && eq(data.status, 'published') &&
+                    <VersionDropdown data={data}/>
+                }
             </Stack>
 
         </div>

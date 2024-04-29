@@ -2,10 +2,8 @@ import {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import Dropdown from 'react-bootstrap/Dropdown'
 import AppContext from "../../../../context/AppContext";
-import {getEntityEndPoint} from "../../../../config/config";
 import {getEntityViewUrl} from "../../js/functions";
 import Select from 'react-select'
-import {get_headers} from "../../../../lib/services";
 
 function VersionsDropdown({data}) {
 
