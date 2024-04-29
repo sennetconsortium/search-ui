@@ -19,7 +19,7 @@ export default function DatasetType({datasetTypes, data, onChange}) {
                 </Form.Label>
 
                 {/*Check that there exists a data type for this dataset and if it is not a part of the list of primary assay types*/}
-                {data.dataset_category !== 'primary' ?
+                {data?.dataset_category && data.dataset_category !== 'primary' ?
                     (
                         <Form.Select required aria-label="Dataset Type" disabled>
                             <option
