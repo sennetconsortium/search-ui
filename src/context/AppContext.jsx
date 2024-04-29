@@ -254,17 +254,6 @@ export const AppProvider = ({ cache, banners, children }) => {
     const handleSidebar = () => {
         setSidebarVisible(!sidebarVisible)
     }
-
-    const checkUIAdminStatus = async () => {
-        try {
-            const headers = get_auth_header()
-            let res  = await fetch(`${getIngestEndPoint()}privs/has-data-admin`, {method:'GET', headers})
-            let data = res.ok ? await res.json() : {has_data_admin_privs: false}
-            return data.has_data_admin_privs
-        } catch {
-            return false
-        }
-    }
     
     return (
         <AppContext.Provider
@@ -287,7 +276,6 @@ export const AppProvider = ({ cache, banners, children }) => {
                 banners,
                 router,
                 filterImageFilesToAdd,
-                checkUIAdminStatus,
                 supportedMetadata,
                 handleSidebar,
                 sidebarVisible,
