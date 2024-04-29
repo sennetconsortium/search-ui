@@ -31,7 +31,6 @@ import {
     getIngestEndPoint,
     valid_dataset_ancestor_config
 } from "../../config/config";
-import AttributesUpload from "../../components/custom/edit/AttributesUpload";
 import $ from 'jquery'
 import SenNetPopover from "../../components/SenNetPopover"
 import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
@@ -53,7 +52,8 @@ export default function EditDataset() {
         dataAccessPublic, setDataAccessPublic,
         getEntityConstraints,
         getSampleEntityConstraints,
-        buildConstraint, successIcon, errIcon, getCancelBtn
+        buildConstraint, successIcon, errIcon, getCancelBtn,
+        isAdminOrHasValue, getAssignedToGroupNames
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
     const router = useRouter()
@@ -372,7 +372,6 @@ export default function EditDataset() {
         setContainsHumanGeneticSequences(false)
     }
 
-    const isAdminOrHasValue = (key) => (data[key] || adminGroup)
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
@@ -409,7 +408,7 @@ export default function EditDataset() {
                                             entity_type={'dataset'}/>
                                     }
                                     {
-                                        !(userWriteGroups.length === 1) && isAdminOrHasValue('assigned_to_group_name') && isEditMode() &&
+                                        isAdminOrHasValue(adminGroup, 'assigned_to_group_name') && isEditMode() &&
                                         <GroupSelect
                                             optionValueProp={'displayname'}
                                             isDisabled={!adminGroup}
@@ -419,13 +418,13 @@ export default function EditDataset() {
                                             popover={<>The group responsible for the next step in the data ingest process.</>}
                                             data={data}
                                             value={data.assigned_to_group_name}
-                                            groups={userWriteGroups.map(item => {if (item.data_provider) return item})}
+                                            groups={getAssignedToGroupNames(adminGroup)}
                                             onGroupSelectChange={onChange}
                                             entity_type={'dataset'}/>
                                     }
 
                                     {/*/!*Ingest*!/*/}
-                                    {isEditMode() && isAdminOrHasValue('ingest_task') &&
+                                    {isEditMode() && isAdminOrHasValue(adminGroup, 'ingest_task') &&
                                         <EntityFormGroup label='Ingest Task'
                                                          isDisabled={!adminGroup}
                                            type={'textarea'}

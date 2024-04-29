@@ -36,7 +36,7 @@ function EditUpload() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
-        getCancelBtn
+        getCancelBtn, isAdminOrHasValue, getAssignedToGroupNames
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
 
@@ -184,8 +184,6 @@ function EditUpload() {
         handlePut('reorganize')
     }
 
-    const isAdminOrHasValue = (key) => (data[key] || adminGroup)
-
     if (isAuthorizing() || isUnauthorized()) {
         return (
             isUnauthorized() ? <Unauthorized/> : <Spinner/>
@@ -245,7 +243,7 @@ function EditUpload() {
                                         }
 
                                         {
-                                            !(userWriteGroups.length === 1) && isAdminOrHasValue('assigned_to_group_name') && isEditMode() &&
+                                            isAdminOrHasValue(adminGroup, 'assigned_to_group_name') && isEditMode() &&
                                             <GroupSelect
                                                 optionValueProp={'displayname'}
                                                 isDisabled={!adminGroup}
@@ -255,13 +253,13 @@ function EditUpload() {
                                                 popover={<>The group responsible for the next step in the data ingest process.</>}
                                                 data={data}
                                                 value={data.assigned_to_group_name}
-                                                groups={userWriteGroups.map(item => {if (item.data_provider) return item})}
+                                                groups={getAssignedToGroupNames(adminGroup)}
                                                 onGroupSelectChange={onChange}
                                                 entity_type={'dataset'}/>
                                         }
 
                                         {/*/!*Ingest*!/*/}
-                                        {isEditMode() && isAdminOrHasValue('ingest_task') &&
+                                        {isEditMode() && isAdminOrHasValue(adminGroup, 'ingest_task') &&
                                             <EntityFormGroup label='Ingest Task'
                                                              isDisabled={!adminGroup}
                                                              type={'textarea'}
