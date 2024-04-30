@@ -34,8 +34,11 @@ const useOrganDetail = (urlParamName) => {
             });
             organ = _.mapKeys(organ, (v, k) => _.camelCase(k));
 
-            const uberonPath = organ.organUberon.replace(":", "_");
-            const uberonUrl = `http://purl.obolibrary.org/obo/${uberonPath}`;
+            let uberonUrl = undefined;
+            if (organ.organUberon) {
+                const uberonPath = organ.organUberon.replace(":", "_");
+                uberonUrl = `http://purl.obolibrary.org/obo/${uberonPath}`;
+            }
             return setOrganDetail({ ...organDetail, ...organ, uberonUrl });
         };
         getOntologyOrgan(organDetail[1]);
