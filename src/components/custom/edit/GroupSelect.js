@@ -3,7 +3,8 @@ import {Form} from 'react-bootstrap';
 import SenNetPopover from "../../SenNetPopover";
 import AppContext from "../../../context/AppContext";
 
-const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural, popover, value, title = 'Group', controlId='group_uuid', required = true, optionValueProp = 'uuid'}) => {
+const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural, popover, value, isDisabled,
+                         title = 'Group', controlId='group_uuid', required = true, optionValueProp = 'uuid'}) => {
     const {cache} = useContext(AppContext)
     popover = popover || <>{`You are a member of more than one Globus group and need to pick a group to associate with ${plural ? 'these ' : 'this '}`}
         <code>{cache.entities[entity_type]}</code>.</>
@@ -18,7 +19,7 @@ const GroupSelect = ({groups, onGroupSelectChange, entity_type, plural, popover,
 
                 </Form.Label>
 
-                <Form.Select required={required} aria-label="group-select"
+                <Form.Select disabled={isDisabled} required={required} aria-label="group-select"
                              onChange={e => onGroupSelectChange(e, e.target.id, e.target.value)}>
                     <option value="">----</option>
                     {

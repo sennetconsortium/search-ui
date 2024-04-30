@@ -252,6 +252,20 @@ export const EntityProvider = ({ children }) => {
         />
     }
 
+    const isAdminOrHasValue = (adminGroup, key) => (data[key] || adminGroup)
+
+    const getAssignedToGroupNames = (adminGroup) => {
+        if (adminGroup) {
+            return userWriteGroups.map(item => {if (item.data_provider) return item})
+        } else {
+            return [
+                {
+                    displayname: data.assigned_to_group_name
+                }
+            ]
+        }
+    }
+
     return (
         <EntityContext.Provider
             value={{
@@ -275,7 +289,8 @@ export const EntityProvider = ({ children }) => {
                 dataAccessPublic, setDataAccessPublic,
                 getEntityConstraints, getSampleEntityConstraints, buildConstraint,
                 getMetadataNote, successIcon, errIcon, checkProtocolUrl,
-                warningClasses, setWarningClasses, getCancelBtn
+                warningClasses, setWarningClasses, getCancelBtn,
+                isAdminOrHasValue, getAssignedToGroupNames
             }}
         >
             {children}
