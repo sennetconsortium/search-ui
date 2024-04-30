@@ -20,6 +20,7 @@ import SidebarBtn from "../components/SidebarBtn";
 import Metadata from "../components/custom/entities/Metadata";
 import FileTreeView from "../components/custom/entities/dataset/FileTreeView";
 import Upload from "../components/custom/entities/dataset/Upload";
+import CreationActionRelationship from "../components/custom/entities/dataset/CreationActionRelationship";
 
 function ViewDataset() {
     const [data, setData] = useState(null)
@@ -115,6 +116,11 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
+                                            <li className="nav-item">
+                                                <a href="#multi-assay-relationship"
+                                                   className="nav-link "
+                                                   data-bs-parent="#sidebar">Multi-Assay Relationship</a>
+                                            </li>
                                             {data.upload && data.upload.uuid &&
                                                 <li className="nav-item">
                                                     <a href="#Associated Upload"
@@ -192,6 +198,8 @@ function ViewDataset() {
                                                 secondaryDateTitle="Last Touch"
                                                 secondaryDate={data.last_modified_timestamp}
                                                 data={data}/>
+
+                                            <CreationActionRelationship data={data} />
 
                                             {/*Upload*/}
                                             {data.upload && data.upload.uuid && <Upload data={data.upload}/>}

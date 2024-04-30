@@ -1,7 +1,7 @@
 import React, {useContext} from 'react'
 import AppContext from '../../../../context/AppContext'
 import {Button, Stack} from 'react-bootstrap';
-import {eq} from "../../js/functions";
+import {eq, getCreationActionRelationName} from "../../js/functions";
 import PropTypes from 'prop-types'
 import ClipboardCopy from "../../../ClipboardCopy";
 import {ViewHeaderBadges} from "./ViewHeaderBadges";
@@ -47,8 +47,8 @@ function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader, unique
 
     return (
         <div style={{width: '100%'}}>
-            {/*TODO: should ideally depend on ontology */}
-            <h4>{cache.entities[entity] || entity.upperCaseFirst()}</h4>
+
+            <h4>{eq(entity, 'dataset') && <span>{getCreationActionRelationName(data.creation_action)}</span>} {!eq(entity, 'dataset') && entity.upperCaseFirst()}</h4>
             <h3>{data.sennet_id}
                 <ClipboardCopy text={data.sennet_id}/>
             </h3>

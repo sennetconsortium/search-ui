@@ -334,6 +334,22 @@ export function getStatusColor(status) {
 
 }
 
+export const datasetIs = {
+    processed: (creationAction) => creationAction.includes('Process'),
+    component: (creationAction) => creationAction.includes('Multi-Assay Split'),
+    primary: (creationAction) => eq(creationAction,'create dataset activity')
+}
+
+export function getCreationActionRelationName(creationAction) {
+    if (datasetIs.processed(creationAction)) {
+        return 'Processed Dataset'
+    } else if (datasetIs.component(creationAction)) {
+        return 'Component Dataset'
+    } else {
+        return 'Primary Dataset'
+    }
+}
+
 export function checkFilterType(filters, field = 'entity_type') {
     let hasType = false;
     filters.map((filter, index) => {
