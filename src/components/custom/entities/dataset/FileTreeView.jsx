@@ -134,7 +134,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
         return <>
             {Object.entries(badges).map(([label, hasBadge]) => { 
                 return hasBadge
-                    ? <span className="badge bg-secondary mx-2"> {label}</span>
+                    ? <span className="badge bg-secondary mx-2" key={label}> {label}</span>
                     : null
             })}
         </>
