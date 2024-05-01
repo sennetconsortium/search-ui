@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {fetchDataCite, getRequestHeaders} from "../components/custom/js/functions";
+import {datasetIs, fetchDataCite, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -37,10 +37,26 @@ function ViewDataset() {
     } = useContext(DerivedContext)
     const [datasetCategories, setDatasetCategories] = useState(null)
 
+    const fetchEntityForMultiAssayInfo = async () => {
+        for (let entity of data.ancestors) {
+            if (datasetIs.primary(entity.creation_action)) {
+                const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders());
+                // convert the data to json
+                const primary = await response.json();
+                setDatasetCategories(getAssaySplitData(primary))
+                break;
+            }
+        }
+    }
+
     useEffect(() => {
             if (data) {
                 initVitessceConfig(data)
-                setDatasetCategories(getAssaySplitData(data))
+                if (datasetIs.primary(data.creation_action)) {
+                    setDatasetCategories(getAssaySplitData(data))
+                } else {
+                    fetchEntityForMultiAssayInfo()
+                }
             }
     }, [data])
 
