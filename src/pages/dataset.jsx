@@ -33,11 +33,14 @@ function ViewDataset() {
     const {
         showVitessce,
         initVitessceConfig,
+        getAssaySplitData
     } = useContext(DerivedContext)
+    const [datasetCategories, setDatasetCategories] = useState(null)
 
     useEffect(() => {
             if (data) {
                 initVitessceConfig(data)
+                setDatasetCategories(getAssaySplitData(data))
             }
     }, [data])
 
@@ -199,7 +202,7 @@ function ViewDataset() {
                                                 secondaryDate={data.last_modified_timestamp}
                                                 data={data}/>
 
-                                            <CreationActionRelationship data={data} />
+                                            {datasetCategories && (datasetCategories.component.length > 0) && <CreationActionRelationship entity={data} data={datasetCategories} />}
 
                                             {/*Upload*/}
                                             {data.upload && data.upload.uuid && <Upload data={data.upload}/>}

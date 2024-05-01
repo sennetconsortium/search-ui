@@ -1,31 +1,16 @@
 import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import SenNetAccordion from "../../layout/SenNetAccordion";
-import Lineage from "../sample/Lineage";
-import {datasetIs, getCreationActionRelationName} from "../../js/functions";
+import {getCreationActionRelationName} from "../../js/functions";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-function CreationActionRelationship({ data }) {
-    const [datasetCategories, setDatasetCategories] = useState({primary: [], component: [], processed: []})
+import DataTable from "react-data-table-component";
+import ClipboardCopy from "../../../ClipboardCopy";
+function CreationActionRelationship({ entity, data }) {
+
 
     useEffect(() => {
-        let component = []
-        let primary = []
-        let processed = []
-        let mergedData = data.ancestors.concat(data.descendants)
-        mergedData.push(data)
-        for (let entity of mergedData) {
-            if (datasetIs.component(entity.creation_action || '')) {
-                component.push(entity)
-            }
-            if (datasetIs.processed(entity.creation_action || '')) {
-                processed.push(entity)
-            }
-            if (datasetIs.primary(entity.creation_action || '')) {
-                primary.push(entity)
-            }
-        }
-        setDatasetCategories({component, processed, primary})
+
     }, [])
 
     const relationshipNames = {
@@ -35,9 +20,32 @@ function CreationActionRelationship({ data }) {
     }
 
     const getDefaultTab = () => {
-        const category = getCreationActionRelationName(data.creation_action)
+        const category = getCreationActionRelationName(entity.creation_action)
         return category.replace(' Dataset', '').toLowerCase()
     }
+
+    const columns = [
+        {
+            name: 'SenNet ID',
+            selector: row => row.sennet_id,
+            sortable: false,
+            format: (row) => {
+                return <span className={'has-supIcon'}><a href={'/' + row.entity_type.toLowerCase() + '?uuid=' + row.uuid}
+                                                          className="icon_inline">{row.sennet_id}</a><ClipboardCopy text={row.sennet_id} size={10} title={'Copy SenNet ID {text} to clipboard'} /></span>
+            }
+        },
+        {
+            name: 'Dataset Type',
+            selector: row => row.dataset_type,
+            sortable: true,
+        },
+        {
+            name: 'Group Name',
+            selector: row => row.group_name,
+            sortable: true,
+        }
+    ];
+
     return (
         <>
             <SenNetAccordion title={'Multi-Assay Relationship'} id={'multi-assay-relationship'}>
@@ -48,19 +56,31 @@ function CreationActionRelationship({ data }) {
                     className="mb-3"
                     variant="pills"
                 >
-                {datasetCategories.primary.length > 0 &&
+                {data.primary.length > 0 &&
                     <Tab eventKey="primary" title={relationshipNames.primary}>
-                        <Lineage lineage={datasetCategories.primary}/>
+                        <DataTable
+                            columns={columns}
+                            data={data.primary}
+                            fixedHeader={true}
+                            />
                     </Tab>
                 }
-                {datasetCategories.component.length > 0 &&
+                {data.component.length > 0 &&
                     <Tab eventKey="component" title={relationshipNames.component}>
-                        <Lineage lineage={datasetCategories.component} />
+                        <DataTable
+                            columns={columns}
+                            data={data.component}
+                            fixedHeader={true}
+                           />
                     </Tab>
                 }
-                {datasetCategories.processed.length > 0 &&
+                {data.processed.length > 0 &&
                     <Tab eventKey="processed" title={relationshipNames.processed}>
-                        <Lineage lineage={datasetCategories.processed}/>
+                        <DataTable
+                            columns={columns}
+                            data={data.processed}
+                            fixedHeader={true}
+                           />
                     </Tab>
                 }
                 </Tabs>
