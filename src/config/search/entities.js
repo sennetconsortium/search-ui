@@ -104,6 +104,14 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            dataset_category: {
+                label: 'Dataset Category',
+                type: 'value',
+                field: 'dataset_category.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
             status: {
                 label: 'Status',
                 type: 'value',
@@ -163,6 +171,8 @@ export const SEARCH_ENTITIES = {
             'rui_location_anatomical_locations.label': FilterIsSelected('entity_type', 'Sample'),
 
             sample_category: FilterIsSelected('entity_type', 'Sample'),
+
+            dataset_category: FilterIsSelected('entity_type', 'Dataset'),
 
             // Only show 'source.source_type' facet if 'Dataset' or 'Sample' is selected from the entity type facet
             "source.source_type": ({filters}) => {
