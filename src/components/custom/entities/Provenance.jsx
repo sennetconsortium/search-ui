@@ -10,7 +10,13 @@ import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
 import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
-import {fetchEntity, fetchProtocols, getClickableLink, getUBKGFullName} from "../js/functions";
+import {
+    fetchEntity,
+    fetchProtocols,
+    getClickableLink,
+    getCreationActionRelationName,
+    getUBKGFullName
+} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import * as d3 from "d3";
 
@@ -175,7 +181,8 @@ function Provenance({nodeData}) {
             Activity: '#f16766'
         },
         propertyMap: {
-            'sennet:created_by_user_displayname': 'agent'
+            'sennet:created_by_user_displayname': 'agent',
+            'sennet:creation_action': 'category'
         },
         imageMap: {
             "Sample|sennet:sample_category|Organ": null,
@@ -235,12 +242,13 @@ function Provenance({nodeData}) {
         typeProps: {
             Source: ['sennet:source_type'],
             Sample: ['sennet:sample_category', 'sennet:organ'],
-            Dataset: ['sennet:title'],
+            Dataset: ['sennet:creation_action', 'sennet:title'],
             Activity: ['sennet:created_timestamp', 'sennet:protocol_url', 'sennet:processing_information', 'sennet:created_by_user_displayname']
         },
         callbacks: {
             'sennet:created_timestamp': 'formatDate',
-            'sennet:organ': getUBKGFullName
+            'sennet:organ': getUBKGFullName,
+            'sennet:creation_action': getCreationActionRelationName,
         }
     }
 

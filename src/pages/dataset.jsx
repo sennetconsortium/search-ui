@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {fetchDataCite, getRequestHeaders} from "../components/custom/js/functions";
+import {datasetIs, fetchDataCite, getRequestHeaders} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";
@@ -20,6 +20,7 @@ import SidebarBtn from "../components/SidebarBtn";
 import Metadata from "../components/custom/entities/Metadata";
 import FileTreeView from "../components/custom/entities/dataset/FileTreeView";
 import Upload from "../components/custom/entities/dataset/Upload";
+import CreationActionRelationship from "../components/custom/entities/dataset/CreationActionRelationship";
 
 function ViewDataset() {
     const [data, setData] = useState(null)
@@ -32,11 +33,30 @@ function ViewDataset() {
     const {
         showVitessce,
         initVitessceConfig,
+        getAssaySplitData
     } = useContext(DerivedContext)
+    const [datasetCategories, setDatasetCategories] = useState(null)
+
+    const fetchEntityForMultiAssayInfo = async () => {
+        for (let entity of data.ancestors) {
+            if (datasetIs.primary(entity.creation_action)) {
+                const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders());
+                // convert the data to json
+                const primary = await response.json();
+                setDatasetCategories(getAssaySplitData(primary))
+                break;
+            }
+        }
+    }
 
     useEffect(() => {
             if (data) {
                 initVitessceConfig(data)
+                if (datasetIs.primary(data.creation_action)) {
+                    setDatasetCategories(getAssaySplitData(data))
+                } else {
+                    fetchEntityForMultiAssayInfo()
+                }
             }
     }, [data])
 
@@ -115,6 +135,11 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
+                                            <li className="nav-item">
+                                                <a href="#multi-assay-relationship"
+                                                   className="nav-link "
+                                                   data-bs-parent="#sidebar">Multi-Assay Relationship</a>
+                                            </li>
                                             {data.upload && data.upload.uuid &&
                                                 <li className="nav-item">
                                                     <a href="#Associated Upload"
@@ -192,6 +217,8 @@ function ViewDataset() {
                                                 secondaryDateTitle="Last Touch"
                                                 secondaryDate={data.last_modified_timestamp}
                                                 data={data}/>
+
+                                            {datasetCategories && (datasetCategories.component.length > 0) && <CreationActionRelationship entity={data} data={datasetCategories} />}
 
                                             {/*Upload*/}
                                             {data.upload && data.upload.uuid && <Upload data={data.upload}/>}

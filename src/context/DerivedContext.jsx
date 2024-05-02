@@ -1,6 +1,6 @@
 import {createContext, useCallback, useRef, useState} from "react";
 import $ from "jquery";
-import {fetchEntity} from "../components/custom/js/functions";
+import {datasetIs, fetchEntity} from "../components/custom/js/functions";
 import {fetchVitessceConfiguration, get_prov_info} from "../lib/services";
 import useVitessceEncoder from "../hooks/useVitessceEncoder";
 
@@ -99,6 +99,26 @@ export const DerivedProvider = ({children}) => {
         setShowVitessce(true)
     }
 
+    const getAssaySplitData = (data) => {
+        let component = []
+        let primary = []
+        let processed = []
+        let mergedData = data.ancestors.concat(data.descendants)
+        mergedData.push(data)
+        for (let entity of mergedData) {
+            if (datasetIs.component(entity.creation_action || '')) {
+                component.push(entity)
+            }
+            if (datasetIs.processed(entity.creation_action || '')) {
+                processed.push(entity)
+            }
+            if (datasetIs.primary(entity.creation_action || '')) {
+                primary.push(entity)
+            }
+        }
+        return {component, primary, processed}
+    }
+
     return <DerivedContext.Provider value={{
         initVitessceConfig,
         showVitessce,
@@ -116,6 +136,7 @@ export const DerivedProvider = ({children}) => {
         setIsFullscreen,
         expandVitessceToFullscreen,
         vitessceConfigFromUrl, vitessceParams,
+        getAssaySplitData,
         setVitessceConfigState, getUrlByLengthMaximums, encodeConfigToUrl
     }}>
         {children}
