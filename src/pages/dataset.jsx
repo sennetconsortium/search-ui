@@ -34,7 +34,8 @@ function ViewDataset() {
     const {
         showVitessce,
         initVitessceConfig,
-        getAssaySplitData
+        getAssaySplitData,
+        fetchDataProducts, dataProducts
     } = useContext(DerivedContext)
     const [datasetCategories, setDatasetCategories] = useState(null)
 
@@ -58,6 +59,7 @@ function ViewDataset() {
                 } else {
                     fetchEntityForMultiAssayInfo()
                 }
+                fetchDataProducts(data)
             }
     }, [data])
 
@@ -136,16 +138,16 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            <li className="nav-item">
+                                            {datasetCategories && (datasetCategories.component.length > 0) && <li className="nav-item">
                                                 <a href="#multi-assay-relationship"
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Multi-Assay Relationship</a>
-                                            </li>
-                                            <li className="nav-item">
+                                            </li>}
+                                            {datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action) && dataProducts && (dataProducts.length > 0) && <li className="nav-item">
                                                 <a href="#data-products"
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Data Products</a>
-                                            </li>
+                                            </li>}
                                             {data.upload && data.upload.uuid &&
                                                 <li className="nav-item">
                                                     <a href="#Associated Upload"
@@ -226,7 +228,7 @@ function ViewDataset() {
 
                                             {datasetCategories && (datasetCategories.component.length > 0) && <CreationActionRelationship entity={data} data={datasetCategories} />}
 
-                                            <DataProducts data={data} />
+                                            {datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action) && dataProducts && (dataProducts.length > 0) && <DataProducts data={data} files={dataProducts} />}
 
                                             {/*Upload*/}
                                             {data.upload && data.upload.uuid && <Upload data={data.upload}/>}
