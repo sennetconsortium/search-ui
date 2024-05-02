@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
+import useLocalSettings from "../../../hooks/useLocalSettings";
 import { getOrganDataTypeQuantities } from "../../../lib/services";
 import SenNetAccordion from "../layout/SenNetAccordion";
 
 const DataTypeQuantities = ({ id, ruiCode }) => {
+    const router = useRouter();
+    const {setLocalSettings} = useLocalSettings();
     const [dataTypes, setDataTypes] = useState(null);
 
     useEffect(() => {
@@ -40,6 +44,27 @@ const DataTypeQuantities = ({ id, ruiCode }) => {
         );
     };
 
+    const handleSearchPageClick = (e) => {
+        e.preventDefault();
+        // Expand the relevant facets on the search page
+        setLocalSettings("entities", {
+            "entity_type": { isExpanded: true },
+            "origin_sample.organ": { isExpanded: true },
+        })
+        router.push(searchUrl);
+    }
+
+    const handleDatasetTypeRowClick = (e, datasetType) => {
+        e.preventDefault();
+        // Expand the relevant facets on the search page
+        setLocalSettings("entities", {
+            "entity_type": { isExpanded: true },
+            "origin_sample.organ": { isExpanded: true },
+            "dataset_type": { isExpanded: true },
+        })
+        router.push(searchUrlForDatasetType(datasetType));
+    }
+
     const columns = [
         {
             name: "Dataset Type",
@@ -47,7 +72,8 @@ const DataTypeQuantities = ({ id, ruiCode }) => {
             cell: (row, index, column, id) => {
                 return (
                     <Link
-                        href={searchUrlForDatasetType(row.dataType)}
+                        href=""
+                        onClick={(e) => handleDatasetTypeRowClick(e, row.dataType)}
                     >
                         {row.dataType}
                     </Link>
@@ -66,7 +92,8 @@ const DataTypeQuantities = ({ id, ruiCode }) => {
             <div className="d-flex flex-row-reverse">
                 <Link
                     className="btn btn-outline-primary rounded-0"
-                    href={searchUrl}
+                    href=""
+                    onClick={handleSearchPageClick}
                 >
                     View on search page
                 </Link>
