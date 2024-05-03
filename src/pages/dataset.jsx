@@ -228,7 +228,7 @@ function ViewDataset() {
 
                                             {datasetCategories && (datasetCategories.component.length > 0) && <CreationActionRelationship entity={data} data={datasetCategories} />}
 
-                                            {datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action) && dataProducts && (dataProducts.length > 0) && <DataProducts data={data} files={dataProducts} />}
+                                            {(datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action)) && dataProducts && (dataProducts.length > 0) && <DataProducts data={data} files={dataProducts} />}
 
                                             {/*Upload*/}
                                             {data.upload && data.upload.uuid && <Upload data={data.upload}/>}

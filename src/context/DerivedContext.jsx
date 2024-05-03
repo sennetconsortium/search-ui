@@ -124,7 +124,7 @@ export const DerivedProvider = ({children}) => {
         if (!allFiles) return
         let _files = []
         for (let file of allFiles) {
-            if (file.is_data_product) {
+            if (file?.is_data_product) {
                 _files.push(file)
             }
         }
@@ -135,8 +135,8 @@ export const DerivedProvider = ({children}) => {
             let _files = []
             for (let entity of data.descendants) {
                 if (datasetIs.processed(entity.creation_action)) {
-                    const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders());
-                    const processed = await response.json();
+                    const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders())
+                    const processed = await response.json()
                     _files = _files.concat(processed.files)
                 }
             }

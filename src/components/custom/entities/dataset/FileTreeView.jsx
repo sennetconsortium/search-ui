@@ -17,7 +17,7 @@ import 'primeicons/primeicons.css';
 
 export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid: 'uuid'},
                                  loadDerived = true, treeViewOnly = false, className = '', filesClassName = '',
-                                 showQAButton = true, showDataProductButton = true,
+                                 showQAButton = true, showDataProductButton = true, includeDescription= false,
                                  showDownloadAllButton = false}) => {
     const filterByValues = {
         default: "label",
@@ -164,6 +164,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         <Col md={2} sm={2} className={"text-end"}>
                             {formatByteSize(node.data.size)}
                         </Col>
+                        {includeDescription && <span>{node.data.description}</span>}
                     </Row>) : (<>{node.label}</>)}
             </Fragment>
         );

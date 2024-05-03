@@ -14,6 +14,7 @@ function DataProducts({ files, data }) {
                                                               showDownloadAllButton={true}
                                                               showQAButton={false}
                                                               showDataProductButton={false}
+                                                              includeDescription={true}
                                                               loadDerived={false}
                                                               treeViewOnly={true}
                                                               filesClassName={'js-files'}
