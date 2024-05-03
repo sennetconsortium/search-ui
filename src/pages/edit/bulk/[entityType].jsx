@@ -59,8 +59,6 @@ export default function EditBulk() {
 
                 <AppNavbar/>
                 <BulkCreate
-                    entityType={entityType}
-                    subType={subType}
                     userWriteGroups={userWriteGroups}
                     handleHome={handleHome}
                     isMetadata={isMetadata}
