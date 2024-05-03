@@ -77,6 +77,18 @@ export const organDetails = {
         searchUrl: organSearchUrl("LY"),
         urlParamName: "lymph-nodes",
     },
+    ML: {
+        icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-breast.svg",
+        ruiCode: "ML",
+        searchUrl: organSearchUrl("ML"),
+        urlParamName: "left-mammary-gland",
+    },
+    MR: {
+        icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-breast.svg",
+        ruiCode: "MR",
+        searchUrl: organSearchUrl("MR"),
+        urlParamName: "right-mammary-gland",
+    },
     MU: {
         icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-trachea.svg",
         ruiCode: "MU",
