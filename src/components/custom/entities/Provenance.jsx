@@ -188,8 +188,28 @@ function Provenance({nodeData}) {
             "Sample|sennet:sample_category|Organ": null,
             "Sample|sennet:sample_category|Block": null,
             "Sample|sennet:sample_category|Section": null,
+            "Dataset|sennet:creation_action|Component Dataset": null,
+            "Dataset|sennet:creation_action|Processed Dataset": null,
         },
         imageMapActions: {
+            "Dataset|sennet:creation_action|Component Dataset": {
+                fn: 'append',
+                type: 'g',
+                data: [
+                    {
+                        draw: 'm17 16-4-4V8.82C14.16 8.4 15 7.3 15 6c0-1.66-1.34-3-3-3S9 4.34 9 6c0 1.3.84 2.4 2 2.82V12l-4 4H3v5h5v-3.05l4-4.2 4 4.2V21h5v-5z'
+                    }
+                ]
+            },
+            "Dataset|sennet:creation_action|Processed Dataset": {
+                fn: 'append',
+                type: 'g',
+                data: [
+                    {
+                        draw: "M24.8,11.1C22,8.5,20.6,2.1,12.2,2.1C5.1,2.1,0.9,7.2,1,14.4s6.9,9.7,11.2,9.7 c2.8,0,2.8,3.9,8.4,3.9c4.2,0,8.4-3.9,8.4-9C29,15,27.6,13.7,24.8,11.1"
+                    }
+                ]
+            },
             "Sample|sennet:sample_category|Organ": {
                 fn: 'append',
                 type: 'g',
@@ -242,7 +262,7 @@ function Provenance({nodeData}) {
         typeProps: {
             Source: ['sennet:source_type'],
             Sample: ['sennet:sample_category', 'sennet:organ'],
-            Dataset: ['sennet:creation_action', 'sennet:title'],
+            Dataset: ['sennet:creation_action', 'sennet:title', 'sennet:dataset_type'],
             Activity: ['sennet:created_timestamp', 'sennet:protocol_url', 'sennet:processing_information', 'sennet:created_by_user_displayname']
         },
         callbacks: {
