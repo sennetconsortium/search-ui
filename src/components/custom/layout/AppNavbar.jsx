@@ -51,7 +51,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
         if (eq(entity, 'upload') || eq(range, 'single')) {
             return `/edit/${entity}?uuid=register`
         } else {
-            return `/edit/bulk/${entity}?action=register`
+            return `/edit/bulk/register?entityType=${entity}`
         }
     }
 
@@ -126,32 +126,11 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                             ))}
                         </NavDropdown>
 
-                        <NavDropdown
-                            active={false}
-                            variant={'primary'}
-                            hidden={hidden || !isLoggedIn()}
-                            title="Upload metadata"
-                            id="nav-dropdown--bulkMetadata">
-                            {Object.keys(supportedMetadata()).map((entity, key) => (
-                                <div key={`dropdownItem-md-${entity}`}>
-                                    {key !== 0 && <NavDropdown.Divider/>}
-                                    <NavDropdown.Item className='dropdown-item is-heading'
-                                                      aria-controls={`submenu-md-${entity}`}>
-                                        {entity}s
-                                    </NavDropdown.Item>
-
-                                    <div className={'submenu'} id={`submenu-md-${entity}`}>
-                                        {Object.entries(supportedMetadata()[entity].categories).map((type, typekey) => (
-                                            <NavDropdown.Item key={`submenuItem-md-${type[1]}`}
-                                                              href={`/edit/bulk/${entity.toLowerCase()}?action=metadata&category=${type[1]}`}
-                                                              className={'is-subItem'}>
-                                                <span>{type[1]}</span>
-                                            </NavDropdown.Item>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </NavDropdown>
+                        <Nav.Link key={`submenuItem-md-all`}
+                                          href={`/edit/bulk/metadata`}
+                                          className={'is-subItem'}>
+                            <span>Upload metadata</span>
+                        </Nav.Link>
 
                         <NavDropdown active={false}
                                      variant={'primary'}

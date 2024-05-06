@@ -27,6 +27,7 @@ import OptionsSelect from "../layout/entity/OptionsSelect";
 export default function BulkCreate({
                                        userWriteGroups,
                                        handleHome,
+                                       entityDetails = {},
                                        isMetadata=false,
                                    }) {
     const buttonVariant = "btn btn-outline-primary rounded-0"
@@ -42,8 +43,8 @@ export default function BulkCreate({
     const [showModal, setShowModal] = useState(true)
     const {cache, supportedMetadata} = useContext(AppContext)
     const [jobData, setJobData] = useState(null)
-    const [subType, setSubType] = useState(null)
-    const [entityType, setEntityType] = useState(null)
+    const [subType, setSubType] = useState(entityDetails.subType)
+    const [entityType, setEntityType] = useState(entityDetails.entityType)
     const { intervalTimer,
         isLoading, setIsLoading, bulkData, setBulkData,
         file, setFile,
@@ -351,7 +352,7 @@ export default function BulkCreate({
     const onMetadataNext = () => {
         setIsNextButtonDisabled(true)
         if (activeStep === 0) {
-
+            setIsNextButtonDisabled(false)
         }
         else if (activeStep === 1) {
             metadataValidation()
@@ -435,14 +436,14 @@ export default function BulkCreate({
     const isMouse = () => eq(subType, cache.sourceTypes.Mouse)
 
     const getTitle = () => {
-        if (!subType || !entityType) {
+        if (!entityType) {
             return `${getVerb()} ${isMetadata ? 'Metadata' : ''}`
         }
-        const entity = cache.entities[entityType]
-        let title = `${getVerb()} ${entity}s`
+
+        let title = `${getVerb()} ${entityType}s`
         if (isMetadata) {
             const subTypeText = isMouse() ? "Murines'" : `${subType}s'`
-            title = `${getVerb()} ${entity} ${subTypeText} Metadata`
+            title = `${getVerb()} ${entityType} ${subTypeText} Metadata`
         }
         return title
     }
