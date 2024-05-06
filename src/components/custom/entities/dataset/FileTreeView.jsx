@@ -153,10 +153,10 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                                href={`${getAssetsEndpoint()}${node.data.uuid}/${node.data.rel_path}?token=${getAuth()}`}><span
                                className="me-1">{node.label}</span>
                             </a>
-                            <SenNetPopover className={`file-${node.label}`}
+                            {!includeDescription && <SenNetPopover className={`file-${node.label}`}
                                            trigger={SenPopoverOptions.triggers.hover}
                                            text={`${node.data.description}`}><i className="bi bi-info-circle-fill"></i>
-                            </SenNetPopover>
+                            </SenNetPopover>}
                         </Col>
                         <Col md={2} sm={2} className={"text-end"}>
                             {getBadgeViews(node)}

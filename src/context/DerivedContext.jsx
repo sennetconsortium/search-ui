@@ -120,15 +120,15 @@ export const DerivedProvider = ({children}) => {
         return {component, primary, processed}
     }
 
-    const filterFilesForDataProducts = (allFiles) => {
+    const filterFilesForDataProducts = (allFiles, parent) => {
         if (!allFiles) return
         let _files = []
         for (let file of allFiles) {
             if (file?.is_data_product) {
-                _files.push(file)
+                _files.push({...file, uuid: parent.uuid, sennet_id: parent.sennet_id})
             }
         }
-        setDataProducts(_files)
+        return _files
     }
     const fetchDataProducts = async (data) => {
         if (datasetIs.primary(data.creation_action)) {
@@ -137,12 +137,14 @@ export const DerivedProvider = ({children}) => {
                 if (datasetIs.processed(entity.creation_action)) {
                     const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders())
                     const processed = await response.json()
-                    _files = _files.concat(processed.files)
+                    let dataProducts = filterFilesForDataProducts(processed.files, processed)
+                    _files = _files.concat(dataProducts)
                 }
             }
-            filterFilesForDataProducts(_files)
+            setDataProducts(_files)
         } else {
-            filterFilesForDataProducts(data.files)
+            setDataProducts(filterFilesForDataProducts(data.files, data))
+
         }
     }
 
