@@ -323,7 +323,7 @@ function ViewJobs({isAdmin = false}) {
         if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
 
         if (Array.isArray(array) && array.length && array[0].error === undefined) {
-            if (array[0].description) {
+            if (array[0].description && array[0].description.error) {
                 let errors = []
                 for (let item of array) {
                     errors.push(item.description)
@@ -363,6 +363,7 @@ function ViewJobs({isAdmin = false}) {
         const columns = tableColumns(['`', '"', "'"])
         setErrorModal(false)
         let errors = flatten(row.errors)
+        log.debug('JOB ERRORS', errors)
         setShowModal(true)
         setModalTitle(<h3>Job Error Details</h3>)
         setModalSize('xl')
