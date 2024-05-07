@@ -436,7 +436,7 @@ export default function BulkCreate({
     const isMouse = () => eq(subType, cache.sourceTypes.Mouse)
 
     const getTitle = () => {
-        if (!entityType) {
+        if (!entityType || activeStep === 0) {
             return `${getVerb()} ${isMetadata ? 'Metadata' : ''}`
         }
 
@@ -454,7 +454,7 @@ export default function BulkCreate({
     }
 
     const isCedarSupported = () => {
-        return isMetadata && !subType.includes([cache.sourceTypes.Mouse])
+        return isMetadata
     }
 
     const getDocsUrl = () => {
@@ -518,7 +518,7 @@ export default function BulkCreate({
                             className={buttonVariant}
                             href={isCedarSupported() ? `https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/${entityType}-${subType.toLowerCase()}/latest/${entityType}-${subType.toLowerCase()}.tsv` : `/bulk/${getFilename().toLowerCase()}.tsv`}
                         >
-                            <FileDownloadIcon/> {' '} <span>EXAMPLE.TSV {isCedarSupported() && <span>(CEDAR)</span>}</span>
+                            <FileDownloadIcon/> {' '} <span>EXAMPLE.TSV</span>
                         </a>}
 
                     </div>
