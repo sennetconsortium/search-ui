@@ -23,9 +23,9 @@ export default function EditBulk() {
     } = useContext(EntityContext)
 
     const router = useRouter()
-    let entityType = router.query['entityType'] || cache.entities.source
+    let entityType = router.query['entityType']
     entityType = cache.entities[entityType?.toLowerCase()]
-    let subType = router.query['category'] || cache.sourceTypes.Mouse
+    let subType = router.query['category']
     const isMetadata = router.query['action'] === 'metadata'
     let result
 

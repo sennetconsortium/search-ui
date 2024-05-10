@@ -352,7 +352,7 @@ export default function BulkCreate({
     const onMetadataNext = () => {
         setIsNextButtonDisabled(true)
         if (activeStep === 0) {
-            setIsNextButtonDisabled(false)
+
         }
         else if (activeStep === 1) {
             metadataValidation()
@@ -500,8 +500,11 @@ export default function BulkCreate({
         let parts = value.split(':')
         setSubType(parts[1])
         setEntityType(parts[0])
-        console.log('changed', parts)
-        setIsNextButtonDisabled(false)
+        if (value && value.length) {
+            setIsNextButtonDisabled(false)
+        } else {
+            setIsNextButtonDisabled(true)
+        }
     }
 
     return (
@@ -599,6 +602,7 @@ export default function BulkCreate({
                                     propVal={'categories'}
                                     popover={<>Select type of metadata being uploaded.</>} controlId={'uploadType'}
                                     isRequired={true} label={'Upload Type'} onChange={onChangeMetadataType} data={supportedMetadata()} />
+                                <small>{file.name}</small>
                             </Grid>
                             <Grid item xs></Grid>
                         </Grid>

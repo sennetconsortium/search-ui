@@ -36,7 +36,7 @@ function OptionsSelect({popover, controlId, isRequired, isDisabled, label, onCha
 
                 <Form.Select disabled={isDisabled} required={isRequired} aria-label={controlId}
                              onChange={e => onChange(e, e.target.id, e.target.value)}>
-                    {Array.isArray(data) &&<option value="">----</option>}
+                    <option value="">----</option>
                     {!Array.isArray(data) && getGroupedList()}
                     {Array.isArray(data) &&
                         (data.sortOnProperty(propLabel)).map(item => {
