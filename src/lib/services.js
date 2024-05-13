@@ -1,6 +1,7 @@
+import { getCookie } from "cookies-next";
 import log from "loglevel";
 import { getAuth, getEntityEndPoint, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "../config/config";
-import {getCookie} from "cookies-next";
+import { SEARCH_ENTITIES } from "../config/search/entities";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
@@ -343,6 +344,15 @@ export const getDatasetQuantities = async () => {
 };
 
 export const getOrganDataTypeQuantities = async (organCode) => {
+    // Get the must_not filters from entities config
+    const mustNot = SEARCH_ENTITIES.searchQuery.excludeFilters.flatMap((filter) => {
+        if (Array.isArray(filter.value)) {
+            return filter.value.map((value) => { return { term: { [filter.keyword]: value } } })
+        } else {
+            return { term: { [filter.keyword]: filter.value } };
+        }
+    })
+
     const body = {
         size: 0,
         query: {
@@ -352,18 +362,7 @@ export const getOrganDataTypeQuantities = async (organCode) => {
                         "origin_sample.organ.keyword": organCode,
                     }
                 },
-                must_not: [
-                    {
-                        term: {
-                            "dataset_category.keyword": "codcc-processed"
-                        }
-                    },
-                    {
-                        term: {
-                            "dataset_category.keyword": "lab-processed"
-                        }
-                    }
-                ]
+                must_not: mustNot
             }
         },
         aggs: {
