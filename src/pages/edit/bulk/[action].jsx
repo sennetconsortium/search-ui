@@ -24,7 +24,7 @@ export default function EditBulk() {
 
     const router = useRouter()
     let entityType = router.query['entityType']
-    entityType = entityType.toLowerCase()
+    entityType = cache.entities[entityType?.toLowerCase()]
     let subType = router.query['category']
     const isMetadata = router.query['action'] === 'metadata'
     let result
@@ -44,23 +44,22 @@ export default function EditBulk() {
             subType = subType.upperCaseFirst()
         }
 
-        let supportedEntities = Object.keys(cache.entities)
+        let supportedEntities = Object.values(cache.entities)
         const isSupported = () => {
+            console.log('DETAILS', entityType, subType)
             if (isMetadata) {
-                let supp = supportedMetadata()[cache.entities[entityType]]
-                return supp ? supp.categories.includes(subType) : false
+                return true
             } else {
                 return (supportedEntities.includes(entityType))
             }
         }
         if (isSupported()) {
             result = <>
-                <Header title={`Bulk Register ${isMetadata ? `Metadata | ${subType.upperCaseFirst()}` : entityType.upperCaseFirst()} | SenNet`}></Header>
+                <Header title={`Bulk Register ${isMetadata ? `Metadata` : entityType.upperCaseFirst()} | SenNet`}></Header>
 
                 <AppNavbar/>
                 <BulkCreate
-                    entityType={entityType}
-                    subType={subType}
+                    entityDetails={{entityType, subType}}
                     userWriteGroups={userWriteGroups}
                     handleHome={handleHome}
                     isMetadata={isMetadata}

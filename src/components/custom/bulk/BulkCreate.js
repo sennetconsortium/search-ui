@@ -7,6 +7,7 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import DatasetIcon from '@mui/icons-material/Dataset';
 import StepConnector, {stepConnectorClasses} from '@mui/material/StepConnector';
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -21,12 +22,12 @@ import {eq, getHeaders, getStatusColor} from "../js/functions";
 import AppContext from "../../../context/AppContext";
 import {get_headers, get_auth_header} from "../../../lib/services";
 import JobQueueContext from "../../../context/JobQueueContext";
+import OptionsSelect from "../layout/entity/OptionsSelect";
 
 export default function BulkCreate({
-                                       entityType,
-                                       subType,
                                        userWriteGroups,
                                        handleHome,
+                                       entityDetails = {},
                                        isMetadata=false,
                                    }) {
     const buttonVariant = "btn btn-outline-primary rounded-0"
@@ -40,8 +41,10 @@ export default function BulkCreate({
     const [steps, setSteps] = useState(stepLabels)
     const [selectedGroup, setSelectedGroup] = useState(null)
     const [showModal, setShowModal] = useState(true)
-    const {cache} = useContext(AppContext)
+    const {cache, supportedMetadata} = useContext(AppContext)
     const [jobData, setJobData] = useState(null)
+    const [subType, setSubType] = useState(entityDetails.subType)
+    const [entityType, setEntityType] = useState(entityDetails.entityType)
     const { intervalTimer,
         isLoading, setIsLoading, bulkData, setBulkData,
         file, setFile,
@@ -111,8 +114,9 @@ export default function BulkCreate({
         } else {
             icons = {
                 1: <AttachFileIcon/>,
-                2: <VerifiedIcon/>,
-                3: <DoneOutlineIcon/>,
+                2: <DatasetIcon/>,
+                3: <VerifiedIcon/>,
+                4: <DoneOutlineIcon/>,
             }
         }
 
@@ -126,13 +130,13 @@ export default function BulkCreate({
     useEffect(() => {
         setIsMetadata(isMetadata)
         if (userWriteGroups && getUserWriteGroupsLength() > 1) {
+            let extraSteps = Array.from(stepLabels)
             if (isMetadata) {
-                setSteps(stepLabels)
+                extraSteps.splice(1, 0, 'Select Metadata Type')
             } else {
-                let extraSteps = Array.from(stepLabels)
-                extraSteps.splice(1, 0, 'Select group')
-                setSteps(extraSteps)
+                extraSteps.splice(1, 0, 'Select Group')
             }
+            setSteps(extraSteps)
         }
         if (userWriteGroups && getUserWriteGroupsLength() === 1) {
             setSelectedGroup(userWriteGroups[0].uuid)
@@ -231,7 +235,7 @@ export default function BulkCreate({
         setIsLoading(true)
         const formData = new FormData()
         formData.append('metadata', file)
-        formData.append('entity_type', cache.entities[entityType])
+        formData.append('entity_type', entityType)
         formData.append('sub_type', subType)
         formData.append('validate_uuids', '1')
         formData.append('referrer', JSON.stringify(getValidateReferrer()))
@@ -347,19 +351,20 @@ export default function BulkCreate({
 
     const onMetadataNext = () => {
         setIsNextButtonDisabled(true)
-        if (getStepsLength() === 3) {
-            if (activeStep === 0) {
-                metadataValidation()
+        if (activeStep === 0) {
+
+        }
+        else if (activeStep === 1) {
+            metadataValidation()
+        }
+        else if (activeStep === 2) {
+            if (!hasAlreadyRegistered(jobData)) {
+                metadataRegister()
             }
-            else if (activeStep === 1) {
-                if (!hasAlreadyRegistered(jobData)) {
-                    metadataRegister()
-                }
-            }
-            else if (activeStep === 2) {
-                handleReset()
-                return
-            }
+        }
+        else if (activeStep === 3) {
+            handleReset()
+            return
         }
         setActiveStep(prevState => prevState + 1)
     }
@@ -417,7 +422,7 @@ export default function BulkCreate({
 
     function getModalTitle() {
         const inner = isMetadata ? "' Metadata" : ""
-        return `${cache.entities[entityType]}s${inner} ${getVerb(true, true)}`
+        return `${entityType}s${inner} ${getVerb(true, true)}`
     }
 
     function getModalBody() {
@@ -431,11 +436,14 @@ export default function BulkCreate({
     const isMouse = () => eq(subType, cache.sourceTypes.Mouse)
 
     const getTitle = () => {
-        const entity = cache.entities[entityType]
-        let title = `${getVerb()} ${entity}s`
+        if (!entityType || activeStep === 0) {
+            return `${getVerb()} ${isMetadata ? 'Metadata' : ''}`
+        }
+
+        let title = `${getVerb()} ${entityType}s`
         if (isMetadata) {
             const subTypeText = isMouse() ? "Murines'" : `${subType}s'`
-            title = `${getVerb()} ${entity} ${subTypeText} Metadata`
+            title = `${getVerb()} ${entityType} ${subTypeText} Metadata`
         }
         return title
     }
@@ -446,7 +454,7 @@ export default function BulkCreate({
     }
 
     const isCedarSupported = () => {
-        return isMetadata && !subType.includes([cache.sourceTypes.Mouse])
+        return isMetadata
     }
 
     const getDocsUrl = () => {
@@ -468,7 +476,7 @@ export default function BulkCreate({
     }
 
     const isValidationStep = () => {
-        return (isMetadata && activeStep === 1) || (getStepsLength() === 4 ? activeStep === 2 : activeStep === 1)
+        return (isMetadata && activeStep === 2) || (getStepsLength() === 4 ? activeStep === 2 : activeStep === 1)
     }
 
     const jobDashboardUrl = (id) => `/user/jobs?q=${id}`
@@ -488,6 +496,17 @@ export default function BulkCreate({
         </div>)
     }
 
+    const onChangeMetadataType = (e, id, value) => {
+        let parts = value.split(':')
+        setSubType(parts[1])
+        setEntityType(parts[0])
+        if (value && value.length) {
+            setIsNextButtonDisabled(false)
+        } else {
+            setIsNextButtonDisabled(true)
+        }
+    }
+
     return (
         <div className='main-wrapper' data-js-ada='modal'>
             <Container sx={{mt: 5}}>
@@ -497,13 +516,13 @@ export default function BulkCreate({
                     boxShadow: 3,
                 }}>
                     <div>
-                        <a
+                        {subType && <a
                             download
                             className={buttonVariant}
                             href={isCedarSupported() ? `https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/${entityType}-${subType.toLowerCase()}/latest/${entityType}-${subType.toLowerCase()}.tsv` : `/bulk/${getFilename().toLowerCase()}.tsv`}
                         >
-                            <FileDownloadIcon/> {' '} <span>EXAMPLE.TSV {isCedarSupported() && <span>(CEDAR)</span>}</span>
-                        </a>
+                            <FileDownloadIcon/> {' '} <span>EXAMPLE.TSV</span>
+                        </a>}
 
                     </div>
                     <h1 className={'text-center'}>{getTitle()}</h1>
@@ -570,6 +589,20 @@ export default function BulkCreate({
                                     entity_type={entityType}
                                     plural={true}
                                 />
+                            </Grid>
+                            <Grid item xs></Grid>
+                        </Grid>
+                    }
+                    {
+                        isMetadata && activeStep === 1 &&
+                        <Grid container className={'text-center mt-5'}>
+                            <Grid item xs></Grid>
+                            <Grid item xs>
+                                <OptionsSelect
+                                    propVal={'categories'}
+                                    popover={<>Select type of metadata being uploaded.</>} controlId={'uploadType'}
+                                    isRequired={true} label={'Upload Type'} onChange={onChangeMetadataType} data={supportedMetadata()} />
+                                <small>{file.name}</small>
                             </Grid>
                             <Grid item xs></Grid>
                         </Grid>
