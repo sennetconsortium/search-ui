@@ -1,6 +1,6 @@
 import {createContext, useCallback, useRef, useState} from "react";
 import $ from "jquery";
-import {datasetIs, fetchEntity} from "../components/custom/js/functions";
+import {datasetIs, fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import {fetchVitessceConfiguration, get_prov_info} from "../lib/services";
 import useVitessceEncoder from "../hooks/useVitessceEncoder";
 
@@ -19,6 +19,7 @@ export const DerivedProvider = ({children}) => {
     const [showVitessce, setShowVitessce] = useState(false)
     const {vitessceConfigFromUrl, encodeConfigToUrl, getUrlByLengthMaximums} = useVitessceEncoder({})
     const vitessceParams = useRef(null)
+    const [dataProducts, setDataProducts] = useState(null)
 
     // Load the correct Vitessce view config
     const set_vitessce_config = async (data, dataset_id, dataset_type) => {
@@ -120,6 +121,34 @@ export const DerivedProvider = ({children}) => {
         return {component, primary, processed}
     }
 
+    const filterFilesForDataProducts = (allFiles, parent) => {
+        if (!allFiles) return
+        let _files = []
+        for (let file of allFiles) {
+            if (file?.is_data_product) {
+                _files.push({...file, uuid: parent.uuid, sennet_id: parent.sennet_id})
+            }
+        }
+        return _files
+    }
+    const fetchDataProducts = async (data) => {
+        if (datasetIs.primary(data.creation_action)) {
+            let _files = []
+            for (let entity of data.descendants) {
+                if (datasetIs.processed(entity.creation_action)) {
+                    const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders())
+                    const processed = await response.json()
+                    let dataProducts = filterFilesForDataProducts(processed.files, processed)
+                    _files = _files.concat(dataProducts)
+                }
+            }
+            setDataProducts(_files)
+        } else {
+            setDataProducts(filterFilesForDataProducts(data.files, data))
+
+        }
+    }
+
     return <DerivedContext.Provider value={{
         initVitessceConfig,
         showVitessce,
@@ -138,7 +167,8 @@ export const DerivedProvider = ({children}) => {
         expandVitessceToFullscreen,
         vitessceConfigFromUrl, vitessceParams,
         getAssaySplitData,
-        setVitessceConfigState, getUrlByLengthMaximums, encodeConfigToUrl
+        setVitessceConfigState, getUrlByLengthMaximums, encodeConfigToUrl,
+        fetchDataProducts, dataProducts
     }}>
         {children}
     </DerivedContext.Provider>

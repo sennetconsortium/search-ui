@@ -13,11 +13,12 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import {Tree} from 'primereact/tree';
-
 import 'primeicons/primeicons.css';
 
 export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid: 'uuid'},
-                                 loadDerived = true, treeViewOnly = false, className = '', showQAButton = true, showDataProductButton = true}) => {
+                                 loadDerived = true, treeViewOnly = false, className = '', filesClassName = '',
+                                 showQAButton = true, showDataProductButton = true, includeDescription= false,
+                                 showDownloadAllButton = false}) => {
     const filterByValues = {
         default: "label",
         qa: "data.is_qa_qc",
@@ -134,7 +135,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
         return <>
             {Object.entries(badges).map(([label, hasBadge]) => { 
                 return hasBadge
-                    ? <span className="badge bg-secondary mx-2"> {label}</span>
+                    ? <span className="badge bg-secondary mx-2" key={label}> {label}</span>
                     : null
             })}
         </>
@@ -145,17 +146,17 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
         return (
             <Fragment>
                 {node.icon.includes("file") ? (
-                    <Row className={"w-100"}>
+                    <Row className={`w-100 ${filesClassName}`}>
                         <Col md={8} sm={8}>
                             <a target="_blank"
-                               className={"icon_inline"}
+                               className={"icon_inline js-file"}
                                href={`${getAssetsEndpoint()}${node.data.uuid}/${node.data.rel_path}?token=${getAuth()}`}><span
                                className="me-1">{node.label}</span>
                             </a>
-                            <SenNetPopover className={`file-${node.label}`}
+                            {!includeDescription && <SenNetPopover className={`file-${node.label}`}
                                            trigger={SenPopoverOptions.triggers.hover}
                                            text={`${node.data.description}`}><i className="bi bi-info-circle-fill"></i>
-                            </SenNetPopover>
+                            </SenNetPopover>}
                         </Col>
                         <Col md={2} sm={2} className={"text-end"}>
                             {getBadgeViews(node)}
@@ -163,9 +164,14 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         <Col md={2} sm={2} className={"text-end"}>
                             {formatByteSize(node.data.size)}
                         </Col>
+                        {includeDescription && <span>{node.data.description}</span>}
                     </Row>) : (<>{node.label}</>)}
             </Fragment>
         );
+    }
+
+    const handleDownloadAllButtonClick = () => {
+        document.querySelectorAll(`.${filesClassName} .js-file`).forEach((element) => element.click())
     }
 
     const filterTemplate = (options) => {
@@ -222,6 +228,19 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         >
                             Show Data Product files only
                         </ToggleButton>
+                    </Form.Group> }
+
+                    {showDownloadAllButton && <Form.Group as={Col} xl={3} lg={6} className="mt-xl-0 mt-md-2">
+                        <Button
+                            className="rounded-0 w-100"
+                            id="download-all-data-products"
+                            variant="outline-primary"
+                            value="true"
+                            onClick={handleDownloadAllButtonClick}
+                        >
+                            Download All <i
+                            className="bi bi-download"></i>
+                        </Button>
                     </Form.Group> }
                 </Row>
             </Form>
