@@ -137,8 +137,10 @@ export const DerivedProvider = ({children}) => {
                 if (datasetIs.processed(entity.creation_action)) {
                     const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders())
                     const processed = await response.json()
-                    let dataProducts = filterFilesForDataProducts(processed.files, processed)
-                    _files = _files.concat(dataProducts)
+                    if (processed.files && processed.files.length) {
+                        let dataProducts = filterFilesForDataProducts(processed.files, processed)
+                        _files = _files.concat(dataProducts)
+                    }
                 }
             }
             setDataProducts(_files)
