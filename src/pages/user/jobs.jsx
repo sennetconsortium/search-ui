@@ -323,13 +323,22 @@ function ViewJobs({isAdmin = false}) {
         if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
 
         if (Array.isArray(array) && array.length && array[0].error === undefined) {
-            array.forEach((item) => {
-                item.id = item.index
-                item.row = item.index
-                item.error = getErrorVal(item)
-            })
-            array = array.filter((item) => !item.success)
-            return array
+            if (array[0].description && array[0].description.error) {
+                let errors = []
+                for (let item of array) {
+                    errors.push(item.description)
+                }
+                return errors;
+            } else {
+                array.forEach((item) => {
+                    item.id = item.index
+                    item.row = item.index
+                    item.error = getErrorVal(item)
+                })
+                array = array.filter((item) => !item.success)
+                return array
+            }
+
         }
 
         let result = []
@@ -354,6 +363,7 @@ function ViewJobs({isAdmin = false}) {
         const columns = tableColumns(['`', '"', "'"])
         setErrorModal(false)
         let errors = flatten(row.errors)
+        log.debug('JOB ERRORS', errors)
         setShowModal(true)
         setModalTitle(<h3>Job Error Details</h3>)
         setModalSize('xl')
