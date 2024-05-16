@@ -15,6 +15,7 @@ import {DerivedProvider} from "../context/DerivedContext";
 import SidebarBtn from "../components/SidebarBtn";
 import {useRouter} from "next/router";
 import Datasets from "../components/custom/entities/collection/Datasets";
+import {get_write_privilege_for_group_uuid} from "../lib/services";
 
 
 
@@ -50,6 +51,11 @@ function ViewCollection() {
                 setData(data);
                 const doi = await fetchDataCite(data.doi_url)
                 setDoiData(doi?.data)
+
+                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                    console.log('Has rights', response)
+                    setHasWritePrivilege(response.has_write_privs)
+                }).catch(log.error)
             }
         }
 
@@ -116,7 +122,7 @@ function ViewCollection() {
                                     <SidebarBtn />
 
                                     <EntityViewHeader data={data} entity={'collection'}
-                                                      hasWritePrivilege={adminGroup}
+                                                      hasWritePrivilege={hasWritePrivilege}
                                                        />
 
                                     <div className="row">
