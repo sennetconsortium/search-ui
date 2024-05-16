@@ -53,7 +53,6 @@ function ViewCollection() {
                 setDoiData(doi?.data)
 
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
-                    console.log('Has rights', response)
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
             }
