@@ -77,7 +77,7 @@ function ViewCollection() {
     } else {
         return (
             <>
-                {data && <Header title={`${data.sennet_id} | Sample | SenNet`}></Header>}
+                {data && <Header title={`${data.sennet_id} | Collection | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
