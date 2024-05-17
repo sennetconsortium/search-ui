@@ -15,6 +15,8 @@ import {DerivedProvider} from "../context/DerivedContext";
 import SidebarBtn from "../components/SidebarBtn";
 import {useRouter} from "next/router";
 import Datasets from "../components/custom/entities/collection/Datasets";
+import {get_write_privilege_for_group_uuid} from "../lib/services";
+import Attribution from "../components/custom/entities/sample/Attribution";
 
 
 
@@ -50,6 +52,10 @@ function ViewCollection() {
                 setData(data);
                 const doi = await fetchDataCite(data.doi_url)
                 setDoiData(doi?.data)
+
+                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                    setHasWritePrivilege(response.has_write_privs)
+                }).catch(log.error)
             }
         }
 
@@ -71,7 +77,7 @@ function ViewCollection() {
     } else {
         return (
             <>
-                {data && <Header title={`${data.sennet_id} | Sample | SenNet`}></Header>}
+                {data && <Header title={`${data.sennet_id} | Collection | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
@@ -107,7 +113,11 @@ function ViewCollection() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Creators</a>
                                             </li>
-
+                                            <li className="nav-item">
+                                                <a href="#Attribution"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Attribution</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -116,7 +126,7 @@ function ViewCollection() {
                                     <SidebarBtn />
 
                                     <EntityViewHeader data={data} entity={'collection'}
-                                                      hasWritePrivilege={adminGroup}
+                                                      hasWritePrivilege={hasWritePrivilege}
                                                        />
 
                                     <div className="row">
@@ -139,6 +149,9 @@ function ViewCollection() {
 
                                             {/*Creators*/}
                                             <ContributorsContacts title={'Creators'} data={data.creators} />
+
+                                            {/*Attribution*/}
+                                            <Attribution data={data}/>
                                         </div>
                                     </div>
                                 </main>

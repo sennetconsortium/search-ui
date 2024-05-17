@@ -436,7 +436,7 @@ export default function EditDataset() {
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
                                         <AncestorIds values={values} ancestors={ancestors} onChange={onChange} dataset_category={data.dataset_category}
-                                                     fetchAncestors={fetchAncestors} deleteAncestor={deleteAncestor}/>
+                                                     fetchAncestors={fetchAncestors} deleteAncestor={deleteAncestor} addButtonDisabled={data.dataset_category!=='primary'}/>
                                     }
 
                                     {/*/!*Lab Name or ID*!/*/}
