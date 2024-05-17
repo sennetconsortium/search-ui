@@ -16,6 +16,7 @@ import SidebarBtn from "../components/SidebarBtn";
 import {useRouter} from "next/router";
 import Datasets from "../components/custom/entities/collection/Datasets";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
+import Attribution from "../components/custom/entities/sample/Attribution";
 
 
 
@@ -112,7 +113,11 @@ function ViewCollection() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Creators</a>
                                             </li>
-
+                                            <li className="nav-item">
+                                                <a href="#Attribution"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Attribution</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -144,6 +149,9 @@ function ViewCollection() {
 
                                             {/*Creators*/}
                                             <ContributorsContacts title={'Creators'} data={data.creators} />
+
+                                            {/*Attribution*/}
+                                            <Attribution data={data}/>
                                         </div>
                                     </div>
                                 </main>
