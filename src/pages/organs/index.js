@@ -45,12 +45,10 @@ const AllOrgans = () => {
                 <Row xs={1} s={2} md={4} className="gy-2">
                     {organs.map((organ) => (
                         <Col key={organ.ruiCode}>
-                            <Link
-                                className="text-decoration-none"
-                                href={`${APP_ROUTES.organs}/${organ.urlParamName}`}
+                            <a className="text-decoration-none" href={`${APP_ROUTES.organs}/${organ.urlParamName}`}
                             >
                                 <OrganCard organ={organ} />
-                            </Link>
+                            </a>
                         </Col>
                     ))}
                 </Row>
