@@ -1,6 +1,6 @@
 {
   "name": "portal-ui",
-  "version": "1.8.5",
+  "version": "1.8.6",
   "private": true,
   "scripts": {
     "run": "npm-run-all --parallel dev sass",
@@ -34,7 +34,7 @@
     "sass": "^1.57.1",
     "search-ui": "file:search-ui",
     "sharp": "^0.32.3",
-    "vitessce": "^3.3.12",
+    "vitessce": "^3.4.5",
     "ws": "^8.16.0"
   }
 }

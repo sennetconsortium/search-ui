@@ -81,7 +81,7 @@ class RUIIntegration extends Component {
     }
 
     updateRUIConfig() {
-        const organ = this.props.organ[0] === "BS" ? "Mammary Gland (Left)":this.props.cache.organTypes[this.props.organ];
+        const organ = this.props.cache.organTypes[this.props.organ];
         const [_, organType, organSide] = organ.match(
             /^((?:\w)+(?: \w+)?)(?: \((Right|Left)\))?$/
         );
@@ -91,7 +91,6 @@ class RUIIntegration extends Component {
         const self = this;
 
         const rui = this.ruiRef.current;
-        console.log(organ)
         rui.baseHref = "https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
         rui.user = {
             firstName: firstName || "",
