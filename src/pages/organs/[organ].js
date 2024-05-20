@@ -5,6 +5,7 @@ import NotFound from "../../components/custom/NotFound";
 import AppFooter from "../../components/custom/layout/AppFooter";
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import DataTypeQuantities from "../../components/custom/organ/DataTypeQuantities";
+import HumanReferenceAtlas from "../../components/custom/organ/HumanReferenceAtlas";
 import Samples from "../../components/custom/organ/Samples";
 import OrganViewHeader from "../../components/custom/organ/ViewHeader";
 import AppContext from "../../context/AppContext";
@@ -36,10 +37,21 @@ const Organ = () => {
                                 id="sidebar-nav"
                                 className="nav list-group rounded-1 text-sm-start"
                             >
+                                {organDetail.hraSupport && (
+                                    <li className="nav-item">
+                                        <a
+                                            href="#HumanReferenceAtlas"
+                                            className="nav-link"
+                                            data-bs-parent="#sidebar"
+                                        >
+                                            Human Reference Atlas
+                                        </a>
+                                    </li>
+                                )}
                                 <li className="nav-item">
                                     <a
                                         href="#DataTypes"
-                                        className="nav-link "
+                                        className="nav-link"
                                         data-bs-parent="#sidebar"
                                     >
                                         Data Types
@@ -48,7 +60,7 @@ const Organ = () => {
                                 <li className="nav-item">
                                     <a
                                         href="#Samples"
-                                        className="nav-link "
+                                        className="nav-link"
                                         data-bs-parent="#sidebar"
                                     >
                                         Samples
@@ -63,6 +75,11 @@ const Organ = () => {
 
                         {/* Title and badges */}
                         <OrganViewHeader organ={organDetail} />
+
+                        {/* Human Reference Atlas */}
+                        {organDetail.hraSupport && ( 
+                            <HumanReferenceAtlas id="HumanReferenceAtlas" uberonUrl={organDetail.uberonUrl}/>
+                        )}
 
                         {/* Data Types */}
                         <DataTypeQuantities
