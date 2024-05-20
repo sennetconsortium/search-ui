@@ -153,7 +153,7 @@ function ViewSource() {
 
                                             {/*Protocols*/}
                                             {data.protocol_url &&
-                                                <Protocols protocol_url={data.protocol_url}/>
+                                                <Protocols protocolUrl={data.protocol_url}/>
                                             }
 
                                             {/*Attribution*/}
