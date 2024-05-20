@@ -2,6 +2,7 @@ import _ from "lodash";
 import { useEffect, useState } from "react";
 import { organDetails } from "../../config/organs";
 import { getOrgans } from "../../lib/ontology";
+import { supportedRuiSources } from "../../config/config";
 
 const useOrganDetail = (urlParamName) => {
     const [organDetail, setOrganDetail] = useState({
@@ -15,12 +16,14 @@ const useOrganDetail = (urlParamName) => {
         searchUrl: "",
         urlParamName: "",
         uberonUrl: "",
+        hraSupport: false
     });
 
     useEffect(() => {
         const organDetail = Object.entries(organDetails).find((organDetail) => {
             return organDetail[1].urlParamName === urlParamName.toLowerCase();
         });
+        organDetail[1].hraSupport = !supportedRuiSources.includes(organDetail[1].ruiCode);
 
         if (!organDetail) {
             setOrganDetail(null);
