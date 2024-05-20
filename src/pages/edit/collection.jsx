@@ -37,6 +37,7 @@ import {Zoom, Popper} from "@mui/material";
 import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
 import {CheckIcon} from "primereact/icons/check";
 import NotFound from "../../components/custom/NotFound";
+import GroupSelect from "../../components/custom/edit/GroupSelect";
 
 export default function EditCollection() {
     const {
@@ -361,6 +362,15 @@ export default function EditCollection() {
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} id="collection-form">
+                                    {/*Group select*/}
+                                    {
+                                        !(userWriteGroups.length === 1 || isEditMode()) &&
+                                        <GroupSelect
+                                            data={data}
+                                            groups={userWriteGroups}
+                                            onGroupSelectChange={onChange}
+                                            entity_type={'dataset'}/>
+                                    }
 
                                     {/*Linked Datasets*/}
                                     <AncestorIds controlId={'entity_uuids'}
