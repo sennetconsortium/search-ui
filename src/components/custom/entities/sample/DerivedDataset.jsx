@@ -42,8 +42,8 @@ const DerivedDataset = ({includeSample, data}) => {
                                             return (
                                                 <React.Fragment key={index}>
                                                     <DerivedDatasetItem index={index} data={data}
-                                                                        data_type="Sample"
-                                                                        descendant_uuid={descendant_data.uuid}/>
+                                                                        dataType="Sample"
+                                                                        descendantUuid={descendant_data.uuid}/>
                                                 </React.Fragment>
                                             )
                                         }
@@ -72,8 +72,8 @@ const DerivedDataset = ({includeSample, data}) => {
                                         return (
                                             <React.Fragment key={index}>
                                                 <DerivedDatasetItem index={index} data={data}
-                                                                    data_type="Dataset"
-                                                                    descendant_uuid={descendant_data.uuid}/>
+                                                                    dataType="Dataset"
+                                                                    descendantUuid={descendant_data.uuid}/>
                                             </React.Fragment>
                                         )
                                     }
