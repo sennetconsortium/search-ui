@@ -89,12 +89,14 @@ export const organDetails = {
         icon: `${BASE_ICON_URL}/organs/organ-icon-breast.svg`,
         ruiCode: "ML",
         searchUrl: organSearchUrl("ML"),
+        uberonUrl: "http://purl.org/sig/ont/fma/fma57991",
         urlParamName: "left-mammary-gland",
     },
     MR: {
         icon: `${BASE_ICON_URL}/organs/organ-icon-breast.svg`,
         ruiCode: "MR",
         searchUrl: organSearchUrl("MR"),
+        uberonUrl: "http://purl.org/sig/ont/fma/fma57987",
         urlParamName: "right-mammary-gland",
     },
     MU: {
