@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {Form} from 'react-bootstrap';
 import {Results, SearchBox} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
@@ -39,119 +39,115 @@ function BodyContent({ handleChangeSource }) {
     )
 }
 
-export default class AncestorId extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showHideModal: false,
-        };
-    }
+const AncestorId = ({fetchSource, onChange, source}) => {
+    const [showHideModal, setShowHideModal] = useState(false)
 
-    handleSearchFormSubmit(event, onSubmit) {
+    const handleSearchFormSubmit = (event, onSubmit) => {
         onSubmit(event)
     }
 
-    showModal = () => {
-        this.setState({showHideModal: true})
+    const showModal = () => {
+        setShowHideModal(true)
         // Enable addons for facets
         addons('sample')
     }
 
-    hideModal = () => {
-        this.setState({showHideModal: false})
+    const hideModal = () => {
+        setShowHideModal(false)
+
         // Reset addons for facets
         delete window.addons['sample']
     }
 
     // Handles when updates are made to `Source ID` when the search feature is used
-    changeSource = async (e, sourceId) => {
-        this.props.onChange(e, 'direct_ancestor_uuid', sourceId);
-        this.props.fetchSource(sourceId);
-        this.hideModal();
+    const changeSource = async (e, sourceId) => {
+        onChange(e, 'direct_ancestor_uuid', sourceId);
+        fetchSource(sourceId);
+        hideModal();
     }
 
-    render() {
-        return (
-            <>
-                <Form.Label>Ancestor ID <span
-                    className="required">* </span>
-                    <SenNetPopover className={'direct_ancestor_uuid'}
-                                   text={<>The SenNet ID of the entity that this <code>Sample</code> came from. Must be
-                                       another <code>Sample</code> or <code>Source</code>.</>}>
-                        <i className="bi bi-question-circle-fill"></i>
-                    </SenNetPopover>
-                </Form.Label>
-                <InputGroup className="mb-3" id="direct_ancestor_uuid">
-                    <Form.Control required type="text"
-                                  placeholder=""
-                                  disabled
-                                  onChange={e => this.props.onChange(e, e.target.id, e.target.value)}
-                                  defaultValue={this.props.source?.sennet_id}/>
-                    <Button variant="primary" onClick={this.showModal}>
-                        <i className="bi bi-search"></i>
+    return (
+        <>
+            <Form.Label>Ancestor ID <span
+                className="required">* </span>
+                <SenNetPopover className={'direct_ancestor_uuid'}
+                               text={<>The SenNet ID of the entity that this <code>Sample</code> came from. Must be
+                                   another <code>Sample</code> or <code>Source</code>.</>}>
+                    <i className="bi bi-question-circle-fill"></i>
+                </SenNetPopover>
+            </Form.Label>
+            <InputGroup className="mb-3" id="direct_ancestor_uuid">
+                <Form.Control required type="text"
+                              placeholder=""
+                              disabled
+                              onChange={e => onChange(e, e.target.id, e.target.value)}
+                              defaultValue={source?.sennet_id}/>
+                <Button variant="primary" onClick={showModal}>
+                    <i className="bi bi-search"></i>
+                </Button>
+            </InputGroup>
+
+            <Modal
+                size="xxl"
+                show={showHideModal}
+                onHide={hideModal}
+                backdrop="static"
+                keyboard={false}
+            >
+                <Modal.Body>
+                    <SearchUIContainer config={exclude_dataset_config} name={undefined}>
+                        <Layout
+                            header={
+                                <div className="search-box-header js-gtm--search">
+                                    <SearchBox
+                                        view={({onChange, value, onSubmit}) => (
+                                            <Form
+                                                onSubmit={e => handleSearchFormSubmit(e, onSubmit)}>
+                                                <Form.Group controlId="search">
+                                                    <InputGroup>
+                                                        <Form.Control
+                                                            value={value}
+                                                            onChange={(e) => onChange(e.currentTarget.value)}
+                                                            className="right-border-none form-control form-control-lg rounded-0"
+                                                            placeholder="Search"
+                                                            autoFocus={true}
+                                                        />
+                                                        <InputGroup.Text
+                                                            className={"transparent"}><i className="bi bi-search"></i></InputGroup.Text>
+                                                        <Button variant="outline-primary"
+                                                                className={"rounded-0"}
+                                                                onClick={e => handleSearchFormSubmit(e, onSubmit)}>Search</Button>
+                                                    </InputGroup>
+                                                </Form.Group>
+                                            </Form>
+                                        )}
+                                    />
+                                </div>
+                            }
+                            sideContent={
+                                <div data-js-ada='facets'>
+                                    <CustomClearSearchBox />
+
+                                    <SelectedFilters/>
+
+                                    <FacetsContent transformFunction={getUBKGFullName} />
+                                </div>
+                            }
+                            bodyContent={
+                                <BodyContent handleChangeSource={changeSource} />
+                            }
+
+                        />
+                    </SearchUIContainer>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="outline-secondary rounded-0" onClick={hideModal}>
+                        Close
                     </Button>
-                </InputGroup>
-
-                <Modal
-                    size="xxl"
-                    show={this.state.showHideModal}
-                    onHide={this.hideModal}
-                    backdrop="static"
-                    keyboard={false}
-                >
-                    <Modal.Body>
-                        <SearchUIContainer config={exclude_dataset_config} name={undefined}>
-                            <Layout
-                                header={
-                                    <div className="search-box-header js-gtm--search">
-                                        <SearchBox
-                                            view={({onChange, value, onSubmit}) => (
-                                                <Form
-                                                    onSubmit={e => this.handleSearchFormSubmit(e, onSubmit)}>
-                                                    <Form.Group controlId="search">
-                                                        <InputGroup>
-                                                            <Form.Control
-                                                                value={value}
-                                                                onChange={(e) => onChange(e.currentTarget.value)}
-                                                                className="right-border-none form-control form-control-lg rounded-0"
-                                                                placeholder="Search"
-                                                                autoFocus={true}
-                                                            />
-                                                            <InputGroup.Text
-                                                                className={"transparent"}><i className="bi bi-search"></i></InputGroup.Text>
-                                                            <Button variant="outline-primary"
-                                                                    className={"rounded-0"}
-                                                                    onClick={e => this.handleSearchFormSubmit(e, onSubmit)}>Search</Button>
-                                                        </InputGroup>
-                                                    </Form.Group>
-                                                </Form>
-                                            )}
-                                        />
-                                    </div>
-                                }
-                                sideContent={
-                                    <div data-js-ada='facets'>
-                                        <CustomClearSearchBox />
-
-                                        <SelectedFilters/>
-
-                                        <FacetsContent transformFunction={getUBKGFullName} />
-                                    </div>
-                                }
-                                bodyContent={
-                                    <BodyContent handleChangeSource={this.changeSource} />
-                                }
-
-                            />
-                        </SearchUIContainer>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="outline-secondary rounded-0" onClick={this.hideModal}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </>
-        )
-    }
+                </Modal.Footer>
+            </Modal>
+        </>
+    )
 }
+
+export default AncestorId
