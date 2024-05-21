@@ -46,6 +46,11 @@ function Provenance({nodeData}) {
         return w / 2.4
     }
 
+    const onCenterY= (ops) => {
+        const w = canvas(ops).width()
+        return w < 1400 ? 150 : null
+    }
+
     const onAfterBuild = (ops) => {
         const ui = window.ProvenanceTreeD3[ops.options.selectorId]
         if (ui) {
@@ -242,6 +247,7 @@ function Provenance({nodeData}) {
         selectorId: 'neo4j--page',
         callbacks: {
             onCenterX,
+            onCenterY,
             onInitializationComplete,
             onAfterBuild,
             onSvgSizing,
