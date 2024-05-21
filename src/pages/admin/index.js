@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, useState} from 'react'
+import React, {useContext, useState} from 'react'
 import { Row, Col, Container, Card, Button } from 'react-bootstrap'
 import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppFooter from "../../components/custom/layout/AppFooter";

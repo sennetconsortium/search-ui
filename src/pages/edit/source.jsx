@@ -19,7 +19,6 @@ import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
 import Alert from 'react-bootstrap/Alert';
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import SenNetAlert from "../../components/SenNetAlert";
-import AttributesUpload from "../../components/custom/edit/AttributesUpload";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
 import $ from "jquery";
 

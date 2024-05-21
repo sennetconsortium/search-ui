@@ -1,4 +1,4 @@
-import {FilterIsSelected, getAuth, getFilesIndex, getSearchEndPoint} from "../config";
+import {getAuth, getFilesIndex, getSearchEndPoint} from "../config";
 import SearchAPIConnector from "search-ui/packages/search-api-connector";
 
 
