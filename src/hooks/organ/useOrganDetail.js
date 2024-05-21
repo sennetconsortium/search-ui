@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { useEffect, useState } from "react";
 import { organDetails } from "../../config/organs";
 import { getOrgans } from "../../lib/ontology";
@@ -32,7 +31,7 @@ const useOrganDetail = (urlParamName) => {
             let organ = organs.find((organ) => {
                 return organ.rui_code === organDetail.ruiCode;
             });
-            organ = _.mapKeys(organ, (v, k) => _.camelCase(k));
+            organ = Object.entries(organ).mapKeys((k) => k.camelCase())
 
             let uberonUrl = undefined;
             if (organ.organUberon) {
