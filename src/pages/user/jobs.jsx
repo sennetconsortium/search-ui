@@ -86,7 +86,10 @@ function ViewJobs({isAdmin = false}) {
 
     const errIcon = () => <WarningAmberIcon sx={{color: '#842029'}}/>
 
-    const getEntityType = (row) => row.referrer?.path.split('/edit/bulk/')[1]?.split('?action')[0]
+    const getEntityType = (row) => {
+        const params = new URLSearchParams(row.referrer?.path)
+        return params.get('entityType')
+    }
 
     const randomColor = () => {
         let col;
@@ -336,6 +339,7 @@ function ViewJobs({isAdmin = false}) {
         if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
 
         if (Array.isArray(array) && array.length && array[0].error === undefined) {
+            debugger
             if (array[0].description && array[0].description.error) {
                 let errors = []
                 for (let item of array) {
