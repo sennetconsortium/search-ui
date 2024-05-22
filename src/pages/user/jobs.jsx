@@ -339,7 +339,6 @@ function ViewJobs({isAdmin = false}) {
         if (Array.isArray(array) && array.length && array[0].row !== undefined) return array
 
         if (Array.isArray(array) && array.length && array[0].error === undefined) {
-            debugger
             if (array[0].description && array[0].description.error) {
                 let errors = []
                 for (let item of array) {
