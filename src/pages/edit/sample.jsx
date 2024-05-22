@@ -27,8 +27,7 @@ import Spinner from '../../components/custom/Spinner'
 import EntityHeader from '../../components/custom/layout/entity/Header'
 import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
 import Alert from 'react-bootstrap/Alert';
-import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/config";
-import AttributesUpload from "../../components/custom/edit/AttributesUpload";
+import {getUserName, isRuiSupported} from "../../config/config";
 import ImageSelector from "../../components/custom/edit/ImageSelector";
 import SenNetAlert from "../../components/SenNetAlert";
 import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";

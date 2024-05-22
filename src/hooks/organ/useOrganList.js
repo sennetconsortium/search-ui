@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { useEffect, useState } from "react";
 import { organDetails } from "../../config/organs";
 import { getOrgans } from "../../lib/ontology";
@@ -11,7 +10,7 @@ const useOrganList = () => {
         const retrieveOrgans = async () => {
             let organs = await getOrgans();
             organs = organs.map((organ) => {
-                const o = _.mapKeys(organ, (v, k) => _.camelCase(k));
+                const o = Object.entries(organ).mapKeys((k) => k.camelCase())
                 return {...o, ...organDetails[o.ruiCode]}
             });
             setOrgans(organs);
