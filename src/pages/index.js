@@ -1,15 +1,18 @@
-import { useRouter } from 'next/router'
-import { useEffect, useContext } from 'react'
+import dynamic from "next/dynamic";
+import {useRouter} from 'next/router'
+import {useContext, useEffect} from 'react'
 import log from 'loglevel'
-import { getCookie, setCookie } from 'cookies-next'
-import { goToSearch } from '../components/custom/js/functions'
-import Unauthorized from '../components/custom/layout/Unauthorized'
-import Spinner from '../components/custom/Spinner'
+import {getCookie, setCookie} from 'cookies-next'
+import {goToSearch} from '../components/custom/js/functions'
 import AppContext from '../context/AppContext'
+
+const Spinner = dynamic(() => import("../components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("../components/custom/layout/Unauthorized"))
+
 
 export default function Home() {
     const router = useRouter()
-    const { setIsBusy, login, isLoginPermitted } = useContext(AppContext)
+    const {setIsBusy, login, isLoginPermitted} = useContext(AppContext)
 
     useEffect(() => {
         if (router.isReady) {
@@ -32,8 +35,8 @@ export default function Home() {
     }, [router.isReady])
 
     if (!isLoginPermitted) {
-        return <Unauthorized />
+        return <Unauthorized/>
     } else {
-        return <Spinner />
+        return <Spinner/>
     }
 }

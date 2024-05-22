@@ -1,16 +1,18 @@
+import dynamic from "next/dynamic";
 import React, {useContext} from 'react';
-import BulkCreate from "../../../components/custom/bulk/BulkCreate";
-import AppNavbar from "../../../components/custom/layout/AppNavbar";
-import Unauthorized from "../../../components/custom/layout/Unauthorized";
 import {useRouter} from 'next/router'
 import EntityContext, {EntityProvider} from "../../../context/EntityContext";
-import Spinner from "../../../components/custom/Spinner";
 import AppContext from "../../../context/AppContext";
-import NotFound from "../../../components/custom/NotFound";
-import AppFooter from "../../../components/custom/layout/AppFooter";
 import {eq} from "../../../components/custom/js/functions";
-import Header from "../../../components/custom/layout/Header";
 import {JobQueueProvider} from "../../../context/JobQueueContext";
+
+const AppFooter = dynamic(() => import("../../../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../../../components/custom/layout/AppNavbar"))
+const BulkCreate = dynamic(() => import("../../../components/custom/bulk/BulkCreate"))
+const Header = dynamic(() => import("../../../components/custom/layout/Header"))
+const NotFound = dynamic(() => import("../../../components/custom/NotFound"))
+const Spinner = dynamic(() => import("../../../components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("../../../components/custom/layout/Unauthorized"))
 
 export default function EditBulk() {
     const {cache, supportedMetadata} = useContext(AppContext)
@@ -55,7 +57,8 @@ export default function EditBulk() {
         }
         if (isSupported()) {
             result = <>
-                <Header title={`Bulk Register ${isMetadata ? `Metadata` : entityType.upperCaseFirst()} | SenNet`}></Header>
+                <Header
+                    title={`Bulk Register ${isMetadata ? `Metadata` : entityType.upperCaseFirst()} | SenNet`}></Header>
 
                 <AppNavbar/>
                 <BulkCreate
@@ -64,10 +67,10 @@ export default function EditBulk() {
                     handleHome={handleHome}
                     isMetadata={isMetadata}
                 />
-                <AppFooter />
+                <AppFooter/>
             </>
         } else {
-            return (<NotFound />)
+            return (<NotFound/>)
         }
     }
 

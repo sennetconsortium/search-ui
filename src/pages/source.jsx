@@ -1,22 +1,25 @@
+import dynamic from "next/dynamic";
 import React, {Fragment, useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
-import Description from "../components/custom/entities/sample/Description";
-import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {eq, getRequestHeaders} from "../components/custom/js/functions";
-import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
-import Unauthorized from "../components/custom/layout/Unauthorized";
-import Protocols from "../components/custom/entities/sample/Protocols";
-import AppFooter from "../components/custom/layout/AppFooter";
-import Header from "../components/custom/layout/Header";
-import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import SidebarBtn from "../components/SidebarBtn";
-import Metadata from "../components/custom/entities/Metadata";
+
+const AppFooter = dynamic(() => import("../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../components/custom/layout/AppNavbar"))
+const Attribution = dynamic(() => import("../components/custom/entities/sample/Attribution"))
+const Description = dynamic(() => import("../components/custom/entities/sample/Description"))
+const Header = dynamic(() => import("../components/custom/layout/Header"))
+const Metadata = dynamic(() => import("../components/custom/entities/Metadata"))
+const Protocols = dynamic(() => import("../components/custom/entities/sample/Protocols"))
+const Provenance = dynamic(() => import( "../components/custom/entities/Provenance"))
+const SidebarBtn = dynamic(() => import("../components/SidebarBtn"))
+const Spinner = dynamic(() => import("../components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("../components/custom/layout/Unauthorized"))
+
 
 function ViewSource() {
     const router = useRouter()
