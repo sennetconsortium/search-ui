@@ -18,7 +18,7 @@ const DataProducts = dynamic(() => import("../components/custom/entities/dataset
 const Description = dynamic(() => import("../components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("../components/custom/layout/Header"))
 const Metadata = dynamic(() => import("../components/custom/entities/Metadata"))
-const Provenance = dynamic (() => import("../components/custom/entities/Provenance"))
+const Provenance = dynamic(() => import("../components/custom/entities/Provenance"))
 const SennetVitessce = dynamic(() => import("../components/custom/vitessce/SennetVitessce"))
 const SidebarBtn = dynamic(() => import("../components/SidebarBtn"))
 const Spinner = dynamic(() => import("../components/custom/Spinner"))

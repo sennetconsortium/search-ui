@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import Description from "../components/custom/entities/sample/Description";
 import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getDataTypesByProperty, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
+import {getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
 import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import Unauthorized from "../components/custom/layout/Unauthorized";

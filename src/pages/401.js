@@ -11,7 +11,7 @@ export default function Custom401() {
                     <div className={"col"}>
                         <h1 className={"text-center"}>401</h1>
                         <h2 className={"text-center"}>Your globus token has expired</h2>
-                        <p  className={"text-center"}>Please logout and login again</p>
+                        <p className={"text-center"}>Please logout and login again</p>
                         <div className={"row"}>
                             <div className={"col text-center"}>
                                 <a className="btn btn-outline-primary" role={"button"} href={"/logout"}>Logout</a>

@@ -1,19 +1,22 @@
+import dynamic from "next/dynamic";
 import React, {useContext, useState} from 'react'
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
-import AppNavbar from "../../components/custom/layout/AppNavbar";
-import AppFooter from "../../components/custom/layout/AppFooter";
-import Header from "../../components/custom/layout/Header";
 import AppContext from "../../context/AppContext";
 import {APP_TITLE} from "../../config/config";
-import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
 import {toast} from "react-toastify";
-import Unauthorized from '../../components/custom/layout/Unauthorized';
-import {Grid} from "@mui/material";
+import Grid from "@mui/material/Grid"
 import AdminContext, {AdminProvider} from "../../context/AdminContext";
+
+const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
+const Header = dynamic(() => import("../../components/custom/layout/Header"))
+const Spinner = dynamic(() => import("../../components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
+
 
 function AdminIndex() {
     const {_t, authorized} = useContext(AppContext)

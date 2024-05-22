@@ -1,41 +1,35 @@
-import React, {useEffect, useState, useContext, useRef} from "react";
+import dynamic from "next/dynamic";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {useRouter} from 'next/router';
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
-import AncestorId from "../../components/custom/edit/sample/AncestorId";
-import SampleCategory from "../../components/custom/edit/sample/SampleCategory";
-import AncestorInformationBox from "../../components/custom/entities/sample/AncestorInformationBox";
 import log from "loglevel";
-import {
-    cleanJson, eq,
-    fetchEntity,
-    getDOIPattern,
-    getRequestHeaders
-} from "../../components/custom/js/functions";
-import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_entity, parseJson, get_ancestor_organs} from "../../lib/services";
-import Unauthorized from "../../components/custom/layout/Unauthorized";
-import AppFooter from "../../components/custom/layout/AppFooter";
-import GroupSelect from "../../components/custom/edit/GroupSelect";
-import Header from "../../components/custom/layout/Header";
-import RUIIntegration from "../../components/custom/edit/sample/rui/RUIIntegration";
-import RUIButton from "../../components/custom/edit/sample/rui/RUIButton";
+import {cleanJson, eq, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
+import {get_ancestor_organs, parseJson, update_create_entity} from "../../lib/services";
 import AppContext from '../../context/AppContext'
-import {EntityProvider} from '../../context/EntityContext'
-import EntityContext from '../../context/EntityContext'
-import Spinner from '../../components/custom/Spinner'
-import EntityHeader from '../../components/custom/layout/entity/Header'
-import EntityFormGroup from "../../components/custom/layout/entity/FormGroup";
-import Alert from 'react-bootstrap/Alert';
-import {getEntityEndPoint, getUserName, isRuiSupported} from "../../config/config";
-import AttributesUpload from "../../components/custom/edit/AttributesUpload";
-import ImageSelector from "../../components/custom/edit/ImageSelector";
-import SenNetAlert from "../../components/SenNetAlert";
-import ThumbnailSelector from "../../components/custom/edit/ThumbnailSelector";
+import EntityContext, {EntityProvider} from '../../context/EntityContext'
+import {getUserName, isRuiSupported} from "../../config/config";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
 import $ from "jquery";
 
+const AncestorId = dynamic(() => import("../../components/custom/edit/sample/AncestorId"))
+const AncestorInformationBox = dynamic(() => import("../../components/custom/entities/sample/AncestorInformationBox"))
+const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
+const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
+const GroupSelect = dynamic(() => import("../../components/custom/edit/GroupSelect"))
+const Header = dynamic(() => import("../../components/custom/layout/Header"))
+const ImageSelector = dynamic(() => import("../../components/custom/edit/ImageSelector"))
+const RUIIntegration = dynamic(() => import("../../components/custom/edit/sample/rui/RUIIntegration"))
+const RUIButton = dynamic(() => import("../../components/custom/edit/sample/rui/RUIButton"))
+const SampleCategory = dynamic(() => import("../../components/custom/edit/sample/SampleCategory"))
+const SenNetAlert = dynamic(() => import("../../components/SenNetAlert"))
+const Spinner = dynamic(() => import("../../components/custom/Spinner"))
+const ThumbnailSelector = dynamic(() => import("../../components/custom/edit/ThumbnailSelector"))
+const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
 
 function EditSample() {
     const {
@@ -261,8 +255,8 @@ function EditSample() {
             let ancestor_organ = []
             if (source.hasOwnProperty("organ")) {
                 ancestor_organ.push(source['organ'])
-            } else if(source.hasOwnProperty("origin_sample")) {
-                if(source.origin_sample.hasOwnProperty("organ")){
+            } else if (source.hasOwnProperty("origin_sample")) {
+                if (source.origin_sample.hasOwnProperty("organ")) {
                     ancestor_organ.push(source.origin_sample['organ'])
                 }
             }
@@ -465,16 +459,21 @@ function EditSample() {
                                                      controlId='protocol_url' value={data.protocol_url}
                                                      isRequired={true} pattern={getDOIPattern()}
                                                      className={warningClasses.protocol_url}
-                                                     warningText={<>The supplied protocols.io DOI URL, formatting is correct but does not resolve. This will need to be corrected for any <code>Dataset</code> submission that uses this entity as an ancestor.</>}
+                                                     warningText={<>The supplied protocols.io DOI URL, formatting is
+                                                         correct but does not resolve. This will need to be corrected
+                                                         for any <code>Dataset</code> submission that uses this entity
+                                                         as an ancestor.</>}
                                                      popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
                                                      onChange={_onChange}
                                                      onBlur={_onBlur}
                                                      text={<span>The protocol used when procuring or preparing the tissue. This must be provided as a protocols.io DOI URL see: <a
                                                          href="https://www.protocols.io/." target='_blank'
-                                                         className='lnk--ic'>https://www.protocols.io/ <i className="bi bi-box-arrow-up-right"></i></a>.</span>}/>
+                                                         className='lnk--ic'>https://www.protocols.io/ <i
+                                                         className="bi bi-box-arrow-up-right"></i></a>.</span>}/>
 
                                     {/*/!*Lab Sample ID*!/*/}
-                                    <EntityFormGroup label='Lab Sample ID' placeholder='A non-PHI ID or deidentified name used by the lab when referring to the specimen'
+                                    <EntityFormGroup label='Lab Sample ID'
+                                                     placeholder='A non-PHI ID or deidentified name used by the lab when referring to the specimen'
                                                      controlId='lab_tissue_sample_id'
                                                      isRequired={true}
                                                      value={data.lab_tissue_sample_id}
@@ -488,11 +487,12 @@ function EditSample() {
                                                      onChange={_onChange}
                                                      text='Free text field to enter a description of the specimen'/>
 
-                                    {metadataNote() && <Alert variant={alertStyle.current}><span>{metadataNote()}</span></Alert>}
+                                    {metadataNote() &&
+                                        <Alert variant={alertStyle.current}><span>{metadataNote()}</span></Alert>}
 
                                     {/* Deidentify images warning */}
                                     <SenNetAlert className='deidentify-alert'
-                                                 text='Upload de-identified images and thumbnails only' />
+                                                 text='Upload de-identified images and thumbnails only'/>
 
                                     {/* Images */}
                                     <ImageSelector editMode={editMode}
@@ -509,7 +509,8 @@ function EditSample() {
 
                                     <div className={'d-flex flex-row-reverse'}>
                                         {getCancelBtn('sample')}
-                                        <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
+                                        <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save"
+                                                onClick={handleSave}
                                                 disabled={disableSubmit}>
                                             {_t('Save')}
 

@@ -57,7 +57,8 @@ export default function EditBulk() {
         }
         if (isSupported()) {
             result = <>
-                <Header title={`Bulk Register ${isMetadata ? `Metadata` : entityType.upperCaseFirst()} | SenNet`}></Header>
+                <Header
+                    title={`Bulk Register ${isMetadata ? `Metadata` : entityType.upperCaseFirst()} | SenNet`}></Header>
 
                 <AppNavbar/>
                 <BulkCreate
@@ -66,10 +67,10 @@ export default function EditBulk() {
                     handleHome={handleHome}
                     isMetadata={isMetadata}
                 />
-                <AppFooter />
+                <AppFooter/>
             </>
         } else {
-            return (<NotFound />)
+            return (<NotFound/>)
         }
     }
 

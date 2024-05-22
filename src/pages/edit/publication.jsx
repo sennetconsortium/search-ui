@@ -1,6 +1,8 @@
+import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
@@ -13,22 +15,22 @@ import {
     fetchEntity,
     getRequestHeaders
 } from '../../components/custom/js/functions'
-import AppNavbar from '../../components/custom/layout/AppNavbar'
-import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
-import Unauthorized from '../../components/custom/layout/Unauthorized'
-import AppFooter from '../../components/custom/layout/AppFooter'
-import Header from '../../components/custom/layout/Header'
-
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
-import Spinner from '../../components/custom/Spinner'
-import EntityHeader from '../../components/custom/layout/entity/Header'
-import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
-import Alert from 'react-bootstrap/Alert';
 import $ from 'jquery'
-import SenNetPopover from "../../components/SenNetPopover"
 import {valid_dataset_ancestor_config} from "../../config/config";
-import NotFound from "../../components/custom/NotFound";
+
+const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
+const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
+const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
+const Header = dynamic(() => import("../../components/custom/layout/Header"))
+const NotFound = dynamic(() => import("../../components/custom/NotFound"))
+const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
+const Spinner = dynamic(() => import("../../components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
+
 
 export default function EditPublication() {
     const {
