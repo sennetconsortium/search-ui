@@ -1,27 +1,29 @@
+import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
-import Description from "../components/custom/entities/sample/Description";
-import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
 import {datasetIs, fetchDataCite, getRequestHeaders} from "../components/custom/js/functions";
-import AppNavbar from "../components/custom/layout/AppNavbar";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
-import Unauthorized from "../components/custom/layout/Unauthorized";
-import AppFooter from "../components/custom/layout/AppFooter";
-import Header from "../components/custom/layout/Header";
-import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import Provenance from "../components/custom/entities/Provenance";
-import ContributorsContacts from "../components/custom/entities/ContributorsContacts";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import DerivedContext, {DerivedProvider} from "../context/DerivedContext";
-import SennetVitessce from "../components/custom/vitessce/SennetVitessce";
-import SidebarBtn from "../components/SidebarBtn";
-import Metadata from "../components/custom/entities/Metadata";
 import FileTreeView from "../components/custom/entities/dataset/FileTreeView";
-import Upload from "../components/custom/entities/dataset/Upload";
-import CreationActionRelationship from "../components/custom/entities/dataset/CreationActionRelationship";
-import DataProducts from "../components/custom/entities/dataset/DataProducts";
+
+const AppFooter = dynamic(() => import("../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../components/custom/layout/AppNavbar"))
+const Attribution = dynamic(() => import("../components/custom/entities/sample/Attribution"))
+const ContributorsContacts = dynamic(() => import("../components/custom/entities/ContributorsContacts"))
+const CreationActionRelationship = dynamic(() => import("../components/custom/entities/dataset/CreationActionRelationship"))
+const DataProducts = dynamic(() => import("../components/custom/entities/dataset/DataProducts"))
+const Description = dynamic(() => import("../components/custom/entities/sample/Description"))
+const Header = dynamic(() => import("../components/custom/layout/Header"))
+const Metadata = dynamic(() => import("../components/custom/entities/Metadata"))
+const Provenance = dynamic (() => import("../components/custom/entities/Provenance"))
+const SennetVitessce = dynamic(() => import("../components/custom/vitessce/SennetVitessce"))
+const SidebarBtn = dynamic(() => import("../components/SidebarBtn"))
+const Spinner = dynamic(() => import("../components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("../components/custom/layout/Unauthorized"))
+const Upload = dynamic(() => import("../components/custom/entities/dataset/Upload"))
 
 function ViewDataset() {
     const [data, setData] = useState(null)
@@ -52,15 +54,15 @@ function ViewDataset() {
     }
 
     useEffect(() => {
-            if (data) {
-                initVitessceConfig(data)
-                if (datasetIs.primary(data.creation_action)) {
-                    setDatasetCategories(getAssaySplitData(data))
-                } else {
-                    fetchEntityForMultiAssayInfo()
-                }
-                fetchDataProducts(data)
+        if (data) {
+            initVitessceConfig(data)
+            if (datasetIs.primary(data.creation_action)) {
+                setDatasetCategories(getAssaySplitData(data))
+            } else {
+                fetchEntityForMultiAssayInfo()
             }
+            fetchDataProducts(data)
+        }
     }, [data])
 
     // only executed on init rendering, see the []
@@ -138,16 +140,18 @@ function ViewDataset() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            {datasetCategories && (datasetCategories.component.length > 0) && <li className="nav-item">
-                                                <a href="#multi-assay-relationship"
-                                                   className="nav-link "
-                                                   data-bs-parent="#sidebar">Multi-Assay Relationship</a>
-                                            </li>}
-                                            {datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action) && dataProducts && (dataProducts.length > 0) && <li className="nav-item">
-                                                <a href="#data-products"
-                                                   className="nav-link "
-                                                   data-bs-parent="#sidebar">Data Products</a>
-                                            </li>}
+                                            {datasetCategories && (datasetCategories.component.length > 0) &&
+                                                <li className="nav-item">
+                                                    <a href="#multi-assay-relationship"
+                                                       className="nav-link "
+                                                       data-bs-parent="#sidebar">Multi-Assay Relationship</a>
+                                                </li>}
+                                            {datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action) && dataProducts && (dataProducts.length > 0) &&
+                                                <li className="nav-item">
+                                                    <a href="#data-products"
+                                                       className="nav-link "
+                                                       data-bs-parent="#sidebar">Data Products</a>
+                                                </li>}
                                             {data.upload && data.upload.uuid &&
                                                 <li className="nav-item">
                                                     <a href="#Associated Upload"
@@ -226,9 +230,11 @@ function ViewDataset() {
                                                 secondaryDate={data.last_modified_timestamp}
                                                 data={data}/>
 
-                                            {datasetCategories && (datasetCategories.component.length > 0) && <CreationActionRelationship entity={data} data={datasetCategories} />}
+                                            {datasetCategories && (datasetCategories.component.length > 0) &&
+                                                <CreationActionRelationship entity={data} data={datasetCategories}/>}
 
-                                            {(datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action)) && dataProducts && (dataProducts.length > 0) && <DataProducts data={data} files={dataProducts} />}
+                                            {(datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action)) && dataProducts && (dataProducts.length > 0) &&
+                                                <DataProducts data={data} files={dataProducts}/>}
 
                                             {/*Upload*/}
                                             {data.upload && data.upload.uuid && <Upload data={data.upload}/>}

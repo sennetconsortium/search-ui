@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useContext, useRef} from "react";
 import {useRouter} from 'next/router';
-import {Button, Form} from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import AncestorId from "../../components/custom/edit/sample/AncestorId";
 import SampleCategory from "../../components/custom/edit/sample/SampleCategory";

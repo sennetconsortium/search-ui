@@ -13,7 +13,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from "../../components/custom/Spinner";
 import AppContext from "../../context/AppContext";
 import SelectedFilters from "../../components/custom/layout/SelectedFilters";
-import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
+import {getUBKGFullName} from "../../components/custom/js/functions";
 import SelectedFacets from "../../components/custom/search/SelectedFacets";
 import SearchUIContainer from "search-ui/components/core/SearchUIContainer";
 import FacetsContent from "../../components/custom/search/FacetsContent";
@@ -38,13 +38,13 @@ function SearchEntities() {
 
     // Define here because we need auth state from AppContext
     SEARCH_ENTITIES['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
-        return hasAuthenticationCookie() && !isUnauthorized() && 
+        return hasAuthenticationCookie() && !isUnauthorized() &&
             filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Sample"))
     }
 
     SEARCH_ENTITIES['searchQuery']['conditionalFacets']['ancestors.rui_location'] = ({filters}) => {
-        return hasAuthenticationCookie() && !isUnauthorized() && 
-            filters.some((filter) => filter.field === "entity_type" &&  filter.values.includes("Dataset") )
+        return hasAuthenticationCookie() && !isUnauthorized() &&
+            filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
     }
 
     function handleSearchFormSubmit(event, onSubmit) {
@@ -72,8 +72,8 @@ function SearchEntities() {
                             header={
                                 <>
                                     <div className="search-box-header js-gtm--search">
-                                        <SenNetBanner name={'searchEntities'} />
-                                        <AppTutorial />
+                                        <SenNetBanner name={'searchEntities'}/>
+                                        <AppTutorial/>
                                         <SearchBox
                                             view={({onChange, value, onSubmit}) => (
                                                 <Form onSubmit={e => handleSearchFormSubmit(e, onSubmit)}>
@@ -99,23 +99,23 @@ function SearchEntities() {
                                         />
                                     </div>
                                     <div className='sui-filters-summary'>
-                                        <SelectedFacets />
+                                        <SelectedFacets/>
                                     </div>
                                 </>
                             }
                             sideContent={
                                 <div data-js-ada='facets'>
-                                    <SearchDropdown title='Entities' />
+                                    <SearchDropdown title='Entities'/>
 
-                                    <CustomClearSearchBox />
+                                    <CustomClearSearchBox/>
 
-                                    <SelectedFilters />
+                                    <SelectedFilters/>
 
                                     <FacetsContent transformFunction={getUBKGFullName}/>
                                 </div>
                             }
                             bodyContent={
-                                <BodyContent view={TableResultsEntities} />
+                                <BodyContent view={TableResultsEntities}/>
                             }
                         />
                     </ErrorBoundary>

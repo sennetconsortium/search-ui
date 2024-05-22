@@ -1,7 +1,8 @@
 import React, {useContext, useEffect, useRef, useState} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
-import {Button, Form} from 'react-bootstrap'
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'

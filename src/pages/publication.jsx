@@ -10,8 +10,8 @@ import AppFooter from "../components/custom/layout/AppFooter";
 import Header from "../components/custom/layout/Header";
 import Spinner from "../components/custom/Spinner";
 import AppContext from "../context/AppContext";
-import {Alert, Stack, Table, Badge} from 'react-bootstrap';
-
+import Alert from 'react-bootstrap/Alert';
+import Table from 'react-bootstrap/Table';
 import Provenance from "../components/custom/entities/Provenance";
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import DerivedContext, {DerivedProvider} from "../context/DerivedContext";

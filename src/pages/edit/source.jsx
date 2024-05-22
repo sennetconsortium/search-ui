@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useState, useRef} from "react";
 import {useRouter} from 'next/router';
-import {Button, Form} from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
 import {cleanJson, eq, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
