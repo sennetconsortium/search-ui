@@ -7,7 +7,7 @@ import ErrorBoundary from '../components/custom/error/ErrorBoundary'
 import React, {useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import {getCookie} from 'cookies-next'
-import {getIngestEndPoint, getLogLevel} from '../config/config'
+import { getLogLevel} from '../config/config'
 import useGoogleTagManager from '../hooks/useGoogleTagManager'
 import addons from "../components/custom/js/addons/addons"
 import {AppProvider} from '../context/AppContext'

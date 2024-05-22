@@ -7,7 +7,6 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import SenNetAccordion from "../layout/SenNetAccordion";
 import Spinner from "../Spinner";
-import useVitessceEncoder from "../../../hooks/useVitessceEncoder";
 
 export const SennetVitessce = ({data}) => {
     const Vitessce = React.lazy(() => import ('./VitessceWrapper.js'))

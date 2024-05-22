@@ -1,14 +1,19 @@
-import { useContext } from "react";
-import { Col, Container, Row } from "react-bootstrap";
-import Spinner from "../../components/custom/Spinner";
-import AppNavbar from "../../components/custom/layout/AppNavbar";
-import Header from "../../components/custom/layout/Header";
-import OrganCard from "../../components/custom/organ/OrganCard";
-import { APP_TITLE } from "../../config/config";
+import dynamic from "next/dynamic";
+import {useContext} from "react";
+import Col from "react-bootstrap/Col"
+import Container from "react-bootstrap/Container"
+import Row from "react-bootstrap/Row"
+import {APP_TITLE} from "../../config/config";
 import AppContext from "../../context/AppContext";
 import useOrganList from "../../hooks/organ/useOrganList";
 import Link from "next/link";
-import { APP_ROUTES } from "../../config/constants";
+import {APP_ROUTES} from "../../config/constants";
+
+const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
+const Header = dynamic(() => import("../../components/custom/layout/Header"))
+const OrganCard = dynamic(() => import("../../components/custom/organ/OrganCard"))
+const Spinner = dynamic(() => import("../../components/custom/Spinner"))
 
 const AllOrgans = () => {
     const {
@@ -19,10 +24,10 @@ const AllOrgans = () => {
         hasAuthenticationCookie,
     } = useContext(AppContext);
 
-    const { organs } = useOrganList();
+    const {organs} = useOrganList();
 
     if (isAuthorizing()) {
-        return <Spinner />;
+        return <Spinner/>;
     }
 
     if (isUnauthorized() && hasAuthenticationCookie()) {
@@ -33,8 +38,8 @@ const AllOrgans = () => {
 
     return (
         <>
-            <Header title={APP_TITLE} />
-            <AppNavbar hidden={isRegisterHidden} signoutHidden={false} />
+            <Header title={APP_TITLE}/>
+            <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
             <Container fluid className="mb-5 d-block">
                 <Row>
                     <div className="py-4 bd-highlight">
@@ -49,12 +54,13 @@ const AllOrgans = () => {
                                 className="text-decoration-none"
                                 href={`${APP_ROUTES.organs}/${organ.urlParamName}`}
                             >
-                                <OrganCard organ={organ} />
+                                <OrganCard organ={organ}/>
                             </Link>
                         </Col>
                     ))}
                 </Row>
             </Container>
+            <AppFooter/>
         </>
     );
 };
