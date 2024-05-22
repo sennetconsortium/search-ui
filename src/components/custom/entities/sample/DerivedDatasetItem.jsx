@@ -1,63 +1,64 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {fetchEntity, getStatusColor} from "../../js/functions";
 
-export default class DerivedDatasetItem extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            descendant_data: null
-        };
-    }
+const DerivedDatasetItem = ({index, data, dataType, descendantUuid}) => {
 
-    async componentDidMount() {
-        await fetchEntity(this.props.descendant_uuid).then((data) => {
-            this.setState({descendant_data: data})
-        });
-    }
+    const [descendantData, setDescendantData] = useState(null)
 
-    render() {
-        return (
-            <>
-                {this.state.descendant_data != null &&
-                    <tr key={"descendant_data_" + this.props.index}>
-                        <td>
-                            <a href={`/dataset?uuid=${this.state.descendant_data.uuid}`} className="icon_inline">
-                                <span className="me-1">{this.state.descendant_data.sennet_id}</span> <i className="bi bi-box-arrow-up-right"></i>
-                            </a>
-                        </td>
-                        {(() => {
-                            if (this.props.data_type === 'Dataset') {
-                                return (
-                                    <>
-                                        <td>
-                                            {this.state.descendant_data.dataset_type}
-                                        </td>
-                                        <td>
-                                            <span className={`${getStatusColor(this.state.descendant_data.status)} badge`}>
-                                                {this.state.descendant_data.status}
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await fetchEntity(descendantUuid).then((data) => {
+                setDescendantData(data)
+            });
+        }
+
+        fetchData()
+    }, [])
+
+    return (
+        <>
+            {descendantData != null &&
+                <tr key={"descendant_data_" + index}>
+                    <td>
+                        <a href={`/dataset?uuid=${descendantData.uuid}`} className="icon_inline">
+                            <span className="me-1">{descendantData.sennet_id}</span> <i className="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </td>
+                    {(() => {
+                        if (dataType === 'Dataset') {
+                            return (
+                                <>
+                                    <td>
+                                        {descendantData.dataset_type}
+                                    </td>
+                                    <td>
+                                            <span className={`${getStatusColor(descendantData.status)} badge`}>
+                                                {descendantData.status}
                                             </span>
-                                        </td>
-                                    </>
-                                )
-                            } else if (this.props.data_type === 'Sample') {
-                                return (
-                                    <>
-                                        <td>{this.state.descendant_data.organ}</td>
-                                        <td>{this.state.descendant_data.sample_category}</td>
-                                    </>
-                                )
-                            }
-                        })()}
+                                    </td>
+                                </>
+                            )
+                        } else if (dataType === 'Sample') {
+                            return (
+                                <>
+                                    <td>{descendantData.organ}</td>
+                                    <td>{descendantData.sample_category}</td>
+                                </>
+                            )
+                        }
+                    })()}
 
-                        <td>{this.state.descendant_data.descendant_counts?.entity_type?.Dataset || 0}</td>
-                        <td>{new Intl.DateTimeFormat('en-US', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit'
-                        }).format(this.state.descendant_data.last_modified_timestamp)}</td>
-                    </tr>
-                }
-            </>
-        )
-    }
+                    <td>{descendantData.descendant_counts?.entity_type?.Dataset || 0}</td>
+                    <td>{new Intl.DateTimeFormat('en-US', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    }).format(descendantData.last_modified_timestamp)}</td>
+                </tr>
+            }
+        </>
+    )
 };
+
+export default DerivedDatasetItem

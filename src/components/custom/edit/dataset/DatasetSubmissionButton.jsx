@@ -1,48 +1,47 @@
-import React from "react";
+import React, {useState} from "react";
 import Badge from 'react-bootstrap/Badge'
 import {Button} from 'react-bootstrap';
 import AppModal from "../../../AppModal";
 import {getStatusColor} from "../../js/functions";
 
-export default class DatasetSubmissionButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showModal: false,
-        };
+const DatasetSubmissionButton = ({onClick, btnLabel, actionBtnClassName, modalBody, modalTitle, disableSubmit}) => {
+    const [showModal, setShowModal] = useState(false)
+
+
+    const displayModal = () => {
+        setShowModal(true)
     }
 
-    showModal = () => {
-        this.setState({showModal: true})
-    }
-    hideModal = () => {
-        this.setState({showModal: false})
+    const hideModal = () => {
+        setShowModal(false)
     }
 
-    render() {
+
         return (
             <>
-                <Button className="me-2" variant="outline-primary rounded-0" disabled={this.props.disableSubmit}
-                        onClick={this.showModal}>
-                    {this.props.btnLabel}
+                <Button className="me-2" variant="outline-primary rounded-0" disabled={disableSubmit}
+                        onClick={displayModal}>
+                    {btnLabel}
                 </Button>
 
                 <AppModal
                     className={`modal--ctaConfirm`}
-                    showModal={this.state.showModal}
-                    modalTitle={`Confirm ${this.props.modalTitle || 'Submission'}`}
-                    modalBody={this.props.modalBody}
-                    handleClose={this.hideModal}
+                    showModal={showModal}
+                    modalTitle={`Confirm ${modalTitle || 'Submission'}`}
+                    modalBody={modalBody}
+                    handleClose={hideModal}
                     handleHome={() => {
-                        this.props.onClick();
-                        this.hideModal()
+                        onClick()
+                        hideModal()
                     }}
-                    actionButtonLabel={this.props.btnLabel}
-                    actionBtnClassName={this.props.actionBtnClassName || 'js-btn--submit'}
+                    actionButtonLabel={btnLabel}
+                    actionBtnClassName={actionBtnClassName || 'js-btn--submit'}
                     showCloseButton={true}
                     closeButtonLabel={'Close'}
                 />
             </>
         )
-    }
+
 }
+
+export default DatasetSubmissionButton
