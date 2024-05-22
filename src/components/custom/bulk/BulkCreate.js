@@ -220,7 +220,7 @@ export default function BulkCreate({
     function getValidateReferrer() {
         return {
             type: 'validate',
-            path: window.location.pathname `?entityType=${entityType}${subType ? `&subType=${subType}` : ''}`
+            path: window.location.pathname + `?entityType=${entityType}${subType ? `&subType=${subType}` : ''}`
         }
     }
 
