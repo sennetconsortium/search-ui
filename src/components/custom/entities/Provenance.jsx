@@ -11,7 +11,6 @@ import $ from 'jquery'
 import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
 import {
-    fetchEntity,
     fetchProtocols,
     getClickableLink,
     getCreationActionRelationName,
@@ -19,6 +18,7 @@ import {
 } from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import * as d3 from "d3";
+import {get_lineage_info} from "../../../lib/services";
 
 
 function Provenance({nodeData}) {
@@ -281,25 +281,21 @@ function Provenance({nodeData}) {
     }
 
     useEffect(() => {
-        async function fetchLineage (ancestors, fetch) {
-            let new_ancestors = []
-            for (const ancestor of ancestors) {
-                let complete_ancestor = await fetchEntity(ancestor.uuid);
-                if (complete_ancestor.hasOwnProperty("error")) {
-                    setError(true)
-                    setErrorMessage(complete_ancestor["error"])
-                } else {
-                    new_ancestors.push(complete_ancestor)
-                }
+        async function fetchLineage (lineageDescriptor, setLineage) {
+            let lineage = await get_lineage_info(data.uuid, lineageDescriptor);
+            if (lineage.hasOwnProperty("error")) {
+                setError(true)
+                setErrorMessage(lineage["error"])
+            } else {
+               setLineage(lineage)
             }
-            fetch(new_ancestors)
         }
 
         if (nodeData.hasOwnProperty("descendants")) {
-            fetchLineage(data.descendants, setDescendants);
+            fetchLineage("descendants", setDescendants);
         }
         if (nodeData.hasOwnProperty("ancestors")) {
-            fetchLineage(data.ancestors, setAncestors);
+            fetchLineage("ancestors", setAncestors);
         }
 
         if (initialized.current) return
