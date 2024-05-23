@@ -442,6 +442,9 @@ Object.assign(String.prototype, {
     },
     isEmpty() {
         return (eq(typeof this, 'string') && !this.length)
+    },
+    camelCase(delimiter = '_') {
+        return this.split(delimiter).map((e,i) => i ? e.charAt(0).toUpperCase() + e.slice(1).toLowerCase() : e.toLowerCase()).join('')
     }
 })
 
@@ -462,6 +465,14 @@ Object.assign(Array.prototype, {
     },
     contains(needle, insensitive = true) {
         return this.some((i) => eq(i, needle, insensitive))
+    },
+    mapKeys(fn) {
+        const mapped = this.map(([k,v]) => ({ [fn(k)] : v}) )
+        let result = {}
+        for(let m of mapped) {
+            result = Object.assign(result, m)
+        }
+        return result
     }
 })
 

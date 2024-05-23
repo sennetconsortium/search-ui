@@ -1,27 +1,28 @@
-import ViewJobs from "../../user/jobs";
+import dynamic from "next/dynamic";
 import React, {useContext} from "react";
+import ViewJobs from "../../user/jobs";
 import AppContext from "../../../context/AppContext";
-import Spinner from "../../../components/custom/Spinner";
 import {JobQueueProvider} from "../../../context/JobQueueContext";
-import Unauthorized from "../../../components/custom/layout/Unauthorized";
 import AdminContext, {AdminProvider} from "../../../context/AdminContext";
 
+const Spinner = dynamic(() => import("../../../components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("../../../components/custom/layout/Unauthorized"))
 
 function ViewJobsAdmin() {
     const {adminGroup, authorized} = useContext(AppContext)
-    const { uiAdminAuthorized } = useContext(AdminContext)
+    const {uiAdminAuthorized} = useContext(AdminContext)
 
     if (!authorized || uiAdminAuthorized.loading) {
-        return <Spinner />
+        return <Spinner/>
     }
 
     if (!uiAdminAuthorized.authorized) {
-        return <Unauthorized />
+        return <Unauthorized/>
     }
 
     return (
         <>
-            {adminGroup && <ViewJobs isAdmin={adminGroup} />}
+            {adminGroup && <ViewJobs isAdmin={adminGroup}/>}
         </>
     )
 }

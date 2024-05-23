@@ -1,45 +1,49 @@
-import React, {useContext, useEffect, useState, useRef} from "react";
+import dynamic from "next/dynamic";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {useRouter} from 'next/router';
-import {Button, Form} from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
 import {cleanJson, eq, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
-import AppNavbar from "../../components/custom/layout/AppNavbar";
 import {update_create_entity} from "../../lib/services";
-import SourceType from "../../components/custom/edit/source/SourceType";
-import Unauthorized from "../../components/custom/layout/Unauthorized";
-import AppFooter from "../../components/custom/layout/AppFooter";
-import GroupSelect from "../../components/custom/edit/GroupSelect";
-import Header from "../../components/custom/layout/Header";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
-import Spinner from '../../components/custom/Spinner'
-import EntityHeader from '../../components/custom/layout/entity/Header'
-import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
-import Alert from 'react-bootstrap/Alert';
-import ImageSelector from "../../components/custom/edit/ImageSelector";
-import SenNetAlert from "../../components/SenNetAlert";
-import AttributesUpload from "../../components/custom/edit/AttributesUpload";
 import {SenPopoverOptions} from "../../components/SenNetPopover";
 import $ from "jquery";
 
+const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
+const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
+const GroupSelect = dynamic(() => import("../../components/custom/edit/GroupSelect"))
+const Header = dynamic(() => import("../../components/custom/layout/Header"))
+const ImageSelector = dynamic(() => import("../../components/custom/edit/ImageSelector"))
+const SenNetAlert = dynamic(() => import("../../components/SenNetAlert"))
+const SourceType = dynamic(() => import("../../components/custom/edit/source/SourceType"))
+const Spinner = dynamic(() => import("../../components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
+
 
 function EditSource() {
-    const { isUnauthorized, isAuthorizing, getModal, setModalDetails,
+    const {
+        isUnauthorized, isAuthorizing, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
         errorMessage, setErrorMessage,
         validated, setValidated,
         userWriteGroups, onChange,
-        editMode, setEditMode,isEditMode,
+        editMode, setEditMode, isEditMode,
         showModal,
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
         getMetadataNote, checkProtocolUrl,
-        warningClasses, getCancelBtn } = useContext(EntityContext)
-    const { _t, filterImageFilesToAdd, cache } = useContext(AppContext)
+        warningClasses, getCancelBtn
+    } = useContext(EntityContext)
+    const {_t, filterImageFilesToAdd, cache} = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
@@ -136,7 +140,12 @@ function EditSource() {
 
 
             await update_create_entity(uuid, json, editMode, cache.entities.source).then((response) => {
-                setModalDetails({entity: cache.entities.source, type: response.source_type, typeHeader: _t('Source Type'), response})
+                setModalDetails({
+                    entity: cache.entities.source,
+                    type: response.source_type,
+                    typeHeader: _t('Source Type'),
+                    response
+                })
                 if (response.image_files) {
                     setValues(prevState => ({...prevState, image_files: response.image_files}))
                 }
@@ -167,8 +176,10 @@ function EditSource() {
 
         const notEq = !eq(data.source_type, values.source_type)
         const className = values.metadata ? 'mt-2 d-block' : ''
-        const curatorMessage = <span key={'md-curator'} className={className}><code>{values.source_type} Source</code> metadata must be sent through the <a href={`mailto:help@sennetconsortium.org`}>curator</a>. <br /></span>
-        const noSupportMessage = <span key={'md-no-support'} className={className}>This <code>Source</code> type <code>{values.source_type}</code> does not offer metadata submission support.</span>
+        const curatorMessage = <span key={'md-curator'} className={className}><code>{values.source_type} Source</code> metadata must be sent through the <a
+            href={`mailto:help@sennetconsortium.org`}>curator</a>. <br/></span>
+        const noSupportMessage = <span key={'md-no-support'}
+                                       className={className}>This <code>Source</code> type <code>{values.source_type}</code> does not offer metadata submission support.</span>
         alertStyle.current = notEq && values.metadata ? 'warning' : 'info'
 
         if (isEditMode() && values.metadata) {
@@ -184,13 +195,17 @@ function EditSource() {
 
             if (curatorHandledMetadata()) {
                 text.push(curatorMessage)
-                {/* text.push(<span>//TODO: confirm fields for Human and upload to docs.sennetconsortium.org */}
-                {/*<small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;*/}
-                {/*    <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <i className="bi bi-box-arrow-up-right"></i></a>.*/}
-                {/*</small><br /></span>)*/}
+                {/* text.push(<span>//TODO: confirm fields for Human and upload to docs.sennetconsortium.org */
+                }
+                {/*<small className='text-muted'>For details on what information should be included in your metadata submission, please see &nbsp;*/
+                }
+                {/*    <a href='https://docs.sennetconsortium.org/libraries/ingest-validation-tools/schemas/source/' target='_blank' className='lnk--ic'> the docs <i className="bi bi-box-arrow-up-right"></i></a>.*/
+                }
+                {/*</small><br /></span>)*/
+                }
             }
             return text
-        }  else {
+        } else {
             text = []
             if (isEditMode() && curatorHandledMetadata()) {
                 text.push(curatorMessage)
@@ -209,7 +224,7 @@ function EditSource() {
 
     if (isAuthorizing() || isUnauthorized()) {
         return (
-            isUnauthorized() ? <Unauthorized /> : <Spinner />
+            isUnauthorized() ? <Unauthorized/> : <Spinner/>
         )
     } else {
         console.log(values)
@@ -228,7 +243,7 @@ function EditSource() {
                     <div className="no_sidebar">
                         <Layout
                             bodyHeader={
-                                <EntityHeader entity={cache.entities.source} isEditMode={isEditMode()} data={data} />
+                                <EntityHeader entity={cache.entities.source} isEditMode={isEditMode()} data={data}/>
                             }
                             bodyContent={
                                 <Form noValidate validated={validated} onSubmit={handleSave} id={"source-form"}>
@@ -243,7 +258,8 @@ function EditSource() {
                                     }
 
                                     {/*Lab's Source Non-PHI ID*/}
-                                    <EntityFormGroup label="Lab's Source Non-PHI ID or Name" placeholder='A non-PHI ID or deidentified name used by the lab when referring to the source.'
+                                    <EntityFormGroup label="Lab's Source Non-PHI ID or Name"
+                                                     placeholder='A non-PHI ID or deidentified name used by the lab when referring to the source.'
                                                      controlId='lab_source_id' value={data.lab_source_id}
                                                      isRequired={true}
                                                      onChange={onChange}
@@ -256,21 +272,34 @@ function EditSource() {
                                     <SourceType data={data} onChange={onChange}/>
 
                                     {/*Case Selection Protocol*/}
-                                    <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI' popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
-                                        controlId='protocol_url' value={data.protocol_url} isRequired={true} pattern={getDOIPattern()}
+                                    <EntityFormGroup label="Case Selection Protocol" placeholder='protocols.io DOI'
+                                                     popoverTrigger={SenPopoverOptions.triggers.hoverOnClickOff}
+                                                     controlId='protocol_url' value={data.protocol_url}
+                                                     isRequired={true} pattern={getDOIPattern()}
                                                      className={warningClasses.protocol_url}
-                                                     warningText={<>The supplied protocols.io DOI URL, formatting is correct but does not resolve. This will need to be corrected for any <code>Dataset</code> submission that uses this entity as an ancestor.</>}
-                                                     onChange={onChange} onBlur={_onBlur} text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a href="https://www.protocols.io/." target='_blank' className='lnk--ic'>https://www.protocols.io/ <i className="bi bi-box-arrow-up-right"></i></a>.</span>} />
+                                                     warningText={<>The supplied protocols.io DOI URL, formatting is
+                                                         correct but does not resolve. This will need to be corrected
+                                                         for any <code>Dataset</code> submission that uses this entity
+                                                         as an ancestor.</>}
+                                                     onChange={onChange} onBlur={_onBlur}
+                                                     text={<span>The protocol used for <code>Source</code> selection including any inclusion or exclusion criteria. This must  be provided  as a protocols.io DOI see: <a
+                                                         href="https://www.protocols.io/." target='_blank'
+                                                         className='lnk--ic'>https://www.protocols.io/ <i
+                                                         className="bi bi-box-arrow-up-right"></i></a>.</span>}/>
 
                                     {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='Lab Notes' type='textarea' controlId='description' value={data.description}
-                                                     onChange={onChange} text={<>Free text field to enter a description of the <code>Source</code>.</>} />
+                                    <EntityFormGroup label='Lab Notes' type='textarea' controlId='description'
+                                                     value={data.description}
+                                                     onChange={onChange}
+                                                     text={<>Free text field to enter a description of
+                                                         the <code>Source</code>.</>}/>
 
-                                    {metadataNote() && <Alert variant={alertStyle.current}><span>{metadataNote()}</span></Alert>}
+                                    {metadataNote() &&
+                                        <Alert variant={alertStyle.current}><span>{metadataNote()}</span></Alert>}
 
                                     {/* Deidentify images warning */}
                                     <SenNetAlert className='deidentify-alert'
-                                                 text='Upload de-identified images only' />
+                                                 text='Upload de-identified images only'/>
 
                                     {/* Images */}
                                     <ImageSelector editMode={editMode}
@@ -281,7 +310,8 @@ function EditSource() {
 
                                     <div className={'d-flex flex-row-reverse'}>
                                         {getCancelBtn('source')}
-                                        <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save" onClick={handleSave}
+                                        <Button className={"me-2"} variant="outline-primary rounded-0 js-btn--save"
+                                                onClick={handleSave}
                                                 disabled={disableSubmit}>
                                             {_t('Save')}
                                         </Button>
@@ -299,7 +329,7 @@ function EditSource() {
     }
 }
 
-EditSource.withWrapper = function(page) {
+EditSource.withWrapper = function (page) {
     return <EntityProvider>{page}</EntityProvider>
 }
 

@@ -1,5 +1,4 @@
-import {getAuth, getRootURL} from "../../../config/config";
-import {getCookie, hasCookie} from "cookies-next";
+import {getRootURL} from "../../../config/config";
 import {formatMessageForCloudwatch} from "../find";
 import {get_auth_header, get_headers_from_req, get_json_header} from "../../../lib/services";
 

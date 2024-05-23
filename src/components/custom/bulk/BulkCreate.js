@@ -220,7 +220,7 @@ export default function BulkCreate({
     function getValidateReferrer() {
         return {
             type: 'validate',
-            path: window.location.pathname + window.location.search
+            path: window.location.pathname + `?action=validate&entityType=${entityType}${subType ? `&subType=${subType}` : ''}`
         }
     }
 
@@ -461,7 +461,7 @@ export default function BulkCreate({
         const url = new URL(getDocsRootURL());
         url.pathname = isMetadata ? 'libraries/ingest-validation-tools/schemas' : 'registration/bulk-registration'
         const _subType = isMouse() ? 'murine' : subType
-        url.pathname += isMetadata ? `/` : `/${entityType}`
+        url.pathname += isMetadata ? `/` : `/${entityType.toLowerCase()}`
         return url.href
     }
 
