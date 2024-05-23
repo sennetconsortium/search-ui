@@ -145,18 +145,17 @@ function Provenance({nodeData}) {
         }
     }
 
-    const buildProtocolData = async (data) => {
-        for (let current in data.activity) {
-            let d = data.activity[current]
-            if (d['sennet:protocol_url']) {
-                let url = getClickableLink(d['sennet:protocol_url'])
-                d['sennet:protocol_url'] = url
-                const uuid = d['sennet:uuid']
+    const buildProtocolData = async (d) => {
+        if (d['sennet:protocol_url']) {
+            let url = getClickableLink(d['sennet:protocol_url'])
+            d['sennet:protocol_url'] = url
+            const uuid = d['sennet:uuid']
 
-                protocolsData[url] =  await fetchProtocols(url)
-                if (protocolsData[url]?.title) {
-                    $(`[data-id="${uuid}"] .protocol_url a`).html(protocolsData[url]?.title)
-                }
+            if (protocolsData[url] === undefined) {
+                protocolsData[url] = await fetchProtocols(url)
+            }
+            if (protocolsData[url]?.title) {
+                $(`[data-id="${uuid}"] .protocol_url a`).html(protocolsData[url]?.title)
             }
         }
     }
@@ -166,6 +165,7 @@ function Provenance({nodeData}) {
     }
 
     const protocolUrl = (d, property, value) => {
+        buildProtocolData(d)
         let data = protocolsData[value]
         let title = data ? data.title : value
         return {href: value, value: title}
@@ -330,8 +330,6 @@ function Provenance({nodeData}) {
                 $.extend(result.entity, result.descendants.entity)
                 log.debug(`Result width appended descendants...`, result)
             }
-
-            await buildProtocolData(result)
 
             const converter = new DataConverterNeo4J(result, dataMap)
             converter.buildAdjacencyList(itemId)
