@@ -47,8 +47,8 @@ function Provenance({nodeData}) {
     }
 
     const onCenterY= (ops) => {
-        const w = canvas(ops).width()
-        return w < 1400 ? 150 : null
+        svgTranslate.current['lastY'] = ops.options.graphDepth / 2
+        return  svgTranslate.current['lastY']
     }
 
     const onAfterBuild = (ops) => {
@@ -58,25 +58,28 @@ function Provenance({nodeData}) {
         }
 
         let hidden = activityHidden.current
-        // Fine tune a bit based on graph size and UI viewport area
-        const x1 = 50
-        const x2 = 300
-        if (ops.data.treeWidth > 6) {
-            if (svgTranslate.current[hidden] === undefined) {
-                // Set some positions to move the graph based on visibility of activity nodes
-                svgTranslate.current[hidden] = hidden ? ops.data.treeWidth * 23 : ops.data.sz.height / 2.2
-            }
-            if (svgTranslate.current[!hidden] !== undefined) {
-                // Move the graph back
-                ops.$el.svg.call(ops.options.zoom.translateBy, !hidden ? -x1 : -x2, -1 * svgTranslate.current[!hidden])
-            }
-            // Move into new position after toggle
-            ops.$el.svg.transition().call(ops.options.zoom.translateBy, hidden ? x1 : x2, svgTranslate.current[hidden])
 
-        } else if (ops.data.treeWidth > 3) {
-            // Nudge a bit for better positioning
-            ops.$el.svg.transition().call(ops.options.zoom.translateBy, -7, -x1)
+
+        if (ops.data.treeWidth > 3) {
+            // Fine tune a bit based on graph size and UI viewport area
+            const d = ops.options.graphDepth
+            let xPos = hidden ? 50 : 300
+            const isSmall = ops.data.treeWidth > 3 && ops.data.treeWidth < 6
+            xPos = isSmall ? -7 : xPos
+            const lastX = svgTranslate.current['lastX'] || 0
+
+            if (svgTranslate.current['lastY'] !== undefined) {
+                // Move the graph back to origin position
+                ops.$el.svg.call(ops.options.zoom.translateBy, -lastX, -1 * svgTranslate.current['lastY'])
+            }
+            svgTranslate.current['lastY'] = d / 2
+            svgTranslate.current['lastX'] = xPos
+
+            // Move into new position after toggle
+            ops.$el.svg.transition().call(ops.options.zoom.translateBy, svgTranslate.current['lastX'], svgTranslate.current['lastY'])
         }
+
+
         onInitializationComplete(ops.options.selectorId)
         canvas(ops).find('svg').css('opacity', 1)
     }
