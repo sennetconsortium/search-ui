@@ -149,11 +149,11 @@ export default function BulkCreate({
     }
 
     const getEntityValidationUrl = () => {
-        return `${getIngestEndPoint()}${entityType}s/bulk/validate`
+        return `${getIngestEndPoint()}${entityType.toLowerCase()}s/bulk/validate`
     }
 
     const getEntityRegistrationUrl = () => {
-        return `${getIngestEndPoint()}${entityType}s/bulk/register`
+        return `${getIngestEndPoint()}${entityType.toLowerCase()}s/bulk/register`
     }
 
     const getMetadataValidationUrl = () => {
