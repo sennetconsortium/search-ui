@@ -32,12 +32,12 @@ function Provenance({nodeData}) {
     const [maxGraphWidth, setMaxGraphWidth] = useState('500px')
     const initialized = useRef(false)
     const activityHidden = useRef(true)
-    const svgTranslate = useRef({})
     const protocolsData = {}
     const { _t } = useContext(AppContext)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     let cbTimeout;
+    let cbTimeout2;
 
     const canvas = (ops) => $(`#${ops.options.selectorId}`)
 
@@ -46,42 +46,50 @@ function Provenance({nodeData}) {
         return w / 2.4
     }
 
-    const onCenterY= (ops) => {
-        svgTranslate.current['lastY'] = ops.options.graphDepth / 2
-        return  svgTranslate.current['lastY']
+    const onAfterBuild = (ops) => {
+        clearTimeout(cbTimeout2)
+        canvas(ops).find('svg').css('opacity', 0)
+        cbTimeout2 = setTimeout(() => {
+            onAfterBuild2(ops)
+        }, 500)
     }
 
-    const onAfterBuild = (ops) => {
+    const onAfterBuild2 = (ops) => {
         const ui = window.ProvenanceTreeD3[ops.options.selectorId]
         if (ui) {
             ui.enableZoom()
         }
 
         let hidden = activityHidden.current
-
-
         if (ops.data.treeWidth > 3) {
+
             // Fine tune a bit based on graph size and UI viewport area
-            const d = ops.options.graphDepth
             let xPos = hidden ? 50 : 300
             const isSmall = ops.data.treeWidth > 3 && ops.data.treeWidth < 6
             xPos = isSmall ? -7 : xPos
-            const lastX = svgTranslate.current['lastX'] || 0
+            const lastX = ui.lastX || 0
 
-            if (svgTranslate.current['lastY'] !== undefined) {
+            if (ui.lastY !== undefined) {
                 // Move the graph back to origin position
-                ops.$el.svg.call(ops.options.zoom.translateBy, -lastX, -1 * svgTranslate.current['lastY'])
+                ops.$el.svg.call(ops.options.zoom.translateBy, -lastX, -1 * ui.lastY)
             }
-            svgTranslate.current['lastY'] = d / 2
-            svgTranslate.current['lastX'] = xPos
+
+            // Retrieve the value calculated by simulation.forceCenter on the first element and use that as y position
+            // on a huge graph, this is the value negative that the visualization was moved by,
+            // we want to keep the visualization from the top
+            const yPos = Math.abs(Number(ops.$el.linksGroup.node().firstChild.getAttribute('y1'))) + 100
+
+            // Store new last positions
+            ui.lastX = xPos
+            ui.lastY = yPos
 
             // Move into new position after toggle
-            ops.$el.svg.transition().call(ops.options.zoom.translateBy, svgTranslate.current['lastX'], svgTranslate.current['lastY'])
+            ops.$el.svg.transition().call(ops.options.zoom.translateBy, xPos, yPos)
         }
-
 
         onInitializationComplete(ops.options.selectorId)
         canvas(ops).find('svg').css('opacity', 1)
+        canvas(ops).css('opacity', 1)
     }
 
     const getTreeWidth = (ops) => {
@@ -250,7 +258,6 @@ function Provenance({nodeData}) {
         selectorId: 'neo4j--page',
         callbacks: {
             onCenterX,
-            onCenterY,
             onInitializationComplete,
             onAfterBuild,
             onSvgSizing,
@@ -358,6 +365,7 @@ function Provenance({nodeData}) {
 
     const toggleData = (e, hideActivity, selectorId) => {
         const ui = window.ProvenanceTreeD3[selectorId]
+        canvas(ui).css('opacity', 0)
         log.debug('activity', hideActivity)
         activityHidden.current = hideActivity
         ui.toggleData({filter: hideActivity ? 'Activity' : '', parentKey: hideActivity ? DataConverterNeo4J.KEY_P_ENTITY : DataConverterNeo4J.KEY_P_ACT})
