@@ -9,7 +9,7 @@ export async function update_create_entity(uuid, body, action = "Edit", entity_t
     let headers = get_headers()
     headers = get_x_sennet_header(headers)
     let raw = JSON.stringify(body)
-    let url = getEntityEndPoint() + "entities/" + (action === 'Register' ? entity_type : uuid)
+    let url = getEntityEndPoint() + "entities/" + (action === 'Register' ? entity_type : uuid + '?return_dict=true')
     let method = (action === 'Register' ? "POST" : "PUT")
 
     return callService(raw, url, method, headers)
