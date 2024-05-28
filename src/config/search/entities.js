@@ -7,6 +7,19 @@ const connector = new SearchAPIConnector({
     accessToken: getAuth(),
 })
 
+const getOrganGroups = async () => {
+    return {
+        RK: 'Kidney',
+        LK: 'Kidney',
+        LL: 'Lung',
+        RL: 'Lung',
+        ML: 'Mammary Gland',
+        MR: 'Mammary Gland',
+        LO: 'Ovary',
+        RO: 'Ovary',
+    }
+}
+
 export const SEARCH_ENTITIES = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
@@ -60,7 +73,7 @@ export const SEARCH_ENTITIES = {
                 field: 'organ.keyword',
                 isExpanded: false,
                 filterType: 'any',
-                isFilterable: false,
+                isFilterable: false
             },
             // Used for when "Dataset" or Sample Block/Section/Suspension is selected to show related organs
             "origin_sample.organ": {
