@@ -1,4 +1,4 @@
-import {createContext, useCallback, useRef, useState} from "react";
+import {createContext, useCallback, useEffect, useRef, useState} from "react";
 import $ from "jquery";
 import {datasetIs, fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import {fetchVitessceConfiguration, get_prov_info} from "../lib/services";
@@ -13,6 +13,8 @@ export const DerivedProvider = ({children}) => {
     const [vitessceConfig, setVitessceConfig] = useState(null)
     const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
     const [isFullscreen, setIsFullscreen] = useState(false)
+    const [isMultiDataset, setIsMultiDataset] = useState(false)
+    const [profileIndex, setProfileIndex] = useState(null)
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
     const [derivedDataset, setDerivedDataset] = useState(null)
@@ -95,6 +97,13 @@ export const DerivedProvider = ({children}) => {
     }, []);
     //endregion
 
+    useEffect(() => {
+        if (vitessceConfig && Array.isArray(vitessceConfig)) {
+            setIsMultiDataset(true)
+            setProfileIndex(0)
+        }
+    }, [vitessceConfig])
+
     const setVitessceConfigState = (val) => {
         vitessceParams.current = val
         setShowVitessce(true)
@@ -166,6 +175,9 @@ export const DerivedProvider = ({children}) => {
         isFullscreen,
         setIsFullscreen,
         expandVitessceToFullscreen,
+        isMultiDataset,
+        profileIndex,
+        setProfileIndex,
         vitessceConfigFromUrl, vitessceParams,
         getAssaySplitData,
         setVitessceConfigState, getUrlByLengthMaximums, encodeConfigToUrl,
