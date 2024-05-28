@@ -50,11 +50,11 @@ function Provenance({nodeData}) {
         clearTimeout(cbTimeout2)
         canvas(ops).find('svg').css('opacity', 0)
         cbTimeout2 = setTimeout(() => {
-            updateVisualtionTranslation(ops)
+            updateVisualizationTranslation(ops)
         }, 500)
     }
 
-    const updateVisualtionTranslation = (ops) => {
+    const updateVisualizationTranslation = (ops) => {
         const ui = window.ProvenanceTreeD3[ops.options.selectorId]
         if (ui) {
             ui.enableZoom()
@@ -85,6 +85,10 @@ function Provenance({nodeData}) {
 
             // Move into new position after toggle
             ops.$el.svg.transition().call(ops.options.zoom.translateBy, xPos, yPos)
+        }
+
+        if (ops.data.treeWidth < 3) {
+            ops.$el.svg.transition().call(ops.options.zoom.translateBy, 0, 50)
         }
 
         onInitializationComplete(ops.options.selectorId)
