@@ -61,39 +61,47 @@ function Provenance({nodeData}) {
         }
 
         let hidden = activityHidden.current
-        if (ops.data.treeWidth > 3) {
 
-            // Fine tune a bit based on graph size and UI viewport area
-            let xPos = hidden ? 50 : 300
-            const isSmall = ops.data.treeWidth > 3 && ops.data.treeWidth < 6
-            xPos = isSmall ? -7 : xPos
-            const lastX = ui.lastX || 0
+        // Fine tune a bit based on graph size and UI viewport area
+        let xPos = hidden ? 50 : 300
+        const isSmall = ops.data.treeWidth > 3 && ops.data.treeWidth < 6
+        xPos = isSmall ? -7 : xPos
+        const lastX = ui.lastX || 0
 
-            if (ui.lastY !== undefined) {
-                // Move the graph back to origin position
-                ops.$el.svg.call(ops.options.zoom.translateBy, -lastX, -1 * ui.lastY)
-            }
-
-            // Retrieve the value calculated by simulation.forceCenter on the first element and use that as y position
-            // on a huge graph, this is the value negative that the visualization was moved by,
-            // we want to keep the visualization from the top
-            const yPos = Math.abs(Number(ops.$el.linksGroup.node().firstChild.getAttribute('y1'))) + 100
-
-            // Store new last positions
-            ui.lastX = xPos
-            ui.lastY = yPos
-
-            // Move into new position after toggle
-            ops.$el.svg.transition().call(ops.options.zoom.translateBy, xPos, yPos)
+        if (ui.lastY !== undefined) {
+            // Move the graph back to origin position
+            ops.$el.svg.call(ops.options.zoom.translateBy, -lastX, -1 * ui.lastY)
         }
 
-        if (ops.data.treeWidth < 3) {
-            ops.$el.svg.transition().call(ops.options.zoom.translateBy, 0, 50)
-        }
+        // Retrieve the value calculated by simulation.forceCenter on the first element and use that as y position
+        // For a huge graph, this is the value negative that the visualization was moved by
+        // For a small graph, this value is positive
+        // we want to keep the visualization from the top
+        let forcePos = Number(ops.$el.linksGroup.node().firstChild.getAttribute('y1'))
+        forcePos = forcePos < 0 ? Math.abs(forcePos) : -1 * forcePos
+        const yPos = forcePos + 100
+
+        // Store new last positions
+        ui.lastX = xPos
+        ui.lastY = yPos
+
+        // Move into new position after toggle
+        ops.$el.svg.transition().call(ops.options.zoom.translateBy, xPos, yPos)
 
         onInitializationComplete(ops.options.selectorId)
         canvas(ops).find('svg').css('opacity', 1)
         canvas(ops).css('opacity', 1)
+    }
+
+    const onAfterInfoUpdateBuild = (ops) => {
+        if (ops.data.treeWidth < 3 && document.querySelector(`#${ops.options.selectorId} .c-provenance__info`).clientHeight > 65) {
+            const ui = window.ProvenanceTreeD3[ops.options.selectorId]
+            if (ui) {
+                ui.enableZoom()
+                ops.$el.svg.call(ops.options.zoom.translateBy, 0, 50)
+                ui.disableZoom()
+            }
+        }
     }
 
     const getTreeWidth = (ops) => {
@@ -266,7 +274,8 @@ function Provenance({nodeData}) {
             onAfterBuild,
             onSvgSizing,
             onNodeClick,
-            onInfoCloseClick
+            onInfoCloseClick,
+            onAfterInfoUpdateBuild
         }
     }
 
