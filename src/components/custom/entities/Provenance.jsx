@@ -50,11 +50,11 @@ function Provenance({nodeData}) {
         clearTimeout(cbTimeout2)
         canvas(ops).find('svg').css('opacity', 0)
         cbTimeout2 = setTimeout(() => {
-            onAfterBuild2(ops)
+            updateVisualtionTranslation(ops)
         }, 500)
     }
 
-    const onAfterBuild2 = (ops) => {
+    const updateVisualtionTranslation = (ops) => {
         const ui = window.ProvenanceTreeD3[ops.options.selectorId]
         if (ui) {
             ui.enableZoom()
