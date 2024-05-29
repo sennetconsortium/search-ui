@@ -113,7 +113,7 @@ export const SennetVitessce = ({data}) => {
                         </OverlayTrigger>
                     </div>
 
-                    {vitessceConfig && profileIndex != null &&
+                    {isMultiDataset &&
                         <MultiProfileSelector vitessceConfig={vitessceConfig} profileIndex={profileIndex}
                                               setProfileIndex={setProfileIndex}/>
                     }
