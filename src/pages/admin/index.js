@@ -15,6 +15,7 @@ const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter
 const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
 const Header = dynamic(() => import("../../components/custom/layout/Header"))
 const Spinner = dynamic(() => import("../../components/custom/Spinner"))
+const SpinnerEl = dynamic(() => import( "../../components/custom/Spinner"))
 const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
 
 

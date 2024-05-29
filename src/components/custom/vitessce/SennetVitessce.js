@@ -1,4 +1,4 @@
-import React, {Suspense, useContext, useState} from "react";
+import React, {Suspense, useContext} from "react";
 import DerivedContext from "../../../context/DerivedContext";
 import Link from "next/link";
 import {Snackbar} from "@mui/material";
@@ -7,6 +7,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import SenNetAccordion from "../layout/SenNetAccordion";
 import Spinner from "../Spinner";
+import MultiProfileSelector from "./MultiProfileSelector";
 
 export const SennetVitessce = ({data}) => {
     const Vitessce = React.lazy(() => import ('./VitessceWrapper.js'))
@@ -23,6 +24,9 @@ export const SennetVitessce = ({data}) => {
         isFullscreen,
         setIsFullscreen,
         expandVitessceToFullscreen,
+        isMultiDataset,
+        profileIndex,
+        setProfileIndex,
         isPrimaryDataset,
         derivedDataset,
         vitessceParams,
@@ -60,11 +64,12 @@ export const SennetVitessce = ({data}) => {
                                     {showCopiedToClipboard ? 'Shareable URL copied to clipboard!' : 'Share Visualization'}
                                 </Tooltip>
                             }>
-                            <i className={'bi bi-share'} style={{cursor: 'pointer'}} color="royalblue" size={24} onClick={() => {
-                                const params = encodeConfigToUrl(vitessceParams.current)
-                                navigator.clipboard.writeText(getUrlByLengthMaximums(params))
-                                setShowCopiedToClipboard(true)
-                            }} onMouseLeave={() => setShowCopiedToClipboard(false)}/>
+                            <i className={'bi bi-share'} style={{cursor: 'pointer'}} color="royalblue" size={24}
+                               onClick={() => {
+                                   const params = encodeConfigToUrl(vitessceParams.current)
+                                   navigator.clipboard.writeText(getUrlByLengthMaximums(params))
+                                   setShowCopiedToClipboard(true)
+                               }} onMouseLeave={() => setShowCopiedToClipboard(false)}/>
                         </OverlayTrigger>
                         {
                             vitessceTheme === 'light' ?
@@ -73,13 +78,14 @@ export const SennetVitessce = ({data}) => {
                                                     overlay={<Tooltip id={'light-theme-tooltip'}>Switch to light
                                                         theme</Tooltip>}>
                                         <i style={{cursor: 'pointer'}} onClick={() => setVitessceTheme('light')}
-                                                 className={'m-2 bi bi-sun-fill'} color="royalblue" size={24} title="Light mode"/>
+                                           className={'m-2 bi bi-sun-fill'} color="royalblue" size={24}
+                                           title="Light mode"/>
                                     </OverlayTrigger>
                                     <OverlayTrigger placement={'top'}
                                                     overlay={<Tooltip id={'dark-theme-tooltip'}>Switch to dark
                                                         theme</Tooltip>}>
                                         <i style={{cursor: 'pointer'}} onClick={() => setVitessceTheme('dark')}
-                                              className={'bi bi-moon m-2'} color="royalblue" size={24} title="Dark mode"/>
+                                           className={'bi bi-moon m-2'} color="royalblue" size={24} title="Dark mode"/>
                                     </OverlayTrigger>
                                 </>
                                 :
@@ -87,24 +93,31 @@ export const SennetVitessce = ({data}) => {
                                     <OverlayTrigger placement={'top'}
                                                     overlay={<Tooltip>Switch to light theme</Tooltip>}>
                                         <i style={{cursor: 'pointer'}} onClick={() => setVitessceTheme('light')}
-                                             className={'bi bi-sun m-2'} color="royalblue" size={24} title="Light mode"/>
+                                           className={'bi bi-sun m-2'} color="royalblue" size={24} title="Light mode"/>
                                     </OverlayTrigger>
                                     <OverlayTrigger placement={'top'} overlay={<Tooltip>Switch to dark theme</Tooltip>}>
                                         <i style={{cursor: 'pointer'}} onClick={() => setVitessceTheme('dark')}
-                                                  className={'bi bi-moon-fill m-2'} color="royalblue" size={24} title="Dark mode"/>
+                                           className={'bi bi-moon-fill m-2'} color="royalblue" size={24}
+                                           title="Dark mode"/>
                                     </OverlayTrigger>
                                 </>
 
                         }
                         <OverlayTrigger placement={'top'} overlay={<Tooltip>Enter fullscreen</Tooltip>}>
                             <i className="bi bi-fullscreen m-2" style={{cursor: 'pointer'}} color="royalblue" size={24}
-                                        title="Fullscreen" onClick={() => {
+                               title="Fullscreen" onClick={() => {
                                 expandVitessceToFullscreen()
                                 setIsFullscreen(true)
                             }
                             }/>
                         </OverlayTrigger>
                     </div>
+
+                    {isMultiDataset &&
+                        <MultiProfileSelector vitessceConfig={vitessceConfig} profileIndex={profileIndex}
+                                              setProfileIndex={setProfileIndex}/>
+                    }
+
                 </div>
                 <Snackbar open={showExitFullscreenMessage} autoHideDuration={8000}
                           anchorOrigin={{vertical: 'top', horizontal: 'center'}}
@@ -114,12 +127,15 @@ export const SennetVitessce = ({data}) => {
                     </MuiAlert>
                 </Snackbar>
                 <Suspense fallback={<div>Loading...</div>}>
-                    {vitessceConfigFromUrl || vitessceConfig ?
+                    {vitessceConfigFromUrl || vitessceConfig?.profileIndex || vitessceConfig ?
                         (
-                            <Vitessce onConfigChange={setVitessceConfigState} config={vitessceConfigFromUrl || vitessceConfig} theme={vitessceTheme} height={isFullscreen ? null : 800}/>
+                            <Vitessce onConfigChange={setVitessceConfigState}
+                                      config={vitessceConfigFromUrl || vitessceConfig[profileIndex] || vitessceConfig}
+                                      theme={vitessceTheme}
+                                      height={isFullscreen ? null : 800}/>
                         )
                         : (
-                             <Spinner/>
+                            <Spinner/>
                         )
                     }
                 </Suspense>
