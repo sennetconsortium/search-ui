@@ -32,6 +32,7 @@ function Provenance({nodeData}) {
     const [maxGraphWidth, setMaxGraphWidth] = useState('500px')
     const initialized = useRef(false)
     const activityHidden = useRef(true)
+    const hasOnAfterInfoUpdateBuild = useRef(false)
     const protocolsData = {}
     const { _t } = useContext(AppContext)
     const [error, setError] = useState(false)
@@ -94,11 +95,12 @@ function Provenance({nodeData}) {
     }
 
     const onAfterInfoUpdateBuild = (ops) => {
-        if (ops.data.treeWidth < 3 && document.querySelector(`#${ops.options.selectorId} .c-provenance__info`).clientHeight > 65) {
+        if (ops.data.treeWidth < 3 && !hasOnAfterInfoUpdateBuild.current && document.querySelector(`#${ops.options.selectorId} .c-provenance__info`).clientHeight > 65) {
             const ui = window.ProvenanceTreeD3[ops.options.selectorId]
             if (ui) {
                 ui.enableZoom()
                 ops.$el.svg.call(ops.options.zoom.translateBy, 0, 50)
+                hasOnAfterInfoUpdateBuild.current = true
                 ui.disableZoom()
             }
         }
