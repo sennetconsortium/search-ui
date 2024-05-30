@@ -5,12 +5,14 @@ function MultiProfileSelector({vitessceConfig, profileIndex, setProfileIndex}) {
     return (
         <>
             <div className={'col text-end p-2 m-2'}>
-                <Form.Select id={"vitessce-profile-selector"} onChange={e => {
-                    setProfileIndex(e.target.value)
-                }}>
+                <Form.Select
+                    id={"vitessce-profile-selector"}
+                    selected={profileIndex}
+                    onChange={e => { setProfileIndex(e.target.value) }}>
                     {vitessceConfig.map((profile, index) => (
-                        <option key={`profile-${index}`} value={index}
-                                selected={profileIndex === index}>{profile.name}</option>
+                        <option key={`profile-${index}`} value={index}>
+                            {profile.name}
+                        </option>
                     ))}
                 </Form.Select>
             </div>
