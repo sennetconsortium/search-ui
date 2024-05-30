@@ -1,4 +1,4 @@
-import React, {Suspense, useContext} from "react";
+import React, {useContext} from "react";
 import DerivedContext from "../../../context/DerivedContext";
 import Link from "next/link";
 import {Snackbar} from "@mui/material";
@@ -6,11 +6,10 @@ import MuiAlert from "@mui/material/Alert";
 import Tooltip from 'react-bootstrap/Tooltip';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import SenNetAccordion from "../layout/SenNetAccordion";
-import Spinner from "../Spinner";
 import MultiProfileSelector from "./MultiProfileSelector";
+import SuspendVitessce from "./SuspendVitessce";
 
 export const SennetVitessce = ({data}) => {
-    const Vitessce = React.lazy(() => import ('./VitessceWrapper.js'))
     const {
         showVitessce,
         vitessceTheme,
@@ -24,7 +23,6 @@ export const SennetVitessce = ({data}) => {
         isFullscreen,
         setIsFullscreen,
         expandVitessceToFullscreen,
-        isMultiDataset,
         profileIndex,
         setProfileIndex,
         isPrimaryDataset,
@@ -113,9 +111,11 @@ export const SennetVitessce = ({data}) => {
                         </OverlayTrigger>
                     </div>
 
-                    {isMultiDataset &&
-                        <MultiProfileSelector vitessceConfig={vitessceConfig} profileIndex={profileIndex}
-                                              setProfileIndex={setProfileIndex}/>
+                    {vitessceConfig && Array.isArray(vitessceConfig) &&
+                        <MultiProfileSelector
+                            vitessceConfig={vitessceConfig}
+                            profileIndex={profileIndex}
+                            setProfileIndex={setProfileIndex} />
                     }
 
                 </div>
@@ -126,19 +126,15 @@ export const SennetVitessce = ({data}) => {
                         Press ESC to exit fullscreen
                     </MuiAlert>
                 </Snackbar>
-                <Suspense fallback={<div>Loading...</div>}>
-                    {vitessceConfigFromUrl || vitessceConfig?.profileIndex || vitessceConfig ?
-                        (
-                            <Vitessce onConfigChange={setVitessceConfigState}
-                                      config={vitessceConfigFromUrl || vitessceConfig[profileIndex] || vitessceConfig}
-                                      theme={vitessceTheme}
-                                      height={isFullscreen ? null : 800}/>
-                        )
-                        : (
-                            <Spinner/>
-                        )
-                    }
-                </Suspense>
+
+                <SuspendVitessce
+                    vitessceConfigFromUrl={vitessceConfigFromUrl}
+                    vitessceConfig={vitessceConfig}
+                    profileIndex={profileIndex}
+                    setVitessceConfigState={setVitessceConfigState}
+                    vitessceTheme={vitessceTheme}
+                    isFullscreen={isFullscreen} />
+
             </SenNetAccordion>
         }
     </>

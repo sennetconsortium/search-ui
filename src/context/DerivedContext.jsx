@@ -13,8 +13,7 @@ export const DerivedProvider = ({children}) => {
     const [vitessceConfig, setVitessceConfig] = useState(null)
     const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
     const [isFullscreen, setIsFullscreen] = useState(false)
-    const [isMultiDataset, setIsMultiDataset] = useState(false)
-    const [profileIndex, setProfileIndex] = useState(null)
+    const [profileIndex, setProfileIndex] = useState(0)
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
     const [derivedDataset, setDerivedDataset] = useState(null)
@@ -33,7 +32,7 @@ export const DerivedProvider = ({children}) => {
         })
     }
 
-    const initVitessceConfig = async (data) => {
+    const initVitessceConfig = useCallback(async (data) => {
         // Remove anything in brackets from dataset_type (might need to update this for visium to include parenthesis)
         const dataset_type = data.dataset_type = data.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
 
@@ -71,7 +70,7 @@ export const DerivedProvider = ({children}) => {
                 }
             }
         }
-    }
+    })
 
     const isDatasetStatusPassed = data => {
         if (data.hasOwnProperty('status')) {
@@ -81,11 +80,11 @@ export const DerivedProvider = ({children}) => {
         }
     }
 
-    const expandVitessceToFullscreen = () => {
+    const expandVitessceToFullscreen = useCallback(() => {
         document.addEventListener("keydown", collapseVitessceOnEsc, false);
         $('.vitessce-container').toggleClass('vitessce_fullscreen');
         setShowExitFullscreenMessage(true)
-    }
+    })
 
     const collapseVitessceOnEsc = useCallback((event) => {
         if (event.key === "Escape") {
@@ -97,19 +96,12 @@ export const DerivedProvider = ({children}) => {
     }, []);
     //endregion
 
-    useEffect(() => {
-        if (vitessceConfig && Array.isArray(vitessceConfig)) {
-            setIsMultiDataset(true)
-            setProfileIndex(0)
-        }
-    }, [vitessceConfig])
-
-    const setVitessceConfigState = (val) => {
+    const setVitessceConfigState = useCallback((val) => {
         vitessceParams.current = val
         setShowVitessce(true)
-    }
+    })
 
-    const getAssaySplitData = (data) => {
+    const getAssaySplitData = useCallback((data) => {
         let component = []
         let primary = []
         let processed = []
@@ -127,7 +119,7 @@ export const DerivedProvider = ({children}) => {
             }
         }
         return {component, primary, processed}
-    }
+    })
 
     const filterFilesForDataProducts = (allFiles, parent) => {
         if (!allFiles) return
@@ -139,7 +131,7 @@ export const DerivedProvider = ({children}) => {
         }
         return _files
     }
-    const fetchDataProducts = async (data) => {
+    const fetchDataProducts = useCallback(async (data) => {
         if (datasetIs.primary(data.creation_action)) {
             let _files = []
             for (let entity of data.descendants) {
@@ -157,7 +149,7 @@ export const DerivedProvider = ({children}) => {
             setDataProducts(filterFilesForDataProducts(data.files, data))
 
         }
-    }
+    })
 
     return <DerivedContext.Provider value={{
         initVitessceConfig,
@@ -175,13 +167,16 @@ export const DerivedProvider = ({children}) => {
         isFullscreen,
         setIsFullscreen,
         expandVitessceToFullscreen,
-        isMultiDataset,
         profileIndex,
         setProfileIndex,
-        vitessceConfigFromUrl, vitessceParams,
+        vitessceConfigFromUrl,
+        vitessceParams,
         getAssaySplitData,
-        setVitessceConfigState, getUrlByLengthMaximums, encodeConfigToUrl,
-        fetchDataProducts, dataProducts
+        setVitessceConfigState,
+        getUrlByLengthMaximums,
+        encodeConfigToUrl,
+        fetchDataProducts,
+        dataProducts
     }}>
         {children}
     </DerivedContext.Provider>
