@@ -123,7 +123,7 @@ export const SennetVitessce = ({data}) => {
                           anchorOrigin={{vertical: 'top', horizontal: 'center'}}
                           onClose={() => setShowExitFullscreenMessage(false)}>
                     <MuiAlert onClose={() => setShowExitFullscreenMessage(false)} severity="info" sx={{width: '100%'}}>
-                        Pres ESC to exit fullscreen
+                        Press ESC to exit fullscreen
                     </MuiAlert>
                 </Snackbar>
                 <Suspense fallback={<div>Loading...</div>}>
