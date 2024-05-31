@@ -60,7 +60,7 @@ export const SEARCH_ENTITIES = {
                 field: 'organ.keyword',
                 isExpanded: false,
                 filterType: 'any',
-                isFilterable: false,
+                isFilterable: false
             },
             // Used for when "Dataset" or Sample Block/Section/Suspension is selected to show related organs
             "origin_sample.organ": {
