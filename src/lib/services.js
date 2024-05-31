@@ -64,6 +64,23 @@ export async function get_prov_info(dataset_uuid) {
     return {}
 }
 
+export async function get_lineage_info(entity_uuid, lineage_descriptor) {
+    let headers = get_headers()
+    const url = getEntityEndPoint() + lineage_descriptor + "/" + entity_uuid
+    const request_options = {
+        method: 'GET',
+        headers: headers
+    }
+    const response = await fetch(url, request_options)
+    if (response.status === 200) {
+        return await response.json()
+    } else if (response.status === 400) {
+        return []
+    }
+    log.error('error', response)
+    return []
+}
+
 export function get_headers_from_req(reqHeaders, headers) {
     headers = headers || new Headers();
     for (let h in reqHeaders) {
