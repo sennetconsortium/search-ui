@@ -7,19 +7,6 @@ const connector = new SearchAPIConnector({
     accessToken: getAuth(),
 })
 
-const getOrganGroups = async () => {
-    return {
-        RK: 'Kidney',
-        LK: 'Kidney',
-        LL: 'Lung',
-        RL: 'Lung',
-        ML: 'Mammary Gland',
-        MR: 'Mammary Gland',
-        LO: 'Ovary',
-        RO: 'Ovary',
-    }
-}
-
 export const SEARCH_ENTITIES = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
