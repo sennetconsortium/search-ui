@@ -387,7 +387,7 @@ function ViewJobs({isAdmin = false}) {
                                                                               pagination/></div>)
     }
 
-    const isMetadata = (row) => row.referrer?.path?.includes('action=metadata')
+    const isMetadata = (row) => row.referrer?.path?.includes('metadata')
 
     const getJobType = (row) => {
         let type = row.referrer.type
