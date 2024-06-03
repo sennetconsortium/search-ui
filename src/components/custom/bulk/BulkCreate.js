@@ -129,7 +129,7 @@ export default function BulkCreate({
 
     useEffect(() => {
         setIsMetadata(isMetadata)
-        if (userWriteGroups && getUserWriteGroupsLength() > 1) {
+        if ((userWriteGroups && getUserWriteGroupsLength() > 1) || isMetadata) {
             let extraSteps = Array.from(stepLabels)
             if (isMetadata) {
                 extraSteps.splice(1, 0, 'Select Metadata Type')
