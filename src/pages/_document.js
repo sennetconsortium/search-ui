@@ -4,6 +4,12 @@ export default function Document() {
     return (
         <Html>
             <Head>
+                <script src="/js/jquery-3.7.1.min.js"
+
+                        crossOrigin="anonymous"></script>
+                <script src="/js/main-plugins.js"
+
+                        crossOrigin="anonymous"></script>
                 <link rel="stylesheet"
                       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
                 {/* Bootstrap CSS */}
