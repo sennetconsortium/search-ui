@@ -31,14 +31,12 @@ function ViewSample() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
+    const {isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-
-
             log.debug('sample: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
@@ -54,16 +52,17 @@ function ViewSample() {
                 // set state with the result
                 setData(data);
                 for (const ancestor of data.ancestors) {
-                    console.log(ancestor)
+                    log.debug(ancestor)
                     if (ancestor.metadata && Object.keys(ancestor.metadata).length) {
                         setAncestorHasMetadata(true)
                         break
                     }
                 }
 
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
-                    setHasWritePrivilege(response.has_write_privs)
-                }).catch(log.error)
+                get_write_privilege_for_group_uuid(data.group_uuid)
+                    .then(response => {
+                        setHasWritePrivilege(response.has_write_privs)
+                    }).catch(log.error)
             }
         }
 
@@ -169,8 +168,11 @@ function ViewSample() {
                                             {/*Metadata*/}
                                             {/*Samples have their metadata inside "metadata"*/}
                                             {!!((data.metadata && Object.keys(data.metadata).length) || ancestorHasMetadata) &&
-                                                <Metadata data={data} metadata={data?.metadata}
-                                                          hasLineageMetadata={true}/>
+                                                <Metadata
+                                                    data={data}
+                                                    metadata={data?.metadata}
+                                                    mappedMetadata={data?.sample_mapped_metadata}
+                                                    hasLineageMetadata={true}/>
                                             }
 
                                             {/*Protocols*/}

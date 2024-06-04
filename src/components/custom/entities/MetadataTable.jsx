@@ -5,7 +5,7 @@ import DataTable from "react-data-table-component";
 import useDataTableSearch from "../../../hooks/useDataTableSearch";
 import SourceDataTable from "./source/SourceDataTable";
 
-export default function MetadataTable({data, metadata, metadataKey, filename}) {
+export default function MetadataTable({data, metadata, mappedMetadata, metadataKey, filename}) {
     let columns = [
         {
             name: 'Key',
@@ -27,6 +27,13 @@ export default function MetadataTable({data, metadata, metadataKey, filename}) {
             acc[value.key_display] = value.value_display;
             return acc;
         }, {});
+    } else if (mappedMetadata) {
+        Object.entries(mappedMetadata).map(([key, value]) => {
+            tableData.push({
+                key: metadataKey + key,
+                value: Array.isArray(value) ? value.join(', ') : value
+            })
+        })
     } else {
         Object.entries(metadata).map(([key, value]) => {
             tableData.push({

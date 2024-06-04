@@ -11,7 +11,7 @@ import * as d3 from "d3";
 import $ from 'jquery'
 import {ViewHeaderBadges} from "../layout/entity/ViewHeaderBadges";
 
-function Metadata({data, metadata, hasLineageMetadata = false}) {
+function Metadata({data, metadata, mappedMetadata, hasLineageMetadata = false}) {
     const {cache} = useContext(AppContext)
     const [headerBadges, setHeaderBadges] = useState(null)
 
@@ -44,23 +44,30 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                            text={<>View the metadata for the ancestor <code>{cache.entities[entity]}</code> of this
                                entity.</>}>
                 <Nav.Item>
-                    <Nav.Link onClick={(e) => {
-                        triggerNode(e, data.uuid);
-                        updateHeader(data)
-                    }} data-uuid={data.uuid} eventKey={data.sennet_id}
-                              bsPrefix={`btn btn-${entity} rounded-0`}>{data.sennet_id}</Nav.Link>
+                    <Nav.Link
+                        onClick={(e) => {
+                            triggerNode(e, data.uuid);
+                            updateHeader(data)
+                        }}
+                        data-uuid={data.uuid}
+                        eventKey={data.sennet_id}
+                        bsPrefix={`btn btn-${entity} rounded-0`}
+                    >
+                        {data.sennet_id}
+                    </Nav.Link>
                 </Nav.Item>
             </SenNetPopover>
         )
     }
 
-    const tabPaneCommon = (pre, index, data, metadata) => {
+    const tabPaneCommon = (pre, index, data, metadata, mappedMetadata) => {
         return (
             <Tab.Pane key={`tabpane-${pre}-${index}`} eventKey={data.sennet_id}>
                 <MetadataTable data={data}
                                filename={data.sennet_id}
                                metadataKey={""}
                                metadata={metadata}
+                               mappedMetadata={mappedMetadata}
                                setHeaderBadges={setHeaderBadges}/>
             </Tab.Pane>
         )
@@ -118,11 +125,13 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                             {!!(metadata && Object.keys(metadata).length) &&
                                 // The metatable table for the current entity
                                 <Tab.Pane eventKey={data.sennet_id}>
-                                    <MetadataTable data={data}
-                                                   filename={data.sennet_id}
-                                                   metadata={metadata}
-                                                   metadataKey={""} 
-                                                   setHeaderBadges={setHeaderBadges}/>
+                                    <MetadataTable
+                                        data={data}
+                                        filename={data.sennet_id}
+                                        metadata={metadata}
+                                        mappedMetadata={mappedMetadata}
+                                        metadataKey={""}
+                                        setHeaderBadges={setHeaderBadges}/>
                                 </Tab.Pane>
                             }
                             {data.ancestors.reverse().map((ancestor, index, array) => {
@@ -138,7 +147,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                                     // Handle mouse source and sample table
                                     // Mice sources and all samples have their metadata inside "metadata"
                                     return (
-                                        tabPaneCommon('1', index, ancestor, ancestor.metadata)
+                                        tabPaneCommon('1', index, ancestor, ancestor.metadata, ancestor.sample_mapped_metadata)
                                     )
                                 } else if (ancestor.metadata && Object.keys(ancestor.metadata).length && 'metadata' in ancestor.metadata) {
                                     // Handle dataset table
@@ -155,6 +164,7 @@ function Metadata({data, metadata, hasLineageMetadata = false}) {
                     <MetadataTable data={data}
                                    filename={data.sennet_id}
                                    metadata={metadata}
+                                   mappedMetadata={mappedMetadata}
                                    metadataKey=""
                                    setHeaderBadges={setHeaderBadges}/>
                 )
