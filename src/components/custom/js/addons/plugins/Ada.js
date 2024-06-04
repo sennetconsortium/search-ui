@@ -1,5 +1,3 @@
-
-
 /**
  * This adds web accessibility functionality to
  * elements.

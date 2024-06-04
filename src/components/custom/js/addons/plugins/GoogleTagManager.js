@@ -1,5 +1,3 @@
-
-
 class GoogleTagManager extends Addon {
     constructor(el, args) {
         super(el, args)

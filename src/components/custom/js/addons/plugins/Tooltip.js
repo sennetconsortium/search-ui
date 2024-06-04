@@ -1,9 +1,6 @@
-
-
 class Tooltip extends Addon {
     constructor(el, args) {
         super(el, args)
-        this.log('Tooltip')
         this.ops = this.el.data('js-tooltip')
         this.timeouts
         if (this.ops) {

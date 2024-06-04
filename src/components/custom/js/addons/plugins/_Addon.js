@@ -1,4 +1,4 @@
-
+// Base class that should be an entry before the other plugins.
 class Addon {
     route;
 
@@ -14,7 +14,7 @@ class Addon {
             this.user = JSON.parse(args.data.user)
         }
         if (Addon.isLocal()) {
-            Addon.log('Addons args:', 'log', 'aqua')
+            Addon.log(`Addons args of ${args.app}:`, 'log', 'aqua')
             console.log(args)
         }
         this.keycodes = {
