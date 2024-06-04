@@ -1,5 +1,5 @@
 
-class _Addon {
+class Addon {
     route;
 
     constructor(el, args) {
@@ -13,8 +13,8 @@ class _Addon {
         if (args.data && args.data.user) {
             this.user = JSON.parse(args.data.user)
         }
-        if (_Addon.isLocal()) {
-            _Addon.log('Addons args:', 'log', 'aqua')
+        if (Addon.isLocal()) {
+            Addon.log('Addons args:', 'log', 'aqua')
             console.log(args)
         }
         this.keycodes = {
@@ -64,17 +64,17 @@ class _Addon {
     }
 
     static isLocal() {
-        return (location.host.indexOf('localhost') !== -1)
+        return (location.host.indexOf('localhost') !== -1) || (location.host.indexOf('.dev') !== -1)
     }
 
     static log(msg, fn = 'log', color = '#bada55') {
-        if (_Addon.isLocal()) {
+        if (Addon.isLocal()) {
             console[fn](`%c ${msg}`, `background: #222; color: ${color}`)
         }
     }
 
     log(msg, fn = 'log') {
-        _Addon.log(msg, fn)
+        Addon.log(msg, fn)
     }
 }
 

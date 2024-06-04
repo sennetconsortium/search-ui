@@ -10,7 +10,7 @@
  * @returns
  */
 function addons(source, args= null) {
-    _Addon.log('Addons started ...', 'log',  'red')
+    Addon.log('Addons started ...', 'log',  'red')
     window.addons = window.addons || {}
     if (window.addons[source] !== undefined) {
         return

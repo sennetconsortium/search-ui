@@ -4,7 +4,7 @@
  * This adds web accessibility functionality to
  * elements.
  */
-class Ada extends _Addon {
+class Ada extends Addon {
     constructor(el, args) {
         super(el, args)
         this._el = this.el.data(`js-${this.app}`)
@@ -22,7 +22,7 @@ class Ada extends _Addon {
     }
 
     facets() {
-        _Addon.log('Ada > Facets')
+        Addon.log('Ada > Facets')
         this.onKeydownEnter('.sui-facet__title, .sui-select__control')
 
         this.onKeydownEnter( '.sui-multi-checkbox-facet__checkbox', ((e) => {
@@ -33,7 +33,7 @@ class Ada extends _Addon {
 
     modal() {
         $(window).on('keydown', ((e) => {
-            _Addon.log('Ada > Modal')
+            Addon.log('Ada > Modal')
             if (this.isEsc(e)) {
                 $('.modal-footer .btn').eq(0).click()
             }

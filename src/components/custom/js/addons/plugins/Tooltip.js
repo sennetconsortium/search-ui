@@ -1,6 +1,6 @@
 
 
-class Tooltip extends _Addon {
+class Tooltip extends Addon {
     constructor(el, args) {
         super(el, args)
         this.log('Tooltip')
