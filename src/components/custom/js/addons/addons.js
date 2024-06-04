@@ -1,8 +1,3 @@
-// import Addon from '.plugins/Addon'
-// import GoogleTagManager from '.plugins/GoogleTagManager'
-// import Ada from '.plugins/Ada'
-// import Tooltip from '.plugins/Tooltip'
-
 /**
  * JS functionality which enhance site functionality, not necessarily part of the core.
  * @param {string} source
