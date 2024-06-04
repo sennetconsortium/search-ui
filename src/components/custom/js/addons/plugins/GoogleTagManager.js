@@ -1,6 +1,6 @@
 
 
-class GoogleTagManager extends _Addon {
+class GoogleTagManager extends Addon {
     constructor(el, args) {
         super(el, args)
         this.sel = {
@@ -35,6 +35,9 @@ class GoogleTagManager extends _Addon {
                 break
             case 'results':
                 this.results()
+                break
+            case 'download':
+                this.download()
                 break
             default:
                 this.numericFacets() // As these facets can be conditional
@@ -147,6 +150,19 @@ class GoogleTagManager extends _Addon {
         }).bind(this))
     }
 
+    handleDownload(e) {
+        this.event = 'cta'
+        const action = 'download'
+        const label = this.currentTarget(e).text()
+        this.gtm({action, label})
+    }
+
+    download() {
+        this.el.on('click', 'a', ((e) => {
+            this.handleDownload(e)
+        }).bind(this))
+    }
+
     getPath() {
         const path = window.location.pathname + window.location.search
         return path.length > 70 ? window.location.pathname : path;
@@ -154,11 +170,15 @@ class GoogleTagManager extends _Addon {
     handleLinks(e) {
         this.event = 'links'
         const $el = this.currentTarget(e)
-        this.gtm({link: $el.text() || $el.attr('aria-label') || $el.attr('alt')})
+        const link  = $el.text() || $el.attr('aria-label') || $el.attr('alt')
+        if (link !== undefined) {
+            this.gtm({link})
+        }
     }
 
     links() {
-        $('a').on('click', ((e) => {
+        $('body').on('click', 'a', ((e) => {
+            this.stop(e)
             this.handleLinks(e)
         }).bind(this))
     }
@@ -196,7 +216,6 @@ class GoogleTagManager extends _Addon {
     page() {
         this.event = 'page'
         let data = {data: 'view'}
-        _Addon.log('GTM, Page event ...', 'log', 'pink')
         this.entityPage(data)
     }
 
@@ -253,7 +272,10 @@ class GoogleTagManager extends _Addon {
             globus_id: this.user.globus_id,
             session: (this.user.email !== undefined), ...args
         }
-        if (_Addon.isLocal()) console.log(data)
+        if (Addon.isLocal()) {
+            Addon.log(`GTM, ${this.event} event ...`, 'log', 'pink')
+            console.log(data)
+        }
         dataLayer.push(data)
     }
 }

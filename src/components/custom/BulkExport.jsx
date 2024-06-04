@@ -287,7 +287,7 @@ function BulkExport({ data, raw, columns, filters, exportKind, onCheckAll, hidde
     return (
         <>
             <div className='sui-check-all'><input type="checkbox" name="toggle-check-all" onClick={(e) => toggleCheckAll(e, setTotalSelected)} /><span></span></div>
-            <div id='sui-tbl-checkbox-actions'>
+            <div id='sui-tbl-checkbox-actions' className={'js-gtm--download'}>
                 <Dropdown>
                     <Dropdown.Toggle  id="dropdown-basic" variant={'secondary-outline'}>
                         ...
