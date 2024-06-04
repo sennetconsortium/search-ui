@@ -292,7 +292,7 @@ function ViewJobs({isAdmin = false}) {
     }
 
     const getEntityRegisterPath = (row) => {
-        return `${getEntityType(row)}s/bulk/register`
+        return `${getEntityType(row).toLowerCase()}s/bulk/register`
     }
 
     const handleAction = (e, action, row) => {
@@ -301,7 +301,7 @@ function ViewJobs({isAdmin = false}) {
             handleSingleJobDeletion(e, row, action)
         } else if (eq(action, 'Register')) {
             e.target.disabled = true
-            const pathName = row.referrer?.path.includes('action=metadata') ? `metadata/register` : getEntityRegisterPath(row)
+            const pathName = row.referrer?.path.includes('metadata') ? `metadata/register` : getEntityRegisterPath(row)
             handleResponseModal(e, row, getIngestEndPoint() + pathName, 'POST', action, 'registered',
                 {
                     job_id: row.job_id, referrer: {
@@ -387,7 +387,7 @@ function ViewJobs({isAdmin = false}) {
                                                                               pagination/></div>)
     }
 
-    const isMetadata = (row) => row.referrer?.path?.includes('action=metadata')
+    const isMetadata = (row) => row.referrer?.path?.includes('metadata')
 
     const getJobType = (row) => {
         let type = row.referrer.type

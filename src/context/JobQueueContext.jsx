@@ -194,7 +194,7 @@ export const JobQueueProvider = ({ children }) => {
         let sentencePre = data.fails.length ? `${prefix} of your ` : 'Your ';
 
         body.push(
-            <p key={'modal-subtitle'}>{sentencePre} <code>{cache.entities[entityType]}s'</code> metadata were {getVerb(true, true)}.</p>
+            <p key={'modal-subtitle'}>{sentencePre} <code>{entityType}s'</code> metadata were {getVerb(true, true)}.</p>
         )
 
         let {typeCol, labIdCol} = getColNames(entityType)

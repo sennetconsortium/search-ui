@@ -129,7 +129,7 @@ export default function BulkCreate({
 
     useEffect(() => {
         setIsMetadata(isMetadata)
-        if (userWriteGroups && getUserWriteGroupsLength() > 1) {
+        if ((userWriteGroups && getUserWriteGroupsLength() > 1) || isMetadata) {
             let extraSteps = Array.from(stepLabels)
             if (isMetadata) {
                 extraSteps.splice(1, 0, 'Select Metadata Type')
@@ -642,7 +642,7 @@ export default function BulkCreate({
                                 onClick={handleNext}
                                 disabled={isNextButtonDisabled}
                             >
-                                {activeStep === getStepsLength() - 1 ? 'Finish' : 'Next'}
+                                {activeStep === getStepsLength() - 1 ? 'Finish' : (activeStep === getStepsLength() - 2 ? 'Register' : 'Next')}
                             </Button>
                         </Grid>
                     </Grid>

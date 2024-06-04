@@ -126,7 +126,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                             ))}
                         </NavDropdown>
 
-                        <Nav.Link key={`submenuItem-md-all`}
+                        <Nav.Link hidden={hidden || !isLoggedIn()} key={`submenuItem-md-all`}
                                           href={`/edit/bulk/metadata`}
                                           className={'is-subItem'}>
                             <span>Upload metadata</span>
