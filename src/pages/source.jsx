@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import React, {Fragment, useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
-import {eq, getRequestHeaders} from "../components/custom/js/functions";
+import {eq, extractSourceMappedMetadataInfo, getRequestHeaders} from "../components/custom/js/functions";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
@@ -24,6 +24,9 @@ const Unauthorized = dynamic(() => import("../components/custom/layout/Unauthori
 function ViewSource() {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [metadata, setMetadata] = useState(null)
+    const [mappedMetadata, setMappedMetadata] = useState(null)
+    const [groups, setGroups] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -47,7 +50,18 @@ function ViewSource() {
                 setData(false)
             } else {
                 // set state with the result
+                if (eq(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata) {
+                    // Humans have their metadata inside "source_mapped_metadata" while mice have theirs inside "metadata"
+                    // Humans have grouped metadata
+                    const {groups, metadata} = extractSourceMappedMetadataInfo(data.source_mapped_metadata)
+                    setGroups(groups)
+                    setMetadata(metadata)
+                } else if (eq(data.source_type, cache.sourceTypes.Mouse) && data.metadata) {
+                    setMetadata(data.metadata)
+                }
+
                 setData(data);
+
                 get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
@@ -59,7 +73,6 @@ function ViewSource() {
             fetchData(router.query.uuid)
                 // make sure to catch any error
                 .catch(console.error);
-            ;
         } else {
             setData(null);
         }
@@ -142,16 +155,12 @@ function ViewSource() {
                                             }
 
                                             {/*Metadata*/}
-                                            {/*Humans have their metadata inside "source_mapped_metadata" while mice have theirs inside "metadata"*/}
-                                            {!!((eq(data.source_type, cache.sourceTypes.Mouse) && data.metadata && Object.keys(data.metadata).length) ||
-                                                    (eq(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata && Object.keys(data.source_mapped_metadata).length)) &&
-                                                <Fragment>
-                                                    {eq(data.source_type, cache.sourceTypes.Mouse) ? (
-                                                        <Metadata data={data} metadata={data.metadata}/>
-                                                    ) : (
-                                                        <Metadata data={data} metadata={data.source_mapped_metadata}/>
-                                                    )}
-                                                </Fragment>
+                                            {metadata &&
+                                                <Metadata
+                                                    data={data}
+                                                    metadata={metadata}
+                                                    mappedMetadata={mappedMetadata}
+                                                    groups={groups}/>
                                             }
 
                                             {/*Protocols*/}

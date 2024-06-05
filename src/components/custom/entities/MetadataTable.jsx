@@ -3,9 +3,9 @@ import {Container, Row} from 'react-bootstrap'
 import {createDownloadUrl, tableDataToTSV} from "../js/functions";
 import DataTable from "react-data-table-component";
 import useDataTableSearch from "../../../hooks/useDataTableSearch";
-import SourceDataTable from "./source/SourceDataTable";
+import GroupedDataTable from "./GroupedDataTable";
 
-export default function MetadataTable({data, metadata, mappedMetadata, metadataKey, filename}) {
+export default function MetadataTable({data, metadata, mappedMetadata, metadataKey, filename, groups}) {
     let columns = [
         {
             name: 'Key',
@@ -20,14 +20,7 @@ export default function MetadataTable({data, metadata, mappedMetadata, metadataK
     ];
 
     let tableData = [];
-    let metadataValues = metadata;
-    if (data.source_type === 'Human') {
-        // Human sources metadata needs to be restructured for TSV file
-        metadataValues = Object.values(metadata).reduce((acc, value) => {
-            acc[value.key_display] = value.value_display;
-            return acc;
-        }, {});
-    } else if (mappedMetadata) {
+    if (mappedMetadata) {
         Object.entries(mappedMetadata).map(([key, value]) => {
             tableData.push({
                 key: metadataKey + key,
@@ -45,7 +38,7 @@ export default function MetadataTable({data, metadata, mappedMetadata, metadataK
 
     const {filteredItems, filterText, searchBarComponent} = useDataTableSearch({data: tableData, fieldsToSearch: ['value', 'key']})
 
-    const tableDataTSV = tableDataToTSV(metadataValues);
+    const tableDataTSV = tableDataToTSV(metadata);
     const downloadURL = createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
     return (
         <Container fluid={true} className={'rdt-container-wrap'}>
@@ -65,9 +58,9 @@ export default function MetadataTable({data, metadata, mappedMetadata, metadataK
                     </div>
                 </div>
             </Row>
-            {data.source_type === 'Human' ?
+            {groups ?
                 (
-                    <SourceDataTable metadata={metadata}/>
+                    <GroupedDataTable metadata={metadata} groups={groups}/>
                 ) :
                 (
                     <DataTable columns={columns}

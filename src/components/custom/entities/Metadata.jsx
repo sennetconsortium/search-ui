@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import SenNetPopover from "../../SenNetPopover";
-import {eq} from "../js/functions";
+import {eq, extractSourceMappedMetadataInfo} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import Tab from 'react-bootstrap/Tab';
 import Nav from 'react-bootstrap/Nav';
@@ -11,7 +11,17 @@ import * as d3 from "d3";
 import $ from 'jquery'
 import {ViewHeaderBadges} from "../layout/entity/ViewHeaderBadges";
 
-function Metadata({data, metadata, mappedMetadata, hasLineageMetadata = false}) {
+/**
+ * Component that displays metadata information.
+ *
+ * @component
+ * @param {Object.<string, any>} data - The data entity object.
+ * @param {Object.<string, string>=} metadata - The metadata object. Used for tsv file download. Used for display if mappedMetadata is not supplied (optional)
+ * @param {Object.<string, string>=} mappedMetadata - The mapped metadata object used for display (optional)
+ * @param {Object.<string, string>=} groups - The groups object used to create a GroupedDataTable (i.e. Human sources) (optional)
+ * @param {boolean} [hasLineageMetadata=false] - A boolean indicating whether lineage metadata is present (default: false)
+ */
+function Metadata({data, metadata, mappedMetadata, groups, hasLineageMetadata = false}) {
     const {cache} = useContext(AppContext)
     const [headerBadges, setHeaderBadges] = useState(null)
 
@@ -60,7 +70,7 @@ function Metadata({data, metadata, mappedMetadata, hasLineageMetadata = false}) 
         )
     }
 
-    const tabPaneCommon = (pre, index, data, metadata, mappedMetadata) => {
+    const tabPaneCommon = (pre, index, data, metadata, mappedMetadata, groups) => {
         return (
             <Tab.Pane key={`tabpane-${pre}-${index}`} eventKey={data.sennet_id}>
                 <MetadataTable data={data}
@@ -68,6 +78,7 @@ function Metadata({data, metadata, mappedMetadata, hasLineageMetadata = false}) 
                                metadataKey={""}
                                metadata={metadata}
                                mappedMetadata={mappedMetadata}
+                               groups={groups}
                                setHeaderBadges={setHeaderBadges}/>
             </Tab.Pane>
         )
@@ -130,6 +141,7 @@ function Metadata({data, metadata, mappedMetadata, hasLineageMetadata = false}) 
                                         filename={data.sennet_id}
                                         metadata={metadata}
                                         mappedMetadata={mappedMetadata}
+                                        groups={groups}
                                         metadataKey={""}
                                         setHeaderBadges={setHeaderBadges}/>
                                 </Tab.Pane>
@@ -139,8 +151,9 @@ function Metadata({data, metadata, mappedMetadata, hasLineageMetadata = false}) 
                                 // Human sources have their metadata inside "source_mapped_metadata"
                                 if (eq(ancestor.entity_type, cache.entities.source) && eq(ancestor.source_type, cache.sourceTypes.Human)) {
                                     if (ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) {
+                                        const {groups, metadata} = extractSourceMappedMetadataInfo(ancestor.source_mapped_metadata)
                                         return (
-                                            tabPaneCommon('0', index, ancestor, ancestor.source_mapped_metadata)
+                                            tabPaneCommon('0', index, ancestor, metadata, undefined, groups)
                                         )
                                     }
                                 } else if (!eq(ancestor.entity_type, cache.entities.dataset) && ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
@@ -165,6 +178,7 @@ function Metadata({data, metadata, mappedMetadata, hasLineageMetadata = false}) 
                                    filename={data.sennet_id}
                                    metadata={metadata}
                                    mappedMetadata={mappedMetadata}
+                                   groups={groups}
                                    metadataKey=""
                                    setHeaderBadges={setHeaderBadges}/>
                 )
@@ -177,6 +191,8 @@ function Metadata({data, metadata, mappedMetadata, hasLineageMetadata = false}) 
 Metadata.propTypes = {
     data: PropTypes.object.isRequired,
     metadata: PropTypes.object,
+    mappedMetadata: PropTypes.object,
+    groups: PropTypes.object,
     hasLineageMetadata: PropTypes.bool
 }
 

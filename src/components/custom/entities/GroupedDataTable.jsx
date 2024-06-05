@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types'
 import DataTable from 'react-data-table-component'
 
-function SourceDataTable({ metadata }) {
+
+function GroupedDataTable({ metadata, groups }) {
     const tableStyles = {
         rows: {
             style: {
@@ -24,27 +25,17 @@ function SourceDataTable({ metadata }) {
     ]
 
     const groupSourceMappedMetadata = (metadata) => {
-        const groups = []
-
-        for (const value of Object.values(metadata)) {
-            const groupName = value.group_display
-            const idx = groups.findIndex((group) => group.name === groupName)
-            if (idx < 0) {
-                groups.push({
-                    name: groupName,
-                    data: [
-                        { key: value.key_display, value: value.value_display }
-                    ]
-                })
-                continue
+        const g = []
+        for (const [key, value] of Object.entries(metadata)) {
+            const groupName = groups[key]
+            const groupIndex = g.findIndex((group) => group.name === groupName)
+            if (groupIndex !== -1) {
+                g[groupIndex].data.push({ key: key, value: value })
+            } else {
+                g.push({ name: groupName, data: [{ key: key, value: value }] })
             }
-            groups[idx].data.push({
-                key: value.key_display,
-                value: value.value_display
-            })
         }
-
-        return groups
+        return g
     }
 
     const tableRow = ({ data }) => {
@@ -80,8 +71,8 @@ function SourceDataTable({ metadata }) {
     )
 }
 
-SourceDataTable.propTypes = {
+GroupedDataTable.propTypes = {
     metadata: PropTypes.object.isRequired,
 }
 
-export default SourceDataTable
+export default GroupedDataTable
