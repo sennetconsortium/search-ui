@@ -15,11 +15,12 @@ import {ViewHeaderBadges} from "../layout/entity/ViewHeaderBadges";
  * Component that displays metadata information.
  *
  * @component
- * @param {Object.<string, any>} data - The data entity object.
- * @param {Object.<string, string>=} metadata - The metadata object. Used for tsv file download. Used for display if mappedMetadata is not supplied (optional)
- * @param {Object.<string, string>=} mappedMetadata - The mapped metadata object used for display (optional)
- * @param {Object.<string, string>=} groups - The groups object used to create a GroupedDataTable (i.e. Human sources) (optional)
- * @param {boolean} [hasLineageMetadata=false] - A boolean indicating whether lineage metadata is present (default: false)
+ * @param {Object} props - The props object for the Metadata component
+ * @param {Record<string, any>} props.data - The data entity object.
+ * @param {Record<string, string>} [props.metadata] - The metadata object. Used for tsv file download. Used for display if mappedMetadata is not supplied (optional)
+ * @param {Record<string, string>} [props.mappedMetadata] - The mapped metadata object used for display (optional)
+ * @param {Record<string, string>} [props.groups] - The groups object used to create a GroupedDataTable (i.e. Human sources) (optional)
+ * @param {boolean} [props.hasLineageMetadata=false] - A boolean indicating whether lineage metadata is present (default: false)
  */
 function Metadata({data, metadata, mappedMetadata, groups, hasLineageMetadata = false}) {
     const {cache} = useContext(AppContext)

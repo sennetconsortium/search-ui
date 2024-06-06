@@ -1,7 +1,14 @@
 import PropTypes from 'prop-types'
 import DataTable from 'react-data-table-component'
 
-
+/**
+ * Component that displaying grouped metadata in a DataTable.
+ *
+ * @component
+ * @param {Object} props - The props object for the GroupedDataTable component
+ * @param {Record<string, string>} props.metadata - The metadata object. Key is the metadata key and value is the metadata value
+ * @param {Record<string, string>} props.groups - The groups map. Key is the metadata key and value is the group name
+ */
 function GroupedDataTable({ metadata, groups }) {
     const tableStyles = {
         rows: {
@@ -73,6 +80,7 @@ function GroupedDataTable({ metadata, groups }) {
 
 GroupedDataTable.propTypes = {
     metadata: PropTypes.object.isRequired,
+    groups: PropTypes.object.isRequired,
 }
 
 export default GroupedDataTable
