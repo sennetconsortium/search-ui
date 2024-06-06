@@ -34,7 +34,6 @@ function BodyContent({ handleChangeAncestor }) {
 
     return (
         <div
-            className="js-gtm--results"
             data-js-ada='.rdt_TableCell'
             data-js-tooltip='{"trigger":".rdt_TableBody [role=\"row\"]", "diffY": -81, "data":".modal-content .rdt_Table", "class": "is-error"}'
         >

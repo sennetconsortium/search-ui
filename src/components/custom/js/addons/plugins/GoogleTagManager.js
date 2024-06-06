@@ -270,10 +270,7 @@ class GoogleTagManager extends Addon {
             globus_id: this.user.globus_id,
             session: (this.user.email !== undefined), ...args
         }
-        if (Addon.isLocal()) {
-            Addon.log(`GTM, ${this.event} event ...`, {color: 'pink'})
-            console.log(data)
-        }
+        Addon.log(`GTM, ${this.event} event ...`, {color: 'pink', data})
         dataLayer.push(data)
     }
 }

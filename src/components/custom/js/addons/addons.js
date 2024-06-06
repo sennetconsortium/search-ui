@@ -34,7 +34,7 @@ function addons(source, args= null) {
         } catch (e) {
             console.error(e)
         }
-    }, 2000)
+    }, 1200)
 
 }
 
