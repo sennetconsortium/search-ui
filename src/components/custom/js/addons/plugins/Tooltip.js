@@ -4,6 +4,7 @@ class Tooltip extends Addon {
         this.ops = this.el.data('js-tooltip')
         this.timeouts
         if (this.ops) {
+            Addon.log('Tooltip ops...', {data: this.ops})
             this.events()
         } else {
             this.ops = {}

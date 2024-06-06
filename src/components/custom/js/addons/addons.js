@@ -5,7 +5,7 @@
  * @returns
  */
 function addons(source, args= null) {
-    Addon.log('Addons started ...', 'log',  'red')
+    Addon.log('Addons started ...', {color: 'white'})
     window.addons = window.addons || {}
     if (window.addons[source] !== undefined) {
         return

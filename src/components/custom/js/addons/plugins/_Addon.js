@@ -13,10 +13,7 @@ class Addon {
         if (args.data && args.data.user) {
             this.user = JSON.parse(args.data.user)
         }
-        if (Addon.isLocal()) {
-            Addon.log(`Addons args of ${args.app}:`, 'log', 'aqua')
-            console.log(args)
-        }
+        Addon.log(`Addons args of ${args.app}:`, {color: 'aqua', data: {el, args}})
         this.keycodes = {
             enter: 'Enter',
             esc: 'Escape'
@@ -67,14 +64,19 @@ class Addon {
         return (location.host.indexOf('localhost') !== -1) || (location.host.indexOf('.dev') !== -1)
     }
 
-    static log(msg, fn = 'log', color = '#bada55') {
+    static log(msg, ops) {
+        ops = ops || {}
+        let {fn, color, data} = ops
+        fn = fn || 'log'
+        color = color || '#bada55'
+        data = data || ''
         if (Addon.isLocal()) {
-            console[fn](`%c ${msg}`, `background: #222; color: ${color}`)
+            console[fn](`%c ${msg}`, `background: #222; color: ${color}`, data)
         }
     }
 
     log(msg, fn = 'log') {
-        Addon.log(msg, fn)
+        Addon.log(msg, {fn})
     }
 }
 
