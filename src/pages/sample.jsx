@@ -171,7 +171,7 @@ function ViewSample() {
                                                 <Metadata
                                                     data={data}
                                                     metadata={data?.metadata}
-                                                    mappedMetadata={data?.sample_mapped_metadata}
+                                                    mappedMetadata={data?.cedar_mapped_metadata}
                                                     hasLineageMetadata={true}/>
                                             }
 

@@ -57,6 +57,7 @@ function ViewSource() {
                     setGroups(groups)
                     setMetadata(metadata)
                 } else if (eq(data.source_type, cache.sourceTypes.Mouse) && data.metadata) {
+                    setMappedMetadata(data.cedar_mapped_metadata)
                     setMetadata(data.metadata)
                 }
 

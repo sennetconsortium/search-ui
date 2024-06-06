@@ -160,13 +160,13 @@ function Metadata({data, metadata, mappedMetadata, groups, hasLineageMetadata = 
                                     // Handle mouse source and sample table
                                     // Mice sources and all samples have their metadata inside "metadata"
                                     return (
-                                        tabPaneCommon('1', index, ancestor, ancestor.metadata, ancestor.sample_mapped_metadata)
+                                        tabPaneCommon('1', index, ancestor, ancestor.metadata, ancestor.cedar_mapped_metadata)
                                     )
                                 } else if (ancestor.metadata && Object.keys(ancestor.metadata).length && 'metadata' in ancestor.metadata) {
                                     // Handle dataset table
                                     // Datasets have their metadata inside "metadata.metadata"
                                     return (
-                                        tabPaneCommon('2', index, ancestor, ancestor.metadata.metadata)
+                                        tabPaneCommon('2', index, ancestor, ancestor.metadata.metadata, ancestor.cedar_mapped_metadata)
                                     )
                                 }
                             })}
