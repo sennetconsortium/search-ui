@@ -250,8 +250,11 @@ function ViewDataset() {
                                             {/*Metadata*/}
                                             {/*Datasets have their metadata inside "metadata.metadata"*/}
                                             {!!((data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) || ancestorHasMetadata) &&
-                                                <Metadata data={data} metadata={data?.metadata?.metadata}
-                                                          hasLineageMetadata={true}/>
+                                                <Metadata
+                                                    data={data}
+                                                    metadata={data?.metadata?.metadata}
+                                                    mappedMetadata={data?.cedar_mapped_metadata}
+                                                    hasLineageMetadata={true}/>
                                             }
 
                                             {/*Files*/}

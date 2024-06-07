@@ -545,3 +545,16 @@ export const THEME = {
         return {color, light: THEME.isLightColor(color), r, g, b};
     },
 }
+
+export const extractSourceMappedMetadataInfo = (sourceMappedMetadata) => {
+    const groups = {}
+    const metadata = {}
+    for (const [key, value] of Object.entries(sourceMappedMetadata)) {
+        groups[value.key_display] = value.group_display
+        metadata[value.key_display] = value.value_display
+    }
+    return {
+        groups: groups,
+        metadata: metadata
+    }
+}
