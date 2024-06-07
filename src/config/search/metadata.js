@@ -60,7 +60,8 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-            },            
+            },
+
             // Source Human
             "source_mapped_metadata.sex.value": {
                 label: 'Sex',
@@ -98,6 +99,7 @@ export const SEARCH_METADATA = {
                 uiType: 'numrange',
                 uiRange: [0, 50],
             },
+
             // Source Mouse
             "metadata.strain": {
                 label: 'Strain',
@@ -141,24 +143,7 @@ export const SEARCH_METADATA = {
             },
 
             // Sample Block
-            "metadata.weight_value": {
-                label: 'Weight',
-                type: 'range',
-                field: 'metadata.weight_value',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                uiType: 'numrange',
-                uiRange: [0, 100],
-            },
-            "metadata.weight_unit": {
-                label: 'Weight Unit',
-                type: 'value',
-                field: 'metadata.weight_unit.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
+            // TODO: Update the uiRange
             "metadata.volume_value": {
                 label: 'Volume',
                 type: 'range',
@@ -167,8 +152,8 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 100000],
-                uiInterval: 5000,
+                uiRange: [0, 81000],
+                uiInterval: 1000,
             },
             "metadata.volume_unit": {
                 label: 'Volume Unit',
@@ -178,78 +163,122 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.pathology_distance_value": {
-                label: 'Pathology Distance',
-                type: 'range',
-                field: 'metadata.pathology_distance_value',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                uiType: 'numrange',
-                uiRange: [0, 100],
-            },
-            "metadata.pathology_distance_unit": {
-                label: 'Pathology Distance Unit',
-                type: 'value',
-                field: 'metadata.pathology_distance_unit.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
 
             // Sample Section
-            "metadata.section_thickness_value": {
-                label: 'Section Thickness',
+            // TODO: Update the uiRange, one outlier
+            "metadata.thickness_value": {
+                label: 'Thickness',
                 type: 'range',
-                field: 'metadata.section_thickness_value',
+                field: 'metadata.thickness_value',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
                 uiRange: [0, 100],
             },
-            "metadata.section_thickness_unit": {
-                label: 'Section Thickness Unit',
+            "metadata.thickness_unit": {
+                label: 'Thickness Unit',
                 type: 'value',
-                field: 'metadata.section_thickness_unit.keyword',
+                field: 'metadata.thickness_unit.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            // TODO: Update the uiRange
+            "metadata.area_value": {
+                label: 'Area',
+                type: 'range',
+                field: 'metadata.area_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                uiType: 'numrange',
+                uiRange: [0, 100],
+            },
+            "metadata.area_unit": {
+                label: 'Area Unit',
+                type: 'value',
+                field: 'metadata.area_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
 
             // Sample Suspension
-            "metadata.suspension_entity": {
-                label: 'Suspension Entity',
+            "metadata.suspension_entity_type": {
+                label: 'Suspension Entity Type',
                 type: 'value',
-                field: 'metadata.suspension_entity.keyword',
+                field: 'metadata.suspension_entity_type.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.suspension_entity_number": {
+            // TODO: Update the uiRange
+            "metadata.suspension_entity_count": {
                 label: 'Suspension Entity Number',
                 type: 'range',
-                field: 'metadata.suspension_entity_number',
+                field: 'metadata.suspension_entity_count',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 100],
+                uiRange: [0, 10000000],
+                uiInterval: 100000,
             },
-            "metadata.suspension_enriched": {
+            "metadata.is_suspension_enriched": {
                 label: 'Is Suspension Enriched',
                 type: 'value',
-                field: 'metadata.suspension_enriched.keyword',
+                field: 'metadata.is_suspension_enriched.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
 
-            // Sample General
-            "metadata.preparation_media": {
-                label: 'Preparation Media',
+            // Sample Block/Suspension Shared
+            // TODO: Update the uiRange
+            "metadata.tissue_weight_value": {
+                label: 'Tissue Weight',
+                type: 'range',
+                field: 'metadata.tissue_weight_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                uiType: 'numrange',
+                uiRange: [0, 650],
+                uiInterval: 10,
+            },
+            "metadata.tissue_weight_unit": {
+                label: 'Tissue Weight Unit',
                 type: 'value',
-                field: 'metadata.preparation_media.keyword',
+                field: 'metadata.tissue_weight_unit.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+
+            // Sample Shared
+            "metadata.source_storage_duration_value": {
+                label: 'Storage Duration',
+                type: 'range',
+                field: 'metadata.source_storage_duration_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                uiType: 'numrange',
+                uiRange: [0, 70],
+            },
+            "metadata.source_storage_duration_unit": {
+                label: 'Storage Duration Unit',
+                type: 'value',
+                field: 'metadata.source_storage_duration_unit.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            "metadata.preparation_medium": {
+                label: 'Preparation Medium',
+                type: 'value',
+                field: 'metadata.preparation_medium.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -262,26 +291,38 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.storage_media": {
-                label: 'Storage Media',
+            "metadata.storage_medium": {
+                label: 'Storage Medium',
                 type: 'value',
-                field: 'metadata.storage_media.keyword',
+                field: 'metadata.storage_medium.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
             "metadata.storage_method": {
-                label: 'Storage Method',
+                label: 'Preparation Method',
                 type: 'value',
                 field: 'metadata.storage_method.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.storage_temperature": {
-                label: 'Storage Temperature',
+
+            // TODO: Update the uiRange
+            "metadata.processing_time_value": {
+                label: 'Processing Time',
+                type: 'range',
+                field: 'metadata.processing_time_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                uiType: 'numrange',
+                uiRange: [0, 70],
+            },
+            "metadata.processing_time_unit": {
+                label: 'Processing Time Unit',
                 type: 'value',
-                field: 'metadata.storage_temperature.keyword',
+                field: 'metadata.processing_time_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -337,8 +378,8 @@ export const SEARCH_METADATA = {
             // Source Human
             "source_mapped_metadata.sex": FilterIsSelected('source_type', 'Human'),
             "source_mapped_metadata.race": FilterIsSelected('source_type', 'Human'),
-            "source_mapped_metadata.age_value": FilterIsSelected('source_type', 'Human'),
-            "source_mapped_metadata.body_mass_index_value": FilterIsSelected('source_type', 'Human'),
+            "source_mapped_metadata.age.value": FilterIsSelected('source_type', 'Human'),
+            "source_mapped_metadata.body_mass_index.value": FilterIsSelected('source_type', 'Human'),
 
             // Source Mouse
             "metadata.strain": FilterIsSelected('source_type', 'Mouse'),
@@ -348,27 +389,51 @@ export const SEARCH_METADATA = {
             "metadata.euthanization_method": FilterIsSelected('source_type', 'Mouse'),
 
             // Sample Block
-            "metadata.weight_value": FilterIsSelected('sample_category', 'Block'),
-            "metadata.weight_unit": FilterIsSelected('sample_category', 'Block'),
-            "metadata.volume_value": FilterIsSelected('sample_category', 'Block'),
             "metadata.volume_unit": FilterIsSelected('sample_category', 'Block'),
-            "metadata.pathology_distance_value": FilterIsSelected('sample_category', 'Block'),
-            "metadata.pathology_distance_unit": FilterIsSelected('sample_category', 'Block'),
+            "metadata.volume_value": ({filters}) => {
+                return filters.some((filter) => filter.field === 'metadata.volume_unit')
+            },
 
             // Sample Section
-            "metadata.section_thickness_value": FilterIsSelected('sample_category', 'Section'),
-            "metadata.section_thickness_unit": FilterIsSelected('sample_category', 'Section'),
+            "metadata.thickness_unit": FilterIsSelected('sample_category', 'Section'),
+            "metadata.thickness_value": ({filters}) => {
+                return filters.some((filter) => filter.field === 'metadata.thickness_unit')
+            },
+            "metadata.area_unit": FilterIsSelected('sample_category', 'Section'),
+            "metadata.area_value": ({filters}) => {
+                return filters.some((filter) => filter.field === 'metadata.area_unit')
+            },
 
             // Sample Suspension
-            "metadata.suspension_entity": FilterIsSelected('sample_category', 'Suspension'),
-            "metadata.suspension_entity_number": FilterIsSelected('sample_category', 'Suspension'),
-            "metadata.suspension_enriched": FilterIsSelected('sample_category', 'Suspension'),
+            "metadata.suspension_entity_type": FilterIsSelected('sample_category', 'Suspension'),
+            "metadata.suspension_entity_count": FilterIsSelected('sample_category', 'Suspension'),
+            "metadata.is_suspension_enriched": FilterIsSelected('sample_category', 'Suspension'),
 
-            // Sample General
-            "metadata.preparation_media": FilterIsSelected('entity_type', 'Sample'),
+            // Sample Block/Suspension Shared
+            "metadata.tissue_weight_unit": ({filters}) => {
+                return filters.some(
+                    (filter) =>
+                        filter.field === 'sample_category' &&
+                        (filter.values.includes('Block') || filter.values.includes('Suspension'))
+                )
+           }, 
+            "metadata.tissue_weight_value": ({filters}) => {
+                return filters.some((filter) => filter.field === 'metadata.tissue_weight_unit')
+            }, 
+
+            // Sample Shared
+            "metadata.source_storage_duration_unit": FilterIsSelected('entity_type', 'Sample'),
+            "metadata.source_storage_duration_value": ({filters}) => {
+                return filters.some((filter) => filter.field === 'metadata.source_storage_duration_unit')
+            }, 
+            "metadata.preparation_medium": FilterIsSelected('entity_type', 'Sample'),
             "metadata.preparation_condition": FilterIsSelected('entity_type', 'Sample'),
-            "metadata.storage_media": FilterIsSelected('entity_type', 'Sample'),
+            "metadata.storage_medium": FilterIsSelected('entity_type', 'Sample'),
             "metadata.storage_method": FilterIsSelected('entity_type', 'Sample'),
+            "metadata.processing_time_unit": FilterIsSelected('entity_type', 'Sample'),
+            "metadata.processing_time_value": ({filters}) => {
+                return filters.some((filter) => filter.field === 'metadata.processing_time_unit')
+            }, 
 
             // Dataset
             "metadata.metadata.assay_category": FilterIsSelected('entity_type', 'Dataset'),
