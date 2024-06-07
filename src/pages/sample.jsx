@@ -107,14 +107,14 @@ function ViewSample() {
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="#Provenance"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Provenance</a>
-                                            </li>
-                                            <li className="nav-item">
                                                 <a href="#Tissue"
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Tissue</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a href="#Provenance"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Provenance</a>
                                             </li>
                                             {!!((data.metadata && Object.keys(data.metadata).length) || ancestorHasMetadata) &&
                                                 <li className="nav-item">
@@ -156,14 +156,14 @@ function ViewSample() {
                                                          labId={data.lab_tissue_sample_id}
                                             />
 
-                                            {/*Provenance*/}
-                                            {data &&
-                                                <Provenance nodeData={data}/>
-                                            }
-
                                             {/*Tissue*/}
                                             {data &&
                                                 <Tissue data={data}/>
+                                            }
+
+                                            {/*Provenance*/}
+                                            {data &&
+                                                <Provenance nodeData={data}/>
                                             }
 
                                             {/*Metadata*/}
