@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Form} from 'react-bootstrap';
 import {Results, SearchBox} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
@@ -17,9 +17,10 @@ import SearchUIContext from 'search-ui/components/core/SearchUIContext';
 import FacetsContent from '../../search/FacetsContent';
 import AppContext from "../../../../context/AppContext";
 
-function BodyContent({ handleChangeSource }) {
+function BodyContent({ handleChangeSource, data }) {
     const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
     const { filters } = useContext(SearchUIContext)
+    const includedExclude = useRef(false)
 
     exclude_dataset_config['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
         return hasAuthenticationCookie() && !isUnauthorized() &&
@@ -27,6 +28,16 @@ function BodyContent({ handleChangeSource }) {
     }
 
     exclude_dataset_config['searchQuery']['conditionalFacets']['ancestors.rui_location'] = () => false
+
+    useEffect(() => {
+        if (!includedExclude.current) {
+            includedExclude.current = true
+            exclude_dataset_config['searchQuery']['excludeFilters'].push({
+                keyword: "uuid.keyword",
+                value: data['uuid']
+            })
+        }
+    }, [])
 
     return (
         <div className="js-gtm--results"
@@ -39,7 +50,7 @@ function BodyContent({ handleChangeSource }) {
     )
 }
 
-const AncestorId = ({fetchSource, onChange, source}) => {
+const AncestorId = ({fetchSource, onChange, source, data}) => {
     const [showHideModal, setShowHideModal] = useState(false)
 
     const handleSearchFormSubmit = (event, onSubmit) => {
@@ -134,7 +145,7 @@ const AncestorId = ({fetchSource, onChange, source}) => {
                                 </div>
                             }
                             bodyContent={
-                                <BodyContent handleChangeSource={changeSource} />
+                                <BodyContent handleChangeSource={changeSource} data={data} />
                             }
 
                         />
