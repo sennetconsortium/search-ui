@@ -1,13 +1,19 @@
 import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
-import {datasetIs, fetchDataCite, getRequestHeaders} from "../components/custom/js/functions";
+import {
+    datasetIs,
+    fetchDataCite,
+    getCreationActionRelationName, getEntityViewUrl,
+    getRequestHeaders
+} from "../components/custom/js/functions";
 import {get_write_privilege_for_group_uuid} from "../lib/services";
 import AppContext from "../context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
 import DerivedContext, {DerivedProvider} from "../context/DerivedContext";
 import FileTreeView from "../components/custom/entities/dataset/FileTreeView";
+import WarningIcon from '@mui/icons-material/Warning'
 
 const AppFooter = dynamic(() => import("../components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("../components/custom/layout/AppNavbar"))
@@ -33,6 +39,7 @@ function ViewDataset() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
     const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
+    const [primaryDatasetData, setPrimaryDatasetInfo] = useState(null)
     const {
         showVitessce,
         initVitessceConfig,
@@ -47,6 +54,7 @@ function ViewDataset() {
                 const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders());
                 // convert the data to json
                 const primary = await response.json();
+                setPrimaryDatasetInfo(primary)
                 setDatasetCategories(getAssaySplitData(primary))
                 break;
             }
@@ -129,8 +137,13 @@ function ViewDataset() {
                 {data && !error &&
                     <>
                         <div className="container-fluid">
+                            {!datasetIs.primary(data.creation_action) && primaryDatasetData && <Alert className={'mt-4'} variant='info'><WarningIcon /> You are viewing a&nbsp;
+                                {getCreationActionRelationName(data.creation_action)}. To view the Primary Dataset visit &nbsp;
+                                <a href={getEntityViewUrl('dataset', primaryDatasetData.uuid, {})}>{primaryDatasetData.sennet_id}</a>
+                            </Alert>}
                             <div className="row flex-nowrap entity_body">
                                 <div className="col-auto p-0">
+
                                     <div id="sidebar"
                                          className="collapse collapse-horizontal sticky-top custom-sticky">
                                         <ul id="sidebar-nav"
