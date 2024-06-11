@@ -443,7 +443,7 @@ export default function EditDataset() {
                                     {/*Ancestor IDs*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
-                                        <AncestorIds values={values} ancestors={ancestors} onChange={onChange}
+                                        <AncestorIds data={data} values={values} ancestors={ancestors} onChange={onChange}
                                                      dataset_category={data.dataset_category}
                                                      fetchAncestors={fetchAncestors} deleteAncestor={deleteAncestor}
                                                      addButtonDisabled={data.dataset_category != null && data.dataset_category !== 'primary' }/>

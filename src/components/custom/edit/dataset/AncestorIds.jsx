@@ -19,7 +19,7 @@ import FacetsContent from '../../search/FacetsContent';
 import SearchUIContext from 'search-ui/components/core/SearchUIContext';
 import AppContext from "../../../../context/AppContext";
 
-function BodyContent({ handleChangeAncestor }) {
+function BodyContent({ handleChangeAncestor, data }) {
     const { wasSearched, filters } = useContext(SearchUIContext)
     const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
     const addConditional = (key, entity) => {
@@ -31,6 +31,11 @@ function BodyContent({ handleChangeAncestor }) {
 
     addConditional('rui_location','Sample' )
     addConditional('ancestors.rui_location', 'Dataset')
+
+    valid_dataset_ancestor_config['searchQuery']['excludeFilters'] = [{
+        keyword: "uuid.keyword",
+        value: data['uuid']
+    }]
 
     return (
         <div
@@ -46,7 +51,7 @@ function BodyContent({ handleChangeAncestor }) {
 }
 
 export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd, onShowModal, formLabelPlural,
-                                        formLabel = 'ancestor', controlId = 'direct_ancestor_uuids', dataset_category, addButtonDisabled}) {
+                                        formLabel = 'ancestor', controlId = 'direct_ancestor_uuids', dataset_category, addButtonDisabled, data}) {
     const [showHideModal, setShowHideModal] = useState(false)
 
     useEffect(() => {
@@ -181,7 +186,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
                                 </div>
                             }
                             bodyContent={
-                                <BodyContent handleChangeAncestor={changeAncestor} />
+                                <BodyContent handleChangeAncestor={changeAncestor} data={data} />
                             }
                         />
                     </SearchUIContainer>
