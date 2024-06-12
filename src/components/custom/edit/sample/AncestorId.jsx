@@ -30,7 +30,7 @@ function BodyContent({ handleChangeSource, data }) {
     exclude_dataset_config['searchQuery']['conditionalFacets']['ancestors.rui_location'] = () => false
 
     useEffect(() => {
-        if (!includedExclude.current) {
+        if (!includedExclude.current && data && data.uuid) {
             includedExclude.current = true
             exclude_dataset_config['searchQuery']['excludeFilters'].push({
                 keyword: "uuid.keyword",
