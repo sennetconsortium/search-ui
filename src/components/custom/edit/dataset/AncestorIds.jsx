@@ -32,10 +32,12 @@ function BodyContent({ handleChangeAncestor, data }) {
     addConditional('rui_location','Sample' )
     addConditional('ancestors.rui_location', 'Dataset')
 
-    valid_dataset_ancestor_config['searchQuery']['excludeFilters'] = [{
-        keyword: "uuid.keyword",
-        value: data['uuid']
-    }]
+    if (data && data.uuid) {
+        valid_dataset_ancestor_config['searchQuery']['excludeFilters'] = [{
+            keyword: "uuid.keyword",
+            value: data['uuid']
+        }]
+    }
 
     return (
         <div
