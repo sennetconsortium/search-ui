@@ -138,7 +138,7 @@ function ViewDataset() {
                     <>
                         <div className="container-fluid">
                             {!datasetIs.primary(data.creation_action) && primaryDatasetData && <Alert className={'mt-4'} variant='info'><WarningIcon /> You are viewing a&nbsp;
-                                {getCreationActionRelationName(data.creation_action)}. To view the Primary Dataset visit &nbsp;
+                                <code>{getCreationActionRelationName(data.creation_action)}</code>. To view the <code>Primary Dataset</code>, visit &nbsp;
                                 <a href={getEntityViewUrl('dataset', primaryDatasetData.uuid, {})}>{primaryDatasetData.sennet_id}</a>
                             </Alert>}
                             <div className="row flex-nowrap entity_body">
