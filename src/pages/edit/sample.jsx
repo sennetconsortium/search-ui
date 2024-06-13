@@ -427,7 +427,7 @@ function EditSample() {
                                     {/*Ancestor ID*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
-                                        <AncestorId source={source} onChange={_onChange} fetchSource={fetchSource}/>
+                                        <AncestorId data={data} source={source} onChange={_onChange} fetchSource={fetchSource}/>
                                     }
 
                                     {/*Source Information Box*/}
