@@ -1,8 +1,3 @@
-import Addon from './Addon'
-import GTM from './GoogleTagManager'
-import Ada from './Ada'
-import Tooltip from './Tooltip'
-
 /**
  * JS functionality which enhance site functionality, not necessarily part of the core.
  * @param {string} source
@@ -10,7 +5,7 @@ import Tooltip from './Tooltip'
  * @returns
  */
 function addons(source, args= null) {
-    Addon.log('Addons started ...', 'log',  'red')
+    Addon.log('Addons started ...', {color: 'white'})
     window.addons = window.addons || {}
     if (window.addons[source] !== undefined) {
         return
@@ -18,7 +13,7 @@ function addons(source, args= null) {
     window.addons[source] = args
 
     let apps = {
-        gtm: GTM,
+        gtm: GoogleTagManager,
         ada: Ada,
         tooltip: Tooltip
     }
@@ -30,17 +25,16 @@ function addons(source, args= null) {
                 document
                     .querySelectorAll(`[class*='js-${app}--'], [data-js-${app}]`)
                     .forEach((el) => {
-                        const contextApp = Object.assign(Addon, apps[app])
-                        apps[app].constructor(el, {app, ...args }, Addon)
+                        new apps[app](el, {app, ...args })
                     })
             }
 
             // Default: Capture all link clicks.
-            GTM.constructor(null, {app: 'links', ...args }, Addon)
+            new GoogleTagManager(null, {app: 'links', ...args })
         } catch (e) {
             console.error(e)
         }
-    }, 1000)
+    }, 1200)
 
 }
 
