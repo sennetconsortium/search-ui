@@ -412,7 +412,8 @@ function Provenance({nodeData}) {
         title: 'Help, Provenance Graph',
         legend: `<li><code>Sample</code> shapes <span class="shape pink shape--diamond">diamond</span>, <span class="shape pink shape--sq">square</span>, 
                     <span class="shape pink shape--rect">rectangle</span> and <span class="shape pink shape--circle">ellipse</span> correspond to <code>sample_category</code>  of
-                <code>organ</code>, <code>block</code>, <code>section</code> and <code>suspension</code> respectively.</li>`
+                <code>organ</code>, <code>block</code>, <code>section</code> and <code>suspension</code> respectively.</li>
+                <li><code>Dataset</code> shapes <span class="shape green shape--circle">ellipse</span>, <span class="shape shape--blob">"blob"</span>, and <span class="shape shape--triangle">triangle</span> correspond to <code>category</code> of <code>primary</code>, <code>processed</code> and <code>component</code> respectively.</li>`
     }
 
     const legend = {
