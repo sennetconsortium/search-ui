@@ -87,7 +87,7 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 100],
+                uiInterval: 1,
             },
             "source_mapped_metadata.body_mass_index.value": {
                 label: 'Body Mass Index',
@@ -97,7 +97,7 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 50],
+                uiInterval: 1,
             },
 
             // Source Mouse
@@ -143,7 +143,6 @@ export const SEARCH_METADATA = {
             },
 
             // Sample Block
-            // TODO: Update the uiRange
             "metadata.volume_value": {
                 label: 'Volume',
                 type: 'range',
@@ -152,8 +151,12 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 81000],
-                uiInterval: 1000,
+                uiInterval: (filters) => {
+                    if (filters.some((filter) => filter.values.includes('ml'))) {
+                        return 0.1
+                    }
+                    return 1000
+                },
             },
             "metadata.volume_unit": {
                 label: 'Volume Unit',
@@ -165,7 +168,6 @@ export const SEARCH_METADATA = {
             },
 
             // Sample Section
-            // TODO: Update the uiRange, one outlier
             "metadata.thickness_value": {
                 label: 'Thickness',
                 type: 'range',
@@ -174,7 +176,12 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 100],
+                uiInterval: (filters) => {
+                    if (filters.some((filter) => filter.values.includes('um'))) {
+                        return 1
+                    }
+                    return 0.1
+                },
             },
             "metadata.thickness_unit": {
                 label: 'Thickness Unit',
@@ -184,7 +191,6 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            // TODO: Update the uiRange
             "metadata.area_value": {
                 label: 'Area',
                 type: 'range',
@@ -193,7 +199,6 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 100],
             },
             "metadata.area_unit": {
                 label: 'Area Unit',
@@ -213,7 +218,6 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            // TODO: Update the uiRange
             "metadata.suspension_entity_count": {
                 label: 'Suspension Entity Number',
                 type: 'range',
@@ -222,7 +226,6 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 10000000],
                 uiInterval: 100000,
             },
             "metadata.is_suspension_enriched": {
@@ -235,7 +238,6 @@ export const SEARCH_METADATA = {
             },
 
             // Sample Block/Suspension Shared
-            // TODO: Update the uiRange
             "metadata.tissue_weight_value": {
                 label: 'Tissue Weight',
                 type: 'range',
@@ -244,8 +246,7 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 650],
-                uiInterval: 10,
+                uiInterval: 5,
             },
             "metadata.tissue_weight_unit": {
                 label: 'Tissue Weight Unit',
@@ -265,7 +266,15 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 70],
+                uiInterval: (filters) => {
+                    if (filters.some((filter) => filter.values.includes('day'))) {
+                        return 5
+                    }
+                    if (filters.some((filter) => filter.values.includes('month'))) {
+                        return 0.1
+                    }
+                    return 1
+                },
             },
             "metadata.source_storage_duration_unit": {
                 label: 'Storage Duration Unit',
@@ -308,7 +317,6 @@ export const SEARCH_METADATA = {
                 isFilterable: false,
             },
 
-            // TODO: Update the uiRange
             "metadata.processing_time_value": {
                 label: 'Processing Time',
                 type: 'range',
@@ -317,7 +325,6 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiRange: [0, 70],
             },
             "metadata.processing_time_unit": {
                 label: 'Processing Time Unit',
