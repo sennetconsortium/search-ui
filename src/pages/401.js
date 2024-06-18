@@ -1,4 +1,4 @@
-import Header from "../components/custom/layout/Header";
+import Header from "@/components/custom/layout/Header";
 import React from "react";
 
 export default function Custom401() {

@@ -4,32 +4,33 @@ import log from "loglevel";
 import {
     datasetIs,
     fetchDataCite,
-    getCreationActionRelationName, getEntityViewUrl,
+    getCreationActionRelationName,
+    getEntityViewUrl,
     getRequestHeaders
-} from "../components/custom/js/functions";
-import {get_write_privilege_for_group_uuid} from "../lib/services";
-import AppContext from "../context/AppContext";
+} from "@/components/custom/js/functions";
+import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import DerivedContext, {DerivedProvider} from "../context/DerivedContext";
-import FileTreeView from "../components/custom/entities/dataset/FileTreeView";
+import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
+import DerivedContext, {DerivedProvider} from "@/context/DerivedContext";
+import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
 import WarningIcon from '@mui/icons-material/Warning'
 
-const AppFooter = dynamic(() => import("../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../components/custom/layout/AppNavbar"))
-const Attribution = dynamic(() => import("../components/custom/entities/sample/Attribution"))
-const ContributorsContacts = dynamic(() => import("../components/custom/entities/ContributorsContacts"))
-const CreationActionRelationship = dynamic(() => import("../components/custom/entities/dataset/CreationActionRelationship"))
-const DataProducts = dynamic(() => import("../components/custom/entities/dataset/DataProducts"))
-const Description = dynamic(() => import("../components/custom/entities/sample/Description"))
-const Header = dynamic(() => import("../components/custom/layout/Header"))
-const Metadata = dynamic(() => import("../components/custom/entities/Metadata"))
-const Provenance = dynamic(() => import("../components/custom/entities/Provenance"))
-const SennetVitessce = dynamic(() => import("../components/custom/vitessce/SennetVitessce"))
-const SidebarBtn = dynamic(() => import("../components/SidebarBtn"))
-const Spinner = dynamic(() => import("../components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("../components/custom/layout/Unauthorized"))
-const Upload = dynamic(() => import("../components/custom/entities/dataset/Upload"))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
+const CreationActionRelationship = dynamic(() => import("@/components/custom/entities/dataset/CreationActionRelationship"))
+const DataProducts = dynamic(() => import("@/components/custom/entities/dataset/DataProducts"))
+const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
+const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"))
+const SennetVitessce = dynamic(() => import("@/components/custom/vitessce/SennetVitessce"))
+const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
+const Spinner = dynamic(() => import("@/components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthorized"))
+const Upload = dynamic(() => import("@/components/custom/entities/dataset/Upload"))
 
 function ViewDataset() {
     const [data, setData] = useState(null)
