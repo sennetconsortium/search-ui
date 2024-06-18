@@ -51,7 +51,9 @@ function Provenance({nodeData}) {
         clearTimeout(cbTimeout2)
         canvas(ops).find('svg').css('opacity', 0)
         cbTimeout2 = setTimeout(() => {
-            updateVisualizationTranslation(ops)
+            if (ops.data.links.length) {
+                updateVisualizationTranslation(ops)
+            }
         }, 500)
     }
 
@@ -326,7 +328,7 @@ function Provenance({nodeData}) {
         if (initialized.current) return
         initialized.current = true
         const token = getAuth();
-        const url = getEntityEndPoint() + 'entities/{id}/provenance?return_descendants=true'
+        const url = getEntityEndPoint() + 'entities/{id}/provenance?return_descendants=true&filter=-Publication|-Collection|-Upload'
         const itemId = data.uuid;
         const graphOps = {token, url}
 
