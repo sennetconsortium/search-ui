@@ -328,7 +328,7 @@ function Provenance({nodeData}) {
         if (initialized.current) return
         initialized.current = true
         const token = getAuth();
-        const url = getEntityEndPoint() + 'entities/{id}/provenance?return_descendants=true&filter=-Publication|-Collection|-Upload'
+        const url = getEntityEndPoint() + 'entities/{id}/provenance?return_descendants=true&filter='+ encodeURI('-Publication|-Collection|-Upload')
         const itemId = data.uuid;
         const graphOps = {token, url}
 
