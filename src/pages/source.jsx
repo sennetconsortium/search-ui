@@ -1,24 +1,24 @@
 import dynamic from "next/dynamic";
-import React, {Fragment, useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
-import {eq, extractSourceMappedMetadataInfo, getRequestHeaders} from "../components/custom/js/functions";
-import {get_write_privilege_for_group_uuid} from "../lib/services";
-import AppContext from "../context/AppContext";
+import {eq, extractSourceMappedMetadataInfo, getRequestHeaders} from "@/components/custom/js/functions";
+import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
+import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 
-const AppFooter = dynamic(() => import("../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../components/custom/layout/AppNavbar"))
-const Attribution = dynamic(() => import("../components/custom/entities/sample/Attribution"))
-const Description = dynamic(() => import("../components/custom/entities/sample/Description"))
-const Header = dynamic(() => import("../components/custom/layout/Header"))
-const Metadata = dynamic(() => import("../components/custom/entities/Metadata"))
-const Protocols = dynamic(() => import("../components/custom/entities/sample/Protocols"))
-const Provenance = dynamic(() => import( "../components/custom/entities/Provenance"))
-const SidebarBtn = dynamic(() => import("../components/SidebarBtn"))
-const Spinner = dynamic(() => import("../components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("../components/custom/layout/Unauthorized"))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
+const Protocols = dynamic(() => import("@/components/custom/entities/sample/Protocols"))
+const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
+const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
+const Spinner = dynamic(() => import("@/components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthorized"))
 
 
 function ViewSource() {
