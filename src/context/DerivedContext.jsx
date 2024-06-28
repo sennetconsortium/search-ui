@@ -25,10 +25,15 @@ export const DerivedProvider = ({children}) => {
     // Load the correct Vitessce view config
     const set_vitessce_config = async (data, dataset_id, dataset_type) => {
         fetchVitessceConfiguration(dataset_id).then(config => {
-            setVitessceConfig(config)
+            // If the /vitessce endpoint returns anything but a 200 and an actual configuration, hide the visualization  section
+            if (JSON.stringify(config) === '{}' ) {
+                setShowVitessce(false)
+            } else {
+                setVitessceConfig(config)
+            }
         }).catch(error => {
             console.error(error)
-            setVitessceConfig("")
+            setShowVitessce(false)
         })
     }
 
