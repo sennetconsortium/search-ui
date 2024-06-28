@@ -134,8 +134,7 @@ export async function fetchGlobusFilepath(sennet_id) {
 
 // This function requires the bearer token passed to it as the middleware can't access "getAuth()"
 export async function fetch_entity_type(uuid, bearer_token) {
-    const headers = new Headers();
-    headers.append("Authorization", "Bearer " + bearer_token)
+    const headers = get_auth_header();
     const url = getUUIDEndpoint() + "uuid/" + uuid
     const request_options = {
         method: 'GET',
