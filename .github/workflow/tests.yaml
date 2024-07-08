@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+      - dev-integrate
+  pull_request:
+    branches:
+      - main
+      - dev-integrate
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ci/requirements.txt
+      - name: Open the socket app and run tests
+        run: |
+          python ci/main.py
