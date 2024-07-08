@@ -217,6 +217,8 @@ function Provenance({nodeData}) {
             'sennet:creation_action': 'category'
         },
         imageMap: {
+            "Source|sennet:source_type|Mouse": null,
+            "Source|sennet:source_type|Mouse Organoid": null,
             "Sample|sennet:sample_category|Organ": null,
             "Sample|sennet:sample_category|Block": null,
             "Sample|sennet:sample_category|Section": null,
@@ -224,6 +226,24 @@ function Provenance({nodeData}) {
             "Dataset|sennet:creation_action|Processed Dataset": null,
         },
         imageMapActions: {
+            "Source|sennet:source_type|Mouse": {
+                fn: 'append',
+                type: 'g',
+                data: [
+                    {
+                        draw: 'M22.9,22.9H7.1c-3.5,0-6.4-2.9-6.4-6.4v-2.9c0-3.5,2.9-6.4,6.4-6.4h15.7c3.5,0,6.4,2.9,6.4,6.4v2.9C29.3,20,26.4,22.9,22.9,22.9z'
+                    }
+                ]
+            },
+            "Source|sennet:source_type|Mouse Organoid": {
+                fn: 'append',
+                type: 'g',
+                data: [
+                    {
+                        draw: 'M22.9,22.9H7.1c-3.5,0-6.4-2.9-6.4-6.4v-2.9c0-3.5,2.9-6.4,6.4-6.4h15.7c3.5,0,6.4,2.9,6.4,6.4v2.9C29.3,20,26.4,22.9,22.9,22.9z'
+                    }
+                ]
+            },
             "Dataset|sennet:creation_action|Component Dataset": {
                 fn: 'append',
                 type: 'g',
@@ -412,10 +432,11 @@ function Provenance({nodeData}) {
 
     const help = {
         title: 'Help, Provenance Graph',
-        legend: `<li><code>Sample</code> shapes <span class="shape pink shape--diamond">diamond</span>, <span class="shape pink shape--sq">square</span>, 
-                    <span class="shape pink shape--rect">rectangle</span> and <span class="shape pink shape--circle">ellipse</span> correspond to <code>sample_category</code>  of
+        legend: `<li><code>Source</code> shapes <span class="shape yellow shape--circle">circle</span> and <span class="shape shape--stadium">stadium</span> correspond to <code>source_type</code> of Human and Mouse respectively. </li>
+                <li><code>Sample</code> shapes <span class="shape pink shape--diamond">diamond</span>, <span class="shape pink shape--sq">square</span>, 
+                    <span class="shape pink shape--rect">rectangle</span> and <span class="shape pink shape--circle">circle</span> correspond to <code>sample_category</code>  of
                 <code>organ</code>, <code>block</code>, <code>section</code> and <code>suspension</code> respectively.</li>
-                <li><code>Dataset</code> shapes <span class="shape green shape--circle">ellipse</span>, <span class="shape shape--blob">"blob"</span>, and <span class="shape shape--triangle">triangle</span> correspond to <code>category</code> of <code>primary</code>, <code>processed</code> and <code>component</code> respectively.</li>`
+                <li><code>Dataset</code> shapes <span class="shape green shape--circle">circle</span>, <span class="shape shape--blob">"blob"</span>, and <span class="shape shape--triangle">triangle</span> correspond to <code>category</code> of <code>primary</code>, <code>processed</code> and <code>component</code> respectively.</li>`
     }
 
     const legend = {
