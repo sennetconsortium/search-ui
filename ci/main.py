@@ -22,7 +22,8 @@ def workflow_printer(message):
             state = 'error' if has_failed else 'notice'
             title = ' > '.join(t.get('title', ''))
             emoji = '❌  ' if has_failed else '✅  '
-            print(f"::{state}::{title} {emoji}")
+            color = Color.RED if has_failed else Color.GREEN
+            print(f"::{state}::{color}{title}{color.OFF} {emoji}")
         print("::endgroup::")
     else:
         print(f"::notice::{Color.CYAN}{result.get('message')}{Color.OFF}")
