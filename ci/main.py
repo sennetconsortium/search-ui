@@ -16,7 +16,7 @@ def workflow_printer(message):
         print(f"::group::{test.get('spec').get('relative')}")  # group title
         stats = test.get('reporterStats', '')
         state = 'error' if stats.get('failures') > 0 else 'notice'
-        print(f"::{state}::Tests: {stats.get('tests')} ; Passes: {stats.get('passes')} ; Fails: {stats.get('failures')}")
+        print(f"::{state}::Tests: {stats.get('tests')} ; {Color.GREEN}Passes: {stats.get('passes')}{Color.OFF} ; {Color.RED}Fails: {stats.get('failures')}{Color.OFF}")
         for t in test.get('tests'):
             has_failed = t.get('state') != 'passed'
             state = 'error' if has_failed else 'notice'
@@ -38,7 +38,7 @@ def is_complete(result):
 
 
 def main():
-    with connect("wss://c81f-2601-547-cc01-6200-8df3-bd33-eb87-696f.ngrok-free.app") as websocket:
+    with connect("wss://6721-2601-547-cc01-6200-5909-ee75-1d42-11a9.ngrok-free.app") as websocket:
         websocket.send(f"Requesting Cypress reports ... Date: {datetime.datetime.now()}. 🚀 ")
         receiving = True
         results = {}
