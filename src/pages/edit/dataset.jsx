@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {get_headers, update_create_dataset} from '../../lib/services'
+import {get_headers, getAncestry, update_create_dataset} from '../../lib/services'
 import {
     cleanJson,
     eq,
@@ -147,18 +147,20 @@ export default function EditDataset() {
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
-            const data = await response.json();
+            let _data = await response.json();
 
-            log.debug('editDataset: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editDataset: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
             } else {
-                setData(data)
-                isPrimary.current = getIsPrimaryDataset(data)
+                const ancestry = await getAncestry(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
+                Object.assign(_data, ancestry)
+                setData(_data)
+                isPrimary.current = getIsPrimaryDataset(_data)
                 let immediate_ancestors = []
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    for (const ancestor of data.immediate_ancestors) {
+                if (_data.hasOwnProperty("immediate_ancestors")) {
+                    for (const ancestor of _data.immediate_ancestors) {
                         immediate_ancestors.push(ancestor.uuid)
                     }
                     await fetchAncestors(immediate_ancestors)
@@ -166,19 +168,19 @@ export default function EditDataset() {
 
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
-                    'status': data.status,
-                    'lab_dataset_id': data.lab_dataset_id,
-                    'dataset_type': data.dataset_type,
-                    'description': data.description,
-                    'dataset_info': data.dataset_info,
+                    'status': _data.status,
+                    'lab_dataset_id': _data.lab_dataset_id,
+                    'dataset_type': _data.dataset_type,
+                    'description': _data.description,
+                    'dataset_info': _data.dataset_info,
                     'direct_ancestor_uuids': immediate_ancestors,
-                    'assigned_to_group_name': adminGroup ? data.assigned_to_group_name : undefined,
-                    'ingest_task': adminGroup ? data.ingest_task : undefined,
-                    'contains_human_genetic_sequences': data.contains_human_genetic_sequences
+                    'assigned_to_group_name': adminGroup ? _data.assigned_to_group_name : undefined,
+                    'ingest_task': adminGroup ? _data.ingest_task : undefined,
+                    'contains_human_genetic_sequences': _data.contains_human_genetic_sequences
                 })
                 setEditMode("Edit")
-                setContainsHumanGeneticSequences(data.contains_human_genetic_sequences)
-                setDataAccessPublic(data.data_access_level === 'public')
+                setContainsHumanGeneticSequences(_data.contains_human_genetic_sequences)
+                setDataAccessPublic(_data.data_access_level === 'public')
             }
         }
 
