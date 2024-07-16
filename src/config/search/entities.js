@@ -38,6 +38,14 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 isFilterable: false,
             },
+            sources: {
+                label: 'Source Type',
+                type: 'value',
+                field: 'sources.source_type.keyword',
+                filterType: 'any',
+                isExpanded: false,
+                isFilterable: false,
+            },
             sample_category: {
                 label: 'Sample Category',
                 type: 'value',
@@ -158,6 +166,15 @@ export const SEARCH_ENTITIES = {
                                 filter.values.includes('Section') || filter.values.includes('Suspension')))
                 )
             },
+            // Show 'metadata' facet if 'Sample' or Sample Block/Section/Suspension is selected
+            metadata: ({filters}) => {
+                return filters.some(
+                    (filter) =>
+                        (filter.field === 'entity_type' && filter.values.some(r=> ['Source', 'Dataset', 'Collection', 'Publication'].includes(r))  ) ||
+                        (filter.field === 'sample_category' && (filter.values.includes('Block') ||
+                            filter.values.includes('Section') || filter.values.includes('Suspension')))
+                )
+            },
             // Only show 'organ' facet if 'Sample' is selected from the entity type facet
             organ: FilterIsSelected('entity_type', 'Sample'),
             'rui_location_anatomical_locations.label': FilterIsSelected('entity_type', 'Sample'),
@@ -174,6 +191,8 @@ export const SEARCH_ENTITIES = {
             },
             // Only show 'source' facet if 'Source' is selected from the entity type facet
             source_type: FilterIsSelected('entity_type', 'Source'),
+            // Only show 'sources' facet if 'Dataset' is selected from the entity type facet
+            sources: FilterIsSelected('entity_type', 'Dataset'),
         },
         search_fields: {
             "sennet_id^4": {type: 'value'},
