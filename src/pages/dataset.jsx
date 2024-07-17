@@ -58,7 +58,6 @@ function ViewDataset() {
                 if (!primary.error) {
                     const ancestry = await getAncestry(primary.uuid, {})
                     Object.assign(primary, ancestry)
-                    console.log('PRIMARY', primary)
                     setPrimaryDatasetInfo(primary)
                     setDatasetCategories(getAssaySplitData(primary))
                 } else {
