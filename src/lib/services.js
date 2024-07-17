@@ -212,8 +212,8 @@ export async function get_user_write_groups() {
 
 export async function getAncestry(uuid, {endpoints = ['ancestors', 'descendants'], otherEndpoints = []}) {
     const propertyNameMap = {
-        'immediate_ancestors': '/parents',
-        'immediate_descendants': '/children'
+        'immediate_ancestors': 'parents',
+        'immediate_descendants': 'children'
     }
     const allEndpoints = endpoints.concat(otherEndpoints)
     let result = {}
