@@ -328,21 +328,12 @@ function Provenance({nodeData}) {
     }
 
     useEffect(() => {
-        async function fetchLineage (lineageDescriptor, setLineage) {
-            let lineage = await get_lineage_info(data.uuid, lineageDescriptor);
-            if (lineage.hasOwnProperty("error")) {
-                setError(true)
-                setErrorMessage(lineage["error"])
-            } else {
-               setLineage(lineage)
-            }
-        }
 
         if (nodeData.hasOwnProperty("descendants")) {
-            fetchLineage("descendants", setDescendants);
+            setDescendants(nodeData.descendants)
         }
         if (nodeData.hasOwnProperty("ancestors")) {
-            fetchLineage("ancestors", setAncestors);
+            setAncestors(nodeData.ancestors)
         }
 
         if (initialized.current) return

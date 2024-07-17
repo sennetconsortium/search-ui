@@ -210,6 +210,20 @@ export async function get_user_write_groups() {
     return await call_privs_service('user-write-groups')
 }
 
+export async function getAncestry(uuid, {endpoints = ['ancestors', 'descendants'], otherEndpoints = []}) {
+    const propertyNameMap = {
+        'immediate_ancestors': 'parents',
+        'immediate_descendants': 'children'
+    }
+    const allEndpoints = endpoints.concat(otherEndpoints)
+    let result = {}
+    for (let key of allEndpoints) {
+        let endpoint = propertyNameMap[key] || key
+        result[key] = await callService(null,  `${getEntityEndPoint()}${endpoint}/${uuid}`)
+    }
+    return result
+}
+
 export async function callService(raw, url, method, headers) {
     headers = headers ? headers : get_headers()
     return await fetch(url, {

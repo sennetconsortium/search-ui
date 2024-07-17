@@ -38,6 +38,14 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 isFilterable: false,
             },
+            'sources.source_type': {
+                label: 'Source Type',
+                type: 'value',
+                field: 'sources.source_type.keyword',
+                filterType: 'any',
+                isExpanded: false,
+                isFilterable: false,
+            },
             sample_category: {
                 label: 'Sample Category',
                 type: 'value',
@@ -158,22 +166,32 @@ export const SEARCH_ENTITIES = {
                                 filter.values.includes('Section') || filter.values.includes('Suspension')))
                 )
             },
+            // Show 'metadata' facet if 'Sample' or Sample Block/Section/Suspension is selected
+            metadata: ({filters}) => {
+                return filters.some(
+                    (filter) =>
+                        (filter.field === 'entity_type' && filter.values.some(r=> ['Source', 'Dataset', 'Collection', 'Publication'].includes(r))  ) ||
+                        (filter.field === 'sample_category' && (filter.values.includes('Block') ||
+                            filter.values.includes('Section') || filter.values.includes('Suspension')))
+                )
+            },
             // Only show 'organ' facet if 'Sample' is selected from the entity type facet
             organ: FilterIsSelected('entity_type', 'Sample'),
             'rui_location_anatomical_locations.label': FilterIsSelected('entity_type', 'Sample'),
 
             sample_category: FilterIsSelected('entity_type', 'Sample'),
 
-            // Only show 'source.source_type' facet if 'Dataset' or 'Sample' is selected from the entity type facet
+            // Only show 'source.source_type' facet if 'Sample' is selected from the entity type facet
             "source.source_type": ({filters}) => {
                 return filters.some(
                     (filter) =>
-                        filter.field === 'entity_type' &&
-                        (filter.values.includes('Sample') || filter.values.includes('Dataset'))
+                        filter.field === 'entity_type' && filter.values.includes('Sample')
                 )
             },
             // Only show 'source' facet if 'Source' is selected from the entity type facet
             source_type: FilterIsSelected('entity_type', 'Source'),
+            // Only show 'sources' facet if 'Dataset' is selected from the entity type facet
+            'sources.source_type': FilterIsSelected('entity_type', 'Dataset'),
         },
         search_fields: {
             "sennet_id^4": {type: 'value'},
@@ -197,6 +215,7 @@ export const SEARCH_ENTITIES = {
             'group_name',
             'source_type',
             'source.source_type',
+            'sources.source_type',
             'last_modified_timestamp',
             'dataset_type',
             'dataset_category',

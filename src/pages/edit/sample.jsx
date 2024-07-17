@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
 import {cleanJson, eq, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
-import {get_ancestor_organs, parseJson, update_create_entity} from "../../lib/services";
+import {get_ancestor_organs, getAncestry, parseJson, update_create_entity} from "../../lib/services";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import {getUserName, isRuiSupported} from "../../config/config";
@@ -114,54 +114,56 @@ function EditSample() {
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
-            const data = await response.json();
+            const _data = await response.json();
 
-            log.debug('editSample: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editSample: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
             } else {
-                setData(data);
+                const ancestry = await getAncestry(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
+                Object.assign(_data, ancestry)
+                setData(_data);
 
-                checkProtocolUrl(data.protocol_url)
+                checkProtocolUrl(_data.protocol_url)
 
                 // Show organ input group if sample category is 'organ'
-                if (eq(data.sample_category, cache.sampleCategories.Organ)) {
+                if (eq(_data.sample_category, cache.sampleCategories.Organ)) {
                     set_organ_group_hide('')
                 }
 
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
-                    'sample_category': data.sample_category,
-                    'organ': data.organ,
-                    'organ_other': data.organ_other,
-                    'protocol_url': data.protocol_url,
-                    'lab_tissue_sample_id': data.lab_tissue_sample_id,
-                    'description': data.description,
-                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid,
-                    'metadata': data.metadata
+                    'sample_category': _data.sample_category,
+                    'organ': _data.organ,
+                    'organ_other': _data.organ_other,
+                    'protocol_url': _data.protocol_url,
+                    'lab_tissue_sample_id': _data.lab_tissue_sample_id,
+                    'description': _data.description,
+                    'direct_ancestor_uuid': _data.immediate_ancestors[0].uuid,
+                    'metadata': _data.metadata
                 })
-                if (data.image_files) {
-                    setValues(prevState => ({...prevState, image_files: data.image_files}))
+                if (_data.image_files) {
+                    setValues(prevState => ({...prevState, image_files: _data.image_files}))
                 }
-                if (data.thumbnail_file) {
-                    setValues(prevState => ({...prevState, thumbnail_file: data.thumbnail_file}))
+                if (_data.thumbnail_file) {
+                    setValues(prevState => ({...prevState, thumbnail_file: _data.thumbnail_file}))
                 }
-                setImageFilesToAdd(data.image_files)
-                setThumbnailFileToAdd(data.thumbnail_file)
+                setImageFilesToAdd(_data.image_files)
+                setThumbnailFileToAdd(_data.thumbnail_file)
                 setEditMode("Edit")
-                setDataAccessPublic(data.data_access_level === 'public')
+                setDataAccessPublic(_data.data_access_level === 'public')
 
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    await fetchSource(data.immediate_ancestors[0].uuid);
+                if (_data.hasOwnProperty("immediate_ancestors")) {
+                    await fetchSource(_data.immediate_ancestors[0].uuid);
                 }
 
-                let ancestor_organ = await get_ancestor_organs(data.uuid)
+                let ancestor_organ = await get_ancestor_organs(_data.uuid)
                 setAncestorOrgan(ancestor_organ)
-                setAncestorSource([getSourceType(data.source)])
+                setAncestorSource([getSourceType(_data.source)])
 
-                if (data['rui_location'] !== undefined) {
-                    setRuiLocation(data['rui_location'])
+                if (_data['rui_location'] !== undefined) {
+                    setRuiLocation(_data['rui_location'])
                     setShowRuiButton(true)
                 }
             }
