@@ -181,12 +181,11 @@ export const SEARCH_ENTITIES = {
 
             sample_category: FilterIsSelected('entity_type', 'Sample'),
 
-            // Only show 'source.source_type' facet if 'Dataset' or 'Sample' is selected from the entity type facet
+            // Only show 'source.source_type' facet if 'Sample' is selected from the entity type facet
             "source.source_type": ({filters}) => {
                 return filters.some(
                     (filter) =>
-                        filter.field === 'entity_type' &&
-                        (filter.values.includes('Sample') || filter.values.includes('Dataset'))
+                        filter.field === 'entity_type' && filter.values.includes('Sample')
                 )
             },
             // Only show 'source' facet if 'Source' is selected from the entity type facet
