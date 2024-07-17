@@ -38,7 +38,7 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 isFilterable: false,
             },
-            sources: {
+            'sources.source_type': {
                 label: 'Source Type',
                 type: 'value',
                 field: 'sources.source_type.keyword',
@@ -192,7 +192,7 @@ export const SEARCH_ENTITIES = {
             // Only show 'source' facet if 'Source' is selected from the entity type facet
             source_type: FilterIsSelected('entity_type', 'Source'),
             // Only show 'sources' facet if 'Dataset' is selected from the entity type facet
-            sources: FilterIsSelected('entity_type', 'Dataset'),
+            'sources.source_type': FilterIsSelected('entity_type', 'Dataset'),
         },
         search_fields: {
             "sennet_id^4": {type: 'value'},
