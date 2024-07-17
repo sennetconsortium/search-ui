@@ -216,6 +216,7 @@ export const SEARCH_ENTITIES = {
             'group_name',
             'source_type',
             'source.source_type',
+            'sources.source_type',
             'last_modified_timestamp',
             'dataset_type',
             'dataset_category',
