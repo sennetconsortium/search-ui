@@ -38,14 +38,6 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 isFilterable: false,
             },
-            'sources.source_type': {
-                label: 'Source Type',
-                type: 'value',
-                field: 'sources.source_type.keyword',
-                filterType: 'any',
-                isExpanded: false,
-                isFilterable: false,
-            },
             sample_category: {
                 label: 'Sample Category',
                 type: 'value',
@@ -60,6 +52,14 @@ export const SEARCH_ENTITIES = {
                 field: 'dataset_type.keyword',
                 isExpanded: false,
                 filterType: 'any',
+                isFilterable: false,
+            },
+            'sources.source_type': {
+                label: 'Source Type',
+                type: 'value',
+                field: 'sources.source_type.keyword',
+                filterType: 'any',
+                isExpanded: false,
                 isFilterable: false,
             },
             organ: {
