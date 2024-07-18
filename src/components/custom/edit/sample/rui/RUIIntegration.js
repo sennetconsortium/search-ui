@@ -22,7 +22,6 @@ class RUIIntegration extends Component {
      * Update the ccf-rui config and add a resize screen event listener
      */
     componentDidMount() {
-        console.log("RUI...", this.props);
         this.updateHeight();
         this.updateRUIConfig();
         window.addEventListener("resize", this.updateHeight.bind(this));
@@ -81,8 +80,19 @@ class RUIIntegration extends Component {
     }
 
     updateRUIConfig() {
-        const organ = this.props.cache.organTypes[this.props.organ];
-        const [_, organType, organSide] = organ.match(
+        const uberon_url_base = "http://purl.obolibrary.org/obo/UBERON_"
+        const fma_url_base = "http://purl.org/sig/ont/fma/fma"
+        let ontologyId = ""
+
+        const complete_organ = this.props.cache.organs.find(x => x.rui_code === this.props.organ[0])
+        const [whole_code, organ_code_type, organ_code] = complete_organ['organ_uberon'].match(/([^:\s]+):([^:\s]+)/);
+        if (organ_code_type.includes("UBERON")) {
+            ontologyId = uberon_url_base + organ_code
+        } else {
+            ontologyId = fma_url_base + organ_code
+        }
+
+        const [_, organType, organSide] = complete_organ['term'].match(
             /^((?:\w)+(?: \w+)?)(?: \((Right|Left)\))?$/
         );
         const sex = this.props.sex;
@@ -97,11 +107,12 @@ class RUIIntegration extends Component {
             lastName: lastName || "",
         };
         rui.organ = {
-            ontologyId: this.props.organ[0],
+            ontologyId: ontologyId,
             name: organType.toLowerCase(),
             sex: sex?.toLowerCase() || "female",
             side: organSide?.toLowerCase(),
         };
+        console.log("RUI Organ: " + JSON.stringify(rui.organ))
 
         rui.register = function (tissueBlockSpatialData) {
             console.log(tissueBlockSpatialData);

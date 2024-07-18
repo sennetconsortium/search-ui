@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import { organDetails } from "../../config/organs";
-import { getOrgans } from "../../lib/ontology";
+import AppContext from "@/context/AppContext";
 
 const useOrganDetail = (urlParamName) => {
     const [organDetail, setOrganDetail] = useState({
@@ -15,6 +15,7 @@ const useOrganDetail = (urlParamName) => {
         urlParamName: "",
         uberonUrl: "",
     });
+    const {cache} = useContext(AppContext)
 
     useEffect(() => {
         const organDetail = Object.entries(organDetails).find((organDetail) => {
@@ -27,7 +28,7 @@ const useOrganDetail = (urlParamName) => {
         }
 
         const getOntologyOrgan = async (organDetail) => {
-            const organs = await getOrgans();
+            const organs = cache.organs
             let organ = organs.find((organ) => {
                 return organ.rui_code === organDetail.ruiCode;
             });

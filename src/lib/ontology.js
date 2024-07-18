@@ -81,7 +81,7 @@ export async function get_data_assays_obj() {
     return json
 }
 
-export async function getOrgans() {
+export async function get_organs() {
     return get_ontology_from_cache(getUbkgCodes().organ_types)
 }
 
