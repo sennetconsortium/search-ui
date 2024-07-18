@@ -56,16 +56,6 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
                                         formLabel = 'ancestor', controlId = 'direct_ancestor_uuids', dataset_category, addButtonDisabled, data}) {
     const [showHideModal, setShowHideModal] = useState(false)
 
-    useEffect(() => {
-        // Return an array of data types that should be excluded from search
-        // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
-        const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false)
-        valid_dataset_ancestor_config['searchQuery']['excludeFilters'].push({
-            keyword: "dataset_type.keyword",
-            value: excludeNonPrimaryTypes
-        });
-    }, [])
-
 
     const handleSearchFormSubmit = (event, onSubmit) => {
         onSubmit(event)
