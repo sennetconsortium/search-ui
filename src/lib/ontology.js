@@ -76,6 +76,7 @@ export async function get_organs() {
         }
     }
     return organs
+}
 
 export async function get_organ_types() {
     let list = await get_ontology_from_cache(getUbkgCodes().organ_types)
