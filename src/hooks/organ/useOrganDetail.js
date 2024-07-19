@@ -1,6 +1,6 @@
-import {useContext, useEffect, useState} from "react";
-import { organDetails } from "../../config/organs";
+import { organDetails } from "@/config/organs";
 import AppContext from "@/context/AppContext";
+import { useContext, useEffect, useState } from "react";
 
 const useOrganDetail = (urlParamName) => {
     const [organDetail, setOrganDetail] = useState({
@@ -13,7 +13,7 @@ const useOrganDetail = (urlParamName) => {
         icon: "",
         searchUrl: "",
         urlParamName: "",
-        uberonUrl: "",
+        organUberonUrl: "",
     });
     const {cache} = useContext(AppContext)
 
@@ -34,12 +34,7 @@ const useOrganDetail = (urlParamName) => {
             });
             organ = Object.entries(organ).mapKeys((k) => k.camelCase())
 
-            let uberonUrl = undefined;
-            if (organ.organUberon) {
-                const uberonPath = organ.organUberon.replace(":", "_");
-                uberonUrl = `http://purl.obolibrary.org/obo/${uberonPath}`;
-            }
-            return setOrganDetail({ ...organDetail, ...organ, uberonUrl });
+            return setOrganDetail({ ...organDetail, ...organ });
         };
         getOntologyOrgan(organDetail[1]);
     }, []);

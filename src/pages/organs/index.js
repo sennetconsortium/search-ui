@@ -1,19 +1,19 @@
+import { APP_TITLE } from "@/config/config";
+import { APP_ROUTES } from "@/config/constants";
+import AppContext from "@/context/AppContext";
+import useOrganList from "@/hooks/organ/useOrganList";
 import dynamic from "next/dynamic";
-import {useContext} from "react";
-import Col from "react-bootstrap/Col"
-import Container from "react-bootstrap/Container"
-import Row from "react-bootstrap/Row"
-import {APP_TITLE} from "../../config/config";
-import AppContext from "../../context/AppContext";
-import useOrganList from "../../hooks/organ/useOrganList";
 import Link from "next/link";
-import {APP_ROUTES} from "../../config/constants";
+import { useContext } from "react";
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
 
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const Header = dynamic(() => import("../../components/custom/layout/Header"))
-const OrganCard = dynamic(() => import("../../components/custom/organ/OrganCard"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const OrganCard = dynamic(() => import("@/components/custom/organ/OrganCard"))
+const Spinner = dynamic(() => import("@/components/custom/Spinner"))
 
 const AllOrgans = () => {
     const {

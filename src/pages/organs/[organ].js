@@ -1,23 +1,23 @@
+import AppContext from "@/context/AppContext";
+import useOrganDetail from "@/hooks/organ/useOrganDetail";
 import dynamic from "next/dynamic";
-import {useRouter} from "next/router";
-import {useContext} from "react";
-import AppContext from "../../context/AppContext";
-import useOrganDetail from "../../hooks/organ/useOrganDetail";
+import { useRouter } from "next/router";
+import { useContext } from "react";
 
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const DataTypeQuantities = dynamic(() => import("../../components/custom/organ/DataTypeQuantities"))
-const NotFound = dynamic(() => import("../../components/custom/NotFound"))
-const OrganViewHeader = dynamic(() => import("../../components/custom/organ/ViewHeader"))
-const Samples = dynamic(() => import("../../components/custom/organ/Samples"))
-const SidebarBtn = dynamic(() => import("../../components/SidebarBtn"))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const DataTypeQuantities = dynamic(() => import("@/components/custom/organ/DataTypeQuantities"))
+const NotFound = dynamic(() => import("@/components/custom/NotFound"))
+const OrganViewHeader = dynamic(() => import("@/components/custom/organ/ViewHeader"))
+const Samples = dynamic(() => import("@/components/custom/organ/Samples"))
+const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 
 const Organ = () => {
-    const {isRegisterHidden} = useContext(AppContext);
+    const { isRegisterHidden } = useContext(AppContext);
 
     const router = useRouter();
-    const {organ} = router.query;
-    const {organDetail} = useOrganDetail(organ);
+    const { organ } = router.query;
+    const { organDetail } = useOrganDetail(organ);
 
     if (organDetail == null) {
         return NotFound();
