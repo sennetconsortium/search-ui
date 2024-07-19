@@ -40,6 +40,14 @@ export const EntityProvider = ({ children }) => {
     const [response, setResponse] = useState()
     const [warningClasses, setWarningClasses] = useState({})
 
+    const [contacts, setContacts] = useState([])
+    const [creators, setCreators] = useState([])
+    const contactsTSV = {
+        excludeColumns: ['is_contact'],
+        headers: ['version', 'affiliation', 'first_name', 'last_name', 'middle_name_or_initial', 'name', 'orcid_id'],
+        uploadEndpoint: 'collections/attributes'
+    }
+
     const isUnauthorized = () => {
         return authorized === false
     }
@@ -266,6 +274,18 @@ export const EntityProvider = ({ children }) => {
         }
     }
 
+    const setContactsAttributes = (resp) => {
+        if (!resp.description) return
+        setCreators(resp)
+        let _contacts = []
+        for (let creator of resp?.description?.records) {
+            if (eq(creator.is_contact, 'true')) {
+                _contacts.push(creator)
+            }
+        }
+        setContacts({description: {records: _contacts, headers: resp.description.headers}})
+    }
+
     return (
         <EntityContext.Provider
             value={{
@@ -290,7 +310,8 @@ export const EntityProvider = ({ children }) => {
                 getEntityConstraints, getSampleEntityConstraints, buildConstraint,
                 getMetadataNote, successIcon, errIcon, checkProtocolUrl,
                 warningClasses, setWarningClasses, getCancelBtn,
-                isAdminOrHasValue, getAssignedToGroupNames
+                isAdminOrHasValue, getAssignedToGroupNames,
+                contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes
             }}
         >
             {children}
