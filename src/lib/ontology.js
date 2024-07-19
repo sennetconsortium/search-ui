@@ -1,5 +1,5 @@
-import {getUbkgCodes, getUbkgCodesPath, getUbkgEndPoint, getUbkgValuesetPath} from '../config/config'
-import {get_json_header} from './services'
+import { getUbkgCodes, getUbkgCodesPath, getUbkgEndPoint, getUbkgValuesetPath } from '@/config/config'
+import { get_json_header } from './services'
 
 export async function get_onotology_valueset(code) {
     const path = getUbkgCodesPath() ? getUbkgCodesPath()[code] : null
@@ -81,8 +81,22 @@ export async function get_data_assays_obj() {
     return json
 }
 
+const uberon_url_base = "http://purl.obolibrary.org/obo/UBERON_"
+const fma_url_base = "http://purl.org/sig/ont/fma/fma"
+
 export async function get_organs() {
-    return get_ontology_from_cache(getUbkgCodes().organ_types)
+    const organs = await get_ontology_from_cache(getUbkgCodes().organ_types)
+    for (let organ of organs) {
+        if (!organ['organ_uberon']) continue
+
+        const [organ_code_type, organ_code] = organ['organ_uberon'].split(':');
+        if (organ_code_type.includes("UBERON")) {
+            organ["organ_uberon_url"] = uberon_url_base + organ_code
+        } else {
+            organ["organ_uberon_url"] = fma_url_base + organ_code
+        }
+    }
+    return organs
 }
 
 export async function get_organ_types() {

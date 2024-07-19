@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import {Button, Modal} from "react-bootstrap";
-import Spinner from "../../../Spinner";
-import {parseJson} from "../../../../../lib/services";
-import AppModal from "../../../../AppModal";
+import AppModal from "@/components/AppModal";
+import Spinner from "@/components/custom/Spinner";
+import { parseJson } from "@/lib/services";
 import Script from "next/script";
-import {Helmet, HelmetProvider} from "react-helmet-async";
+import React, { Component } from "react";
+import { Button, Modal } from "react-bootstrap";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 class RUIIntegration extends Component {
     constructor(props) {
@@ -80,19 +80,8 @@ class RUIIntegration extends Component {
     }
 
     updateRUIConfig() {
-        const uberon_url_base = "http://purl.obolibrary.org/obo/UBERON_"
-        const fma_url_base = "http://purl.org/sig/ont/fma/fma"
-        let ontologyId = ""
-
-        const complete_organ = this.props.cache.organs.find(x => x.rui_code === this.props.organ[0])
-        const [whole_code, organ_code_type, organ_code] = complete_organ['organ_uberon'].match(/([^:\s]+):([^:\s]+)/);
-        if (organ_code_type.includes("UBERON")) {
-            ontologyId = uberon_url_base + organ_code
-        } else {
-            ontologyId = fma_url_base + organ_code
-        }
-
-        const [_, organType, organSide] = complete_organ['term'].match(
+        const completeOrgan = this.props.cache.organs.find(x => x.rui_code === this.props.organ[0])
+        const [_, organType, organSide] = completeOrgan['term'].match(
             /^((?:\w)+(?: \w+)?)(?: \((Right|Left)\))?$/
         );
         const sex = this.props.sex;
@@ -107,12 +96,11 @@ class RUIIntegration extends Component {
             lastName: lastName || "",
         };
         rui.organ = {
-            ontologyId: ontologyId,
+            ontologyId: completeOrgan["organ_uberon_url"],
             name: organType.toLowerCase(),
             sex: sex?.toLowerCase() || "female",
             side: organSide?.toLowerCase(),
         };
-        console.log("RUI Organ: " + JSON.stringify(rui.organ))
 
         rui.register = function (tissueBlockSpatialData) {
             console.log(tissueBlockSpatialData);
