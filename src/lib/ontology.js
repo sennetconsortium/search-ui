@@ -55,30 +55,9 @@ export async function get_sample_categories() {
     return to_key_val(list)
 }
 
-export async function get_data_assays() {
-    const list = await get_ontology_from_cache(getUbkgCodes().data_assays) //C000001
-    const assays = to_key_val(list, false, 'data_type', 'data_type')
-    return add_other(assays)
-}
-
 export async function get_dataset_types() {
     const list = await get_ontology_from_cache(getUbkgCodes().dataset_types) //C000001
     return to_key_val(list)
-}
-
-export async function get_data_assays_obj() {
-    const json = await get_ontology_from_cache(getUbkgCodes().data_assays)
-    json.push({
-        "alt-names": [],
-        "contains-pii": true,
-        "data_type": "Other",
-        "dataset_provider": "SenNet IEC",
-        "description": "Other",
-        "primary": true,
-        "vis-only": false,
-        "vitessce-hints": []
-    })
-    return json
 }
 
 export async function getOrgans() {

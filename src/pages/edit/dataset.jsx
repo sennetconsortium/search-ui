@@ -106,12 +106,6 @@ export default function EditDataset() {
                                 sub_types = sub_types.concat(constraint.sub_type || [])
                             }
                         })
-                        if (sub_types.length) {
-                            constraintsDataTypes = cache.dataTypesObj.filter(data_type => sub_types.includes(data_type["data_type"])).map(data_type => data_type.data_type);
-                            console.log('Right here')
-                            // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
-                            // $.extend(constraintsDataTypes, dataset_type)
-                        }
                     } // end for
                     if ($.isEmptyObject(constraintsDataTypes)) {
                         getDataTypesByProperty("primary", true)
