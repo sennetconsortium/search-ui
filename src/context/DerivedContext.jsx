@@ -137,21 +137,22 @@ export const DerivedProvider = ({children}) => {
         return _files
     }
     const fetchDataProducts = useCallback(async (data) => {
+        let _files = []
         if (datasetIs.primary(data.creation_action)) {
-            let _files = []
             for (let entity of data.descendants) {
                 if (datasetIs.processed(entity.creation_action)) {
                     const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders())
                     const processed = await response.json()
-                    if (processed.files && processed.files.length) {
-                        let dataProducts = filterFilesForDataProducts(processed.files, processed)
+                    if (processed.ingest_metadata && processed.ingest_metadata.files && processed.ingest_metadata.files.length) {
+                        let dataProducts = filterFilesForDataProducts(processed.ingest_metadata.files, processed)
                         _files = _files.concat(dataProducts)
                     }
                 }
             }
             setDataProducts(_files)
         } else {
-            setDataProducts(filterFilesForDataProducts(data.files, data))
+            _files = data.ingest_metadata?.files || []
+            setDataProducts(filterFilesForDataProducts(_files, data))
 
         }
     })

@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
 import {getRequestHeaders} from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import {get_write_privilege_for_group_uuid, getAncestry} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
@@ -41,17 +41,19 @@ function ViewSample() {
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
-            const data = await response.json();
+            let _data = await response.json();
 
-            log.debug('sample: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('sample: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
+                const ancestry = await getAncestry(_data.uuid, {})
+                Object.assign(_data, ancestry)
                 // set state with the result
-                setData(data);
-                for (const ancestor of data.ancestors) {
+                setData(_data);
+                for (const ancestor of _data.ancestors) {
                     log.debug(ancestor)
                     if (ancestor.metadata && Object.keys(ancestor.metadata).length) {
                         setAncestorHasMetadata(true)
@@ -59,7 +61,7 @@ function ViewSample() {
                     }
                 }
 
-                get_write_privilege_for_group_uuid(data.group_uuid)
+                get_write_privilege_for_group_uuid(_data.group_uuid)
                     .then(response => {
                         setHasWritePrivilege(response.has_write_privs)
                     }).catch(log.error)
