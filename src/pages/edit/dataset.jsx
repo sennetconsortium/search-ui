@@ -179,7 +179,7 @@ export default function EditDataset() {
                     'ingest_task': adminGroup ? _data.ingest_task : undefined,
                     'contains_human_genetic_sequences': _data.contains_human_genetic_sequences,
                     'contacts': _data.contacts,
-                    'creators': _data.creators
+                    'contributors': _data.contributors
                 })
                 setEditMode("Edit")
                 setContainsHumanGeneticSequences(_data.contains_human_genetic_sequences)
@@ -344,6 +344,11 @@ export default function EditDataset() {
                 values['contains_human_genetic_sequences'] = containsHumanGeneticSequences
                 if (values['group_uuid'] === null && editMode === 'Register') {
                     values['group_uuid'] = selectedUserWriteGroupUuid
+                }
+
+                if (adminGroup && !_.isEmpty(creators)) {
+                    values['contributors'] = creators.description.records
+                    values['contacts'] = contacts.description.records
                 }
 
                 // Remove empty strings
@@ -529,21 +534,21 @@ export default function EditDataset() {
                                             values={values} data={data} onChange={onChange}/>
                                     }
 
-                                    <AttributesUpload ingestEndpoint={contactsTSV.uploadEndpoint} showAllInTable={true}
+                                    {adminGroup && <AttributesUpload ingestEndpoint={contactsTSV.uploadEndpoint} showAllInTable={true}
                                                       setAttribute={setContactsAttributes}
                                                       entity={cache.entities.collection} excludeColumns={contactsTSV.excludeColumns}
                                                       attribute={'Creators'} title={<h6>Creators</h6>}
                                                       customFileInfo={<span><a
                                                           className='btn btn-outline-primary rounded-0 fs-8' download
-                                                          href={'/bulk/entities/example_collection_creators.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>
+                                                          href={'/bulk/entities/example_collection_creators.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>}
 
                                     {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
                                     {isEditMode && !creators.description && data.creators &&
                                         <div className='c-metadataUpload__table table-responsive'>
-                                            <h6>Creators</h6>
+                                            <h6>Contributors</h6>
                                             <DataTable
                                                 columns={getResponseList({headers: contactsTSV.headers}, contactsTSV.excludeColumns).columns}
-                                                data={data.creators}
+                                                data={data.contributors}
                                                 pagination/>
                                         </div>}
 
