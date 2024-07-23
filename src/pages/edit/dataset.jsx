@@ -543,7 +543,7 @@ export default function EditDataset() {
                                                           href={'/bulk/entities/example_collection_creators.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>}
 
                                     {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
-                                    {isEditMode && !creators.description && data.creators &&
+                                    {isEditMode && !creators.description && data.contributors &&
                                         <div className='c-metadataUpload__table table-responsive'>
                                             <h6>Contributors</h6>
                                             <DataTable
