@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
 import {getRequestHeaders, getStatusColor} from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import {get_write_privilege_for_group_uuid, getAncestry} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Table from 'react-bootstrap/Table';
@@ -45,17 +45,19 @@ function ViewPublication() {
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
-            const data = await response.json();
+            let _data = await response.json();
 
-            log.debug('publication: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('publication: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
+                const ancestry = await getAncestry(_data.uuid, {})
+                Object.assign(_data, ancestry)
                 // set state with the result
-                setData(data);
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                setData(_data);
+                get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
             }

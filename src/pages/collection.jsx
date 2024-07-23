@@ -8,7 +8,7 @@ import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "@/context/DerivedContext";
 import {useRouter} from "next/router";
-import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import {get_write_privilege_for_group_uuid, getAncestry} from "@/lib/services";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -40,20 +40,22 @@ function ViewCollection() {
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
-            const data = await response.json();
+            const _data = await response.json();
 
-            log.debug('collection: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('collection: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
+                const ancestry = await getAncestry(_data.uuid, {})
+                Object.assign(_data, ancestry)
                 // set state with the result
-                setData(data);
-                const doi = await fetchDataCite(data.doi_url)
+                setData(_data);
+                const doi = await fetchDataCite(_data.doi_url)
                 setDoiData(doi?.data)
 
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
             }

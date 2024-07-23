@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import {Button, Modal} from "react-bootstrap";
-import Spinner from "../../../Spinner";
-import {parseJson} from "../../../../../lib/services";
-import AppModal from "../../../../AppModal";
+import AppModal from "@/components/AppModal";
+import Spinner from "@/components/custom/Spinner";
+import { parseJson } from "@/lib/services";
 import Script from "next/script";
-import {Helmet, HelmetProvider} from "react-helmet-async";
+import React, { Component } from "react";
+import { Button, Modal } from "react-bootstrap";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 class RUIIntegration extends Component {
     constructor(props) {
@@ -22,7 +22,6 @@ class RUIIntegration extends Component {
      * Update the ccf-rui config and add a resize screen event listener
      */
     componentDidMount() {
-        console.log("RUI...", this.props);
         this.updateHeight();
         this.updateRUIConfig();
         window.addEventListener("resize", this.updateHeight.bind(this));
@@ -81,8 +80,8 @@ class RUIIntegration extends Component {
     }
 
     updateRUIConfig() {
-        const organ = this.props.cache.organTypes[this.props.organ];
-        const [_, organType, organSide] = organ.match(
+        const completeOrgan = this.props.cache.organs.find(x => x.rui_code === this.props.organ[0])
+        const [_, organType, organSide] = completeOrgan['term'].match(
             /^((?:\w)+(?: \w+)?)(?: \((Right|Left)\))?$/
         );
         const sex = this.props.sex;
@@ -97,7 +96,7 @@ class RUIIntegration extends Component {
             lastName: lastName || "",
         };
         rui.organ = {
-            ontologyId: this.props.organ[0],
+            ontologyId: completeOrgan["organ_uberon_url"],
             name: organType.toLowerCase(),
             sex: sex?.toLowerCase() || "female",
             side: organSide?.toLowerCase(),

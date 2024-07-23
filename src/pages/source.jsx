@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
 import {eq, extractSourceMappedMetadataInfo, getRequestHeaders} from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import {get_write_privilege_for_group_uuid, getAncestry} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
@@ -41,29 +41,31 @@ function ViewSource() {
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
             // convert the data to json
-            const data = await response.json();
+            let _data = await response.json();
 
-            log.debug('source: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('source: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                // set state with the result
-                if (eq(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata) {
+                
+                if (eq(_data.source_type, cache.sourceTypes.Human) && _data.source_mapped_metadata) {
                     // Humans have their metadata inside "source_mapped_metadata" while mice have theirs inside "metadata"
                     // Humans have grouped metadata
-                    const {groups, metadata} = extractSourceMappedMetadataInfo(data.source_mapped_metadata)
+                    const {groups, metadata} = extractSourceMappedMetadataInfo(_data.source_mapped_metadata)
                     setGroups(groups)
                     setMetadata(metadata)
-                } else if (eq(data.source_type, cache.sourceTypes.Mouse) && data.metadata) {
-                    setMappedMetadata(data.cedar_mapped_metadata)
-                    setMetadata(data.metadata)
+                } else if (eq(_data.source_type, cache.sourceTypes.Mouse) && _data.metadata) {
+                    setMappedMetadata(_data.cedar_mapped_metadata)
+                    setMetadata(_data.metadata)
                 }
+                const ancestry = await getAncestry(_data.uuid, {})
+                Object.assign(_data, ancestry)
+                // set state with the result
+                setData(_data);
 
-                setData(data);
-
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
             }
