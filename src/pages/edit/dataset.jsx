@@ -360,10 +360,12 @@ export default function EditDataset() {
 
                 // Remove 'status' from values. Not a field to pass to Entity API for a normal update of Dataset
                 delete json['status']
+
+                // Temporarily disable
                 // If dataset is not `primary` then don't send direct_ancestor_uuids
-                if (data.dataset_category !== 'primary') {
-                    delete json['direct_ancestor_uuids']
-                }
+                // if (data.dataset_category !== 'primary') {
+                //     delete json['direct_ancestor_uuids']
+                // }
 
                 await update_create_dataset(uuid, json, editMode).then((response) => {
                     modalResponse(response)
