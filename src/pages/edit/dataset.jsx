@@ -163,8 +163,8 @@ export default function EditDataset() {
                     await fetchAncestors(immediate_ancestors)
                 }
 
-                if (data.contacts) {
-                    setContacts({description: {records: data.contacts, headers: contactsTSV.headers}})
+                if (_data.contacts) {
+                    setContacts({description: {records: _data.contacts, headers: contactsTSV.headers}})
                 }
 
                 // Set state with default values that will be PUT to Entity API to update
