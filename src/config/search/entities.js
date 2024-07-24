@@ -79,7 +79,7 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-             // Used for when "Dataset/Sample" is selected to show related sources
+            // Used for when "Dataset/Sample" is selected to show related sources
             "source.source_type": {
                 label: 'Source Type',
                 type: 'value',
@@ -104,10 +104,10 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            metadata: {
+            'ingest_metadata.metadata': {
                 label: 'Has Metadata',
                 type: 'exists',
-                field: 'metadata',
+                field: 'ingest_metadata.metadata',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -159,15 +159,15 @@ export const SEARCH_ENTITIES = {
         conditionalFacets: {
             // Show 'origin_sample.organ' facet if 'Dataset' or Sample Block/Section/Suspension is selected
             "origin_sample.organ": ({filters}) => {
-                 return filters.some(
+                return filters.some(
                     (filter) =>
                         (filter.field === 'entity_type' && filter.values.includes('Dataset')) ||
                         (filter.field === 'sample_category' && (filter.values.includes('Block') ||
-                                filter.values.includes('Section') || filter.values.includes('Suspension')))
+                            filter.values.includes('Section') || filter.values.includes('Suspension')))
                 )
             },
             // Show 'metadata' facet if 'Sample' or Sample Block/Section/Suspension is selected
-            metadata: ({filters}) => {
+            'ingest_metadata.metadata': ({filters}) => {
                 return filters.some(
                     (filter) =>
                         (filter.field === 'entity_type' && filter.values.some(r=> ['Source', 'Dataset', 'Collection', 'Publication'].includes(r))  ) ||
