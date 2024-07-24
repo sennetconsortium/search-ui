@@ -104,6 +104,14 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
+             'metadata': {
+                label: 'Has Metadata',
+                type: 'exists',
+                field: 'metadata',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
             'ingest_metadata.metadata': {
                 label: 'Has Metadata',
                 type: 'exists',
@@ -167,12 +175,18 @@ export const SEARCH_ENTITIES = {
                 )
             },
             // Show 'metadata' facet if 'Sample' or Sample Block/Section/Suspension is selected
-            'ingest_metadata.metadata': ({filters}) => {
+            'metadata': ({filters}) => {
                 return filters.some(
                     (filter) =>
-                        (filter.field === 'entity_type' && filter.values.some(r=> ['Source', 'Dataset', 'Collection', 'Publication'].includes(r))  ) ||
+                        (filter.field === 'entity_type' && filter.values.some(r=> ['Source', 'Collection', 'Publication'].includes(r))  ) ||
                         (filter.field === 'sample_category' && (filter.values.includes('Block') ||
                             filter.values.includes('Section') || filter.values.includes('Suspension')))
+                )
+            },
+             'ingest_metadata.metadata': ({filters}) => {
+                return filters.some(
+                    (filter) =>
+                        (filter.field === 'entity_type' && filter.values.includes('Dataset'))
                 )
             },
             // Only show 'organ' facet if 'Sample' is selected from the entity type facet
