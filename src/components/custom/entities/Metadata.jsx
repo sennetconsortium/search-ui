@@ -163,11 +163,11 @@ function Metadata({data, metadata, mappedMetadata, groups, hasLineageMetadata = 
                                     return (
                                         tabPaneCommon('1', index, ancestor, ancestor.metadata, ancestor.cedar_mapped_metadata)
                                     )
-                                } else if (ancestor.metadata && Object.keys(ancestor.metadata).length && 'metadata' in ancestor.metadata) {
+                                } else if (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata).length && 'metadata' in ancestor.ingest_metadata) {
                                     // Handle dataset table
                                     // Datasets have their metadata inside "metadata.metadata"
                                     return (
-                                        tabPaneCommon('2', index, ancestor, ancestor.metadata.metadata, ancestor.cedar_mapped_metadata)
+                                        tabPaneCommon('2', index, ancestor, ancestor.ingest_metadata.metadata, ancestor.cedar_mapped_metadata)
                                     )
                                 }
                             })}
