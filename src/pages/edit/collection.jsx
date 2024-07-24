@@ -47,16 +47,13 @@ export default function EditCollection() {
         showModal, setShowModal,
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
-        getEntityConstraints, getCancelBtn
+        getEntityConstraints, getCancelBtn,
+        contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const isPrimary = useRef(false)
-    const [contacts, setContacts] = useState([])
-    const [creators, setCreators] = useState([])
-    const ingestEndpoint = 'collections/attributes'
-    const excludeColumns = ['is_contact']
     const [bulkAddField, setBulkAddField] = useState(false)
     const isBulkHandling = useRef(false)
     const [bulkErrorMessage, setBulkErrorMessage] = useState(null)
@@ -64,7 +61,6 @@ export default function EditCollection() {
     const bulkAddBtnTooltipDefault = <span>Toggle the field to bulk add comma separated SenNet ids or uuids.</span>
     const [bulkAddBtnTooltip, setBulkAddBtnTooltip] = useState(bulkAddBtnTooltipDefault)
     const [bulkAddTextareaVal, setBulkAddTextareaVal] = useState(null)
-    const headers = ['version', 'affiliation', 'first_name', 'last_name', 'middle_name_or_initial', 'name', 'orcid_id']
     const supportedEntities = [cache.entities.dataset, cache.entities.sample, cache.entities.source]
 
     useEffect(() => {
@@ -112,7 +108,7 @@ export default function EditCollection() {
                 }
 
                 if (data.contacts) {
-                    setContacts({description: {records: data.contacts, headers}})
+                    setContacts({description: {records: data.contacts, headers: contactsTSV.headers}})
                 }
 
                 // Set state with default values that will be PUT to Entity API to update
@@ -314,18 +310,6 @@ export default function EditCollection() {
 
     }
 
-    const setAttributes = (resp) => {
-        if (!resp.description) return
-        setCreators(resp)
-        let _contacts = []
-        for (let creator of resp?.description?.records) {
-            if (eq(creator.is_contact, 'true')) {
-                _contacts.push(creator)
-            }
-        }
-        setContacts({description: {records: _contacts, headers: resp.description.headers}})
-    }
-
     // TODO: remove this return when ready to support
     return <NotFound/>
 
@@ -455,9 +439,9 @@ export default function EditCollection() {
                                                      text={<>An abstract publicly available when
                                                          the <code>Collection</code> is published.</>}/>
 
-                                    <AttributesUpload ingestEndpoint={ingestEndpoint} showAllInTable={true}
-                                                      setAttribute={setAttributes}
-                                                      entity={cache.entities.collection} excludeColumns={excludeColumns}
+                                    <AttributesUpload ingestEndpoint={contactsTSV.uploadEndpoint} showAllInTable={true}
+                                                      setAttribute={setContactsAttributes}
+                                                      entity={cache.entities.collection} excludeColumns={contactsTSV.excludeColumns}
                                                       attribute={'Creators'} title={<h6>Creators</h6>}
                                                       customFileInfo={<span><a
                                                           className='btn btn-outline-primary rounded-0 fs-8' download
@@ -468,7 +452,7 @@ export default function EditCollection() {
                                         <div className='c-metadataUpload__table table-responsive'>
                                             <h6>Creators</h6>
                                             <DataTable
-                                                columns={getResponseList({headers}, excludeColumns).columns}
+                                                columns={getResponseList({headers: contactsTSV.headers}, contactsTSV.excludeColumns).columns}
                                                 data={data.creators}
                                                 pagination/>
                                         </div>}
@@ -478,7 +462,7 @@ export default function EditCollection() {
                                         <div className='c-metadataUpload__table table-responsive'>
                                             <h6>Contacts</h6>
                                             <DataTable
-                                                columns={getResponseList(contacts, excludeColumns).columns}
+                                                columns={getResponseList(contacts, contactsTSV.excludeColumns).columns}
                                                 data={contacts.description.records}
                                                 pagination/>
                                         </div>}

@@ -14,7 +14,6 @@ import {
     eq,
     fetchEntity,
     fetchProtocols,
-    getDataTypesByProperty,
     getEntityViewUrl,
     getIsPrimaryDataset,
     getRequestHeaders,
@@ -25,6 +24,9 @@ import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import {getIngestEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 import $ from 'jquery'
 import DatasetRevertButton, {statusRevertTooltip} from "../../components/custom/edit/dataset/DatasetRevertButton";
+import DataTable from "react-data-table-component";
+import AttributesUpload, {getResponseList} from "@/components/custom/edit/AttributesUpload";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
 const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
@@ -56,7 +58,8 @@ export default function EditDataset() {
         getEntityConstraints,
         getSampleEntityConstraints,
         buildConstraint, successIcon, errIcon, getCancelBtn,
-        isAdminOrHasValue, getAssignedToGroupNames
+        isAdminOrHasValue, getAssignedToGroupNames,
+        contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
     const router = useRouter()
@@ -64,6 +67,7 @@ export default function EditDataset() {
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
     const [dataTypes, setDataTypes] = useState(null)
     const isPrimary = useRef(false)
+
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -107,9 +111,7 @@ export default function EditDataset() {
                             }
                         })
                     } // end for
-                    if ($.isEmptyObject(constraintsDataTypes)) {
-                        getDataTypesByProperty("primary", true)
-                    } else {
+                    if (!$.isEmptyObject(constraintsDataTypes)) {
                         setDataTypes(constraintsDataTypes)
                     }
                 }
@@ -160,6 +162,10 @@ export default function EditDataset() {
                     await fetchAncestors(immediate_ancestors)
                 }
 
+                if (_data.contacts) {
+                    setContacts({description: {records: _data.contacts, headers: contactsTSV.headers}})
+                }
+
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
                     'status': _data.status,
@@ -170,7 +176,9 @@ export default function EditDataset() {
                     'direct_ancestor_uuids': immediate_ancestors,
                     'assigned_to_group_name': adminGroup ? _data.assigned_to_group_name : undefined,
                     'ingest_task': adminGroup ? _data.ingest_task : undefined,
-                    'contains_human_genetic_sequences': _data.contains_human_genetic_sequences
+                    'contains_human_genetic_sequences': _data.contains_human_genetic_sequences,
+                    'contacts': _data.contacts,
+                    'contributors': _data.contributors
                 })
                 setEditMode("Edit")
                 setContainsHumanGeneticSequences(_data.contains_human_genetic_sequences)
@@ -337,6 +345,11 @@ export default function EditDataset() {
                     values['group_uuid'] = selectedUserWriteGroupUuid
                 }
 
+                if (adminGroup && !_.isEmpty(creators)) {
+                    values['contributors'] = creators.description.records
+                    values['contacts'] = contacts.description.records
+                }
+
                 // Remove empty strings
                 let json = cleanJson({...values});
                 let uuid = data.uuid
@@ -351,10 +364,12 @@ export default function EditDataset() {
 
                 // Remove 'status' from values. Not a field to pass to Entity API for a normal update of Dataset
                 delete json['status']
+
+                // Temporarily disable
                 // If dataset is not `primary` then don't send direct_ancestor_uuids
-                if (data.dataset_category !== 'primary') {
-                    delete json['direct_ancestor_uuids']
-                }
+                // if (data.dataset_category !== 'primary') {
+                //     delete json['direct_ancestor_uuids']
+                // }
 
                 await update_create_dataset(uuid, json, editMode).then((response) => {
                     modalResponse(response)
@@ -517,6 +532,34 @@ export default function EditDataset() {
                                             datasetTypes={dataTypes === null ? Object.values(cache.datasetTypes) : dataTypes}
                                             values={values} data={data} onChange={onChange}/>
                                     }
+
+                                    {adminGroup && <AttributesUpload ingestEndpoint={contactsTSV.uploadEndpoint} showAllInTable={true}
+                                                      setAttribute={setContactsAttributes}
+                                                      entity={cache.entities.collection} excludeColumns={contactsTSV.excludeColumns}
+                                                      attribute={'Creators'} title={<h6>Creators</h6>}
+                                                      customFileInfo={<span><a
+                                                          className='btn btn-outline-primary rounded-0 fs-8' download
+                                                          href={'/bulk/entities/example_collection_creators.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>}
+
+                                    {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
+                                    {isEditMode && !creators.description && data.contributors &&
+                                        <div className='c-metadataUpload__table table-responsive'>
+                                            <h6>Contributors</h6>
+                                            <DataTable
+                                                columns={getResponseList({headers: contactsTSV.headers}, contactsTSV.excludeColumns).columns}
+                                                data={data.contributors}
+                                                pagination/>
+                                        </div>}
+
+                                    {/*When a user uploads a file, the is_contact property is used to determine contacts, on edit mode, this just displays list from data.contacts*/}
+                                    {contacts && contacts.description &&
+                                        <div className='c-metadataUpload__table table-responsive'>
+                                            <h6>Contacts</h6>
+                                            <DataTable
+                                                columns={getResponseList(contacts, contactsTSV.excludeColumns).columns}
+                                                data={contacts.description.records}
+                                                pagination/>
+                                        </div>}
 
                                     <div className={'d-flex flex-row-reverse'}>
 
