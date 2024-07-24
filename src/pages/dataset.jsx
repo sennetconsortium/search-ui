@@ -106,7 +106,7 @@ function ViewDataset() {
                 setDoiData(doi?.data)
                 for (const ancestor of ancestry.ancestors) {
                     console.log(ancestor)
-                    if (ancestor.metadata && Object.keys(ancestor.metadata).length) {
+                    if ((ancestor.metadata && Object.keys(ancestor.metadata).length) || (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata) && 'metadata' in ancestor.ingest_metadata)) {
                         setAncestorHasMetadata(true)
                         break
                     }
@@ -194,7 +194,7 @@ function ViewDataset() {
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
 
-                                            {!!((data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) || ancestorHasMetadata) &&
+                                            {!!((data.ingest_metadata && Object.keys(data.ingest_metadata).length && 'metadata' in data.ingest_metadata) || ancestorHasMetadata) &&
                                                 <li className="nav-item">
                                                     <a href="#Metadata"
                                                        className="nav-link"
@@ -271,10 +271,10 @@ function ViewDataset() {
 
                                             {/*Metadata*/}
                                             {/*Datasets have their metadata inside "metadata.metadata"*/}
-                                            {!!((data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) || ancestorHasMetadata) &&
+                                            {!!((data.ingest_metadata && Object.keys(data.ingest_metadata).length && 'metadata' in data.ingest_metadata) || ancestorHasMetadata) &&
                                                 <Metadata
                                                     data={data}
-                                                    metadata={data?.metadata?.metadata}
+                                                    metadata={data?.ingest_metadata?.metadata}
                                                     mappedMetadata={data?.cedar_mapped_metadata}
                                                     hasLineageMetadata={true}/>
                                             }
