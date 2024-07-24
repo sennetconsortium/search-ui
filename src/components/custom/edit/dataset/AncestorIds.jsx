@@ -12,7 +12,7 @@ import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
 import addons from "../../js/addons/addons";
 import $ from 'jquery'
 import SelectedFilters from "../../layout/SelectedFilters";
-import {getDataTypesByProperty, getUBKGFullName} from "../../js/functions";
+import {getUBKGFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
 import SearchUIContainer from 'search-ui/components/core/SearchUIContainer';
 import FacetsContent from '../../search/FacetsContent';

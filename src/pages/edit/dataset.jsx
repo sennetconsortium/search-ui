@@ -14,7 +14,6 @@ import {
     eq,
     fetchEntity,
     fetchProtocols,
-    getDataTypesByProperty,
     getEntityViewUrl,
     getIsPrimaryDataset,
     getRequestHeaders,
