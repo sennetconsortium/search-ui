@@ -37,6 +37,7 @@ export const tableColumns = (d = '"') => [
         sortable: true,
         format: (row) => {
             const formatError = (val) => {
+                if (!val) return ''
                 let del = d
                 if (!Array.isArray(d)) {
                     del = [d]
@@ -118,7 +119,7 @@ export const getResponseList = (details, excludeColumns) => {
     return {data: data?.records, columns}
 }
 
-function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable, excludeColumns, title, customFileInfo }) {
+function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable, excludeColumns, title, customFileInfo, setAttributesOnFail }) {
 
     const attributeInputRef = useRef()
     const [file, setFile] = useState('')
@@ -177,6 +178,9 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
                     setValidationError(true)
                 }
                 setTable(result)
+                if (setAttributesOnFail !== undefined) {
+                    setAttributesOnFail(details)
+                }
             } else {
                 if (showAllInTable) {
                     setTable(getResponseList(details, excludeColumns))

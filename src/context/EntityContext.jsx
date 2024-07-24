@@ -44,8 +44,9 @@ export const EntityProvider = ({ children }) => {
     const [creators, setCreators] = useState([])
     const contactsTSV = {
         excludeColumns: ['is_contact'],
-        headers: ['version', 'affiliation', 'first_name', 'last_name', 'middle_name_or_initial', 'name', 'orcid_id'],
-        uploadEndpoint: 'collections/attributes'
+        headers: ['first_name', 'last_name', 'middle_name_or_initial	display_name','affiliation','orcid','email',
+            'is_contact','is_principal_investigator','is_operator', 'metadata_schema_id'],
+        uploadEndpoint: 'validate-tsv'
     }
 
     const isUnauthorized = () => {
@@ -279,11 +280,18 @@ export const EntityProvider = ({ children }) => {
         setCreators(resp)
         let _contacts = []
         for (let creator of resp?.description?.records) {
-            if (eq(creator.is_contact, 'true')) {
+            if (eq(creator.is_contact, 'true') || eq(creator.is_contact, 'yes')) {
                 _contacts.push(creator)
             }
         }
         setContacts({description: {records: _contacts, headers: resp.description.headers}})
+        setDisableSubmit(false)
+    }
+
+    const setContactsAttributesOnFail = (resp) => {
+        setCreators({description: {}})
+        setContacts([])
+        setDisableSubmit(true)
     }
 
     return (
@@ -311,7 +319,7 @@ export const EntityProvider = ({ children }) => {
                 getMetadataNote, successIcon, errIcon, checkProtocolUrl,
                 warningClasses, setWarningClasses, getCancelBtn,
                 isAdminOrHasValue, getAssignedToGroupNames,
-                contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes
+                contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes, setContactsAttributesOnFail
             }}
         >
             {children}
