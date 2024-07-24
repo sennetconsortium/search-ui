@@ -80,6 +80,15 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'ingest_metad
 
     }, [derivedDataset])
 
+    const getAssetsURL = (uuid, rel_path) => {
+        let url = getAssetsEndpoint() + uuid + "/" + rel_path
+        let token = getAuth()
+        if (token != null) {
+            url += "?token=" + token
+        }
+        return url
+    }
+
     const onExpand = (event) => {
         event.node.icon = 'pi pi-fw pi-folder-open'
     }
@@ -158,7 +167,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'ingest_metad
                         <Col md={8} sm={8}>
                             <a target="_blank"
                                className={"icon_inline js-file"}
-                               href={`${getAssetsEndpoint()}${node.data.uuid}/${node.data.rel_path}?token=${getAuth()}`}><span
+                               href={`${getAssetsURL(node.data.uuid, node.data.rel_path)}`}><span
                                className="me-1">{node.label}</span>
                             </a>
                             {!includeDescription && <SenNetPopover className={`file-${node.label}`}
