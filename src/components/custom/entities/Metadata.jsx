@@ -123,7 +123,7 @@ function Metadata({data, metadata, mappedMetadata, groups, hasLineageMetadata = 
                                         }
                                         // The dataset nav link
                                     } else if (eq(ancestor.entity_type, cache.entities.dataset)) {
-                                        if (ancestor.metadata && Object.keys(ancestor.metadata).length && 'metadata' in ancestor.metadata) {
+                                        if (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata).length && 'metadata' in ancestor.ingest_metadata) {
                                             return (
                                                 popoverCommon(index, 'dataset', ancestor)
                                             )
