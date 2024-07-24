@@ -155,6 +155,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
             const upload = e && e.currentTarget.files ? e.currentTarget.files[0] : file
             if (!upload) return
             log.debug('Metadata', file)
+            setTable(null)
             setRerun(null)
             setIsValidating(true)
             let formData = new FormData()
@@ -259,7 +260,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
                     </small>
                 </span>
                 {customFileInfo}
-                {(error || showAllInTable) && table.data && <div className={`c-metadataUpload__table table-responsive ${error ? 'has-error' : ''}`}>
+                {(error || showAllInTable) && table?.data && <div className={`c-metadataUpload__table table-responsive ${error ? 'has-error' : ''}`}>
                     {title}
                     <DataTable
                         columns={table.columns}
