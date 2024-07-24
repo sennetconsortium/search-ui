@@ -104,10 +104,10 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            metadata: {
+            'ingest_metadata.metadata': {
                 label: 'Has Metadata',
                 type: 'exists',
-                field: 'metadata',
+                field: 'ingest_metadata.metadata',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -167,7 +167,7 @@ export const SEARCH_ENTITIES = {
                 )
             },
             // Show 'metadata' facet if 'Sample' or Sample Block/Section/Suspension is selected
-            metadata: ({filters}) => {
+            'ingest_metadata.metadata': ({filters}) => {
                 return filters.some(
                     (filter) =>
                         (filter.field === 'entity_type' && filter.values.some(r=> ['Source', 'Dataset', 'Collection', 'Publication'].includes(r))  ) ||
