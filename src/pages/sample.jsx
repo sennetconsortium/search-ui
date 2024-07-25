@@ -26,6 +26,7 @@ const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthoriz
 function ViewSample() {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [isDataLoaded, setIsDataLoaded] = useState(false)
     const [ancestorHasMetadata, setAncestorHasMetadata] = useState(false)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
@@ -48,6 +49,7 @@ function ViewSample() {
                 setError(true)
                 setErrorMessage(_data["error"])
                 setData(false)
+                setIsDataLoaded(true)
             } else {
                 const ancestry = await getAncestry(_data.uuid, {})
                 Object.assign(_data, ancestry)
@@ -65,6 +67,8 @@ function ViewSample() {
                     .then(response => {
                         setHasWritePrivilege(response.has_write_privs)
                     }).catch(log.error)
+
+                setIsDataLoaded(true)
             }
         }
 
@@ -79,7 +83,7 @@ function ViewSample() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
+    if (((isAuthorizing() || isUnauthorized()) && !data) || !isDataLoaded ) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )

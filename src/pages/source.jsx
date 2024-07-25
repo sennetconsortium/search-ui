@@ -24,6 +24,7 @@ const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthoriz
 function ViewSource() {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [isDataLoaded, setIsDataLoaded] = useState(false)
     const [metadata, setMetadata] = useState(null)
     const [mappedMetadata, setMappedMetadata] = useState(null)
     const [groups, setGroups] = useState(null)
@@ -48,6 +49,7 @@ function ViewSource() {
                 setError(true)
                 setErrorMessage(_data["error"])
                 setData(false)
+                setIsDataLoaded(true)
             } else {
                 
                 if (eq(_data.source_type, cache.sourceTypes.Human) && _data.source_mapped_metadata) {
@@ -68,6 +70,8 @@ function ViewSource() {
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
+
+                setIsDataLoaded(true)
             }
         }
 
@@ -81,7 +85,7 @@ function ViewSource() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
+    if (((isAuthorizing() || isUnauthorized()) && !data) || !isDataLoaded ) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )
