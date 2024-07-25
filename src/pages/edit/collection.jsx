@@ -48,7 +48,7 @@ export default function EditCollection() {
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
         getEntityConstraints, getCancelBtn,
-        contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes
+        contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes, setContactsAttributesOnFail
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
     const router = useRouter()
@@ -221,7 +221,7 @@ export default function EditCollection() {
                 log.debug("Form is valid")
 
 
-                if (!_.isEmpty(creators)) {
+                if (!_.isEmpty(creators) && creators.description.records) {
                     values["creators"] = creators.description.records
                     values['contacts'] = contacts.description.records
                 }
@@ -441,11 +441,12 @@ export default function EditCollection() {
 
                                     <AttributesUpload ingestEndpoint={contactsTSV.uploadEndpoint} showAllInTable={true}
                                                       setAttribute={setContactsAttributes}
+                                                      setAttributesOnFail={setContactsAttributesOnFail}
                                                       entity={cache.entities.collection} excludeColumns={contactsTSV.excludeColumns}
                                                       attribute={'Creators'} title={<h6>Creators</h6>}
                                                       customFileInfo={<span><a
                                                           className='btn btn-outline-primary rounded-0 fs-8' download
-                                                          href={'/bulk/entities/example_collection_creators.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>
+                                                          href={'/bulk/entities/example_contributors.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>
 
                                     {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
                                     {isEditMode && !creators.description && data.creators &&

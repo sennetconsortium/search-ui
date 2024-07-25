@@ -23,6 +23,7 @@ const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthoriz
 
 function ViewPublication() {
     const [data, setData] = useState(null)
+    const [isDataLoaded, setIsDataLoaded] = useState(false)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -52,6 +53,7 @@ function ViewPublication() {
                 setError(true)
                 setErrorMessage(_data["error"])
                 setData(false)
+                setIsDataLoaded(true)
             } else {
                 const ancestry = await getAncestry(_data.uuid, {})
                 Object.assign(_data, ancestry)
@@ -60,6 +62,8 @@ function ViewPublication() {
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
+
+                setIsDataLoaded(true)
             }
         }
 
@@ -74,7 +78,7 @@ function ViewPublication() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
+    if (((isAuthorizing() || isUnauthorized()) && !data) || !isDataLoaded ) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )

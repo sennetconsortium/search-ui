@@ -34,6 +34,7 @@ const Upload = dynamic(() => import("@/components/custom/entities/dataset/Upload
 
 function ViewDataset() {
     const [data, setData] = useState(null)
+    const [isDataLoaded, setIsDataLoaded] = useState(false)
     const [doiData, setDoiData] = useState(null)
     const [ancestorHasMetadata, setAncestorHasMetadata] = useState(false)
     const [error, setError] = useState(false)
@@ -84,8 +85,6 @@ function ViewDataset() {
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-
-
             log.debug('dataset: getting data...', uuid)
             // get the data from the api
             const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
@@ -97,6 +96,7 @@ function ViewDataset() {
                 setError(true)
                 setErrorMessage(_data["error"])
                 setData(false)
+                setIsDataLoaded(true)
             } else {
                 const ancestry = await getAncestry(_data.uuid, {})
                 Object.assign(_data, ancestry)
@@ -115,6 +115,8 @@ function ViewDataset() {
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
+
+                setIsDataLoaded(true)
             }
         }
 
@@ -129,7 +131,7 @@ function ViewDataset() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
+    if (((isAuthorizing() || isUnauthorized()) && !data) || !isDataLoaded ) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )
