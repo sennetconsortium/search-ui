@@ -446,7 +446,7 @@ export default function EditCollection() {
                                                       attribute={'Creators'} title={<h6>Creators</h6>}
                                                       customFileInfo={<span><a
                                                           className='btn btn-outline-primary rounded-0 fs-8' download
-                                                          href={'/bulk/entities/example_contributors.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>
+                                                          href={'https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/contributors/latest/contributors.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>
 
                                     {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
                                     {isEditMode && !creators.description && data.creators &&
