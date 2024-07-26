@@ -47,7 +47,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'ingest_metad
 
     const getFiles = (data) => {
         if (keys.files.contains('ingest_metadata')) {
-            return data.ingest_metadata?.files
+            return data?.ingest_metadata?.files
         } else {
             return data[keys.files]
         }
