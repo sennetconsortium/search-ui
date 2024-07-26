@@ -188,9 +188,9 @@ function EditUpload() {
         handlePut('reorganize')
     }
 
-    if (isAuthorizing() || isUnauthorized()) {
+    if ((isAuthorizing() || isUnauthorized()) || !data) {
         return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
+            data == null ? <Spinner/> : <Unauthorized/>
         )
     } else {
         return (
