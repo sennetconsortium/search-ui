@@ -53,6 +53,7 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                groupBy: 'dataset_type_hierarchy.keyword',
             },
             'sources.source_type': {
                 label: 'Source Type',
@@ -68,7 +69,8 @@ export const SEARCH_ENTITIES = {
                 field: 'organ.keyword',
                 isExpanded: false,
                 filterType: 'any',
-                isFilterable: false
+                isFilterable: false,
+                groupBy: 'organ_hierarchy.keyword',
             },
             // Used for when "Dataset" or Sample Block/Section/Suspension is selected to show related organs
             "origin_sample.organ": {
@@ -78,6 +80,7 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                groupBy: 'origin_sample.organ_hierarchy.keyword',
             },
             // Used for when "Dataset/Sample" is selected to show related sources
             "source.source_type": {

@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import React, {useContext, useEffect} from "react";
+import React, {useContext} from "react";
 import {ErrorBoundary, SearchBox} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
 import {APP_TITLE} from "../../config/config";
@@ -12,7 +12,6 @@ import AppContext from "../../context/AppContext";
 import SelectedFilters from "../../components/custom/layout/SelectedFilters";
 import {getUBKGFullName} from "../../components/custom/js/functions";
 import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
-import useOrganList from "../../hooks/organ/useOrganList";
 
 const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
@@ -39,22 +38,6 @@ function SearchEntities() {
         isUnauthorized,
         hasAuthenticationCookie
     } = useContext(AppContext);
-
-    const {organs} = useOrganList();
-
-    // Define here because we need organs from an async function
-    useEffect(() => {
-        const regex = /^([\w]* ?[\w]+)(?: \(Left\)| \(Right\))$/
-        const groupedOptions = {}
-        for (const organ of organs) {
-            const term = organ.term
-            const found = term.match(regex);
-            if (found && found[1]) {
-                groupedOptions[organ.ruiCode] = found[1]
-            }
-        }
-        SEARCH_ENTITIES['searchQuery']['facets']['organ']['groupedOptions'] = groupedOptions
-    }, [organs])
 
     // Define here because we need auth state from AppContext
     SEARCH_ENTITIES['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
