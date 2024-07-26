@@ -390,9 +390,9 @@ export default function EditDataset() {
     }
 
 
-    if (isAuthorizing() || isUnauthorized()) {
+    if ((isAuthorizing() || isUnauthorized()) || !data) {
         return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
+            data == null ? <Spinner/> : <Unauthorized/>
         )
     } else {
 

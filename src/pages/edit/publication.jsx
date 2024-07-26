@@ -203,9 +203,9 @@ export default function EditPublication() {
     // TODO: remove this return when ready to support
     return <NotFound />
 
-    if (isAuthorizing() || isUnauthorized()) {
+    if ((isAuthorizing() || isUnauthorized()) || !data) {
         return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
+            data == null ? <Spinner/> : <Unauthorized/>
         )
     } else {
 

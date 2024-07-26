@@ -318,9 +318,9 @@ export default function EditCollection() {
         return <Unauthorized/>
     }
 
-    if (isAuthorizing() || isUnauthorized()) {
+    if ((isAuthorizing() || isUnauthorized()) || !data) {
         return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
+            data == null ? <Spinner/> : <Unauthorized/>
         )
     } else {
 
