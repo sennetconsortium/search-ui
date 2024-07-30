@@ -10,7 +10,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import AppContext from "../../context/AppContext";
 import SelectedFilters from "../../components/custom/layout/SelectedFilters";
-import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
+import {getUBKGFullName} from "../../components/custom/js/functions";
 import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
 
 const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
@@ -33,14 +33,6 @@ function SearchMetadata() {
         isUnauthorized,
         hasAuthenticationCookie
     } = useContext(AppContext);
-
-    // Return an array of data types that should be excluded from search
-    // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
-    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false)
-    SEARCH_METADATA['searchQuery']['excludeFilters'].push({
-        keyword: "dataset_type.keyword",
-        value: excludeNonPrimaryTypes
-    });
 
     function handleSearchFormSubmit(event, onSubmit) {
         onSubmit(event)

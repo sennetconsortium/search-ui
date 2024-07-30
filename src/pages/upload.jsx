@@ -52,6 +52,7 @@ function ViewUpload() {
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
+
             }
         }
 
@@ -68,7 +69,7 @@ function ViewUpload() {
 
     console.log("Test cache in source: ", cache)
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
+    if ((isAuthorizing() || isUnauthorized()) || !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )

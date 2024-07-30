@@ -65,6 +65,7 @@ function ViewSample() {
                     .then(response => {
                         setHasWritePrivilege(response.has_write_privs)
                     }).catch(log.error)
+
             }
         }
 
@@ -79,7 +80,7 @@ function ViewSample() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
+    if ((isAuthorizing() || isUnauthorized()) || !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )
