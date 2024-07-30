@@ -318,7 +318,7 @@ export default function EditCollection() {
         return <Unauthorized/>
     }
 
-    if ((isAuthorizing() || isUnauthorized()) || !data) {
+    if (isUnauthorized() || !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )

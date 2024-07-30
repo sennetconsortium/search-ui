@@ -222,7 +222,7 @@ function EditSource() {
         }
     };
 
-    if ((isAuthorizing() || isUnauthorized()) || !data) {
+    if (isUnauthorized() || !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )

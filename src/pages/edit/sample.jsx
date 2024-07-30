@@ -33,7 +33,7 @@ const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauth
 
 function EditSample() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails,
+        isUnauthorized, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -377,7 +377,7 @@ function EditSample() {
         }
     }
 
-    if ((isAuthorizing() || isUnauthorized()) || !data) {
+    if (isUnauthorized() || !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )
