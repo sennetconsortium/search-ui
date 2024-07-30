@@ -28,7 +28,7 @@ const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauth
 
 function EditUpload() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails,
+        isUnauthorized, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -188,7 +188,7 @@ function EditUpload() {
         handlePut('reorganize')
     }
 
-    if ((isAuthorizing() || isUnauthorized()) || !data) {
+    if (isUnauthorized() || !data) {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )
