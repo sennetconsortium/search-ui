@@ -69,7 +69,7 @@ function ViewUpload() {
 
     console.log("Test cache in source: ", cache)
 
-    if ((isAuthorizing() || isUnauthorized()) || !data) {
+    if ((isAuthorizing() || isUnauthorized()) && !data)  {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )
