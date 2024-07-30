@@ -127,7 +127,7 @@ function ViewDataset() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) || !data) {
+    if ((isAuthorizing() || isUnauthorized()) && !data)  {
         return (
             data == null ? <Spinner/> : <Unauthorized/>
         )
