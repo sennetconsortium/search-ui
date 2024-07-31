@@ -8,13 +8,14 @@ import {
     getEntityViewUrl,
     getRequestHeaders
 } from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid, getAncestry} from "@/lib/services";
+import {callService, get_write_privilege_for_group_uuid, getAncestry, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import DerivedContext, {DerivedProvider} from "@/context/DerivedContext";
 import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
 import WarningIcon from '@mui/icons-material/Warning'
+import {getEntityEndPoint} from "@/config/config";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -86,9 +87,7 @@ function ViewDataset() {
         const fetchData = async (uuid) => {
             log.debug('dataset: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            let _data = await response.json();
+            let _data = await getEntityData(uuid);
 
             log.debug('dataset: Got data', _data)
             if (_data.hasOwnProperty("error")) {
@@ -96,8 +95,8 @@ function ViewDataset() {
                 setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                const ancestry = await getAncestry(_data.uuid, {})
-                Object.assign(_data, ancestry)
+                // const ancestry = await getAncestry(_data.uuid, {})
+                // Object.assign(_data, ancestry)
                 // set state with the result
                 setData(_data);
                 const doi = await fetchDataCite(_data.doi_url)
