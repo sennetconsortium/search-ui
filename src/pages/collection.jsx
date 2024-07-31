@@ -28,7 +28,7 @@ function ViewCollection() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isUnauthorized, isAuthorizing, _t} = useContext(AppContext)
+    const {isRegisterHidden, _t, isPreview, getPreviewView} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -72,10 +72,8 @@ function ViewCollection() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) || !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data))  {
+        return getPreviewView(data)
     } else {
         return (
             <>

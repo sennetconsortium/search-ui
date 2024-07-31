@@ -17,7 +17,7 @@ import ClipboardCopy from "../components/ClipboardCopy";
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
-    const {_t, cache } = useContext(AppContext)
+    const {_t, cache, hasPublicAccess } = useContext(AppContext)
     const router = useRouter()
     const [authorized, setAuthorized] = useState(null)
     const [validated, setValidated] = useState(false)
@@ -50,7 +50,10 @@ export const EntityProvider = ({ children }) => {
     }
 
     const isUnauthorized = () => {
-        return authorized === false
+        if (hasPublicAccess(data)) {
+            return false
+        }
+        return (authorized === false)
     }
 
     const isAuthorizing = () => {
@@ -294,10 +297,14 @@ export const EntityProvider = ({ children }) => {
         setDisableSubmit(true)
     }
 
+    const isPreview = () => {
+        return ((isUnauthorized() || isAuthorizing()) || !data)
+    }
+
     return (
         <EntityContext.Provider
             value={{
-                isUnauthorized, isAuthorizing,
+                isUnauthorized, isAuthorizing, isPreview,
                 getModal, setModalDetails,
                 setSubmissionModal,
                 setCheckDoiModal,

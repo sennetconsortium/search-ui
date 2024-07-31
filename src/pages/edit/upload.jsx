@@ -28,7 +28,7 @@ const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauth
 
 function EditUpload() {
     const {
-        isUnauthorized, getModal, setModalDetails,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -42,7 +42,7 @@ function EditUpload() {
         dataAccessPublic, setDataAccessPublic,
         getCancelBtn, isAdminOrHasValue, getAssignedToGroupNames
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
+    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
@@ -188,10 +188,8 @@ function EditUpload() {
         handlePut('reorganize')
     }
 
-    if (isUnauthorized() || !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview())  {
+        return getPreviewView(data)
     } else {
         return (
             <>

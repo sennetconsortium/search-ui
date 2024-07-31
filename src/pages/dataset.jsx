@@ -39,7 +39,7 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
+    const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
     const [primaryDatasetData, setPrimaryDatasetInfo] = useState(null)
     const {
         showVitessce,
@@ -127,10 +127,8 @@ function ViewDataset() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data)  {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data))  {
+        return getPreviewView(data)
     } else {
         return (
             <>

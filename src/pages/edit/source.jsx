@@ -28,7 +28,7 @@ const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauth
 
 function EditSource() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -43,7 +43,7 @@ function EditSource() {
         getMetadataNote, checkProtocolUrl,
         warningClasses, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, filterImageFilesToAdd, cache} = useContext(AppContext)
+    const {_t, filterImageFilesToAdd, cache, getPreviewView} = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
@@ -222,10 +222,8 @@ function EditSource() {
         }
     };
 
-    if (isUnauthorized() || !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview())  {
+        return getPreviewView(data)
     } else {
         console.log(values)
         return (
