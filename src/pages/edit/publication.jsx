@@ -34,7 +34,7 @@ const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauth
 
 export default function EditPublication() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails, setSubmissionModal,
+        isPreview, getModal, setModalDetails, setSubmissionModal,
         data, setData,
         error, setError,
         values, setValues,
@@ -46,7 +46,7 @@ export default function EditPublication() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache} = useContext(AppContext)
+    const {_t, cache, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [publicationStatus, setPublicationStatus] = useState(null)
@@ -203,10 +203,8 @@ export default function EditPublication() {
     // TODO: remove this return when ready to support
     return <NotFound />
 
-    if (isUnauthorized() || !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview())  {
+        return getPreviewView(data)
     } else {
 
         return (

@@ -43,7 +43,7 @@ const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauth
 
 export default function EditDataset() {
     const {
-        isUnauthorized, getModal, setModalDetails, setSubmissionModal, setCheckDoiModal,
+        isPreview, getModal, setModalDetails, setSubmissionModal, setCheckDoiModal,
         data, setData,
         error, setError,
         values, setValues,
@@ -61,7 +61,7 @@ export default function EditDataset() {
         isAdminOrHasValue, getAssignedToGroupNames,
         contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes, setContactsAttributesOnFail
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
+    const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
@@ -390,10 +390,8 @@ export default function EditDataset() {
     }
 
 
-    if (isUnauthorized() || !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview())  {
+        return getPreviewView(data)
     } else {
 
         return (
