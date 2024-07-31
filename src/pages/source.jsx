@@ -30,7 +30,7 @@ function ViewSource() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext);
+    const {isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -82,10 +82,8 @@ function ViewSource() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data)  {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
