@@ -82,7 +82,7 @@ function ViewDataset() {
             }
             fetchDataProducts(data)
         }
-    }, [data])
+    }, [data?.ancestors])
 
     // only executed on init rendering, see the []
     useEffect(() => {
