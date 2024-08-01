@@ -22,8 +22,6 @@ const GroupSelect = dynamic(() => import("../../components/custom/edit/GroupSele
 const Header = dynamic(() => import("../../components/custom/layout/Header"))
 const SenNetAlert = dynamic(() => import("../../components/SenNetAlert"))
 const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
 
 
 function EditUpload() {
@@ -188,7 +186,7 @@ function EditUpload() {
         handlePut('reorganize')
     }
 
-    if (isPreview())  {
+    if (isPreview(error))  {
         return getPreviewView(data)
     } else {
         return (

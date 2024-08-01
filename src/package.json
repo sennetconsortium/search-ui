@@ -33,6 +33,7 @@
     "sass": "^1.57.1",
     "search-ui": "file:search-ui",
     "sharp": "^0.32.3",
+    "shimmer-effects-react": "^1.0.4",
     "vitessce": "^3.4.9"
   },
   "devDependencies": {

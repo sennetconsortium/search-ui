@@ -31,8 +31,6 @@ const EntityFormGroup = dynamic(() => import('../../components/custom/layout/ent
 const GroupSelect = dynamic(() => import("../../components/custom/edit/GroupSelect"))
 const Header = dynamic(() => import("../../components/custom/layout/Header"))
 const NotFound = dynamic(() => import("../../components/custom/NotFound"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
 
 export default function EditCollection() {
     const {
@@ -313,7 +311,7 @@ export default function EditCollection() {
     // TODO: remove this return when ready to support
     return <NotFound/>
 
-    if (isPreview() || (!isAuthorizing() && !adminGroup))  {
+    if (isPreview(error) || (!isAuthorizing() && !adminGroup))  {
         return getPreviewView(data)
     } else {
 

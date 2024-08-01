@@ -22,8 +22,6 @@ const Header = dynamic(() => import("../../components/custom/layout/Header"))
 const ImageSelector = dynamic(() => import("../../components/custom/edit/ImageSelector"))
 const SenNetAlert = dynamic(() => import("../../components/SenNetAlert"))
 const SourceType = dynamic(() => import("../../components/custom/edit/source/SourceType"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
 
 
 function EditSource() {
@@ -222,7 +220,7 @@ function EditSource() {
         }
     };
 
-    if (isPreview())  {
+    if (isPreview(error))  {
         return getPreviewView(data)
     } else {
         console.log(values)

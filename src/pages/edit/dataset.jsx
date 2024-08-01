@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {get_headers, getAncestry, update_create_dataset} from '../../lib/services'
+import {get_headers, getAncestryData, update_create_dataset} from '../../lib/services'
 import {
     cleanJson,
     eq,
@@ -39,7 +39,6 @@ const GroupSelect = dynamic(() => import("../../components/custom/edit/GroupSele
 const Header = dynamic(() => import("../../components/custom/layout/Header"))
 const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
 const Spinner = dynamic(() => import("../../components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
 
 export default function EditDataset() {
     const {
@@ -150,9 +149,11 @@ export default function EditDataset() {
                 setError(true)
                 setErrorMessage(_data["error"])
             } else {
-                const ancestry = await getAncestry(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
                 Object.assign(_data, ancestry)
                 setData(_data)
+
                 isPrimary.current = getIsPrimaryDataset(_data)
                 let immediate_ancestors = []
                 if (_data.hasOwnProperty("immediate_ancestors")) {
@@ -390,7 +391,7 @@ export default function EditDataset() {
     }
 
 
-    if (isPreview())  {
+    if (isPreview(error))  {
         return getPreviewView(data)
     } else {
 

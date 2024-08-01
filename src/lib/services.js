@@ -226,11 +226,15 @@ export function getAncestry(uuid, {endpoints = ['ancestors', 'descendants'], oth
 }
 
 export async function getEntityData(uuid) {
-    const dataPromise = callService(null,  "/api/find?uuid=" + uuid, 'GET', getRequestHeaders())
-    const ancestryPromises = getAncestry(uuid, {})
-    const promiseSettled = await Promise.allSettled([dataPromise, ...Object.values(ancestryPromises)])
-    let _data = promiseSettled[0].value;
-    let i = 1;
+    return await callService(null,  "/api/find?uuid=" + uuid, 'GET', getRequestHeaders())
+}
+
+export async function getAncestryData(uuid, ops = {endpoints: ['ancestors', 'descendants'], otherEndpoints: []}) {
+
+    const ancestryPromises = getAncestry(uuid, ops)
+    const promiseSettled = await Promise.allSettled([...Object.values(ancestryPromises)])
+    let _data = {};
+    let i = 0;
     for (let key of Object.keys(ancestryPromises)){
         _data[key] = promiseSettled[i].value;
         i++;

@@ -267,7 +267,8 @@ export const AppProvider = ({ cache, banners, children }) => {
         setSidebarVisible(!sidebarVisible)
     }
 
-    const isPreview = (data) => {
+    const isPreview = (data, error) => {
+        if (error) return false
         return ((isUnauthorized(data) || isAuthorizing()) || !data)
     }
 

@@ -8,14 +8,18 @@ import {
     getEntityViewUrl,
     getRequestHeaders
 } from "@/components/custom/js/functions";
-import {callService, get_write_privilege_for_group_uuid, getAncestry, getEntityData} from "@/lib/services";
+import {
+    get_write_privilege_for_group_uuid,
+    getAncestry,
+    getAncestryData,
+    getEntityData
+} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import DerivedContext, {DerivedProvider} from "@/context/DerivedContext";
 import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
 import WarningIcon from '@mui/icons-material/Warning'
-import {getEntityEndPoint} from "@/config/config";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -30,7 +34,6 @@ const Provenance = dynamic(() => import("@/components/custom/entities/Provenance
 const SennetVitessce = dynamic(() => import("@/components/custom/vitessce/SennetVitessce"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 const Spinner = dynamic(() => import("@/components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthorized"))
 const Upload = dynamic(() => import("@/components/custom/entities/dataset/Upload"))
 
 function ViewDataset() {
@@ -70,7 +73,7 @@ function ViewDataset() {
     }
 
     useEffect(() => {
-        if (data) {
+        if (data && data.ancestors) {
             initVitessceConfig(data)
             if (datasetIs.primary(data.creation_action)) {
                 setDatasetCategories(getAssaySplitData(data))
@@ -95,10 +98,12 @@ function ViewDataset() {
                 setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                // const ancestry = await getAncestry(_data.uuid, {})
-                // Object.assign(_data, ancestry)
                 // set state with the result
-                setData(_data);
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid)
+                Object.assign(_data, ancestry)
+                setData(_data)
+
                 const doi = await fetchDataCite(_data.doi_url)
                 setDoiData(doi?.data)
                 for (const ancestor of ancestry.ancestors) {
@@ -126,7 +131,7 @@ function ViewDataset() {
         }
     }, [router]);
 
-    if (isPreview(data))  {
+    if (isPreview(data, error))  {
         return getPreviewView(data)
     } else {
         return (
@@ -271,7 +276,7 @@ function ViewDataset() {
                                                     data={data}
                                                     metadata={data?.ingest_metadata?.metadata}
                                                     mappedMetadata={data?.cedar_mapped_metadata}
-                                                    hasLineageMetadata={true}/>
+                                                />
                                             }
 
                                             {/*Files*/}

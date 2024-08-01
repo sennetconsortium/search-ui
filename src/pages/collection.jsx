@@ -8,7 +8,7 @@ import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "@/context/DerivedContext";
 import {useRouter} from "next/router";
-import {get_write_privilege_for_group_uuid, getAncestry} from "@/lib/services";
+import {get_write_privilege_for_group_uuid, getAncestryData} from "@/lib/services";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -17,8 +17,6 @@ const ContributorsContacts = dynamic(() => import("@/components/custom/entities/
 const Datasets = dynamic(() => import("@/components/custom/entities/collection/Datasets"))
 const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const Spinner = dynamic(() => import("@/components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthorized"))
 
 function ViewCollection() {
     const router = useRouter()
@@ -48,10 +46,11 @@ function ViewCollection() {
                 setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                const ancestry = await getAncestry(_data.uuid, {})
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid)
                 Object.assign(_data, ancestry)
-                // set state with the result
-                setData(_data);
+                setData(_data)
+
                 const doi = await fetchDataCite(_data.doi_url)
                 setDoiData(doi?.data)
 
@@ -72,7 +71,7 @@ function ViewCollection() {
         }
     }, [router]);
 
-    if (isPreview(data))  {
+    if (isPreview(data, error))  {
         return getPreviewView(data)
     } else {
         return (
