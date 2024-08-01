@@ -88,7 +88,7 @@ function ViewDataset() {
         const fetchData = async (uuid) => {
             log.debug('dataset: getting data...', uuid)
             // get the data from the api
-            let _data = await getEntityData(uuid);
+            const _data = await getEntityData(uuid);
 
             log.debug('dataset: Got data', _data)
             if (_data.hasOwnProperty("error")) {

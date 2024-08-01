@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
 import {getRequestHeaders, getStatusColor} from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid, getAncestryData} from "@/lib/services";
+import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Table from 'react-bootstrap/Table';
@@ -41,9 +41,7 @@ function ViewPublication() {
 
             log.debug('publication: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            let _data = await response.json();
+            const _data = await getEntityData(uuid)
 
             log.debug('publication: Got data', _data)
             if (_data.hasOwnProperty("error")) {

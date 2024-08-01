@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {get_headers, getAncestryData, update_create_dataset} from '../../lib/services'
+import {get_headers, getAncestryData, getEntityData, update_create_dataset} from '../../lib/services'
 import {
     cleanJson,
     eq,
@@ -140,9 +140,7 @@ export default function EditDataset() {
         const fetchData = async (uuid) => {
             log.debug('editDataset: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            let _data = await response.json();
+            const _data = await getEntityData(uuid)
 
             log.debug('editDataset: Got data', _data)
             if (_data.hasOwnProperty("error")) {

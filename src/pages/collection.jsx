@@ -8,7 +8,7 @@ import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "@/context/DerivedContext";
 import {useRouter} from "next/router";
-import {get_write_privilege_for_group_uuid, getAncestryData} from "@/lib/services";
+import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -36,9 +36,7 @@ function ViewCollection() {
 
             log.debug('collection: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const _data = await response.json();
+            const _data = await getEntityData(uuid)
 
             log.debug('collection: Got data', _data)
             if (_data.hasOwnProperty("error")) {

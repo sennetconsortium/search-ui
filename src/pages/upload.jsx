@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
 import {getRequestHeaders} from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid, getAncestryData} from "@/lib/services";
+import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
@@ -33,9 +33,7 @@ function ViewUpload() {
 
             log.debug('upload: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const _data = await response.json();
+            const _data = await getEntityData(uuid)
 
             log.debug('upload: Got data', _data)
             if (_data.hasOwnProperty("error")) {

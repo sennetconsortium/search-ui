@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
 import {cleanJson, eq, getRequestHeaders, getStatusColor} from "../../components/custom/js/functions";
-import {update_create_dataset} from "../../lib/services";
+import {getEntityData, update_create_dataset} from "../../lib/services";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import $ from "jquery";
@@ -65,9 +65,7 @@ function EditUpload() {
         const fetchData = async (uuid) => {
             log.debug('editUpload: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const data = await getEntityData(uuid)
 
             log.debug('editUpload: Got data', data)
             if (data.hasOwnProperty("error")) {
