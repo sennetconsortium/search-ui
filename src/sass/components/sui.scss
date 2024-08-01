@@ -272,7 +272,9 @@
 
 .sui-multi-checkbox-facet {
   &__option-input-wrapper {
-    display: table;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     flex: inherit;
   }
   &__checkbox,

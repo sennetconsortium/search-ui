@@ -53,6 +53,8 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                groupBy: 'dataset_type_hierarchy.keyword',
+                groupAll: true,
             },
             'sources.source_type': {
                 label: 'Source Type',
@@ -68,7 +70,9 @@ export const SEARCH_ENTITIES = {
                 field: 'organ.keyword',
                 isExpanded: false,
                 filterType: 'any',
-                isFilterable: false
+                isFilterable: false,
+                groupBy: 'organ_hierarchy.keyword',
+                groupAll: false,
             },
             // Used for when "Dataset" or Sample Block/Section/Suspension is selected to show related organs
             "origin_sample.organ": {
@@ -78,6 +82,8 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                groupBy: 'origin_sample.organ_hierarchy.keyword',
+                groupAll: false,
             },
             // Used for when "Dataset/Sample" is selected to show related sources
             "source.source_type": {
@@ -107,7 +113,7 @@ export const SEARCH_ENTITIES = {
              'metadata': {
                 label: 'Has Metadata',
                 type: 'exists',
-                field: 'ingest_metadata.metadata',
+                field: 'metadata',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -220,26 +226,19 @@ export const SEARCH_ENTITIES = {
             'sennet_id',
             'entity_type',
             'uuid',
-            'created_by_user_displayname',
-            'created_by_user_email',
             'lab_tissue_sample_id',
             'lab_source_id',
             'lab_dataset_id',
             'sample_category',
+            'group_uuid',
             'group_name',
             'source_type',
-            'source.source_type',
-            'sources.source_type',
-            'last_modified_timestamp',
             'dataset_type',
-            'dataset_category',
             'status',
             'origin_sample.organ',
             'organ',
             'title',
             'description',
-            'group_uuid',
-            'rui_location_anatomical_locations.label'
         ],
     },
     initialState: {
