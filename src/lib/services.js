@@ -2,7 +2,7 @@ import { getCookie } from "cookies-next";
 import log from "loglevel";
 import { getAuth, getEntityEndPoint, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "../config/config";
 import { SEARCH_ENTITIES } from "../config/search/entities";
-import {getRequestHeaders} from "@/components/custom/js/functions";
+import {getHeaders, getRequestHeaders} from "@/components/custom/js/functions";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
@@ -226,7 +226,7 @@ export function getAncestry(uuid, {endpoints = ['ancestors', 'descendants'], oth
 }
 
 export async function getEntityData(uuid) {
-    return await callService(null,  "/api/find?uuid=" + uuid, 'GET', getRequestHeaders())
+    return await callService(null,  "/api/find?uuid=" + uuid, 'GET', getHeaders())
 }
 
 export async function getAncestryData(uuid, ops = {endpoints: ['ancestors', 'descendants'], otherEndpoints: []}) {
