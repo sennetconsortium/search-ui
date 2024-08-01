@@ -10,7 +10,6 @@ import {
 } from "@/components/custom/js/functions";
 import {
     get_write_privilege_for_group_uuid,
-    getAncestry,
     getAncestryData,
     getEntityData
 } from "@/lib/services";
@@ -33,7 +32,6 @@ const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
 const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"))
 const SennetVitessce = dynamic(() => import("@/components/custom/vitessce/SennetVitessce"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const Spinner = dynamic(() => import("@/components/custom/Spinner"))
 const Upload = dynamic(() => import("@/components/custom/entities/dataset/Upload"))
 
 function ViewDataset() {
@@ -60,7 +58,7 @@ function ViewDataset() {
                 // convert the data to json
                 let primary = await response.json();
                 if (!primary.error) {
-                    const ancestry = await getAncestry(primary.uuid, {})
+                    const ancestry = await getAncestryData(primary.uuid)
                     Object.assign(primary, ancestry)
                     setPrimaryDatasetInfo(primary)
                     setDatasetCategories(getAssaySplitData(primary))
