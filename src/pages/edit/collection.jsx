@@ -36,7 +36,7 @@ const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauth
 
 export default function EditCollection() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails, setSubmissionModal, setCheckDoiModal,
+        isPreview, isAuthorizing, getModal, setModalDetails, setSubmissionModal, setCheckDoiModal,
         data, setData,
         error, setError,
         values, setValues,
@@ -50,7 +50,7 @@ export default function EditCollection() {
         getEntityConstraints, getCancelBtn,
         contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes, setContactsAttributesOnFail
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
+    const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const isPrimary = useRef(false)
@@ -313,15 +313,8 @@ export default function EditCollection() {
     // TODO: remove this return when ready to support
     return <NotFound/>
 
-    // TODO: May see a brief flash of this Unauthorized view ...
-    if (!isAuthorizing() && !adminGroup) {
-        return <Unauthorized/>
-    }
-
-    if (isUnauthorized() || !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview() || (!isAuthorizing() && !adminGroup))  {
+        return getPreviewView(data)
     } else {
 
         return (

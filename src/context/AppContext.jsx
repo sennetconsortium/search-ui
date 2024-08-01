@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
-import { goToSearch } from '../components/custom/js/functions'
+import {eq, goToSearch} from '../components/custom/js/functions'
 import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import {
@@ -15,6 +15,7 @@ import {APP_ROUTES} from "../config/constants";
 import {getIngestEndPoint, STORAGE_KEY} from "../config/config";
 import AppModal from "../components/AppModal";
 import Spinner from "../components/custom/Spinner";
+import Unauthorized from "@/components/custom/layout/Unauthorized";
 
 const AppContext = createContext()
 
@@ -142,8 +143,19 @@ export const AppProvider = ({ cache, banners, children }) => {
         return validToken === null
     }
 
-    const isUnauthorized = () => {
-        return authorized === false  
+    const hasPublicAccess = (data) => {
+        let publicAccess = false
+        if (data) {
+            publicAccess =  eq(data.data_access_level, 'public') || eq(data.status, 'published')
+        }
+        return publicAccess
+    }
+
+    const isUnauthorized = (data) => {
+        if (hasPublicAccess(data)) {
+            return false
+        }
+        return (authorized === false)
     }
 
     const isAuthorizing = () => {
@@ -254,6 +266,14 @@ export const AppProvider = ({ cache, banners, children }) => {
     const handleSidebar = () => {
         setSidebarVisible(!sidebarVisible)
     }
+
+    const isPreview = (data) => {
+        return ((isUnauthorized(data) || isAuthorizing()) || !data)
+    }
+
+    const getPreviewView = (data) => {
+        return data == null ? <Spinner/> : <Unauthorized/>
+    }
     
     return (
         <AppContext.Provider
@@ -267,6 +287,9 @@ export const AppProvider = ({ cache, banners, children }) => {
                 isLoggedIn,
                 isAuthorizing,
                 isUnauthorized,
+                hasPublicAccess,
+                isPreview,
+                getPreviewView,
                 hasInvalidToken,
                 validatingToken,
                 logout,

@@ -33,7 +33,7 @@ const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauth
 
 function EditSample() {
     const {
-        isUnauthorized, getModal, setModalDetails,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -49,7 +49,7 @@ function EditSample() {
         getMetadataNote, checkProtocolUrl,
         warningClasses, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache, filterImageFilesToAdd} = useContext(AppContext)
+    const {_t, cache, filterImageFilesToAdd, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
@@ -377,10 +377,8 @@ function EditSample() {
         }
     }
 
-    if (isUnauthorized() || !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview())  {
+        return getPreviewView(data)
     } else {
         return (
             <>
