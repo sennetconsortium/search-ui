@@ -107,7 +107,7 @@ export const SEARCH_ENTITIES = {
              'metadata': {
                 label: 'Has Metadata',
                 type: 'exists',
-                field: 'ingest_metadata.metadata',
+                field: 'metadata',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
