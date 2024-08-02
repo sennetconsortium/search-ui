@@ -274,7 +274,7 @@ export const AppProvider = ({ cache, banners, children }) => {
     }
 
     const getPreviewView = (data) => {
-        return isUnauthorized(data) ? <Unauthorized/> : <Spinner/>
+        return isUnauthorized(data) && data != null ? <Unauthorized/> : <Spinner/>
     }
     
     return (
