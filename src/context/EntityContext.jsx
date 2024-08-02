@@ -298,7 +298,7 @@ export const EntityProvider = ({ children }) => {
     }
 
     const isPreview = (error) => {
-        if (error) return false
+        if (error  && hasPublicAccess(data)) return false
         return ((isUnauthorized() || isAuthorizing()) || !data)
     }
 
