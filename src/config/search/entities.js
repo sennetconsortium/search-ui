@@ -240,9 +240,14 @@ export const SEARCH_ENTITIES = {
             'title',
             'description',
         ],
+        pagination: {
+            from: 1,
+            size: 20
+        }
     },
     initialState: {
-        resultsPerPage: 10000,
+        current: 1,
+        resultsPerPage: 20,
         sortList: [{
             field: "last_modified_timestamp",
             direction: "desc"

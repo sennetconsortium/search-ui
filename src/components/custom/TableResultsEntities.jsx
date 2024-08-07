@@ -12,15 +12,15 @@ import ClipboardCopy from "../ClipboardCopy";
 import BulkExport, {handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
 import ResultsBlock from "./search/ResultsBlock";
-import {TableResultsProvider} from "../../context/TableResultsContext";
+import {TableResultsProvider} from "@/context/TableResultsContext";
 import SenNetPopover from "../SenNetPopover";
 import {Chip} from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import AppModal from "../AppModal";
-import {parseJson} from "../../lib/services";
-import {COLS_ORDER_KEY} from "../../config/config";
+import {parseJson} from "@/lib/services";
+import {COLS_ORDER_KEY} from "@/config/config";
 
-function TableResultsEntities({children, filters, onRowClicked, currentColumns, forData = false, rowFn, inModal = false}) {
+function TableResultsEntities({children, filters, onRowClicked, currentColumns, forData = false, rowFn, inModal = false, rawResponse}) {
 
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
     const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
@@ -268,7 +268,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
     }
 
     // Prepare opsDict
-    getOptions(children.length)
+    getOptions(rawResponse?.record_count || children.length)
 
     const getSearchContext = () => `entities.${tableContext.current}`
 
@@ -276,6 +276,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         <>
             <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
                 <ResultsBlock
+                    index={'entities'}
                     searchContext={getSearchContext}
                     defaultHiddenColumns={Object.values(defaultHiddenColumns)}
                     getTableColumns={getTableColumns}

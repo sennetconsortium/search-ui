@@ -75,6 +75,10 @@ export const SEARCH_FILES = {
             dataset_type: {type: 'value'}
         },
         source_fields: sourceItems,
+        pagination: {
+            from: 1,
+            size: 20
+        }
     },
     initialState: {
         resultsPerPage: 10000,

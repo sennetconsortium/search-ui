@@ -3,15 +3,16 @@ import $ from "jquery";
 import AppContext from "./AppContext";
 import {RESULTS_PER_PAGE} from "../config/config";
 import {createTheme} from "react-data-table-component";
-import {handlePagingInfo} from "../components/custom/search/ResultsPerPage";
-import log from 'loglevel'
 import SearchUIContext from "search-ui/components/core/SearchUIContext";
+import {handleTableControls} from "@/components/custom/search/ResultsPerPage";
 const TableResultsContext = createContext({})
 
-export const TableResultsProvider = ({ columnsRef, children, getHotLink, rows, filters, onRowClicked, forData = false, raw, getId, inModal = false }) => {
+export const TableResultsProvider = ({ index, columnsRef, children, getHotLink, rows, filters, onRowClicked, forData = false, raw, getId, inModal = false }) => {
 
     const {isLoggedIn} = useContext(AppContext)
-    const {isLoading} = useContext(SearchUIContext)
+    const {isLoading, rawResponse, pageNumber,
+        setPageNumber, pageSize, setPageSize, sort, setSort} = useContext(SearchUIContext)
+
     const hasLoaded = useRef(false)
     let pageData = []
     const [resultsPerPage, setResultsPerPage] = useState(RESULTS_PER_PAGE[1])
@@ -50,21 +51,24 @@ export const TableResultsProvider = ({ columnsRef, children, getHotLink, rows, f
         }
     }
 
+    const updateTablePagination = (page, currentRowsPerPage) => {
+        setPageSize(currentRowsPerPage)
+        setPageNumber(page)
+    }
+
     const handlePageChange = (page, totalRows) => {
-        handlePagingInfo(page, resultsPerPage, totalRows)
+        updateTablePagination(page, resultsPerPage)
+        handleTableControls()
     }
     const handleRowsPerPageChange = (currentRowsPerPage, currentPage) => {
-        handlePagingInfo(currentPage, currentRowsPerPage, rows.length)
         setResultsPerPage(currentRowsPerPage)
+        updateTablePagination(1, currentRowsPerPage)
+        handleTableControls()
     }
 
     useEffect(() => {
         hasLoaded.current = true
         setNoResultsMessage(getNoDataMessage())
-        if (!forData) {
-            log.debug('Results', rows)
-            handlePageChange(1, rows.length)
-        }
     }, [])
 
     useEffect(() => {
@@ -73,7 +77,7 @@ export const TableResultsProvider = ({ columnsRef, children, getHotLink, rows, f
 
     const getTableData = () => {
         pageData = []
-        handlePageChange(1, rows.length)
+        //handlePageChange(1, rows.length)
         if (rows.length) {
             for (let row of rows) {
                 let _row = row.props ? row.props.result : row
@@ -93,6 +97,9 @@ export const TableResultsProvider = ({ columnsRef, children, getHotLink, rows, f
         pageData,
         resultsPerPage,
         setResultsPerPage,
+        setPageSize, sort, setSort,
+        pageSize,
+        pageNumber,
         currentColumns,
         getId,
         rows,
@@ -102,6 +109,8 @@ export const TableResultsProvider = ({ columnsRef, children, getHotLink, rows, f
         handlePageChange,
         noResultsMessage,
         isLoading,
+        rawResponse,
+        updateTablePagination
     }}>
         { children }
     </TableResultsContext.Provider>
