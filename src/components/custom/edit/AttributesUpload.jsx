@@ -37,6 +37,7 @@ export const tableColumns = (d = '"') => [
         sortable: true,
         format: (row) => {
             const formatError = (val) => {
+                if (!val) return ''
                 let del = d
                 if (!Array.isArray(d)) {
                     del = [d]
@@ -118,7 +119,7 @@ export const getResponseList = (details, excludeColumns) => {
     return {data: data?.records, columns}
 }
 
-function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable, excludeColumns, title, customFileInfo }) {
+function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable, excludeColumns, title, customFileInfo, setAttributesOnFail }) {
 
     const attributeInputRef = useRef()
     const [file, setFile] = useState('')
@@ -154,6 +155,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
             const upload = e && e.currentTarget.files ? e.currentTarget.files[0] : file
             if (!upload) return
             log.debug('Metadata', file)
+            setTable(null)
             setRerun(null)
             setIsValidating(true)
             let formData = new FormData()
@@ -177,6 +179,9 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
                     setValidationError(true)
                 }
                 setTable(result)
+                if (setAttributesOnFail !== undefined) {
+                    setAttributesOnFail(details)
+                }
             } else {
                 if (showAllInTable) {
                     setTable(getResponseList(details, excludeColumns))
@@ -255,7 +260,7 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
                     </small>
                 </span>
                 {customFileInfo}
-                {(error || showAllInTable) && table.data && <div className={`c-metadataUpload__table table-responsive ${error ? 'has-error' : ''}`}>
+                {(error || showAllInTable) && table?.data && <div className={`c-metadataUpload__table table-responsive ${error ? 'has-error' : ''}`}>
                     {title}
                     <DataTable
                         columns={table.columns}

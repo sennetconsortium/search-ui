@@ -1,24 +1,25 @@
+import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
-import Description from "../components/custom/entities/sample/Description";
-import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getRequestHeaders} from "../components/custom/js/functions";
-import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_write_privilege_for_group_uuid} from "../lib/services";
-import Unauthorized from "../components/custom/layout/Unauthorized";
-import Protocols from "../components/custom/entities/sample/Protocols";
-import AppFooter from "../components/custom/layout/AppFooter";
-import Header from "../components/custom/layout/Header";
-import Spinner from "../components/custom/Spinner";
-import AppContext from "../context/AppContext";
+import {getRequestHeaders} from "@/components/custom/js/functions";
+import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
+import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import Provenance from "../components/custom/entities/Provenance";
-import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import SidebarBtn from "../components/SidebarBtn";
-import Metadata from "../components/custom/entities/Metadata";
-import {APP_ROUTES} from "../config/constants";
-import Tissue from "../components/custom/entities/sample/Tissue";
+import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
+import {APP_ROUTES} from "@/config/constants";
+
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
+const Protocols = dynamic(() => import("@/components/custom/entities/sample/Protocols"))
+const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
+const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
+const Tissue = dynamic(() => import("@/components/custom/entities/sample/Tissue"))
+
 
 function ViewSample() {
     const router = useRouter()
@@ -28,39 +29,39 @@ function ViewSample() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
+    const {isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-
-
             log.debug('sample: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid)
 
-            log.debug('sample: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('sample: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                // set state with the result
-                setData(data);
-                for (const ancestor of data.ancestors) {
-                    console.log(ancestor)
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid)
+                Object.assign(_data, ancestry)
+                setData(_data)
+                for (const ancestor of _data.ancestors) {
+                    log.debug(ancestor)
                     if (ancestor.metadata && Object.keys(ancestor.metadata).length) {
                         setAncestorHasMetadata(true)
                         break
                     }
                 }
 
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
-                    setHasWritePrivilege(response.has_write_privs)
-                }).catch(log.error)
+                get_write_privilege_for_group_uuid(_data.group_uuid)
+                    .then(response => {
+                        setHasWritePrivilege(response.has_write_privs)
+                    }).catch(log.error)
+
             }
         }
 
@@ -75,10 +76,8 @@ function ViewSample() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data, error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -104,16 +103,16 @@ function ViewSample() {
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="#Provenance"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Provenance</a>
-                                            </li>
-                                            <li className="nav-item">
                                                 <a href="#Tissue"
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Tissue</a>
                                             </li>
-                                             {!!((data.metadata && Object.keys(data.metadata).length) || ancestorHasMetadata) &&
+                                            <li className="nav-item">
+                                                <a href="#Provenance"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Provenance</a>
+                                            </li>
+                                            {!!((data.metadata && Object.keys(data.metadata).length) || ancestorHasMetadata) &&
                                                 <li className="nav-item">
                                                     <a href="#Metadata"
                                                        className="nav-link "
@@ -153,26 +152,29 @@ function ViewSample() {
                                                          labId={data.lab_tissue_sample_id}
                                             />
 
+                                            {/*Tissue*/}
+                                            {data &&
+                                                <Tissue data={data}/>
+                                            }
+
                                             {/*Provenance*/}
                                             {data &&
                                                 <Provenance nodeData={data}/>
                                             }
 
-                                            {/*Tissue*/}
-                                            {data &&
-                                                <Tissue data={data} />
-                                            }
-
                                             {/*Metadata*/}
                                             {/*Samples have their metadata inside "metadata"*/}
                                             {!!((data.metadata && Object.keys(data.metadata).length) || ancestorHasMetadata) &&
-                                                <Metadata data={data} metadata={data?.metadata}
-                                                          hasLineageMetadata={true}/>
+                                                <Metadata
+                                                    data={data}
+                                                    metadata={data?.metadata}
+                                                    mappedMetadata={data?.cedar_mapped_metadata}
+                                                    />
                                             }
 
                                             {/*Protocols*/}
                                             {data.protocol_url &&
-                                                <Protocols protocol_url={data.protocol_url}/>
+                                                <Protocols protocolUrl={data.protocol_url}/>
                                             }
 
                                             {/*Attribution*/}

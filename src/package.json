@@ -1,14 +1,16 @@
 {
   "name": "portal-ui",
-  "version": "1.8.6",
+  "version": "1.8.13",
   "private": true,
   "scripts": {
-    "run": "npm-run-all --parallel dev sass",
+    "run": "npm-run-all --parallel dev sass plugins-watch",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "sass": "sass --watch sass/main.scss public/css/main.css --style compressed",
-    "sass-build": "sass sass/main.scss public/css/main.css --style compressed"
+    "sass-build": "sass sass/main.scss public/css/main.css --style compressed",
+    "plugins": "./node_modules/.bin/babel components/custom/js/addons/plugins/__polyfill.js components/custom/js/addons/plugins/_Addon.js components/custom/js/addons/plugins/*.js --presets minify --out-file public/js/main-plugins.js",
+    "plugins-watch": "watch 'npm run plugins' ./components/custom/js/addons/plugins"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
@@ -18,15 +20,12 @@
     "bootstrap-icons": "^1.11.3",
     "cookies-next": "^2.1.1",
     "core-js": "^3.26.0",
-    "fetch-jsonp": "^1.2.3",
-    "jquery": "^3.6.1",
-    "lodash": "^4.17.21",
     "next": "^14.1.0",
     "npm-run-all": "^4.1.5",
     "primeicons": "^6.0.1",
     "primereact": "^9.6.0",
-    "provenance-ui": "github:sennetconsortium/provenance-ui#v2.5.8-rc",
-    "react-data-table-component": "^7.5.3",
+    "provenance-ui": "github:sennetconsortium/provenance-ui#v2.6.2-rc",
+    "react-data-table-component": "^7.6.2",
     "react-helmet-async": "^2.0.3",
     "react-idle-timer": "^5.7.2",
     "react-joyride": "^2.7.0",
@@ -34,7 +33,14 @@
     "sass": "^1.57.1",
     "search-ui": "file:search-ui",
     "sharp": "^0.32.3",
-    "vitessce": "^3.4.5",
-    "ws": "^8.16.0"
+    "styled-components": "^5.3.3",
+    "vitessce": "^3.4.9"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.24.6",
+    "@babel/core": "^7.24.6",
+    "@babel/polyfill": "^7.12.1",
+    "babel-preset-minify": "^0.5.2",
+    "watch": "^1.0.2"
   }
 }

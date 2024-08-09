@@ -129,7 +129,7 @@ export default function BulkCreate({
 
     useEffect(() => {
         setIsMetadata(isMetadata)
-        if (userWriteGroups && getUserWriteGroupsLength() > 1) {
+        if ((userWriteGroups && getUserWriteGroupsLength() > 1) || isMetadata) {
             let extraSteps = Array.from(stepLabels)
             if (isMetadata) {
                 extraSteps.splice(1, 0, 'Select Metadata Type')
@@ -149,11 +149,11 @@ export default function BulkCreate({
     }
 
     const getEntityValidationUrl = () => {
-        return `${getIngestEndPoint()}${entityType}s/bulk/validate`
+        return `${getIngestEndPoint()}${entityType.toLowerCase()}s/bulk/validate`
     }
 
     const getEntityRegistrationUrl = () => {
-        return `${getIngestEndPoint()}${entityType}s/bulk/register`
+        return `${getIngestEndPoint()}${entityType.toLowerCase()}s/bulk/register`
     }
 
     const getMetadataValidationUrl = () => {
@@ -220,7 +220,7 @@ export default function BulkCreate({
     function getValidateReferrer() {
         return {
             type: 'validate',
-            path: window.location.pathname + window.location.search
+            path: window.location.pathname + `?action=validate&entityType=${entityType}${subType ? `&subType=${subType}` : ''}`
         }
     }
 
@@ -461,7 +461,7 @@ export default function BulkCreate({
         const url = new URL(getDocsRootURL());
         url.pathname = isMetadata ? 'libraries/ingest-validation-tools/schemas' : 'registration/bulk-registration'
         const _subType = isMouse() ? 'murine' : subType
-        url.pathname += isMetadata ? `/` : `/${entityType}`
+        url.pathname += isMetadata ? `/` : `/${entityType.toLowerCase()}`
         return url.href
     }
 
@@ -642,7 +642,7 @@ export default function BulkCreate({
                                 onClick={handleNext}
                                 disabled={isNextButtonDisabled}
                             >
-                                {activeStep === getStepsLength() - 1 ? 'Finish' : 'Next'}
+                                {activeStep === getStepsLength() - 1 ? 'Finish' : (activeStep === getStepsLength() - 2 ? 'Register' : 'Next')}
                             </Button>
                         </Grid>
                     </Grid>

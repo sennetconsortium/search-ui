@@ -63,8 +63,8 @@ const AppFooter = () => {
                     </Col>
                 </Row>
                 <Row>
-                    <div className={'text-center text-muted nav--copyright'}>Copyright <a className="text-muted lnk--ic" href="https://sennetconsortium.org/">
-                        NIH Cellular Senescence Network (SenNet)</a> {(new Date().getFullYear())}. All rights reserved.</div>
+                    <div
+                        className={'text-center text-muted nav--copyright'}>Copyright {(new Date().getFullYear())}</div>
                 </Row>
 
             </footer>

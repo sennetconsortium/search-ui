@@ -153,6 +153,18 @@ export const organDetails = {
         searchUrl: organSearchUrl("HT"),
         urlParamName: "heart",
     },
+    LT: {
+        icon: `${BASE_ICON_URL}/organs/organ-icon-palatine-tonsil.svg`,
+        ruiCode: "LT",
+        searchUrl: organSearchUrl("LT"),
+        urlParamName: "left-tonsil",
+    },
+    RT: {
+        icon: `${BASE_ICON_URL}/organs/organ-icon-palatine-tonsil.svg`,
+        ruiCode: "RT",
+        searchUrl: organSearchUrl("RT"),
+        urlParamName: "right-tonsil",
+    },
     OT: {
         icon: "https://cdn.jsdelivr.net/gh/cns-iu/md-icons@main/other-icons/organs/ico-organs-united.svg",
         ruiCode: "OT",

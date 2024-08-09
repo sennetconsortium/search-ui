@@ -1,24 +1,22 @@
+import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
-import Description from "../components/custom/entities/sample/Description";
-import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {getDataTypesByProperty, getRequestHeaders, getStatusColor} from "../components/custom/js/functions";
-import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_write_privilege_for_group_uuid} from "../lib/services";
-import Unauthorized from "../components/custom/layout/Unauthorized";
-import AppFooter from "../components/custom/layout/AppFooter";
-import Header from "../components/custom/layout/Header";
-import Spinner from "../components/custom/Spinner";
-import AppContext from "../context/AppContext";
-import {Alert, Stack, Table, Badge} from 'react-bootstrap';
+import {getRequestHeaders, getStatusColor} from "@/components/custom/js/functions";
+import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
+import AppContext from "@/context/AppContext";
+import Alert from 'react-bootstrap/Alert';
+import Table from 'react-bootstrap/Table';
+import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
+import DerivedContext, {DerivedProvider} from "@/context/DerivedContext";
 
-import Provenance from "../components/custom/entities/Provenance";
-import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import DerivedContext, {DerivedProvider} from "../context/DerivedContext";
-
-import SidebarBtn from "../components/SidebarBtn";
-import SenNetAccordion from "../components/custom/layout/SenNetAccordion";
-
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
+const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
+const SenNetAccordion = dynamic(() => import("@/components/custom/layout/SenNetAccordion"))
 
 
 function ViewPublication() {
@@ -26,14 +24,13 @@ function ViewPublication() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
+    const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
     const {
         showVitessce,
         setVitessceConfig,
         setIsPrimaryDataset,
         isPrimaryDataset
     } = useContext(DerivedContext)
-
 
 
     // only executed on init rendering, see the []
@@ -44,21 +41,23 @@ function ViewPublication() {
 
             log.debug('publication: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid)
 
-            log.debug('publication: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('publication: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                // set state with the result
-                setData(data);
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid)
+                Object.assign(_data, ancestry)
+                setData(_data)
+
+                get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
+
             }
         }
 
@@ -73,10 +72,8 @@ function ViewPublication() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data, error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -119,7 +116,7 @@ function ViewPublication() {
                                 </div>
 
                                 <main className="col m-md-3 entity_details">
-                                    <SidebarBtn />
+                                    <SidebarBtn/>
 
                                     <EntityViewHeader data={data}
                                                       uniqueHeader={data.dataset_type}
@@ -151,7 +148,7 @@ function ViewPublication() {
                                                         </tr>
                                                         </tbody>
                                                     </Table>
-                                                    <br />
+                                                    <br/>
                                                     <Table borderless>
                                                         <thead>
                                                         <tr>
@@ -162,11 +159,13 @@ function ViewPublication() {
                                                         <tbody>
                                                         <tr>
                                                             <td>{data.publication_venue}</td>
-                                                            <td><span className={`${getStatusColor(data.status)} badge`}>{data.status}</span></td>
+                                                            <td><span
+                                                                className={`${getStatusColor(data.status)} badge`}>{data.status}</span>
+                                                            </td>
                                                         </tr>
                                                         </tbody>
                                                     </Table>
-                                                    <br />
+                                                    <br/>
                                                     <Table borderless>
                                                         <thead>
                                                         <tr>
@@ -181,34 +180,40 @@ function ViewPublication() {
                                                         </tr>
                                                         </tbody>
                                                     </Table>
-                                                    <br />
-                                                    { data.publication_url &&
-                                                    <Table borderless>
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Publication URL</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr>
-                                                            <td><a href={data.publication_url} className={'lnk--ic pl-0'}>{data.publication_url} <i className="bi bi-box-arrow-up-right"></i></a></td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </Table>
+                                                    <br/>
+                                                    {data.publication_url &&
+                                                        <Table borderless>
+                                                            <thead>
+                                                            <tr>
+                                                                <th>Publication URL</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr>
+                                                                <td><a href={data.publication_url}
+                                                                       className={'lnk--ic pl-0'}>{data.publication_url}
+                                                                    <i className="bi bi-box-arrow-up-right"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </Table>
                                                     }
                                                     {data.publication_doi &&
-                                                    <Table borderless>
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Publication DOI</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr>
-                                                            <td><a href={data.publication_doi} className={'lnk--ic pl-0'}>{data.publication_doi} <i className="bi bi-box-arrow-up-right"></i></a></td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </Table> }
+                                                        <Table borderless>
+                                                            <thead>
+                                                            <tr>
+                                                                <th>Publication DOI</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <tr>
+                                                                <td><a href={data.publication_doi}
+                                                                       className={'lnk--ic pl-0'}>{data.publication_doi}
+                                                                    <i className="bi bi-box-arrow-up-right"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                            </tbody>
+                                                        </Table>}
 
                                                 </div>
                                             </SenNetAccordion>
@@ -234,6 +239,8 @@ function ViewPublication() {
     }
 }
 
-ViewPublication.withWrapper = function(page) { return <DerivedProvider>{ page }</DerivedProvider> }
+ViewPublication.withWrapper = function (page) {
+    return <DerivedProvider>{page}</DerivedProvider>
+}
 
 export default ViewPublication

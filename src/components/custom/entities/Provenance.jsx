@@ -11,7 +11,6 @@ import $ from 'jquery'
 import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
 import {
-    fetchEntity,
     fetchProtocols,
     getClickableLink,
     getCreationActionRelationName,
@@ -19,6 +18,7 @@ import {
 } from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import * as d3 from "d3";
+import {get_lineage_info} from "../../../lib/services";
 
 
 function Provenance({nodeData}) {
@@ -32,12 +32,13 @@ function Provenance({nodeData}) {
     const [maxGraphWidth, setMaxGraphWidth] = useState('500px')
     const initialized = useRef(false)
     const activityHidden = useRef(true)
-    const svgTranslate = useRef({})
+    const hasOnAfterInfoUpdateBuild = useRef(false)
     const protocolsData = {}
     const { _t } = useContext(AppContext)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     let cbTimeout;
+    let cbTimeout2;
 
     const canvas = (ops) => $(`#${ops.options.selectorId}`)
 
@@ -47,33 +48,64 @@ function Provenance({nodeData}) {
     }
 
     const onAfterBuild = (ops) => {
+        clearTimeout(cbTimeout2)
+        canvas(ops).find('svg').css('opacity', 0)
+        cbTimeout2 = setTimeout(() => {
+            if (ops.data.links.length) {
+                updateVisualizationTranslation(ops)
+            }
+        }, 500)
+    }
+
+    const updateVisualizationTranslation = (ops) => {
         const ui = window.ProvenanceTreeD3[ops.options.selectorId]
         if (ui) {
             ui.enableZoom()
         }
 
         let hidden = activityHidden.current
-        // Fine tune a bit based on graph size and UI viewport area
-        const x1 = 50
-        const x2 = 300
-        if (ops.data.treeWidth > 6) {
-            if (svgTranslate.current[hidden] === undefined) {
-                // Set some positions to move the graph based on visibility of activity nodes
-                svgTranslate.current[hidden] = hidden ? ops.data.treeWidth * 23 : ops.data.sz.height / 2.2
-            }
-            if (svgTranslate.current[!hidden] !== undefined) {
-                // Move the graph back
-                ops.$el.svg.call(ops.options.zoom.translateBy, !hidden ? -x1 : -x2, -1 * svgTranslate.current[!hidden])
-            }
-            // Move into new position after toggle
-            ops.$el.svg.transition().call(ops.options.zoom.translateBy, hidden ? x1 : x2, svgTranslate.current[hidden])
 
-        } else if (ops.data.treeWidth > 3) {
-            // Nudge a bit for better positioning
-            ops.$el.svg.transition().call(ops.options.zoom.translateBy, -7, -x1)
+        // Fine tune a bit based on graph size and UI viewport area
+        let xPos = hidden ? 50 : 300
+        const isSmall = ops.data.treeWidth > 3 && ops.data.treeWidth < 6
+        xPos = isSmall ? -7 : xPos
+        const lastX = ui.lastX || 0
+
+        if (ui.lastY !== undefined) {
+            // Move the graph back to origin position
+            ops.$el.svg.call(ops.options.zoom.translateBy, -lastX, -1 * ui.lastY)
         }
+
+        // Retrieve the value calculated by simulation.forceCenter on the first element and use that as y position
+        // For a huge graph, this is the value negative that the visualization was moved by
+        // For a small graph, this value is positive
+        // we want to keep the visualization from the top
+        let forcePos = Number(ops.$el.linksGroup.node().firstChild.getAttribute('y1'))
+        forcePos = forcePos < 0 ? Math.abs(forcePos) : -1 * forcePos
+        const yPos = forcePos + 100
+
+        // Store new last positions
+        ui.lastX = xPos
+        ui.lastY = yPos
+
+        // Move into new position after toggle
+        ops.$el.svg.transition().call(ops.options.zoom.translateBy, xPos, yPos)
+
         onInitializationComplete(ops.options.selectorId)
         canvas(ops).find('svg').css('opacity', 1)
+        canvas(ops).css('opacity', 1)
+    }
+
+    const onAfterInfoUpdateBuild = (ops) => {
+        if (ops.data.treeWidth < 3 && !hasOnAfterInfoUpdateBuild.current && document.querySelector(`#${ops.options.selectorId} .c-provenance__info`).clientHeight > 65) {
+            const ui = window.ProvenanceTreeD3[ops.options.selectorId]
+            if (ui) {
+                ui.enableZoom()
+                ops.$el.svg.call(ops.options.zoom.translateBy, 0, 50)
+                hasOnAfterInfoUpdateBuild.current = true
+                ui.disableZoom()
+            }
+        }
     }
 
     const getTreeWidth = (ops) => {
@@ -140,18 +172,17 @@ function Provenance({nodeData}) {
         }
     }
 
-    const buildProtocolData = async (data) => {
-        for (let current in data.activity) {
-            let d = data.activity[current]
-            if (d['sennet:protocol_url']) {
-                let url = getClickableLink(d['sennet:protocol_url'])
-                d['sennet:protocol_url'] = url
-                const uuid = d['sennet:uuid']
+    const buildProtocolData = async (d) => {
+        if (d['sennet:protocol_url']) {
+            let url = getClickableLink(d['sennet:protocol_url'])
+            d['sennet:protocol_url'] = url
+            const uuid = d['sennet:uuid']
 
-                protocolsData[url] =  await fetchProtocols(url)
-                if (protocolsData[url]?.title) {
-                    $(`[data-id="${uuid}"] .protocol_url a`).html(protocolsData[url]?.title)
-                }
+            if (protocolsData[url] === undefined) {
+                protocolsData[url] = await fetchProtocols(url)
+            }
+            if (protocolsData[url]?.title) {
+                $(`[data-id="${uuid}"] .protocol_url a`).html(protocolsData[url]?.title)
             }
         }
     }
@@ -161,6 +192,7 @@ function Provenance({nodeData}) {
     }
 
     const protocolUrl = (d, property, value) => {
+        buildProtocolData(d)
         let data = protocolsData[value]
         let title = data ? data.title : value
         return {href: value, value: title}
@@ -185,6 +217,8 @@ function Provenance({nodeData}) {
             'sennet:creation_action': 'category'
         },
         imageMap: {
+            "Source|sennet:source_type|Mouse": null,
+            "Source|sennet:source_type|Mouse Organoid": null,
             "Sample|sennet:sample_category|Organ": null,
             "Sample|sennet:sample_category|Block": null,
             "Sample|sennet:sample_category|Section": null,
@@ -192,6 +226,24 @@ function Provenance({nodeData}) {
             "Dataset|sennet:creation_action|Processed Dataset": null,
         },
         imageMapActions: {
+            "Source|sennet:source_type|Mouse": {
+                fn: 'append',
+                type: 'g',
+                data: [
+                    {
+                        draw: 'M22.9,22.9H7.1c-3.5,0-6.4-2.9-6.4-6.4v-2.9c0-3.5,2.9-6.4,6.4-6.4h15.7c3.5,0,6.4,2.9,6.4,6.4v2.9C29.3,20,26.4,22.9,22.9,22.9z'
+                    }
+                ]
+            },
+            "Source|sennet:source_type|Mouse Organoid": {
+                fn: 'append',
+                type: 'g',
+                data: [
+                    {
+                        draw: 'M22.9,22.9H7.1c-3.5,0-6.4-2.9-6.4-6.4v-2.9c0-3.5,2.9-6.4,6.4-6.4h15.7c3.5,0,6.4,2.9,6.4,6.4v2.9C29.3,20,26.4,22.9,22.9,22.9z'
+                    }
+                ]
+            },
             "Dataset|sennet:creation_action|Component Dataset": {
                 fn: 'append',
                 type: 'g',
@@ -246,7 +298,8 @@ function Provenance({nodeData}) {
             onAfterBuild,
             onSvgSizing,
             onNodeClick,
-            onInfoCloseClick
+            onInfoCloseClick,
+            onAfterInfoUpdateBuild
         }
     }
 
@@ -275,31 +328,18 @@ function Provenance({nodeData}) {
     }
 
     useEffect(() => {
-        async function fetchLineage (ancestors, fetch) {
-            let new_ancestors = []
-            for (const ancestor of ancestors) {
-                let complete_ancestor = await fetchEntity(ancestor.uuid);
-                if (complete_ancestor.hasOwnProperty("error")) {
-                    setError(true)
-                    setErrorMessage(complete_ancestor["error"])
-                } else {
-                    new_ancestors.push(complete_ancestor)
-                }
-            }
-            fetch(new_ancestors)
-        }
 
         if (nodeData.hasOwnProperty("descendants")) {
-            fetchLineage(data.descendants, setDescendants);
+            setDescendants(nodeData.descendants)
         }
         if (nodeData.hasOwnProperty("ancestors")) {
-            fetchLineage(data.ancestors, setAncestors);
+            setAncestors(nodeData.ancestors)
         }
 
         if (initialized.current) return
         initialized.current = true
         const token = getAuth();
-        const url = getEntityEndPoint() + 'entities/{id}/provenance?return_descendants=true'
+        const url = getEntityEndPoint() + 'entities/{id}/provenance?return_descendants=true&filter='+ encodeURI('-Publication|-Collection|-Upload')
         const itemId = data.uuid;
         const graphOps = {token, url}
 
@@ -329,8 +369,6 @@ function Provenance({nodeData}) {
                 log.debug(`Result width appended descendants...`, result)
             }
 
-            await buildProtocolData(result)
-
             const converter = new DataConverterNeo4J(result, dataMap)
             converter.buildAdjacencyList(itemId)
             log.debug('Converter details...', converter)
@@ -347,7 +385,7 @@ function Provenance({nodeData}) {
             const graph = new GraphGeneric(graphOps)
             graph.service({callback: handleResult, url: url.replace('{id}', itemId)})
         }
-    }, [data])
+    }, [data?.ancestors, data?.descendants])
 
     const handleModal = (e) => {
         setShowModal(!showModal)
@@ -355,6 +393,7 @@ function Provenance({nodeData}) {
 
     const toggleData = (e, hideActivity, selectorId) => {
         const ui = window.ProvenanceTreeD3[selectorId]
+        canvas(ui).css('opacity', 0)
         log.debug('activity', hideActivity)
         activityHidden.current = hideActivity
         ui.toggleData({filter: hideActivity ? 'Activity' : '', parentKey: hideActivity ? DataConverterNeo4J.KEY_P_ENTITY : DataConverterNeo4J.KEY_P_ACT})
@@ -384,9 +423,11 @@ function Provenance({nodeData}) {
 
     const help = {
         title: 'Help, Provenance Graph',
-        legend: `<li><code>Sample</code> shapes <span class="shape pink shape--diamond">diamond</span>, <span class="shape pink shape--sq">square</span>, 
-                    <span class="shape pink shape--rect">rectangle</span> and <span class="shape pink shape--circle">ellipse</span> correspond to <code>sample_category</code>  of
-                <code>organ</code>, <code>block</code>, <code>section</code> and <code>suspension</code> respectively.</li>`
+        legend: `<li><code>Source</code> shapes <span class="shape yellow shape--circle">circle</span> and <span class="shape shape--stadium">stadium</span> correspond to <code>source_type</code> of Human and Mouse respectively. </li>
+                <li><code>Sample</code> shapes <span class="shape pink shape--diamond">diamond</span>, <span class="shape pink shape--sq">square</span>, 
+                    <span class="shape pink shape--rect">rectangle</span> and <span class="shape pink shape--circle">circle</span> correspond to <code>sample_category</code>  of
+                <code>organ</code>, <code>block</code>, <code>section</code> and <code>suspension</code> respectively.</li>
+                <li><code>Dataset</code> shapes <span class="shape green shape--circle">circle</span>, <span class="shape shape--blob">"blob"</span>, and <span class="shape shape--triangle">triangle</span> correspond to <code>category</code> of <code>primary</code>, <code>processed</code> and <code>component</code> respectively.</li>`
     }
 
     const legend = {

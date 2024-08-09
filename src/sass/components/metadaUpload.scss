@@ -4,6 +4,9 @@
     margin-top: 10px;
     display: block;
     width: 100%;
+    h6 {
+      padding: 15px;
+    }
   }
 
   &__fileStatus {
@@ -18,7 +21,7 @@
     font-size: 16px;
     padding-top: 10px;
     margin-left: 10px !important;
-    margin-right: 10px;
+    margin-right: 25px;
     position: relative;
 
     .ic {

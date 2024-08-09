@@ -15,7 +15,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import {Tree} from 'primereact/tree';
 import 'primeicons/primeicons.css';
 
-export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid: 'uuid'},
+export const FileTreeView = ({data, selection = {}, keys = {files: 'ingest_metadata', uuid: 'uuid'},
                                  loadDerived = true, treeViewOnly = false, className = '', filesClassName = '',
                                  showQAButton = true, showDataProductButton = true, includeDescription= false,
                                  showDownloadAllButton = false}) => {
@@ -45,6 +45,14 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
         return Array.isArray(obj) ? obj.length : Object.keys(obj).length
     }
 
+    const getFiles = (data) => {
+        if (keys.files.contains('ingest_metadata')) {
+            return data?.ingest_metadata?.files
+        } else {
+            return data[keys.files]
+        }
+    }
+
     useEffect( () => {
         async function fetchData() {
             await fetchGlobusFilepath(data[keys.uuid]).then((globusData) => {
@@ -56,21 +64,30 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
         fetchData()
 
         //Default to use files, otherwise wait until derivedDataset is populated
-        if (data[keys.files] && getLength(data[keys.files])) {
+        if (getFiles(data) && getLength(getFiles(data))) {
             setHasData(true)
-            buildTree(data[keys.uuid], data[keys.files])
+            buildTree(data[keys.uuid], getFiles(data))
         }
     }, [])
 
     useEffect(() => {
         if (loadDerived) {
-            if (isPrimaryDataset && derivedDataset[keys.files] && getLength(derivedDataset[keys.files])) {
+            if (isPrimaryDataset && getFiles(derivedDataset) && getLength(getFiles(derivedDataset))) {
                 setHasData(true)
-                buildTree(derivedDataset[keys.uuid], derivedDataset[keys.files])
+                buildTree(derivedDataset[keys.uuid], getFiles(derivedDataset))
             }
         }
 
     }, [derivedDataset])
+
+    const getAssetsURL = (uuid, rel_path) => {
+        let url = getAssetsEndpoint() + uuid + "/" + rel_path
+        let token = getAuth()
+        if (token != null) {
+            url += "?token=" + token
+        }
+        return url
+    }
 
     const onExpand = (event) => {
         event.node.icon = 'pi pi-fw pi-folder-open'
@@ -150,7 +167,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
                         <Col md={8} sm={8}>
                             <a target="_blank"
                                className={"icon_inline js-file"}
-                               href={`${getAssetsEndpoint()}${node.data.uuid}/${node.data.rel_path}?token=${getAuth()}`}><span
+                               href={`${getAssetsURL(node.data.uuid, node.data.rel_path)}`}><span
                                className="me-1">{node.label}</span>
                             </a>
                             {!includeDescription && <SenNetPopover className={`file-${node.label}`}

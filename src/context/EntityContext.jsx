@@ -17,7 +17,7 @@ import ClipboardCopy from "../components/ClipboardCopy";
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
-    const {_t, cache } = useContext(AppContext)
+    const {_t, cache, hasPublicAccess } = useContext(AppContext)
     const router = useRouter()
     const [authorized, setAuthorized] = useState(null)
     const [validated, setValidated] = useState(false)
@@ -40,8 +40,20 @@ export const EntityProvider = ({ children }) => {
     const [response, setResponse] = useState()
     const [warningClasses, setWarningClasses] = useState({})
 
+    const [contacts, setContacts] = useState([])
+    const [creators, setCreators] = useState([])
+    const contactsTSV = {
+        excludeColumns: ['is_contact'],
+        headers: ['first_name', 'last_name', 'middle_name_or_initial	display_name','affiliation','orcid','email',
+            'is_contact','is_principal_investigator','is_operator', 'metadata_schema_id'],
+        uploadEndpoint: 'validate-tsv'
+    }
+
     const isUnauthorized = () => {
-        return authorized === false
+        if (hasPublicAccess(data)) {
+            return false
+        }
+        return (authorized === false)
     }
 
     const isAuthorizing = () => {
@@ -266,10 +278,34 @@ export const EntityProvider = ({ children }) => {
         }
     }
 
+    const setContactsAttributes = (resp) => {
+        if (!resp.description) return
+        setCreators(resp)
+        let _contacts = []
+        for (let creator of resp?.description?.records) {
+            if (eq(creator.is_contact, 'true') || eq(creator.is_contact, 'yes')) {
+                _contacts.push(creator)
+            }
+        }
+        setContacts({description: {records: _contacts, headers: resp.description.headers}})
+        setDisableSubmit(false)
+    }
+
+    const setContactsAttributesOnFail = (resp) => {
+        setCreators({description: {}})
+        setContacts([])
+        setDisableSubmit(true)
+    }
+
+    const isPreview = (error) => {
+        if (error  && hasPublicAccess(data)) return false
+        return ((isUnauthorized() || isAuthorizing()) || !data)
+    }
+
     return (
         <EntityContext.Provider
             value={{
-                isUnauthorized, isAuthorizing,
+                isUnauthorized, isAuthorizing, isPreview,
                 getModal, setModalDetails,
                 setSubmissionModal,
                 setCheckDoiModal,
@@ -290,7 +326,8 @@ export const EntityProvider = ({ children }) => {
                 getEntityConstraints, getSampleEntityConstraints, buildConstraint,
                 getMetadataNote, successIcon, errIcon, checkProtocolUrl,
                 warningClasses, setWarningClasses, getCancelBtn,
-                isAdminOrHasValue, getAssignedToGroupNames
+                isAdminOrHasValue, getAssignedToGroupNames,
+                contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes, setContactsAttributesOnFail
             }}
         >
             {children}

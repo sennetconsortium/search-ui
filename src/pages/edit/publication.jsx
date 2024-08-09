@@ -1,37 +1,38 @@
+import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
-import {Button, Form} from 'react-bootstrap'
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {update_create_entity} from '../../lib/services'
+import {getAncestryData, getEntityData, update_create_entity} from '../../lib/services'
 import {
     cleanJson,
     eq,
     fetchEntity,
     getRequestHeaders
 } from '../../components/custom/js/functions'
-import AppNavbar from '../../components/custom/layout/AppNavbar'
-import AncestorIds from '../../components/custom/edit/dataset/AncestorIds'
-import Unauthorized from '../../components/custom/layout/Unauthorized'
-import AppFooter from '../../components/custom/layout/AppFooter'
-import Header from '../../components/custom/layout/Header'
-
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
-import Spinner from '../../components/custom/Spinner'
-import EntityHeader from '../../components/custom/layout/entity/Header'
-import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
-import Alert from 'react-bootstrap/Alert';
 import $ from 'jquery'
-import SenNetPopover from "../../components/SenNetPopover"
 import {valid_dataset_ancestor_config} from "../../config/config";
-import NotFound from "../../components/custom/NotFound";
+
+const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
+const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
+const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
+const Header = dynamic(() => import("../../components/custom/layout/Header"))
+const NotFound = dynamic(() => import("../../components/custom/NotFound"))
+const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
+
 
 export default function EditPublication() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails, setSubmissionModal,
+        isPreview, getModal, setModalDetails, setSubmissionModal,
         data, setData,
         error, setError,
         values, setValues,
@@ -43,7 +44,7 @@ export default function EditPublication() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache} = useContext(AppContext)
+    const {_t, cache, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [publicationStatus, setPublicationStatus] = useState(null)
@@ -64,20 +65,21 @@ export default function EditPublication() {
         const fetchData = async (uuid) => {
             log.debug('editPublication: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid)
 
-            log.debug('editPublication: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editPublication: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
             } else {
-                setData(data);
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
+                Object.assign(_data, ancestry)
+                setData(_data)
 
                 let immediate_ancestors = []
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    for (const ancestor of data.immediate_ancestors) {
+                if (_data.hasOwnProperty("immediate_ancestors")) {
+                    for (const ancestor of _data.immediate_ancestors) {
                         immediate_ancestors.push(ancestor.uuid)
                     }
                     await fetchAncestors(immediate_ancestors)
@@ -85,12 +87,12 @@ export default function EditPublication() {
 
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
-                    'lab_dataset_id': data.lab_dataset_id || data.title,
-                    'dataset_type': data.dataset_type,
-                    'description': data.description,
-                    'dataset_info': data.dataset_info,
+                    'lab_dataset_id': _data.lab_dataset_id || _data.title,
+                    'dataset_type': _data.dataset_type,
+                    'description': _data.description,
+                    'dataset_info': _data.dataset_info,
                     'direct_ancestor_uuids': immediate_ancestors,
-                    'publication_status': data.publication_status
+                    'publication_status': _data.publication_status
                 })
                 setEditMode("Edit")
             }
@@ -198,10 +200,8 @@ export default function EditPublication() {
     // TODO: remove this return when ready to support
     return <NotFound />
 
-    if (isAuthorizing() || isUnauthorized()) {
-        return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
-        )
+    if (isPreview(error))  {
+        return getPreviewView(data)
     } else {
 
         return (

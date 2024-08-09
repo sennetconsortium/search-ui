@@ -1,24 +1,22 @@
+import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
-import Description from "../components/custom/entities/sample/Description";
 import log from "loglevel";
-import {fetchDataCite, getRequestHeaders} from "../components/custom/js/functions";
-import AppNavbar from "../components/custom/layout/AppNavbar";
-import Unauthorized from "../components/custom/layout/Unauthorized";
-import AppFooter from "../components/custom/layout/AppFooter";
-import Header from "../components/custom/layout/Header";
-import Spinner from "../components/custom/Spinner";
-import AppContext from "../context/AppContext";
+import {fetchDataCite, getRequestHeaders} from "@/components/custom/js/functions";
+import Header from "@/components/custom/layout/Header";
+import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import ContributorsContacts from "../components/custom/entities/ContributorsContacts";
-import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import {DerivedProvider} from "../context/DerivedContext";
-import SidebarBtn from "../components/SidebarBtn";
+import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
+import {DerivedProvider} from "@/context/DerivedContext";
 import {useRouter} from "next/router";
-import Datasets from "../components/custom/entities/collection/Datasets";
-import {get_write_privilege_for_group_uuid} from "../lib/services";
-import Attribution from "../components/custom/entities/sample/Attribution";
+import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 
-
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
+const Datasets = dynamic(() => import("@/components/custom/entities/collection/Datasets"))
+const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
+const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 
 function ViewCollection() {
     const router = useRouter()
@@ -28,7 +26,7 @@ function ViewCollection() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t, cache, adminGroup} = useContext(AppContext)
+    const {isRegisterHidden, _t, isPreview, getPreviewView} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -38,22 +36,23 @@ function ViewCollection() {
 
             log.debug('collection: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid)
 
-            log.debug('collection: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('collection: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                // set state with the result
-                setData(data);
-                const doi = await fetchDataCite(data.doi_url)
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid)
+                Object.assign(_data, ancestry)
+                setData(_data)
+
+                const doi = await fetchDataCite(_data.doi_url)
                 setDoiData(doi?.data)
 
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
             }
@@ -70,10 +69,8 @@ function ViewCollection() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data, error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -123,32 +120,32 @@ function ViewCollection() {
                                 </div>
 
                                 <main className="col m-md-3 entity_details">
-                                    <SidebarBtn />
+                                    <SidebarBtn/>
 
                                     <EntityViewHeader data={data} entity={'collection'}
                                                       hasWritePrivilege={hasWritePrivilege}
-                                                       />
+                                    />
 
                                     <div className="row">
                                         <div className="col-12">
                                             {/*Description*/}
                                             <Description
-                                                     data={data}
-                                                     doiData={doiData}
-                                                     primaryDateTitle="Creation Date"
-                                                     primaryDate={data.created_timestamp}
-                                                     secondaryDateTitle="Modification Date"
-                                                     secondaryDate={data.last_modified_timestamp}
+                                                data={data}
+                                                doiData={doiData}
+                                                primaryDateTitle="Creation Date"
+                                                primaryDate={data.created_timestamp}
+                                                secondaryDateTitle="Modification Date"
+                                                secondaryDate={data.last_modified_timestamp}
                                             />
 
                                             {/*Contacts*/}
-                                            <ContributorsContacts title={'Contacts'} data={data.contacts} />
+                                            <ContributorsContacts title={'Contacts'} data={data.contacts}/>
 
                                             {/*Entities*/}
-                                            <Datasets data={data.entities || data.datasets} label={'Entities'} />
+                                            <Datasets data={data.entities || data.datasets} label={'Entities'}/>
 
                                             {/*Creators*/}
-                                            <ContributorsContacts title={'Creators'} data={data.creators} />
+                                            <ContributorsContacts title={'Creators'} data={data.creators}/>
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>
@@ -165,6 +162,8 @@ function ViewCollection() {
     }
 }
 
-ViewCollection.withWrapper = function(page) { return <DerivedProvider>{ page }</DerivedProvider> }
+ViewCollection.withWrapper = function (page) {
+    return <DerivedProvider>{page}</DerivedProvider>
+}
 
 export default ViewCollection

@@ -1,20 +1,19 @@
-// import 'vitessce/dist/es/production/static/css/index.css';
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
 import 'bootstrap/dist/css/bootstrap.css';
-import '../public/css/main.css'
+import '@/public/css/main.css'
 import log from 'loglevel'
-import ErrorBoundary from '../components/custom/error/ErrorBoundary'
+import ErrorBoundary from '@/components/custom/error/ErrorBoundary'
 import React, {useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import {getCookie} from 'cookies-next'
-import {getIngestEndPoint, getLogLevel} from '../config/config'
-import useGoogleTagManager from '../hooks/useGoogleTagManager'
-import addons from "../components/custom/js/addons/addons"
-import {AppProvider} from '../context/AppContext'
-import useCache from "../hooks/useCache";
-import Spinner from "../components/custom/Spinner";
-import useContent from "../hooks/useContent";
-import IdleTimerPopup from "../components/IdleTimerPopup";
+import { getLogLevel} from '@/config/config'
+import useGoogleTagManager from '@/hooks/useGoogleTagManager'
+import addons from "@/components/custom/js/addons/addons"
+import {AppProvider} from '@/context/AppContext'
+import useCache from "@/hooks/useCache";
+import Spinner from "@/components/custom/Spinner";
+import useContent from "@/hooks/useContent";
+import IdleTimerPopup from "@/components/IdleTimerPopup";
 
 function MyApp({Component, pageProps}) {
     const router = useRouter()

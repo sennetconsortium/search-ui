@@ -126,8 +126,6 @@ export function getUBKGFullName(term) {
         return window.UBKG_CACHE.organTypes[term]
     } else if (term in window.UBKG_CACHE.datasetTypes) {
         return window.UBKG_CACHE.datasetTypes[term]
-    } else if (window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type['data_type'] === term).length > 0) {
-        return window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type['data_type'] === term).map(data_type => data_type.description)[0];
     } else {
         return getNormalizedName(term)
     }
@@ -151,18 +149,6 @@ function getNormalizedName(term) {
         return normalizedNames[term.toLowerCase()]
     }
     return term
-}
-
-export function getDataTypes() {
-    return window.UBKG_CACHE.dataTypes
-}
-
-export function getDatasetTypes() {
-    return window.UBKG_CACHE.datasetTypes
-}
-
-export function getDataTypesByProperty(property, value) {
-    return window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type[property] === value).map(data_type => data_type.data_type);
 }
 
 export function getIsPrimaryDataset(data) {
@@ -442,6 +428,9 @@ Object.assign(String.prototype, {
     },
     isEmpty() {
         return (eq(typeof this, 'string') && !this.length)
+    },
+    camelCase(delimiter = '_') {
+        return this.split(delimiter).map((e,i) => i ? e.charAt(0).toUpperCase() + e.slice(1).toLowerCase() : e.toLowerCase()).join('')
     }
 })
 
@@ -462,6 +451,14 @@ Object.assign(Array.prototype, {
     },
     contains(needle, insensitive = true) {
         return this.some((i) => eq(i, needle, insensitive))
+    },
+    mapKeys(fn) {
+        const mapped = this.map(([k,v]) => ({ [fn(k)] : v}) )
+        let result = {}
+        for(let m of mapped) {
+            result = Object.assign(result, m)
+        }
+        return result
     }
 })
 
@@ -533,4 +530,17 @@ export const THEME = {
         const {r, g, b} = THEME.getRGB(color)
         return {color, light: THEME.isLightColor(color), r, g, b};
     },
+}
+
+export const extractSourceMappedMetadataInfo = (sourceMappedMetadata) => {
+    const groups = {}
+    const metadata = {}
+    for (const [key, value] of Object.entries(sourceMappedMetadata)) {
+        groups[value.key_display] = value.group_display
+        metadata[value.key_display] = value.value_display
+    }
+    return {
+        groups: groups,
+        metadata: metadata
+    }
 }

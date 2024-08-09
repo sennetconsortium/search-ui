@@ -53,6 +53,16 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                groupBy: 'dataset_type_hierarchy.keyword',
+                groupAll: true,
+            },
+            'sources.source_type': {
+                label: 'Source Type',
+                type: 'value',
+                field: 'sources.source_type.keyword',
+                filterType: 'any',
+                isExpanded: false,
+                isFilterable: false,
             },
             organ: {
                 label: 'Organ',
@@ -61,6 +71,8 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                groupBy: 'organ_hierarchy.keyword',
+                groupAll: false,
             },
             // Used for when "Dataset" or Sample Block/Section/Suspension is selected to show related organs
             "origin_sample.organ": {
@@ -70,8 +82,10 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                groupBy: 'origin_sample.organ_hierarchy.keyword',
+                groupAll: false,
             },
-             // Used for when "Dataset/Sample" is selected to show related sources
+            // Used for when "Dataset/Sample" is selected to show related sources
             "source.source_type": {
                 label: 'Source Type',
                 type: 'value',
@@ -96,10 +110,18 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            metadata: {
+             'metadata': {
                 label: 'Has Metadata',
                 type: 'exists',
                 field: 'metadata',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            'ingest_metadata.metadata': {
+                label: 'Has Metadata',
+                type: 'exists',
+                field: 'ingest_metadata.metadata',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -151,11 +173,26 @@ export const SEARCH_ENTITIES = {
         conditionalFacets: {
             // Show 'origin_sample.organ' facet if 'Dataset' or Sample Block/Section/Suspension is selected
             "origin_sample.organ": ({filters}) => {
-                 return filters.some(
+                return filters.some(
                     (filter) =>
                         (filter.field === 'entity_type' && filter.values.includes('Dataset')) ||
                         (filter.field === 'sample_category' && (filter.values.includes('Block') ||
-                                filter.values.includes('Section') || filter.values.includes('Suspension')))
+                            filter.values.includes('Section') || filter.values.includes('Suspension')))
+                )
+            },
+            // Show 'metadata' facet if 'Sample' or Sample Block/Section/Suspension is selected
+            'metadata': ({filters}) => {
+                return filters.some(
+                    (filter) =>
+                        (filter.field === 'entity_type' && filter.values.some(r=> ['Source', 'Collection', 'Publication'].includes(r))  ) ||
+                        (filter.field === 'sample_category' && (filter.values.includes('Block') ||
+                            filter.values.includes('Section') || filter.values.includes('Suspension')))
+                )
+            },
+             'ingest_metadata.metadata': ({filters}) => {
+                return filters.some(
+                    (filter) =>
+                        (filter.field === 'entity_type' && filter.values.includes('Dataset'))
                 )
             },
             // Only show 'organ' facet if 'Sample' is selected from the entity type facet
@@ -164,16 +201,17 @@ export const SEARCH_ENTITIES = {
 
             sample_category: FilterIsSelected('entity_type', 'Sample'),
 
-            // Only show 'source.source_type' facet if 'Dataset' or 'Sample' is selected from the entity type facet
+            // Only show 'source.source_type' facet if 'Sample' is selected from the entity type facet
             "source.source_type": ({filters}) => {
                 return filters.some(
                     (filter) =>
-                        filter.field === 'entity_type' &&
-                        (filter.values.includes('Sample') || filter.values.includes('Dataset'))
+                        filter.field === 'entity_type' && filter.values.includes('Sample')
                 )
             },
             // Only show 'source' facet if 'Source' is selected from the entity type facet
             source_type: FilterIsSelected('entity_type', 'Source'),
+            // Only show 'sources' facet if 'Dataset' is selected from the entity type facet
+            'sources.source_type': FilterIsSelected('entity_type', 'Dataset'),
         },
         search_fields: {
             "sennet_id^4": {type: 'value'},
@@ -188,25 +226,19 @@ export const SEARCH_ENTITIES = {
             'sennet_id',
             'entity_type',
             'uuid',
-            'created_by_user_displayname',
-            'created_by_user_email',
             'lab_tissue_sample_id',
             'lab_source_id',
             'lab_dataset_id',
             'sample_category',
+            'group_uuid',
             'group_name',
             'source_type',
-            'source.source_type',
-            'last_modified_timestamp',
             'dataset_type',
-            'dataset_category',
             'status',
             'origin_sample.organ',
             'organ',
             'title',
             'description',
-            'group_uuid',
-            'rui_location_anatomical_locations.label'
         ],
     },
     initialState: {

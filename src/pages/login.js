@@ -1,7 +1,7 @@
-import Login from '../components/custom/Login'
+import Login from '@/components/custom/Login'
 
 function login() {
-    return <Login />
+    return <Login/>
 }
 
 export default login

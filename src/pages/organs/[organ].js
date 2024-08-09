@@ -1,15 +1,17 @@
+import AppContext from "@/context/AppContext";
+import useOrganDetail from "@/hooks/organ/useOrganDetail";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useContext } from "react";
-import SidebarBtn from "../../components/SidebarBtn";
-import NotFound from "../../components/custom/NotFound";
-import AppFooter from "../../components/custom/layout/AppFooter";
-import AppNavbar from "../../components/custom/layout/AppNavbar";
-import DataTypeQuantities from "../../components/custom/organ/DataTypeQuantities";
-import HumanReferenceAtlas from "../../components/custom/organ/HumanReferenceAtlas";
-import Samples from "../../components/custom/organ/Samples";
-import OrganViewHeader from "../../components/custom/organ/ViewHeader";
-import AppContext from "../../context/AppContext";
-import useOrganDetail from "../../hooks/organ/useOrganDetail";
+import HumanReferenceAtlas from "@/components/custom/organ/HumanReferenceAtlas";
+
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const DataTypeQuantities = dynamic(() => import("@/components/custom/organ/DataTypeQuantities"))
+const NotFound = dynamic(() => import("@/components/custom/NotFound"))
+const OrganViewHeader = dynamic(() => import("@/components/custom/organ/ViewHeader"))
+const Samples = dynamic(() => import("@/components/custom/organ/Samples"))
+const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 
 const Organ = () => {
     const { isRegisterHidden } = useContext(AppContext);
@@ -21,10 +23,11 @@ const Organ = () => {
     if (organDetail == null) {
         return NotFound();
     }
+                            console.log(organDetail)
 
     return (
         <>
-            <AppNavbar hidden={isRegisterHidden} signoutHidden={false} />
+            <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
             <div className="container-fluid">
                 <div className="row flex-nowrap entity_body">
                     {/* Sidebar */}
@@ -71,14 +74,14 @@ const Organ = () => {
                     </div>
 
                     <main className="col m-md-3 entity_details">
-                        <SidebarBtn />
+                        <SidebarBtn/>
 
                         {/* Title and badges */}
-                        <OrganViewHeader organ={organDetail} />
+                        <OrganViewHeader organ={organDetail}/>
 
                         {/* Human Reference Atlas */}
-                        {organDetail.hraSupport && ( 
-                            <HumanReferenceAtlas id="HumanReferenceAtlas" uberonUrl={organDetail.uberonUrl}/>
+                        {organDetail.hraSupport && (
+                            <HumanReferenceAtlas id="HumanReferenceAtlas" uberonUrl={organDetail.organUberonUrl}/>
                         )}
 
                         {/* Data Types */}
@@ -88,11 +91,11 @@ const Organ = () => {
                         />
 
                         {/* Sample */}
-                        <Samples id="Samples" ruiCode={organDetail.ruiCode} />
+                        <Samples id="Samples" ruiCode={organDetail.ruiCode}/>
                     </main>
                 </div>
             </div>
-            <AppFooter />
+            <AppFooter/>
         </>
     );
 };

@@ -1,9 +1,6 @@
+import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useRef, useState} from 'react'
 import PropTypes from 'prop-types'
-import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
-import Unauthorized from "../../components/custom/layout/Unauthorized";
-import Header from "../../components/custom/layout/Header";
-import AppNavbar from "../../components/custom/layout/AppNavbar";
 import AppContext from "../../context/AppContext";
 import LinearProgress from '@mui/material/LinearProgress';
 import log from 'loglevel'
@@ -11,14 +8,16 @@ import {
     eq,
     getHeaders,
     getJobStatusDefinition,
+    getJobTypeColor,
     getStatusColor,
-    THEME,
-    getJobTypeColor
+    THEME
 } from "../../components/custom/js/functions";
-import SenNetPopover from "../../components/SenNetPopover";
 import DataTable from "react-data-table-component";
-import ColumnsDropdown from "../../components/custom/search/ColumnsDropdown";
-import {Container, Row, Button, Form, Alert} from "react-bootstrap";
+import Alert from "react-bootstrap/Alert"
+import Button from "react-bootstrap/Button"
+import Container from "react-bootstrap/Container"
+import Form from "react-bootstrap/Form"
+import Row from "react-bootstrap/Row"
 import {getIngestEndPoint, RESULTS_PER_PAGE} from "../../config/config";
 import {getOptions, opsDict, ResultsPerPage} from "../../components/custom/search/ResultsPerPage";
 import AppModal from "../../components/AppModal";
@@ -33,13 +32,23 @@ import JobQueueContext, {JobQueueProvider} from "../../context/JobQueueContext";
 import Joyride, {STATUS} from "react-joyride";
 import {TUTORIAL_THEME} from "../../config/constants";
 import JobDashboardTutorialSteps from "../../components/custom/layout/JobDashboardTutorialSteps";
+import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
+
+const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
+const ColumnsDropdown = dynamic(() => import("../../components/custom/search/ColumnsDropdown"))
+const Header = dynamic(() => import("../../components/custom/layout/Header"))
+const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
+const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
 
 function ViewJobs({isAdmin = false}) {
 
     const searchContext = () => `${isAdmin ? 'admin' : 'user'}.jobs-queue`
     const rowSettingKey = searchContext() + '.rowSetting'
-    const {intervalTimer, jobHasFailed, getEntityModalBody, getMetadataModalBody,
-        fetchEntities} = useContext(JobQueueContext)
+    const {
+        intervalTimer, jobHasFailed, getEntityModalBody, getMetadataModalBody,
+        fetchEntities
+    } = useContext(JobQueueContext)
 
     const [data, setData] = useState([])
     const [timestamp, setTimestamp] = useState(null)
@@ -73,11 +82,14 @@ function ViewJobs({isAdmin = false}) {
     const {filteredItems, setFilterText, searchBarComponent} = useDataTableSearch(
         {data, fieldsToSearch: ['job_id', 'description', 'status'], className: 'has-extraPadding', onKeydown})
 
-    const successIcon = () => <TaskAltIcon color={'success'} />
+    const successIcon = () => <TaskAltIcon color={'success'}/>
 
-    const errIcon = () => <WarningAmberIcon sx={{color: '#842029'}} />
+    const errIcon = () => <WarningAmberIcon sx={{color: '#842029'}}/>
 
-    const getEntityType = (row) => row.referrer?.path.split('/edit/bulk/')[1]?.split('?action')[0]
+    const getEntityType = (row) => {
+        const params = new URLSearchParams(row.referrer?.path)
+        return params.get('entityType')
+    }
 
     const randomColor = () => {
         let col;
@@ -173,12 +185,12 @@ function ViewJobs({isAdmin = false}) {
     const flushAllData = () => {
         Swal.fire(deleteConfig).then(result => {
             if (result.isConfirmed && isAdmin) {
-                fetch(urlPrefix() + `/flush`, {method: 'DELETE', headers: getHeaders()}).then(async (res)=>{
+                fetch(urlPrefix() + `/flush`, {method: 'DELETE', headers: getHeaders()}).then(async (res) => {
                     setErrorModal(false)
                     setShowModal(true)
                     setModalTitle(<h3>{successIcon()} Jobs flushed</h3>)
                     setModalBody(<div>All jobs have been flushed.</div>)
-                }).catch((err)=>{
+                }).catch((err) => {
                     setErrorModal(true)
                     setShowModal(true)
                     setModalTitle(<h3>{errIcon()} Jobs failed to be deleted.</h3>)
@@ -188,7 +200,7 @@ function ViewJobs({isAdmin = false}) {
                             <div>
                                 <code>{err.message}</code>
                             </div>
-                        </div> )
+                        </div>)
                 })
             }
         }).catch(error => {
@@ -254,7 +266,7 @@ function ViewJobs({isAdmin = false}) {
             method: method,
             headers: get_headers(),
             body: JSON.stringify(body)
-        }).then((res) =>{
+        }).then((res) => {
 
             if (!eq(action, 'register')) {
                 setErrorModal(false)
@@ -265,7 +277,7 @@ function ViewJobs({isAdmin = false}) {
 
             updateTableData(row, res, action)
 
-        }).catch((err)=>{
+        }).catch((err) => {
             e.target.disabled = false
             setErrorModal(true)
             setShowModal(true)
@@ -275,12 +287,12 @@ function ViewJobs({isAdmin = false}) {
                     <div>
                         <code>{err.message}</code>
                     </div>
-            </div> )
+                </div>)
         })
     }
 
     const getEntityRegisterPath = (row) => {
-        return `${getEntityType(row)}s/bulk/register`
+        return `${getEntityType(row).toLowerCase()}s/bulk/register`
     }
 
     const handleAction = (e, action, row) => {
@@ -289,14 +301,17 @@ function ViewJobs({isAdmin = false}) {
             handleSingleJobDeletion(e, row, action)
         } else if (eq(action, 'Register')) {
             e.target.disabled = true
-            const pathName = row.referrer?.path.includes('action=metadata') ? `metadata/register` : getEntityRegisterPath(row)
+            const pathName = row.referrer?.path.includes('metadata') ? `metadata/register` : getEntityRegisterPath(row)
             handleResponseModal(e, row, getIngestEndPoint() + pathName, 'POST', action, 'registered',
-                {job_id: row.job_id, referrer: {type: 'register', path: row.referrer?.path + `&job_id=${row.job_id}`
-                }})
+                {
+                    job_id: row.job_id, referrer: {
+                        type: 'register', path: row.referrer?.path + `&job_id=${row.job_id}`
+                    }
+                })
         } else if (eq(action, 'Cancel')) {
             handleSingleJobCancellation(e, row, action)
         } else {
-           window.location = row.referrer?.path
+            window.location = row.referrer?.path
         }
     }
 
@@ -304,7 +319,8 @@ function ViewJobs({isAdmin = false}) {
         const actions = getAction(row)
         let ui = [];
         for (let action of actions) {
-            ui.push(<Button key={action} variant={getVariant(action)} className={'mx-1'} size="sm" onClick={(e) => handleAction(e, action, row)}>{action}</Button>)
+            ui.push(<Button key={action} variant={getVariant(action)} className={'mx-1'} size="sm"
+                            onClick={(e) => handleAction(e, action, row)}>{action}</Button>)
         }
 
         return ui
@@ -367,10 +383,11 @@ function ViewJobs({isAdmin = false}) {
         setShowModal(true)
         setModalTitle(<h3>Job Error Details</h3>)
         setModalSize('xl')
-        setModalBody(<div className={'table-responsive has-error'}><DataTable columns={columns} data={errors} pagination /></div> )
+        setModalBody(<div className={'table-responsive has-error'}><DataTable columns={columns} data={errors}
+                                                                              pagination/></div>)
     }
 
-    const isMetadata = (row) => row.referrer?.path?.includes('action=metadata')
+    const isMetadata = (row) => row.referrer?.path?.includes('metadata')
 
     const getJobType = (row) => {
         let type = row.referrer.type
@@ -385,7 +402,9 @@ function ViewJobs({isAdmin = false}) {
     const getDescriptionModal = (row) => {
         setModalSize('lg')
         setModalTitle(<h4>Job Description</h4>)
-        setModalBody(<div>{row.description}<div className={'mt-3'}><small>Job ID: <code>{row.job_id}</code></small></div></div>)
+        setModalBody(<div>{row.description}
+            <div className={'mt-3'}><small>Job ID: <code>{row.job_id}</code></small></div>
+        </div>)
         setShowModal(true)
     }
 
@@ -400,9 +419,9 @@ function ViewJobs({isAdmin = false}) {
         setErrorModal(false)
         setModalTitle(<h3>{getJobType(row)} job completion details</h3>)
         setShowModal(true)
-        setModalBody(<div><Spinner /></div>)
+        setModalBody(<div><Spinner/></div>)
         setModalSize('xl')
-        const data = await fetchEntities(currentRow.current, {clearFetch: false, entityType })
+        const data = await fetchEntities(currentRow.current, {clearFetch: false, entityType})
 
         if ((data.passes && data.passes.length) || (data.fails && data.fails.length)) {
             if (isMetadata(currentRow.current)) {
@@ -440,7 +459,8 @@ function ViewJobs({isAdmin = false}) {
                 selector: row => row.description,
                 sortable: true,
                 reorder: true,
-                format: row => <div style={{cursor: 'pointer'}} data-field='job_id' title={row.description} onClick={()=>getDescriptionModal(row)}>
+                format: row => <div style={{cursor: 'pointer'}} data-field='job_id' title={row.description}
+                                    onClick={() => getDescriptionModal(row)}>
                     <SenNetPopover text={<>Click to view full description.</>} className={`desc-info-${row.job_id}`}>
                         {row.description}
                     </SenNetPopover>
@@ -454,14 +474,20 @@ function ViewJobs({isAdmin = false}) {
                     const hasStarted = eq(row.status, 'started')
                     return (<div className={'p-2'}>
                         <span className={`${getStatusColor(row.status)} badge`}>
-                         <SenNetPopover text={getJobStatusDefinition(row.status)} className={`status-info-${row.job_id}`}>
+                         <SenNetPopover text={getJobStatusDefinition(row.status)}
+                                        className={`status-info-${row.job_id}`}>
                             {row.status}
                         </SenNetPopover>
                         </span>
-                            {hasStarted && !isRegisterJob(row) && <span style={{position: 'absolute', marginLeft: '5px', marginTop: '2px'}}><SpinnerEl /></span>}
-                            {(jobHasFailed(row) || (jobCompleted(row) && isRegisterJob(row))) && <a className={'mx-2'} href={'#'} onClick={(e) => getViewDetailsModal(e, row)}><small>View details</small></a>}
-                            {hasStarted && isRegisterJob(row) && <span className={'mt-2'} style={{display: 'block'}}><LinearProgress variant="determinate" value={row.progress} /> <small>{row.progress}%</small></span>}
-                    </div>
+                            {hasStarted && !isRegisterJob(row) && <span
+                                style={{position: 'absolute', marginLeft: '5px', marginTop: '2px'}}><SpinnerEl/></span>}
+                            {(jobHasFailed(row) || (jobCompleted(row) && isRegisterJob(row))) &&
+                                <a className={'mx-2'} href={'#'} onClick={(e) => getViewDetailsModal(e, row)}><small>View
+                                    details</small></a>}
+                            {hasStarted && isRegisterJob(row) &&
+                                <span className={'mt-2'} style={{display: 'block'}}><LinearProgress
+                                    variant="determinate" value={row.progress}/> <small>{row.progress}%</small></span>}
+                        </div>
 
                     )
                 },
@@ -563,7 +589,7 @@ function ViewJobs({isAdmin = false}) {
 
     const mimicSocket = () => {
         clearInterval(intervalTimer.current)
-        intervalTimer.current = setInterval(()=>{
+        intervalTimer.current = setInterval(() => {
             fetchData()
         }, 3000)
     }
@@ -577,7 +603,7 @@ function ViewJobs({isAdmin = false}) {
         }
 
         document.addEventListener('visibilitychange', () => {
-            if (eq(document.visibilityState,'visible')) {
+            if (eq(document.visibilityState, 'visible')) {
                 mimicSocket()
             } else {
                 clearInterval(intervalTimer.current)
@@ -619,7 +645,7 @@ function ViewJobs({isAdmin = false}) {
             },
             style: row => {
                 const {r, g, b, light} = colorMap.current[row.job_id]
-                return ({ backgroundColor: `rgba(${r}, ${g}, ${b}, 0.1)`, color: 'black' })
+                return ({backgroundColor: `rgba(${r}, ${g}, ${b}, 0.1)`, color: 'black'})
             },
         },
     ];
@@ -629,7 +655,7 @@ function ViewJobs({isAdmin = false}) {
     }
 
     const handleFinishTutorial = (data) => {
-        const { status, type } = data;
+        const {status, type} = data;
         const finishedStatuses = [STATUS.FINISHED, STATUS.SKIPPED];
         if (finishedStatuses.includes(status)) {
             setTutorial({...tutorial, run: false})
@@ -657,52 +683,68 @@ function ViewJobs({isAdmin = false}) {
 
                     <Row>
 
-                     <div className='container'>
-                         {tutorial.steps.length > 0 && <Joyride
-                             steps={tutorial.steps}
-                             scrollOffset={80}
-                             run={tutorial.run}
-                             showProgress={true}
-                             showSkipButton={true}
-                             callback={handleFinishTutorial}
-                             locale={{last: 'Finish Tutorial'}}
-                             continuous
-                             styles={TUTORIAL_THEME}
-                         />}
+                        <div className='container'>
+                            {tutorial.steps.length > 0 && <Joyride
+                                steps={tutorial.steps}
+                                scrollOffset={80}
+                                run={tutorial.run}
+                                showProgress={true}
+                                showSkipButton={true}
+                                callback={handleFinishTutorial}
+                                locale={{last: 'Finish Tutorial'}}
+                                continuous
+                                styles={TUTORIAL_THEME}
+                            />}
 
-                         <Alert variant={'info'} >
-                             <div>
-                                 <p>This dashboard provides an overview of the job queue and is used to track queued, completed, and
-                                     jobs in progress. Users can initiate new jobs via the wizard by visiting any link under "Register entity -&gt; Bulk" or "Upload metadata" at the top of the page.</p>
+                            <Alert variant={'info'}>
+                                <div>
+                                    <p>This dashboard provides an overview of the job queue and is used to track queued,
+                                        completed, and
+                                        jobs in progress. Users can initiate new jobs via the wizard by visiting any
+                                        link under "Register entity -&gt; Bulk" or "Upload metadata" at the top of the
+                                        page.</p>
 
-                                 <p>Once validation of the submitted TSV is complete, users can click on the "Register" button
-                                     located under the Action column to finalize entity registration or metadata upload.</p>
+                                    <p>Once validation of the submitted TSV is complete, users can click on the
+                                        "Register" button
+                                        located under the Action column to finalize entity registration or metadata
+                                        upload.</p>
 
-                                 <p>Validation and registration jobs of the same file are linked and this relationship can be shown and grouped in the table by enabling "Color code linked jobs"</p>
+                                    <p>Validation and registration jobs of the same file are linked and this
+                                        relationship can be shown and grouped in the table by enabling "Color code
+                                        linked jobs"</p>
 
-                                 <button className='btn btn-primary' onClick={() => handleTutorial()}>Begin Tutorial Tour</button>
-                             </div>
-                         </Alert>
-                     </div>
+                                    <button className='btn btn-primary' onClick={() => handleTutorial()}>Begin Tutorial
+                                        Tour
+                                    </button>
+                                </div>
+                            </Alert>
+                        </div>
 
-                    <DataTable
-                        key={`results-${timestamp}`} //unique key on ResultsPerPage change is required for DataTable update on paginationPerPage value
-                        columns={getTableColumns(hiddenColumns)}
-                        data={filteredItems}
-                        fixedHeader={true}
-                        defaultSortFieldId={'started_timestamp'}
-                        defaultSortAsc={false}
-                        subHeader
-                        subHeaderComponent={
-                        <>
-                        {searchBarComponent}
-                            <div className='sui-layout-main-header mt-4 mb-4'>
-                                <div className='sui-layout-main-header__inner'>
-                                    <div><Button variant={'outline-primary'} onClick={fetchData}><i className={'bi bi-arrow-clockwise mx-1 refresh-jobs'} role={'presentation'}></i>Refresh</Button>
-                                        {isAdmin && filteredItems.length > 0 && <Button variant={'outline-danger'} className='mx-2' onClick={flushAllData}><i className={'bi bi-trash mx-1'} role={'presentation'}></i>Flush All</Button>}
-                                    </div>
+                        <DataTable
+                            key={`results-${timestamp}`} //unique key on ResultsPerPage change is required for DataTable update on paginationPerPage value
+                            columns={getTableColumns(hiddenColumns)}
+                            data={filteredItems}
+                            fixedHeader={true}
+                            defaultSortFieldId={'started_timestamp'}
+                            defaultSortAsc={false}
+                            subHeader
+                            subHeaderComponent={
+                                <>
+                                    {searchBarComponent}
+                                    <div className='sui-layout-main-header mt-4 mb-4'>
+                                        <div className='sui-layout-main-header__inner'>
+                                            <div><Button variant={'outline-primary'} onClick={fetchData}><i
+                                                className={'bi bi-arrow-clockwise mx-1 refresh-jobs'}
+                                                role={'presentation'}></i>Refresh</Button>
+                                                {isAdmin && filteredItems.length > 0 &&
+                                                    <Button variant={'outline-danger'} className='mx-2'
+                                                            onClick={flushAllData}><i className={'bi bi-trash mx-1'}
+                                                                                      role={'presentation'}></i>Flush
+                                                        All</Button>}
+                                            </div>
 
-                                    {filteredItems.length > 0 && <Stack className={'sui-stack'} direction="row" spacing={2}>
+                                            {filteredItems.length > 0 &&
+                                                <Stack className={'sui-stack'} direction="row" spacing={2}>
                                         <span className='mx-1 btn-illusion-secondary'><Form.Check
                                             style={{display: 'inline-block'}}
                                             onChange={updateRowColoring}
@@ -711,23 +753,32 @@ function ViewJobs({isAdmin = false}) {
                                             id="custom-switch"
                                             label="Color code linked jobs"
                                         /></span>
-                                        <ColumnsDropdown searchContext={searchContext} defaultHiddenColumns={['Start Date', 'End Date', 'Type']} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
-                                                                                      currentColumns={currentColumns} deleteFirst={false} />
-                                        <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={handleResultsPerPage} totalRows={filteredItems.length}  />
-                                    </Stack>}
-                                </div>
-                            </div>
-                        </>
-                        }
-                        onChangeRowsPerPage={handleRowsPerPageChange}
-                        paginationPerPage={resultsPerPage}
-                        paginationRowsPerPageOptions={Object.keys(opsDict)}
-                        conditionalRowStyles={condStyles}
-                        pagination />
-                        <AppModal modalSize={modalSize} className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`} showHomeButton={false} showCloseButton={true} handleClose={() => closeModal()} showModal={showModal} modalTitle={modalTitle} modalBody={modalBody} />
+                                                    <ColumnsDropdown searchContext={searchContext}
+                                                                     defaultHiddenColumns={['Start Date', 'End Date', 'Type']}
+                                                                     getTableColumns={getTableColumns}
+                                                                     setHiddenColumns={setHiddenColumns}
+                                                                     currentColumns={currentColumns}
+                                                                     deleteFirst={false}/>
+                                                    <ResultsPerPage resultsPerPage={resultsPerPage}
+                                                                    setResultsPerPage={handleResultsPerPage}
+                                                                    totalRows={filteredItems.length}/>
+                                                </Stack>}
+                                        </div>
+                                    </div>
+                                </>
+                            }
+                            onChangeRowsPerPage={handleRowsPerPageChange}
+                            paginationPerPage={resultsPerPage}
+                            paginationRowsPerPageOptions={Object.keys(opsDict)}
+                            conditionalRowStyles={condStyles}
+                            pagination/>
+                        <AppModal modalSize={modalSize} className={`modal--ctaConfirm ${errorModal ? 'is-error' : ''}`}
+                                  showHomeButton={false} showCloseButton={true} handleClose={() => closeModal()}
+                                  showModal={showModal} modalTitle={modalTitle} modalBody={modalBody}/>
                     </Row>
                 </Container>}
-                </>
+                <AppFooter/>
+            </>
         )
     }
 }

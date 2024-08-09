@@ -1,28 +1,36 @@
-import React, {useEffect, useContext, useState} from 'react'
-import { Row, Col, Container, Card, Button } from 'react-bootstrap'
-import AppNavbar from "../../components/custom/layout/AppNavbar";
-import AppFooter from "../../components/custom/layout/AppFooter";
-import Header from "../../components/custom/layout/Header";
+import dynamic from "next/dynamic";
+import React, {useContext, useState} from 'react'
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
 import AppContext from "../../context/AppContext";
 import {APP_TITLE} from "../../config/config";
-import Spinner, {SpinnerEl} from "../../components/custom/Spinner";
 import {toast} from "react-toastify";
-import Unauthorized from '../../components/custom/layout/Unauthorized';
-import {Grid} from "@mui/material";
+import Grid from "@mui/material/Grid"
 import AdminContext, {AdminProvider} from "../../context/AdminContext";
 
+const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
+const Header = dynamic(() => import("../../components/custom/layout/Header"))
+const Spinner = dynamic(() => import("../../components/custom/Spinner"))
+const SpinnerEl = dynamic(() => import( "../../components/custom/Spinner"))
+const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
+
+
 function AdminIndex() {
-    const { _t, authorized} = useContext(AppContext)
+    const {_t, authorized} = useContext(AppContext)
 
     const [busy, setBusy] = useState(false)
-    const { uiAdminAuthorized } = useContext(AdminContext)
+    const {uiAdminAuthorized} = useContext(AdminContext)
 
     const clearCache = async () => {
         const url = '/api/ontology'
         try {
             setBusy(true)
             await toast.promise(
-                fetch(url, { method: 'DELETE' }),
+                fetch(url, {method: 'DELETE'}),
                 {
                     pending: 'Attempting to clear cache...',
                     success: 'Cache cleared 👌',
@@ -36,11 +44,11 @@ function AdminIndex() {
     }
 
     if (!authorized || uiAdminAuthorized.loading) {
-        return <Spinner />
+        return <Spinner/>
     }
 
     if (!uiAdminAuthorized.authorized) {
-        return <Unauthorized />
+        return <Unauthorized/>
     }
 
     const goToLink = (item) => window.location = item.btn.href
@@ -73,15 +81,16 @@ function AdminIndex() {
             results.push(
                 <Grid item xs={2} sm={4} md={3} key={item.title}>
                     <Card className={'px-2 py-2 tooly'} style={{width: '18rem'}}>
-                        <Card.Img variant="top" src={item.img} />
+                        <Card.Img variant="top" src={item.img}/>
                         <Card.Body className={'mt-2 mb-2'}>
                             <Card.Title>{item.title}</Card.Title>
                             <Card.Text>
                                 {item.desc}
                             </Card.Text>
                             <Row>
-                                <Col sm={10}><Button variant="primary" onClick={() => item.btn.handler(item)}>{item.btn.text}</Button></Col>
-                                <Col sm={2}>{busy && <SpinnerEl />}</Col>
+                                <Col sm={10}><Button variant="primary"
+                                                     onClick={() => item.btn.handler(item)}>{item.btn.text}</Button></Col>
+                                <Col sm={2}>{busy && <SpinnerEl/>}</Col>
                             </Row>
                         </Card.Body>
                     </Card>
@@ -101,12 +110,12 @@ function AdminIndex() {
                 </Row>
 
                 <Row>
-                    <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+                    <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 4, sm: 8, md: 12}}>
                         {getCards()}
                     </Grid>
                 </Row>
             </Container>
-            <AppFooter />
+            <AppFooter/>
         </div>
     )
 }

@@ -2,6 +2,7 @@ import { getCookie } from "cookies-next";
 import log from "loglevel";
 import { getAuth, getEntityEndPoint, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "../config/config";
 import { SEARCH_ENTITIES } from "../config/search/entities";
+import {getHeaders, getRequestHeaders} from "@/components/custom/js/functions";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
 
@@ -9,7 +10,7 @@ export async function update_create_entity(uuid, body, action = "Edit", entity_t
     let headers = get_headers()
     headers = get_x_sennet_header(headers)
     let raw = JSON.stringify(body)
-    let url = getEntityEndPoint() + "entities/" + (action === 'Register' ? entity_type : uuid)
+    let url = getEntityEndPoint() + "entities/" + (action === 'Register' ? entity_type : uuid + '?return_dict=true')
     let method = (action === 'Register' ? "POST" : "PUT")
 
     return callService(raw, url, method, headers)
@@ -62,6 +63,23 @@ export async function get_prov_info(dataset_uuid) {
     }
     log.error('error', response)
     return {}
+}
+
+export async function get_lineage_info(entity_uuid, lineage_descriptor) {
+    let headers = get_headers()
+    const url = getEntityEndPoint() + lineage_descriptor + "/" + entity_uuid
+    const request_options = {
+        method: 'GET',
+        headers: headers
+    }
+    const response = await fetch(url, request_options)
+    if (response.status === 200) {
+        return await response.json()
+    } else if (response.status === 400) {
+        return []
+    }
+    log.error('error', response)
+    return []
 }
 
 export function get_headers_from_req(reqHeaders, headers) {
@@ -117,8 +135,7 @@ export async function fetchGlobusFilepath(sennet_id) {
 
 // This function requires the bearer token passed to it as the middleware can't access "getAuth()"
 export async function fetch_entity_type(uuid, bearer_token) {
-    const headers = new Headers();
-    headers.append("Authorization", "Bearer " + bearer_token)
+    const headers = get_auth_header();
     const url = getUUIDEndpoint() + "uuid/" + uuid
     const request_options = {
         method: 'GET',
@@ -192,6 +209,37 @@ export async function get_write_privilege_for_group_uuid(group_uuid) {
 export async function get_user_write_groups() {
     log.debug('FETCHING USER WRITE GROUPS')
     return await call_privs_service('user-write-groups')
+}
+
+export function getAncestry(uuid, {endpoints = ['ancestors', 'descendants'], otherEndpoints = []}) {
+    const propertyNameMap = {
+        'immediate_ancestors': 'parents',
+        'immediate_descendants': 'children'
+    }
+    const allEndpoints = endpoints.concat(otherEndpoints)
+    let result = {}
+    for (let key of allEndpoints) {
+        let endpoint = propertyNameMap[key] || key
+        result[key] = callService(null,  `${getEntityEndPoint()}${endpoint}/${uuid}`)
+    }
+    return result
+}
+
+export async function getEntityData(uuid) {
+    return await callService(null,  "/api/find?uuid=" + uuid, 'GET', getHeaders())
+}
+
+export async function getAncestryData(uuid, ops = {endpoints: ['ancestors', 'descendants'], otherEndpoints: []}) {
+
+    const ancestryPromises = getAncestry(uuid, ops)
+    const promiseSettled = await Promise.allSettled([...Object.values(ancestryPromises)])
+    let _data = {};
+    let i = 0;
+    for (let key of Object.keys(ancestryPromises)){
+        _data[key] = promiseSettled[i].value;
+        i++;
+    }
+    return _data;
 }
 
 export async function callService(raw, url, method, headers) {

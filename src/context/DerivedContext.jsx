@@ -1,4 +1,4 @@
-import {createContext, useCallback, useRef, useState} from "react";
+import {createContext, useCallback, useEffect, useRef, useState} from "react";
 import $ from "jquery";
 import {datasetIs, fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
 import {fetchVitessceConfiguration, get_prov_info} from "../lib/services";
@@ -13,6 +13,7 @@ export const DerivedProvider = ({children}) => {
     const [vitessceConfig, setVitessceConfig] = useState(null)
     const [showCopiedToClipboard, setShowCopiedToClipboard] = useState(false)
     const [isFullscreen, setIsFullscreen] = useState(false)
+    const [profileIndex, setProfileIndex] = useState(0)
     const [showExitFullscreenMessage, setShowExitFullscreenMessage] = useState(null)
     const [isPrimaryDataset, setIsPrimaryDataset] = useState(false)
     const [derivedDataset, setDerivedDataset] = useState(null)
@@ -24,14 +25,19 @@ export const DerivedProvider = ({children}) => {
     // Load the correct Vitessce view config
     const set_vitessce_config = async (data, dataset_id, dataset_type) => {
         fetchVitessceConfiguration(dataset_id).then(config => {
-            setVitessceConfig(config)
+            // If the /vitessce endpoint returns anything but a 200 and an actual configuration, hide the visualization  section
+            if (JSON.stringify(config) === '{}' ) {
+                setShowVitessce(false)
+            } else {
+                setVitessceConfig(config)
+            }
         }).catch(error => {
             console.error(error)
-            setVitessceConfig("")
+            setShowVitessce(false)
         })
     }
 
-    const initVitessceConfig = async (data) => {
+    const initVitessceConfig = useCallback(async (data) => {
         // Remove anything in brackets from dataset_type (might need to update this for visium to include parenthesis)
         const dataset_type = data.dataset_type = data.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
 
@@ -58,7 +64,7 @@ export const DerivedProvider = ({children}) => {
                         if (isDatasetStatusPassed(processed_dataset_statuses[i])) {
                             fetchEntity(processed_datasets[i]).then(processed_dataset => {
                                 // Check that the assay type is supported by Vitessce
-                                let processed_dataset_type = processed_dataset.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
+                                let processed_dataset_type = processed_dataset.dataset_type?.replace(/\s+([\[]).*?([\]])/g, "")
                                 setShowVitessce(true)
                                 setDerivedDataset(processed_dataset)
                                 set_vitessce_config(processed_dataset, processed_dataset.uuid, processed_dataset_type)
@@ -69,7 +75,7 @@ export const DerivedProvider = ({children}) => {
                 }
             }
         }
-    }
+    })
 
     const isDatasetStatusPassed = data => {
         if (data.hasOwnProperty('status')) {
@@ -79,11 +85,11 @@ export const DerivedProvider = ({children}) => {
         }
     }
 
-    const expandVitessceToFullscreen = () => {
+    const expandVitessceToFullscreen = useCallback(() => {
         document.addEventListener("keydown", collapseVitessceOnEsc, false);
         $('.vitessce-container').toggleClass('vitessce_fullscreen');
         setShowExitFullscreenMessage(true)
-    }
+    })
 
     const collapseVitessceOnEsc = useCallback((event) => {
         if (event.key === "Escape") {
@@ -95,12 +101,12 @@ export const DerivedProvider = ({children}) => {
     }, []);
     //endregion
 
-    const setVitessceConfigState = (val) => {
+    const setVitessceConfigState = useCallback((val) => {
         vitessceParams.current = val
         setShowVitessce(true)
-    }
+    })
 
-    const getAssaySplitData = (data) => {
+    const getAssaySplitData = useCallback((data) => {
         let component = []
         let primary = []
         let processed = []
@@ -118,7 +124,7 @@ export const DerivedProvider = ({children}) => {
             }
         }
         return {component, primary, processed}
-    }
+    })
 
     const filterFilesForDataProducts = (allFiles, parent) => {
         if (!allFiles) return
@@ -130,25 +136,26 @@ export const DerivedProvider = ({children}) => {
         }
         return _files
     }
-    const fetchDataProducts = async (data) => {
+    const fetchDataProducts = useCallback(async (data) => {
+        let _files = []
         if (datasetIs.primary(data.creation_action)) {
-            let _files = []
             for (let entity of data.descendants) {
                 if (datasetIs.processed(entity.creation_action)) {
                     const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders())
                     const processed = await response.json()
-                    if (processed.files && processed.files.length) {
-                        let dataProducts = filterFilesForDataProducts(processed.files, processed)
+                    if (processed.ingest_metadata && processed.ingest_metadata.files && processed.ingest_metadata.files.length) {
+                        let dataProducts = filterFilesForDataProducts(processed.ingest_metadata.files, processed)
                         _files = _files.concat(dataProducts)
                     }
                 }
             }
             setDataProducts(_files)
         } else {
-            setDataProducts(filterFilesForDataProducts(data.files, data))
+            _files = data.ingest_metadata?.files || []
+            setDataProducts(filterFilesForDataProducts(_files, data))
 
         }
-    }
+    })
 
     return <DerivedContext.Provider value={{
         initVitessceConfig,
@@ -166,10 +173,16 @@ export const DerivedProvider = ({children}) => {
         isFullscreen,
         setIsFullscreen,
         expandVitessceToFullscreen,
-        vitessceConfigFromUrl, vitessceParams,
+        profileIndex,
+        setProfileIndex,
+        vitessceConfigFromUrl,
+        vitessceParams,
         getAssaySplitData,
-        setVitessceConfigState, getUrlByLengthMaximums, encodeConfigToUrl,
-        fetchDataProducts, dataProducts
+        setVitessceConfigState,
+        getUrlByLengthMaximums,
+        encodeConfigToUrl,
+        fetchDataProducts,
+        dataProducts
     }}>
         {children}
     </DerivedContext.Provider>

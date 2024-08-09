@@ -6,13 +6,14 @@ const OrganViewHeader = ({ organ }) => {
             <h3>{organ.term}</h3>
 
             {/* Badges */}
-            {organ.uberonUrl && (
+            {organ.organUberonUrl && (
                 <div className='row mb-2' style={{ minHeight: '38px' }}>
                     <div className='col-md-6 col-sm-12 entity_subtitle icon_inline'>
                         <h5 className='title_badge'>
                             <span className='badge bg-secondary'>
                                 <a
-                                    href={organ.uberonUrl}
+                                    // href={organ.uberonUrl}
+                                    href={organ.organUberonUrl}
                                     className='icon_inline text-white'
                                 >
                                     {organ.organUberon}

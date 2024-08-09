@@ -1,30 +1,32 @@
+import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
-import {Alert, Button, Form} from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
 import {cleanJson, eq, getRequestHeaders, getStatusColor} from "../../components/custom/js/functions";
-import AppNavbar from "../../components/custom/layout/AppNavbar";
-import {update_create_dataset} from "../../lib/services";
-import Unauthorized from "../../components/custom/layout/Unauthorized";
-import AppFooter from "../../components/custom/layout/AppFooter";
-import GroupSelect from "../../components/custom/edit/GroupSelect";
-import Header from "../../components/custom/layout/Header";
+import {getEntityData, update_create_dataset} from "../../lib/services";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
-import Spinner from '../../components/custom/Spinner'
-import EntityHeader from '../../components/custom/layout/entity/Header'
-import EntityFormGroup from '../../components/custom/layout/entity/FormGroup'
-import SenNetPopover from "../../components/SenNetPopover";
 import $ from "jquery";
-import DatasetSubmissionButton from "../../components/custom/edit/dataset/DatasetSubmissionButton";
 import DatasetRevertButton, {statusRevertTooltip} from "../../components/custom/edit/dataset/DatasetRevertButton";
-import SenNetAlert from "../../components/SenNetAlert";
+
+const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
+const DatasetSubmissionButton = dynamic(() => import("../../components/custom/edit/dataset/DatasetSubmissionButton"))
+const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
+const GroupSelect = dynamic(() => import("../../components/custom/edit/GroupSelect"))
+const Header = dynamic(() => import("../../components/custom/layout/Header"))
+const SenNetAlert = dynamic(() => import("../../components/SenNetAlert"))
+const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
 
 
 function EditUpload() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -38,7 +40,7 @@ function EditUpload() {
         dataAccessPublic, setDataAccessPublic,
         getCancelBtn, isAdminOrHasValue, getAssignedToGroupNames
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
+    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
@@ -63,9 +65,7 @@ function EditUpload() {
         const fetchData = async (uuid) => {
             log.debug('editUpload: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const data = await getEntityData(uuid)
 
             log.debug('editUpload: Got data', data)
             if (data.hasOwnProperty("error")) {
@@ -184,10 +184,8 @@ function EditUpload() {
         handlePut('reorganize')
     }
 
-    if (isAuthorizing() || isUnauthorized()) {
-        return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
-        )
+    if (isPreview(error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -216,9 +214,13 @@ function EditUpload() {
                                                          Globus location. Valid uploads will be reorganized into
                                                          individual datasets with their own SenNet IDs by CODCC
                                                          Curation. Uploads must have directory structures, contributors,
-                                                         and metadata files per the <a target="_blank" href={"https://docs.google.com/document/d/1jXjUhC9ErfU7CVe5UGA5UEYx1MIXTq7KmDpF0s69ZsY/edit#heading=h.35zdcmzbs5a0"}>Data Submission Guide</a>. A new section
+                                                         and metadata files per the <a target="_blank"
+                                                                                       href={"https://docs.google.com/document/d/1jXjUhC9ErfU7CVe5UGA5UEYx1MIXTq7KmDpF0s69ZsY/edit#heading=h.35zdcmzbs5a0"}>Data
+                                                             Submission Guide</a>. A new section
                                                          on this topic is forthcoming as of 2023-09-29. For now, please
-                                                         schedule a <a target="_blank" href={"https://calendly.com/bhonick-psc/30min"}>Data Submission Office Hours</a> meeting with the
+                                                         schedule a <a target="_blank"
+                                                                       href={"https://calendly.com/bhonick-psc/30min"}>Data
+                                                             Submission Office Hours</a> meeting with the
                                                          Curation team or email the Help Desk for guidance on
                                                          constructing an upload.
                                                          {/*<br></br><br></br>*/}
@@ -250,7 +252,8 @@ function EditUpload() {
                                                 title={'Assigned to Group Name'}
                                                 required={false}
                                                 controlId={'assigned_to_group_name'}
-                                                popover={<>The group responsible for the next step in the data ingest process.</>}
+                                                popover={<>The group responsible for the next step in the data ingest
+                                                    process.</>}
                                                 data={data}
                                                 value={data.assigned_to_group_name}
                                                 groups={getAssignedToGroupNames(adminGroup)}
@@ -265,7 +268,7 @@ function EditUpload() {
                                                              type={'textarea'}
                                                              controlId='ingest_task' value={data.ingest_task}
                                                              onChange={onChange}
-                                                             text={<>The next task in the data ingest process.</>} />}
+                                                             text={<>The next task in the data ingest process.</>}/>}
 
                                         {/*Title*/}
                                         <EntityFormGroup label="Upload Title" placeholder='Upload Title'

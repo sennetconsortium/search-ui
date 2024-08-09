@@ -1,30 +1,33 @@
-import React, {Fragment, useContext, useEffect, useState} from "react";
+import dynamic from "next/dynamic";
+import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
-import Description from "../components/custom/entities/sample/Description";
-import Attribution from "../components/custom/entities/sample/Attribution";
 import log from "loglevel";
-import {eq, getRequestHeaders} from "../components/custom/js/functions";
-import AppNavbar from "../components/custom/layout/AppNavbar";
-import {get_write_privilege_for_group_uuid} from "../lib/services";
-import Unauthorized from "../components/custom/layout/Unauthorized";
-import Protocols from "../components/custom/entities/sample/Protocols";
-import AppFooter from "../components/custom/layout/AppFooter";
-import Header from "../components/custom/layout/Header";
-import Spinner from "../components/custom/Spinner";
-import AppContext from "../context/AppContext";
+import {eq, extractSourceMappedMetadataInfo, getRequestHeaders} from "@/components/custom/js/functions";
+import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
+import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import Provenance from "../components/custom/entities/Provenance";
-import {EntityViewHeader} from "../components/custom/layout/entity/ViewHeader";
-import SidebarBtn from "../components/SidebarBtn";
-import Metadata from "../components/custom/entities/Metadata";
+import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
+
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
+const Protocols = dynamic(() => import("@/components/custom/entities/sample/Protocols"))
+const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
+const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 
 function ViewSource() {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [metadata, setMetadata] = useState(null)
+    const [mappedMetadata, setMappedMetadata] = useState(null)
+    const [groups, setGroups] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext);
+    const {isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -33,21 +36,34 @@ function ViewSource() {
 
             log.debug('source: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid)
 
-            log.debug('source: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('source: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                // set state with the result
-                setData(data);
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                
+                if (eq(_data.source_type, cache.sourceTypes.Human) && _data.source_mapped_metadata) {
+                    // Humans have their metadata inside "source_mapped_metadata" while mice have theirs inside "metadata"
+                    // Humans have grouped metadata
+                    const {groups, metadata} = extractSourceMappedMetadataInfo(_data.source_mapped_metadata)
+                    setGroups(groups)
+                    setMetadata(metadata)
+                } else if (eq(_data.source_type, cache.sourceTypes.Mouse) && _data.metadata) {
+                    setMappedMetadata(_data.cedar_mapped_metadata)
+                    setMetadata(_data.metadata)
+                }
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid)
+                Object.assign(_data, ancestry)
+                setData(_data)
+
+                get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
+
             }
         }
 
@@ -56,16 +72,13 @@ function ViewSource() {
             fetchData(router.query.uuid)
                 // make sure to catch any error
                 .catch(console.error);
-            ;
         } else {
             setData(null);
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data, error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -139,21 +152,17 @@ function ViewSource() {
                                             }
 
                                             {/*Metadata*/}
-                                            {/*Humans have their metadata inside "source_mapped_metadata" while mice have theirs inside "metadata"*/}
-                                            {!!((eq(data.source_type, cache.sourceTypes.Mouse) && data.metadata && Object.keys(data.metadata).length) ||
-                                                    (eq(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata && Object.keys(data.source_mapped_metadata).length)) &&
-                                                <Fragment>
-                                                    {eq(data.source_type, cache.sourceTypes.Mouse) ? (
-                                                        <Metadata data={data} metadata={data.metadata}/>
-                                                    ) : (
-                                                        <Metadata data={data} metadata={data.source_mapped_metadata}/>
-                                                    )}
-                                                </Fragment>
+                                            {metadata &&
+                                                <Metadata
+                                                    data={data}
+                                                    metadata={metadata}
+                                                    mappedMetadata={mappedMetadata}
+                                                    groups={groups}/>
                                             }
 
                                             {/*Protocols*/}
                                             {data.protocol_url &&
-                                                <Protocols protocol_url={data.protocol_url}/>
+                                                <Protocols protocolUrl={data.protocol_url}/>
                                             }
 
                                             {/*Attribution*/}

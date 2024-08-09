@@ -1,33 +1,30 @@
-import React from "react";
+import React, {useState} from "react";
 import Modal from 'react-bootstrap/Modal';
 import {Button} from 'react-bootstrap';
 import SenNetAlert from '../../../SenNetAlert';
 
 
-export default class HipaaModal extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showModal: false,
-        };
+const HipaaModal = ({}) => {
+    const [showModal, setShowModal] = useState(false)
+
+    const displayModal = () => {
+        setShowModal(true)
     }
 
-    showModal = () => {
-        this.setState({showModal: true})
-    }
-    hideModal = () => {
-        this.setState({showModal: false})
+    const hideModal = () => {
+        setShowModal(false)
+
     }
 
-    render() {
+
         return (
             <>
                 <SenNetAlert className="hipaa-alert"
-                             text=<>Do not provide any Protected Health Information. This includes the <span className="link" onClick={this.showModal}>
+                             text=<>Do not provide any Protected Health Information. This includes the <span className="link" onClick={displayModal}>
                                       18 identifiers specified by HIPAA</span>
                                   </> />
 
-                <Modal size="xl" show={this.state.showModal} keyboard={false}>
+                <Modal size="xl" show={showModal} keyboard={false}>
                     <Modal.Body>
                         <ol>
                             <li>Names.</li>
@@ -75,12 +72,13 @@ export default class HipaaModal extends React.Component {
                         </ol>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="outline-secondary rounded-0" onClick={this.hideModal}>
+                        <Button variant="outline-secondary rounded-0" onClick={hideModal}>
                             Close
                         </Button>
                     </Modal.Footer>
                 </Modal>
             </>
         )
-    }
 }
+
+export default HipaaModal

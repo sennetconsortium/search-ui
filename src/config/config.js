@@ -3,7 +3,6 @@ import {APP_ROUTES} from './constants'
 
 import _ from 'lodash';
 import {SEARCH_ENTITIES} from "./search/entities";
-import {parseJson} from "../lib/services";
 
 export const APP_TITLE = 'Data Sharing Portal'
 export const NAVBAR_TITLE = 'SenNet'

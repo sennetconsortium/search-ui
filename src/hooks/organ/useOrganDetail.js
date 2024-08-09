@@ -1,7 +1,6 @@
-import _ from "lodash";
-import { useEffect, useState } from "react";
-import { organDetails } from "../../config/organs";
-import { getOrgans } from "../../lib/ontology";
+import { organDetails } from "@/config/organs";
+import AppContext from "@/context/AppContext";
+import { useContext, useEffect, useState } from "react";
 import { supportedRuiSources } from "../../config/config";
 
 const useOrganDetail = (urlParamName) => {
@@ -15,9 +14,10 @@ const useOrganDetail = (urlParamName) => {
         icon: "",
         searchUrl: "",
         urlParamName: "",
-        uberonUrl: "",
+        organUberonUrl: "",
         hraSupport: false
     });
+    const {cache} = useContext(AppContext)
 
     useEffect(() => {
         const organDetail = Object.entries(organDetails).find((organDetail) => {
@@ -31,18 +31,13 @@ const useOrganDetail = (urlParamName) => {
         }
 
         const getOntologyOrgan = async (organDetail) => {
-            const organs = await getOrgans();
+            const organs = cache.organs
             let organ = organs.find((organ) => {
                 return organ.rui_code === organDetail.ruiCode;
             });
-            organ = _.mapKeys(organ, (v, k) => _.camelCase(k));
+            organ = Object.entries(organ).mapKeys((k) => k.camelCase())
 
-            let uberonUrl = organ.uberonUrl;
-            if (!uberonUrl && organ.organUberon) {
-                const uberonPath = organ.organUberon.replace(":", "_");
-                uberonUrl = `http://purl.obolibrary.org/obo/${uberonPath}`;
-            }
-            return setOrganDetail({ uberonUrl, ...organDetail, ...organ });
+            return setOrganDetail({ ...organDetail, ...organ });
         };
         getOntologyOrgan(organDetail[1]);
     }, []);
