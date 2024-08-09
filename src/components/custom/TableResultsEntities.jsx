@@ -67,6 +67,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         cols.push(
             {
                 name: 'SenNet ID',
+                fieldName: 'sennet_id',
                 selector: row => raw(row.sennet_id),
                 sortable: true,
                 reorder: true,
@@ -76,6 +77,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         if (hasMultipleEntityTypes) {
             cols.push({
                 name: 'Entity Type',
+                fieldName: 'entity_type',
                 selector: row => raw(row.entity_type),
                 sortable: true,
                 reorder: true,
@@ -85,6 +87,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         if (includeLabIdCol && isLoggedIn() || _isLoggedIn) {
             cols.push({
                 name: 'Lab ID',
+                fieldName: 'lab_id',
                 selector: row => {
                     return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
                 },
@@ -97,6 +100,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         if (includeGroupCol) {
             cols.push({
                 name: 'Group',
+                fieldName: 'group_name',
                 selector: row => raw(row.group_name),
                 sortable: true,
                 reorder: true,
@@ -110,6 +114,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
     const reusableColumns = {
         Status:  {
             name: 'Status',
+            fieldName: 'status',
             selector: row => raw(row.status),
             format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
             sortable: true,
@@ -117,24 +122,28 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         },
         Organ: {
             name: 'Organ',
+            fieldName: 'origin_sample.organ',
             selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
             sortable: true,
             reorder: true,
         },
         SourceType: {
             name: 'Type',
+            fieldName: 'source_type',
             selector: row => raw(row.source_type),
             sortable: true,
             reorder: true,
         },
         SampleCategory: {
             name: 'Category',
+            fieldName: 'sample_category',
             selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : '',
             sortable: true,
             reorder: true,
         },
         DatasetType: {
             name: 'Dataset Type',
+            fieldName: 'dataset_type',
             selector: row => {
                 let val = raw(row.dataset_type)
                 if (val) {
@@ -166,12 +175,14 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
     const uploadColumns = [
         {
             name: 'Title',
+            fieldName: 'title',
             selector: row => raw(row.title),
             sortable: true,
             reorder: true,
         },
         {
             name: 'Description',
+            fieldName: 'description',
             selector: row => raw(row.description),
             sortable: true,
             reorder: true,
@@ -195,12 +206,14 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
     const collectionColumns = [
         {
             name: 'Title',
+            fieldName: 'title',
             selector: row => raw(row.title),
             sortable: true,
             reorder: true,
         },
         {
             name: 'Description',
+            fieldName: 'description',
             selector: row => raw(row.description),
             sortable: true,
             reorder: true,

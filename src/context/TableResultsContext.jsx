@@ -5,13 +5,15 @@ import {RESULTS_PER_PAGE} from "../config/config";
 import {createTheme} from "react-data-table-component";
 import SearchUIContext from "search-ui/components/core/SearchUIContext";
 import {handleTableControls} from "@/components/custom/search/ResultsPerPage";
+import {eq} from "@/components/custom/js/functions";
 const TableResultsContext = createContext({})
 
 export const TableResultsProvider = ({ index, columnsRef, children, getHotLink, rows, filters, onRowClicked, forData = false, raw, getId, inModal = false }) => {
 
     const {isLoggedIn} = useContext(AppContext)
     const {isLoading, rawResponse, pageNumber,
-        setPageNumber, pageSize, setPageSize, sort, setSort} = useContext(SearchUIContext)
+        setPageNumber, pageSize, setPageSize, setSort} = useContext(SearchUIContext)
+    const sortedFields = useRef({})
 
     const hasLoaded = useRef(false)
     let pageData = []
@@ -56,6 +58,29 @@ export const TableResultsProvider = ({ index, columnsRef, children, getHotLink, 
         setPageNumber(page)
     }
 
+    const handleSort = (column, sortDirection) => {
+        let sorting = []
+        let field = column.fieldName
+        const direction = eq(sortedFields.current[field], 'desc') ? 'asc' : 'desc'
+        const newSort = {
+            field: `${field}.keyword`,
+            direction
+        }
+        let found = false
+        for (let i = 0; i < sorting.length; i++) {
+            if (eq(sorting[i].field, field)) {
+                found = true
+                sorting[i] = newSort
+                break
+            }
+        }
+        if (!found) {
+            sorting.push(newSort)
+        }
+        sortedFields.current[field] = direction
+        setSort(sorting)
+    }
+
     const handlePageChange = (page, totalRows) => {
         updateTablePagination(page, resultsPerPage)
         handleTableControls()
@@ -97,7 +122,8 @@ export const TableResultsProvider = ({ index, columnsRef, children, getHotLink, 
         pageData,
         resultsPerPage,
         setResultsPerPage,
-        setPageSize, sort, setSort,
+        setPageSize, setSort,
+        handleSort,
         pageSize,
         pageNumber,
         currentColumns,

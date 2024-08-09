@@ -18,7 +18,7 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
         noResultsMessage,
         inModal,
         rows,
-        resultsPerPage,
+        handleSort,
         setResultsPerPage,
         currentColumns,
         filters,
@@ -61,6 +61,8 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
                         data={getTableData()}
                         theme={'plain'}
                         defaultSortAsc={false}
+                        onSort={handleSort}
+                        sortServer
                         pointerOnHover={true}
                         highlightOnHover={true}
                         noDataComponent={noResultsMessage}
