@@ -17,29 +17,25 @@ const EUIIntegration = () => {
     return (
         <HelmetProvider>
             <Helmet>
-                <base href="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/wc.js"/>
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&amp;display=swap"
                       rel="stylesheet"/>
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined"
                       rel="stylesheet"/>
-                <link rel="stylesheet" href="styles.css"/>
-                <script src="wc.js" async></script>
+                <link href="https://cdn.humanatlas.io/ui/ccf-eui/styles.css" rel="stylesheet"/>
             </Helmet>
             <ccf-eui
                 ref={euiRef}
                 theme="sennet"
                 header="true"
                 use-remote-api="true"
-                remote-api-endpoint="https://apps.humanatlas.io/sennet-hra-api/v1"
-                hubmap-data-url=""
+                remote-api-endpoint="https://apps.humanatlas.io/api"
                 login-disabled="true"
-                logo-tooltip=""
                 home-url={getRootURL() + "search"}
             />
 
             <Script
                 only="ccf-eui"
-                src="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/wc.js"
+                src="https://cdn.humanatlas.io/ui/ccf-eui/wc.js"
             />
         </HelmetProvider>
     );
