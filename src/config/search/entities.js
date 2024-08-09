@@ -239,11 +239,7 @@ export const SEARCH_ENTITIES = {
             'organ',
             'title',
             'description',
-        ],
-        pagination: {
-            from: 1,
-            size: 20
-        }
+        ]
     },
     initialState: {
         current: 1,

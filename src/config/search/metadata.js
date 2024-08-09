@@ -468,11 +468,7 @@ export const SEARCH_METADATA = {
             'organ',
             'title',
             'description',
-        ],
-        pagination: {
-            from: 1,
-            size: 20
-        }
+        ]
     },
     initialState: {
         resultsPerPage: 10000,

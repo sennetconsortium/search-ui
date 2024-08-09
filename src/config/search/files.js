@@ -74,11 +74,7 @@ export const SEARCH_FILES = {
             dataset_sennet_id: {type: 'value'},
             dataset_type: {type: 'value'}
         },
-        source_fields: sourceItems,
-        pagination: {
-            from: 1,
-            size: 20
-        }
+        source_fields: sourceItems
     },
     initialState: {
         resultsPerPage: 10000,
