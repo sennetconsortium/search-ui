@@ -266,12 +266,14 @@ export const AppProvider = ({ cache, banners, children }) => {
         setSidebarVisible(!sidebarVisible)
     }
 
-    const isPreview = (data) => {
+    const isPreview = (data, error) => {
+        log.debug('isPreview', data, error, authorized)
+        if (error && hasPublicAccess(data)) return false
         return ((isUnauthorized(data) || isAuthorizing()) || !data)
     }
 
     const getPreviewView = (data) => {
-        return data == null ? <Spinner/> : <Unauthorized/>
+        return isUnauthorized(data) && data != null ? <Unauthorized/> : <Spinner/>
     }
     
     return (
