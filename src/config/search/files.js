@@ -74,10 +74,11 @@ export const SEARCH_FILES = {
             dataset_sennet_id: {type: 'value'},
             dataset_type: {type: 'value'}
         },
-        source_fields: sourceItems,
+        source_fields: sourceItems
     },
     initialState: {
-        resultsPerPage: 10000,
+        current: 1,
+        resultsPerPage: 20,
         sortList: [{
             field: "source.file_info_refresh_timestamp",
             direction: "desc"

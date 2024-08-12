@@ -239,10 +239,11 @@ export const SEARCH_ENTITIES = {
             'organ',
             'title',
             'description',
-        ],
+        ]
     },
     initialState: {
-        resultsPerPage: 10000,
+        current: 1,
+        resultsPerPage: 20,
         sortList: [{
             field: "last_modified_timestamp",
             direction: "desc"

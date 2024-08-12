@@ -3,9 +3,11 @@ import {withSearch} from "@elastic/react-search-ui";
 import SearchUIContext from "search-ui/components/core/SearchUIContext";
 
 function CustomClearSearchBox({shouldClearFilters = true}) {
-    const { clearSearchTerm } = useContext(SearchUIContext)
+    const { clearSearchTerm, setPageSize, setPageNumber } = useContext(SearchUIContext)
 
     function handleClearFiltersClick() {
+        setPageSize(20)
+        setPageNumber(1)
         clearSearchTerm(shouldClearFilters)
     }
 

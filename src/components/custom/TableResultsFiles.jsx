@@ -328,6 +328,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     running.</small>
                 </> />
                 <ResultsBlock
+                    index={'files'}
                     searchContext={`files.${tableContext.current}`}
                     tableClassName={'rdt_Results--Files'}
                     getTableColumns={getTableColumns}

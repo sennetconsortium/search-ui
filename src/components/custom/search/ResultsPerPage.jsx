@@ -1,19 +1,12 @@
-import {getCheckAll, handleCheckAll} from "../BulkExport";
-import $ from "jquery";
-import {RESULTS_PER_PAGE} from "../../../config/config";
+import {handleCheckAll} from "../BulkExport";
+import {RESULTS_PER_PAGE} from "@/config/config";
 import React, {useState} from "react";
 import Select from 'react-select'
 import {clearDownloadSizeLabel} from "../TableResultsFiles";
 
-export const handlePagingInfo = (page, resultsPerPage, totalRows) => {
+export const handleTableControls = () => {
     try {
         handleCheckAll()
-        const $pgInfo = $('.sui-paging-info')
-        let from = (page - 1) * resultsPerPage + 1
-        let to = page * resultsPerPage
-        to = to > totalRows ? totalRows : to
-        let txt = totalRows > 0 ? `${from} - ${to}` : '0 - 0'
-        $pgInfo.find('strong').eq(0).html(`${txt}`)
         clearDownloadSizeLabel()
     } catch (e) {
         console.error(e)
@@ -35,7 +28,7 @@ export const getOptions = (totalRows) => {
     return result
 }
 
-export function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
+export function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows, updateTablePagination}) {
     const getDefaultValue = () => getOptions(totalRows).length > 1 ? getOptions(totalRows)[1] : getOptions(totalRows)[0]
 
     const [value, setValue] = useState(getDefaultValue())
@@ -43,7 +36,8 @@ export function ResultsPerPage({resultsPerPage, setResultsPerPage, totalRows}) {
     const handleChange = (e) => {
         setResultsPerPage(e.value)
         setValue(e)
-        handlePagingInfo(1, e.value, totalRows)
+        updateTablePagination(1, e.value)
+        handleTableControls()
     }
 
     const getCurrentValue = () => {
