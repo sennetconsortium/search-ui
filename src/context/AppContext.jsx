@@ -1,18 +1,17 @@
 import React, { createContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
-import {eq, goToSearch} from '../components/custom/js/functions'
+import {eq, goToSearch} from '@/components/custom/js/functions'
 import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import {
     check_valid_token,
-    get_auth_header,
     get_read_write_privileges,
     get_user_write_groups,
     has_data_admin_privs
-} from '../lib/services'
-import {deleteCookies} from "../lib/auth";
-import {APP_ROUTES} from "../config/constants";
-import {getIngestEndPoint, STORAGE_KEY} from "../config/config";
+} from '@/lib/services'
+import {deleteCookies} from "@/lib/auth";
+import {APP_ROUTES} from "@/config/constants";
+import {STORAGE_KEY} from "@/config/config";
 import AppModal from "../components/AppModal";
 import Spinner from "../components/custom/Spinner";
 import Unauthorized from "@/components/custom/layout/Unauthorized";
