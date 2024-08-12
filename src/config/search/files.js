@@ -77,7 +77,8 @@ export const SEARCH_FILES = {
         source_fields: sourceItems
     },
     initialState: {
-        resultsPerPage: 10000,
+        current: 1,
+        resultsPerPage: 20,
         sortList: [{
             field: "source.file_info_refresh_timestamp",
             direction: "desc"
