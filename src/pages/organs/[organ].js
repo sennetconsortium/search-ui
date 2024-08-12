@@ -23,7 +23,6 @@ const Organ = () => {
     if (organDetail == null) {
         return NotFound();
     }
-                            console.log(organDetail)
 
     return (
         <>
@@ -81,7 +80,7 @@ const Organ = () => {
 
                         {/* Human Reference Atlas */}
                         {organDetail.hraSupport && (
-                            <HumanReferenceAtlas id="HumanReferenceAtlas" uberonUrl={organDetail.organUberonUrl}/>
+                            <HumanReferenceAtlas id="HumanReferenceAtlas" organ={organDetail}/>
                         )}
 
                         {/* Data Types */}

@@ -1,9 +1,13 @@
 import { organDetails } from "@/config/organs";
 import AppContext from "@/context/AppContext";
 import { useContext, useEffect, useState } from "react";
-import { supportedRuiSources } from "../../config/config";
+import { nonSupportedRuiOrgans } from "../../config/config";
 
 const useOrganDetail = (urlParamName) => {
+
+
+
+
     const [organDetail, setOrganDetail] = useState({
         code: "",
         organCui: "",
@@ -20,15 +24,14 @@ const useOrganDetail = (urlParamName) => {
     const {cache} = useContext(AppContext)
 
     useEffect(() => {
-        const organDetail = Object.entries(organDetails).find((organDetail) => {
-            return organDetail[1].urlParamName === urlParamName.toLowerCase();
+        const organDetail = Object.values(organDetails).find((organDetail) => {
+            return organDetail.urlParamName === urlParamName.toLowerCase();
         });
-        organDetail[1].hraSupport = !supportedRuiSources.includes(organDetail[1].ruiCode);
-
         if (!organDetail) {
             setOrganDetail(null);
             return;
         }
+        organDetail.hraSupport = !nonSupportedRuiOrgans.includes(organDetail.ruiCode);
 
         const getOntologyOrgan = async (organDetail) => {
             const organs = cache.organs
@@ -37,9 +40,14 @@ const useOrganDetail = (urlParamName) => {
             });
             organ = Object.entries(organ).mapKeys((k) => k.camelCase())
 
+            const [_, __, organSide] = organ.term.match(/^((?:\w)+(?: \w+)?)(?: \((Right|Left)\))?$/)
+            if (organSide) {
+                organ.side = organSide
+            }
+
             return setOrganDetail({ ...organDetail, ...organ });
         };
-        getOntologyOrgan(organDetail[1]);
+        getOntologyOrgan(organDetail);
     }, []);
 
     return { organDetail };

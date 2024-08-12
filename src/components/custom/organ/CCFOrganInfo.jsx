@@ -1,7 +1,7 @@
 import {Helmet, HelmetProvider} from 'react-helmet-async'
 import {getCookie} from "cookies-next";
 
-const CCFOrganInfo = ({uberonUrl}) => {
+const CCFOrganInfo = ({organ}) => {
     // See https://github.com/hubmapconsortium/hra-ui/blob/47490b8b5977def6cbaed047ebda6beb9e90fb97/EMBEDDING.md?plain=1#L412
     console.log("https://apps.humanatlas.io/api/ds-graph/sennet?token=")
     console.log(getCookie('groups_token'))
@@ -21,7 +21,8 @@ const CCFOrganInfo = ({uberonUrl}) => {
                 <style>{customStyles}</style>
             </Helmet>
             <ccf-organ-info
-                organ-iri={uberonUrl}
+                side={organ.side}
+                organ-iri={organ.organUberonUrl}
                 data-sources={`["https://apps.humanatlas.io/api/ds-graph/sennet?token=${getCookie('groups_token')}"]`}
                 eui-url="https://data.sennetconsortium.org/ccf-eui"
                 rui-url="https://apps.humanatlas.io/rui/"

@@ -3,7 +3,6 @@ import { APP_ROUTES } from "@/config/constants";
 import AppContext from "@/context/AppContext";
 import useOrganList from "@/hooks/organ/useOrganList";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useContext } from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
