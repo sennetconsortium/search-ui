@@ -20,6 +20,10 @@ export const SEARCH_METADATA = {
                 value: "Publication"
             },
             {
+                keyword: "entity_type.keyword",
+                value: "Upload"
+            },
+            {
                 keyword: "sample_category.keyword",
                 value: "Organ",
             },
