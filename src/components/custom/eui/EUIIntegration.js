@@ -1,19 +1,9 @@
-import {useEffect, useRef} from "react";
 import Script from "next/script";
 import {getCookie} from "cookies-next";
 import {Helmet, HelmetProvider} from "react-helmet-async";
 import {getRootURL} from "../../../config/config";
 
 const EUIIntegration = () => {
-    const euiRef = useRef(null);
-
-    useEffect(() => {
-        const eui = euiRef.current;
-        if (getCookie('groups_token')) {
-            eui.hubmapToken = `SNT-${getCookie('groups_token')}`
-        }
-    }, []);
-
     return (
         <HelmetProvider>
             <Helmet>
@@ -24,11 +14,10 @@ const EUIIntegration = () => {
                 <link href="https://cdn.humanatlas.io/ui/ccf-eui/styles.css" rel="stylesheet"/>
             </Helmet>
             <ccf-eui
-                ref={euiRef}
                 theme="sennet"
-                header="true"
-                use-remote-api="true"
-                remote-api-endpoint="https://apps.humanatlas.io/api"
+                data-sources={`["https://apps.humanatlas.io/api/ds-graph/sennet?token=${getCookie('groups_token')}"]`}
+                base-href="https://cdn.humanatlas.io/ui/ccf-eui/"
+                logo-tooltip="SenNet Data Portal"
                 login-disabled="true"
                 home-url={getRootURL() + "search"}
             />
