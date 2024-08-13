@@ -67,22 +67,6 @@ export const SEARCH_METADATA = {
             },
 
             // Source Human
-            "source_mapped_metadata.sex.value": {
-                label: 'Sex',
-                type: 'value',
-                field: 'source_mapped_metadata.sex.value.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "source_mapped_metadata.race.value": {
-                label: 'Race',
-                type: 'value',
-                field: 'source_mapped_metadata.race.value.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
             "source_mapped_metadata.age.value": {
                 label: 'Age',
                 type: 'range',
@@ -103,20 +87,28 @@ export const SEARCH_METADATA = {
                 uiType: 'numrange',
                 uiInterval: 1,
             },
-
-            // Source Mouse
-            "metadata.strain": {
-                label: 'Strain',
+            "source_mapped_metadata.race.value": {
+                label: 'Race',
                 type: 'value',
-                field: 'metadata.strain.keyword',
+                field: 'source_mapped_metadata.race.value.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.sex": {
+            "source_mapped_metadata.sex.value": {
                 label: 'Sex',
                 type: 'value',
-                field: 'metadata.sex.keyword',
+                field: 'source_mapped_metadata.sex.value.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+
+            // Source Mouse
+            "metadata.euthanization_method": {
+                label: 'Euthanization Method',
+                type: 'value',
+                field: 'metadata.euthanization_method.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -137,14 +129,23 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.euthanization_method": {
-                label: 'Euthanization Method',
+            "metadata.sex": {
+                label: 'Sex',
                 type: 'value',
-                field: 'metadata.euthanization_method.keyword',
+                field: 'metadata.sex.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
+            "metadata.strain": {
+                label: 'Strain',
+                type: 'value',
+                field: 'metadata.strain.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+
 
             // Sample Section
             "metadata.area_value": {
