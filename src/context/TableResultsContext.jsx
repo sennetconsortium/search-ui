@@ -58,9 +58,10 @@ export const TableResultsProvider = ({ index, columnsRef, children, getHotLink, 
         setPageNumber(page)
     }
 
-    const handleSort = (column) => {
+    const handleSort = (column, order) => {
         let sorting = []
         let field = column.id
+        if (sortedFields.current[field] === undefined) sortedFields.current[field] = order
         const direction = eq(sortedFields.current[field], 'desc') ? 'asc' : 'desc'
 
         const newSort = {
