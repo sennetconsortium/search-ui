@@ -342,30 +342,6 @@ export const SEARCH_METADATA = {
             },
 
             // Dataset
-            "ingest_metadata.metadata.assay_category": {
-                label: 'Assay Category',
-                type: 'value',
-                field: 'ingest_metadata.metadata.assay_category.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "ingest_metadata.metadata.analyte_class": {
-                label: 'Analyte Class',
-                type: 'value',
-                field: 'ingest_metadata.metadata.analyte_class.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "ingest_metadata.metadata.operator": {
-                label: 'Operator',
-                type: 'value',
-                field: 'ingest_metadata.metadata.operator.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
             "ingest_metadata.metadata.acquisition_instrument_model": {
                 label: 'Acquisition Instrument Model',
                 type: 'value',
@@ -382,6 +358,31 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            "ingest_metadata.metadata.analyte_class": {
+                label: 'Analyte Class',
+                type: 'value',
+                field: 'ingest_metadata.metadata.analyte_class.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            "ingest_metadata.metadata.assay_category": {
+                label: 'Assay Category',
+                type: 'value',
+                field: 'ingest_metadata.metadata.assay_category.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            "ingest_metadata.metadata.operator": {
+                label: 'Operator',
+                type: 'value',
+                field: 'ingest_metadata.metadata.operator.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+
         },
         disjunctiveFacets: [],
         conditionalFacets: {
