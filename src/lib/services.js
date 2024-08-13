@@ -1,11 +1,10 @@
+import { getHeaders } from "@/components/custom/js/functions";
+import { getAuth, getEntityEndPoint, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "@/config/config";
 import { getCookie } from "cookies-next";
 import log from "loglevel";
-import { getAuth, getEntityEndPoint, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "../config/config";
 import { SEARCH_ENTITIES } from "../config/search/entities";
-import {getHeaders, getRequestHeaders} from "@/components/custom/js/functions";
 
 // After creating or updating an entity, send to Entity API. Search API will be triggered during this process automatically
-
 export async function update_create_entity(uuid, body, action = "Edit", entity_type = null) {
     let headers = get_headers()
     headers = get_x_sennet_header(headers)
@@ -352,27 +351,27 @@ export const getDatasetQuantities = async () => {
             bool: {
                 filter: {
                     term: {
-                        "entity_type.keyword": "Dataset",
+                        'entity_type.keyword': 'Dataset',
                     },
                 },
                 must_not: [
                     {
                         term: {
-                            "dataset_category.keyword": "codcc-processed"
+                            'dataset_category.keyword': 'codcc-processed'
                         }
                     },
                     {
                         term: {
-                            "dataset_category.keyword": "lab-processed"
+                            'dataset_category.keyword': 'lab-processed'
                         }
                     }
                 ]
             },
         },
         aggs: {
-            "origin_sample.organ": {
+            'origin_sample.organ': {
                 terms: {
-                    field: "origin_sample.organ.keyword",
+                    field: 'origin_sample.organ.keyword',
                     size: 40,
                 },
             },
@@ -382,7 +381,7 @@ export const getDatasetQuantities = async () => {
     if (!content) {
         return null;
     }
-    return content.aggregations["origin_sample.organ"].buckets.reduce(
+    return content.aggregations['origin_sample.organ'].buckets.reduce(
         (acc, bucket) => {
             acc[bucket.key] = bucket.doc_count;
             return acc;
@@ -391,7 +390,7 @@ export const getDatasetQuantities = async () => {
     );
 };
 
-export const getOrganDataTypeQuantities = async (organCode) => {
+export const getOrganDataTypeQuantities = async (organCodes) => {
     // Get the must_not filters from entities config
     const mustNot = SEARCH_ENTITIES.searchQuery.excludeFilters.flatMap((filter) => {
         if (Array.isArray(filter.value)) {
@@ -406,8 +405,8 @@ export const getOrganDataTypeQuantities = async (organCode) => {
         query: {
             bool: {
                 filter: {
-                    term: {
-                        "origin_sample.organ.keyword": organCode,
+                    terms: {
+                        'origin_sample.organ.keyword': organCodes,
                     }
                 },
                 must_not: mustNot
@@ -416,7 +415,7 @@ export const getOrganDataTypeQuantities = async (organCode) => {
         aggs: {
             dataset_type: {
                 terms: {
-                    field: "dataset_type.keyword",
+                    field: 'dataset_type.keyword',
                     size: 40
                 }
             }
@@ -426,7 +425,7 @@ export const getOrganDataTypeQuantities = async (organCode) => {
     if (!content) {
         return null;
     }
-    return content.aggregations["dataset_type"].buckets.reduce(
+    return content.aggregations['dataset_type'].buckets.reduce(
         (acc, bucket) => {
             acc[bucket.key] = bucket.doc_count;
             return acc;
@@ -435,19 +434,19 @@ export const getOrganDataTypeQuantities = async (organCode) => {
     );
 }
 
-export const getSamplesByOrgan = async (ruiCode) => {
+export const getSamplesByOrgan = async (organCodes) => {
     const body = {
         query: {
             bool: {
                 filter: [
                     {
                         term: {
-                            "entity_type.keyword": "Sample"
+                            'entity_type.keyword': 'Sample'
                         }
                     },
                     {
-                        term: {
-                            "organ.keyword": ruiCode
+                        terms: {
+                            'organ.keyword': organCodes,
                         }
                     }
                 ]
@@ -456,10 +455,10 @@ export const getSamplesByOrgan = async (ruiCode) => {
         size: 10000,
         _source: {
             includes: [
-                "sennet_id",
-                "lab_tissue_sample_id",
-                "group_name",
-                "last_touch"
+                'sennet_id',
+                'lab_tissue_sample_id',
+                'group_name',
+                'last_touch'
             ]
         }
     }
