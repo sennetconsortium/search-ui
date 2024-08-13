@@ -149,7 +149,7 @@ export async function fetch_entity_type(uuid, bearer_token) {
     } else if (response.status === 400) {
         return "404";
     } else {
-        return ""
+        return response.status.toString()
     }
 }
 
