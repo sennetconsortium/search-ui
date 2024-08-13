@@ -58,10 +58,11 @@ export const TableResultsProvider = ({ index, columnsRef, children, getHotLink, 
         setPageNumber(page)
     }
 
-    const handleSort = (column, sortDirection) => {
+    const handleSort = (column) => {
         let sorting = []
-        let field = column.fieldName
+        let field = column.id
         const direction = eq(sortedFields.current[field], 'desc') ? 'asc' : 'desc'
+
         const newSort = {
             field: `${field}.keyword`,
             direction
@@ -79,6 +80,14 @@ export const TableResultsProvider = ({ index, columnsRef, children, getHotLink, 
         }
         sortedFields.current[field] = direction
         setSort(sorting)
+
+        // This is an unfortunate hack because react-data-table-component use defaultValue as Select prop,
+        // no value prop is exposed. We can either use our own custom Pagination component or
+        // if we want to keep the one from react-data-table-component need to add a dynamic key prop to the DataTable component
+        $('[role="columnheader"]').removeClass('is-activeSort')
+        setTimeout(() => {
+            $(`[data-column-id="${field}"][role="columnheader"]`).addClass(`is-activeSort`).attr('data-sort-direction', direction)
+        }, 500)
     }
 
     const handlePageChange = (page, totalRows) => {
