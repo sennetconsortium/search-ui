@@ -85,7 +85,7 @@ export const TableResultsProvider = ({ index, columnsRef, children, getHotLink, 
         // This is an unfortunate hack because react-data-table-component uses defaultValue as Select prop,
         // no value prop is exposed. We can either use our own custom Pagination component or
         // if we want to keep the one from react-data-table-component need to add a dynamic key prop to the DataTable component
-        // and manually apply these css classes to indicator sorting
+        // and manually apply these css classes to indicate sorting
         $('[role="columnheader"]').removeClass('is-activeSort')
         setTimeout(() => {
             $(`[data-column-id="${field}"][role="columnheader"]`).addClass(`is-activeSort`).attr('data-sort-direction', direction)
