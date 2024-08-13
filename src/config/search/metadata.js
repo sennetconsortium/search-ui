@@ -146,32 +146,103 @@ export const SEARCH_METADATA = {
                 isFilterable: false,
             },
 
-            // Sample Block
-            "metadata.volume_value": {
-                label: 'Volume',
+            // Sample Section
+            "metadata.area_value": {
+                label: 'Area',
                 type: 'range',
-                field: 'metadata.volume_value',
+                field: 'metadata.area_value',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
-                uiInterval: (filters) => {
-                    if (filters.some((filter) => filter.values.includes('ml'))) {
-                        return 0.1
-                    }
-                    return 1000
-                },
             },
-            "metadata.volume_unit": {
-                label: 'Volume Unit',
+            "metadata.area_unit": {
+                label: 'Area Unit',
                 type: 'value',
-                field: 'metadata.volume_unit.keyword',
+                field: 'metadata.area_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
 
-            // Sample Section
+            // Sample Shared
+            "metadata.preparation_condition": {
+                label: 'Preparation Condition',
+                type: 'value',
+                field: 'metadata.preparation_condition.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            "metadata.preparation_medium": {
+                label: 'Preparation Medium',
+                type: 'value',
+                field: 'metadata.preparation_medium.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            "metadata.storage_method": {
+                label: 'Preparation Method',
+                type: 'value',
+                field: 'metadata.storage_method.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            "metadata.processing_time_value": {
+                label: 'Processing Time',
+                type: 'range',
+                field: 'metadata.processing_time_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                uiType: 'numrange',
+            },
+            "metadata.processing_time_unit": {
+                label: 'Processing Time Unit',
+                type: 'value',
+                field: 'metadata.processing_time_unit.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            "metadata.source_storage_duration_value": {
+                label: 'Storage Duration',
+                type: 'range',
+                field: 'metadata.source_storage_duration_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                uiType: 'numrange',
+                uiInterval: (filters) => {
+                    if (filters.some((filter) => filter.values.includes('day'))) {
+                        return 5
+                    }
+                    if (filters.some((filter) => filter.values.includes('month'))) {
+                        return 0.1
+                    }
+                    return 1
+                },
+            },
+            "metadata.source_storage_duration_unit": {
+                label: 'Storage Duration Unit',
+                type: 'value',
+                field: 'metadata.source_storage_duration_unit.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+            "metadata.storage_medium": {
+                label: 'Storage Medium',
+                type: 'value',
+                field: 'metadata.storage_medium.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+
+            //Sample Section
             "metadata.thickness_value": {
                 label: 'Thickness',
                 type: 'range',
@@ -195,19 +266,47 @@ export const SEARCH_METADATA = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.area_value": {
-                label: 'Area',
+
+            // Sample Block/Suspension Shared
+            "metadata.tissue_weight_value": {
+                label: 'Tissue Weight',
                 type: 'range',
-                field: 'metadata.area_value',
+                field: 'metadata.tissue_weight_value',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
                 uiType: 'numrange',
+                uiInterval: 5,
             },
-            "metadata.area_unit": {
-                label: 'Area Unit',
+            "metadata.tissue_weight_unit": {
+                label: 'Tissue Weight Unit',
                 type: 'value',
-                field: 'metadata.area_unit.keyword',
+                field: 'metadata.tissue_weight_unit.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
+
+            // Sample Block
+            "metadata.volume_value": {
+                label: 'Volume',
+                type: 'range',
+                field: 'metadata.volume_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                uiType: 'numrange',
+                uiInterval: (filters) => {
+                    if (filters.some((filter) => filter.values.includes('ml'))) {
+                        return 0.1
+                    }
+                    return 1000
+                },
+            },
+            "metadata.volume_unit": {
+                label: 'Volume Unit',
+                type: 'value',
+                field: 'metadata.volume_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -236,104 +335,6 @@ export const SEARCH_METADATA = {
                 label: 'Is Suspension Enriched',
                 type: 'value',
                 field: 'metadata.is_suspension_enriched.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-
-            // Sample Block/Suspension Shared
-            "metadata.tissue_weight_value": {
-                label: 'Tissue Weight',
-                type: 'range',
-                field: 'metadata.tissue_weight_value',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                uiType: 'numrange',
-                uiInterval: 5,
-            },
-            "metadata.tissue_weight_unit": {
-                label: 'Tissue Weight Unit',
-                type: 'value',
-                field: 'metadata.tissue_weight_unit.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-
-            // Sample Shared
-            "metadata.source_storage_duration_value": {
-                label: 'Storage Duration',
-                type: 'range',
-                field: 'metadata.source_storage_duration_value',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                uiType: 'numrange',
-                uiInterval: (filters) => {
-                    if (filters.some((filter) => filter.values.includes('day'))) {
-                        return 5
-                    }
-                    if (filters.some((filter) => filter.values.includes('month'))) {
-                        return 0.1
-                    }
-                    return 1
-                },
-            },
-            "metadata.source_storage_duration_unit": {
-                label: 'Storage Duration Unit',
-                type: 'value',
-                field: 'metadata.source_storage_duration_unit.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.preparation_medium": {
-                label: 'Preparation Medium',
-                type: 'value',
-                field: 'metadata.preparation_medium.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.preparation_condition": {
-                label: 'Preparation Condition',
-                type: 'value',
-                field: 'metadata.preparation_condition.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.storage_medium": {
-                label: 'Storage Medium',
-                type: 'value',
-                field: 'metadata.storage_medium.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.storage_method": {
-                label: 'Preparation Method',
-                type: 'value',
-                field: 'metadata.storage_method.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-
-            "metadata.processing_time_value": {
-                label: 'Processing Time',
-                type: 'range',
-                field: 'metadata.processing_time_value',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                uiType: 'numrange',
-            },
-            "metadata.processing_time_unit": {
-                label: 'Processing Time Unit',
-                type: 'value',
-                field: 'metadata.processing_time_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
