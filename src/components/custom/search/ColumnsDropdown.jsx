@@ -113,10 +113,6 @@ function ColumnsDropdown({ getTableColumns, setHiddenColumns, currentColumns, fi
     )
 }
 
-ColumnsDropdown.defaultProps = {
-    defaultHiddenColumns: []
-}
-
 ColumnsDropdown.propTypes = {
     getTableColumns: PropTypes.func.isRequired,
     setHiddenColumns: PropTypes.func.isRequired,

@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import SenNetPopover, {SenPopoverOptions} from "./SenNetPopover";
 
-function ClipboardCopy({children, text, title, className, size= 12}) {
+function ClipboardCopy({children, text, title = 'Copy SenNet ID to clipboard', className = '', size= 12}) {
 
     const [showTooltip, setShowTooltip] = useState(false)
     const copyToClipboard = () => {
@@ -23,11 +23,6 @@ function ClipboardCopy({children, text, title, className, size= 12}) {
             </sup>
         </SenNetPopover>
     )
-}
-
-ClipboardCopy.defaultProps = {
-    className: '',
-    title: 'Copy SenNet ID to clipboard'
 }
 
 ClipboardCopy.propTypes = {

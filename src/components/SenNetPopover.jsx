@@ -37,7 +37,7 @@ export const handlePopoverDisplay = (className, stateCallback) => {
     domMutation(callback)
 }
 
-function SenNetPopover({children, text, placement, className, trigger, show}) {
+function SenNetPopover({children, text, placement = SenPopoverOptions.placement.top, className = 'sen-popover', trigger = SenPopoverOptions.triggers.hoverOnClickOff, show}) {
 
     const [showTooltip, setShowTooltip] = useState(undefined)
     const containerClassName = `${className}`
@@ -98,12 +98,6 @@ function SenNetPopover({children, text, placement, className, trigger, show}) {
             </span>
         </OverlayTrigger>
     )
-}
-
-SenNetPopover.defaultProps = {
-    placement: SenPopoverOptions.placement.top,
-    className: 'sen-popover',
-    trigger: SenPopoverOptions.triggers.hoverOnClickOff
 }
 
 SenNetPopover.propTypes = {
