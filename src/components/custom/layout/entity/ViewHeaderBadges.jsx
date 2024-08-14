@@ -1,19 +1,21 @@
-import PropTypes from "prop-types";
-import {displayBodyHeader, eq, getStatusColor, getStatusDefinition, getUBKGFullName} from "../../js/functions";
-import React, {Fragment, useContext} from "react";
-import AppContext from "../../../../context/AppContext";
-import SenNetPopover from "../../../SenNetPopover";
-import StatusError from "../../../StatusError";
+import ClipboardCopy from "@/components/ClipboardCopy";
+import SenNetPopover from "@/components/SenNetPopover";
+import StatusError from "@/components/StatusError";
+import { APP_ROUTES } from "@/config/constants";
+import { getOrganByCode } from "@/config/organs";
+import AppContext from "@/context/AppContext";
 import Link from "next/link";
-import {APP_ROUTES} from "../../../../config/constants";
-import {organDetails} from "../../../../config/organs";
-import ClipboardCopy from "../../../ClipboardCopy";
+import PropTypes from "prop-types";
+import { Fragment, useContext } from "react";
+import { displayBodyHeader, eq, getStatusColor, getStatusDefinition, getUBKGFullName } from "../../js/functions";
 
 function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader, hasWritePrivilege}) {
     const {cache} = useContext(AppContext)
 
     const getOrganRoute = (ruiCode) => {
-        return `${APP_ROUTES.organs}/${organDetails[ruiCode].urlParamName}`
+        const organ = getOrganByCode(ruiCode)
+        if (!organ) return
+        return `${APP_ROUTES.organs}/${organ.path}`
     }
 
     return (
@@ -60,14 +62,26 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                 </Fragment>) : (
                 <Fragment>
                     {data.origin_sample &&
-                        <Link href={getOrganRoute(data.origin_sample.organ)}>
-                            <h5 className={"title_badge"}>
-                                <span className="badge bg-secondary me-2">
-                                    {displayBodyHeader(getUBKGFullName(data.origin_sample.organ))}
-                                </span>
-                            </h5>
-                        </Link>
+                        <>
+                            {/* Some organs don't have an organ page */}
+                            {getOrganRoute(data.origin_sample.organ) ? (
+                                <a href={getOrganRoute(data.origin_sample.organ)}>
+                                    <h5 className={"title_badge"}>
+                                        <span className="badge bg-secondary me-2">
+                                            {displayBodyHeader(getUBKGFullName(data.origin_sample.organ))}
+                                        </span>
+                                    </h5>
+                                </a>
+                            ) : (
+                                <h5 className={"title_badge"}>
+                                    <span className="badge bg-secondary me-2">
+                                        {displayBodyHeader(getUBKGFullName(data.origin_sample.organ))}
+                                    </span>
+                                </h5>
+                            )}
+                        </>
                     }
+
                     {data.source_type &&
                         <h5 className={"title_badge"}>
                             <span className="badge bg-secondary me-2">
@@ -133,4 +147,5 @@ ViewHeaderBadges.propTypes = {
     isMetadataHeader: PropTypes.bool
 }
 
-export {ViewHeaderBadges}
+export { ViewHeaderBadges };
+

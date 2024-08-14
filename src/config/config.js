@@ -1,8 +1,7 @@
-import {getCookie} from 'cookies-next';
-import {APP_ROUTES} from './constants'
-
+import { getCookie } from 'cookies-next';
 import _ from 'lodash';
-import {SEARCH_ENTITIES} from "./search/entities";
+import { APP_ROUTES } from './constants';
+import { SEARCH_ENTITIES } from "./search/entities";
 
 export const APP_TITLE = 'Data Sharing Portal'
 export const NAVBAR_TITLE = 'SenNet'
@@ -25,7 +24,7 @@ export function getAuth() {
 
 // Organs not supported by the CCF-RUI Tool are:
 // Adipose, Blood, Bone Marrow, Breast, Muscle, and Other
-export const nonSupportedRuiOrgans = ['AD', 'BD', 'BM', 'BS', 'MU', 'OT']
+export const nonSupportedRuiOrgans = ['AD', 'BD', 'BM', 'BS', 'BX', 'MU', 'OT']
 export const supportedRuiSources = ['Human', 'Human Organoid']
 
 export function valuesRuiSupported(values, dict) {
