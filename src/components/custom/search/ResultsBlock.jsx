@@ -11,7 +11,7 @@ import {eq} from '../js/functions'
 import {COLS_ORDER_KEY} from "@/config/config";
 import Spinner from '../Spinner';
 
-function ResultsBlock({getTableColumns, disableRowClick, tableClassName, defaultHiddenColumns, searchContext, index}) {
+function ResultsBlock({getTableColumns, disableRowClick, tableClassName = '', defaultHiddenColumns = [], searchContext}) {
 
     const {
         getTableData,
@@ -80,11 +80,6 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
                 />}
         </>
     )
-}
-
-ResultsBlock.defaultProps = {
-    tableClassName: '',
-    defaultHiddenColumns: []
 }
 
 ResultsBlock.propTypes = {

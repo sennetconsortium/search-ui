@@ -310,8 +310,6 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
     )
 }
 
-TableResultsEntities.defaultProps = {}
-
 TableResultsEntities.propTypes = {
     children: PropTypes.node,
     onRowClicked: PropTypes.func

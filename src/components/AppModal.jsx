@@ -3,8 +3,8 @@ import {Button, Modal} from 'react-bootstrap'
 import AppContext from '../context/AppContext'
 import PropTypes from "prop-types"
 
-const AppModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, showCloseButton, closeButtonLabel,
-                      showHomeButton, children, modalSize, className, actionBtnClassName, actionButtonLabel, secBtnClassName}) => {
+const AppModal = ({showModal = false, modalTitle, modalBody, handleClose, handleHome, showCloseButton, closeButtonLabel = 'Close',
+                      showHomeButton = true, children, modalSize, className, actionBtnClassName = '', actionButtonLabel = 'Home page', secBtnClassName = ''}) => {
     const [size, setSize] = useState(modalSize)
     const {_t} = useContext(AppContext)
     return (
@@ -38,15 +38,6 @@ const AppModal = ({showModal, modalTitle, modalBody, handleClose, handleHome, sh
         </section>
     );
 };
-
-AppModal.defaultProps = {
-    showModal: false,
-    showHomeButton: true,
-    closeButtonLabel: 'Close',
-    actionButtonClassName: '',
-    secBtnClassName: '',
-    actionButtonLabel: 'Home page'
-}
 
 AppModal.propTypes = {
     showModal: PropTypes.bool,

@@ -78,6 +78,10 @@ class GoogleTagManager extends Addon {
     }
 
     storeLoaded(key) {
+        return GoogleTagManager.storeLoaded(key)
+    }
+
+    static storeLoaded(key) {
         const $body = $('body')
         if ($body.data(key)) return null
         $body.attr(`data-${key}`, true)
@@ -111,11 +115,18 @@ class GoogleTagManager extends Addon {
         )
     }
 
+    static dispatch(results) {
+        if (results.key === 'numericFacets') {
+            const sel = GoogleTagManager.storeLoaded(results.key)
+            $(`${sel} .MuiSlider-thumb`).trigger(results.key)
+        }
+    }
+
     numericFacets() {
         const sel = this.storeLoaded('numericFacets')
         if (!sel) return
         $('body').on(
-            'DOMSubtreeModified',
+            'numericFacets',
             `${sel} .MuiSlider-thumb`,
             ((e) => {
                 this.stop(e)
