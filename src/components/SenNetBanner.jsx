@@ -5,7 +5,7 @@ import {Alert} from 'react-bootstrap'
 import AppContext from "../context/AppContext";
 import $ from 'jquery';
 
-function SenNetBanner({name}) {
+function SenNetBanner({name = 'login'}) {
     const {banners} = useContext(AppContext)
     const [banner, setBanner] = useState(null)
     const [showBanner, setShowBanner] = useState(true)
@@ -46,10 +46,6 @@ function SenNetBanner({name}) {
             </div>}
         </>
     )
-}
-
-SenNetBanner.defaultProps = {
-    name: 'login'
 }
 
 SenNetBanner.propTypes = {
