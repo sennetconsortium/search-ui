@@ -1,4 +1,9 @@
 .modal {
+  &-body {
+    .sui-layout-body__inner {
+      margin-top: 20px;
+    }
+  }
   &-xxl {
     width: 80%;
     max-width: inherit;

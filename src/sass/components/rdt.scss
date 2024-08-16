@@ -1,6 +1,14 @@
 .rdt {
   &_Results {
-    [data-column-id="2"].rdt_TableCol {
+    .is-activeSort {
+      span {
+        opacity: 1;
+      }
+    }
+    [data-sort-direction="desc"] span {
+      rotate: 180deg;
+    }
+    [data-column-id="sennet_id"].rdt_TableCol {
       min-width: 185px;
     }
     .MuiChip-sizeSmall {
@@ -49,7 +57,7 @@
       &_Table {
         font-family: var(--bs-font-sans-serif);
         &Body {
-          [data-column-id="2"] {
+          [data-column-id="sennet_id"] {
             min-width: 185px;
           }
           [role="cell"] {

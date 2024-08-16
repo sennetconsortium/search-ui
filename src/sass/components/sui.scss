@@ -103,6 +103,9 @@
   -ms-flex: 0 0 300px;
   flex: 0 0 300px;
   padding: 0 32px 0 0;
+  @media (max-width: 1350px) {
+    flex: inherit;
+  }
 }
 
 .sui-layout-sidebar--toggled {

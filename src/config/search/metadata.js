@@ -20,6 +20,10 @@ export const SEARCH_METADATA = {
                 value: "Publication"
             },
             {
+                keyword: "entity_type.keyword",
+                value: "Upload"
+            },
+            {
                 keyword: "sample_category.keyword",
                 value: "Organ",
             },
@@ -336,42 +340,42 @@ export const SEARCH_METADATA = {
             },
 
             // Dataset
-            "metadata.metadata.assay_category": {
+            "ingest_metadata.metadata.assay_category": {
                 label: 'Assay Category',
                 type: 'value',
-                field: 'metadata.metadata.assay_category.keyword',
+                field: 'ingest_metadata.metadata.assay_category.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.metadata.analyte_class": {
+            "ingest_metadata.metadata.analyte_class": {
                 label: 'Analyte Class',
                 type: 'value',
-                field: 'metadata.metadata.analyte_class.keyword',
+                field: 'ingest_metadata.metadata.analyte_class.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.metadata.operator": {
+            "ingest_metadata.metadata.operator": {
                 label: 'Operator',
                 type: 'value',
-                field: 'metadata.metadata.operator.keyword',
+                field: 'ingest_metadata.metadata.operator.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.metadata.acquisition_instrument_model": {
+            "ingest_metadata.metadata.acquisition_instrument_model": {
                 label: 'Acquisition Instrument Model',
                 type: 'value',
-                field: 'metadata.metadata.acquisition_instrument_model.keyword',
+                field: 'ingest_metadata.metadata.acquisition_instrument_model.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
             },
-            "metadata.metadata.acquisition_instrument_vendor": {
+            "ingest_metadata.metadata.acquisition_instrument_vendor": {
                 label: 'Acquisition Instrument Vendor',
                 type: 'value',
-                field: 'metadata.metadata.acquisition_instrument_vendor.keyword',
+                field: 'ingest_metadata.metadata.acquisition_instrument_vendor.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
@@ -443,11 +447,11 @@ export const SEARCH_METADATA = {
             }, 
 
             // Dataset
-            "metadata.metadata.assay_category": FilterIsSelected('entity_type', 'Dataset'),
-            "metadata.metadata.analyte_class": FilterIsSelected('entity_type', 'Dataset'),
-            "metadata.metadata.operator": FilterIsSelected('entity_type', 'Dataset'),
-            "metadata.metadata.acquisition_instrument_model": FilterIsSelected('entity_type', 'Dataset'),
-            "metadata.metadata.acquisition_instrument_vendor": FilterIsSelected('entity_type', 'Dataset'),
+            "ingest_metadata.metadata.assay_category": FilterIsSelected('entity_type', 'Dataset'),
+            "ingest_metadata.metadata.analyte_class": FilterIsSelected('entity_type', 'Dataset'),
+            "ingest_metadata.metadata.operator": FilterIsSelected('entity_type', 'Dataset'),
+            "ingest_metadata.metadata.acquisition_instrument_model": FilterIsSelected('entity_type', 'Dataset'),
+            "ingest_metadata.metadata.acquisition_instrument_vendor": FilterIsSelected('entity_type', 'Dataset'),
         },
         search_fields: {
             all_text: {type: 'value'},
@@ -468,10 +472,11 @@ export const SEARCH_METADATA = {
             'organ',
             'title',
             'description',
-        ],
+        ]
     },
     initialState: {
-        resultsPerPage: 10000,
+        current: 1,
+        resultsPerPage: 20,
         sortList: [{
             field: "last_modified_timestamp",
             direction: "desc"
@@ -525,20 +530,20 @@ export const SEARCH_METADATA = {
             title: 'All Nucleic Datasets',
             description: 'Datasets with the nucleic acid and protein analyte class.',
             entityType: 'dataset',
-            queryString: 'size=n_10000_n&filters[0][field]=entity_type&filters[0][values][0]=Dataset&filters[0][type]=any&filters[1][field]=metadata.metadata.analyte_class&filters[1][values][0]=Nucleic acid and protein&filters[1][type]=any&sort[0][field]=last_modified_timestamp&sort[0][direction]=desc'
+            queryString: 'size=n_10000_n&filters[0][field]=entity_type&filters[0][values][0]=Dataset&filters[0][type]=any&filters[1][field]=ingest_metadata.metadata.analyte_class&filters[1][values][0]=Nucleic acid and protein&filters[1][type]=any&sort[0][field]=last_modified_timestamp&sort[0][direction]=desc'
 
         },
         {
             title: 'All RNA Datasets',
             description: 'Datasets with the RNA analyte class.',
             entityType: 'dataset',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=metadata.metadata.analyte_class&filters%5B1%5D%5Bvalues%5D%5B0%5D=RNA&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=ingest_metadata.metadata.analyte_class&filters%5B1%5D%5Bvalues%5D%5B0%5D=RNA&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
         },
         {
             title: 'All Sequence Datasets',
             description: 'Datasets with the sequence assay category.',
             entityType: 'dataset',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=metadata.metadata.assay_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=sequence&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=ingest_metadata.metadata.assay_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=sequence&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
         },
     ],
 }

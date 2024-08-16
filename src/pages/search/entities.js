@@ -2,30 +2,29 @@ import dynamic from "next/dynamic";
 import React, {useContext} from "react";
 import {ErrorBoundary, SearchBox} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
-import {APP_TITLE} from "../../config/config";
-import {SEARCH_ENTITIES} from "../../config/search/entities"
-import CustomClearSearchBox from "../../components/custom/layout/CustomClearSearchBox";
+import {APP_TITLE} from "@/config/config";
+import {SEARCH_ENTITIES} from "@/config/search/entities"
+import CustomClearSearchBox from "@/components/custom/layout/CustomClearSearchBox";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import AppContext from "../../context/AppContext";
-import SelectedFilters from "../../components/custom/layout/SelectedFilters";
-import {getUBKGFullName} from "../../components/custom/js/functions";
-import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
+import AppContext from "@/context/AppContext";
+import SelectedFilters from "@/components/custom/layout/SelectedFilters";
+import {getUBKGFullName} from "@/components/custom/js/functions";
+import {TableResultsEntities} from "@/components/custom/TableResultsEntities";
 
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const AppTutorial = dynamic(() => import("../../components/custom/layout/AppTutorial"))
-const BodyContent = dynamic(() => import("../../components/custom/search/BodyContent"))
-const FacetsContent = dynamic(() => import("../../components/custom/search/FacetsContent"))
-const Header = dynamic(() => import("../../components/custom/layout/Header"))
-const InvalidToken = dynamic(() => import("../../components/custom/layout/InvalidToken"))
-const SearchDropdown = dynamic(() => import("../../components/custom/search/SearchDropdown"))
-const SearchUIContainer = dynamic(() => import("search-ui/components/core/SearchUIContainer"))
-const SelectedFacets = dynamic(() => import("../../components/custom/search/SelectedFacets"))
-const SenNetBanner = dynamic(() => import("../../components/SenNetBanner"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
-
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const AppTutorial = dynamic(() => import("@/components/custom/layout/AppTutorial"))
+const BodyContent = dynamic(() => import("@/components/custom/search/BodyContent"))
+const FacetsContent = dynamic(() => import("@/components/custom/search/FacetsContent"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const InvalidToken = dynamic(() => import("@/components/custom/layout/InvalidToken"))
+const SearchDropdown = dynamic(() => import("@/components/custom/search/SearchDropdown"))
+const SearchUIContainer = dynamic(() => import("@/search-ui/components/core/SearchUIContainer"))
+const SelectedFacets = dynamic(() => import("@/components/custom/search/SelectedFacets"))
+const SenNetBanner = dynamic(() => import("@/components/SenNetBanner"))
+const Spinner = dynamic(() => import("@/components/custom/Spinner"))
 
 function SearchEntities() {
     const {
@@ -39,6 +38,10 @@ function SearchEntities() {
         hasAuthenticationCookie
     } = useContext(AppContext);
 
+    function handleSearchFormSubmit(event, onSubmit) {
+        onSubmit(event)
+    }
+
     // Define here because we need auth state from AppContext
     SEARCH_ENTITIES['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
         return hasAuthenticationCookie() && !isUnauthorized() &&
@@ -48,10 +51,6 @@ function SearchEntities() {
     SEARCH_ENTITIES['searchQuery']['conditionalFacets']['ancestors.rui_location'] = ({filters}) => {
         return hasAuthenticationCookie() && !isUnauthorized() &&
             filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
-    }
-
-    function handleSearchFormSubmit(event, onSubmit) {
-        onSubmit(event)
     }
 
     if (validatingToken() || isAuthorizing()) {
