@@ -1,7 +1,6 @@
-import {COLS_ORDER_KEY, getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
-import {APP_ROUTES} from "../../../config/constants";
+import { getAuth, getRootURL } from "@/config/config";
+import { APP_ROUTES } from "@/config/constants";
 import log from "loglevel";
-import React from "react";
 
 export function getHeaders() {
     const myHeaders = new Headers();
@@ -543,4 +542,31 @@ export const extractSourceMappedMetadataInfo = (sourceMappedMetadata) => {
         groups: groups,
         metadata: metadata
     }
+}
+
+// filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=origin_sample.organ&filters%5B1%5D%5Bvalues%5D%5B0%5D=LL&filters%5B1%5D%5Bvalues%5D%5B1%5D=RL&filters%5B1%5D%5Btype%5D=any
+
+/**
+ * @typedef {Object} Filter
+ * @property {string} field - The field to filter on
+ * @property {string[]} values - The values to filter on
+ * @property {string} type - The type of filter
+ */
+
+/**
+ * @param {Filter[]} filters - The filters to convert to a query string
+ * @param {number} [size] - The number of results to return per page
+ * @returns {string} - The url encodes query string
+ */
+export const searchUIQueryString = (filters, size=20) => {
+    const segments = filters.map((filter, idx) => {
+        let segment = encodeURIComponent(`filters[${idx}][field]`) + `=${filter.field}&`
+        segment += filter.values
+            .map((value, i) => encodeURIComponent(`filters[${idx}][values][${i}]`) + `=${value}&`)
+            .join('')
+        segment += encodeURIComponent(`filters[${idx}][type]`) + `=${filter.type}`
+        return segment
+    })
+
+    return `size=n_${size}_n&` + segments.join('&')
 }
