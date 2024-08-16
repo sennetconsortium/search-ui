@@ -90,7 +90,7 @@ class RUIIntegration extends Component {
         const self = this;
 
         const rui = this.ruiRef.current;
-        rui.baseHref = "https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
+        rui.baseHref = "https://cdn.humanatlas.io/ui/ccf-rui/"
         rui.user = {
             firstName: firstName || "",
             lastName: lastName || "",
@@ -131,12 +131,11 @@ class RUIIntegration extends Component {
         return (
             <HelmetProvider>
                 <Helmet>
-                    <link rel="stylesheet"
-                          href={"https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/styles.css"}/>
-                    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap"
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&amp;display=swap"
                           rel="stylesheet"/>
-                    <link rel="stylesheet"
-                          href={"https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Sharp|Material+Icons+Outlined"}/>
+                    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined"
+                          rel="stylesheet"/>
+                    <link href="https://cdn.humanatlas.io/ui/ccf-rui/styles.css" rel="stylesheet"/>
                 </Helmet>
                 <div className="webgl-content mat-typography rui">
                     <div
@@ -195,7 +194,7 @@ class RUIIntegration extends Component {
 
                         <Script
                             only="edit/sample"
-                            src="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/wc.js"
+                            src="https://cdn.humanatlas.io/ui/ccf-rui/wc.js"
                         />
                     </div>
                 </div>
