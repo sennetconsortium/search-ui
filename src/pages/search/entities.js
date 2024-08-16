@@ -44,16 +44,6 @@ function SearchEntities() {
     }
 
     // Define here because we need auth state from AppContext
-    SEARCH_ENTITIES['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
-        return hasAuthenticationCookie() && !isUnauthorized() &&
-            filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Sample"))
-    }
-
-    SEARCH_ENTITIES['searchQuery']['conditionalFacets']['ancestors.rui_location'] = ({filters}) => {
-        return hasAuthenticationCookie() && !isUnauthorized() &&
-            filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
-    }
-
     SEARCH_ENTITIES['searchQuery']['conditionalFacets']['has_qa_derived_datasets'] = ({filters}) => {
         return adminGroup === true &&
             filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
