@@ -46,10 +46,10 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
-            has_qa_derived_datasets: {
+            has_qa_derived_dataset: {
                 label: 'Has QA Derived Datasets',
                 type: 'value',
-                field: 'has_qa_derived_datasets.keyword',
+                field: 'has_qa_derived_dataset',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false
