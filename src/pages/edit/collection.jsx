@@ -429,7 +429,7 @@ export default function EditCollection() {
                                                       setAttribute={setContactsAttributes}
                                                       setAttributesOnFail={setContactsAttributesOnFail}
                                                       entity={cache.entities.collection} excludeColumns={contactsTSV.excludeColumns}
-                                                      attribute={'Creators'} title={<h6>Creators</h6>}
+                                                      attribute={'Contributors'} title={<h6>Contributors</h6>}
                                                       customFileInfo={<span><a
                                                           className='btn btn-outline-primary rounded-0 fs-8' download
                                                           href={'https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/contributors/latest/contributors.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>
@@ -437,7 +437,7 @@ export default function EditCollection() {
                                     {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
                                     {isEditMode && !creators.description && data.creators &&
                                         <div className='c-metadataUpload__table table-responsive'>
-                                            <h6>Creators</h6>
+                                            <h6>Contributors</h6>
                                             <DataTable
                                                 columns={getResponseList({headers: contactsTSV.headers}, contactsTSV.excludeColumns).columns}
                                                 data={data.creators}
