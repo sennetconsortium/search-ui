@@ -306,9 +306,6 @@ export default function EditCollection() {
 
     }
 
-    // TODO: remove this return when ready to support
-    return <NotFound/>
-
     if (isPreview(error) || (!isAuthorizing() && !adminGroup))  {
         return getPreviewView(data)
     } else {
