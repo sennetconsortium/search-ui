@@ -34,7 +34,7 @@ const NotFound = dynamic(() => import("../../components/custom/NotFound"))
 
 export default function EditCollection() {
     const {
-        isPreview, isAuthorizing, getModal, setModalDetails, setSubmissionModal, setCheckDoiModal,
+        isPreview, isAuthorizing, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -42,16 +42,15 @@ export default function EditCollection() {
         validated, setValidated,
         userWriteGroups, onChange,
         editMode, setEditMode, isEditMode,
-        showModal, setShowModal,
+        showModal,
         disableSubmit, setDisableSubmit,
-        dataAccessPublic, setDataAccessPublic,
-        getEntityConstraints, getCancelBtn,
-        contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes, setContactsAttributesOnFail
+        setDataAccessPublic,
+        getCancelBtn,
+        contactsTSV, contacts, setContacts, contributors, setContributors, setContactsAttributes, setContactsAttributesOnFail
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
-    const isPrimary = useRef(false)
     const [bulkAddField, setBulkAddField] = useState(false)
     const isBulkHandling = useRef(false)
     const [bulkErrorMessage, setBulkErrorMessage] = useState(null)
@@ -93,7 +92,6 @@ export default function EditCollection() {
                 setErrorMessage(data["error"])
             } else {
                 setData(data)
-                //isPrimary.current = isPrimaryAssay(data)
                 let entity_uuids = []
 
                 if (data.hasOwnProperty("entities")) {
@@ -113,7 +111,7 @@ export default function EditCollection() {
                     'description': data.description,
                     'entity_uuids': entity_uuids,
                     'contacts': data.contacts,
-                    'creators': data.creators
+                    'contributors': data.contributors
                 })
                 setEditMode("Edit")
                 setDataAccessPublic(data.data_access_level === 'public')
@@ -217,8 +215,8 @@ export default function EditCollection() {
                 log.debug("Form is valid")
 
 
-                if (!_.isEmpty(creators) && creators.description.records) {
-                    values["creators"] = creators.description.records
+                if (!_.isEmpty(contributors) && contributors.description.records) {
+                    values["contributors"] = contributors.description.records
                     values['contacts'] = contacts.description.records
                 }
 
@@ -434,13 +432,13 @@ export default function EditCollection() {
                                                           className='btn btn-outline-primary rounded-0 fs-8' download
                                                           href={'https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/contributors/latest/contributors.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>
 
-                                    {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
-                                    {isEditMode && !creators.description && data.creators &&
+                                    {/*This table is just for showing data.contributors list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
+                                    {isEditMode && !contributors.description && data.contributors &&
                                         <div className='c-metadataUpload__table table-responsive'>
                                             <h6>Contributors</h6>
                                             <DataTable
                                                 columns={getResponseList({headers: contactsTSV.headers}, contactsTSV.excludeColumns).columns}
-                                                data={data.creators}
+                                                data={data.contributors}
                                                 pagination/>
                                         </div>}
 
