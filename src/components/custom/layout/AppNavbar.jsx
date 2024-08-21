@@ -26,7 +26,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
 
     const supportedSingleRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication', 'upload', 'organ', 'collection', 'dataset']
+        let notSupported = ['publication', 'upload', 'organ', 'dataset']
         return entities.filter(entity => !notSupported.includes(entity))
     }
 
