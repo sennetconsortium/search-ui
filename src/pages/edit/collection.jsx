@@ -8,11 +8,11 @@ import Alert from 'react-bootstrap/Alert';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {getEntityData, update_create_entity} from '../../lib/services'
+import {callService, getEntityData, update_create_entity} from '../../lib/services'
 import {cleanJson, eq, fetchEntity, getIdRegEx, getRequestHeaders} from '../../components/custom/js/functions'
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
-import {valid_dataset_ancestor_config} from "../../config/config";
+import {getEntityEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 import $ from 'jquery'
 import SenNetPopover, {SenPopoverOptions} from "../../components/SenNetPopover"
 import AttributesUpload, {getResponseList} from "../../components/custom/edit/AttributesUpload";
@@ -84,37 +84,41 @@ export default function EditCollection() {
         const fetchData = async (uuid) => {
             log.debug('editCollection: getting data...', uuid)
             // get the data from the api
-            const data = await getEntityData(uuid)
+            const _data = await getEntityData(uuid)
 
-            log.debug('editCollection: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editCollection: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
             } else {
-                setData(data)
+                setData(_data)
+                const entities = await callService(null,  `${getEntityEndPoint()}collections/${_data.uuid}/entities`)
+                Object.assign(_data, entities)
+                setData(_data)
+
                 let entity_uuids = []
 
-                if (data.hasOwnProperty("entities")) {
-                    for (const ancestor of data.entities) {
+                if (_data.hasOwnProperty("entities")) {
+                    for (const ancestor of _data.entities) {
                         entity_uuids.push(ancestor.uuid)
                     }
                     await fetchLinkedEntity(entity_uuids)
                 }
 
-                if (data.contacts) {
-                    setContacts({description: {records: data.contacts, headers: contactsTSV.headers}})
+                if (_data.contacts) {
+                    setContacts({description: {records: _data.contacts, headers: contactsTSV.headers}})
                 }
 
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
-                    'title': data.title,
-                    'description': data.description,
+                    'title': _data.title,
+                    'description': _data.description,
                     'entity_uuids': entity_uuids,
-                    'contacts': data.contacts,
-                    'contributors': data.contributors
+                    'contacts': _data.contacts,
+                    'contributors': _data.contributors
                 })
                 setEditMode("Edit")
-                setDataAccessPublic(data.data_access_level === 'public')
+                setDataAccessPublic(_data.data_access_level === 'public')
             }
         }
 
