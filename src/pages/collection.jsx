@@ -47,7 +47,7 @@ function ViewCollection() {
             } else {
                 setData(_data)
                 const entities = await callService(null,  `${getEntityEndPoint()}collections/${_data.uuid}/entities`)
-                Object.assign(_data, entities)
+                Object.assign(_data, {entities})
                 setData(_data)
 
                 const doi = await fetchDataCite(_data.doi_url)
