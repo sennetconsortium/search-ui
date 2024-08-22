@@ -23,7 +23,7 @@ function ContributorsContacts({data, title}) {
                 sortable: true,
                 format: row => {
                     let view = <></>
-                    if (eq(row.is_contact, 'yes')) {
+                    if (eq(row.is_contact, 'yes') || eq(row.is_contact, 'true')) {
                         view = row.email ? <span><a href={`mailto:${row.email}`}>{row.email}</a></span> :
                             <span>No email provided.</span>
                     }
