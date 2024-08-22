@@ -548,16 +548,6 @@ export default function EditDataset() {
                                                 pagination/>
                                         </div>}
 
-                                    {/*When a user uploads a file, the is_contact property is used to determine contacts, on edit mode, this just displays list from data.contacts*/}
-                                    {contacts && contacts.description &&
-                                        <div className='c-metadataUpload__table table-responsive'>
-                                            <h6>Contacts</h6>
-                                            <DataTable
-                                                columns={getResponseList(contacts, contactsTSV.excludeColumns).columns}
-                                                data={contacts.description.records}
-                                                pagination/>
-                                        </div>}
-
                                     <div className={'d-flex flex-row-reverse'}>
 
                                         {getCancelBtn('dataset')}
