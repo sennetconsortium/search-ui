@@ -119,7 +119,7 @@ export const getResponseList = (details, excludeColumns, asSnakeCase = false) =>
     return {data: data?.records, columns}
 }
 
-function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, subType, showAllInTable, excludeColumns, title, customFileInfo, setAttributesOnFail }) {
+function AttributesUpload({ setAttribute, attribute = 'metadata', ingestEndpoint = 'metadata/validate', entity, subType = '', showAllInTable = false, excludeColumns = [], title, customFileInfo, setAttributesOnFail }) {
 
     const attributeInputRef = useRef()
     const [file, setFile] = useState('')
@@ -271,14 +271,6 @@ function AttributesUpload({ setAttribute, attribute, ingestEndpoint, entity, sub
             </InputGroup>
         </div>
     )
-}
-
-AttributesUpload.defaultProps = {
-    subType: '',
-    attribute: 'metadata',
-    ingestEndpoint: 'metadata/validate',
-    showAllInTable: false,
-    excludeColumns: []
 }
 
 AttributesUpload.propTypes = {

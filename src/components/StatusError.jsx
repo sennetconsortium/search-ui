@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import SenNetPopover, {SenPopoverOptions} from "./SenNetPopover";
+import SenNetPopover from "./SenNetPopover";
 import {displayBodyHeader} from "./custom/js/functions";
 
-function StatusError({text, error, title}) {
+function StatusError({text, error = 'An error occurred', title = 'Copy error message to clipboard',}) {
     const copyToClipboard = () => {
         navigator.clipboard.writeText(error)
     }
@@ -16,12 +16,6 @@ function StatusError({text, error, title}) {
             </span>
         </SenNetPopover>
     )
-}
-
-StatusError.defaultProps = {
-    className: '',
-    title: 'Copy error message to clipboard',
-    error: 'An error occurred'
 }
 
 StatusError.propTypes = {

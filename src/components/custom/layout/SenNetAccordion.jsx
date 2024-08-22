@@ -1,7 +1,7 @@
 import React, {Fragment, useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 
-function SenNetAccordion({children, title, id, afterTitle, className}) {
+function SenNetAccordion({children, title, id, afterTitle, className = ''}) {
     const [refId, setRefId] = useState(id)
     useEffect(() => {
         if (id == null && typeof title === 'string') {
@@ -26,10 +26,6 @@ function SenNetAccordion({children, title, id, afterTitle, className}) {
             </div>
         </div>
     )
-}
-
-SenNetAccordion.defaultProps = {
-    className: ''
 }
 
 SenNetAccordion.propTypes = {

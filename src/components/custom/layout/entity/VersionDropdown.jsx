@@ -68,8 +68,6 @@ function VersionDropdown({data}) {
     )
 }
 
-VersionDropdown.defaultProps = {}
-
 VersionDropdown.propTypes = {
     data: PropTypes.object
 }

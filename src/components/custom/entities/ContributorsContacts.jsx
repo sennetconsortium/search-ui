@@ -49,8 +49,6 @@ function ContributorsContacts({data, title}) {
     )
 }
 
-ContributorsContacts.defaultProps = {}
-
 ContributorsContacts.propTypes = {
     data: PropTypes.array
 }

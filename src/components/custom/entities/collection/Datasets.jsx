@@ -5,7 +5,7 @@ import {TableResultsEntities} from "../../TableResultsEntities";
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import {eq} from "../../js/functions";
 
-function Datasets({ data, label }) {
+function Datasets({ data, label = 'Datasets' }) {
     const currentColumns = useRef([])
     const getColumns = () => {
         const hasMultipleEntityTypes = !eq(label, 'Datasets')
@@ -20,10 +20,6 @@ function Datasets({ data, label }) {
             <DataTable columns={getColumns()} data={data} pagination fixedHeader={true} />
         </SenNetAccordion>
     )
-}
-
-Datasets.defaultProps = {
-    label: 'Datasets'
 }
 
 Datasets.propTypes = {
