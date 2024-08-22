@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import DataTable, { createTheme } from 'react-data-table-component'
 import SenNetAccordion from "../layout/SenNetAccordion";
+import {eq} from "@/components/custom/js/functions";
 
 function ContributorsContacts({data, title}) {
     const getColumns = () => {
@@ -15,6 +16,19 @@ function ContributorsContacts({data, title}) {
                 name: 'Affiliation',
                 selector: row => row.affiliation,
                 sortable: true
+            },
+            {
+                name: 'Contact',
+                selector: row => row.email || '',
+                sortable: true,
+                format: row => {
+                    let view = <></>
+                    if (eq(row.is_contact, 'yes')) {
+                        view = row.email ? <span><a href={`mailto:${row.email}`}>{row.email}</a></span> :
+                            <span>No email provided.</span>
+                    }
+                    return view;
+                }
             },
             {
                 name: 'ORCID',

@@ -48,7 +48,7 @@ export default function EditCollection() {
         getCancelBtn,
         contactsTSV, contacts, setContacts, contributors, setContributors, setContactsAttributes, setContactsAttributesOnFail
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
+    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [bulkAddField, setBulkAddField] = useState(false)
@@ -442,15 +442,6 @@ export default function EditCollection() {
                                                 pagination/>
                                         </div>}
 
-                                    {/*When a user uploads a file, the is_contact property is used to determine contacts, on edit mode, this just displays list from data.contacts*/}
-                                    {contacts && contacts.description &&
-                                        <div className='c-metadataUpload__table table-responsive'>
-                                            <h6>Contacts</h6>
-                                            <DataTable
-                                                columns={getResponseList(contacts, contactsTSV.excludeColumns).columns}
-                                                data={contacts.description.records}
-                                                pagination/>
-                                        </div>}
 
                                     <div className={'d-flex flex-row-reverse'}>
 

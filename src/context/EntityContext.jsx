@@ -43,7 +43,7 @@ export const EntityProvider = ({ children }) => {
     const [contacts, setContacts] = useState([])
     const [contributors, setContributors] = useState([])
     const contactsTSV = {
-        excludeColumns: ['is_contact'],
+        excludeColumns: ['metadata_schema_id'],
         headers: ['first_name', 'last_name', 'middle_name_or_initial	display_name','affiliation','orcid','email',
             'is_contact','is_principal_investigator','is_operator', 'metadata_schema_id'],
         uploadEndpoint: 'validate-tsv'

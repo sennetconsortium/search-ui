@@ -100,14 +100,14 @@ export const getErrorList = (details) => {
     return {data, columns: tableColumns()};
 }
 
-export const getResponseList = (details, excludeColumns) => {
+export const getResponseList = (details, excludeColumns, asSnakeCase = false) => {
     let data = details?.description || details
     let columns = []
     for (let column of data?.headers) {
         if (excludeColumns.indexOf(column) === -1) {
             columns.push(
                 {
-                    name: column.upperCaseFirst(),
+                    name: asSnakeCase ? column : column.replaceAll('_', ' ').titleCase(),
                     selector: row => row[column],
                     sortable: true,
                 }

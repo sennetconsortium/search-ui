@@ -8,7 +8,8 @@ import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "@/context/DerivedContext";
 import {useRouter} from "next/router";
-import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
+import {callService, get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
+import {getEntityEndPoint} from "@/config/config";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -45,8 +46,8 @@ function ViewCollection() {
                 setData(false)
             } else {
                 setData(_data)
-                const ancestry = await getAncestryData(_data.uuid)
-                Object.assign(_data, ancestry)
+                const entities = await callService(null,  `${getEntityEndPoint()}collections/${_data.uuid}/entities`)
+                Object.assign(_data, entities)
                 setData(_data)
 
                 const doi = await fetchDataCite(_data.doi_url)
@@ -96,19 +97,14 @@ function ViewCollection() {
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="#Contacts"
-                                                   className="nav-link "
-                                                   data-bs-parent="#sidebar">Contacts</a>
-                                            </li>
-                                            <li className="nav-item">
                                                 <a href="#Entities"
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Entities</a>
                                             </li>
                                             <li className="nav-item">
-                                                <a href="#Creators"
+                                                <a href="#Contributors"
                                                    className="nav-link"
-                                                   data-bs-parent="#sidebar">Creators</a>
+                                                   data-bs-parent="#sidebar">Contributors</a>
                                             </li>
                                             <li className="nav-item">
                                                 <a href="#Attribution"
@@ -138,14 +134,11 @@ function ViewCollection() {
                                                 secondaryDate={data.last_modified_timestamp}
                                             />
 
-                                            {/*Contacts*/}
-                                            <ContributorsContacts title={'Contacts'} data={data.contacts}/>
-
                                             {/*Entities*/}
-                                            <Datasets data={data.entities || data.datasets} label={'Entities'}/>
+                                            <Datasets data={data.entities} label={'Entities'}/>
 
-                                            {/*Creators*/}
-                                            <ContributorsContacts title={'Creators'} data={data.creators}/>
+                                            {/*Contributors*/}
+                                            <ContributorsContacts title={'Contributors'} data={data.contributors}/>
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>
