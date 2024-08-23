@@ -41,9 +41,9 @@ export const EntityProvider = ({ children }) => {
     const [warningClasses, setWarningClasses] = useState({})
 
     const [contacts, setContacts] = useState([])
-    const [creators, setCreators] = useState([])
+    const [contributors, setContributors] = useState([])
     const contactsTSV = {
-        excludeColumns: ['is_contact'],
+        excludeColumns: ['metadata_schema_id'],
         headers: ['first_name', 'last_name', 'middle_name_or_initial	display_name','affiliation','orcid','email',
             'is_contact','is_principal_investigator','is_operator', 'metadata_schema_id'],
         uploadEndpoint: 'validate-tsv'
@@ -280,7 +280,7 @@ export const EntityProvider = ({ children }) => {
 
     const setContactsAttributes = (resp) => {
         if (!resp.description) return
-        setCreators(resp)
+        setContributors(resp)
         let _contacts = []
         for (let creator of resp?.description?.records) {
             if (eq(creator.is_contact, 'true') || eq(creator.is_contact, 'yes')) {
@@ -292,7 +292,7 @@ export const EntityProvider = ({ children }) => {
     }
 
     const setContactsAttributesOnFail = (resp) => {
-        setCreators({description: {}})
+        setContributors({description: {}})
         setContacts([])
         setDisableSubmit(true)
     }
@@ -327,7 +327,7 @@ export const EntityProvider = ({ children }) => {
                 getMetadataNote, successIcon, errIcon, checkProtocolUrl,
                 warningClasses, setWarningClasses, getCancelBtn,
                 isAdminOrHasValue, getAssignedToGroupNames,
-                contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes, setContactsAttributesOnFail
+                contactsTSV, contacts, setContacts, contributors, setContributors, setContactsAttributes, setContactsAttributesOnFail
             }}
         >
             {children}

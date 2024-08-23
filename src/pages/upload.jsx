@@ -3,10 +3,11 @@ import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
 import {getRequestHeaders} from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
+import {callService, get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
+import {getEntityEndPoint} from "@/config/config";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -42,8 +43,8 @@ function ViewUpload() {
                 setData(false)
             } else {
                 setData(_data)
-                const ancestry = await getAncestryData(_data.uuid)
-                Object.assign(_data, ancestry)
+                const datasets = await callService(null,  `${getEntityEndPoint()}uploads/${_data.uuid}/datasets`)
+                Object.assign(_data, {datasets})
                 setData(_data)
 
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {

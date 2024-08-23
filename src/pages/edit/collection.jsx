@@ -8,11 +8,11 @@ import Alert from 'react-bootstrap/Alert';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {getEntityData, update_create_entity} from '../../lib/services'
+import {callService, getEntityData, update_create_entity} from '../../lib/services'
 import {cleanJson, eq, fetchEntity, getIdRegEx, getRequestHeaders} from '../../components/custom/js/functions'
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
-import {valid_dataset_ancestor_config} from "../../config/config";
+import {getEntityEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 import $ from 'jquery'
 import SenNetPopover, {SenPopoverOptions} from "../../components/SenNetPopover"
 import AttributesUpload, {getResponseList} from "../../components/custom/edit/AttributesUpload";
@@ -34,7 +34,7 @@ const NotFound = dynamic(() => import("../../components/custom/NotFound"))
 
 export default function EditCollection() {
     const {
-        isPreview, isAuthorizing, getModal, setModalDetails, setSubmissionModal, setCheckDoiModal,
+        isPreview, isAuthorizing, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -42,16 +42,15 @@ export default function EditCollection() {
         validated, setValidated,
         userWriteGroups, onChange,
         editMode, setEditMode, isEditMode,
-        showModal, setShowModal,
+        showModal,
         disableSubmit, setDisableSubmit,
-        dataAccessPublic, setDataAccessPublic,
-        getEntityConstraints, getCancelBtn,
-        contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes, setContactsAttributesOnFail
+        setDataAccessPublic,
+        getCancelBtn,
+        contactsTSV, contacts, setContacts, contributors, setContributors, setContactsAttributes, setContactsAttributesOnFail
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
+    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
-    const isPrimary = useRef(false)
     const [bulkAddField, setBulkAddField] = useState(false)
     const isBulkHandling = useRef(false)
     const [bulkErrorMessage, setBulkErrorMessage] = useState(null)
@@ -85,38 +84,41 @@ export default function EditCollection() {
         const fetchData = async (uuid) => {
             log.debug('editCollection: getting data...', uuid)
             // get the data from the api
-            const data = await getEntityData(uuid)
+            const _data = await getEntityData(uuid)
 
-            log.debug('editCollection: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editCollection: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
             } else {
-                setData(data)
-                //isPrimary.current = isPrimaryAssay(data)
+                setData(_data)
+                const entities = await callService(null,  `${getEntityEndPoint()}collections/${_data.uuid}/entities`)
+                Object.assign(_data, {entities})
+                setData(_data)
+
                 let entity_uuids = []
 
-                if (data.hasOwnProperty("entities")) {
-                    for (const ancestor of data.entities) {
+                if (_data.hasOwnProperty("entities")) {
+                    for (const ancestor of _data.entities) {
                         entity_uuids.push(ancestor.uuid)
                     }
                     await fetchLinkedEntity(entity_uuids)
                 }
 
-                if (data.contacts) {
-                    setContacts({description: {records: data.contacts, headers: contactsTSV.headers}})
+                if (_data.contacts) {
+                    setContacts({description: {records: _data.contacts, headers: contactsTSV.headers}})
                 }
 
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
-                    'title': data.title,
-                    'description': data.description,
+                    'title': _data.title,
+                    'description': _data.description,
                     'entity_uuids': entity_uuids,
-                    'contacts': data.contacts,
-                    'creators': data.creators
+                    'contacts': _data.contacts,
+                    'contributors': _data.contributors
                 })
                 setEditMode("Edit")
-                setDataAccessPublic(data.data_access_level === 'public')
+                setDataAccessPublic(_data.data_access_level === 'public')
             }
         }
 
@@ -217,8 +219,8 @@ export default function EditCollection() {
                 log.debug("Form is valid")
 
 
-                if (!_.isEmpty(creators) && creators.description.records) {
-                    values["creators"] = creators.description.records
+                if (!_.isEmpty(contributors) && contributors.description.records) {
+                    values["contributors"] = contributors.description.records
                     values['contacts'] = contacts.description.records
                 }
 
@@ -305,9 +307,6 @@ export default function EditCollection() {
         }
 
     }
-
-    // TODO: remove this return when ready to support
-    return <NotFound/>
 
     if (isPreview(error) || (!isAuthorizing() && !adminGroup))  {
         return getPreviewView(data)
@@ -432,30 +431,21 @@ export default function EditCollection() {
                                                       setAttribute={setContactsAttributes}
                                                       setAttributesOnFail={setContactsAttributesOnFail}
                                                       entity={cache.entities.collection} excludeColumns={contactsTSV.excludeColumns}
-                                                      attribute={'Creators'} title={<h6>Creators</h6>}
+                                                      attribute={'Contributors'} title={<h6>Contributors</h6>}
                                                       customFileInfo={<span><a
                                                           className='btn btn-outline-primary rounded-0 fs-8' download
                                                           href={'https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/contributors/latest/contributors.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>
 
-                                    {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
-                                    {isEditMode && !creators.description && data.creators &&
+                                    {/*This table is just for showing data.contributors list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
+                                    {isEditMode && !contributors.description && data.contributors &&
                                         <div className='c-metadataUpload__table table-responsive'>
-                                            <h6>Creators</h6>
+                                            <h6>Contributors</h6>
                                             <DataTable
                                                 columns={getResponseList({headers: contactsTSV.headers}, contactsTSV.excludeColumns).columns}
-                                                data={data.creators}
+                                                data={data.contributors}
                                                 pagination/>
                                         </div>}
 
-                                    {/*When a user uploads a file, the is_contact property is used to determine contacts, on edit mode, this just displays list from data.contacts*/}
-                                    {contacts && contacts.description &&
-                                        <div className='c-metadataUpload__table table-responsive'>
-                                            <h6>Contacts</h6>
-                                            <DataTable
-                                                columns={getResponseList(contacts, contactsTSV.excludeColumns).columns}
-                                                data={contacts.description.records}
-                                                pagination/>
-                                        </div>}
 
                                     <div className={'d-flex flex-row-reverse'}>
 

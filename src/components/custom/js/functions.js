@@ -419,6 +419,12 @@ Object.assign(String.prototype, {
     upperCaseFirst() {
         return this[0].toUpperCase() + this.slice(1);
     },
+    titleCase() {
+        return this.replace(
+            /\w\S*/g,
+            text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase()
+        )
+    },
     contains(needle) {
         return this.indexOf(needle) !== -1
     },

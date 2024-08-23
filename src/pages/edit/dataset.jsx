@@ -55,10 +55,9 @@ export default function EditDataset() {
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
         getEntityConstraints,
-        getSampleEntityConstraints,
         buildConstraint, successIcon, errIcon, getCancelBtn,
         isAdminOrHasValue, getAssignedToGroupNames,
-        contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes, setContactsAttributesOnFail
+        contactsTSV, contacts, setContacts, contributors, setContributors, setContactsAttributes, setContactsAttributesOnFail
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
     const router = useRouter()
@@ -344,8 +343,8 @@ export default function EditDataset() {
                     values['group_uuid'] = selectedUserWriteGroupUuid
                 }
 
-                if (adminGroup && !_.isEmpty(creators) && creators.description.records) {
-                    values['contributors'] = creators.description.records
+                if (adminGroup && !_.isEmpty(contributors) && contributors.description.records) {
+                    values['contributors'] = contributors.description.records
                     values['contacts'] = contacts.description.records
                 }
 
@@ -452,7 +451,7 @@ export default function EditDataset() {
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
                                         <AncestorIds data={data} values={values} ancestors={ancestors} onChange={onChange}
-                                                     dataset_category={data.dataset_category}
+                                                     disableDelete={data.dataset_category!=='primary'}
                                                      fetchAncestors={fetchAncestors} deleteAncestor={deleteAncestor}
                                                      addButtonDisabled={data.dataset_category != null && data.dataset_category !== 'primary' }/>
                                     }
@@ -540,22 +539,12 @@ export default function EditDataset() {
                                                           href={'https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/contributors/latest/contributors.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>}
 
                                     {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
-                                    {isEditMode && !creators.description && data.contributors &&
+                                    {isEditMode && !contributors.description && data.contributors &&
                                         <div className='c-metadataUpload__table table-responsive'>
                                             <h6>Contributors</h6>
                                             <DataTable
                                                 columns={getResponseList({headers: contactsTSV.headers}, contactsTSV.excludeColumns).columns}
                                                 data={data.contributors}
-                                                pagination/>
-                                        </div>}
-
-                                    {/*When a user uploads a file, the is_contact property is used to determine contacts, on edit mode, this just displays list from data.contacts*/}
-                                    {contacts && contacts.description &&
-                                        <div className='c-metadataUpload__table table-responsive'>
-                                            <h6>Contacts</h6>
-                                            <DataTable
-                                                columns={getResponseList(contacts, contactsTSV.excludeColumns).columns}
-                                                data={contacts.description.records}
                                                 pagination/>
                                         </div>}
 

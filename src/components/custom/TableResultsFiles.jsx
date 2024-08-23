@@ -364,8 +364,6 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
     )
 }
 
-TableResultsFiles.defaultProps = {}
-
 TableResultsFiles.propTypes = {
     children: PropTypes.node,
     onRowClicked: PropTypes.func

@@ -52,8 +52,6 @@ function OptionsSelect({popover, controlId, isRequired, isDisabled, label, onCha
     )
 }
 
-OptionsSelect.defaultProps = {}
-
 OptionsSelect.propTypes = {
     children: PropTypes.node
 }

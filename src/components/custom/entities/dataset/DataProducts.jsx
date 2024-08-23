@@ -32,8 +32,6 @@ function DataProducts({ files, data }) {
     )
 }
 
-DataProducts.defaultProps = {}
-
 DataProducts.propTypes = {
     children: PropTypes.node
 }

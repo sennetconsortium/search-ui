@@ -53,7 +53,7 @@ function BodyContent({ handleChangeAncestor, data }) {
 }
 
 export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd, onShowModal, formLabelPlural,
-                                        formLabel = 'ancestor', controlId = 'direct_ancestor_uuids', dataset_category, addButtonDisabled, data}) {
+                                        formLabel = 'ancestor', controlId = 'direct_ancestor_uuids',  disableDelete, addButtonDisabled, data}) {
     const [showHideModal, setShowHideModal] = useState(false)
 
 
@@ -117,7 +117,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
             {/*Ancestor Information Box*/}
             {ancestors && ancestors.length !== 0 &&
                 <AncestorsTable controlId={controlId} formLabel={formLabel} values={values} onChange={onChange}
-                                ancestors={ancestors} deleteAncestor={deleteAncestor} dataset_category={dataset_category}/>
+                                ancestors={ancestors} deleteAncestor={deleteAncestor} disableDelete={disableDelete}/>
             }
 
             {/*Disable the button if the dataset is not 'primary'*/}
