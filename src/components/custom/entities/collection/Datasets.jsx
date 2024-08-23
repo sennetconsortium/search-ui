@@ -11,8 +11,8 @@ function Datasets({ data, label = 'Datasets' }) {
         const hasMultipleEntityTypes = !eq(label, 'Datasets')
         const {datasetColumns, defaultColumns} = TableResultsEntities({filters: [{field: 'entity_type', values: ['Dataset']}], currentColumns, children: data, forData: true, rowFn: (row) => row ? row : ''})
         let cols = defaultColumns({hasMultipleEntityTypes, columns: datasetColumns, _isLoggedIn: true})
-        currentColumns.current = cols
-        return cols
+        currentColumns.current = cols.filter((col) => col.id !== 'origin_sample.organ')
+        return currentColumns.current
     }
 
     return (
