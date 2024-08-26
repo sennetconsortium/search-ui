@@ -323,7 +323,7 @@ export default function EditCollection() {
                     value = value.replaceAll(' ', '')
 
                     for (let d of datasets) {
-                        value = value.replaceAll(d.uuid + ',', '').replaceAll(d.sennet_id + ',', '')
+                        value = value.replaceAll(d.uuid + ',', '').replaceAll(d.sennet_id.toLowerCase() + ',', '')
                     }
                     $field.value = value
                 }
