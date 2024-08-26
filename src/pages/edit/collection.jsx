@@ -22,6 +22,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Zoom from "@mui/material/Zoom"
 import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
 import {CheckIcon} from "primereact/icons/check";
+import {SpinnerEl} from "@/components/custom/Spinner";
 
 const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
 const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
@@ -46,7 +47,7 @@ export default function EditCollection() {
         disableSubmit, setDisableSubmit,
         setDataAccessPublic,
         getCancelBtn,
-        contactsTSV, contacts, setContacts, contributors, setContributors, setContactsAttributes, setContactsAttributesOnFail
+        contactsTSV, contacts, setContacts, contributors, setContactsAttributes, setContactsAttributesOnFail
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
     const router = useRouter()
@@ -55,10 +56,11 @@ export default function EditCollection() {
     const isBulkHandling = useRef(false)
     const [bulkErrorMessage, setBulkErrorMessage] = useState(null)
     const [bulkPopover, setBulkPopover] = useState(false)
-    const bulkAddBtnTooltipDefault = <span>Toggle the field to bulk add comma separated SenNet ids or uuids.</span>
+    const bulkAddBtnTooltipDefault = <span>Toggle the field to bulk add comma separated SenNet IDs or UUIDs.</span>
     const [bulkAddBtnTooltip, setBulkAddBtnTooltip] = useState(bulkAddBtnTooltipDefault)
     const [bulkAddTextareaVal, setBulkAddTextareaVal] = useState(null)
     const supportedEntities = [cache.entities.dataset, cache.entities.sample, cache.entities.source]
+    const [bulkAddSpinnerVisible, setBulkAddSpinnerVisible] = useState(false)
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -176,6 +178,7 @@ export default function EditCollection() {
                 {notSupported.length > 1 ? ' are' : ' is'} not{notSupported.length > 1 ? '' : ' a'} dataset{notSupported.length > 1 ? 's' : ''}.</span></>)
         }
         isBulkHandling.current = false
+        setBulkAddSpinnerVisible(false)
         setAncestors(newDatasets)
         return newDatasets
     }
@@ -266,10 +269,14 @@ export default function EditCollection() {
         setBulkAddTextareaVal(textareaVal)
         clearBulkPopover()
         isBulkHandling.current = true
+        setBulkAddSpinnerVisible(true)
         if (textareaVal) {
             let ids = textareaVal.split(',')
             ids = new Set(ids) // remove duplicates
             ids = Array.from(ids)
+
+            // in case of lingering commas or too many commas between inputs, let's clear empty values out of array
+            ids = ids.filter((id) => id.trim() !== '')
             const re = getIdRegEx()
             let validIds = []
             let previous = ancestors ? [...ancestors] : []
@@ -281,6 +288,7 @@ export default function EditCollection() {
             let alreadyAdded = []
             let invalidFormat = []
             for (let id of ids) {
+                id = id.trim()
                 let matched = getIdRegEx().test(id)
                 if ((matched || id.length === 32) && !dict[id]) {
                     validIds.push(id)
@@ -294,7 +302,7 @@ export default function EditCollection() {
             }
             let errMsg
             if (alreadyAdded.length) {
-                errMsg = <span>The dataset{alreadyAdded.length > 1 ? 's' : ''}
+                errMsg = <span>The dataset{alreadyAdded.length > 1 ? 's' : ''}&nbsp;
                     <code>{alreadyAdded.join(',')}</code> {alreadyAdded.length > 1 ? 'have' : 'has'} already been added.</span>
             }
             if (invalidFormat.length) {
@@ -303,6 +311,22 @@ export default function EditCollection() {
             let datasets = await fetchLinkedEntity(validIds, errMsg)
             if (datasets.length) {
                 onChange(null, 'entity_uuids', datasets.map((item) => item.uuid))
+
+                const $field = document.getElementById('ancestor_ids')
+                // Clear textfield if all went well
+                if (datasets.length === ids.length) {
+                    $field.value = ''
+                } else {
+                    // otherwise replace the ones that were good and leave for user to fix the bad ones
+                    let value = $field.value.toLowerCase()
+                    // remove any spaces in order for replaceAll where there could be a space between id and comma
+                    value = value.replaceAll(' ', '')
+
+                    for (let d of datasets) {
+                        value = value.replaceAll(d.uuid + ',', '').replaceAll(d.sennet_id + ',', '')
+                    }
+                    $field.value = value
+                }
             }
         }
 
@@ -379,7 +403,7 @@ export default function EditCollection() {
                                                          </>}
                                                      ><span>&nbsp;</span>
                                                      </Tooltip>
-                                                     <textarea name='ancestor_ids'
+                                                     <textarea id='ancestor_ids' name='ancestor_ids'
                                                                className={bulkAddField ? 'is-visible' : ''}
                                                                onChange={handleBulkAddTextChange}/>
                                                      <SenNetPopover
@@ -401,8 +425,9 @@ export default function EditCollection() {
                                                              <span>Click here to bulk add <code>Entities</code> to the <code>Collection</code></span>}
                                                      >
                                                  <span role='button' aria-label={'Bulk add Entities to the Collection'}
-                                                       onClick={handleBulkAdd}
-                                                       className={`btn-add ${bulkAddField && bulkAddTextareaVal ? 'is-visible' : ''}`}> <CheckIcon/>
+                                                       onClick={bulkAddSpinnerVisible ? undefined : handleBulkAdd}
+                                                       className={`btn-add ${bulkAddField && bulkAddTextareaVal ? 'is-visible' : ''}`}> {!bulkAddSpinnerVisible && <CheckIcon/>}
+                                                     { bulkAddSpinnerVisible && <SpinnerEl />}
                                                  </span>
                                                      </SenNetPopover>}
                                                  </>}
