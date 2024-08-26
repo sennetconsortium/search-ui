@@ -152,13 +152,12 @@ export default function EditCollection() {
             if (entity.hasOwnProperty("error")) {
                 if (isBulkHandling.current) {
                     setBulkPopover(true)
-                    setBulkErrorMessage(entity["error"])
+                    errMsgs = <>{errMsgs} <br />{entity["error"]}</>
                 } else {
                     setError(true)
                     setErrorMessage(entity["error"])
                 }
             } else {
-                //TODO:
                 if (supportedEntities.includes(entity.entity_type)) {
                     newDatasets.push(entity)
                 } else {
@@ -272,8 +271,8 @@ export default function EditCollection() {
         setBulkAddSpinnerVisible(true)
         if (textareaVal) {
             let ids = textareaVal.split(',')
-            ids = new Set(ids) // remove duplicates
-            ids = Array.from(ids)
+            let idsSet = new Set(ids) // remove duplicates
+            ids = Array.from(idsSet)
 
             // in case of lingering commas or too many commas between inputs, let's clear empty values out of array
             ids = ids.filter((id) => id.trim() !== '')
@@ -318,14 +317,23 @@ export default function EditCollection() {
                     $field.value = ''
                 } else {
                     // otherwise replace the ones that were good and leave for user to fix the bad ones
-                    let value = $field.value.toLowerCase()
+                    let bulkTextValue = $field.value.toLowerCase()
                     // remove any spaces in order for replaceAll where there could be a space between id and comma
-                    value = value.replaceAll(' ', '')
+                    bulkTextValue = bulkTextValue.replaceAll(' ', '')
 
                     for (let d of datasets) {
-                        value = value.replaceAll(d.uuid + ',', '').replaceAll(d.sennet_id.toLowerCase() + ',', '')
+                        bulkTextValue = bulkTextValue.replaceAll(d.uuid + ',', '').replaceAll(d.sennet_id.toLowerCase() + ',', '')
+                        // delete what can be deleted, i.e. those user inputs that match normalized casing, making list smaller to deal with
+                        idsSet.delete(d.uuid)
+                        idsSet.delete(d.sennet_id)
                     }
-                    $field.value = value
+
+                    // we want to keep the input in the order and casing the user input the list
+                    const updatedValues = bulkTextValue.split(',')
+                    const updatedValuesDict = Object.assign({}, ...updatedValues.map((x) => ({[x]: true}))) //easy dict lookup
+                    const userReducedInput = Array.from(idsSet).filter((x) => updatedValuesDict[x.toLowerCase()])
+
+                    $field.value = userReducedInput.join(',')
                 }
             }
         }
@@ -399,7 +407,7 @@ export default function EditCollection() {
                                                                             setBulkPopover(false)
                                                                         }}><CloseIcon/>
                                                     </span>
-                                                             <div className={'tooltip-content'}>{bulkErrorMessage}</div>
+                                                             <div className={'tooltip-content tooltip-bulk-add-id'}>{bulkErrorMessage}</div>
                                                          </>}
                                                      ><span>&nbsp;</span>
                                                      </Tooltip>
