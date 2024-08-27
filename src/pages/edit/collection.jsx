@@ -320,17 +320,21 @@ export default function EditCollection() {
                     let bulkTextValue = $field.value.toLowerCase()
                     // remove any spaces in order for replaceAll where there could be a space between id and comma
                     bulkTextValue = bulkTextValue.replaceAll(' ', '')
+                    const idsDict = {}
 
                     for (let d of datasets) {
                         bulkTextValue = bulkTextValue.replaceAll(`,${d.uuid},`, ',').replaceAll(`,${d.sennet_id.toLowerCase()},`, ',')
                         // delete what can be deleted, i.e. those user inputs that match normalized casing, making list smaller to deal with
                         idsSet.delete(d.uuid)
                         idsSet.delete(d.sennet_id)
+                        idsDict[d.uuid.toLowerCase()] = false
+                        idsDict[d.sennet_id.toLowerCase()] = false
                     }
 
                     // we want to keep the input in the order and casing the user input the list
                     const updatedValues = bulkTextValue.split(',')
                     const updatedValuesDict = Object.assign({}, ...updatedValues.map((x) => ({[x]: true}))) //easy dict lookup
+                    Object.assign(updatedValuesDict, idsDict)
                     const userReducedInput = Array.from(idsSet).filter((x) => updatedValuesDict[x.toLowerCase()])
 
                     $field.value = userReducedInput.join(',')
