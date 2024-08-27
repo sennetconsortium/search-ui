@@ -326,7 +326,7 @@ export default function EditCollection() {
                         idsDict[d.sennet_id.toLowerCase()] = false
                     }
 
-                    const userReducedInput = Array.from(idsSet).filter((x) => idsDict[x.toLowerCase()] === undefined)
+                    const userReducedInput = Array.from(idsSet).filter((x) => idsDict[x.trim().toLowerCase()] === undefined)
                     $field.value = userReducedInput.join(',')
                 }
             }
