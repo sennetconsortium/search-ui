@@ -23,6 +23,7 @@ import AppContext from "../../../context/AppContext";
 import {get_headers, get_auth_header} from "../../../lib/services";
 import JobQueueContext from "../../../context/JobQueueContext";
 import OptionsSelect from "../layout/entity/OptionsSelect";
+import log from 'loglevel'
 
 export default function BulkCreate({
                                        userWriteGroups,
@@ -45,6 +46,7 @@ export default function BulkCreate({
     const [jobData, setJobData] = useState(null)
     const [subType, setSubType] = useState(entityDetails.subType)
     const [entityType, setEntityType] = useState(entityDetails.entityType)
+    const response = useRef(null)
     const { intervalTimer,
         isLoading, setIsLoading, bulkData, setBulkData,
         file, setFile,
@@ -182,6 +184,13 @@ export default function BulkCreate({
     }
 
     const mimicSocket = (data, {cb, cbFail, cbAll}) => {
+        if (!data.job_id) {
+            const err = `${response.current.statusCode}: ${response.current.statusMessage}`
+            setError({[activeStep]: err})
+            log.debug(`Bulk: ${err}`)
+            setIsLoading(false)
+            return
+        }
         clearSocket()
         setJobData(data)
         setIsInSocket(true)
@@ -244,8 +253,8 @@ export default function BulkCreate({
             headers: get_auth_header(),
             body: formData
         }
-        const response = await fetch(getMetadataValidationUrl(), requestOptions)
-        const data = await response.json()
+        response.current = await fetch(getMetadataValidationUrl(), requestOptions)
+        const data = await response.current.json()
         mimicSocket(data, {cb: updateValidationSuccess})
     }
 
@@ -260,8 +269,8 @@ export default function BulkCreate({
                 referrer: getRegisterReferrer()
             })
         }
-        let response = await fetch(getMetadataRegistrationUrl(), requestOptions)
-        const data = await response.json()
+        response.current = await fetch(getMetadataRegistrationUrl(), requestOptions)
+        const data = await response.current.json()
         mimicSocket(data, {cb: metadataCommitComplete})
         setIsLoading(false)
     }
@@ -288,8 +297,8 @@ export default function BulkCreate({
             headers: get_auth_header(),
             body: formData
         }
-        const response = await fetch(getEntityValidationUrl(), requestOptions)
-        const data = await response.json()
+        response.current = await fetch(getEntityValidationUrl(), requestOptions)
+        const data = await response.current.json()
         mimicSocket(data, {cb: updateValidationSuccess})
     }
 
@@ -302,8 +311,8 @@ export default function BulkCreate({
             headers: get_headers(),
             body: JSON.stringify(body)
         }
-        const response = await fetch(getEntityRegistrationUrl(), requestOptions)
-        const data = await response.json()
+        response.current = await fetch(getEntityRegistrationUrl(), requestOptions)
+        const data = await response.current.json()
         mimicSocket(data, {cb: entityRegistrationComplete, cbFail: entityRegistrationFail})
     }
 
@@ -550,6 +559,13 @@ export default function BulkCreate({
                         }
                     </Stepper>
                     {isLoading && <Spinner/>}
+
+                    {error &&
+                        <Alert severity="error" sx={{m: 2}}>
+                            <div>An unexpected error occurred. Please try again, or contact the <a
+                                href={"mailto:help@sennetconsortium.org"} className='lnk--ic'>SenNet Help Desk<i
+                                className="bi bi-envelope-fill"></i></a> if the issue persists.</div>
+                        </Alert>}
 
                     {isValidationStep() && validationSuccess && !hasAlreadyRegistered(jobData) &&
                         <Alert severity="success" sx={{m: 2}}>
