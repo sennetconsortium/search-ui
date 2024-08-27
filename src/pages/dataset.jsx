@@ -206,13 +206,6 @@ function ViewDataset() {
                                                    data-bs-parent="#sidebar">Files</a>
                                             </li>
 
-                                            {!!(data.contacts && Object.keys(data.contacts).length) &&
-                                                <li className="nav-item">
-                                                    <a href="#Contacts"
-                                                       className="nav-link"
-                                                       data-bs-parent="#sidebar">Contacts</a>
-                                                </li>
-                                            }
 
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&
                                                 <li className="nav-item">
@@ -280,10 +273,7 @@ function ViewDataset() {
                                             {/*Files*/}
                                             <FileTreeView data={data}/>
 
-                                            {/*Contacts*/}
-                                            {!!(data.contacts && Object.keys(data.contacts).length) &&
-                                                <ContributorsContacts title={'Contacts'} data={data.contacts}/>
-                                            }
+
 
                                             {/*Contributors*/}
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&

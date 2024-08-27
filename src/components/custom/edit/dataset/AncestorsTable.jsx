@@ -5,7 +5,7 @@ import SenNetPopover from "../../../SenNetPopover";
 import ClipboardCopy from "../../../ClipboardCopy";
 import DataTable from "react-data-table-component";
 
-export default function AncestorsTable({formLabel, onChange, deleteAncestor, values, controlId, ancestors, dataset_category}) {
+export default function AncestorsTable({formLabel, onChange, deleteAncestor, values, controlId, ancestors, disableDelete}) {
     const _deleteAncestor = async (e, ancestorId) => {
         const old_uuids = [...values[controlId]]
         let updated_uuids = old_uuids.filter(e => e !== ancestorId)
@@ -58,7 +58,7 @@ export default function AncestorsTable({formLabel, onChange, deleteAncestor, val
                 sortable: false,
                 format: col => {
                     // Disable this button when the dataset is not 'primary'
-                    return <Button className="pt-0 pb-0" variant="link" onClick={(e) => _deleteAncestor(e, col.uuid)} disabled={dataset_category!=='primary'}><i className={'bi bi-trash-fill'}
+                    return <Button className="pt-0 pb-0" variant="link" onClick={(e) => _deleteAncestor(e, col.uuid)} disabled={disableDelete}><i className={'bi bi-trash-fill'}
                         style={{color:"red"}}/></Button>
                 },
             },

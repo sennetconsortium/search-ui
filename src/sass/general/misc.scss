@@ -111,6 +111,11 @@ p {
   font-size: 12px;
 }
 
+.tooltip-bulk-add-id {
+  overflow: auto;
+  max-height: 150px;
+}
+
 [id^="react-joyride-step"] {
   * {
     text-align: left;

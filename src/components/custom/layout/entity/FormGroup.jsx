@@ -5,8 +5,8 @@ import AppContext from '../../../../context/AppContext'
 import SenNetPopover from "../../../SenNetPopover";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-function EntityFormGroup({ controlId, label, text, onChange, value, type, placeholder,
-                             isRequired, pattern, popoverTrigger, className, warningText, onBlur, isDisabled }) {
+function EntityFormGroup({ controlId, label, text, onChange, value, type = 'text', placeholder = '',
+                             isRequired = false, pattern, popoverTrigger, className = ' ', warningText, onBlur, isDisabled }) {
   const {_t } = useContext(AppContext)
   const isTextarea = (type === 'textarea')
 
@@ -39,13 +39,6 @@ function EntityFormGroup({ controlId, label, text, onChange, value, type, placeh
     </>
     
   )
-}
-
-EntityFormGroup.defaultProps = {
-    type: 'text',
-    isRequired: false,
-    placeholder: '',
-    className: ' ',
 }
 
 EntityFormGroup.propTypes = {

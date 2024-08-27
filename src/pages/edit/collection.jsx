@@ -8,11 +8,11 @@ import Alert from 'react-bootstrap/Alert';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {getEntityData, update_create_entity} from '../../lib/services'
+import {callService, getEntityData, update_create_entity} from '../../lib/services'
 import {cleanJson, eq, fetchEntity, getIdRegEx, getRequestHeaders} from '../../components/custom/js/functions'
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
-import {valid_dataset_ancestor_config} from "../../config/config";
+import {getEntityEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 import $ from 'jquery'
 import SenNetPopover, {SenPopoverOptions} from "../../components/SenNetPopover"
 import AttributesUpload, {getResponseList} from "../../components/custom/edit/AttributesUpload";
@@ -22,6 +22,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Zoom from "@mui/material/Zoom"
 import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
 import {CheckIcon} from "primereact/icons/check";
+import {SpinnerEl} from "@/components/custom/Spinner";
 
 const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
 const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
@@ -34,7 +35,7 @@ const NotFound = dynamic(() => import("../../components/custom/NotFound"))
 
 export default function EditCollection() {
     const {
-        isPreview, isAuthorizing, getModal, setModalDetails, setSubmissionModal, setCheckDoiModal,
+        isPreview, isAuthorizing, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -42,24 +43,24 @@ export default function EditCollection() {
         validated, setValidated,
         userWriteGroups, onChange,
         editMode, setEditMode, isEditMode,
-        showModal, setShowModal,
+        showModal,
         disableSubmit, setDisableSubmit,
-        dataAccessPublic, setDataAccessPublic,
-        getEntityConstraints, getCancelBtn,
-        contactsTSV, contacts, setContacts, creators, setCreators, setContactsAttributes, setContactsAttributesOnFail
+        setDataAccessPublic,
+        getCancelBtn,
+        contactsTSV, contacts, setContacts, contributors, setContactsAttributes, setContactsAttributesOnFail
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
+    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
-    const isPrimary = useRef(false)
     const [bulkAddField, setBulkAddField] = useState(false)
     const isBulkHandling = useRef(false)
     const [bulkErrorMessage, setBulkErrorMessage] = useState(null)
     const [bulkPopover, setBulkPopover] = useState(false)
-    const bulkAddBtnTooltipDefault = <span>Toggle the field to bulk add comma separated SenNet ids or uuids.</span>
+    const bulkAddBtnTooltipDefault = <span>Toggle the field to bulk add comma separated SenNet IDs or UUIDs.</span>
     const [bulkAddBtnTooltip, setBulkAddBtnTooltip] = useState(bulkAddBtnTooltipDefault)
     const [bulkAddTextareaVal, setBulkAddTextareaVal] = useState(null)
     const supportedEntities = [cache.entities.dataset, cache.entities.sample, cache.entities.source]
+    const [bulkAddSpinnerVisible, setBulkAddSpinnerVisible] = useState(false)
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -85,38 +86,41 @@ export default function EditCollection() {
         const fetchData = async (uuid) => {
             log.debug('editCollection: getting data...', uuid)
             // get the data from the api
-            const data = await getEntityData(uuid)
+            const _data = await getEntityData(uuid)
 
-            log.debug('editCollection: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editCollection: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
             } else {
-                setData(data)
-                //isPrimary.current = isPrimaryAssay(data)
+                setData(_data)
+                const entities = await callService(null,  `${getEntityEndPoint()}collections/${_data.uuid}/entities`)
+                Object.assign(_data, {entities})
+                setData(_data)
+
                 let entity_uuids = []
 
-                if (data.hasOwnProperty("entities")) {
-                    for (const ancestor of data.entities) {
+                if (_data.hasOwnProperty("entities")) {
+                    for (const ancestor of _data.entities) {
                         entity_uuids.push(ancestor.uuid)
                     }
                     await fetchLinkedEntity(entity_uuids)
                 }
 
-                if (data.contacts) {
-                    setContacts({description: {records: data.contacts, headers: contactsTSV.headers}})
+                if (_data.contacts) {
+                    setContacts({description: {records: _data.contacts, headers: contactsTSV.headers}})
                 }
 
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
-                    'title': data.title,
-                    'description': data.description,
+                    'title': _data.title,
+                    'description': _data.description,
                     'entity_uuids': entity_uuids,
-                    'contacts': data.contacts,
-                    'creators': data.creators
+                    'contacts': _data.contacts,
+                    'contributors': _data.contributors
                 })
                 setEditMode("Edit")
-                setDataAccessPublic(data.data_access_level === 'public')
+                setDataAccessPublic(_data.data_access_level === 'public')
             }
         }
 
@@ -148,13 +152,12 @@ export default function EditCollection() {
             if (entity.hasOwnProperty("error")) {
                 if (isBulkHandling.current) {
                     setBulkPopover(true)
-                    setBulkErrorMessage(entity["error"])
+                    errMsgs = <>{errMsgs} <br />{entity["error"]}</>
                 } else {
                     setError(true)
                     setErrorMessage(entity["error"])
                 }
             } else {
-                //TODO:
                 if (supportedEntities.includes(entity.entity_type)) {
                     newDatasets.push(entity)
                 } else {
@@ -174,6 +177,7 @@ export default function EditCollection() {
                 {notSupported.length > 1 ? ' are' : ' is'} not{notSupported.length > 1 ? '' : ' a'} dataset{notSupported.length > 1 ? 's' : ''}.</span></>)
         }
         isBulkHandling.current = false
+        setBulkAddSpinnerVisible(false)
         setAncestors(newDatasets)
         return newDatasets
     }
@@ -217,8 +221,8 @@ export default function EditCollection() {
                 log.debug("Form is valid")
 
 
-                if (!_.isEmpty(creators) && creators.description.records) {
-                    values["creators"] = creators.description.records
+                if (!_.isEmpty(contributors) && contributors.description.records) {
+                    values["contributors"] = contributors.description.records
                     values['contacts'] = contacts.description.records
                 }
 
@@ -264,10 +268,14 @@ export default function EditCollection() {
         setBulkAddTextareaVal(textareaVal)
         clearBulkPopover()
         isBulkHandling.current = true
+        setBulkAddSpinnerVisible(true)
         if (textareaVal) {
             let ids = textareaVal.split(',')
-            ids = new Set(ids) // remove duplicates
-            ids = Array.from(ids)
+            let idsSet = new Set(ids) // remove duplicates
+            ids = Array.from(idsSet)
+
+            // in case of lingering commas or too many commas between inputs, let's clear empty values out of array
+            ids = ids.filter((id) => id.trim() !== '')
             const re = getIdRegEx()
             let validIds = []
             let previous = ancestors ? [...ancestors] : []
@@ -279,6 +287,7 @@ export default function EditCollection() {
             let alreadyAdded = []
             let invalidFormat = []
             for (let id of ids) {
+                id = id.trim()
                 let matched = getIdRegEx().test(id)
                 if ((matched || id.length === 32) && !dict[id]) {
                     validIds.push(id)
@@ -292,7 +301,7 @@ export default function EditCollection() {
             }
             let errMsg
             if (alreadyAdded.length) {
-                errMsg = <span>The dataset{alreadyAdded.length > 1 ? 's' : ''}
+                errMsg = <span>The dataset{alreadyAdded.length > 1 ? 's' : ''}&nbsp;
                     <code>{alreadyAdded.join(',')}</code> {alreadyAdded.length > 1 ? 'have' : 'has'} already been added.</span>
             }
             if (invalidFormat.length) {
@@ -301,13 +310,35 @@ export default function EditCollection() {
             let datasets = await fetchLinkedEntity(validIds, errMsg)
             if (datasets.length) {
                 onChange(null, 'entity_uuids', datasets.map((item) => item.uuid))
+
+                const $field = document.getElementById('ancestor_ids')
+                // Clear textfield if all went well
+                if (datasets.length === ids.length) {
+                    $field.value = ''
+                } else {
+                    // otherwise replace the ones that were good and leave for user to fix the bad ones
+                    let bulkTextValue = $field.value.toLowerCase()
+                    // remove any spaces in order for replaceAll where there could be a space between id and comma
+                    bulkTextValue = bulkTextValue.replaceAll(' ', '')
+
+                    for (let d of datasets) {
+                        bulkTextValue = bulkTextValue.replaceAll(d.uuid + ',', '').replaceAll(d.sennet_id.toLowerCase() + ',', '')
+                        // delete what can be deleted, i.e. those user inputs that match normalized casing, making list smaller to deal with
+                        idsSet.delete(d.uuid)
+                        idsSet.delete(d.sennet_id)
+                    }
+
+                    // we want to keep the input in the order and casing the user input the list
+                    const updatedValues = bulkTextValue.split(',')
+                    const updatedValuesDict = Object.assign({}, ...updatedValues.map((x) => ({[x]: true}))) //easy dict lookup
+                    const userReducedInput = Array.from(idsSet).filter((x) => updatedValuesDict[x.toLowerCase()])
+
+                    $field.value = userReducedInput.join(',')
+                }
             }
         }
 
     }
-
-    // TODO: remove this return when ready to support
-    return <NotFound/>
 
     if (isPreview(error) || (!isAuthorizing() && !adminGroup))  {
         return getPreviewView(data)
@@ -376,11 +407,11 @@ export default function EditCollection() {
                                                                             setBulkPopover(false)
                                                                         }}><CloseIcon/>
                                                     </span>
-                                                             <div className={'tooltip-content'}>{bulkErrorMessage}</div>
+                                                             <div className={'tooltip-content tooltip-bulk-add-id'}>{bulkErrorMessage}</div>
                                                          </>}
                                                      ><span>&nbsp;</span>
                                                      </Tooltip>
-                                                     <textarea name='ancestor_ids'
+                                                     <textarea id='ancestor_ids' name='ancestor_ids'
                                                                className={bulkAddField ? 'is-visible' : ''}
                                                                onChange={handleBulkAddTextChange}/>
                                                      <SenNetPopover
@@ -402,8 +433,9 @@ export default function EditCollection() {
                                                              <span>Click here to bulk add <code>Entities</code> to the <code>Collection</code></span>}
                                                      >
                                                  <span role='button' aria-label={'Bulk add Entities to the Collection'}
-                                                       onClick={handleBulkAdd}
-                                                       className={`btn-add ${bulkAddField && bulkAddTextareaVal ? 'is-visible' : ''}`}> <CheckIcon/>
+                                                       onClick={bulkAddSpinnerVisible ? undefined : handleBulkAdd}
+                                                       className={`btn-add ${bulkAddField && bulkAddTextareaVal ? 'is-visible' : ''}`}> {!bulkAddSpinnerVisible && <CheckIcon/>}
+                                                     { bulkAddSpinnerVisible && <SpinnerEl />}
                                                  </span>
                                                      </SenNetPopover>}
                                                  </>}
@@ -432,30 +464,21 @@ export default function EditCollection() {
                                                       setAttribute={setContactsAttributes}
                                                       setAttributesOnFail={setContactsAttributesOnFail}
                                                       entity={cache.entities.collection} excludeColumns={contactsTSV.excludeColumns}
-                                                      attribute={'Creators'} title={<h6>Creators</h6>}
+                                                      attribute={'Contributors'} title={<h6>Contributors</h6>}
                                                       customFileInfo={<span><a
                                                           className='btn btn-outline-primary rounded-0 fs-8' download
                                                           href={'https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/contributors/latest/contributors.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>
 
-                                    {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
-                                    {isEditMode && !creators.description && data.creators &&
+                                    {/*This table is just for showing data.contributors list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
+                                    {isEditMode && !contributors.description && data.contributors &&
                                         <div className='c-metadataUpload__table table-responsive'>
-                                            <h6>Creators</h6>
+                                            <h6>Contributors</h6>
                                             <DataTable
                                                 columns={getResponseList({headers: contactsTSV.headers}, contactsTSV.excludeColumns).columns}
-                                                data={data.creators}
+                                                data={data.contributors}
                                                 pagination/>
                                         </div>}
 
-                                    {/*When a user uploads a file, the is_contact property is used to determine contacts, on edit mode, this just displays list from data.contacts*/}
-                                    {contacts && contacts.description &&
-                                        <div className='c-metadataUpload__table table-responsive'>
-                                            <h6>Contacts</h6>
-                                            <DataTable
-                                                columns={getResponseList(contacts, contactsTSV.excludeColumns).columns}
-                                                data={contacts.description.records}
-                                                pagination/>
-                                        </div>}
 
                                     <div className={'d-flex flex-row-reverse'}>
 

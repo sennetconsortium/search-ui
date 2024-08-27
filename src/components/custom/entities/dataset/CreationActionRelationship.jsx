@@ -89,8 +89,6 @@ function CreationActionRelationship({ entity, data }) {
     )
 }
 
-CreationActionRelationship.defaultProps = {}
-
 CreationActionRelationship.propTypes = {
     children: PropTypes.node
 }

@@ -75,8 +75,6 @@ function DatasetRevertButton({disableSubmit, onClick, onStatusChange, data}) {
     )
 }
 
-DatasetRevertButton.defaultProps = {}
-
 DatasetRevertButton.propTypes = {
     children: PropTypes.node
 }
