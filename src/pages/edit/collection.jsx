@@ -322,7 +322,7 @@ export default function EditCollection() {
                     bulkTextValue = bulkTextValue.replaceAll(' ', '')
 
                     for (let d of datasets) {
-                        bulkTextValue = bulkTextValue.replaceAll(d.uuid + ',', '').replaceAll(d.sennet_id.toLowerCase() + ',', '')
+                        bulkTextValue = bulkTextValue.replace(d.uuid + ',', '').replace(d.sennet_id.toLowerCase() + ',', '')
                         // delete what can be deleted, i.e. those user inputs that match normalized casing, making list smaller to deal with
                         idsSet.delete(d.uuid)
                         idsSet.delete(d.sennet_id)
