@@ -550,8 +550,6 @@ export const extractSourceMappedMetadataInfo = (sourceMappedMetadata) => {
     }
 }
 
-// filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=origin_sample.organ&filters%5B1%5D%5Bvalues%5D%5B0%5D=LL&filters%5B1%5D%5Bvalues%5D%5B1%5D=RL&filters%5B1%5D%5Btype%5D=any
-
 /**
  * @typedef {Object} Filter
  * @property {string} field - The field to filter on

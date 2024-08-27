@@ -1,5 +1,6 @@
-import {FilterIsSelected, getAuth, getEntitiesIndex, getSearchEndPoint} from "../config";
+import { searchUIQueryString } from "@/components/custom/js/functions";
 import SearchAPIConnector from "search-ui/packages/search-api-connector";
+import { FilterIsSelected, getAuth, getEntitiesIndex, getSearchEndPoint } from "../config";
 
 const connector = new SearchAPIConnector({
     indexName: getEntitiesIndex(),
@@ -492,61 +493,90 @@ export const SEARCH_METADATA = {
         searchResults: ({start, end, totalResults, searchTerm}) =>
             `Searching for "${searchTerm}". Showing ${start} to ${end} results out of ${totalResults}.`,
     },
+
+    // Discover page configuration
     discover: [
         {
             title: 'All Human Sources',
             description: 'Human sources of all ages and sexes.',
             entityType: 'source',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Source&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=source_type&filters%5B1%5D%5Bvalues%5D%5B0%5D=Human&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Source'], type: 'any'},
+                {field: 'source_type', values: ['Human'], type: 'any'}
+            ])
         },
         {
             title: 'C57BL/6 Mouse Sources',
             description: 'Mouse sources from the C57BL/6 strain',
             entityType: 'source',
-            queryString: 'size=n_10000_n&filters[0][field]=entity_type&filters[0][values][0]=Source&filters[0][type]=any&filters[1][field]=source_type&filters[1][values][0]=Mouse&filters[1][type]=any&filters[2][field]=metadata.strain&filters[2][values][0]=C57BL%2F6&filters[2][type]=any&sort[0][field]=last_modified_timestamp&sort[0][direction]=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Source'], type: 'any'},
+                {field: 'source_type', values: ['Mouse'], type: 'any'},
+                {field: 'metadata.strain', values: ['C57BL/6'], type: 'any'}
+            ])
         },
         {
             title: 'All Mouse Sources',
             description: 'Mouse sources of all strains, sexes, and embryo statuses.',
             entityType: 'source',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Source&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=source_type&filters%5B1%5D%5Bvalues%5D%5B0%5D=Mouse&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Source'], type: 'any'},
+                {field: 'source_type', values: ['Mouse'], type: 'any'}
+            ])
         },
         {
             title: 'All Block Samples',
             description: 'Block samples of all weights, volumes, and preparation conditions.',
             entityType: 'sample',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Sample&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=sample_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=Block&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Sample'], type: 'any'},
+                {field: 'sample_category', values: ['Block'], type: 'any'}
+            ])
         },
         {
             title: 'All Section Samples',
             description: 'Section samples of all thicknesses and preparation conditions.',
             entityType: 'sample',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Sample&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=sample_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=Section&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Sample'], type: 'any'},
+                {field: 'sample_category', values: ['Section'], type: 'any'}
+            ])
         },
         {
             title: 'All Suspension Samples',
             description: 'Suspension samples of all entity types, enrichment, and preparation conditions.',
             entityType: 'sample',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Sample&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=sample_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=Suspension&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Sample'], type: 'any'},
+                {field: 'sample_category', values: ['Suspension'], type: 'any'}
+            ])
         },
         {
             title: 'All Nucleic Datasets',
             description: 'Datasets with the nucleic acid and protein analyte class.',
             entityType: 'dataset',
-            queryString: 'size=n_10000_n&filters[0][field]=entity_type&filters[0][values][0]=Dataset&filters[0][type]=any&filters[1][field]=ingest_metadata.metadata.analyte_class&filters[1][values][0]=Nucleic acid and protein&filters[1][type]=any&sort[0][field]=last_modified_timestamp&sort[0][direction]=desc'
-
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Dataset'], type: 'any'},
+                {field: 'ingest_metadata.metadata.analyte_class', values: ['Nucleic acid and protein'], type: 'any'}
+            ])
         },
         {
             title: 'All RNA Datasets',
             description: 'Datasets with the RNA analyte class.',
             entityType: 'dataset',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=ingest_metadata.metadata.analyte_class&filters%5B1%5D%5Bvalues%5D%5B0%5D=RNA&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Dataset'], type: 'any'},
+                {field: 'ingest_metadata.metadata.analyte_class', values: ['RNA'], type: 'any'}
+            ])
         },
         {
             title: 'All Sequence Datasets',
             description: 'Datasets with the sequence assay category.',
             entityType: 'dataset',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=ingest_metadata.metadata.assay_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=sequence&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Dataset'], type: 'any'},
+                {field: 'ingest_metadata.metadata.assay_category', values: ['sequence'], type: 'any'}
+            ])
         },
     ],
 }
