@@ -11,6 +11,7 @@ import $ from 'jquery'
 import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
 import {
+    eq,
     fetchProtocols,
     getClickableLink,
     getCreationActionRelationName,
@@ -134,12 +135,17 @@ function Provenance({nodeData}) {
         return sz
     }
 
+    const modalId = 'neo4j--modal'
+
     const onInitializationComplete = (selectorId) => {
         clearTimeout(cbTimeout)
         cbTimeout = setTimeout(()=>{
             const ui = window.ProvenanceTreeD3[selectorId]
             d3.select(`#${selectorId} #node--${data.uuid}`).dispatch('click')
-            ui.disableZoom()
+
+            if (!eq(selectorId, modalId)) {
+                ui.disableZoom()
+            }
         }, 1000)
     }
 
@@ -418,8 +424,6 @@ function Provenance({nodeData}) {
             visible: false
         }
     }
-
-    const modalId = 'neo4j--modal'
 
     const help = {
         title: 'Help, Provenance Graph',
