@@ -144,6 +144,7 @@ export default function EditDataset() {
             log.debug('editDataset: Got data', _data)
             if (_data.hasOwnProperty("error")) {
                 setError(true)
+                setData(false)
                 setErrorMessage(_data["error"])
             } else {
                 setData(_data)

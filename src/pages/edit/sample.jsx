@@ -115,6 +115,7 @@ function EditSample() {
             log.debug('editSample: Got data', _data)
             if (_data.hasOwnProperty("error")) {
                 setError(true)
+                setData(false)
                 setErrorMessage(_data["error"])
             } else {
 
