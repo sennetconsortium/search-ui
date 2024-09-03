@@ -91,7 +91,7 @@ export const EntityProvider = ({ children }) => {
 
         get_user_write_groups()
             .then((response) => {
-                if (response.user_write_groups.length === 1) {
+                if (response.user_write_groups?.length === 1) {
                     setSelectedUserWriteGroupUuid(
                         response.user_write_groups[0].uuid
                     )

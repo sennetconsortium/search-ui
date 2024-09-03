@@ -70,6 +70,7 @@ export default function EditPublication() {
             log.debug('editPublication: Got data', _data)
             if (_data.hasOwnProperty("error")) {
                 setError(true)
+                setData(false)
                 setErrorMessage(_data["error"])
             } else {
                 setData(_data)
