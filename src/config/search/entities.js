@@ -54,7 +54,7 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false
             },
-            dataset_type: {
+            assay_displayname: {
                 label: 'Dataset Type',
                 type: 'value',
                 field: 'assay_displayname.keyword',
@@ -242,6 +242,7 @@ export const SEARCH_ENTITIES = {
             'group_name',
             'source_type',
             'dataset_type',
+            'assay_displayname',
             'status',
             'origin_sample.organ',
             'organ',
