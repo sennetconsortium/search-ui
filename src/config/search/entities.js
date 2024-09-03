@@ -57,7 +57,7 @@ export const SEARCH_ENTITIES = {
             dataset_type: {
                 label: 'Dataset Type',
                 type: 'value',
-                field: 'dataset_type.keyword',
+                field: 'assay_displayname.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
