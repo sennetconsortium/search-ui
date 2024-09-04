@@ -54,14 +54,14 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false
             },
-            assay_displayname: {
+            dataset_type_hierarchy: {
                 label: 'Dataset Type',
                 type: 'value',
-                field: 'assay_displayname.keyword',
+                field: 'dataset_type_hierarchy.second_level.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                groupBy: 'dataset_type_hierarchy.keyword',
+                groupBy: 'dataset_type_hierarchy.first_level.keyword',
                 groupAll: true,
             },
             'sources.source_type': {
@@ -242,7 +242,8 @@ export const SEARCH_ENTITIES = {
             'group_name',
             'source_type',
             'dataset_type',
-            'assay_displayname',
+            'dataset_type_hierarchy.first_level',
+            'dataset_type_hierarchy.second_level',
             'status',
             'origin_sample.organ',
             'organ',
