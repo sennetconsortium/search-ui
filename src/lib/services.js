@@ -268,26 +268,6 @@ export function parseJson(json) {
     }
 }
 
-export async function get_ancestor_organs(uuid) {
-    log.debug('FETCHING ANCESTOR ORGANS')
-
-    const url = getEntityEndPoint() + "entities/" + uuid + "/ancestor-organs"
-    const request_options = {
-        method: 'GET',
-        headers: get_headers()
-    }
-    let organs = []
-    const response = await fetch(url, request_options)
-    if (!response.ok) {
-        return organs
-    }
-    let json = await response.json()
-    json.forEach(entity => {
-        organs.push(entity["organ"])
-    });
-    return organs
-}
-
 export const uploadFile = async file => {
     const formData = new FormData()
     formData.append('file', file)

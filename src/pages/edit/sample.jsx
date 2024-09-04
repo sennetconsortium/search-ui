@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
 import {cleanJson, eq, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
-import {get_ancestor_organs, getAncestryData, getEntityData, parseJson, update_create_entity} from "../../lib/services";
+import {getAncestryData, getEntityData, parseJson, update_create_entity} from "../../lib/services";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import {getUserName, isRuiSupported} from "../../config/config";
@@ -115,6 +115,7 @@ function EditSample() {
             log.debug('editSample: Got data', _data)
             if (_data.hasOwnProperty("error")) {
                 setError(true)
+                setData(false)
                 setErrorMessage(_data["error"])
             } else {
 
@@ -156,8 +157,7 @@ function EditSample() {
                     await fetchSource(_data.immediate_ancestors[0].uuid);
                 }
 
-                let ancestor_organ = await get_ancestor_organs(_data.uuid)
-                setAncestorOrgan(ancestor_organ)
+                setAncestorOrgan(_data.organ ? [_data.organ] : [_data?.origin_sample.organ])
                 setAncestorSource([getSourceType(_data.source)])
 
                 if (_data['rui_location'] !== undefined) {

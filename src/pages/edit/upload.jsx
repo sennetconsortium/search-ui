@@ -70,6 +70,7 @@ function EditUpload() {
             log.debug('editUpload: Got data', data)
             if (data.hasOwnProperty("error")) {
                 setError(true)
+                setData(false)
                 setErrorMessage(data["error"])
             } else {
                 setData(data);
