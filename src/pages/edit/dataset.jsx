@@ -415,7 +415,7 @@ export default function EditDataset() {
                                 <Form noValidate validated={validated} id="dataset-form">
                                     {/*Group select*/}
                                     {
-                                        !(userWriteGroups.length === 1 || isEditMode()) &&
+                                        userWriteGroups && !(userWriteGroups?.length === 1 || isEditMode()) &&
                                         <GroupSelect
                                             data={data}
                                             groups={userWriteGroups}

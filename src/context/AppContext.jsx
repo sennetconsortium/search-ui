@@ -145,7 +145,8 @@ export const AppProvider = ({ cache, banners, children }) => {
     const hasPublicAccess = (data) => {
         let publicAccess = false
         if (data) {
-            publicAccess =  eq(data.data_access_level, 'public') || eq(data.status, 'published')
+            publicAccess =  (eq(data.data_access_level, 'public') || eq(data.status, 'published'))
+                && !router.pathname.contains('edit')
         }
         return publicAccess
     }
