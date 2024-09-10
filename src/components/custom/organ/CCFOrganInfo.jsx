@@ -42,7 +42,7 @@ const CCFOrganInfo = ({ organ }) => {
             </Helmet>
             <ccf-organ-info
                 organ-iri={organ.url}
-                data-sources={`["https://apps.humanatlas.io/api/ds-graph/sennet?token=${getCookie('groups_token')}"]`}
+                data-sources={`["https://apps.humanatlas.io/api/ds-graph/sennet?token=${getCookie('groups_token') ? getCookie('groups_token') : ''}"]`}
                 eui-url='https://data.sennetconsortium.org/ccf-eui'
                 rui-url='https://apps.humanatlas.io/rui/'
                 asctb-url='https://hubmapconsortium.github.io/ccf-asct-reporter/'
