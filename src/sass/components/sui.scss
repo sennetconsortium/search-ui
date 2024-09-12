@@ -262,7 +262,7 @@
   background: $col-entity-grey;
   padding: 0 24px;
   .MuiChip-root {
-    color: #4f4f4f;
+    color: $col-secondary-txt;
   }
   .chip-title {
     text-transform: uppercase;
@@ -272,13 +272,15 @@
   }
 }
 
-
 .sui-multi-checkbox-facet {
   &__option-input-wrapper {
     display: flex;
     flex-direction: row;
     align-items: center;
     flex: inherit;
+  }
+  &__option-count {
+    color: $col-secondary-txt;
   }
   &__checkbox,
   &__input-text {
