@@ -227,7 +227,7 @@ function ViewDataset() {
                                     <SidebarBtn/>
 
                                     <EntityViewHeader data={data}
-                                                      uniqueHeader={data.display_subtype || data.dataset_type}
+                                                      uniqueHeader={data.assay_displayname || data.display_subtype || data.dataset_type}
                                                       entity={cache.entities.dataset.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}/>
 
