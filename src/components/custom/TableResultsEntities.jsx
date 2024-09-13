@@ -4,7 +4,7 @@ import {
     checkFilterType,
     checkMultipleFilterType,
     displayBodyHeader, eq, getEntityViewUrl, getUBKGFullName,
-    getStatusColor, getStatusDefinition, matchArrayOrder
+    getStatusColor, getStatusDefinition, matchArrayOrder, getDatasetTypeDisplay
 } from './js/functions'
 import AppContext from "../../context/AppContext"
 import log from 'loglevel'
@@ -145,7 +145,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
             name: 'Dataset Type',
             id: 'dataset_type',
             selector: row => {
-                let val = raw(row.dataset_type)
+                let val = raw(getDatasetTypeDisplay(row))
                 if (val) {
                     return Array.isArray(val) ? getUBKGFullName(val[0]) : val
                 } else {

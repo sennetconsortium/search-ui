@@ -57,11 +57,11 @@ export const SEARCH_ENTITIES = {
             dataset_type: {
                 label: 'Dataset Type',
                 type: 'value',
-                field: 'dataset_type.keyword',
+                field: 'dataset_type_hierarchy.second_level.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                groupBy: 'dataset_type_hierarchy.keyword',
+                groupBy: 'dataset_type_hierarchy.first_level.keyword',
                 groupAll: true,
             },
             'sources.source_type': {
