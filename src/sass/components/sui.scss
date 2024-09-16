@@ -99,6 +99,16 @@
   padding: 0 24px;
 }
 
+.sui-layout-main-header__inner {
+  @include sm-mx {
+    display: initial;
+
+    .sui-columns-toggle {
+      margin: 1em 0;
+    }
+  }
+}
+
 .sui-layout-sidebar {
   -ms-flex: 0 0 300px;
   flex: 0 0 300px;
@@ -299,9 +309,11 @@
 
 
 .sui-columns-toggle {
-  position: absolute !important;
-  right: 120px;
   z-index: 900; //must be lower than navbar but above fixed header in DataTable
+  @include lg {
+    position: absolute !important;
+    right: 120px;
+  }
 }
 
 .sui-react-select {
