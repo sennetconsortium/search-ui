@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
 import {
+    getDatasetTypeDisplay,
     datasetIs,
     fetchDataCite,
     getCreationActionRelationName,
@@ -227,9 +228,9 @@ function ViewDataset() {
                                     <SidebarBtn/>
 
                                     <EntityViewHeader data={data}
-                                                      uniqueHeader={data.assay_displayname || data.display_subtype || data.dataset_type}
+                                                      uniqueHeader={getDatasetTypeDisplay(data)}
                                                       entity={cache.entities.dataset.toLowerCase()}
-                                                      hasWritePrivilege={hasWritePrivilege}/>
+                                                      hasWritePrivilege={hasWritePrivilege || false}/>
 
                                     <div className="row">
                                         <div className="col-12">

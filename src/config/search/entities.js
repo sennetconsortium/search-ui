@@ -249,6 +249,7 @@ export const SEARCH_ENTITIES = {
             'organ',
             'title',
             'description',
+            'dataset_type_hierarchy'
         ]
     },
     initialState: {
