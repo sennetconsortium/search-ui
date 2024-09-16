@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 import SenNetAccordion from "../../layout/SenNetAccordion";
-import {getCreationActionRelationName} from "../../js/functions";
+import {getCreationActionRelationName, getDatasetTypeDisplay} from "../../js/functions";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import DataTable from "react-data-table-component";
@@ -36,7 +36,7 @@ function CreationActionRelationship({ entity, data }) {
         },
         {
             name: 'Dataset Type',
-            selector: row => row.dataset_type,
+            selector: row => getDatasetTypeDisplay(row),
             sortable: true,
         },
         {
