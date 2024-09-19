@@ -134,6 +134,14 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isFilterable: false,
             },
+            has_all_published_datasets: {
+                label: 'Has All Primary Datasets Published',
+                type: 'value',
+                field: 'has_all_published_datasets.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+            },
             status: {
                 label: 'Status',
                 type: 'value',
@@ -220,6 +228,8 @@ export const SEARCH_ENTITIES = {
             source_type: FilterIsSelected('entity_type', 'Source'),
             // Only show 'sources' facet if 'Dataset' is selected from the entity type facet
             'sources.source_type': FilterIsSelected('entity_type', 'Dataset'),
+            // Only show 'has_all_published_datasets' facet if 'Upload' is selected from the entity type facet
+            'has_all_published_datasets': FilterIsSelected('entity_type', 'Upload'),
         },
         search_fields: {
             "sennet_id^4": {type: 'value'},
@@ -247,6 +257,7 @@ export const SEARCH_ENTITIES = {
             'organ',
             'title',
             'description',
+            'has_all_published_datasets'
         ]
     },
     initialState: {
