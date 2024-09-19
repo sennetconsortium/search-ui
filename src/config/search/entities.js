@@ -135,7 +135,7 @@ export const SEARCH_ENTITIES = {
                 isFilterable: false,
             },
             has_all_published_datasets: {
-                label: 'Has All Primary Datasets Published',
+                label: 'Has All Primary Published',
                 type: 'value',
                 field: 'has_all_published_datasets.keyword',
                 isExpanded: false,
