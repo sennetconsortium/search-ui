@@ -15,11 +15,11 @@ function SelectedFacets() {
     }
 
     const convertToDisplayLabel = (filter, key) => {
-        switch (filter.uiType) {
+        switch (filter.facetType) {
             case 'daterange':
                 const datePrefix = key === 'from' ? 'Start' : 'End'
                 return `${datePrefix} ${filter.label}`
-            case 'numrange':
+            case 'histogram':
                 const numPrefix = key === 'from' ? 'Min' : 'Max'
                 return `${numPrefix} ${filter.label}`
             default:
@@ -28,10 +28,10 @@ function SelectedFacets() {
     }
 
     const convertToDisplayValue = (filter, value) => {
-        switch (filter.uiType) {
+        switch (filter.facetType) {
             case 'daterange':
                 return new Date(value).toLocaleDateString('en-US', { timeZone: 'UTC' })
-            case 'numrange':
+            case 'histogram':
                 return value
             default:
                 return getUBKGFullName(value)

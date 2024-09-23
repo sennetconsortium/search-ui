@@ -154,11 +154,14 @@ exclude_dataset_config['searchQuery']['excludeFilters'].push(
 );
 
 export function FilterIsSelected(fieldName, value) {
-    return ({filters}) => {
-        return filters.some(
-            (f) => f.field === fieldName && (!value || f.values.includes(value))
-        );
-    };
+    return ({filters, aggregations}) => {
+        for (const filter of filters) {
+            if (filter.field === fieldName && filter.values.includes(value)) {
+                return true
+            }
+        }
+        return false
+    }
 }
 
 export const STORAGE_KEY = (key = '') => `sn-portal.${key}`

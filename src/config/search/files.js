@@ -36,6 +36,11 @@ export const SEARCH_FILES = {
                 field: 'file_extension.keyword',
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             'organs.type': {
                 label: 'Organs',
@@ -44,6 +49,11 @@ export const SEARCH_FILES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             dataset_type: {
                 label: 'Dataset Type',
@@ -52,6 +62,11 @@ export const SEARCH_FILES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             file_info_refresh_timestamp: {
                 label: 'Modification Date',
@@ -60,7 +75,7 @@ export const SEARCH_FILES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: true,
-                uiType: 'daterange',
+                facetType: 'daterange',
             },
         },
         disjunctiveFacets: [],
@@ -84,6 +99,8 @@ export const SEARCH_FILES = {
             direction: "desc"
         }]
     },
+    urlPushDebounceLength: 100,
+    trackTotalHits: true,
     trackUrlState: true,
     apiConnector: connector,
     hasA11yNotifications: true,

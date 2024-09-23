@@ -12,12 +12,12 @@ export const SEARCH_ENTITIES = {
     searchQuery: {
         excludeFilters: [
             {
-                keyword: "entity_type.keyword",
-                value: "Publication"
+                field: "entity_type.keyword",
+                values: ["Publication"]
             },
             {
-                keyword: "dataset_category.keyword",
-                value: ["codcc-processed", "lab-processed"]
+                field: "dataset_category.keyword",
+                values: ["codcc-processed", "lab-processed"]
             }
         ],
         facets: {
@@ -28,6 +28,11 @@ export const SEARCH_ENTITIES = {
                 isExpanded: true,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             // Used for when "Sample" is selected to show organs
             source_type: {
@@ -37,6 +42,11 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isExpanded: false,
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             sample_category: {
                 label: 'Sample Category',
@@ -45,6 +55,11 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             has_qa_derived_dataset: {
                 label: 'Has QA Derived Datasets',
@@ -52,18 +67,24 @@ export const SEARCH_ENTITIES = {
                 field: 'has_qa_derived_dataset.keyword',
                 isExpanded: false,
                 filterType: 'any',
-                isFilterable: false
-            },
-            dataset_type: {
-                label: 'Dataset Type',
-                type: 'value',
-                field: 'dataset_type.keyword',
-                isExpanded: false,
-                filterType: 'any',
                 isFilterable: false,
-                groupBy: 'dataset_type_hierarchy.keyword',
-                groupAll: true,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
+            // dataset_type: {
+            //     label: 'Dataset Type',
+            //     type: 'value',
+            //     field: 'dataset_type.keyword',
+            //     isExpanded: false,
+            //     filterType: 'any',
+            //     isFilterable: false,
+            //     groupBy: 'dataset_type_hierarchy.keyword',
+            //     groupAll: true,
+            //     facetType: 'term',
+            // },
             'sources.source_type': {
                 label: 'Source Type',
                 type: 'value',
@@ -71,28 +92,35 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isExpanded: false,
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
-            organ: {
-                label: 'Organ',
-                type: 'value',
-                field: 'organ.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                groupBy: 'organ_hierarchy.keyword',
-                groupAll: false,
-            },
+            // organ: {
+            //     label: 'Organ',
+            //     type: 'value',
+            //     field: 'organ.keyword',
+            //     isExpanded: false,
+            //     filterType: 'any',
+            //     isFilterable: false,
+            //     groupBy: 'organ_hierarchy.keyword',
+            //     groupAll: false,
+            //     facetType: 'term',
+            // },
             // Used for when "Dataset" or Sample Block/Section/Suspension is selected to show related organs
-            "origin_sample.organ": {
-                label: 'Organ',
-                type: 'value',
-                field: 'origin_sample.organ.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                groupBy: 'origin_sample.organ_hierarchy.keyword',
-                groupAll: false,
-            },
+            // "origin_sample.organ": {
+            //     label: 'Organ',
+            //     type: 'value',
+            //     field: 'origin_sample.organ.keyword',
+            //     isExpanded: false,
+            //     filterType: 'any',
+            //     isFilterable: false,
+            //     groupBy: 'origin_sample.organ_hierarchy.keyword',
+            //     groupAll: false,
+            //     facetType: 'term',
+            // },
             // Used for when "Dataset/Sample" is selected to show related sources
             "source.source_type": {
                 label: 'Source Type',
@@ -101,6 +129,11 @@ export const SEARCH_ENTITIES = {
                 filterType: 'any',
                 isExpanded: false,
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             has_rui_information: {
                 label: 'Is Spatially Registered',
@@ -109,6 +142,11 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             'rui_location_anatomical_locations.label': {
                 label: 'Anatomical Locations',
@@ -117,6 +155,11 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
              'metadata': {
                 label: 'Has Metadata',
@@ -125,6 +168,11 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             'ingest_metadata.metadata': {
                 label: 'Has Metadata',
@@ -133,6 +181,11 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             status: {
                 label: 'Status',
@@ -141,6 +194,11 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             group_name: {
                 label: 'Data Provider Group',
@@ -149,6 +207,11 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             created_by_user_displayname: {
                 label: 'Registered By',
@@ -157,6 +220,7 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
             },
             created_timestamp: {
                 label: 'Creation Date',
@@ -165,7 +229,7 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: true,
-                uiType: 'daterange',
+                facetType: 'daterange',
             },
             last_modified_timestamp: {
                 label: 'Modification Date',
@@ -174,13 +238,13 @@ export const SEARCH_ENTITIES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: true,
-                uiType: 'daterange',
+                facetType: 'daterange',
             },
         },
         disjunctiveFacets: [],
         conditionalFacets: {
             // Show 'origin_sample.organ' facet if 'Dataset' or Sample Block/Section/Suspension is selected
-            "origin_sample.organ": ({filters}) => {
+            "origin_sample.organ": ({filters, aggregations}) => {
                 return filters.some(
                     (filter) =>
                         (filter.field === 'entity_type' && filter.values.includes('Dataset')) ||
@@ -189,7 +253,11 @@ export const SEARCH_ENTITIES = {
                 )
             },
             // Show 'metadata' facet if 'Sample' or Sample Block/Section/Suspension is selected
-            'metadata': ({filters}) => {
+            'metadata': ({ filters, aggregations }) => {
+                if (aggregations && aggregations['metadata']?.buckets.length === 0) {
+                    return false
+                }
+
                 return filters.some(
                     (filter) =>
                         (filter.field === 'entity_type' && filter.values.some(r=> ['Source', 'Collection', 'Publication'].includes(r))  ) ||
@@ -197,17 +265,22 @@ export const SEARCH_ENTITIES = {
                             filter.values.includes('Section') || filter.values.includes('Suspension')))
                 )
             },
-             'ingest_metadata.metadata': ({filters}) => {
+            'ingest_metadata.metadata': ({filters}) => {
                 return filters.some(
                     (filter) =>
                         (filter.field === 'entity_type' && filter.values.includes('Dataset'))
                 )
             },
+            'has_qa_derived_dataset': ({filters, authState}) => {
+                return authState?.isAdmin === true &&
+                    filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
+            },
+
             // Only show 'organ' facet if 'Sample' is selected from the entity type facet
-            organ: FilterIsSelected('entity_type', 'Sample'),
+            'organ': FilterIsSelected('entity_type', 'Sample'),
             'rui_location_anatomical_locations.label': FilterIsSelected('entity_type', 'Sample'),
 
-            sample_category: FilterIsSelected('entity_type', 'Sample'),
+            'sample_category': FilterIsSelected('entity_type', 'Sample'),
 
             // Only show 'source.source_type' facet if 'Sample' is selected from the entity type facet
             "source.source_type": ({filters}) => {
@@ -217,7 +290,7 @@ export const SEARCH_ENTITIES = {
                 )
             },
             // Only show 'source' facet if 'Source' is selected from the entity type facet
-            source_type: FilterIsSelected('entity_type', 'Source'),
+            'source_type': FilterIsSelected('entity_type', 'Source'),
             // Only show 'sources' facet if 'Dataset' is selected from the entity type facet
             'sources.source_type': FilterIsSelected('entity_type', 'Dataset'),
         },
@@ -257,6 +330,8 @@ export const SEARCH_ENTITIES = {
             direction: "desc"
         }]
     },
+    urlPushDebounceLength: 100,
+    trackTotalHits: true,
     trackUrlState: true,
     apiConnector: connector,
     hasA11yNotifications: true,

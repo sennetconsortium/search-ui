@@ -13,24 +13,16 @@ export const SEARCH_METADATA = {
     searchQuery: {
         excludeFilters: [
             {
-                keyword: "entity_type.keyword",
-                value: "Collection"
+                field: "entity_type.keyword",
+                values: ["Collection", "Publication", "Upload"]
             },
             {
-                keyword: "entity_type.keyword",
-                value: "Publication"
+                field: "sample_category.keyword",
+                values: ["Organ"],
             },
             {
-                keyword: "entity_type.keyword",
-                value: "Upload"
-            },
-            {
-                keyword: "sample_category.keyword",
-                value: "Organ",
-            },
-            {
-                keyword: "dataset_category.keyword",
-                value: ["codcc-processed", "lab-processed"]
+                field: "dataset_category.keyword",
+                values: ["codcc-processed", "lab-processed"]
             }
         ],
         facets: {
@@ -41,6 +33,11 @@ export const SEARCH_METADATA = {
                 isExpanded: true,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             source_type: {
                 label: 'Source Type',
@@ -49,6 +46,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             sample_category: {
                 label: 'Sample Category',
@@ -57,6 +59,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             dataset_type: {
                 label: 'Dataset Type',
@@ -65,6 +72,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
 
             // Source Human
@@ -75,7 +87,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
+                facetType: 'histogram',
+                aggregation: {
+                    type: 'histogram',
+                    interval: 1,
+                },
                 uiInterval: 1,
             },
             "source_mapped_metadata.body_mass_index.value": {
@@ -85,7 +101,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
+                facetType: 'histogram',
+                aggregation: {
+                    type: 'histogram',
+                    interval: 1,
+                },
                 uiInterval: 1,
             },
             "source_mapped_metadata.race.value": {
@@ -95,6 +115,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "source_mapped_metadata.sex.value": {
                 label: 'Sex',
@@ -103,6 +128,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
 
             // Source Mouse
@@ -113,6 +143,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "metadata.is_embryo": {
                 label: 'Is Embryo',
@@ -121,6 +156,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "metadata.is_deceased": {
                 label: 'Is Deceased',
@@ -129,6 +169,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "metadata.sex": {
                 label: 'Sex',
@@ -137,6 +182,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "metadata.strain": {
                 label: 'Strain',
@@ -145,6 +195,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
 
 
@@ -156,7 +211,7 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
+                facetType: 'histogram',
             },
             "metadata.area_unit": {
                 label: 'Area Unit',
@@ -165,6 +220,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
 
             // Sample Shared
@@ -175,6 +235,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "metadata.preparation_medium": {
                 label: 'Preparation Medium',
@@ -183,6 +248,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "metadata.storage_method": {
                 label: 'Preparation Method',
@@ -191,6 +261,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "metadata.processing_time_value": {
                 label: 'Processing Time',
@@ -199,7 +274,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
+                facetType: 'histogram',
+                aggregation: {
+                    type: 'histogram',
+                    interval: 1,
+                },
             },
             "metadata.processing_time_unit": {
                 label: 'Processing Time Unit',
@@ -208,6 +287,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "metadata.source_storage_duration_value": {
                 label: 'Storage Duration',
@@ -216,7 +300,19 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
+                facetType: 'histogram',
+                aggregation: {
+                    type: 'histogram',
+                    interval: (filters) => {
+                        if (filters.some((filter) => filter.values.includes('day'))) {
+                            return 5
+                        }
+                        if (filters.some((filter) => filter.values.includes('month'))) {
+                            return 0.1
+                        }
+                        return 1
+                    }
+                },
                 uiInterval: (filters) => {
                     if (filters.some((filter) => filter.values.includes('day'))) {
                         return 5
@@ -234,6 +330,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "metadata.storage_medium": {
                 label: 'Storage Medium',
@@ -242,6 +343,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
 
             //Sample Section
@@ -252,7 +358,16 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
+                facetType: 'histogram',
+                aggregation: {
+                    type: 'histogram',
+                    interval: (filters) => {
+                        if (filters.some((filter) => filter.values.includes('um'))) {
+                            return 1
+                        }
+                        return 0.1
+                    },
+                },
                 uiInterval: (filters) => {
                     if (filters.some((filter) => filter.values.includes('um'))) {
                         return 1
@@ -267,6 +382,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
 
             // Sample Block/Suspension Shared
@@ -277,7 +397,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
+                facetType: 'histogram',
+                aggregation: {
+                    type: 'histogram',
+                    interval: 5,
+                },
                 uiInterval: 5,
             },
             "metadata.tissue_weight_unit": {
@@ -287,6 +411,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
 
             // Sample Block
@@ -297,7 +426,16 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
+                facetType: 'histogram',
+                aggregation: {
+                    type: 'histogram',
+                    interval: (filters) => {
+                        if (filters.some((filter) => filter.values.includes('ml'))) {
+                            return 0.1
+                        }
+                        return 1000
+                    },
+                },
                 uiInterval: (filters) => {
                     if (filters.some((filter) => filter.values.includes('ml'))) {
                         return 0.1
@@ -312,6 +450,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
 
             // Sample Suspension
@@ -322,6 +465,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "metadata.suspension_entity_count": {
                 label: 'Suspension Entity Number',
@@ -330,7 +478,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
+                facetType: 'histogram',
+                aggregation: {
+                    type: 'histogram',
+                    interval: 100000,
+                },
                 uiInterval: 100000,
             },
             "metadata.is_suspension_enriched": {
@@ -340,6 +492,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
 
             // Dataset
@@ -350,6 +507,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "ingest_metadata.metadata.acquisition_instrument_vendor": {
                 label: 'Acquisition Instrument Vendor',
@@ -358,6 +520,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "ingest_metadata.metadata.analyte_class": {
                 label: 'Analyte Class',
@@ -366,6 +533,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "ingest_metadata.metadata.assay_category": {
                 label: 'Assay Category',
@@ -374,6 +546,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
             "ingest_metadata.metadata.operator": {
                 label: 'Operator',
@@ -382,6 +559,11 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                aggregation: {
+                    type: 'term',
+                    size: 40,
+                }
             },
 
         },
@@ -486,6 +668,8 @@ export const SEARCH_METADATA = {
             direction: "desc"
         }]
     },
+    urlPushDebounceLength: 100,
+    trackTotalHits: true,
     trackUrlState: true,
     apiConnector: connector,
     hasA11yNotifications: true,

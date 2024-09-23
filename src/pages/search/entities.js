@@ -34,6 +34,7 @@ function SearchEntities() {
         isRegisterHidden,
         hasInvalidToken,
         validatingToken,
+        authorized,
         isAuthorizing,
         isUnauthorized,
         hasAuthenticationCookie
@@ -44,10 +45,10 @@ function SearchEntities() {
     }
 
     // Define here because we need auth state from AppContext
-    SEARCH_ENTITIES['searchQuery']['conditionalFacets']['has_qa_derived_dataset'] = ({filters}) => {
-        return adminGroup === true &&
-            filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
-    }
+    // SEARCH_ENTITIES['searchQuery']['conditionalFacets']['has_qa_derived_dataset'] = ({filters}) => {
+    //     return adminGroup === true &&
+    //         filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
+    // }
 
     if (validatingToken() || isAuthorizing()) {
         return <Spinner/>
@@ -59,11 +60,18 @@ function SearchEntities() {
             logout()
             window.location.reload()
         }
+
+        const authState = {
+            isAuthenticated: hasAuthenticationCookie() === true,
+            isAuthorized: authorized === true,
+            isAdmin: adminGroup === true
+        }
+
         return (
             <>
                 <Header title={APP_TITLE}/>
 
-                <SearchUIContainer config={SEARCH_ENTITIES} name='entities'>
+                <SearchUIContainer config={SEARCH_ENTITIES} name='entities' authState={authState}>
                     <AppNavbar hidden={isRegisterHidden}/>
                     <ErrorBoundary>
                         <Layout
