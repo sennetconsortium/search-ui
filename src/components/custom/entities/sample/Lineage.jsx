@@ -1,6 +1,6 @@
 import React from 'react';
 import DataTable from 'react-data-table-component';
-import {getUBKGFullName} from "../../js/functions";
+import {getDatasetTypeDisplay, getUBKGFullName} from "../../js/functions";
 import ClipboardCopy from "../../../ClipboardCopy";
 
 const Lineage = ({ lineage }) => {
@@ -23,7 +23,7 @@ const Lineage = ({ lineage }) => {
         },
         {
             name: 'Subtype',
-            selector: row => row.display_subtype,
+            selector: row => getDatasetTypeDisplay(row),
             sortable: true,
         },
         {
