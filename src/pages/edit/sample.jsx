@@ -110,7 +110,7 @@ function EditSample() {
         const fetchData = async (uuid) => {
             log.debug('editSample: getting data...', uuid)
             // get the data from the api
-            const _data = await getEntityData(uuid)
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
             log.debug('editSample: Got data', _data)
             if (_data.hasOwnProperty("error")) {

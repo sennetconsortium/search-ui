@@ -12,6 +12,8 @@ export default async function handler(req, res) {
 
         let uuid = req.query.uuid
         let sennetId = req.query.sennet_id
+        // Convert the URL encoded list into an array (e.g. "ancestors,descendants" => ["ancestors", "descendants"])
+        let excludeProperties = req.query.exclude_properties.split(",")
         let key = sennetId ? 'sennet_id' : 'uuid'
         let id = uuid || sennetId
         // Remove trailing slash
@@ -19,7 +21,7 @@ export default async function handler(req, res) {
         error_messages.push({error: `${key} ${id} not found, please check for the correct id.`})
         if (id) {
             // need to convert into a ES ready query
-            let queryBody = simple_query_builder(key, id)
+            let queryBody = simple_query_builder(key, id, [], excludeProperties)
             console.log('QUERY', formatMessageForCloudwatch(queryBody))
             var myHeaders = new Headers();
             if(req.headers.authorization !== undefined) {

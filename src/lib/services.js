@@ -224,8 +224,12 @@ export function getAncestry(uuid, {endpoints = ['ancestors', 'descendants'], oth
     return result
 }
 
-export async function getEntityData(uuid) {
-    return await callService(null,  "/api/find?uuid=" + uuid, 'GET', getHeaders())
+export async function getEntityData(uuid, exclude_properties=[]) {
+    let url = "/api/find?uuid=" + uuid
+    if (exclude_properties){
+        url += "&exclude_properties=" + encodeURIComponent(exclude_properties.join(','))
+    }
+    return await callService(null,  url , 'GET', getHeaders())
 }
 
 export async function getAncestryData(uuid, ops = {endpoints: ['ancestors', 'descendants'], otherEndpoints: []}) {
