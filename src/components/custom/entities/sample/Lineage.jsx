@@ -18,7 +18,7 @@ const Lineage = ({ lineage }) => {
         },
         {
             name: 'Lab ID',
-            selector: row => row.entity_type,
+            selector: row => row.lab_id,
             sortable: true,
         },
         {
