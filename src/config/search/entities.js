@@ -227,9 +227,7 @@ export const SEARCH_ENTITIES = {
             // Only show 'source' facet if 'Source' is selected from the entity type facet
             source_type: FilterIsSelected('entity_type', 'Source'),
             // Only show 'sources' facet if 'Dataset' is selected from the entity type facet
-            'sources.source_type': FilterIsSelected('entity_type', 'Dataset'),
-            // Only show 'has_all_published_datasets' facet if 'Upload' is selected from the entity type facet
-            'has_all_published_datasets': FilterIsSelected('entity_type', 'Upload'),
+            'sources.source_type': FilterIsSelected('entity_type', 'Dataset')
         },
         search_fields: {
             "sennet_id^4": {type: 'value'},
