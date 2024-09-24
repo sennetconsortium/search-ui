@@ -1,5 +1,5 @@
 import React from 'react';
-import {getStatusColor, getStatusDefinition} from "../../js/functions";
+import {getDatasetTypeDisplay, getStatusColor, getStatusDefinition} from "../../js/functions";
 import Button from 'react-bootstrap/Button';
 import SenNetPopover from "../../../SenNetPopover";
 import ClipboardCopy from "../../../ClipboardCopy";
@@ -29,7 +29,7 @@ export default function AncestorsTable({formLabel, onChange, deleteAncestor, val
             },
             {
                 name: 'Subtype',
-                selector: row => row?.display_subtype,
+                selector: row => getDatasetTypeDisplay(row),
                 sortable: true
             },
             {

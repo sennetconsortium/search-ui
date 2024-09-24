@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import ClipboardCopy from "../../../ClipboardCopy";
+import {getDatasetTypeDisplay} from "@/components/custom/js/functions";
 
 const AncestorInformationBox = ({ ancestor }) => {
 
@@ -61,7 +62,7 @@ const AncestorInformationBox = ({ ancestor }) => {
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
                                 <Card.Subtitle>Organ Type</Card.Subtitle>
-                                <Card.Text>{ancestor.display_subtype}</Card.Text>
+                                <Card.Text>{getDatasetTypeDisplay(ancestor)}</Card.Text>
                             </Card.Body>
                         </Card>
                     }
