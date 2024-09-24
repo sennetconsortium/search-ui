@@ -65,7 +65,7 @@ function EditUpload() {
         const fetchData = async (uuid) => {
             log.debug('editUpload: getting data...', uuid)
             // get the data from the api
-            const data = await getEntityData(uuid)
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
             log.debug('editUpload: Got data', data)
             if (data.hasOwnProperty("error")) {
