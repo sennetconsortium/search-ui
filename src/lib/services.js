@@ -226,7 +226,7 @@ export function getAncestry(uuid, {endpoints = ['ancestors', 'descendants'], oth
 
 export async function getEntityData(uuid, exclude_properties=[]) {
     let url = "/api/find?uuid=" + uuid
-    if (exclude_properties){
+    if (exclude_properties && exclude_properties.length > 0){
         url += "&exclude_properties=" + encodeURIComponent(exclude_properties.join(','))
     }
     return await callService(null,  url , 'GET', getHeaders())
