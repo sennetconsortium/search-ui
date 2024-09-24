@@ -67,26 +67,26 @@ function EditUpload() {
             // get the data from the api
             const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('editUpload: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editUpload: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
                 setData(false)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
             } else {
-                setData(data);
+                setData(_data);
 
                 // Set state with default values that will be PUT to Entity API to update
                 let _values = {
-                    'title': data.title,
-                    'ingest_task': adminGroup ? data.ingest_task : undefined,
-                    'description': data.description,
-                    'assigned_to_group_name': adminGroup ? data.assigned_to_group_name : undefined,
-                    'status': data.status,
+                    'title': _data.title,
+                    'ingest_task': adminGroup ? _data.ingest_task : undefined,
+                    'description': _data.description,
+                    'assigned_to_group_name': adminGroup ? _data.assigned_to_group_name : undefined,
+                    'status': _data.status,
                 }
 
                 setValues(_values)
                 setEditMode("Edit")
-                setDataAccessPublic(data.data_access_level === 'public')
+                setDataAccessPublic(_data.data_access_level === 'public')
             }
         }
 
