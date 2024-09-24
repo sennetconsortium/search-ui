@@ -41,6 +41,7 @@ const Lineage = ({ lineage }) => {
     const data = [];
     {
         lineage.map((lineage_data, index) => {
+            console.log(lineage_data)
             data.push({
                 sennet_id: <span className={'has-supIcon'}><a href={'/' + lineage_data.entity_type.toLowerCase() + '?uuid=' + lineage_data.uuid}
                                                               className="icon_inline">{lineage_data.sennet_id}</a><ClipboardCopy text={lineage_data.sennet_id} size={10} title={'Copy SenNet ID {text} to clipboard'} /></span>,
@@ -51,7 +52,7 @@ const Lineage = ({ lineage }) => {
                             : null,
                 display_subtype: (lineage_data.sample_category ? (
                     lineage_data.sample_category
-                ) : lineage_data.display_subtype),
+                ) : getDatasetTypeDisplay(lineage_data)),
                 organ: getUBKGFullName(lineage_data?.origin_sample?.organ),
                 group_name: lineage_data.group_name
             });
