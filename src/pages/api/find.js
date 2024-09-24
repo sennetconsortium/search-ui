@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         let uuid = req.query.uuid
         let sennetId = req.query.sennet_id
         // Convert the URL encoded list into an array (e.g. "ancestors,descendants" => ["ancestors", "descendants"])
-        let excludeProperties = req.query.exclude_properties.split(",")
+        let excludeProperties = req.query.exclude_properties?.split(",")
         let key = sennetId ? 'sennet_id' : 'uuid'
         let id = uuid || sennetId
         // Remove trailing slash
