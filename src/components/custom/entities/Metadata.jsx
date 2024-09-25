@@ -86,7 +86,7 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
     }
 
     return (
-        <SenNetAccordion title={'Metadata'} afterTitle={headerBadges}>
+        <SenNetAccordion title={'Metadata'} afterTitle={headerBadges} className={'accordion-metadata'}>
             {data.ancestors ? (
                     <Tab.Container defaultActiveKey={data.sennet_id}>
                         <Nav variant="pills" className={"mb-3 flex-nowrap overflow-auto"}>
