@@ -143,6 +143,10 @@ const normalizedNames = {
     "frozen in liquid nitrogen": "Frozen in Liquid Nitrogen",
 }
 
+export const getDatasetTypeDisplay = (data) => {
+    return data.dataset_type_hierarchy?.second_level || data.display_subtype || data.dataset_type
+}
+
 function getNormalizedName(term) {
     if (term && normalizedNames.hasOwnProperty(term.toLowerCase())) {
         return normalizedNames[term.toLowerCase()]

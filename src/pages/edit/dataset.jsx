@@ -139,7 +139,7 @@ export default function EditDataset() {
         const fetchData = async (uuid) => {
             log.debug('editDataset: getting data...', uuid)
             // get the data from the api
-            const _data = await getEntityData(uuid)
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
             log.debug('editDataset: Got data', _data)
             if (_data.hasOwnProperty("error")) {

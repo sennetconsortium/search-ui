@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
 import {
+    getDatasetTypeDisplay,
     datasetIs,
     fetchDataCite,
     getCreationActionRelationName,
@@ -88,7 +89,7 @@ function ViewDataset() {
         const fetchData = async (uuid) => {
             log.debug('dataset: getting data...', uuid)
             // get the data from the api
-            const _data = await getEntityData(uuid);
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
             log.debug('dataset: Got data', _data)
             if (_data.hasOwnProperty("error")) {
@@ -227,9 +228,9 @@ function ViewDataset() {
                                     <SidebarBtn/>
 
                                     <EntityViewHeader data={data}
-                                                      uniqueHeader={data.display_subtype || data.dataset_type}
+                                                      uniqueHeader={getDatasetTypeDisplay(data)}
                                                       entity={cache.entities.dataset.toLowerCase()}
-                                                      hasWritePrivilege={hasWritePrivilege}/>
+                                                      hasWritePrivilege={hasWritePrivilege || false}/>
 
                                     <div className="row">
                                         <div className="col-12">
