@@ -7,7 +7,14 @@ import AppContext from "@/context/AppContext";
 import Link from "next/link";
 import PropTypes from "prop-types";
 import { Fragment, useContext } from "react";
-import { displayBodyHeader, eq, getStatusColor, getStatusDefinition, getUBKGFullName } from "../../js/functions";
+import {
+    getDatasetTypeDisplay,
+    displayBodyHeader,
+    eq,
+    getStatusColor,
+    getStatusDefinition,
+    getUBKGFullName
+} from "../../js/functions";
 
 function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader, hasWritePrivilege}) {
     const {cache} = useContext(AppContext)
@@ -54,7 +61,7 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                     ) : (
                         <h5 className={"title_badge"}>
                             <span className="badge bg-secondary me-2">
-                                    {getUBKGFullName(data.dataset_type)}
+                                    {getUBKGFullName(getDatasetTypeDisplay(data))}
                             </span>
                         </h5>
                     )
