@@ -49,6 +49,11 @@ function SearchEntities() {
             filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
     }
 
+    SEARCH_ENTITIES['searchQuery']['conditionalFacets']['has_all_published_datasets'] = ({filters}) => {
+        return adminGroup === true &&
+            filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Upload"))
+    }
+
     if (validatingToken() || isAuthorizing()) {
         return <Spinner/>
     } else if (hasInvalidToken()) {
