@@ -189,14 +189,18 @@ export const EntityProvider = ({ children }) => {
             setResponse(response)
         } else {
             const verb = isEditMode() ? 'Updating' : 'Registering'
-            setHasSubmissionError(true)
-            setModalTitle(<span>{errIcon()}<span className={'title-text'}>Error {verb} {entity}</span></span>)
-            let responseText = ""
+            let responseText = "An unexpected issue occurred. The request could not have been completed."
+            let title = `Error ${verb} ${entity}`
+
             if ("error" in response) {
                 responseText = response.error
             } else if ("statusText" in response) {
                 responseText = response.statusText
             }
+
+            setHasSubmissionError(true)
+            setModalTitle(<span>{errIcon()}<span className={'title-text'}>{title}</span></span>)
+
             setModalBody(responseText)
         }
     }

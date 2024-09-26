@@ -17,7 +17,7 @@ export default function Description({data, doiData, labId, primaryDateTitle, pri
                 {data && data?.description &&
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
-                            <Card.Subtitle>{(eq(data.entity_type, cache.entities.upload) || eq(data.entity_type, 'Collection')) ? 'Description' : 'DOI Abstract'}</Card.Subtitle>
+                            <Card.Subtitle>{(eq(data.entity_type, cache.entities.upload) || eq(data.entity_type, 'Collection')) ? 'Description' : 'Abstract'}</Card.Subtitle>
                             <Card.Text>{data.description}</Card.Text>
                         </Card.Body>
                     </Card>

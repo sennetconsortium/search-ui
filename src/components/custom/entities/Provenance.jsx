@@ -35,9 +35,6 @@ function Provenance({nodeData}) {
     const activityHidden = useRef(true)
     const hasOnAfterInfoUpdateBuild = useRef(false)
     const protocolsData = {}
-    const { _t } = useContext(AppContext)
-    const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState(null)
     let cbTimeout;
     let cbTimeout2;
 
@@ -165,6 +162,7 @@ function Provenance({nodeData}) {
             $el.click()
         }
     }
+
     const onInfoCloseClick = (ops) => {
         const treeId = ops.options.selectorId
         const uuid = $('#Metadata-collapse .nav-item .active').attr('data-uuid')
@@ -216,11 +214,13 @@ function Provenance({nodeData}) {
             Source: '#ffc255',
             Sample:  '#ebb5c8',
             Dataset: '#8ecb93',
+            Publication: '#a556d9',
             Activity: '#f16766'
         },
         propertyMap: {
             'sennet:created_by_user_displayname': 'agent',
-            'sennet:creation_action': 'category'
+            'sennet:creation_action': 'category',
+            'sennet:publication_venue': 'manuscript'
         },
         imageMap: {
             "Source|sennet:source_type|Mouse": null,
@@ -324,6 +324,7 @@ function Provenance({nodeData}) {
             Source: ['sennet:source_type'],
             Sample: ['sennet:sample_category', 'sennet:organ'],
             Dataset: ['sennet:creation_action', 'sennet:title', 'sennet:dataset_type'],
+            Publication: ['sennet:title', 'sennet:publication_venue', 'sennet:publication_date'],
             Activity: ['sennet:created_timestamp', 'sennet:protocol_url', 'sennet:processing_information', 'sennet:created_by_user_displayname']
         },
         callbacks: {

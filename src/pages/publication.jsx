@@ -1,13 +1,14 @@
 import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
-import {getRequestHeaders, getStatusColor} from "@/components/custom/js/functions";
+import {fetchDataCite, getRequestHeaders, getStatusColor} from "@/components/custom/js/functions";
 import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import Table from 'react-bootstrap/Table';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import DerivedContext, {DerivedProvider} from "@/context/DerivedContext";
+import SenNetPopover from "@/components/SenNetPopover";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -21,6 +22,7 @@ const SenNetAccordion = dynamic(() => import("@/components/custom/layout/SenNetA
 
 function ViewPublication() {
     const [data, setData] = useState(null)
+    const [doiData, setDoiData] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -53,6 +55,9 @@ function ViewPublication() {
                 const ancestry = await getAncestryData(_data.uuid)
                 Object.assign(_data, ancestry)
                 setData(_data)
+
+                const doi = await fetchDataCite(_data.publication_url)
+                setDoiData(doi?.data)
 
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
@@ -130,6 +135,7 @@ function ViewPublication() {
                                                          primaryDate={data.published_timestamp}
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
+                                                         doiData={doiData}
                                                          data={data}/>
 
                                             {/*Publication Details*/}
@@ -152,7 +158,12 @@ function ViewPublication() {
                                                     <Table borderless>
                                                         <thead>
                                                         <tr>
-                                                            <th style={{width: '44%'}}>Venue</th>
+                                                            <th style={{width: '44%'}}>
+                                                                Manuscript&nbsp;
+                                                                <SenNetPopover text={<>The <code>Publication</code> venue</>} className={`popover-publiction_venue`}>
+                                                                    <i className="bi bi-question-circle-fill"></i>
+                                                                </SenNetPopover>
+                                                            </th>
                                                             <th>Status</th>
                                                         </tr>
                                                         </thead>

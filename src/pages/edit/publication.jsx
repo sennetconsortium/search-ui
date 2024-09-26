@@ -168,9 +168,13 @@ export default function EditPublication() {
                 values['contains_human_genetic_sequences'] = false
 
                 if (!values['group_uuid'] && editMode === 'Register') {
-
                     values['group_uuid'] = selectedUserWriteGroupUuid || userWriteGroups[0]?.uuid
                 }
+
+                if (isEditMode) {
+                    delete values['dataset_type']
+                }
+
                 // Remove empty strings
                 let json = cleanJson(values);
                 let uuid = data.uuid
