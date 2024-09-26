@@ -198,9 +198,6 @@ export default function EditPublication() {
         setPublicationStatus(false)
     }
 
-    // TODO: remove this return when ready to support
-    return <NotFound />
-
     if (isPreview(error))  {
         return getPreviewView(data)
     } else {
