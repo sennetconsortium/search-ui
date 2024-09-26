@@ -245,6 +245,19 @@ export default function EditPublication() {
                                                      onChange={onChange}
                                                      text={<>The venue of the publication, journal, conference, preprint server, etc.</>}/>
 
+                                    <div className='row'>
+                                        <div className='col-md-3'>
+                                            {/*/!*Publication Date*!/*/}
+                                            <EntityFormGroup label='Publication Date' controlId='publication_date'
+                                                             isRequired={true}
+                                                             type={'date'}
+                                                             placeholder={'mm/dd/YYYY'}
+                                                             value={data.publication_date}
+                                                             onChange={onChange}
+                                                             text={<>The date of the publication.</>}/>
+                                        </div>
+                                    </div>
+
                                     {/*/!*Human Gene Sequences*!/*/}
                                     {editMode &&
                                         <Form.Group controlId="publication_status" className="mb-3">
@@ -286,20 +299,19 @@ export default function EditPublication() {
                                                      onChange={onChange}
                                                      text={<>The URL at the publishers server for print/pre-print (http(s)://[alpha-numeric-string].[alpha-numeric-string].[...]</>}/>
 
-                                    {/*/!*Publication Date*!/*/}
-                                    <EntityFormGroup label='Publication Date' controlId='publication_date'
-                                                     isRequired={true}
-                                                     type={'date'}
-                                                     placeholder={'mm/dd/YYYY'}
-                                                     value={data.publication_date}
-                                                     onChange={onChange}
-                                                     text={<>The date of the publication.</>}/>
 
                                     {/*/!*Publication DOI*!/*/}
                                     <EntityFormGroup label='Publication DOI' controlId='publication_doi'
                                                      value={data.publication_doi}
                                                      onChange={onChange}
                                                      text={<>The doi of the publication. (##.####/[alpha-numeric-string])</>}/>
+
+                                    {/*/!*OMAP DOI*!/*/}
+                                    <EntityFormGroup label='OMAP DOI' controlId='omap_doi'
+                                                     value={data.omap_doi}
+                                                     onChange={onChange}
+                                                     text={<>A DOI pointing to an Organ Mapping Antibody Panel relevant to this publication</>}/>
+
 
                                     {/*/!*Issue*!/*/}
                                     <EntityFormGroup label='Issue Number' controlId='issue'
@@ -323,7 +335,7 @@ export default function EditPublication() {
 
 
                                     {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='DOI Abstract' type='textarea' controlId='description'
+                                    <EntityFormGroup label='Abstract' type='textarea' controlId='description'
                                                      value={data.description}
                                                      onChange={onChange}
                                                      text={<>An abstract publicly available when the <code>Publication</code> is published.  This will be included with the DOI information of the published <code>Publication</code>.</>}/>
