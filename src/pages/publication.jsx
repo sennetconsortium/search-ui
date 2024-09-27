@@ -1,20 +1,18 @@
 import dynamic from "next/dynamic";
-import React, {useContext, useEffect, useState} from "react";
+import React, {Suspense, useContext, useEffect, useState} from "react";
 import log from "loglevel";
 import {
     eq,
     fetchDataCite,
     getDatasetTypeDisplay,
-    getRequestHeaders,
-    getStatusColor
 } from "@/components/custom/js/functions";
 import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import Table from 'react-bootstrap/Table';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
-import DerivedContext, {DerivedProvider} from "@/context/DerivedContext";
-import SenNetPopover from "@/components/SenNetPopover";
+import {DerivedProvider} from "@/context/DerivedContext";
+import VitessceList from "@/components/custom/vitessce/VitessceList";
+import {SpinnerEl} from "@/components/custom/Spinner";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -33,13 +31,7 @@ function ViewPublication() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
     const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
-    const {
-        showVitessce,
-        setVitessceConfig,
-        setIsPrimaryDataset,
-        isPrimaryDataset
-    } = useContext(DerivedContext)
-
+    const [showVitessceList, setShowVitessceList] = useState(false)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -89,13 +81,13 @@ function ViewPublication() {
     }
 
     const getDatasetTypeFromAncestors = () => {
-        let res = [];
+        let res = new Set();
         for (let d of data.ancestors) {
             if (eq(d.entity_type, cache.entities.dataset)) {
-                res.push(getDatasetTypeDisplay(d))
+                res.add(getDatasetTypeDisplay(d))
             }
         }
-        return res.join(', ')
+        return Array.from(res).join(', ')
     }
 
     if (isPreview(data, error))  {
@@ -131,6 +123,12 @@ function ViewPublication() {
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
 
+                                            <li className="nav-item">
+                                                <a href="#Vitessce"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Visualizations</a>
+                                            </li>
+
 
                                             <li className="nav-item">
                                                 <a href="#Attribution"
@@ -164,6 +162,12 @@ function ViewPublication() {
                                             {data &&
                                                 <Provenance nodeData={data}/>
                                             }
+
+                                            <Suspense fallback={<SpinnerEl />}>
+                                                <SenNetAccordion id='Vitessce' title={'Visualizations'}>
+                                                    {showVitessceList && <VitessceList data={data} setShowVitessceList={setShowVitessceList} />}
+                                                </SenNetAccordion>
+                                            </Suspense>
 
 
                                             {/*Attribution*/}
