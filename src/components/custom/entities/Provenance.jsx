@@ -195,6 +195,10 @@ function Provenance({nodeData}) {
         return {href: `/api/json?view=${btoa(value.replaceAll("'", '"'))}`, value: `${value.substr(0, 20)}...}`}
     }
 
+    const publicationUrl = (d, property, value) => {
+        return {href: nodeData?.publication_url, value: nodeData?.publication_venue}
+    }
+
     const protocolUrl = (d, property, value) => {
         buildProtocolData(d)
         let data = protocolsData[value]
@@ -204,7 +208,10 @@ function Provenance({nodeData}) {
 
     const graphOptions = {
         idNavigate: {
-            props: {'sennet:sennet_id': true, 'sennet:protocol_url': {callback: protocolUrl}, 'sennet:processing_information': {callback: jsonView}},
+            props: {'sennet:sennet_id': true,
+                'manuscript': {callback: publicationUrl},
+                'sennet:protocol_url': {callback: protocolUrl},
+                'sennet:processing_information': {callback: jsonView}},
             url: '/{subType}?uuid={id}',
             exclude: {
                 'Activity': ['sennet:sennet_id']
