@@ -1,7 +1,13 @@
 import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
-import {fetchDataCite, getRequestHeaders, getStatusColor} from "@/components/custom/js/functions";
+import {
+    eq,
+    fetchDataCite,
+    getDatasetTypeDisplay,
+    getRequestHeaders,
+    getStatusColor
+} from "@/components/custom/js/functions";
 import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
@@ -56,7 +62,7 @@ function ViewPublication() {
                 Object.assign(_data, ancestry)
                 setData(_data)
 
-                const doi = await fetchDataCite(_data.publication_url)
+                const doi = await fetchDataCite(_data.publication_doi)
                 setDoiData(doi?.data)
 
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
@@ -76,6 +82,21 @@ function ViewPublication() {
             setData(null);
         }
     }, [router]);
+
+    const getTimestamp = () => {
+        const dates = data?.publication_date.split('-')
+        return new Date( dates[0], dates[1] - 1, dates[2])
+    }
+
+    const getDatasetTypeFromAncestors = () => {
+        let res = [];
+        for (let d of data.ancestors) {
+            if (eq(d.entity_type, cache.entities.dataset)) {
+                res.push(getDatasetTypeDisplay(d))
+            }
+        }
+        return res.join(', ')
+    }
 
     if (isPreview(data, error))  {
         return getPreviewView(data)
@@ -124,7 +145,7 @@ function ViewPublication() {
                                     <SidebarBtn/>
 
                                     <EntityViewHeader data={data}
-                                                      uniqueHeader={data.dataset_type}
+                                                      uniqueHeader={data.ancestors ? getDatasetTypeFromAncestors() : null}
                                                       entity={cache.entities.publication.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}/>
 
@@ -132,102 +153,13 @@ function ViewPublication() {
                                         <div className="col-12">
                                             {/*Description*/}
                                             <Description primaryDateTitle="Publication Date"
-                                                         primaryDate={data.published_timestamp}
+                                                         title={'Publication Details'}
+                                                         primaryDate={getTimestamp()}
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
                                                          doiData={doiData}
                                                          data={data}/>
 
-                                            {/*Publication Details*/}
-                                            <SenNetAccordion title={'Publication Details'}>
-                                                <div>
-
-                                                    <Table borderless>
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Title</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr>
-                                                            <td>{data.title}</td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </Table>
-                                                    <br/>
-                                                    <Table borderless>
-                                                        <thead>
-                                                        <tr>
-                                                            <th style={{width: '44%'}}>
-                                                                Manuscript&nbsp;
-                                                                <SenNetPopover text={<>The <code>Publication</code> venue</>} className={`popover-publiction_venue`}>
-                                                                    <i className="bi bi-question-circle-fill"></i>
-                                                                </SenNetPopover>
-                                                            </th>
-                                                            <th>Status</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr>
-                                                            <td>{data.publication_venue}</td>
-                                                            <td><span
-                                                                className={`${getStatusColor(data.status)} badge`}>{data.status}</span>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </Table>
-                                                    <br/>
-                                                    <Table borderless>
-                                                        <thead>
-                                                        <tr>
-                                                            <th style={{width: '44%'}}>Issue/Volume Number</th>
-                                                            <th>Pages or Article Number</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr>
-                                                            <td>{data.issue}/{data.volume}</td>
-                                                            <td>{data.pages_or_article_num}</td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </Table>
-                                                    <br/>
-                                                    {data.publication_url &&
-                                                        <Table borderless>
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Publication URL</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr>
-                                                                <td><a href={data.publication_url}
-                                                                       className={'lnk--ic pl-0'}>{data.publication_url}
-                                                                    <i className="bi bi-box-arrow-up-right"></i></a>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </Table>
-                                                    }
-                                                    {data.publication_doi &&
-                                                        <Table borderless>
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Publication DOI</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr>
-                                                                <td><a href={data.publication_doi}
-                                                                       className={'lnk--ic pl-0'}>{data.publication_doi}
-                                                                    <i className="bi bi-box-arrow-up-right"></i></a>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </Table>}
-
-                                                </div>
-                                            </SenNetAccordion>
                                             {/*Provenance*/}
                                             {data &&
                                                 <Provenance nodeData={data}/>

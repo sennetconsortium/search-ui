@@ -134,11 +134,11 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
             )
             }
 
-            {data?.doi_url &&
+            {(data?.doi_url || data?.publication_doi) &&
                 <h5 className={"title_badge"}>
                             <span className={`${getStatusColor(data.status)} badge`}>
-                                DOI: <a href={data.doi_url} className={'lnk--nodecor'} style={{color: 'white'}}>{data.registered_doi}</a>
-                                &nbsp;<ClipboardCopy text={data.registered_doi} className={'lnk--white'} />
+                                DOI: <a href={data.doi_url || data?.publication_doi} className={'lnk--nodecor'} style={{color: 'white'}}>{data.registered_doi || data?.publication_doi}</a>
+                                &nbsp;<ClipboardCopy text={data.registered_doi || data?.publication_doi} className={'lnk--white'} />
                             </span>
                 </h5>
             }
