@@ -13,7 +13,7 @@ function VitessceItem({ data}) {
     }, [data])
 
     return (
-        <SennetVitessce title={data.sennet_id} id={'s' + data.uuid} className={'mb-3'} />
+        <SennetVitessce expanded={false} title={data.sennet_id} id={'s' + data.uuid} className={'mb-3'} />
     )
 }
 
