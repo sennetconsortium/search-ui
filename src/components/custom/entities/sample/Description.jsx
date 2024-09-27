@@ -66,16 +66,14 @@ export default function Description({data, doiData, labId, primaryDateTitle, pri
                             <SenNetPopover text={<>The author(s) responsible for handling all correspondence about this article. Contact this author for any inquiries about this publication.</>} className={`popover-contacts`}>
                                 <i className="bi bi-question-circle-fill"></i>
                             </SenNetPopover></Card.Subtitle>
-                        <Card.Text>
-                            <ul>
-                                {buildContacts()}
-                            </ul>
-                        </Card.Text>
+                        <ul>
+                            {buildContacts()}
+                        </ul>
                     </Card.Body>
                 </Card>}
 
-                <CardGroup>
-                    {isLoggedIn() && data && labId &&
+            <CardGroup>
+            {isLoggedIn() && data && labId &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
                                 <Card.Subtitle>{eq(data.entity_type, cache.entities.upload) ? 'Title': 'Lab ID'}</Card.Subtitle>

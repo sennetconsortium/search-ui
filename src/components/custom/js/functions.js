@@ -52,15 +52,15 @@ export function formatCitation(data, url) {
     let result = []
     const creators = data.attributes.creators;
     for (let i = 0; i < creators.length; i++) {
-        result.push(<span key={creators[i].name}>
+        result.push(<span key={i}>
             {creators[i].familyName} {creators[i].givenName[0]}
             {i == creators.length - 1 ? `. ` : `, `} </span>)
     }
-    result.push(<span key={`${data}-title`} className={'fw-light'}>{data.attributes?.titles[0].title}</span>)
-    result.push(<span key={`${data}-publisher`}>. {data.attributes?.publisher}. {data.attributes.publicationYear}.</span>)
+    result.push(<span key={`doi-title`} className={'fw-light'}>{data.attributes?.titles[0].title}</span>)
+    result.push(<span key={`doi-publisher`}>. {data.attributes?.publisher}. {data.attributes.publicationYear}.</span>)
     return <>
         {result}
-        <span> Available from: <br /><a className='lnk--ic' href={url}>{url} <i
+        <span key={'available-from'}> Available from: <br /><a className='lnk--ic' href={url}>{url} <i
             className="bi bi-box-arrow-up-right"></i></a></span>
         {/*<hr/>*/}
         {/*<span><a className='lnk--ic' href={`https://commons.datacite.org/${url.replace('https://', '')}`}>View the DataCite page<i*/}

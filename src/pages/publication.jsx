@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import React, {Suspense, useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
 import {
     eq,
@@ -12,7 +12,6 @@ import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "@/context/DerivedContext";
 import VitessceList from "@/components/custom/vitessce/VitessceList";
-import {SpinnerEl} from "@/components/custom/Spinner";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -31,7 +30,7 @@ function ViewPublication() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
     const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
-    const [showVitessceList, setShowVitessceList] = useState(false)
+    const [showVitessceList, setShowVitessceList] = useState(1)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -118,17 +117,16 @@ function ViewPublication() {
                                             </li>
 
                                             <li className="nav-item">
-                                                <a href="#Provenance"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Provenance</a>
-                                            </li>
-
-                                            <li className="nav-item">
-                                                <a href="#Vitessce"
+                                                <a href="#Visualizations"
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Visualizations</a>
                                             </li>
 
+                                            <li className="nav-item">
+                                                <a href="#Provenance"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Provenance</a>
+                                            </li>
 
                                             <li className="nav-item">
                                                 <a href="#Attribution"
@@ -158,16 +156,15 @@ function ViewPublication() {
                                                          doiData={doiData}
                                                          data={data}/>
 
+                                            {/* Visualizations */}
+                                            <SenNetAccordion id='Visualizations' title={'Visualizations'}>
+                                                {showVitessceList && <VitessceList data={data} showVitessceList={showVitessceList} setShowVitessceList={setShowVitessceList} />}
+                                            </SenNetAccordion>
+
                                             {/*Provenance*/}
                                             {data &&
                                                 <Provenance nodeData={data}/>
                                             }
-
-                                            <Suspense fallback={<SpinnerEl />}>
-                                                <SenNetAccordion id='Vitessce' title={'Visualizations'}>
-                                                    {showVitessceList && <VitessceList data={data} setShowVitessceList={setShowVitessceList} />}
-                                                </SenNetAccordion>
-                                            </Suspense>
 
 
                                             {/*Attribution*/}
