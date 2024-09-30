@@ -44,12 +44,6 @@ function SearchEntities() {
         onSubmit(event)
     }
 
-    // Define here because we need auth state from AppContext
-    // SEARCH_ENTITIES['searchQuery']['conditionalFacets']['has_qa_derived_dataset'] = ({filters}) => {
-    //     return adminGroup === true &&
-    //         filters.some((filter) => filter.field === "entity_type" && filter.values.includes("Dataset"))
-    // }
-
     if (validatingToken() || isAuthorizing()) {
         return <Spinner/>
     } else if (hasInvalidToken()) {

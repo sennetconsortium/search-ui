@@ -68,32 +68,32 @@ function EditSource() {
         const fetchData = async (uuid) => {
             log.debug('editSource: getting data...', uuid)
             // get the data from the api
-            const data = await getEntityData(uuid)
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('editSource: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editSource: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
                 setData(false)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
             } else {
-                setData(data);
+                setData(_data);
 
-                checkProtocolUrl(data.protocol_url)
+                checkProtocolUrl(_data.protocol_url)
 
                 // Set state with default values that will be PUT to Entity API to update
                 let _values = {
-                    'lab_source_id': data.lab_source_id,
-                    'protocol_url': data.protocol_url,
-                    'description': data.description,
-                    'source_type': data.source_type,
-                    'metadata': data.metadata
+                    'lab_source_id': _data.lab_source_id,
+                    'protocol_url': _data.protocol_url,
+                    'description': _data.description,
+                    'source_type': _data.source_type,
+                    'metadata': _data.metadata
                 }
-                if (data.image_files) {
-                    _values['image_files'] = data.image_files
+                if (_data.image_files) {
+                    _values['image_files'] = _data.image_files
                 }
                 setValues(_values)
                 setEditMode("Edit")
-                setDataAccessPublic(data.data_access_level === 'public')
+                setDataAccessPublic(_data.data_access_level === 'public')
             }
         }
 

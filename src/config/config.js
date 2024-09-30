@@ -167,3 +167,38 @@ export function FilterIsSelected(fieldName, value) {
 export const STORAGE_KEY = (key = '') => `sn-portal.${key}`
 
 export const COLS_ORDER_KEY = (context = '') => `${context}.columnsOrder`
+
+export function doesTermFilterContainValues(name, values) {
+    return (filters, auth) => {
+        const filter = filters.find((f) => f.field === name)
+        return (
+            filter != undefined && values.some((v) => filter.values.includes(v))
+        )
+    }
+}
+
+export function doFiltersContainField(field) {
+    return (filters, auth) => {
+        return filters.some((f) => f.field === field)
+    }
+}
+
+export function doesAggregationHaveBuckets(field) {
+    return (filters, aggregations, auth) => {
+        try {
+        return (
+            aggregations[field] !== undefined && aggregations[field].buckets.length > 0
+        )
+        } catch {
+            return false
+        }
+    }
+}
+
+export function doesTermOptionHaveDocCount(option, filters, aggregations, auth) {
+    return option.doc_count > 0
+}
+
+export function isDateFacetVisible(filters, aggregations, auth) {
+    return Object.keys(aggregations).length > 0
+}

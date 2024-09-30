@@ -349,7 +349,11 @@ function Provenance({nodeData}) {
         const itemId = data.uuid;
         const graphOps = {token, url}
 
-        const setContainerSize = () => setMaxGraphWidth((window.outerWidth - 200) + 'px')
+        const setContainerSize = () => {
+            if (window.innerWidth > 1024) {
+                setMaxGraphWidth((window.outerWidth - 200) + 'px')
+            }
+        }
         window.onresize = () =>  setContainerSize()
         setContainerSize()
 

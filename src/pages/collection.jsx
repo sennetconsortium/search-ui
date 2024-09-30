@@ -37,7 +37,7 @@ function ViewCollection() {
 
             log.debug('collection: getting data...', uuid)
             // get the data from the api
-            const _data = await getEntityData(uuid)
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
             log.debug('collection: Got data', _data)
             if (_data.hasOwnProperty("error")) {

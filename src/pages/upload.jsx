@@ -34,7 +34,7 @@ function ViewUpload() {
 
             log.debug('upload: getting data...', uuid)
             // get the data from the api
-            const _data = await getEntityData(uuid)
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
             log.debug('upload: Got data', _data)
             if (_data.hasOwnProperty("error")) {

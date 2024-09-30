@@ -3,16 +3,16 @@ import $ from "jquery";
 import AppContext from "./AppContext";
 import {RESULTS_PER_PAGE} from "../config/config";
 import {createTheme} from "react-data-table-component";
-import SearchUIContext from "search-ui/components/core/SearchUIContext";
 import {handleTableControls} from "@/components/custom/search/ResultsPerPage";
 import {eq} from "@/components/custom/js/functions";
+import { useSearchUIContext } from "search-ui/components/core/SearchUIContext";
+
 const TableResultsContext = createContext({})
 
 export const TableResultsProvider = ({ index, columnsRef, children, getHotLink, rows, filters, onRowClicked, forData = false, raw, getId, inModal = false }) => {
 
     const {isLoggedIn} = useContext(AppContext)
-    const {isLoading, rawResponse, pageNumber,
-        setPageNumber, pageSize, setPageSize, setSort} = useContext(SearchUIContext)
+    const {isLoading, rawResponse, pageNumber, setPageNumber, pageSize, setPageSize, setSort} = useSearchUIContext()
     const sortedFields = useRef({})
 
     const hasLoaded = useRef(false)

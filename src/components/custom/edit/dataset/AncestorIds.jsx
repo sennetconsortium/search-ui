@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Form} from 'react-bootstrap';
 import {Results, SearchBox} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
@@ -16,11 +16,13 @@ import {getUBKGFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
 import SearchUIContainer from 'search-ui/components/core/SearchUIContainer';
 import FacetsContent from '../../search/FacetsContent';
-import SearchUIContext from 'search-ui/components/core/SearchUIContext';
 import AppContext from "../../../../context/AppContext";
+import { useSearchUIContext } from "search-ui/components/core/SearchUIContext";
 
 function BodyContent({ handleChangeAncestor, data }) {
-    const { wasSearched, filters } = useContext(SearchUIContext)
+
+    const { wasSearched, filters } = useSearchUIContext();
+
     const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
     const addConditional = (key, entity) => {
         valid_dataset_ancestor_config['searchQuery']['conditionalFacets'][key] = ({filters}) => {

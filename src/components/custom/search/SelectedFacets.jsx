@@ -1,10 +1,9 @@
-import { useContext } from 'react'
 import { Chip } from '@mui/material'
 import { getUBKGFullName } from '../js/functions'
-import SearchUIContext from 'search-ui/components/core/SearchUIContext'
+import { useSearchUIContext } from "search-ui/components/core/SearchUIContext";
 
 function SelectedFacets() {
-    const { filters, setFilter, removeFilter } = useContext(SearchUIContext)
+    const { facetConfig, filters, setFilter, removeFilter } = useSearchUIContext()
 
     const getSelector = (pre, label, value) => {
         return `sui-${pre}--${formatVal(label)}-${formatVal(value)}`
@@ -14,21 +13,21 @@ function SelectedFacets() {
         return `${id}`.replace(/\W+/g, '')
     }
 
-    const convertToDisplayLabel = (filter, key) => {
-        switch (filter.facetType) {
+    const convertToDisplayLabel = (facet, key) => {
+        switch (facet.facetType) {
             case 'daterange':
                 const datePrefix = key === 'from' ? 'Start' : 'End'
-                return `${datePrefix} ${filter.label}`
+                return `${datePrefix} ${facet.label}`
             case 'histogram':
                 const numPrefix = key === 'from' ? 'Min' : 'Max'
-                return `${numPrefix} ${filter.label}`
+                return `${numPrefix} ${facet.label}`
             default:
-                return filter.label
+                return facet.label
         }
     }
 
-    const convertToDisplayValue = (filter, value) => {
-        switch (filter.facetType) {
+    const convertToDisplayValue = (facet, value) => {
+        switch (facet.facetType) {
             case 'daterange':
                 return new Date(value).toLocaleDateString('en-US', { timeZone: 'UTC' })
             case 'histogram':
@@ -38,25 +37,31 @@ function SelectedFacets() {
         }
     }
 
-    const handleDelete = (e, filter, value, key) => {
+    const handleDelete = (e, filter, facet, value, key) => {
         e.preventDefault()
-        if (filter.type === 'range') {
-            const newValue = { ...value }
-            delete newValue[key]
-            if (!newValue.from && !newValue.to) {
-                removeFilter(filter.field, value, 'SelectedFacets')
-            } else {
-                setFilter(filter.field, newValue, 'SelectedFacets')
-            }
-        } else {
-            removeFilter(filter.field, value, 'SelectedFacets')
+        switch (facet.facetType) {
+            case 'daterange':
+            case 'histogram':
+                const newValue = { ...value }
+                delete newValue[key]
+                if (!newValue.from && !newValue.to) {
+                    removeFilter(filter.field, value)
+                } else {
+                    setFilter(filter.field, newValue)
+                }
+                break;
+            default:
+                removeFilter(filter.field, value)
+                break;
         }
     }
 
-    const buildRangeFacetChip = (filter, value) => {
+    const buildRangeFacetChip = (filter, facet, value) => {
         const chips = []
         Array('from', 'to').forEach((key) => {
-            if (!value[key]) return
+            if (!value[key])
+                return
+
             chips.push(
                 <Chip
                     key={`${filter.field}_${key}`}
@@ -64,19 +69,19 @@ function SelectedFacets() {
                     label={
                         <>
                             {' '}
-                            <span className='chip-title'>{convertToDisplayLabel(filter, key)}</span>:{' '}
-                            {convertToDisplayValue(filter, value[key])}
+                            <span className='chip-title'>{convertToDisplayLabel(facet, key)}</span>:{' '}
+                            {convertToDisplayValue(facet, value[key])}
                         </>
                     }
                     variant='outlined'
-                    onDelete={(e) => handleDelete(e, filter, value, key)}
+                    onDelete={(e) => handleDelete(e, filter, facet, value, key)}
                 />
             )
         })
         return chips
     }
 
-    const buildValueFacetChip = (filter, value) => {
+    const buildValueFacetChip = (filter, facet, value) => {
         return (
             <Chip
                 key={`${filter.field}_${formatVal(value)}`}
@@ -84,12 +89,12 @@ function SelectedFacets() {
                 label={
                     <>
                         {' '}
-                        <span className='chip-title'>{convertToDisplayLabel(filter)}</span>:{' '}
-                        {convertToDisplayValue(filter, value)}
+                        <span className='chip-title'>{convertToDisplayLabel(facet)}</span>:{' '}
+                        {convertToDisplayValue(facet, value)}
                     </>
                 }
                 variant='outlined'
-                onDelete={(e) => handleDelete(e, filter, value)}
+                onDelete={(e) => handleDelete(e, filter, facet, value)}
             />
         )
     }
@@ -97,11 +102,16 @@ function SelectedFacets() {
     return (
         <div className={`c-SelectedFacets`}>
             {filters.reduce((acc, filter) => {
+                const facet = facetConfig[filter.field]
                 for (const value of filter.values) {
-                    if (filter.type === 'range') {
-                        acc.push(...buildRangeFacetChip(filter, value))
-                    } else {
-                        acc.push(buildValueFacetChip(filter, value))
+                    switch (facet.facetType) {
+                    case 'daterange':
+                    case 'histogram':
+                        acc.push(...buildRangeFacetChip(filter, facet, value))
+                        break;
+                    default:
+                        acc.push(buildValueFacetChip(filter, facet, value))
+                        break;
                     }
                 }
                 return acc

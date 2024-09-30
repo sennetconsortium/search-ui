@@ -1,6 +1,9 @@
 .title_badge {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
+  @include sm-mx {
+    margin-top: 5px !important;
+  }
 }
 
 .entity_subtitle {
