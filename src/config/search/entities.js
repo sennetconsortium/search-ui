@@ -178,31 +178,31 @@ export const SEARCH_ENTITIES = {
                 isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
                 isFacetVisible: doesAggregationHaveBuckets('rui_location_anatomical_locations.label')
             },
-            // 'metadata': {
-            //     label: 'Has Metadata',
-            //     type: 'exists',
-            //     field: 'metadata',
-            //     isExpanded: false,
-            //     filterType: 'any',
-            //     isFilterable: false,
-            //     facetType: 'term',
-            //     isAggregationActive: [
-            //         doesTermFilterContainValues('entity_type', ['Source', 'Collection', 'Publication']),
-            //         doesTermFilterContainValues('sample_category', ['Block', 'Section', 'Suspension'])
-            //     ],
-            //     isFacetVisible: doesAggregationHaveBuckets('metadata')
-            // },
-            // 'ingest_metadata.metadata': {
-            //     label: 'Has Metadata',
-            //     type: 'exists',
-            //     field: 'ingest_metadata.metadata',
-            //     isExpanded: false,
-            //     filterType: 'any',
-            //     isFilterable: false,
-            //     facetType: 'term',
-            //     isAggregationActive: doesTermFilterContainValues('entity_type', ['Dataset']),
-            //     isFacetVisible: doesAggregationHaveBuckets('ingest_metadata.metadata')
-            // },
+            'metadata': {
+                label: 'Has Metadata',
+                type: 'exists',
+                field: 'metadata',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: [
+                    doesTermFilterContainValues('entity_type', ['Source', 'Collection', 'Publication']),
+                    doesTermFilterContainValues('sample_category', ['Block', 'Section', 'Suspension'])
+                ],
+                isFacetVisible: doesAggregationHaveBuckets('metadata')
+            },
+            'ingest_metadata.metadata': {
+                label: 'Has Metadata',
+                type: 'exists',
+                field: 'ingest_metadata.metadata',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Dataset']),
+                isFacetVisible: doesAggregationHaveBuckets('ingest_metadata.metadata')
+            },
             has_all_published_datasets: {
                 label: 'Has All Primary Published',
                 type: 'value',
