@@ -6,7 +6,7 @@ import useVitessceEncoder from "../hooks/useVitessceEncoder";
 
 const DerivedContext = createContext({})
 
-export const DerivedProvider = ({children}) => {
+export const DerivedProvider = ({children, showVitessceList, setShowVitessceList}) => {
 
     //region Vitessce
     const [vitessceTheme, setVitessceTheme] = useState("light")
@@ -28,11 +28,17 @@ export const DerivedProvider = ({children}) => {
             // If the /vitessce endpoint returns anything but a 200 and an actual configuration, hide the visualization  section
             if (JSON.stringify(config) === '{}' ) {
                 setShowVitessce(false)
+                if (setShowVitessceList && showVitessceList === 1) {
+                    setShowVitessceList(false)
+                }
             } else {
                 setVitessceConfig(config)
             }
         }).catch(error => {
             console.error(error)
+            if (setShowVitessceList && showVitessceList === 1) {
+                setShowVitessceList(false)
+            }
             setShowVitessce(false)
         })
     }
@@ -42,8 +48,7 @@ export const DerivedProvider = ({children}) => {
         const dataset_type = data.dataset_type = data.dataset_type.replace(/\s+([\[]).*?([\]])/g, "")
 
         // Set if primary based on the data_category: primary, component, codcc-processed, lab-processed
-        const is_primary_dataset = (data.dataset_category === 'primary' || data.dataset_category === 'component')
-        console.log(is_primary_dataset)
+        const is_primary_dataset = data.dataset_category === 'primary' || datasetIs.primary(data.creation_action)
         setIsPrimaryDataset(is_primary_dataset)
 
         // Determine whether to show the Vitessce visualizations and where to pull data from

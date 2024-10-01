@@ -12,10 +12,6 @@ export const SEARCH_ENTITIES = {
     searchQuery: {
         excludeFilters: [
             {
-                keyword: "entity_type.keyword",
-                value: "Publication"
-            },
-            {
                 keyword: "dataset_category.keyword",
                 value: ["codcc-processed", "lab-processed"]
             }
