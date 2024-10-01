@@ -140,18 +140,11 @@ export let valid_dataset_ancestor_config = _.cloneDeep(ancestor_config)
 export let exclude_dataset_config = _.cloneDeep(ancestor_config);
 exclude_dataset_config['searchQuery']['excludeFilters'].push(
     {
-        keyword: "entity_type.keyword",
-        value: "Dataset"
-    },
-    {
-        keyword: "entity_type.keyword",
-        value: "Upload"
-    },
-    {
-        keyword: "entity_type.keyword",
-        value: "Collection"
+        type: 'term',
+        field: 'entity_type.keyword',
+        values: ['Collection', 'Dataset', 'Upload']
     }
-);
+)
 
 export function FilterIsSelected(fieldName, value) {
     return ({filters, aggregations}) => {
