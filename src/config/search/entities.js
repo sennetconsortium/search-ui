@@ -14,6 +14,8 @@ const connector = new SearchAPIConnector({
     accessToken: getAuth(),
 })
 
+const lateralOrgans = ['Breast', 'Kidney', 'Lung', 'Mammary Gland', 'Ovary', 'Tonsil']
+
 export const SEARCH_ENTITIES = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
@@ -117,7 +119,9 @@ export const SEARCH_ENTITIES = {
                 isFilterable: false,
                 facetType: 'hierarchy',
                 groupByField: 'organ_hierarchy.keyword', 
-                groupAll: false,
+                isHierarchyOption: (option) => {
+                    return lateralOrgans.includes(option)
+                },
                 isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
                 isFacetVisible: doesAggregationHaveBuckets('organ')
             },
@@ -131,12 +135,14 @@ export const SEARCH_ENTITIES = {
                 isFilterable: false,
                 facetType: 'hierarchy',
                 groupByField: 'origin_sample.organ_hierarchy.keyword',
-                groupAll: false,
+                isHierarchyOption: (option) => {
+                    return lateralOrgans.includes(option)
+                },
                 isAggregationActive: [
                     doesTermFilterContainValues('entity_type', ['Dataset']),
                     doesTermFilterContainValues('sample_category', ['Block', 'Section', 'Suspension'])
                 ],
-                isFacetVisible: doesAggregationHaveBuckets('organ_sample.organ')
+                isFacetVisible: doesAggregationHaveBuckets('origin_sample.organ')
             },
             // Used for when 'Dataset/Sample' is selected to show related sources
             'source.source_type': {
