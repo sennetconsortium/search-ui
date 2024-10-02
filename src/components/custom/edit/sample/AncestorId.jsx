@@ -13,13 +13,13 @@ import SelectedFilters from "../../layout/SelectedFilters";
 import {getUBKGFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
 import SearchUIContainer from 'search-ui/components/core/SearchUIContainer';
-import SearchUIContext from 'search-ui/components/core/SearchUIContext';
 import FacetsContent from '../../search/FacetsContent';
 import AppContext from "../../../../context/AppContext";
+import { useSearchUIContext } from "search-ui/components/core/SearchUIContext";
 
 function BodyContent({ handleChangeSource, data }) {
     const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
-    const { filters } = useContext(SearchUIContext)
+    const { filters } = useSearchUIContext();
     const includedExclude = useRef(false)
 
     exclude_dataset_config['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
