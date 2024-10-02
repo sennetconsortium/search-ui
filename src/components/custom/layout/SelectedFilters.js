@@ -10,14 +10,14 @@ function SelectedFilters({ filters, removeFilter }) {
             hasEntityFilter = true
         }
 
-        if(filter.field === 'organ' || filter.field === 'origin_sample.organ') {
+        if(filter.field === 'organ' || filter.field === 'origin_samples.organ') {
             hasOrganFilter = true;
         }
     });
 
    if(!hasEntityFilter && hasOrganFilter) {
        removeFilter('organ')
-       removeFilter('origin_sample.organ')
+       removeFilter('origin_samples.organ')
    }
 }
 

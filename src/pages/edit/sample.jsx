@@ -157,7 +157,7 @@ function EditSample() {
                     await fetchSource(_data.immediate_ancestors[0].uuid);
                 }
 
-                setAncestorOrgan(_data.organ ? [_data.organ] : [_data?.origin_sample.organ])
+                setAncestorOrgan(_data.organ ? [_data.organ] : [_data?.origin_samples[0].organ])
                 setAncestorSource([getSourceType(_data.source)])
 
                 if (_data['rui_location'] !== undefined) {
@@ -255,9 +255,9 @@ function EditSample() {
             let ancestor_organ = []
             if (source.hasOwnProperty("organ")) {
                 ancestor_organ.push(source['organ'])
-            } else if (source.hasOwnProperty("origin_sample")) {
-                if (source.origin_sample.hasOwnProperty("organ")) {
-                    ancestor_organ.push(source.origin_sample['organ'])
+            } else if (source.hasOwnProperty("origin_samples")) {
+                if (source.origin_samples[0].hasOwnProperty("organ")) {
+                    ancestor_organ.push(source.origin_samples[0]['organ'])
                 }
             }
             setAncestorOrgan(ancestor_organ)

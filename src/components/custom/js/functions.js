@@ -69,6 +69,7 @@ export function formatCitation(data, url) {
 }
 
 export async function fetchDataCite(protocolUrl) {
+    console.log(protocolUrl)
     if (!protocolUrl) return null
     const regex = new RegExp("(?<=doi.org/).*")
     const protocolId = regex.exec(protocolUrl)
