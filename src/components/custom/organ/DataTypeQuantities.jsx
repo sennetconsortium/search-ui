@@ -33,13 +33,13 @@ const DataTypeQuantities = ({ id, organ }) => {
 
     const searchUrl = `${APP_ROUTES.search}?` + searchUIQueryString([
         { field: 'entity_type', values: ['Dataset'], type: 'any' },
-        { field: 'origin_sample.organ', values: organ.codes, type: 'any' }
+        { field: 'origin_samples.organ', values: organ.codes, type: 'any' }
     ], 20)
 
     const searchUrlForDatasetType = (datasetType) => {
         return `${APP_ROUTES.search}?` + searchUIQueryString([
             { field: 'entity_type', values: ['Dataset'], type: 'any' },
-            { field: 'origin_sample.organ', values: organ.codes, type: 'any' },
+            { field: 'origin_samples.organ', values: organ.codes, type: 'any' },
             { field: 'dataset_type', values: [datasetType], type: 'any' }
         ], 20)
     }
@@ -49,7 +49,7 @@ const DataTypeQuantities = ({ id, organ }) => {
         // Expand the relevant facets on the search page
         setLocalSettings('entities', {
             entity_type: { isExpanded: true },
-            'origin_sample.organ': { isExpanded: true }
+            'origin_samples.organ': { isExpanded: true }
         })
         window.location = e.target.href
     }
@@ -59,7 +59,7 @@ const DataTypeQuantities = ({ id, organ }) => {
         // Expand the relevant facets on the search page
         setLocalSettings('entities', {
             entity_type: { isExpanded: true },
-            'origin_sample.organ': { isExpanded: true },
+            'origin_samples.organ': { isExpanded: true },
             dataset_type: { isExpanded: true }
         })
         window.location = e.target.href

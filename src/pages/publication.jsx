@@ -12,6 +12,7 @@ import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "@/context/DerivedContext";
 import VitessceList from "@/components/custom/vitessce/VitessceList";
+import ContributorsContacts from "@/components/custom/entities/ContributorsContacts";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -53,7 +54,7 @@ function ViewPublication() {
                 Object.assign(_data, ancestry)
                 setData(_data)
 
-                const doi = await fetchDataCite(_data.publication_doi)
+                const doi = await fetchDataCite(_data.publication_url)
                 setDoiData(doi?.data)
 
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
@@ -128,6 +129,14 @@ function ViewPublication() {
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
 
+                                             {!!(data.contacts && Object.keys(data.contacts).length) &&
+                                                <li className="nav-item">
+                                                    <a href="#Authors"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Authors</a>
+                                                </li>
+                                            }
+
                                             <li className="nav-item">
                                                 <a href="#Attribution"
                                                    className="nav-link"
@@ -154,7 +163,11 @@ function ViewPublication() {
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
                                                          doiData={doiData}
-                                                         data={data}/>
+                                                         data={data}
+                                                         showAuthors={true}
+                                                         showDatasetTypes={true}
+                                                         showOrgans={true}
+                                            />
 
                                             {/* Visualizations */}
                                             <SenNetAccordion id='Visualizations' title={'Visualizations'}>
@@ -166,6 +179,9 @@ function ViewPublication() {
                                                 <Provenance nodeData={data}/>
                                             }
 
+                                             {!!(data.contacts && Object.keys(data.contacts).length) &&
+                                                <ContributorsContacts title={'Authors'} data={data.contacts}/>
+                                            }
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>

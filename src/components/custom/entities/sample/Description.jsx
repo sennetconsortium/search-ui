@@ -3,10 +3,10 @@ import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import AppContext from "../../../../context/AppContext";
-import {eq, formatCitation} from "../../js/functions";
+import {eq, formatCitation, getUBKGFullName} from "../../js/functions";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 
-export default function Description({data, doiData, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate, title}) {
+export default function Description({data, doiData, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate, title, showAuthors=false, showDatasetTypes=false, showOrgans=false}) {
 
     const {isLoggedIn, cache} = useContext(AppContext)
 
@@ -19,6 +19,32 @@ export default function Description({data, doiData, labId, primaryDateTitle, pri
                     <i className="bi bi-box-arrow-up-right"></i></a>
                 </li>)
             }
+            return res
+        }
+
+        const buildDatasetTypes = () => {
+            let datasetTypes = new Set()
+            for (let ancestor of data?.ancestors) {
+                if (ancestor.entity_type === 'Dataset') {
+                    datasetTypes.add((ancestor.dataset_type))
+                }
+            }
+            let res = []
+            datasetTypes.forEach(datasetType => {
+                res.push(<li key={datasetType}>{datasetType}</li>)
+            })
+            return res
+        }
+
+        const buildOrgans = () => {
+            let organs = new Set()
+            for (let origin_sample of data?.origin_samples) {
+                organs.add(getUBKGFullName(origin_sample.organ))
+            }
+            let res = []
+            organs.forEach(organ => {
+                res.push(<li key={organ}>{organ}</li>)
+            })
             return res
         }
 
@@ -60,7 +86,7 @@ export default function Description({data, doiData, labId, primaryDateTitle, pri
                     </Card>
                 }
 
-                {data && data?.contacts && <Card border={'0'} className={'pb-3'}>
+                {data && showAuthors && data?.contacts && <Card border={'0'} className={'pb-3'}>
                     <Card.Body>
                         <Card.Subtitle>Corresponding Authors &nbsp;
                             <SenNetPopover text={<>The author(s) responsible for handling all correspondence about this article. Contact this author for any inquiries about this publication.</>} className={`popover-contacts`}>
@@ -71,6 +97,25 @@ export default function Description({data, doiData, labId, primaryDateTitle, pri
                         </ul>
                     </Card.Body>
                 </Card>}
+
+            {data && showDatasetTypes && data?.ancestors && <Card border={'0'} className={'pb-3'}>
+                <Card.Body>
+                    <Card.Subtitle>Dataset Types</Card.Subtitle>
+                    <ul>
+                        {buildDatasetTypes()}
+                    </ul>
+                </Card.Body>
+            </Card>}
+
+            {data && showOrgans && data?.origin_samples && <Card border={'0'} className={'pb-3'}>
+                <Card.Body>
+                    <Card.Subtitle>Organs</Card.Subtitle>
+                    <ul>
+                        {buildOrgans()}
+                    </ul>
+                </Card.Body>
+            </Card>}
+
 
             <CardGroup>
             {isLoggedIn() && data && labId &&

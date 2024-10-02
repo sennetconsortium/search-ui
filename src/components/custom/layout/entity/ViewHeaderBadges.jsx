@@ -68,21 +68,21 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                     }
                 </Fragment>) : (
                 <Fragment>
-                    {data.origin_sample &&
+                    {data.origin_samples && data.origin_samples.length > 0 &&
                         <>
                             {/* Some organs don't have an organ page */}
-                            {getOrganRoute(data.origin_sample.organ) ? (
-                                <a href={getOrganRoute(data.origin_sample.organ)}>
+                            {getOrganRoute(data.origin_samples[0].organ) ? (
+                                <a href={getOrganRoute(data.origin_samples[0].organ)}>
                                     <h5 className={"title_badge"}>
                                         <span className="badge bg-secondary me-2">
-                                            {displayBodyHeader(getUBKGFullName(data.origin_sample.organ))}
+                                            {displayBodyHeader(getUBKGFullName(data.origin_samples[0].organ))}
                                         </span>
                                     </h5>
                                 </a>
                             ) : (
                                 <h5 className={"title_badge"}>
                                     <span className="badge bg-secondary me-2">
-                                        {displayBodyHeader(getUBKGFullName(data.origin_sample.organ))}
+                                        {displayBodyHeader(getUBKGFullName(data.origin_samples[0].organ))}
                                     </span>
                                 </h5>
                             )}

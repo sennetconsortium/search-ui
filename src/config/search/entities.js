@@ -79,14 +79,14 @@ export const SEARCH_ENTITIES = {
                 groupAll: false,
             },
             // Used for when "Dataset" or Sample Block/Section/Suspension is selected to show related organs
-            "origin_sample.organ": {
+            "origin_samples.organ": {
                 label: 'Organ',
                 type: 'value',
-                field: 'origin_sample.organ.keyword',
+                field: 'origin_samples.organ.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                groupBy: 'origin_sample.organ_hierarchy.keyword',
+                groupBy: 'origin_samples.organ_hierarchy.keyword',
                 groupAll: false,
             },
             // Used for when "Dataset/Sample" is selected to show related sources
@@ -183,8 +183,8 @@ export const SEARCH_ENTITIES = {
         },
         disjunctiveFacets: [],
         conditionalFacets: {
-            // Show 'origin_sample.organ' facet if 'Dataset' or Sample Block/Section/Suspension is selected
-            "origin_sample.organ": ({filters}) => {
+            // Show 'origin_samples.organ' facet if 'Dataset' or Sample Block/Section/Suspension is selected
+            "origin_samples.organ": ({filters}) => {
                 return filters.some(
                     (filter) =>
                         (filter.field === 'entity_type' && filter.values.includes('Dataset')) ||
@@ -247,7 +247,7 @@ export const SEARCH_ENTITIES = {
             'source_type',
             'dataset_type',
             'status',
-            'origin_sample.organ',
+            'origin_samples.organ',
             'organ',
             'title',
             'description',

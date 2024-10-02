@@ -14,11 +14,11 @@ export default function Tissue({ data }) {
     const columns = [
         {
             name: 'Organ',
-            selector: row => getUBKGFullName(row.origin_sample?.organ),
+            selector: row => getUBKGFullName(row.origin_samples[0]?.organ),
             width: '30%',
             wrap: true,
             format: row => {
-                const name = getUBKGFullName(row.origin_sample?.organ)
+                const name = getUBKGFullName(row.origin_samples?.organ)
                 const code = cache.organTypesCodes[name]
                 const organ = getOrganByCode(code)
                 const icon = organIcons[code] || organIcons.OT
