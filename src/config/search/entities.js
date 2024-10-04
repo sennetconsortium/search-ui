@@ -7,6 +7,7 @@ import {
     getSearchEndPoint,
     isDateFacetVisible
 } from '../config';
+import { getUBKGFullName } from '@/components/custom/js/functions';
 
 const connector = new SearchAPIConnector({
     indexName: getEntitiesIndex(),
@@ -120,8 +121,8 @@ export const SEARCH_ENTITIES = {
                 isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
                 isFacetVisible: doesAggregationHaveBuckets('organ')
             },
-            // Used for when "Dataset" or Sample Block/Section/Suspension is selected to show related organs
-            "origin_samples.organ": {
+            // Used for when 'Dataset' or Sample Block/Section/Suspension is selected to show related organs
+            'origin_samples.organ': {
                 label: 'Organ',
                 type: 'value',
                 field: 'origin_samples.organ.keyword',
@@ -132,6 +133,12 @@ export const SEARCH_ENTITIES = {
                 groupByField: 'origin_samples.organ_hierarchy.keyword',
                 isHierarchyOption: (option) => {
                     return lateralOrgans.includes(option)
+                },
+                filterSubValues: (value, subValues) => {
+                    return subValues.filter((subValue) => {
+                        const ubkgName = getUBKGFullName(subValue.key)
+                        return ubkgName.startsWith(value)
+                    })
                 },
                 isAggregationActive: [
                     doesTermFilterContainValues('entity_type', ['Dataset']),
