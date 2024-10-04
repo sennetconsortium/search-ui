@@ -9,7 +9,7 @@ import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
 import {callService, getEntityData, update_create_entity} from '../../lib/services'
-import {cleanJson, eq, fetchEntity, getIdRegEx, getRequestHeaders} from '../../components/custom/js/functions'
+import {cleanJson, eq, fetchEntity, getIdRegEx} from '../../components/custom/js/functions'
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import {getEntityEndPoint, valid_dataset_ancestor_config} from "../../config/config";
@@ -95,7 +95,7 @@ export default function EditCollection() {
                 setErrorMessage(_data["error"])
             } else {
                 setData(_data)
-                const entities = await callService(null,  `${getEntityEndPoint()}collections/${_data.uuid}/entities`)
+                const entities = await callService(null, `${getEntityEndPoint()}collections/${_data.uuid}/entities`)
                 Object.assign(_data, {entities})
                 setData(_data)
 
@@ -153,7 +153,7 @@ export default function EditCollection() {
             if (entity.hasOwnProperty("error")) {
                 if (isBulkHandling.current) {
                     setBulkPopover(true)
-                    errMsgs = <>{errMsgs} <br />{entity["error"]}</>
+                    errMsgs = <>{errMsgs} <br/>{entity["error"]}</>
                 } else {
                     setError(true)
                     setErrorMessage(entity["error"])
@@ -335,7 +335,7 @@ export default function EditCollection() {
 
     }
 
-    if (isPreview(error) || (!isAuthorizing() && !adminGroup))  {
+    if (isPreview(error)) {
         return getPreviewView(data)
     } else {
 
@@ -402,7 +402,8 @@ export default function EditCollection() {
                                                                             setBulkPopover(false)
                                                                         }}><CloseIcon/>
                                                     </span>
-                                                             <div className={'tooltip-content tooltip-bulk-add-id'}>{bulkErrorMessage}</div>
+                                                             <div
+                                                                 className={'tooltip-content tooltip-bulk-add-id'}>{bulkErrorMessage}</div>
                                                          </>}
                                                      ><span>&nbsp;</span>
                                                      </Tooltip>
@@ -429,8 +430,9 @@ export default function EditCollection() {
                                                      >
                                                  <span role='button' aria-label={'Bulk add Entities to the Collection'}
                                                        onClick={bulkAddSpinnerVisible ? undefined : handleBulkAdd}
-                                                       className={`btn-add ${bulkAddField && bulkAddTextareaVal ? 'is-visible' : ''}`}> {!bulkAddSpinnerVisible && <CheckIcon/>}
-                                                     { bulkAddSpinnerVisible && <SpinnerEl />}
+                                                       className={`btn-add ${bulkAddField && bulkAddTextareaVal ? 'is-visible' : ''}`}> {!bulkAddSpinnerVisible &&
+                                                     <CheckIcon/>}
+                                                     {bulkAddSpinnerVisible && <SpinnerEl/>}
                                                  </span>
                                                      </SenNetPopover>}
                                                  </>}
@@ -458,7 +460,8 @@ export default function EditCollection() {
                                     <AttributesUpload ingestEndpoint={contactsTSV.uploadEndpoint} showAllInTable={true}
                                                       setAttribute={setContactsAttributes}
                                                       setAttributesOnFail={setContactsAttributesOnFail}
-                                                      entity={cache.entities.collection} excludeColumns={contactsTSV.excludeColumns}
+                                                      entity={cache.entities.collection}
+                                                      excludeColumns={contactsTSV.excludeColumns}
                                                       attribute={'Contributors'} title={<h6>Contributors</h6>}
                                                       customFileInfo={<span><a
                                                           className='btn btn-outline-primary rounded-0 fs-8' download
