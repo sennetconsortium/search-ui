@@ -7,6 +7,7 @@ import {
     getSearchEndPoint,
     isDateFacetVisible
 } from '../config';
+import { getUBKGFullName } from '@/components/custom/js/functions';
 
 const connector = new SearchAPIConnector({
     indexName: getEntitiesIndex(),
@@ -126,23 +127,29 @@ export const SEARCH_ENTITIES = {
                 isFacetVisible: doesAggregationHaveBuckets('organ')
             },
             // Used for when 'Dataset' or Sample Block/Section/Suspension is selected to show related organs
-            'origin_sample.organ': {
+            'origin_samples.organ': {
                 label: 'Organ',
                 type: 'value',
-                field: 'origin_sample.organ.keyword',
+                field: 'origin_samples.organ.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
                 facetType: 'hierarchy',
-                groupByField: 'origin_sample.organ_hierarchy.keyword',
+                groupByField: 'origin_samples.organ_hierarchy.keyword',
                 isHierarchyOption: (option) => {
                     return lateralOrgans.includes(option)
+                },
+                filterSubValues: (value, subValues) => {
+                    return subValues.filter((subValue) => {
+                        const ubkgName = getUBKGFullName(subValue.key)
+                        return ubkgName.startsWith(value)
+                    })
                 },
                 isAggregationActive: [
                     doesTermFilterContainValues('entity_type', ['Dataset']),
                     doesTermFilterContainValues('sample_category', ['Block', 'Section', 'Suspension'])
                 ],
-                isFacetVisible: doesAggregationHaveBuckets('origin_sample.organ')
+                isFacetVisible: doesAggregationHaveBuckets('origin_samples.organ')
             },
             // Used for when 'Dataset/Sample' is selected to show related sources
             'source.source_type': {
