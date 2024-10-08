@@ -18,7 +18,7 @@ import {
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import $ from 'jquery'
-import {valid_dataset_ancestor_config} from "../../config/config";
+import GroupSelect from "@/components/custom/edit/GroupSelect";
 
 const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
 const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
@@ -212,12 +212,19 @@ export default function EditPublication() {
                             bodyContent={
                                 <Form noValidate validated={validated}>
                                     {/*Group select*/}
-
+                                    {
+                                        !(userWriteGroups.length === 1 || isEditMode()) &&
+                                        <GroupSelect
+                                            data={data}
+                                            groups={userWriteGroups}
+                                            onGroupSelectChange={onChange}
+                                            entity_type={'dataset'}/>
+                                    }
 
                                     {/*Ancestor IDs*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
-                                        <AncestorIds values={values} ancestors={ancestors} onChange={onChange}
+                                        <AncestorIds data={data} values={values} ancestors={ancestors} onChange={onChange}
                                                      fetchAncestors={fetchAncestors} deleteAncestor={deleteAncestor}/>
                                     }
 
