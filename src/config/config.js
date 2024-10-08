@@ -150,6 +150,10 @@ exclude_dataset_config['searchQuery']['excludeFilters'].push(
     {
         keyword: "entity_type.keyword",
         value: "Collection"
+    },
+    {
+        keyword: "entity_type.keyword",
+        value: "Publication"
     }
 );
 
