@@ -52,7 +52,7 @@ const Lineage = ({ lineage }) => {
                 display_subtype: (lineage_data.sample_category ? (
                     lineage_data.sample_category
                 ) : getDatasetTypeDisplay(lineage_data)),
-                organ: getUBKGFullName(lineage_data?.origin_samples?.organ),
+                organ: getUBKGFullName(lineage_data?.origin_samples?.[0]?.organ || lineage_data.organ),
                 group_name: lineage_data.group_name
             });
         })
