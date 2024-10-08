@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {getAncestryData, getEntityData, update_create_entity} from '../../lib/services'
+import {getAncestryData, getEntityData, update_create_dataset, update_create_entity} from '../../lib/services'
 import {
     cleanJson,
     eq,
@@ -179,13 +179,8 @@ export default function EditPublication() {
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
-                await update_create_entity(uuid, json, editMode, cache.entities.publication).then((response) => {
-                    setModalDetails({
-                        entity: cache.entities.publication,
-                        type: response.title,
-                        typeHeader: _t('Title'),
-                        response
-                    })
+                 await update_create_dataset(uuid, json, editMode, 'publications').then((response) => {
+                    modalResponse(response)
                 }).catch((e) => log.error(e))
             }
         }

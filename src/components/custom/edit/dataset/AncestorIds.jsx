@@ -57,7 +57,17 @@ function BodyContent({ handleChangeAncestor, data }) {
 export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd, onShowModal, formLabelPlural,
                                         formLabel = 'ancestor', controlId = 'direct_ancestor_uuids',  disableDelete, addButtonDisabled, data}) {
     const [showHideModal, setShowHideModal] = useState(false)
+    const {
+        adminGroup,
+        authorized,
+        hasAuthenticationCookie
+    } = useContext(AppContext);
 
+    const authState = {
+        isAuthenticated: hasAuthenticationCookie() === true,
+        isAuthorized: authorized === true,
+        isAdmin: adminGroup === true
+    }
 
     const handleSearchFormSubmit = (event, onSubmit) => {
         onSubmit(event)
@@ -140,7 +150,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
                 keyboard={false}
             >
                 <Modal.Body>
-                    <SearchUIContainer config={valid_dataset_ancestor_config} name={undefined}>
+                    <SearchUIContainer config={valid_dataset_ancestor_config} name={undefined} authState={authState}>
                         <Layout
                             header={
                                 <div className="search-box-header js-gtm--search">
