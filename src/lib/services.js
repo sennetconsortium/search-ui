@@ -353,9 +353,9 @@ export const getDatasetQuantities = async () => {
             },
         },
         aggs: {
-            'origin_sample.organ': {
+            'origin_samples.organ': {
                 terms: {
-                    field: 'origin_sample.organ.keyword',
+                    field: 'origin_samples.organ.keyword',
                     size: 40,
                 },
             },
@@ -365,7 +365,7 @@ export const getDatasetQuantities = async () => {
     if (!content) {
         return null;
     }
-    return content.aggregations['origin_sample.organ'].buckets.reduce(
+    return content.aggregations['origin_samples.organ'].buckets.reduce(
         (acc, bucket) => {
             acc[bucket.key] = bucket.doc_count;
             return acc;
@@ -390,7 +390,7 @@ export const getOrganDataTypeQuantities = async (organCodes) => {
             bool: {
                 filter: {
                     terms: {
-                        'origin_sample.organ.keyword': organCodes,
+                        'origin_samples.organ.keyword': organCodes,
                     }
                 },
                 must_not: mustNot

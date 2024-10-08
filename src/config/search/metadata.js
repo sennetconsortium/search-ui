@@ -510,7 +510,7 @@ export const SEARCH_METADATA = {
             'source_type',
             'dataset_type',
             'status',
-            'origin_sample.organ',
+            'origin_samples.organ',
             'organ',
             'title',
             'description',

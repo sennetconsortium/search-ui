@@ -34,8 +34,21 @@
 }
 
 .accordion--vitessce {
+  width: 100%;
+  position: relative;
   .accordion-body {
     height: 900px;
+  }
+  .accordion-collapse.show-invisible {
+    display: block;
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    overflow-x: hidden;
+  }
+  .accordion-collapse.show-invisible.show {
+    position: inherit;
+    opacity: 1;
   }
 }
 

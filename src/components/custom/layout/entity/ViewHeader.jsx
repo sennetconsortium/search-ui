@@ -50,10 +50,12 @@ function EntityViewHeader({entity, data, hasWritePrivilege, uniqueHeader, unique
     return (
         <div style={{width: '100%'}}>
 
-            <h4>{eq(entity, 'dataset') && <span>{getCreationActionRelationName(data.creation_action)}</span>} {!eq(entity, 'dataset') && entity.upperCaseFirst()}</h4>
-            <h3>{data.sennet_id}
+            <h4>{eq(entity, cache.entities.dataset) && <span>{getCreationActionRelationName(data.creation_action)}</span>} {!eq(entity, 'dataset') && entity.upperCaseFirst()}</h4>
+            {!eq(entity, cache.entities.publication) && <h3>{data.sennet_id}
                 <ClipboardCopy text={data.sennet_id}/>
-            </h3>
+            </h3>}
+            {eq(entity, cache.entities.publication) && <h3>{data.title}
+            </h3>}
             <div className="row mb-2">
                 <div className="col-md-6 col-sm-12 entity_subtitle icon_inline">
                     <ViewHeaderBadges data={data} 

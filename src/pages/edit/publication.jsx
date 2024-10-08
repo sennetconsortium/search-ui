@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {getAncestryData, getEntityData, update_create_entity} from '../../lib/services'
+import {getAncestryData, getEntityData, update_create_dataset, update_create_entity} from '../../lib/services'
 import {
     cleanJson,
     eq,
@@ -48,15 +48,6 @@ export default function EditPublication() {
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [publicationStatus, setPublicationStatus] = useState(null)
-
-    useEffect(() => {
-        valid_dataset_ancestor_config['searchQuery']['includeFilters'] = [
-            {
-                "keyword": "entity_type.keyword",
-                "value": "Dataset"
-            }]
-    }, [])
-
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -168,20 +159,19 @@ export default function EditPublication() {
                 values['contains_human_genetic_sequences'] = false
 
                 if (!values['group_uuid'] && editMode === 'Register') {
-
                     values['group_uuid'] = selectedUserWriteGroupUuid || userWriteGroups[0]?.uuid
                 }
+
+                if (isEditMode) {
+                    delete values['dataset_type']
+                }
+
                 // Remove empty strings
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
-                await update_create_entity(uuid, json, editMode, cache.entities.publication).then((response) => {
-                    setModalDetails({
-                        entity: cache.entities.publication,
-                        type: response.title,
-                        typeHeader: _t('Title'),
-                        response
-                    })
+                 await update_create_dataset(uuid, json, editMode, 'publications').then((response) => {
+                    modalResponse(response)
                 }).catch((e) => log.error(e))
             }
         }
@@ -197,9 +187,6 @@ export default function EditPublication() {
     function handlePublicationStatusNo() {
         setPublicationStatus(false)
     }
-
-    // TODO: remove this return when ready to support
-    return <NotFound />
 
     if (isPreview(error))  {
         return getPreviewView(data)
@@ -248,6 +235,19 @@ export default function EditPublication() {
                                                      onChange={onChange}
                                                      text={<>The venue of the publication, journal, conference, preprint server, etc.</>}/>
 
+                                    <div className='row'>
+                                        <div className='col-md-3'>
+                                            {/*/!*Publication Date*!/*/}
+                                            <EntityFormGroup label='Publication Date' controlId='publication_date'
+                                                             isRequired={true}
+                                                             type={'date'}
+                                                             placeholder={'mm/dd/YYYY'}
+                                                             value={data.publication_date}
+                                                             onChange={onChange}
+                                                             text={<>The date of the publication.</>}/>
+                                        </div>
+                                    </div>
+
                                     {/*/!*Human Gene Sequences*!/*/}
                                     {editMode &&
                                         <Form.Group controlId="publication_status" className="mb-3">
@@ -289,20 +289,19 @@ export default function EditPublication() {
                                                      onChange={onChange}
                                                      text={<>The URL at the publishers server for print/pre-print (http(s)://[alpha-numeric-string].[alpha-numeric-string].[...]</>}/>
 
-                                    {/*/!*Publication Date*!/*/}
-                                    <EntityFormGroup label='Publication Date' controlId='publication_date'
-                                                     isRequired={true}
-                                                     type={'date'}
-                                                     placeholder={'mm/dd/YYYY'}
-                                                     value={data.publication_date}
-                                                     onChange={onChange}
-                                                     text={<>The date of the publication.</>}/>
 
                                     {/*/!*Publication DOI*!/*/}
                                     <EntityFormGroup label='Publication DOI' controlId='publication_doi'
                                                      value={data.publication_doi}
                                                      onChange={onChange}
                                                      text={<>The doi of the publication. (##.####/[alpha-numeric-string])</>}/>
+
+                                    {/*/!*OMAP DOI*!/*/}
+                                    <EntityFormGroup label='OMAP DOI' controlId='omap_doi'
+                                                     value={data.omap_doi}
+                                                     onChange={onChange}
+                                                     text={<>A DOI pointing to an Organ Mapping Antibody Panel relevant to this publication</>}/>
+
 
                                     {/*/!*Issue*!/*/}
                                     <EntityFormGroup label='Issue Number' controlId='issue'
@@ -326,7 +325,7 @@ export default function EditPublication() {
 
 
                                     {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='DOI Abstract' type='textarea' controlId='description'
+                                    <EntityFormGroup label='Abstract' type='textarea' controlId='description'
                                                      value={data.description}
                                                      onChange={onChange}
                                                      text={<>An abstract publicly available when the <code>Publication</code> is published.  This will be included with the DOI information of the published <code>Publication</code>.</>}/>

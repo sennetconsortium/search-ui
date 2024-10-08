@@ -1,7 +1,7 @@
-import React, {Fragment, useContext, useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
 
-function SenNetAccordion({children, title, id, afterTitle, className = ''}) {
+function SenNetAccordion({children, title, id, afterTitle, className = '', expanded = true}) {
     const [refId, setRefId] = useState(id)
     useEffect(() => {
         if (id == null && typeof title === 'string') {
@@ -14,11 +14,11 @@ function SenNetAccordion({children, title, id, afterTitle, className = ''}) {
             <div className="accordion-item ">
                 <div className="accordion-header">
                     <button className="accordion-button" type="button" data-bs-toggle="collapse"
-                            data-bs-target={`#${refId}-collapse`} aria-expanded="true"
+                            data-bs-target={`#${refId}-collapse`} aria-expanded={expanded}
                             aria-controls={`${refId}-collapse`}><span className={"me-2"}>{title}</span>{afterTitle}
                     </button>
                 </div>
-                <div id={`${refId}-collapse`} className="accordion-collapse collapse show">
+                <div id={`${refId}-collapse`} className={`accordion-collapse collapse ${expanded ? 'show' : 'show-invisible'}`}>
                     <div className="accordion-body">
                         {children}
                     </div>
