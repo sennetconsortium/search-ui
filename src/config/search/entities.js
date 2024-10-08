@@ -23,11 +23,6 @@ export const SEARCH_ENTITIES = {
         excludeFilters: [
             {
                 type: 'term',
-                field: 'entity_type.keyword',
-                values: ['Publication']
-            },
-            {
-                type: 'term',
                 field: 'dataset_category.keyword',
                 values: ['codcc-processed', 'lab-processed']
             },

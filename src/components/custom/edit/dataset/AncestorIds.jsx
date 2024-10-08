@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Form} from 'react-bootstrap';
 import {Results, SearchBox} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
@@ -20,26 +20,26 @@ import AppContext from "../../../../context/AppContext";
 import { useSearchUIContext } from "search-ui/components/core/SearchUIContext";
 
 function BodyContent({ handleChangeAncestor, data }) {
-
-    const { wasSearched, filters } = useSearchUIContext();
-
     const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
-    const addConditional = (key, entity) => {
-        valid_dataset_ancestor_config['searchQuery']['conditionalFacets'][key] = ({filters}) => {
-            return hasAuthenticationCookie() && !isUnauthorized() &&
-                filters.some((filter) => filter.field === "entity_type" && filter.values.includes(entity))
+    const { wasSearched, filters } = useSearchUIContext();
+    const includedExclude = useRef(false)
+
+    valid_dataset_ancestor_config['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
+        return hasAuthenticationCookie() && !isUnauthorized() &&
+            filters.some((filter) => filter.field === "entity_type" && filter.values.includes('Sample'))
+    }
+
+    valid_dataset_ancestor_config['searchQuery']['conditionalFacets']['ancestors.rui_location'] = () => false
+
+    useEffect(() => {
+        if (!includedExclude.current && data && data.uuid) {
+            includedExclude.current = true
+            valid_dataset_ancestor_config['searchQuery']['excludeFilters'].push({
+                keyword: "uuid.keyword",
+                value: data['uuid']
+            })
         }
-    }
-
-    addConditional('rui_location','Sample' )
-    addConditional('ancestors.rui_location', 'Dataset')
-
-    if (data && data.uuid) {
-        valid_dataset_ancestor_config['searchQuery']['excludeFilters'] = [{
-            keyword: "uuid.keyword",
-            value: data['uuid']
-        }]
-    }
+    }, [])
 
     return (
         <div
