@@ -142,7 +142,7 @@ exclude_dataset_config['searchQuery']['excludeFilters'].push(
     {
         type: 'term',
         field: 'entity_type.keyword',
-        values: ['Collection', 'Dataset', 'Upload']
+        values: ['Collection', 'Dataset', 'Upload', 'Publication']
     }
 )
 
