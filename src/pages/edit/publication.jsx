@@ -49,15 +49,6 @@ export default function EditPublication() {
     const [ancestors, setAncestors] = useState(null)
     const [publicationStatus, setPublicationStatus] = useState(null)
 
-    useEffect(() => {
-        valid_dataset_ancestor_config['searchQuery']['includeFilters'] = [
-            {
-                "keyword": "entity_type.keyword",
-                "value": "Dataset"
-            }]
-    }, [])
-
-
     // only executed on init rendering, see the []
     useEffect(() => {
 

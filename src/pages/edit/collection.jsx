@@ -61,24 +61,7 @@ export default function EditCollection() {
     const [bulkAddTextareaVal, setBulkAddTextareaVal] = useState(null)
     const supportedEntities = [cache.entities.dataset, cache.entities.sample, cache.entities.source]
     const [bulkAddSpinnerVisible, setBulkAddSpinnerVisible] = useState(false)
-
-    useEffect(() => {
-        async function fetchAncestorConstraints() {
-            // TODO: maybe we want to add to entity-api constraints for Collection instead of hard coding here ...
-            let searchFilters = []
-            for (let e of supportedEntities) {
-                searchFilters.push({
-                        "keyword": "entity_type.keyword",
-                        "value": e
-                    }
-                )
-            }
-            valid_dataset_ancestor_config['searchQuery']['includeFilters'] = searchFilters
-        }
-
-        fetchAncestorConstraints()
-    }, [])
-
+    
     // only executed on init rendering, see the []
     useEffect(() => {
 
