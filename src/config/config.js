@@ -140,27 +140,58 @@ export let valid_dataset_ancestor_config = _.cloneDeep(ancestor_config)
 export let exclude_dataset_config = _.cloneDeep(ancestor_config);
 exclude_dataset_config['searchQuery']['excludeFilters'].push(
     {
-        keyword: "entity_type.keyword",
-        value: "Dataset"
-    },
-    {
-        keyword: "entity_type.keyword",
-        value: "Upload"
-    },
-    {
-        keyword: "entity_type.keyword",
-        value: "Collection"
+        type: 'term',
+        field: 'entity_type.keyword',
+        values: ['Collection', 'Dataset', 'Upload']
     }
-);
+)
 
 export function FilterIsSelected(fieldName, value) {
-    return ({filters}) => {
-        return filters.some(
-            (f) => f.field === fieldName && (!value || f.values.includes(value))
-        );
-    };
+    return ({filters, aggregations}) => {
+        for (const filter of filters) {
+            if (filter.field === fieldName && filter.values.includes(value)) {
+                return true
+            }
+        }
+        return false
+    }
 }
 
 export const STORAGE_KEY = (key = '') => `sn-portal.${key}`
 
 export const COLS_ORDER_KEY = (context = '') => `${context}.columnsOrder`
+
+export function doesTermFilterContainValues(name, values) {
+    return (filters, auth) => {
+        const filter = filters.find((f) => f.field === name)
+        return (
+            filter != undefined && values.some((v) => filter.values.includes(v))
+        )
+    }
+}
+
+export function doFiltersContainField(field) {
+    return (filters, auth) => {
+        return filters.some((f) => f.field === field)
+    }
+}
+
+export function doesAggregationHaveBuckets(field) {
+    return (filters, aggregations, auth) => {
+        try {
+            return (
+                aggregations[field] !== undefined && aggregations[field].buckets.length > 0
+            )
+        } catch {
+            return false
+        }
+    }
+}
+
+export function doesTermOptionHaveDocCount(option, filters, aggregations, auth) {
+    return option.doc_count > 0
+}
+
+export function isDateFacetVisible(filters, aggregations, auth) {
+    return Object.keys(aggregations).length > 0
+}

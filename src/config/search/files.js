@@ -1,6 +1,11 @@
-import {getAuth, getFilesIndex, getSearchEndPoint} from "../config";
-import SearchAPIConnector from "search-ui/packages/search-api-connector";
-
+import SearchAPIConnector from 'search-ui/packages/search-api-connector';
+import {
+    doesAggregationHaveBuckets,
+    getAuth,
+    getFilesIndex,
+    getSearchEndPoint,
+    isDateFacetVisible
+} from '../config';
 
 const connector = new SearchAPIConnector({
     indexName: getFilesIndex(),
@@ -27,8 +32,12 @@ const sourceItems = [
 export const SEARCH_FILES = {
     alwaysSearchOnInitialLoad: true,
     searchQuery: {
-        groupBy: 'dataset_uuid.keyword',
-        excludeFilters: [],
+        excludeFilters: [
+            {
+                type: 'exists',
+                field: 'next_revision_uuid',
+            }
+        ],
         facets: {
             file_extension: {
                 label: 'File Type',
@@ -36,6 +45,9 @@ export const SEARCH_FILES = {
                 field: 'file_extension.keyword',
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: true,
+                isFacetVisible: doesAggregationHaveBuckets('file_extension')
             },
             'organs.type': {
                 label: 'Organs',
@@ -44,6 +56,9 @@ export const SEARCH_FILES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: true,
+                isFacetVisible: doesAggregationHaveBuckets('organs.type')
             },
             dataset_type: {
                 label: 'Dataset Type',
@@ -52,6 +67,9 @@ export const SEARCH_FILES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: true,
+                isFacetVisible: doesAggregationHaveBuckets('dataset_type')
             },
             file_info_refresh_timestamp: {
                 label: 'Modification Date',
@@ -60,12 +78,12 @@ export const SEARCH_FILES = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: true,
-                uiType: 'daterange',
+                facetType: 'daterange',
+                isFacetVisible: isDateFacetVisible
             },
         },
         disjunctiveFacets: [],
-        conditionalFacets: {
-        },
+        conditionalFacets: {},
         search_fields: {
             rel_path: {type: 'value'},
             file_extension: {type: 'value'},
@@ -80,10 +98,12 @@ export const SEARCH_FILES = {
         current: 1,
         resultsPerPage: 20,
         sortList: [{
-            field: "source.file_info_refresh_timestamp",
-            direction: "desc"
+            field: 'source.file_info_refresh_timestamp',
+            direction: 'desc'
         }]
     },
+    urlPushDebounceLength: 100,
+    trackTotalHits: true,
     trackUrlState: true,
     apiConnector: connector,
     hasA11yNotifications: true,

@@ -18,6 +18,7 @@ const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const BodyContent = dynamic(() => import("@/components/custom/search/BodyContent"))
 const FacetsContent = dynamic(() => import("@/components/custom/search/FacetsContent"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const InvalidToken = dynamic(() => import("@/components/custom/layout/InvalidToken"))
 const SearchDropdown = dynamic(() => import("@/components/custom/search/SearchDropdown"))
 const SearchUIContainer = dynamic(() => import("@/search-ui/components/core/SearchUIContainer"))
 const SelectedFacets = dynamic(() => import("@/components/custom/search/SelectedFacets"))
@@ -28,7 +29,11 @@ function SearchMetadata() {
     const {
         _t,
         logout,
+        adminGroup,
         isRegisterHidden,
+        hasInvalidToken,
+        validatingToken,
+        authorized,
         isAuthorizing,
         isUnauthorized,
         hasAuthenticationCookie
@@ -38,19 +43,28 @@ function SearchMetadata() {
         onSubmit(event)
     }
 
-    if (isAuthorizing()) {
+    if (validatingToken() || isAuthorizing()) {
         return <Spinner/>
+    } else if (hasInvalidToken()) {
+        return <InvalidToken/>
     } else {
         if (isUnauthorized() && hasAuthenticationCookie()) {
             // This is a scenario in which the GLOBUS token is expired but the token still exists in the user's cookies
             logout()
             window.location.reload()
         }
+
+        const authState = {
+            isAuthenticated: hasAuthenticationCookie() === true,
+            isAuthorized: authorized === true,
+            isAdmin: adminGroup === true
+        }
+
         return (
             <>
                 <Header title={APP_TITLE}/>
 
-                <SearchUIContainer config={SEARCH_METADATA} name='metadata'>
+                <SearchUIContainer config={SEARCH_METADATA} name='metadata' authState={authState}>
                     <AppNavbar hidden={isRegisterHidden}/>
                     <ErrorBoundary>
                         <Layout
