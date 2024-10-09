@@ -91,7 +91,6 @@ export default function EditDataset() {
                     includeFilters.push(includeFilter)
                 }
                 valid_dataset_ancestor_config['searchQuery']['includeFilters'] = includeFilters
-                console.log(valid_dataset_ancestor_config)
             }
         }
 

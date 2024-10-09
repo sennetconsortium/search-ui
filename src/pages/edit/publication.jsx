@@ -19,6 +19,7 @@ import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import $ from 'jquery'
 import GroupSelect from "@/components/custom/edit/GroupSelect";
+import {valid_dataset_ancestor_config} from "@/config/config";
 
 const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
 const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
@@ -51,6 +52,12 @@ export default function EditPublication() {
 
     // only executed on init rendering, see the []
     useEffect(() => {
+        // Update valid_dataset_ancestor_config to only display `Dataset` as valid ancestors
+        valid_dataset_ancestor_config['searchQuery']['includeFilters'] = [{
+            "type": 'term',
+            "field": 'entity_type.keyword',
+            "values": ['Dataset']
+        }]
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
