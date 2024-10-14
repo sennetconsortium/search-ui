@@ -6,7 +6,7 @@ import { getOrganByCode } from "@/config/organs";
 import AppContext from "@/context/AppContext";
 import Link from "next/link";
 import PropTypes from "prop-types";
-import { Fragment, useContext } from "react";
+import {Fragment, useContext, useEffect, useState} from "react";
 import {
     getDatasetTypeDisplay,
     displayBodyHeader,
@@ -18,12 +18,23 @@ import {
 
 function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader, hasWritePrivilege}) {
     const {cache} = useContext(AppContext)
+    const [organs, setOrgans] = useState([])
 
     const getOrganRoute = (ruiCode) => {
         const organ = getOrganByCode(ruiCode)
         if (!organ) return
         return `${APP_ROUTES.organs}/${organ.path}`
     }
+
+    useEffect(() => {
+        let organs = new Set()
+        data.origin_samples.map(origin_sample => {
+            organs.add(origin_sample.organ)
+        })
+        // Need to convert Set to Array
+        setOrgans(Array.from(organs))
+    }, [data]);
+
 
     return (
         <Fragment>
@@ -68,25 +79,27 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                     }
                 </Fragment>) : (
                 <Fragment>
-                    {data.origin_samples && data.origin_samples.length > 0 &&
-                        <>
-                            {/* Some organs don't have an organ page */}
-                            {getOrganRoute(data.origin_samples[0].organ) ? (
-                                <a href={getOrganRoute(data.origin_samples[0].organ)}>
-                                    <h5 className={"title_badge"}>
+                    {organs && organs.length > 0 &&
+                        organs.map(organ => (
+                            <>
+                                {/* Some organs don't have an organ page */}
+                                {getOrganRoute(organ) ? (
+                                    <a href={getOrganRoute(organ)}>
+                                        <h5 className={"title_badge"}>
                                         <span className="badge bg-secondary me-2">
-                                            {displayBodyHeader(getUBKGFullName(data.origin_samples[0].organ))}
+                                            {displayBodyHeader(getUBKGFullName(organ))}
                                         </span>
-                                    </h5>
-                                </a>
-                            ) : (
-                                <h5 className={"title_badge"}>
+                                        </h5>
+                                    </a>
+                                ) : (
+                                    <h5 className={"title_badge"}>
                                     <span className="badge bg-secondary me-2">
-                                        {displayBodyHeader(getUBKGFullName(data.origin_samples[0].organ))}
+                                        {displayBodyHeader(getUBKGFullName(organ))}
                                     </span>
-                                </h5>
-                            )}
-                        </>
+                                    </h5>
+                                )}
+                            </>
+                        ))
                     }
 
                     {data.source_type &&
