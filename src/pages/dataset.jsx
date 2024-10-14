@@ -37,7 +37,7 @@ const Upload = dynamic(() => import("@/components/custom/entities/dataset/Upload
 
 function ViewDataset() {
     const [data, setData] = useState(null)
-    const [doiData, setDoiData] = useState(null)
+    const [citationData, setCitationData] = useState(null)
     const [ancestorHasMetadata, setAncestorHasMetadata] = useState(false)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
@@ -103,8 +103,9 @@ function ViewDataset() {
                 Object.assign(_data, ancestry)
                 setData(_data)
 
-                const doi = await fetchDataCite(_data.doi_url)
-                setDoiData(doi?.data)
+                const citation = await fetchDataCite(_data.publication_url)
+                setCitationData(citation)
+
                 for (const ancestor of ancestry.ancestors) {
                     console.log(ancestor)
                     if ((ancestor.metadata && Object.keys(ancestor.metadata).length) || (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata) && 'metadata' in ancestor.ingest_metadata)) {
@@ -239,7 +240,7 @@ function ViewDataset() {
                                                 primaryDateTitle={data.published_timestamp ? ("Publication Date") : ("Creation Date")}
                                                 primaryDate={data.published_timestamp ? (data.published_timestamp) : (data.created_timestamp)}
                                                 labId={data.lab_dataset_id}
-                                                doiData={doiData}
+                                                citationData={citationData}
                                                 secondaryDateTitle="Last Touch"
                                                 secondaryDate={data.last_modified_timestamp}
                                                 data={data}/>

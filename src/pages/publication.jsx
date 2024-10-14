@@ -27,7 +27,7 @@ const SenNetAccordion = dynamic(() => import("@/components/custom/layout/SenNetA
 
 function ViewPublication() {
     const [data, setData] = useState(null)
-    const [doiData, setDoiData] = useState(null)
+    const [citationData, setCitationData] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -55,8 +55,9 @@ function ViewPublication() {
                 Object.assign(_data, ancestry)
                 setData(_data)
 
-                const doi = await fetchDataCite(_data.publication_url)
-                setDoiData(doi?.data)
+                const citation = await fetchDataCite(_data.publication_url)
+                setCitationData(citation)
+                console.log(citation)
 
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
@@ -169,7 +170,7 @@ function ViewPublication() {
                                                          primaryDate={getTimestamp()}
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
-                                                         doiData={doiData}
+                                                         citationData={citationData}
                                                          data={data}
                                                          showAuthors={true}
                                                          showDatasetTypes={true}
@@ -177,9 +178,9 @@ function ViewPublication() {
                                             />
 
                                             {/* Visualizations */}
-                                            <SenNetAccordion id='Visualizations' title={'Visualizations'}>
-                                                {showVitessceList && <VitessceList data={data} showVitessceList={showVitessceList} setShowVitessceList={setShowVitessceList} />}
-                                            </SenNetAccordion>
+                                            {/*<SenNetAccordion id='Visualizations' title={'Visualizations'}>*/}
+                                            {/*    {showVitessceList && <VitessceList data={data} showVitessceList={showVitessceList} setShowVitessceList={setShowVitessceList} />}*/}
+                                            {/*</SenNetAccordion>*/}
 
                                             {/*Provenance*/}
                                             {data &&
