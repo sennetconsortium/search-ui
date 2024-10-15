@@ -1,12 +1,15 @@
 import VignetteItem from '@/components/custom/vitessce/VignetteItem'
 import { getJSONFromAssetsEndpoint } from '@/lib/services'
+import $ from 'jquery'
 import log from 'loglevel'
 import { useEffect, useState } from 'react'
 import Spinner from '../Spinner'
+import SenNetAccordion from '../layout/SenNetAccordion'
 
 function VignetteList({ publication, ancillaryPublication }) {
     const [loading, setLoading] = useState(true)
     const [vignettesData, setVignettesData] = useState([])
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         const fetchVignettesData = async (uuid) => {
@@ -19,6 +22,8 @@ function VignetteList({ publication, ancillaryPublication }) {
             // TODO: handle error
             if (publicationAncillaryConfig instanceof Error) {
                 log.error('Error fetching publication ancillary config', publicationAncillaryConfig)
+                setError('No vignettes available')
+                setLoading(false)
                 return
             }
 
@@ -39,21 +44,29 @@ function VignetteList({ publication, ancillaryPublication }) {
             setLoading(false)
         }
 
-        if (ancillaryPublication) {
+        if (ancillaryPublication && !$.isEmptyObject(ancillaryPublication)) {
             fetchVignettesData(ancillaryPublication.uuid)
+            return
+        }
+        if (ancillaryPublication && $.isEmptyObject(ancillaryPublication)) {
+            // No ancillary publication, so no vignettes to display
+            setError('No visualization available')
+            setLoading(false)
         }
     }, [ancillaryPublication])
 
     return (
-        <div className='mb-4'>
-            {!loading &&
-                vignettesData.length > 0 &&
-                vignettesData.map((v) => (
-                    <VignetteItem key={v.id} publication={{ uuid: publication.uuid }} vignette={v} />
-                ))}
-            {!loading && vignettesData.length < 1 && <div>No vignettes available</div>}
-            {loading && <Spinner />}
-        </div>
+        <SenNetAccordion id='Visualizations' title='Visualizations' expanded={true}>
+            <div className='mb-4'>
+                {!loading &&
+                    vignettesData.length > 0 &&
+                    vignettesData.map((v) => (
+                        <VignetteItem key={v.id} publication={{ uuid: publication.uuid }} vignette={v} />
+                    ))}
+                {!loading && error && <div>{error}</div>}
+                {loading && <Spinner />}
+            </div>
+        </SenNetAccordion>
     )
 }
 

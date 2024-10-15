@@ -55,7 +55,7 @@ function ViewPublication() {
                 // there could potentially be multiple descendants
                 let ancillaryPublication = null
                 if (_data.descendants.length > 1) {
-                    // get the most recent one
+                    // get the most recent ancillary publication
                     ancillaryPublication = _data.descendants
                         .sort((a, b) => new Date(b.last_modified_timestamp) - new Date(a.last_modified_timestamp))
                         .find(d => d.dataset_type === 'Publication [ancillary]' && d.ingest_metadata?.files[0]?.rel_path)
@@ -64,7 +64,7 @@ function ViewPublication() {
                         .find(d => d.dataset_type === 'Publication [ancillary]' && d.ingest_metadata?.files[0]?.rel_path)
                 }
 
-                setAncillaryPublicationData(ancillaryPublication)
+                setAncillaryPublicationData(ancillaryPublication || {})
 
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
@@ -184,11 +184,9 @@ function ViewPublication() {
                                             />
 
                                             {/* Visualizations */}
-                                            <SenNetAccordion id='Visualizations' title='Visualizations' expanded={true}>
-                                                <VignetteList 
-                                                    publication={{uuid: data.uuid}}
-                                                    ancillaryPublication={ancillaryPublicationData}/>
-                                            </SenNetAccordion>
+                                            <VignetteList 
+                                                publication={{uuid: data.uuid}}
+                                                ancillaryPublication={ancillaryPublicationData}/>
 
                                             {/*Provenance*/}
                                             {data &&
