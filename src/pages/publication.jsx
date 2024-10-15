@@ -18,7 +18,6 @@ const Description = dynamic(() => import("@/components/custom/entities/sample/De
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const SenNetAccordion = dynamic(() => import("@/components/custom/layout/SenNetAccordion"))
 
 function ViewPublication() {
     const [data, setData] = useState(null)
