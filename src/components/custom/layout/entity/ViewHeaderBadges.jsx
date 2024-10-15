@@ -28,11 +28,13 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
 
     useEffect(() => {
         let organs = new Set()
-        data.origin_samples.map(origin_sample => {
-            organs.add(origin_sample.organ)
-        })
-        // Need to convert Set to Array
-        setOrgans(Array.from(organs))
+        if (data && data.origin_samples) {
+            data.origin_samples.map(origin_sample => {
+                organs.add(origin_sample.organ)
+            })
+            // Need to convert Set to Array
+            setOrgans(Array.from(organs))
+        }
     }, [data]);
 
 
