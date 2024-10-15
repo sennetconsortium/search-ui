@@ -1,4 +1,4 @@
-import { getAssetsEndpoint } from '@/config/config'
+import { getAssetsEndpoint, getAuth } from '@/config/config'
 import useVitessceEncoder from '@/hooks/useVitessceEncoder'
 import { getJSONFromAssetsEndpoint } from '@/lib/services'
 import { Snackbar } from '@mui/material'
@@ -25,11 +25,26 @@ function VignetteItem({ publication, vignette }) {
                 setHasLazyLoaded(true)
                 const configPath = `${publication.uuid}/vignettes/${vignette.directory_name}/${vignette.figures[0].file}`
                 getJSONFromAssetsEndpoint(configPath).then((config) => {
-                    // Replace the {{ base_url }} placeholder with the actual assets URL
                     const assetsUrl = getAssetsEndpoint() + publication.uuid + '/data'
-                    const configStr = JSON.stringify(config).replace('{{ base_url }}', assetsUrl)
-                    const configObj = JSON.parse(configStr)
-                    setConfig(configObj)
+                    const token = getAuth()
+
+                    for (const ds of config?.datasets || []) {
+                        for (const file of ds.files || []) {
+                            // Replace the {{ base_url }} placeholder with the actual assets URL
+                            file.url = file.url.replace('{{ base_url }}', assetsUrl)
+
+                            // Add the Authorization header to the requestInit object
+                            if (token && !Object.hasOwnProperty(file, 'requestInit')) {
+                                file.requestInit = {
+                                    headers: {
+                                        Authorization: `Bearer ${token}`,
+                                    },
+                                }
+                            }
+                        }
+                    }
+
+                    setConfig(config)
                 })
             }
         }
