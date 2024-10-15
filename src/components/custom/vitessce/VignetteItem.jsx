@@ -79,13 +79,12 @@ function VignetteItem({ publication, vignette }) {
     return (
         <SenNetAccordion
             id={`vignette-${vignette.id}`}
-            title={`Vignette ${vignette.id}`}
+            title={`Vignette ${vignette.id}: ${vignette.name}`}
             expanded={false}
             className='accordion--vitessce'
             ref={accordionRef}
         >
             <div className='row'>
-                <div className='card-subtitle h6'>{vignette.name}</div>
                 <div className='card-text'>{vignette.description}</div>
 
                 <div className='col p-2 mx-1 my-2'>
