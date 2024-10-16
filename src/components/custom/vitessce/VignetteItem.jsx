@@ -85,7 +85,7 @@ function VignetteItem({ publication, vignette }) {
             id={`vignette-${vignette.id}`}
             title={`Vignette ${vignette.id}: ${vignette.name}`}
             expanded={false}
-            className='accordion--vitessce'
+            className='accordion--vitessce accordion--vignette'
             ref={accordionRef}
         >
             <div className='row'>
