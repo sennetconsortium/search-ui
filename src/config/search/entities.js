@@ -295,6 +295,7 @@ export const SEARCH_ENTITIES = {
             'dataset_type',
             'status',
             'origin_samples.organ',
+            'origin_samples.organ_hierarchy',
             'organ',
             'title',
             'description',
