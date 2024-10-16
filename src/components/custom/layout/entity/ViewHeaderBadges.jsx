@@ -83,7 +83,7 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                 <Fragment>
                     {organs && organs.length > 0 &&
                         organs.map(organ => (
-                            <>
+                            <Fragment key={organ}>
                                 {/* Some organs don't have an organ page */}
                                 {getOrganRoute(organ) ? (
                                     <a href={getOrganRoute(organ)}>
@@ -100,7 +100,7 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                                     </span>
                                     </h5>
                                 )}
-                            </>
+                            </Fragment>
                         ))
                     }
 
