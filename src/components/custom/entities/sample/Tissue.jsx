@@ -18,7 +18,7 @@ export default function Tissue({ data }) {
             width: '30%',
             wrap: true,
             format: row => {
-                const name = getUBKGFullName(row.origin_samples?.organ)
+                const name = getUBKGFullName(row.origin_samples[0]?.organ)
                 const code = cache.organTypesCodes[name]
                 const organ = getOrganByCode(code)
                 const icon = organIcons[code] || organIcons.OT

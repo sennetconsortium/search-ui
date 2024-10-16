@@ -62,7 +62,7 @@ const AncestorInformationBox = ({ ancestor }) => {
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
                                 <Card.Subtitle>Organ Type</Card.Subtitle>
-                                <Card.Text>{getUBKGFullName(ancestor.origin_samples[0].organ)}</Card.Text>
+                                <Card.Text>{getUBKGFullName(ancestor.origin_samples[0].organ_hierarchy)}</Card.Text>
                             </Card.Body>
                         </Card>
                     }

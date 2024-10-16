@@ -37,7 +37,7 @@ export default function AncestorsTable({formLabel, onChange, deleteAncestor, val
                 selector: row => {
                     let organs = []
                     row.origin_samples.forEach((origin_sample) => {
-                        organs.push(getUBKGFullName(origin_sample.organ))
+                        organs.push(getUBKGFullName(origin_sample.organ_hierarchy))
                     })
                     if (organs.length > 0) {
                         return organs.join(', ')

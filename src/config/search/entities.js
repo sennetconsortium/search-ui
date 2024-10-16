@@ -292,6 +292,7 @@ export const SEARCH_ENTITIES = {
             'dataset_type_hierarchy.second_level',
             'status',
             'origin_samples.organ',
+            'origin_samples.organ_hierarchy',
             'organ',
             'title',
             'description',

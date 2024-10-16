@@ -113,12 +113,12 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
 
     reusableColumns['Organ'] = {
         name: 'Organ',
-        id: 'origin_samples.organ',
+        id: 'origin_samples.organ_hierarchy',
         selector: row => {
             let organs = []
             if(row.origin_samples) {
                 raw(row.origin_samples).forEach((origin_sample) => {
-                    organs.push(getUBKGFullName(origin_sample.organ))
+                    organs.push(getUBKGFullName(origin_sample.organ_hierarchy))
                 })
                 if (organs.length > 0) {
                     return organs.join(', ')
