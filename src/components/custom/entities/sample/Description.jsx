@@ -6,8 +6,9 @@ import AppContext from "../../../../context/AppContext";
 import {eq, formatCitation, getUBKGFullName} from "../../js/functions";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 
-export default function Description({data, doiData, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate, title, showAuthors=false, showDatasetTypes=false, showOrgans=false}) {
+export default function Description({data, citationData, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate, title, showAuthors=false, showDatasetTypes=false, showOrgans=false}) {
 
+    console.log(citationData)
     const {isLoggedIn, cache} = useContext(AppContext)
 
         const buildContacts = () => {
@@ -75,13 +76,13 @@ export default function Description({data, doiData, labId, primaryDateTitle, pri
                     </Card.Body>
                 </Card>}
 
-                {data && (data?.doi_url || data?.publication_doi) && doiData &&
+                {data && (data?.doi_url || data?.publication_doi) && citationData &&
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
-                            <Card.Subtitle>Citation <SenNetPopover text={<span>Citation is provided in NLM format. If the DataCite page is provided, select from the <i>Cite as</i> drop down alternate ways to cite.</span>} trigger={SenPopoverOptions.triggers.hover} className={`popover-citation`}>
+                            <Card.Subtitle>Citation <SenNetPopover text={<span>Citation is provided in APA format.</span>} trigger={SenPopoverOptions.triggers.hover} className={`popover-citation`}>
                                 <i className="bi bi-question-circle-fill"></i>
                             </SenNetPopover></Card.Subtitle>
-                            <Card.Text>{doiData && <span>{formatCitation(doiData, data.doi_url || data.publication_doi)}</span>}</Card.Text>
+                            <Card.Text dangerouslySetInnerHTML={{__html: citationData}}></Card.Text>
                         </Card.Body>
                     </Card>
                 }

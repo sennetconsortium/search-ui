@@ -12,7 +12,7 @@ import {callService, getEntityData, update_create_entity} from '../../lib/servic
 import {cleanJson, eq, fetchEntity, getIdRegEx} from '../../components/custom/js/functions'
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
-import {getEntityEndPoint, valid_dataset_ancestor_config} from "../../config/config";
+import {getEntityEndPoint} from "../../config/config";
 import $ from 'jquery'
 import SenNetPopover, {SenPopoverOptions} from "../../components/SenNetPopover"
 import AttributesUpload, {getResponseList} from "../../components/custom/edit/AttributesUpload";

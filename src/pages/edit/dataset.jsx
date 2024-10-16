@@ -80,7 +80,17 @@ export default function EditDataset() {
             const response = await getEntityConstraints(fullBody, {order: 'descendants', filter: 'search'})
             if (response.ok) {
                 const body = await response.json()
-                valid_dataset_ancestor_config['searchQuery']['includeFilters'] = body.description[0].description
+                const searchQuery = body.description[0].description
+                let includeFilters = []
+                for (const query of searchQuery) {
+                    let includeFilter = {
+                        "type": 'term',
+                        "field": query.keyword,
+                        "values": [query.value]
+                    }
+                    includeFilters.push(includeFilter)
+                }
+                valid_dataset_ancestor_config['searchQuery']['includeFilters'] = includeFilters
             }
         }
 

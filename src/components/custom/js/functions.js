@@ -48,36 +48,30 @@ export function getProtocolId(protocolUrl) {
     return regex.exec(protocolUrl)
 }
 
-export function formatCitation(data, url) {
-    let result = []
-    const creators = data.attributes.creators;
-    for (let i = 0; i < creators.length; i++) {
-        result.push(<span key={i}>
-            {creators[i].familyName} {creators[i].givenName[0]}
-            {i == creators.length - 1 ? `. ` : `, `} </span>)
-    }
-    result.push(<span key={`doi-title`} className={'fw-light'}>{data.attributes?.titles[0].title}</span>)
-    result.push(<span key={`doi-publisher`}>. {data.attributes?.publisher}. {data.attributes.publicationYear}.</span>)
-    return <>
-        {result}
-        <span key={'available-from'}> Available from: <br /><a className='lnk--ic' href={url}>{url} <i
-            className="bi bi-box-arrow-up-right"></i></a></span>
-        {/*<hr/>*/}
-        {/*<span><a className='lnk--ic' href={`https://commons.datacite.org/${url.replace('https://', '')}`}>View the DataCite page<i*/}
-        {/*    className="bi bi-box-arrow-up-right"></i></a></span>*/}
-    </>
-}
-
 export async function fetchDataCite(protocolUrl) {
-    console.log(protocolUrl)
     if (!protocolUrl) return null
-    const regex = new RegExp("(?<=doi.org/).*")
-    const protocolId = regex.exec(protocolUrl)
-    const response = await fetch(`https://api.datacite.org/dois/${protocolId}`)
-    if (!response.ok) {
+    let headers = new Headers()
+    headers.append("Accept", "text/x-bibliography; style=apa")
+    let requestOptions = {
+        method: 'GET',
+        headers: headers
+    }
+
+    try {
+        const response = await fetch(protocolUrl, requestOptions)
+        if (!response.ok) {
+            return null
+        }
+
+        let urlRegex = /(https?:\/\/[^\s]+)/g;
+
+        return (await response.text()).replace(urlRegex, (url) => {
+            return '<a href="' + url + '" class="lnk--ic pl-0">' + url + ' <i class="bi bi-box-arrow-up-right"></i></a>';
+        });
+    } catch (e) {
+        log.error(e)
         return null
     }
-    return response.json()
 }
 
 export async function fetchProtocols(protocolUrl) {
