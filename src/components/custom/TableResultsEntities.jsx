@@ -49,7 +49,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         setModalTitle(<h5>Description for <code>{raw(row.sennet_id)}</code><ClipboardCopy text={raw(row.sennet_id)} /></h5>)
     }
 
-    const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn, includeLabIdCol = true, includeGroupCol = true}) => {
+    const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], includeGroupCol = true}) => {
         let cols = []
         if (!inModal) {
             cols.push({
@@ -84,18 +84,6 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
                 format: row => <span data-field='entity_type'>{raw(row.entity_type)}</span>,
             })
         }
-        if (includeLabIdCol && isLoggedIn() || _isLoggedIn) {
-            cols.push({
-                name: 'Lab ID',
-                id: 'lab_id',
-                selector: row => {
-                    return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
-                },
-                format: row => <span data-field='lab_id'>{raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)}</span>,
-                sortable: true,
-                reorder: true,
-            })
-        }
         cols = cols.concat(columns)
         if (includeGroupCol) {
             cols.push({
@@ -111,66 +99,127 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         return cols;
     }
 
-    const reusableColumns = {
-        Status:  {
-            name: 'Status',
-            id: 'status',
-            selector: row => raw(row.status),
-            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
-            sortable: true,
-            reorder: true,
-        },
-        Organ: {
-            name: 'Organ',
-            id: 'origin_samples.organ',
-            selector: row => getUBKGFullName(raw(row.origin_samples)[0]?.organ),
-            sortable: true,
-            reorder: true,
-        },
-        SourceType: {
-            name: 'Type',
-            id: 'source_type',
-            selector: row => raw(row.source_type),
-            sortable: true,
-            reorder: true,
-        },
-        SampleCategory: {
-            name: 'Category',
-            id: 'sample_category',
-            selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : '',
-            sortable: true,
-            reorder: true,
-        },
-        DatasetType: {
-            name: 'Dataset Type',
-            id: 'dataset_type',
-            selector: row => {
-                let val = raw(row.dataset_type_hierarchy)?.second_level || raw(row.dataset_type)
-                if (val) {
-                    return Array.isArray(val) ? getUBKGFullName(val[0]) : val
-                } else {
-                    return ''
-                }
-            },
-            sortable: true,
-            reorder: true,
-        },
+    const reusableColumns = {}
+    reusableColumns['Status'] = {
+        name: 'Status',
+        id: 'status',
+        selector: row => raw(row.status),
+        format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover
+            text={getStatusDefinition(raw(row.status))}
+            className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
+        sortable: true,
+        reorder: true,
     }
+
+    reusableColumns['Organ'] = {
+        name: 'Organ',
+        id: 'origin_samples.organ',
+        selector: row => {
+            let organs = []
+            if(row.origin_samples) {
+                raw(row.origin_samples).forEach((origin_sample) => {
+                    organs.push(getUBKGFullName(origin_sample.organ))
+                })
+                if (organs.length > 0) {
+                    return organs.join(', ')
+                }
+            }
+            return ''
+        },
+        sortable: true,
+        reorder: true,
+    }
+
+    reusableColumns['SourceType'] = {
+        name: 'Type',
+        id: 'source_type',
+        selector: row => raw(row.source_type),
+        sortable: true,
+        reorder: true,
+    }
+
+    reusableColumns['SampleCategory'] = {
+        name: 'Category',
+        id: 'sample_category',
+        selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : '',
+        sortable: true,
+        reorder: true,
+    }
+
+    reusableColumns['DatasetType'] = {
+        name: 'Dataset Type',
+        id: 'dataset_type',
+        selector: row => {
+            let val = raw(row.dataset_type_hierarchy)?.second_level || raw(row.dataset_type)
+            if (val) {
+                return Array.isArray(val) ? getUBKGFullName(val[0]) : val
+            } else {
+                return ''
+            }
+        },
+        sortable: true,
+        reorder: true,
+    }
+
+    if (isLoggedIn()) {
+        reusableColumns['LabSourceID'] = {
+            name: 'Lab Source ID',
+            id: 'lab_source_id',
+            selector: row => {
+                return raw(row.lab_source_id)
+            },
+            format: row => <span data-field='lab_source_id'>{raw(row.lab_source_id)}</span>,
+            sortable: true,
+            reorder: true,
+        }
+
+        reusableColumns['LabSampleID'] = {
+            name: 'Lab Sample ID',
+            id: 'lab_tissue_sample_id',
+            selector: row => {
+                return raw(row.lab_tissue_sample_id)
+            },
+            format: row => <span data-field='lab_tissue_sample_id'>{raw(row.lab_tissue_sample_id)}</span>,
+            sortable: true,
+            reorder: true,
+        }
+
+        reusableColumns['LabDatasetID'] = {
+            name: 'Lab Dataset ID',
+            id: 'lab_dataset_id',
+            selector: row => {
+                return raw(row.lab_dataset_id)
+            },
+            format: row => <span data-field='lab_dataset_id'>{raw(row.lab_dataset_id)}</span>,
+            sortable: true,
+            reorder: true,
+        }
+    }
+
 
     const sourceColumns = [
         reusableColumns.SourceType
     ]
+    if(isLoggedIn()){
+        sourceColumns.push(reusableColumns.LabSourceID)
+    }
 
     const sampleColumns = [
         reusableColumns.SampleCategory,
-        reusableColumns.Organ
+        reusableColumns.Organ,
     ]
+    if(isLoggedIn()){
+        sampleColumns.push(reusableColumns.LabSampleID)
+    }
 
     const datasetColumns = [
         reusableColumns.DatasetType,
         reusableColumns.Organ,
         reusableColumns.Status
     ]
+     if(isLoggedIn()){
+        datasetColumns.push(reusableColumns.LabDatasetID)
+    }
 
     const uploadColumns = [
         {
@@ -287,25 +336,31 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
 
     return (
         <>
-            <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
-                <ResultsBlock
-                    index={'entities'}
-                    searchContext={getSearchContext}
-                    defaultHiddenColumns={Object.values(defaultHiddenColumns)}
-                    getTableColumns={getTableColumns}
-                />
-                <AppModal
-                    className={`modal--searchEntities`}
-                    modalSize={'xl'}
-                    showModal={showModal}
-                    modalTitle={modalTitle}
-                    modalBody={modalBody}
-                    handleClose={() => { setShowModal(false)}}
-                    showHomeButton={false}
-                    showCloseButton={true}
-                    closeButtonLabel={'Okay'}
-                />
-            </TableResultsProvider>
+            {defaultHiddenColumns &&
+                <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children}
+                                      filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw}
+                                      inModal={inModal}>
+                    <ResultsBlock
+                        index={'entities'}
+                        searchContext={getSearchContext}
+                        defaultHiddenColumns={Object.values(defaultHiddenColumns)}
+                        getTableColumns={getTableColumns}
+                    />
+                    <AppModal
+                        className={`modal--searchEntities`}
+                        modalSize={'xl'}
+                        showModal={showModal}
+                        modalTitle={modalTitle}
+                        modalBody={modalBody}
+                        handleClose={() => {
+                            setShowModal(false)
+                        }}
+                        showHomeButton={false}
+                        showCloseButton={true}
+                        closeButtonLabel={'Okay'}
+                    />
+                </TableResultsProvider>
+            }
         </>
     )
 }
