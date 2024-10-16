@@ -61,6 +61,10 @@ function VignetteItem({ publication, vignette }) {
         }
     }, [])
 
+    const formatDescription = (description) => {
+        return description.replace(/^#*\s*/, '')
+    }
+
     const expandVitessceToFullscreen = useCallback(() => {
         document.addEventListener('keydown', collapseVitessceOnEsc, false)
         $('.vitessce-container').toggleClass('vitessce_fullscreen')
@@ -85,7 +89,7 @@ function VignetteItem({ publication, vignette }) {
             ref={accordionRef}
         >
             <div className='row'>
-                <div className='card-text'>{vignette.description}</div>
+                <div className='card-text'>{formatDescription(vignette.description)}</div>
 
                 <div className='col p-2 mx-1 my-2'>
                     <span className='fw-light fs-6'>
