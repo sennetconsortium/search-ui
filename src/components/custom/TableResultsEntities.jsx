@@ -118,7 +118,6 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
             let organs = []
             if(row.origin_samples) {
                 raw(row.origin_samples).forEach((origin_sample) => {
-                    console.log(origin_sample)
                     organs.push(getUBKGFullName(origin_sample.organ_hierarchy))
                 })
                 if (organs.length > 0) {
