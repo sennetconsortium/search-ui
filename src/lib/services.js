@@ -1,5 +1,5 @@
 import { getHeaders } from "@/components/custom/js/functions";
-import { getAuth, getEntityEndPoint, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "@/config/config";
+import { getAssetsEndpoint, getAuth, getEntityEndPoint, getIngestEndPoint, getSearchEndPoint, getUUIDEndpoint } from "@/config/config";
 import { getCookie } from "cookies-next";
 import log from "loglevel";
 import { SEARCH_ENTITIES } from "../config/search/entities";
@@ -233,7 +233,6 @@ export async function getEntityData(uuid, exclude_properties=[]) {
 }
 
 export async function getAncestryData(uuid, ops = {endpoints: ['ancestors', 'descendants'], otherEndpoints: []}) {
-
     const ancestryPromises = getAncestry(uuid, ops)
     const promiseSettled = await Promise.allSettled([...Object.values(ancestryPromises)])
     let _data = {};
@@ -243,6 +242,16 @@ export async function getAncestryData(uuid, ops = {endpoints: ['ancestors', 'des
         i++;
     }
     return _data;
+}
+
+export async function getJSONFromAssetsEndpoint(path) {
+    if (path.startsWith('/')) {
+        path = path.substring(1)
+    }
+    const token = getAuth()
+    const tokenParam = token ? `?token=${token}` : ''
+    const assetsUrl = getAssetsEndpoint() + path + tokenParam
+    return callService(null, assetsUrl, 'GET', null)
 }
 
 export async function callService(raw, url, method, headers) {

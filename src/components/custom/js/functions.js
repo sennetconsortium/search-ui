@@ -57,16 +57,21 @@ export async function fetchDataCite(protocolUrl) {
         headers: headers
     }
 
-    const response = await fetch(protocolUrl, requestOptions)
-    if (!response.ok) {
+    try {
+        const response = await fetch(protocolUrl, requestOptions)
+        if (!response.ok) {
+            return null
+        }
+
+        let urlRegex = /(https?:\/\/[^\s]+)/g;
+
+        return (await response.text()).replace(urlRegex, (url) => {
+            return '<a href="' + url + '" class="lnk--ic pl-0">' + url + ' <i class="bi bi-box-arrow-up-right"></i></a>';
+        });
+    } catch (e) {
+        log.error(e)
         return null
     }
-
-    let urlRegex = /(https?:\/\/[^\s]+)/g;
-
-    return (await response.text()).replace(urlRegex, (url) => {
-        return '<a href="' + url + '" class="lnk--ic pl-0">' + url + ' <i class="bi bi-box-arrow-up-right"></i></a>';
-    });
 }
 
 export async function fetchProtocols(protocolUrl) {

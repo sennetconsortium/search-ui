@@ -1,19 +1,15 @@
 import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
-import {
-    eq,
-    fetchDataCite,
-    getDatasetTypeDisplay,
-} from "@/components/custom/js/functions";
+import {eq, fetchDataCite, getDatasetTypeDisplay} from "@/components/custom/js/functions";
 import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "@/context/DerivedContext";
-import VitessceList from "@/components/custom/vitessce/VitessceList";
 import ContributorsContacts from "@/components/custom/entities/ContributorsContacts";
 import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
+import VignetteList from "@/components/custom/vitessce/VignetteList";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -22,23 +18,20 @@ const Description = dynamic(() => import("@/components/custom/entities/sample/De
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const SenNetAccordion = dynamic(() => import("@/components/custom/layout/SenNetAccordion"))
-
 
 function ViewPublication() {
     const [data, setData] = useState(null)
     const [citationData, setCitationData] = useState(null)
+    const [ancillaryPublicationData, setAncillaryPublicationData] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
     const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
-    const [showVitessceList, setShowVitessceList] = useState(1)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-
 
             log.debug('publication: getting data...', uuid)
             // get the data from the api
@@ -57,12 +50,24 @@ function ViewPublication() {
 
                 const citation = await fetchDataCite(_data.publication_url)
                 setCitationData(citation)
-                console.log(citation)
+
+                // there could potentially be multiple descendants
+                let ancillaryPublication = null
+                if (_data.descendants.length > 1) {
+                    // get the most recent ancillary publication
+                    ancillaryPublication = _data.descendants
+                        .sort((a, b) => new Date(b.last_modified_timestamp) - new Date(a.last_modified_timestamp))
+                        .find(d => d.dataset_type === 'Publication [ancillary]' && d.ingest_metadata?.files[0]?.rel_path)
+                } else {
+                    ancillaryPublication = _data.descendants
+                        .find(d => d.dataset_type === 'Publication [ancillary]' && d.ingest_metadata?.files[0]?.rel_path)
+                }
+
+                setAncillaryPublicationData(ancillaryPublication || {})
 
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
-
             }
         }
 
@@ -178,9 +183,9 @@ function ViewPublication() {
                                             />
 
                                             {/* Visualizations */}
-                                            {/*<SenNetAccordion id='Visualizations' title={'Visualizations'}>*/}
-                                            {/*    {showVitessceList && <VitessceList data={data} showVitessceList={showVitessceList} setShowVitessceList={setShowVitessceList} />}*/}
-                                            {/*</SenNetAccordion>*/}
+                                            <VignetteList 
+                                                publication={{uuid: data.uuid}}
+                                                ancillaryPublication={ancillaryPublicationData}/>
 
                                             {/*Provenance*/}
                                             {data &&
