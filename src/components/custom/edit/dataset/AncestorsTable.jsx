@@ -1,5 +1,5 @@
 import React from 'react';
-import {getDatasetTypeDisplay, getStatusColor, getStatusDefinition} from "../../js/functions";
+import {getDatasetTypeDisplay, getStatusColor, getStatusDefinition, getUBKGFullName} from "../../js/functions";
 import Button from 'react-bootstrap/Button';
 import SenNetPopover from "../../../SenNetPopover";
 import ClipboardCopy from "../../../ClipboardCopy";
@@ -30,6 +30,20 @@ export default function AncestorsTable({formLabel, onChange, deleteAncestor, val
             {
                 name: 'Subtype',
                 selector: row => getDatasetTypeDisplay(row),
+                sortable: true
+            },
+            {
+                name: 'Organ',
+                selector: row => {
+                    let organs = []
+                    row.origin_samples.forEach((origin_sample) => {
+                        organs.push(getUBKGFullName(origin_sample.organ_hierarchy))
+                    })
+                    if (organs.length > 0) {
+                        return organs.join(', ')
+                    }
+                    return ''
+                },
                 sortable: true
             },
             {

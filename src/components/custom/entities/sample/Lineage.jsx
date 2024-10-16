@@ -1,42 +1,49 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import DataTable from 'react-data-table-component';
 import {getDatasetTypeDisplay, getUBKGFullName} from "../../js/functions";
 import ClipboardCopy from "../../../ClipboardCopy";
+import AppContext from "@/context/AppContext";
 
 const Lineage = ({ lineage }) => {
+    const {isLoggedIn} = useContext(AppContext)
 
-    const columns = [
-        {
-            name: 'SenNet ID',
-            selector: row => row.sennet_id,
-            sortable: false,
-        },
+    let columns = []
+    columns.push({
+        name: 'SenNet ID',
+        selector: row => row.sennet_id,
+        sortable: false,
+    })
+
+    columns.push(
         {
             name: 'Entity Type',
             selector: row => row.entity_type,
             sortable: true,
-        },
-        {
+        })
+    if (isLoggedIn()) {
+        columns.push({
             name: 'Lab ID',
-            selector: row => row.lab_id,
-            sortable: true,
-        },
-        {
-            name: 'Subtype',
-            selector: row => getDatasetTypeDisplay(row),
-            sortable: true,
-        },
-        {
-            name: 'Organ',
-            selector: row => row.organ,
-            sortable: true,
-        },
-        {
-            name: 'Group Name',
-            selector: row => row.group_name,
-            sortable: true,
-        }
-    ];
+            selector:
+                row => row.lab_id,
+            sortable:
+                true,
+        })
+    }
+    columns.push({
+        name: 'Subtype',
+        selector: row => getDatasetTypeDisplay(row),
+        sortable: true,
+    })
+    columns.push({
+        name: 'Organ',
+        selector: row => row.organ,
+        sortable: true,
+    })
+    columns.push({
+        name: 'Group Name',
+        selector: row => row.group_name,
+        sortable: true,
+    })
 
     const data = [];
     {

@@ -3,7 +3,7 @@ import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import ClipboardCopy from "../../../ClipboardCopy";
-import {getDatasetTypeDisplay} from "@/components/custom/js/functions";
+import {getDatasetTypeDisplay, getUBKGFullName} from "@/components/custom/js/functions";
 
 const AncestorInformationBox = ({ ancestor }) => {
 
@@ -58,11 +58,11 @@ const AncestorInformationBox = ({ ancestor }) => {
                             </Card.Body>
                         </Card>
                     }
-                    {ancestor.organ &&
+                    {ancestor.origin_samples &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
                                 <Card.Subtitle>Organ Type</Card.Subtitle>
-                                <Card.Text>{getDatasetTypeDisplay(ancestor)}</Card.Text>
+                                <Card.Text>{getUBKGFullName(ancestor.origin_samples[0].organ_hierarchy)}</Card.Text>
                             </Card.Body>
                         </Card>
                     }
