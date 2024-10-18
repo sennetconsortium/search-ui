@@ -298,7 +298,9 @@ export const SEARCH_ENTITIES = {
             'description',
             'dataset_type_hierarchy',
             'has_all_published_datasets'
-        ]
+        ],
+        // Moving this configuration into `searchQuery` so the config inside search-tools can read this
+        trackTotalHits: true,
     },
     initialState: {
         current: 1,
@@ -309,7 +311,6 @@ export const SEARCH_ENTITIES = {
         }]
     },
     urlPushDebounceLength: 100,
-    trackTotalHits: true,
     trackUrlState: true,
     apiConnector: connector,
     hasA11yNotifications: true,
