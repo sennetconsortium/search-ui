@@ -51,7 +51,7 @@ export function getProtocolId(protocolUrl) {
 export async function fetchDataCite(protocolUrl) {
     if (!protocolUrl) return null
     let headers = new Headers()
-    headers.append("Accept", "text/x-bibliography; style=apa")
+    headers.append("Accept", "text/x-bibliography; style=american-medical-association")
     let requestOptions = {
         method: 'GET',
         headers: headers

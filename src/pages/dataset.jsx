@@ -103,7 +103,7 @@ function ViewDataset() {
                 Object.assign(_data, ancestry)
                 setData(_data)
 
-                const citation = await fetchDataCite(_data.publication_url)
+                const citation = await fetchDataCite(_data.doi_url)
                 setCitationData(citation)
 
                 for (const ancestor of ancestry.ancestors) {
