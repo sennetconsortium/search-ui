@@ -54,6 +54,9 @@ export const TableResultsProvider = ({ index, columnsRef, children, getHotLink, 
     }
 
     const updateTablePagination = (page, currentRowsPerPage) => {
+        if (page * currentRowsPerPage > 10000) {
+            page = Math.floor(10000 / currentRowsPerPage)
+        }
         setPageSize(currentRowsPerPage)
         setPageNumber(page)
     }
