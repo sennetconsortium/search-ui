@@ -268,7 +268,6 @@ export const AppProvider = ({ cache, banners, children }) => {
     }
 
     const isPreview = (data, error) => {
-        log.debug('isPreview', data, error, authorized)
         if (error && hasPublicAccess(data)) return false
         return ((isUnauthorized(data) || isAuthorizing()) || !data)
     }

@@ -8,7 +8,6 @@ import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 
 export default function Description({data, citationData, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate, title, showAuthors=false, showDatasetTypes=false, showOrgans=false}) {
 
-    console.log(citationData)
     const {isLoggedIn, cache} = useContext(AppContext)
 
         const buildContacts = () => {
@@ -79,7 +78,7 @@ export default function Description({data, citationData, labId, primaryDateTitle
                 {data && (data?.doi_url || data?.publication_doi) && citationData &&
                     <Card border={'0'} className={'pb-3'}>
                         <Card.Body>
-                            <Card.Subtitle>Citation <SenNetPopover text={<span>Citation is provided in APA format.</span>} trigger={SenPopoverOptions.triggers.hover} className={`popover-citation`}>
+                            <Card.Subtitle>Citation <SenNetPopover text={<span>Citation is provided in AMA format.</span>} trigger={SenPopoverOptions.triggers.hover} className={`popover-citation`}>
                                 <i className="bi bi-question-circle-fill"></i>
                             </SenNetPopover></Card.Subtitle>
                             <Card.Text dangerouslySetInnerHTML={{__html: citationData}}></Card.Text>
