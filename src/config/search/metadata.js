@@ -511,10 +511,13 @@ export const SEARCH_METADATA = {
             'dataset_type',
             'status',
             'origin_samples.organ',
+            'origin_samples.organ_hierarchy',
             'organ',
             'title',
             'description',
-        ]
+        ],
+        // Moving this configuration into `searchQuery` so the config inside search-tools can read this
+        trackTotalHits: true,
     },
     initialState: {
         current: 1,
@@ -525,7 +528,6 @@ export const SEARCH_METADATA = {
         }]
     },
     urlPushDebounceLength: 100,
-    trackTotalHits: true,
     trackUrlState: true,
     apiConnector: connector,
     hasA11yNotifications: true,
