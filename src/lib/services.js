@@ -403,6 +403,11 @@ export const getOrganDataTypeQuantities = async (organCodes) => {
                         'origin_samples.organ.keyword': organCodes,
                     }
                 },
+                must: {
+                    term: {
+                        "entity_type.keyword" : "Dataset"
+                    }
+                },
                 must_not: mustNot
             }
         },
