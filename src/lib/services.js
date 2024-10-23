@@ -385,11 +385,12 @@ export const getDatasetQuantities = async () => {
 
 export const getOrganDataTypeQuantities = async (organCodes) => {
     // Get the must_not filters from entities config
-    const mustNot = SEARCH_ENTITIES.searchQuery.excludeFilters.flatMap((filter) => {
-        if (Array.isArray(filter.value)) {
-            return filter.value.map((value) => { return { term: { [filter.keyword]: value } } })
-        } else {
-            return { term: { [filter.keyword]: filter.value } };
+    const mustNot = SEARCH_ENTITIES.searchQuery.excludeFilters.map((filter) => {
+        switch (filter.type) {
+            case 'term':
+                return { terms: { [filter.field]: filter.values } };
+            case 'exists':
+                return { exists: { field: filter.field } };
         }
     })
 
@@ -402,13 +403,18 @@ export const getOrganDataTypeQuantities = async (organCodes) => {
                         'origin_samples.organ.keyword': organCodes,
                     }
                 },
+                must: {
+                    term: {
+                        "entity_type.keyword" : "Dataset"
+                    }
+                },
                 must_not: mustNot
             }
         },
         aggs: {
             dataset_type: {
                 terms: {
-                    field: 'dataset_type.keyword',
+                    field: 'dataset_type_hierarchy.second_level.keyword',
                     size: 40
                 }
             }
