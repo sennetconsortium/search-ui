@@ -63,11 +63,7 @@ export async function fetchDataCite(protocolUrl) {
             return null
         }
 
-        let urlRegex = /(https?:\/\/[^\s]+)/g;
-
-        return (await response.text()).replace(urlRegex, (url) => {
-            return '<a href="' + url + '" class="lnk--ic pl-0">' + url + ' <i class="bi bi-box-arrow-up-right"></i></a>';
-        });
+        return response.text()
     } catch (e) {
         log.error(e)
         return null

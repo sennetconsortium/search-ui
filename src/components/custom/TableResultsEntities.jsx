@@ -115,13 +115,13 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         name: 'Organ',
         id: 'origin_samples.organ_hierarchy',
         selector: row => {
-            let organs = []
+            let organs = new Set()
             if(row.origin_samples) {
                 raw(row.origin_samples).forEach((origin_sample) => {
-                    organs.push(getUBKGFullName(origin_sample.organ_hierarchy))
+                    organs.add(getUBKGFullName(origin_sample.organ_hierarchy))
                 })
-                if (organs.length > 0) {
-                    return organs.join(', ')
+                if (organs.size > 0) {
+                    return [...organs].join(', ')
                 }
             }
             return ''
