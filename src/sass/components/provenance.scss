@@ -38,6 +38,12 @@
         }
     }
 
+    .c-provenance__tabs {
+        li:first-child {
+            padding-left: 0 !important;
+        }
+    }
+
     .c-legend {
         font-size: 12px;
         &__item {

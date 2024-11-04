@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState, useContext} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import log from 'loglevel'
 import {DataConverterNeo4J, GraphGeneric, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
 import 'provenance-ui/dist/ProvenanceUI.css'
@@ -8,7 +8,6 @@ import AppModal from "../../AppModal";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
-import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
 import {
     eq,
@@ -19,7 +18,6 @@ import {
 } from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import * as d3 from "d3";
-import {get_lineage_info} from "../../../lib/services";
 
 
 function Provenance({nodeData}) {
@@ -463,7 +461,7 @@ function Provenance({nodeData}) {
         <SenNetAccordion title={'Provenance'}>
             <Tabs
                 defaultActiveKey="graph"
-                className="mb-3"
+                className="c-provenance__tabs mb-3"
                 variant="pills"
             >
                 <Tab eventKey="graph" title="Graph" >
