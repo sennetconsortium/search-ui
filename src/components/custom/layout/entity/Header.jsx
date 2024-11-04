@@ -19,8 +19,8 @@ function EntityHeader({entity, data, isEditMode, values, showGroup = true, admin
         {adminGroup && (data.pipeline_message || data.validation_message) && (eq(data['status'], 'Error') || eq(data['status'], 'Invalid')) &&
             <SenNetAlert className={"h6"} variant={'warning'}
                          text={data.pipeline_message ? (
-                             <span style={{whiteSpace: 'pre-wrap'}} dangerouslySetInnerHTML={{__html: data.pipeline_message}}/>) : (
-                             <span style={{whiteSpace: 'pre-wrap'}} dangerouslySetInnerHTML={{__html: data.validation_message}}/>)}
+                             <span style={{wordWrap: 'break-word'}} dangerouslySetInnerHTML={{__html: data.pipeline_message}}/>) : (
+                             <span style={{wordWrap: 'break-word'}} dangerouslySetInnerHTML={{__html: data.validation_message}}/>)}
                          icon={<i className="bi bi-exclamation-triangle-fill"></i>}
             />
         }
