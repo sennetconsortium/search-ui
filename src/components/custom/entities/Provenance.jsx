@@ -299,7 +299,7 @@ function Provenance({nodeData}) {
         visitedNodes: new Set(),
         initParentKey: DataConverterNeo4J.KEY_P_ENTITY,
         displayEdgeLabels: false,
-        minHeight: 120,
+        minHeight: 130,
         noStyles: true,
         propertyPrefixClear: 'sennet:',
         selectorId: 'neo4j--page',
@@ -473,7 +473,7 @@ function Provenance({nodeData}) {
                     {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId} otherLegend={otherLegend} />}
                     {loading && <Spinner/>}
                     <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
-                        {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 105 }} data={treeData} />}
+                        {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 500 }} data={treeData} />}
                         {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={modalId} />}
                     </AppModal>
                 </Tab>
