@@ -158,6 +158,17 @@ export const SEARCH_ENTITIES = {
                 isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
                 isFacetVisible: doesAggregationHaveBuckets('source.source_type')
             },
+            contains_data: {
+                label: 'Contains Data',
+                type: 'value',
+                field: 'contains_data.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
+                isFacetVisible: doesAggregationHaveBuckets('contains_data')
+            },
             has_rui_information: {
                 label: 'Is Spatially Registered',
                 type: 'value',
