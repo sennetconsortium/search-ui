@@ -131,16 +131,9 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                     {data.status &&
                         <h5 className={"title_badge"}>
                         <span className={`badge ${getStatusColor(data.status)} me-2`}>
-
-                        {(data.status === 'Invalid' || data.status === 'Error') && hasWritePrivilege ?
-                            (
-                                <StatusError text={data.status}
-                                             error={data.pipeline_message ? data.pipeline_message : data.validation_message}/>
-                            ) : (
-                                <SenNetPopover text={getStatusDefinition(data.status)} className={'status-info'}>
+                            <SenNetPopover text={getStatusDefinition(data.status)} className={'status-info'}>
                                     {displayBodyHeader(data.status)}
-                                </SenNetPopover>
-                            )}
+                            </SenNetPopover>
                         </span>
 
                         </h5>
