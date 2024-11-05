@@ -3,7 +3,6 @@ import RUIModal from "./RUIModal";
 import {Button, Form, OverlayTrigger, Popover} from 'react-bootstrap';
 import AppContext from "../../../../../context/AppContext";
 
-
 const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
     const {cache } = useContext(AppContext)
 
@@ -60,7 +59,9 @@ const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
                 {
                     ruiLocation &&
                     <>
-                        <Button variant={'outline-success'} className={'rounded-0 mb-2 ms-2'}
+                        <Button id={'view-rui-json-btn'}
+                                variant={'outline-success'}
+                                className={'rounded-0 mb-2 ms-2'}
                                 onClick={() => setShowRuiLocationModal(true)}>
                             View JSON
                         </Button>
