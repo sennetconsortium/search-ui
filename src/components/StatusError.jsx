@@ -9,7 +9,7 @@ function StatusError({text, error = 'An error occurred', title = 'Copy error mes
     }
 
     return (
-        <SenNetPopover text={<code>{error}</code>} placement={"bottom"}
+        <SenNetPopover text={<code>{error.length > 250 ? `${error.substring(0, 250)}...` : error}</code>} placement={"bottom"}
                        className="error-popover">
             <span title={title.replace('{error}', error)} onClick={copyToClipboard}>
                 {displayBodyHeader(text)}
