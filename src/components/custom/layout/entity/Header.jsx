@@ -15,7 +15,7 @@ function EntityHeader({entity, data, isEditMode, values, showGroup = true, admin
 
 
     useEffect(async () => {
-        if (data.status === 'Invalid' || data.status === 'Error') {
+        if ((data.status === 'Invalid' || data.status === 'Error') && (data.has_pipeline_message || data.has_validation_message)) {
             await fetch_pipeline_message(data.uuid, data.entity_type).then((pipelineMessage) => {
                 setPipelineMessage(pipelineMessage);
             });
