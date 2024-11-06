@@ -212,7 +212,7 @@ export async function fetch_pipeline_message(dataset_uuid, entity_type) {
     if (entity_type === 'Upload') {
         endpoint = 'validation-message'
     }
-    const url = getEntityEndPoint() + "/entities/" + dataset_uuid + "/" + endpoint
+    const url = getEntityEndPoint() + "entities/" + dataset_uuid + "/" + endpoint
     const response = await fetch_entity_api(url)
     return await response.text();
 }
