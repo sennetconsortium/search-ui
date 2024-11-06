@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {cleanJson, eq, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
+import {cleanJson, eq, fetchEntity, getDOIPattern} from "../../components/custom/js/functions";
 import {getAncestryData, getEntityData, parseJson, update_create_entity} from "../../lib/services";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
@@ -66,7 +66,6 @@ function EditSample() {
     const [imageByteArray, setImageByteArray] = useState([])
     const alertStyle = useRef('info')
 
-
     useEffect(() => {
         const fetchSampleCategories = async () => {
             setSampleCategories(null)
@@ -95,9 +94,12 @@ function EditSample() {
     // Wait until "sampleCategories" and "editMode" are set prior to running this
     useEffect(() => {
         if (dataAccessPublic === true) {
+            const excludedElementIds = ['view-rui-json-btn']
             const form = document.getElementById("sample-form");
             const elements = form.elements;
             for (let i = 0, len = elements.length; i < len; ++i) {
+                if (excludedElementIds.includes(elements[i].id))
+                    continue
                 elements[i].setAttribute('disabled', true);
             }
         }
