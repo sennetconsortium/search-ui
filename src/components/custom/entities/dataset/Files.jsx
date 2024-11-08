@@ -5,7 +5,7 @@ import Card from 'react-bootstrap/Card';
 import DataTable from "react-data-table-component";
 import {formatByteSize} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
-import {getAssetsEndpoint, getAuth} from "../../../../config/config";
+import {getAssetsEndpoint, getAuth, RESULTS_PER_PAGE} from "../../../../config/config";
 import DerivedContext from "../../../../context/DerivedContext";
 import Link from "next/link";
 
@@ -100,6 +100,7 @@ export const Files = ({data}) => {
                     <DataTable columns={tableColumns}
                                data={tableData}
                                fixedHeader={true}
+                               paginationRowsPerPageOptions={RESULTS_PER_PAGE}
                                pagination/>
                 </Card>
             }
