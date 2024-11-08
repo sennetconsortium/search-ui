@@ -174,6 +174,9 @@ export const SEARCH_ENTITIES = {
                 type: 'value',
                 field: 'has_rui_information.keyword',
                 isExpanded: false,
+                tooltipText: `Any entity that either is a tissue block containing spatial registration information or any
+                              tissue Sample or Dataset derived from a block containing spatial registration information
+                              is considered to have spatial information associated with it.`,
                 filterType: 'any',
                 isFilterable: false,
                 facetType: 'term',
