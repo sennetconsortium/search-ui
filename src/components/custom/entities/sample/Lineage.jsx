@@ -3,6 +3,7 @@ import DataTable from 'react-data-table-component';
 import {getDatasetTypeDisplay, getUBKGFullName} from "../../js/functions";
 import ClipboardCopy from "../../../ClipboardCopy";
 import AppContext from "@/context/AppContext";
+import {RESULTS_PER_PAGE} from "@/config/config";
 
 const Lineage = ({ lineage }) => {
     const {isLoggedIn} = useContext(AppContext)
@@ -70,6 +71,7 @@ const Lineage = ({ lineage }) => {
             columns={columns}
             data={data}
             fixedHeader={true}
+            paginationRowsPerPageOptions={RESULTS_PER_PAGE}
             pagination/>
     )
 }

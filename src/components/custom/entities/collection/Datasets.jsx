@@ -4,6 +4,7 @@ import DataTable from 'react-data-table-component'
 import {TableResultsEntities} from "../../TableResultsEntities";
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import {eq} from "../../js/functions";
+import {RESULTS_PER_PAGE} from "@/config/config";
 
 function Datasets({ data, label = 'Datasets' }) {
     const currentColumns = useRef([])
@@ -17,7 +18,7 @@ function Datasets({ data, label = 'Datasets' }) {
 
     return (
         <SenNetAccordion title={label}>
-            <DataTable columns={getColumns()} data={data} pagination fixedHeader={true} />
+            <DataTable columns={getColumns()} data={data} pagination paginationRowsPerPageOptions={RESULTS_PER_PAGE} fixedHeader={true}/>
         </SenNetAccordion>
     )
 }

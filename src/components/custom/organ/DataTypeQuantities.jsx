@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import { searchUIQueryString } from '../js/functions'
 import SenNetAccordion from '../layout/SenNetAccordion'
+import {RESULTS_PER_PAGE} from "@/config/config";
 
 /**
  * DataTypeQuantities component displays the quantities for a given organ in a SenNetAccordion.
@@ -103,6 +104,7 @@ const DataTypeQuantities = ({ id, organ }) => {
                     columns={columns}
                     data={dataTypes}
                     fixedHeader={true}
+                    paginationRowsPerPageOptions={RESULTS_PER_PAGE}
                     pagination
                 />
             )}
