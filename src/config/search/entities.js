@@ -170,7 +170,7 @@ export const SEARCH_ENTITIES = {
                 isFacetVisible: doesAggregationHaveBuckets('contains_data')
             },
             has_rui_information: {
-                label: 'Is Spatially Registered',
+                label: 'Has Spatial Information',
                 type: 'value',
                 field: 'has_rui_information.keyword',
                 isExpanded: false,
