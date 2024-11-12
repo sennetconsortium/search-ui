@@ -14,13 +14,17 @@ function EntityHeader({entity, data, isEditMode, values, showGroup = true, admin
     const [pipelineMessage, setPipelineMessage] = useState(null)
 
 
-    useEffect(async () => {
-        if ((data.status === 'Invalid' || data.status === 'Error') && (data.has_pipeline_message || data.has_validation_message)) {
-            await fetch_pipeline_message(data.uuid, data.entity_type).then((pipelineMessage) => {
-                setPipelineMessage(pipelineMessage);
-            });
+    useEffect(() => {
+        const fetchPipelineMessage = async () => {
+            if ((data.status === 'Invalid' || data.status === 'Error') && (data.has_pipeline_message || data.has_validation_message)) {
+                await fetch_pipeline_message(data.uuid, data.entity_type).then((pipelineMessage) => {
+                    setPipelineMessage(pipelineMessage);
+                });
+            }
         }
-    }, [])
+
+        fetchPipelineMessage().catch(console.error);
+    }, []);
 
 
     return (
