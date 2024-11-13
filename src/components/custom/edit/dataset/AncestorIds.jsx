@@ -128,7 +128,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
 
             {/*Ancestor Information Box*/}
             {ancestors && ancestors.length !== 0 &&
-                <AncestorsTable controlId={controlId} formLabel={formLabel} values={values} onChange={onChange}
+                <AncestorsTable controlId={controlId} formLabel='SenNet' values={values} onChange={onChange}
                                 ancestors={ancestors} deleteAncestor={deleteAncestor} disableDelete={disableDelete}/>
             }
 
