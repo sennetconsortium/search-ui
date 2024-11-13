@@ -3,7 +3,7 @@ import SenNetAccordion from "../../layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 import AppContext from "../../../../context/AppContext";
-import {eq, formatCitation, getUBKGFullName} from "../../js/functions";
+import {eq, formatCitation, getProtocolId, getUBKGFullName} from "../../js/functions";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 
 export default function Description({data, citationData, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate, title, showAuthors=false, showDatasetTypes=false, showOrgans=false}) {
@@ -82,13 +82,21 @@ export default function Description({data, citationData, labId, primaryDateTitle
                                 <i className="bi bi-question-circle-fill"></i>
                             </SenNetPopover></Card.Subtitle>
                             <Card.Text dangerouslySetInnerHTML={{__html: citationData}}></Card.Text>
+                            {data?.doi_url &&
+                                <Card.Text>
+                                    <a className='lnk--ic' target="_blank"
+                                       href={`https://commons.datacite.org/doi.org/${getProtocolId(data.doi_url)}`}>View
+                                        DataCite Page
+                                        <i className="bi bi-box-arrow-up-right"></i></a>
+                                </Card.Text>
+                            }
                         </Card.Body>
                     </Card>
                 }
 
-                {data && showAuthors && data?.contacts && <Card border={'0'} className={'pb-3'}>
-                    <Card.Body>
-                        <Card.Subtitle>Corresponding Authors &nbsp;
+            {data && showAuthors && data?.contacts && <Card border={'0'} className={'pb-3'}>
+                <Card.Body>
+                <Card.Subtitle>Corresponding Authors &nbsp;
                             <SenNetPopover text={<>The author(s) responsible for handling all correspondence about this article. Contact this author for any inquiries about this publication.</>} className={`popover-contacts`}>
                                 <i className="bi bi-question-circle-fill"></i>
                             </SenNetPopover></Card.Subtitle>

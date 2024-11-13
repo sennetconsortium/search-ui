@@ -43,9 +43,9 @@ export async function fetchEntity(ancestorId, paramKey = 'uuid') {
 }
 
 export function getProtocolId(protocolUrl) {
-    // The ID is everything after "dx.doi.org/"
-    const regex = new RegExp("(?<=dx.doi.org/).*")
-    return regex.exec(protocolUrl)
+    // The ID is everything after "doi.org/"
+    const regex = new RegExp("(?<=doi.org/).*")
+    return regex.exec(protocolUrl)[0]
 }
 
 export async function fetchDataCite(protocolUrl) {

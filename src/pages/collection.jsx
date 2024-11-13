@@ -22,7 +22,7 @@ const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 function ViewCollection() {
     const router = useRouter()
     const [data, setData] = useState(null)
-    const [doiData, setDoiData] = useState(null)
+    const [citationData, setCitationData] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -50,8 +50,8 @@ function ViewCollection() {
                 Object.assign(_data, {entities})
                 setData(_data)
 
-                const doi = await fetchDataCite(_data.doi_url)
-                setDoiData(doi?.data)
+                const citation = await fetchDataCite(_data.doi_url)
+                setCitationData(citation)
 
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
@@ -127,7 +127,7 @@ function ViewCollection() {
                                             {/*Description*/}
                                             <Description
                                                 data={data}
-                                                doiData={doiData}
+                                                citationData={citationData}
                                                 primaryDateTitle="Creation Date"
                                                 primaryDate={data.created_timestamp}
                                                 secondaryDateTitle="Modification Date"
