@@ -346,7 +346,9 @@ function Provenance({nodeData}) {
         const resizeObserver = new ResizeObserver(entries => {
             if (!entries.length) return
             const entry = entries[0]
-            $(container).find('svg').width(entry.contentRect.width)
+            // Subtracting 80 to prevent overflow when side menu is opened
+            // TODO: Find a better way to handle this
+            $(container).find('svg').width(entry.contentRect.width - 80)
         })
         resizeObserver.observe(container)
         return () => resizeObserver.disconnect()
