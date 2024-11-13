@@ -1,4 +1,4 @@
-import dynamic from "next/dynamic";
+import dynamic from 'next/dynamic';
 import React, {useContext, useEffect, useRef, useState} from 'react'
 import {useRouter} from 'next/router'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -8,34 +8,33 @@ import Alert from 'react-bootstrap/Alert';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {callService, getEntityData, update_create_entity} from '../../lib/services'
-import {cleanJson, eq, fetchEntity, getIdRegEx} from '../../components/custom/js/functions'
-import AppContext from '../../context/AppContext'
-import EntityContext, {EntityProvider} from '../../context/EntityContext'
-import {getEntityEndPoint} from "../../config/config";
+import {callService, getEntityData, update_create_entity} from '@/lib/services'
+import {cleanJson, eq, fetchEntity, getIdRegEx} from '@/components/custom/js/functions'
+import AppContext from '@/context/AppContext'
+import EntityContext, {EntityProvider} from '@/context/EntityContext'
+import {getEntityEndPoint} from '@/config/config';
 import $ from 'jquery'
-import SenNetPopover, {SenPopoverOptions} from "../../components/SenNetPopover"
-import AttributesUpload, {getResponseList} from "../../components/custom/edit/AttributesUpload";
-import DataTable from "react-data-table-component";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import SenNetPopover, {SenPopoverOptions} from '@/components/SenNetPopover'
+import AttributesUpload, {getResponseList} from '@/components/custom/edit/AttributesUpload';
+import DataTable from 'react-data-table-component';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Tooltip from '@mui/material/Tooltip';
-import Zoom from "@mui/material/Zoom"
-import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
-import {CheckIcon} from "primereact/icons/check";
-import {SpinnerEl} from "@/components/custom/Spinner";
+import Zoom from '@mui/material/Zoom'
+import {CloseIcon} from 'next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon';
+import {CheckIcon} from 'primereact/icons/check';
+import {SpinnerEl} from '@/components/custom/Spinner';
 
-const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
-const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
-const GroupSelect = dynamic(() => import("../../components/custom/edit/GroupSelect"))
-const Header = dynamic(() => import("../../components/custom/layout/Header"))
-const NotFound = dynamic(() => import("../../components/custom/NotFound"))
+const AncestorIds = dynamic(() => import('@/components/custom/edit/dataset/AncestorIds'))
+const AppFooter = dynamic(() => import('@/components/custom/layout/AppFooter'))
+const AppNavbar = dynamic(() => import('@/components/custom/layout/AppNavbar'))
+const EntityHeader = dynamic(() => import('@/components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('@/components/custom/layout/entity/FormGroup'))
+const GroupSelect = dynamic(() => import('@/components/custom/edit/GroupSelect'))
+const Header = dynamic(() => import('@/components/custom/layout/Header'))
 
 export default function EditCollection() {
     const {
-        isPreview, isAuthorizing, getModal, setModalDetails,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,

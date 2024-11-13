@@ -1,23 +1,23 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Form} from 'react-bootstrap';
-import {Results, SearchBox} from "@elastic/react-search-ui";
-import {Layout} from "@elastic/react-search-ui-views";
+import {Results, SearchBox} from '@elastic/react-search-ui';
+import {Layout} from '@elastic/react-search-ui-views';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {valid_dataset_ancestor_config} from "../../../../config/config";
-import {TableResultsEntities} from '../../TableResultsEntities'
-import AncestorsTable from "./AncestorsTable";
-import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
-import addons from "../../js/addons/addons";
+import {valid_dataset_ancestor_config} from '@/config/config';
+import {TableResultsEntities} from '@/components/custom/TableResultsEntities'
+import AncestorsTable from './AncestorsTable';
+import CustomClearSearchBox from '@/components/custom/layout/CustomClearSearchBox';
+import addons from '@/components/custom/js/addons/addons';
 import $ from 'jquery'
-import SelectedFilters from "../../layout/SelectedFilters";
-import {getUBKGFullName} from "../../js/functions";
-import SenNetPopover from "../../../SenNetPopover";
+import SelectedFilters from '@/components/custom/layout/SelectedFilters';
+import {getUBKGFullName} from '@/components/custom/js/functions';
+import SenNetPopover from '@/components/SenNetPopover';
+import FacetsContent from '@/components/custom/search/FacetsContent';
+import AppContext from '@/context/AppContext';
 import SearchUIContainer from 'search-ui/components/core/SearchUIContainer';
-import FacetsContent from '../../search/FacetsContent';
-import AppContext from "../../../../context/AppContext";
-import { useSearchUIContext } from "search-ui/components/core/SearchUIContext";
+import { useSearchUIContext } from 'search-ui/components/core/SearchUIContext';
 
 function BodyContent({ handleChangeAncestor, data }) {
     const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
@@ -139,8 +139,6 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
                 </Button>
                 {otherWithAdd}
             </InputGroup>
-
-
 
             <Modal
                 size="xxl"

@@ -1,23 +1,23 @@
-import dynamic from "next/dynamic";
-import React, {useContext, useEffect, useState} from "react";
-import log from "loglevel";
-import {fetchDataCite, getRequestHeaders} from "@/components/custom/js/functions";
-import Header from "@/components/custom/layout/Header";
-import AppContext from "@/context/AppContext";
+import dynamic from 'next/dynamic';
+import React, {useContext, useEffect, useState} from 'react';
+import log from 'loglevel';
+import {fetchDataCite} from '@/components/custom/js/functions';
+import Header from '@/components/custom/layout/Header';
+import AppContext from '@/context/AppContext';
 import Alert from 'react-bootstrap/Alert';
-import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
-import {DerivedProvider} from "@/context/DerivedContext";
-import {useRouter} from "next/router";
-import {callService, get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
-import {getEntityEndPoint} from "@/config/config";
+import {EntityViewHeader} from '@/components/custom/layout/entity/ViewHeader';
+import {DerivedProvider} from '@/context/DerivedContext';
+import {useRouter} from 'next/router';
+import {callService, get_write_privilege_for_group_uuid, getEntityData} from '@/lib/services';
+import {getEntityEndPoint} from '@/config/config';
 
-const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
-const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
-const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
-const Datasets = dynamic(() => import("@/components/custom/entities/collection/Datasets"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
-const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
+const AppFooter = dynamic(() => import('@/components/custom/layout/AppFooter'))
+const AppNavbar = dynamic(() => import('@/components/custom/layout/AppNavbar'))
+const Attribution = dynamic(() => import('@/components/custom/entities/sample/Attribution'))
+const ContributorsContacts = dynamic(() => import('@/components/custom/entities/ContributorsContacts'))
+const Datasets = dynamic(() => import('@/components/custom/entities/collection/Datasets'))
+const Description = dynamic(() => import('@/components/custom/entities/sample/Description'))
+const SidebarBtn = dynamic(() => import('@/components/SidebarBtn'))
 
 function ViewCollection() {
     const router = useRouter()
@@ -33,8 +33,6 @@ function ViewCollection() {
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-
-
             log.debug('collection: getting data...', uuid)
             // get the data from the api
             const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
@@ -64,7 +62,6 @@ function ViewCollection() {
             fetchData(router.query.uuid)
                 // make sure to catch any error
                 .catch(console.error);
-            ;
         } else {
             setData(null);
         }
@@ -83,71 +80,69 @@ function ViewCollection() {
                     <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
                 }
                 {data && !error &&
-                    <>
-                        <div className="container-fluid">
-                            <div className="row flex-nowrap entity_body">
-                                <div className="col-auto p-0">
-                                    <div id="sidebar"
-                                         className="collapse collapse-horizontal sticky-top custom-sticky">
-                                        <ul id="sidebar-nav"
-                                            className="nav list-group rounded-0 text-sm-start">
-                                            <li className="nav-item">
-                                                <a href="#Summary"
-                                                   className="nav-link "
-                                                   data-bs-parent="#sidebar">Summary</a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a href="#Entities"
-                                                   className="nav-link "
-                                                   data-bs-parent="#sidebar">Entities</a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a href="#Contributors"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Contributors</a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a href="#Attribution"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Attribution</a>
-                                            </li>
-                                        </ul>
+                    <div className="container-fluid">
+                        <div className="row flex-nowrap entity_body">
+                            <div className="col-auto p-0">
+                                <div id="sidebar"
+                                     className="collapse collapse-horizontal sticky-top custom-sticky">
+                                    <ul id="sidebar-nav"
+                                        className="nav list-group rounded-0 text-sm-start">
+                                        <li className="nav-item">
+                                            <a href="#Summary"
+                                               className="nav-link "
+                                               data-bs-parent="#sidebar">Summary</a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a href="#Entities"
+                                               className="nav-link "
+                                               data-bs-parent="#sidebar">Entities</a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a href="#Contributors"
+                                               className="nav-link"
+                                               data-bs-parent="#sidebar">Contributors</a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a href="#Attribution"
+                                               className="nav-link"
+                                               data-bs-parent="#sidebar">Attribution</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <main className="col m-md-3 entity_details">
+                                <SidebarBtn/>
+
+                                <EntityViewHeader data={data} entity={'collection'}
+                                                  hasWritePrivilege={hasWritePrivilege}
+                                />
+
+                                <div className="row">
+                                    <div className="col-12">
+                                        {/*Description*/}
+                                        <Description
+                                            data={data}
+                                            doiData={doiData}
+                                            primaryDateTitle="Creation Date"
+                                            primaryDate={data.created_timestamp}
+                                            secondaryDateTitle="Modification Date"
+                                            secondaryDate={data.last_modified_timestamp}
+                                        />
+
+                                        {/*Entities*/}
+                                        <Datasets data={data.entities} label={'Entities'}/>
+
+                                        {/*Contributors*/}
+                                        <ContributorsContacts title={'Contributors'} data={data.contributors}/>
+
+                                        {/*Attribution*/}
+                                        <Attribution data={data}/>
                                     </div>
                                 </div>
-
-                                <main className="col m-md-3 entity_details">
-                                    <SidebarBtn/>
-
-                                    <EntityViewHeader data={data} entity={'collection'}
-                                                      hasWritePrivilege={hasWritePrivilege}
-                                    />
-
-                                    <div className="row">
-                                        <div className="col-12">
-                                            {/*Description*/}
-                                            <Description
-                                                data={data}
-                                                doiData={doiData}
-                                                primaryDateTitle="Creation Date"
-                                                primaryDate={data.created_timestamp}
-                                                secondaryDateTitle="Modification Date"
-                                                secondaryDate={data.last_modified_timestamp}
-                                            />
-
-                                            {/*Entities*/}
-                                            <Datasets data={data.entities} label={'Entities'}/>
-
-                                            {/*Contributors*/}
-                                            <ContributorsContacts title={'Contributors'} data={data.contributors}/>
-
-                                            {/*Attribution*/}
-                                            <Attribution data={data}/>
-                                        </div>
-                                    </div>
-                                </main>
-                            </div>
+                            </main>
                         </div>
-                    </>
+                    </div>
                 }
                 <AppFooter/>
             </>

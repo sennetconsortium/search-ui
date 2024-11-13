@@ -1,9 +1,9 @@
 import React from 'react';
-import {getDatasetTypeDisplay, getStatusColor, getStatusDefinition, getUBKGFullName} from "../../js/functions";
+import {getDatasetTypeDisplay, getStatusColor, getStatusDefinition, getUBKGFullName} from '@/components/custom/js/functions'
 import Button from 'react-bootstrap/Button';
-import SenNetPopover from "../../../SenNetPopover";
-import ClipboardCopy from "../../../ClipboardCopy";
-import DataTable from "react-data-table-component";
+import SenNetPopover from '@/components/SenNetPopover';
+import ClipboardCopy from '@/components/ClipboardCopy';
+import DataTable from 'react-data-table-component';
 
 export default function AncestorsTable({formLabel, onChange, deleteAncestor, values, controlId, ancestors, disableDelete}) {
     const _deleteAncestor = async (e, ancestorId) => {
