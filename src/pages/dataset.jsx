@@ -64,7 +64,7 @@ function ViewDataset() {
                     setPrimaryDatasetInfo(primary)
                     setDatasetCategories(getAssaySplitData(primary))
                 } else {
-                    console.error('fetchEntityForMultiAssayInfo', primary.error)
+                    log.error('fetchEntityForMultiAssayInfo', primary.error)
                 }
                 break;
             }
@@ -107,7 +107,7 @@ function ViewDataset() {
                 setCitationData(citation)
 
                 for (const ancestor of ancestry.ancestors) {
-                    console.log(ancestor)
+                    log.debug(ancestor)
                     if ((ancestor.metadata && Object.keys(ancestor.metadata).length) || (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata) && 'metadata' in ancestor.ingest_metadata)) {
                         setAncestorHasMetadata(true)
                         break
