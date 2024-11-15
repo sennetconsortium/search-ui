@@ -3,17 +3,17 @@ import { useRouter } from 'next/router'
 import {
     get_read_write_privileges,
     get_user_write_groups,
-} from '../lib/services'
+} from '@/lib/services'
 import log from 'loglevel'
-import {APP_ROUTES} from '../config/constants'
-import AppModal from '../components/AppModal'
+import {APP_ROUTES} from '@/config/constants'
+import AppModal from '@/components/AppModal'
 import AppContext from './AppContext'
-import {eq, fetchProtocols, getHeaders} from "../components/custom/js/functions";
-import {getEntityEndPoint} from "../config/config";
+import {eq, fetchProtocols, getHeaders} from "@/components/custom/js/functions";
+import {getEntityEndPoint} from "@/config/config";
 import {Button} from 'react-bootstrap'
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import ClipboardCopy from "../components/ClipboardCopy";
+import ClipboardCopy from "@/components/ClipboardCopy";
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
