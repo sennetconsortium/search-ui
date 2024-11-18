@@ -2,11 +2,11 @@ import dynamic from "next/dynamic";
 
 const ViewCollection = dynamic(() => import("@/components/custom/entities/collection/ViewCollection.jsx"))
 
-function CollectionView() {
+function EpicollectionView() {
 
     return (
-        <ViewCollection collectionType={'Collection'} entitiesLabel={'Entities'}/>
+        <ViewCollection collectionType={'Epicollection'} entitiesLabel={'Datasets'}/>
     )
 }
 
-export default CollectionView
+export default EpicollectionView

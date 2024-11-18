@@ -310,7 +310,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
                     } else if (hasOneEntity && eq(entityType, cache.entities.upload)) {
                         includeLabIdCol = false
                         columns = uploadColumns
-                    } else if (hasOneEntity && eq(entityType, cache.entities.collection)) {
+                    } else if (hasOneEntity && (eq(entityType, cache.entities.collection) || eq(entityType, cache.entities.epicollection))) {
                         includeLabIdCol = false
                         includeGroupCol = false
                         columns = collectionColumns
