@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
-import {eq, extractSourceMappedMetadataInfo, getRequestHeaders} from "@/components/custom/js/functions";
+import {eq, extractSourceMappedMetadataInfo} from "@/components/custom/js/functions";
 import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
@@ -11,6 +11,7 @@ import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
 const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
@@ -103,6 +104,13 @@ function ViewSource() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
+                                            {data.collections && data.collections.length > 0 &&
+                                                <li className="nav-item">
+                                                    <a href="#Associated Collections"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Collections</a>
+                                                </li>
+                                            }
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
@@ -145,6 +153,9 @@ function ViewSource() {
                                                          secondaryDate={data.last_modified_timestamp}
                                                          labId={data.lab_source_id}
                                             />
+
+                                            {/*Collection*/}
+                                            {data.collections && data.collections.length > 0 && <Collections entityType='Source' data={data.collections}/>}
 
                                             {/*Provenance*/}
                                             {data &&
