@@ -23,6 +23,7 @@ function useCache() {
         delete entities['publication entity']
         entities.publication = 'Publication'
         entities.collection = 'Collection'
+        entities.epicollection = 'Epicollection'
         const cache = {cache: {datasetTypes, sampleCategories, organTypes, entities, sourceTypes, organTypesCodes, organs}}
         window.UBKG_CACHE = cache.cache
         return cache
