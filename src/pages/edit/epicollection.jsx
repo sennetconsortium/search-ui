@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import {EntityProvider} from "@/context/EntityContext";
-import React, {useEffect} from "react";
-import {valid_dataset_ancestor_config} from "@/config/config";
+import React from "react";
 
 const EditCollection = dynamic(() => import("@/components/custom/entities/collection/EditCollection.jsx"))
 

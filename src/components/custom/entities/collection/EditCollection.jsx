@@ -31,11 +31,10 @@ const EntityHeader = dynamic(() => import('@/components/custom/layout/entity/Hea
 const EntityFormGroup = dynamic(() => import('@/components/custom/layout/entity/FormGroup'))
 const GroupSelect = dynamic(() => import("@/components/custom/edit/GroupSelect"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
-const NotFound = dynamic(() => import("@/components/custom/NotFound"))
 
 export default function EditCollection({collectionType='Collection', entitiesTableLabel='Entities', entitiesButtonLabel='entity'}) {
     const {
-        isPreview, isAuthorizing, getModal, setModalDetails,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
