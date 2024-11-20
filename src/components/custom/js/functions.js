@@ -532,6 +532,26 @@ export const THEME = {
     },
 }
 
+export const extractSourceSex = (source) => {
+    // Default to `undefined`
+    let sex = undefined
+    // First check if Source has metadata
+    if ('metadata' in source) {
+        // Source metadata will have a top level object such as organ_donor_data or living_donor_data
+        let metadataKey = Object.keys(source.metadata)[0]
+        source.metadata[metadataKey].some(function (metadataObject) {
+            if (metadataObject['grouping_concept_preferred_term'] === 'Sex') {
+                // Check that the value for Sex is Male or Female, otherwise set to `undefined`
+                sex = (metadataObject['preferred_term'] === 'Male' || metadataObject['preferred_term'] === 'Female') ? metadataObject['preferred_term'] : undefined
+                console.log(sex)
+                return sex
+            }
+        })
+    }
+
+    return sex
+}
+
 export const extractSourceMappedMetadataInfo = (sourceMappedMetadata) => {
     const groups = {}
     const metadata = {}
