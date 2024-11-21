@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {cleanJson, eq, fetchEntity, getDOIPattern} from "../../components/custom/js/functions";
+import {cleanJson, eq, extractSourceSex, fetchEntity, getDOIPattern} from "../../components/custom/js/functions";
 import {getAncestryData, getEntityData, parseJson, update_create_entity} from "../../lib/services";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
@@ -51,6 +51,7 @@ function EditSample() {
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
+    const [ruiSex, setRuiSex] = useState(undefined)
     const [ruiLocation, setRuiLocation] = useState('')
     const [showRui, setShowRui] = useState(false)
     const [showRuiButton, setShowRuiButton] = useState(false)
@@ -125,6 +126,7 @@ function EditSample() {
                 const ancestry = await getAncestryData(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
                 Object.assign(_data, ancestry)
                 setData(_data)
+                setRuiSex(extractSourceSex(_data.source))
 
                 checkProtocolUrl(_data.protocol_url)
 
@@ -395,7 +397,7 @@ function EditSample() {
                 {showRui &&
                     <RUIIntegration
                         organ={ancestorOrgan}
-                        sex={'male'}
+                        sex={ruiSex}
                         user={getUserName()}
                         blockStartLocation={ruiLocation}
                         setRuiLocation={setRuiLocation}
@@ -448,6 +450,8 @@ function EditSample() {
                                                 onChange={_onChange}/>
                                             <RUIButton
                                                 showRegisterLocationButton={showRuiButton}
+                                                ruiSex={ruiSex}
+                                                setRuiSex={setRuiSex}
                                                 ruiLocation={ruiLocation}
                                                 setShowRui={setShowRui}
                                             />

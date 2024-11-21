@@ -98,7 +98,7 @@ class RUIIntegration extends Component {
         rui.organ = {
             ontologyId: completeOrgan["organ_uberon_url"],
             name: organType.toLowerCase(),
-            sex: sex?.toLowerCase() || "female",
+            sex: sex?.toLowerCase() || undefined,
             side: organSide?.toLowerCase(),
         };
 
