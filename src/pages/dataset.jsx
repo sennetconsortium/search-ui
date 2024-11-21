@@ -24,6 +24,7 @@ import WarningIcon from '@mui/icons-material/Warning'
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
 const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
 const CreationActionRelationship = dynamic(() => import("@/components/custom/entities/dataset/CreationActionRelationship"))
 const DataProducts = dynamic(() => import("@/components/custom/entities/dataset/DataProducts"))
@@ -64,7 +65,7 @@ function ViewDataset() {
                     setPrimaryDatasetInfo(primary)
                     setDatasetCategories(getAssaySplitData(primary))
                 } else {
-                    console.error('fetchEntityForMultiAssayInfo', primary.error)
+                    log.error('fetchEntityForMultiAssayInfo', primary.error)
                 }
                 break;
             }
@@ -107,7 +108,7 @@ function ViewDataset() {
                 setCitationData(citation)
 
                 for (const ancestor of ancestry.ancestors) {
-                    console.log(ancestor)
+                    log.debug(ancestor)
                     if ((ancestor.metadata && Object.keys(ancestor.metadata).length) || (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata) && 'metadata' in ancestor.ingest_metadata)) {
                         setAncestorHasMetadata(true)
                         break
@@ -179,6 +180,13 @@ function ViewDataset() {
                                                     <a href="#Associated Upload"
                                                        className="nav-link"
                                                        data-bs-parent="#sidebar">Upload</a>
+                                                </li>
+                                            }
+                                            {data.collections && data.collections.length > 0 &&
+                                                <li className="nav-item">
+                                                    <a href="#Associated Collections"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Collections</a>
                                                 </li>
                                             }
                                             {showVitessce &&
@@ -254,6 +262,9 @@ function ViewDataset() {
                                             {/*Upload*/}
                                             {data.upload && data.upload.uuid && <Upload data={data.upload}/>}
 
+                                            {/*Collection*/}
+                                            {data.collections && data.collections.length > 0 && <Collections entityType='Dataset' data={data.collections}/>}
+
                                             {/* Vitessce */}
                                             <SennetVitessce data={data}/>
 
@@ -274,8 +285,6 @@ function ViewDataset() {
 
                                             {/*Files*/}
                                             <FileTreeView data={data}/>
-
-
 
                                             {/*Contributors*/}
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&
