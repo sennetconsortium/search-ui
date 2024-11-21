@@ -31,11 +31,10 @@ const EntityHeader = dynamic(() => import('@/components/custom/layout/entity/Hea
 const EntityFormGroup = dynamic(() => import('@/components/custom/layout/entity/FormGroup'))
 const GroupSelect = dynamic(() => import("@/components/custom/edit/GroupSelect"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
-const NotFound = dynamic(() => import("@/components/custom/NotFound"))
 
 export default function EditCollection({collectionType='Collection', entitiesTableLabel='Entities', entitiesButtonLabel='entity'}) {
     const {
-        isPreview, isAuthorizing, getModal, setModalDetails,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -173,6 +172,11 @@ export default function EditCollection({collectionType='Collection', entitiesTab
                 }
             } else {
                 if (supportedEntities.includes(entity.entity_type)) {
+                    // delete the entity if it already exists, append the new one
+                    let idx = newDatasets.findIndex((d) => d.uuid === entity.uuid)
+                    if (idx > -1) {
+                        newDatasets.splice(idx, 1)
+                    }
                     newDatasets.push(entity)
                 } else {
                     if (isBulkHandling.current) {
@@ -225,7 +229,6 @@ export default function EditCollection({collectionType='Collection', entitiesTab
             log.debug("Form is invalid")
             setDisableSubmit(false);
         } else {
-
             event.preventDefault();
             if (values['entity_uuids'] === undefined || values['entity_uuids'].length === 0) {
                 event.stopPropagation();
@@ -233,7 +236,6 @@ export default function EditCollection({collectionType='Collection', entitiesTab
             } else {
 
                 log.debug("Form is valid")
-
 
                 if (!_.isEmpty(contributors) && contributors.description.records) {
                     values["contributors"] = contributors.description.records
