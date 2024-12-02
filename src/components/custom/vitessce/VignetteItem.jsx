@@ -101,7 +101,7 @@ function VignetteItem({ publication, vignette }) {
                             rel='noopener noreferrer'
                             title={'Vitessce.io'}
                         >
-                            Vitessce V3.4.9
+                            Vitessce V3.5.1
                         </a>
                     </span>
                 </div>
