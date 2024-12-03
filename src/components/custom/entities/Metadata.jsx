@@ -124,114 +124,114 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
     return (
         <SenNetAccordion title='Metadata' afterTitle={headerBadges} className='accordion-metadata'>
             {data.ancestors ? (
-                    <Tab.Container defaultActiveKey={data.sennet_id}>
-                        <div className='d-flex justify-content-between align-items-center mb-3'>
-                            <Nav variant='pills' className='flex-nowrap overflow-auto align-items-center'>
-                                {/*Create metadata table for current entity*/}
-                                {!!(metadata && Object.keys(metadata).length) &&
-                                    <SenNetPopover className='current-metadata'
-                                                   text={<>View the metadata for this entity.</>}>
-                                        <Nav.Item>
-                                            <Nav.Link onClick={(e) => {triggerNode(e, data.uuid); updateHeader(data)}} data-uuid={data.uuid}
-                                                      eventKey={data.sennet_id}>
-                                                {data.sennet_id}*
-                                            </Nav.Link>
-                                        </Nav.Item>
-                                    </SenNetPopover>
-                                }
-
-                                {/*Create metadata table for ancestors*/}
-                                {/*We want to reverse the ordering of this array so that the furthest ancestor is on the left*/}
-                                {data.ancestors.reverse().map((ancestor, index) => {
-                                    // The source nav link
-                                    if (eq(ancestor.entity_type, cache.entities.source)) {
-                                        if ((ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) ||
-                                            (ancestor.metadata && Object.keys(ancestor.metadata).length)) {
-                                            return (
-                                                popoverCommon(index, 'source', ancestor)
-                                            )
-                                        }
-                                        // The sample nav link
-                                    } else if (eq(ancestor.entity_type, cache.entities.sample)) {
-                                        if (ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
-                                            return (
-                                                popoverCommon(index, 'sample', ancestor)
-                                            )
-                                        }
-                                        // The dataset nav link
-                                    } else if (eq(ancestor.entity_type, cache.entities.dataset)) {
-                                        if (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata).length && 'metadata' in ancestor.ingest_metadata) {
-                                            return (
-                                                popoverCommon(index, 'dataset', ancestor)
-                                            )
-                                        }
-                                    }
-                                })}
-                            </Nav>
-
-                            {hasProvMetadata && (
-                                <>
-                                    <Button type="button"
-                                            onClick={handleProvMetadataDownload}
-                                            label='Download Provenance Metadata'>
-                                        Provenance Metadata
-                                    </Button>
-                                    <a ref={downloadRef} className='d-none'></a>
-                                </>
-                            )}
-                        </div>
-
-                        <Tab.Content>
+                <Tab.Container defaultActiveKey={data.sennet_id}>
+                    <div className='d-flex justify-content-between align-items-center mb-3'>
+                        <Nav variant='pills' className='flex-nowrap overflow-auto align-items-center'>
+                            {/*Create metadata table for current entity*/}
                             {!!(metadata && Object.keys(metadata).length) &&
-                                // The metatable table for the current entity
-                                <Tab.Pane eventKey={data.sennet_id}>
-                                    <MetadataTable
-                                        data={data}
-                                        filename={data.sennet_id}
-                                        metadata={metadata}
-                                        mappedMetadata={mappedMetadata}
-                                        groups={groups}
-                                        metadataKey={""}
-                                        setHeaderBadges={setHeaderBadges}/>
-                                </Tab.Pane>
+                                <SenNetPopover className='current-metadata'
+                                               text={<>View the metadata for this entity.</>}>
+                                    <Nav.Item>
+                                        <Nav.Link onClick={(e) => {triggerNode(e, data.uuid); updateHeader(data)}} data-uuid={data.uuid}
+                                                  eventKey={data.sennet_id}>
+                                            {data.sennet_id}*
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                </SenNetPopover>
                             }
+
+                            {/*Create metadata table for ancestors*/}
+                            {/*We want to reverse the ordering of this array so that the furthest ancestor is on the left*/}
                             {data.ancestors.reverse().map((ancestor, index) => {
-                                // Handle human source table
-                                // Human sources have their metadata inside "source_mapped_metadata"
-                                if (eq(ancestor.entity_type, cache.entities.source) && eq(ancestor.source_type, cache.sourceTypes.Human)) {
-                                    if (ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) {
-                                        const {groups, metadata} = extractSourceMappedMetadataInfo(ancestor.source_mapped_metadata)
+                                // The source nav link
+                                if (eq(ancestor.entity_type, cache.entities.source)) {
+                                    if ((ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) ||
+                                        (ancestor.metadata && Object.keys(ancestor.metadata).length)) {
                                         return (
-                                            tabPaneCommon('0', index, ancestor, metadata, undefined, groups)
+                                            popoverCommon(index, 'source', ancestor)
                                         )
                                     }
-                                } else if (!eq(ancestor.entity_type, cache.entities.dataset) && ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
-                                    // Handle mouse source and sample table
-                                    // Mice sources and all samples have their metadata inside "metadata"
-                                    return (
-                                        tabPaneCommon('1', index, ancestor, ancestor.metadata, ancestor.cedar_mapped_metadata)
-                                    )
-                                } else if (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata).length && 'metadata' in ancestor.ingest_metadata) {
-                                    // Handle dataset table
-                                    // Datasets have their metadata inside "metadata.metadata"
-                                    return (
-                                        tabPaneCommon('2', index, ancestor, ancestor.ingest_metadata.metadata, ancestor.cedar_mapped_metadata)
-                                    )
+                                    // The sample nav link
+                                } else if (eq(ancestor.entity_type, cache.entities.sample)) {
+                                    if (ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
+                                        return (
+                                            popoverCommon(index, 'sample', ancestor)
+                                        )
+                                    }
+                                    // The dataset nav link
+                                } else if (eq(ancestor.entity_type, cache.entities.dataset)) {
+                                    if (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata).length && 'metadata' in ancestor.ingest_metadata) {
+                                        return (
+                                            popoverCommon(index, 'dataset', ancestor)
+                                        )
+                                    }
                                 }
                             })}
-                        </Tab.Content>
-                    </Tab.Container>
-                ) :
-                (
-                    <MetadataTable data={data}
-                                   filename={data.sennet_id}
-                                   metadata={metadata}
-                                   mappedMetadata={mappedMetadata}
-                                   groups={groups}
-                                   metadataKey=""
-                                   setHeaderBadges={setHeaderBadges}/>
-                )
-            }
+                        </Nav>
+
+                        {hasProvMetadata && (
+                            <>
+                                <Button type="button"
+                                        onClick={handleProvMetadataDownload}
+                                        label='Download Provenance Metadata'>
+                                    Provenance Metadata
+                                </Button>
+                                <a ref={downloadRef} className='d-none'></a>
+                            </>
+                        )}
+                    </div>
+
+                    <Tab.Content>
+                        {!!(metadata && Object.keys(metadata).length) &&
+                            // The metatable table for the current entity
+                            <Tab.Pane eventKey={data.sennet_id}>
+                                <MetadataTable
+                                    data={data}
+                                    filename={data.sennet_id}
+                                    metadata={metadata}
+                                    mappedMetadata={mappedMetadata}
+                                    groups={groups}
+                                    metadataKey={""}
+                                    setHeaderBadges={setHeaderBadges}/>
+                            </Tab.Pane>
+                        }
+                        {data.ancestors.reverse().map((ancestor, index) => {
+                            // Handle human source table
+                            // Human sources have their metadata inside "source_mapped_metadata"
+                            if (eq(ancestor.entity_type, cache.entities.source) && eq(ancestor.source_type, cache.sourceTypes.Human)) {
+                                if (ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) {
+                                    const {groups, metadata} = extractSourceMappedMetadataInfo(ancestor.source_mapped_metadata)
+                                    return (
+                                        tabPaneCommon('0', index, ancestor, metadata, undefined, groups)
+                                    )
+                                }
+                            } else if (!eq(ancestor.entity_type, cache.entities.dataset) && ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
+                                // Handle mouse source and sample table
+                                // Mice sources and all samples have their metadata inside "metadata"
+                                return (
+                                    tabPaneCommon('1', index, ancestor, ancestor.metadata, ancestor.cedar_mapped_metadata)
+                                )
+                            } else if (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata).length && 'metadata' in ancestor.ingest_metadata) {
+                                // Handle dataset table
+                                // Datasets have their metadata inside "metadata.metadata"
+                                return (
+                                    tabPaneCommon('2', index, ancestor, ancestor.ingest_metadata.metadata, ancestor.cedar_mapped_metadata)
+                                )
+                            }
+                        })}
+                    </Tab.Content>
+                </Tab.Container>
+            ) :
+            (
+                <MetadataTable data={data}
+                               filename={data.sennet_id}
+                               metadata={metadata}
+                               mappedMetadata={mappedMetadata}
+                               groups={groups}
+                               metadataKey=""
+                               setHeaderBadges={setHeaderBadges}/>
+            )
+        }
 
         </SenNetAccordion>
     )
