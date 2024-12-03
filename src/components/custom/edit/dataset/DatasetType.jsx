@@ -3,16 +3,17 @@ import {Col, Form, Row} from 'react-bootstrap';
 import SenNetPopover from "../../../SenNetPopover";
 import {getUBKGFullName} from "../../js/functions";
 
-export default function DatasetType({datasetTypes, data, onChange}) {
+export default function DatasetType({datasetTypes, data, label, labelDescription, dataValue, onChange}) {
 
+    console.log(datasetTypes)
     return (
         //Data Types
         <>
             <Form.Group className="mb-3" controlId="dataset_type">
-                <Form.Label>Dataset Type <span
+                <Form.Label>{label ? label : `Dataset Type` }<span
                     className="required">* </span>
                     <SenNetPopover className={'dataset_type'}
-                                   text={<>The type of data contained in this <code>Dataset</code>. Choose from one
+                                   text={labelDescription ? labelDescription : <>The type of data contained in this <code>Dataset</code>. Choose from one
                                        of the available options.</>}>
                         <i className={'bi bi-question-circle-fill'}></i>
                     </SenNetPopover>
@@ -23,13 +24,13 @@ export default function DatasetType({datasetTypes, data, onChange}) {
                     (
                         <Form.Select required aria-label="Dataset Type" disabled>
                             <option
-                                value={data.dataset_type}>{getUBKGFullName(data.dataset_type)}</option>
+                                value={data.dataset_type}>{getUBKGFullName(dataValue ? data[dataValue] : data.dataset_type)}</option>
                         </Form.Select>
                     ) : (
                         <Form.Select required aria-label="Dataset Type"
-                                     onChange={(e) => onChange(e, 'dataset_type', e.target.value)}
-                                     name={'dataset_type'}
-                                     defaultValue={data?.dataset_type}>
+                                     onChange={(e) => onChange(e, dataValue ? dataValue : 'dataset_type', e.target.value)}
+                                     name={dataValue ? dataValue : 'dataset_type'}
+                                     defaultValue={dataValue ? data?.[dataValue] : data?.dataset_type}>
                             <option value="">----</option>
                             {datasetTypes.map(data_type => {
                                 return (

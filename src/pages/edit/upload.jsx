@@ -6,22 +6,23 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {cleanJson, eq, getRequestHeaders, getStatusColor} from "../../components/custom/js/functions";
-import {getEntityData, update_create_dataset} from "../../lib/services";
-import AppContext from '../../context/AppContext'
-import EntityContext, {EntityProvider} from '../../context/EntityContext'
+import {cleanJson, eq, getRequestHeaders, getStatusColor, getUBKGFullName} from "@/components/custom/js/functions";
+import {getEntityData, update_create_dataset} from "@/lib/services";
+import AppContext from '@/context/AppContext'
+import EntityContext, {EntityProvider} from '@/context/EntityContext'
 import $ from "jquery";
-import DatasetRevertButton, {statusRevertTooltip} from "../../components/custom/edit/dataset/DatasetRevertButton";
+import DatasetRevertButton, {statusRevertTooltip} from "@/components/custom/edit/dataset/DatasetRevertButton";
 
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const DatasetSubmissionButton = dynamic(() => import("../../components/custom/edit/dataset/DatasetSubmissionButton"))
-const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
-const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
-const GroupSelect = dynamic(() => import("../../components/custom/edit/GroupSelect"))
-const Header = dynamic(() => import("../../components/custom/layout/Header"))
-const SenNetAlert = dynamic(() => import("../../components/SenNetAlert"))
-const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const DatasetSubmissionButton = dynamic(() => import("@/components/custom/edit/dataset/DatasetSubmissionButton"))
+const DatasetType = dynamic(() => import("@/components/custom/edit/dataset/DatasetType"))
+const EntityHeader = dynamic(() => import('@/components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('@/components/custom/layout/entity/FormGroup'))
+const GroupSelect = dynamic(() => import("@/components/custom/edit/GroupSelect"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const SenNetAlert = dynamic(() => import("@/components/SenNetAlert"))
+const SenNetPopover = dynamic(() => import("@/components/SenNetPopover"))
 
 
 function EditUpload() {
@@ -41,7 +42,6 @@ function EditUpload() {
         getCancelBtn, isAdminOrHasValue, getAssignedToGroupNames
     } = useContext(EntityContext)
     const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
-
     const router = useRouter()
     const [source, setSource] = useState(null)
 
@@ -285,6 +285,44 @@ function EditUpload() {
                                                          onChange={onChange}
                                                          text={<>Free text field to enter a description of
                                                              the <code>Upload</code>.</>}/>
+
+                                        {/*/!*Intended Dataset Type*!/*/}
+                                         <DatasetType
+                                            datasetTypes={Object.values(cache.datasetTypes)}
+                                            label={'Intended Dataset Type'}
+                                            labelDescription={<>The dataset type of the intended datasets that will be
+                                                uploaded as part of this <code>Upload</code>.</>}
+                                            dataValue={'intended_dataset_type'}
+                                            values={values} data={data} onChange={onChange}/>
+
+                                        {/*/!*Intended Organ*!/*/}
+                                        <Form.Group className="mb-3" controlId="intended_organ_group">
+                                            <Form.Label>Intended Organ<span
+                                                className="required">* </span>
+                                                <SenNetPopover className={'intended_organ'}
+                                                               text={<>The organ that the data contained in
+                                                                   this <code>Upload</code> will be
+                                                                   registered/associated with.</>}>
+                                                    <i className={'bi bi-question-circle-fill'}></i>
+                                                </SenNetPopover>
+                                            </Form.Label>
+
+                                            <Form.Select required aria-label="Intended Organ" id="intended_organ" onChange={e => {
+                                                onChange(e, e.target.id, e.target.value)
+                                            }}
+                                                         defaultValue={data.intended_organ}>
+                                                <option value="">----</option>
+                                                {Object.entries(cache.organTypes).map(op => {
+                                                    return (
+                                                        <option key={op[0]} value={op[0]}>
+                                                            {op[1]}
+                                                        </option>
+                                                    );
+
+                                                })}
+                                            </Form.Select>
+
+                                        </Form.Group>
 
 
                                         <div className={'d-flex flex-row-reverse'}>
