@@ -533,7 +533,7 @@ export default function EditDataset() {
                                         </Form.Group>
                                     }
 
-                                    {/*/!*Data Types*!/*/}
+                                    {/*/!*Dataset Type*!/*/}
                                     {editMode &&
                                         <DatasetType
                                             datasetTypes={dataTypes === null ? Object.values(cache.datasetTypes) : dataTypes}
