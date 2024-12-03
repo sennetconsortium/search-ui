@@ -40,7 +40,7 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
     }, [data]);
 
     useEffect(() => {
-        if (data['entity_type'] !== 'Dataset' || data.ancestors === undefined) {
+        if (!eq(data.entity_type, cache.entities.dataset) || !data.ancestors) {
             return
         }
 
@@ -90,7 +90,7 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
             <SenNetPopover key={`sennet-popover-${entity}-${index}`} className={`${index}-${entity}-metadata`}
                            text={<>View the metadata for the ancestor <code>{cache.entities[entity]}</code> of this
                                entity.</>}>
-                <Nav.Item>
+                <Nav.Item className='p-0'>
                     <Nav.Link
                         onClick={(e) => {
                             triggerNode(e, data.uuid);
@@ -125,14 +125,15 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
         <SenNetAccordion title='Metadata' afterTitle={headerBadges} className='accordion-metadata'>
             {data.ancestors ? (
                 <Tab.Container defaultActiveKey={data.sennet_id}>
-                    <div className='d-flex justify-content-between align-items-center mb-3'>
-                        <Nav variant='pills' className='flex-nowrap overflow-auto align-items-center'>
+                    <div className='d-flex justify-content-between align-items-sm-center align-items-start my-3'>
+                        <Nav variant='pills' className='overflow-auto align-items-center gap-2'>
                             {/*Create metadata table for current entity*/}
                             {!!(metadata && Object.keys(metadata).length) &&
                                 <SenNetPopover className='current-metadata'
                                                text={<>View the metadata for this entity.</>}>
-                                    <Nav.Item>
-                                        <Nav.Link onClick={(e) => {triggerNode(e, data.uuid); updateHeader(data)}} data-uuid={data.uuid}
+                                    <Nav.Item className='p-0'>
+                                        <Nav.Link onClick={(e) => {triggerNode(e, data.uuid); updateHeader(data)}}
+                                                  data-uuid={data.uuid}
                                                   eventKey={data.sennet_id}>
                                             {data.sennet_id}*
                                         </Nav.Link>
@@ -171,7 +172,8 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
 
                         {hasProvMetadata && (
                             <>
-                                <Button type="button"
+                                <Button type='button'
+                                        className='sm:fs-1'
                                         onClick={handleProvMetadataDownload}
                                         label='Download Provenance Metadata'>
                                     Provenance Metadata
