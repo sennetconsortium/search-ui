@@ -127,8 +127,9 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                         </NavDropdown>
 
                         <Nav.Link hidden={hidden || !isLoggedIn()} key={`submenuItem-md-all`}
-                                          href={`/edit/bulk/metadata`}
-                                          className={'is-subItem'}>
+                                  href={`/edit/bulk/metadata`}
+                                  id={'nav-dropdown--upload-metadata'}
+                                  className={'is-subItem'}>
                             <span>Upload metadata</span>
                         </Nav.Link>
 
