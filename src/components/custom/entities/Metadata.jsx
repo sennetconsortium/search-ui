@@ -1,11 +1,11 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import SenNetPopover from "../../SenNetPopover";
+import SenNetPopover from '@/components/SenNetPopover';
 import {eq, extractSourceMappedMetadataInfo} from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import Tab from 'react-bootstrap/Tab';
 import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
-import AppContext from "../../../context/AppContext";
+import AppContext from "@/context/AppContext";
 import MetadataTable from "./MetadataTable";
 import PropTypes from "prop-types";
 import * as d3 from "d3";
@@ -171,7 +171,8 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
                         </Nav>
 
                         {hasProvMetadata && (
-                            <>
+                            <SenNetPopover className='download-provenance-metadata'
+                                           text={<>Download the full provenance metadata for this <code>Dataset {data.sennet_id}</code> and all of its ancestors.</>}>
                                 <Button type='button'
                                         className='sm:fs-1'
                                         onClick={handleProvMetadataDownload}
@@ -179,7 +180,7 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
                                     Provenance Metadata
                                 </Button>
                                 <a ref={downloadRef} className='d-none'></a>
-                            </>
+                            </SenNetPopover>
                         )}
                     </div>
 

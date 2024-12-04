@@ -4,6 +4,7 @@ import {createDownloadUrl, tableDataToTSV} from '../js/functions';
 import DataTable from 'react-data-table-component';
 import useDataTableSearch from '@/hooks/useDataTableSearch';
 import GroupedDataTable from './GroupedDataTable';
+import SenNetPopover from '@/components/SenNetPopover';
 
 export default function MetadataTable({data, metadata, mappedMetadata, metadataKey, filename, groups}) {
     let columns = [
@@ -45,16 +46,17 @@ export default function MetadataTable({data, metadata, mappedMetadata, metadataK
             <Row className="mb-2">
                 <div className="col-sm-12">
                     <div className="entity_subtitle icon_inline float-md-end">
-                        <a href={downloadURL}
-                           download={`${filename}.tsv`}
-                           className="float-end">
-                        <span className="btn btn-primary"
-                              role='button'
-                              aria-label={`Download ${data.entity_type} Metadata`}
-                              title={`Download ${data.entity_type} Metadata`}>
-                            <i className="bi bi-download"></i>
-                        </span>
-                        </a>
+                        <SenNetPopover className='download-entity-metadata'
+                                       text={<>Download the metadata for <code>{data.entity_type} {data.sennet_id}</code>.</>}>
+                            <a href={downloadURL}
+                               download={`${filename}.tsv`}
+                               className="float-end">
+                                <span className="btn btn-primary"
+                                    role='button'>
+                                    <i className="bi bi-download"></i>
+                                </span>
+                            </a>
+                        </SenNetPopover>
                     </div>
                 </div>
             </Row>
