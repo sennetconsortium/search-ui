@@ -301,7 +301,10 @@ export async function getJSONFromAssetsEndpoint(path) {
     return callService(null, assetsUrl, 'GET', null)
 }
 
-
+export async function getProvenanceMetadata(uuid) {
+    let url = getIngestEndPoint() + `metadata/provenance-metadata/${uuid}`
+    return callService(null, url, 'GET', getHeaders())
+}
 
 export const uploadFile = async file => {
     const formData = new FormData()
