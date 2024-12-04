@@ -50,8 +50,8 @@ export default function MetadataTable({data, metadata, mappedMetadata, metadataK
                            className="float-end">
                         <span className="btn btn-primary"
                               role='button'
-                              aria-label='Download Metadata'
-                              title='Download Metadata'>
+                              aria-label={`Download ${data.entity_type} Metadata`}
+                              title={`Download ${data.entity_type} Metadata`}>
                             <i className="bi bi-download"></i>
                         </span>
                         </a>
