@@ -1,9 +1,9 @@
 import React from 'react';
 import {Container, Row} from 'react-bootstrap'
-import {createDownloadUrl, tableDataToTSV} from "../js/functions";
-import DataTable from "react-data-table-component";
-import useDataTableSearch from "../../../hooks/useDataTableSearch";
-import GroupedDataTable from "./GroupedDataTable";
+import {createDownloadUrl, tableDataToTSV} from '../js/functions';
+import DataTable from 'react-data-table-component';
+import useDataTableSearch from '@/hooks/useDataTableSearch';
+import GroupedDataTable from './GroupedDataTable';
 
 export default function MetadataTable({data, metadata, mappedMetadata, metadataKey, filename, groups}) {
     let columns = [
@@ -36,7 +36,7 @@ export default function MetadataTable({data, metadata, mappedMetadata, metadataK
         })
     }
 
-    const {filteredItems, filterText, searchBarComponent} = useDataTableSearch({data: tableData, fieldsToSearch: ['value', 'key']})
+    const {filteredItems, searchBarComponent} = useDataTableSearch({data: tableData, fieldsToSearch: ['value', 'key']})
 
     const tableDataTSV = tableDataToTSV(metadata);
     const downloadURL = createDownloadUrl(tableDataTSV, 'text/tab-separated-values')
