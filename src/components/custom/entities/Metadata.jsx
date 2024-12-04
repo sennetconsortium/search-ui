@@ -61,7 +61,7 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
                 const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: 'application/json' });
                 const downloadUrl = URL.createObjectURL(blob);
                 downloadRef.current.href = downloadUrl;
-                downloadRef.current.download = `${data.uuid}_provenance_metadata.json`;
+                downloadRef.current.download = `${data.sennet_id}_provenance_metadata.json`;
             } catch (e) {
                 log.error('Error downloading provenance metadata:', e)
             }
