@@ -4,8 +4,6 @@ import SenNetPopover from "../../../SenNetPopover";
 import {getUBKGFullName} from "../../js/functions";
 
 export default function DatasetType({datasetTypes, data, label, labelDescription, dataValue, onChange}) {
-
-    console.log(datasetTypes)
     return (
         //Data Types
         <>
@@ -32,7 +30,7 @@ export default function DatasetType({datasetTypes, data, label, labelDescription
                                      name={dataValue ? dataValue : 'dataset_type'}
                                      defaultValue={dataValue ? data?.[dataValue] : data?.dataset_type}>
                             <option value="">----</option>
-                            {datasetTypes.map(data_type => {
+                            {datasetTypes.sort().map(data_type => {
                                 return (
                                     <option key={data_type} value={data_type.trim()}>
                                         {getUBKGFullName(data_type)}

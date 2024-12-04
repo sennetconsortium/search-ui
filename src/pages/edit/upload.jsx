@@ -232,7 +232,7 @@ function EditUpload() {
                                                          {/*    href={getRootURL() + 'edit/bulk/dataset?action=register'}>this*/}
                                                          {/*    page</a>.*/}
                                                      </>}
-                                                     icon={<i class="bi bi-exclamation-triangle-fill"></i>}/>
+                                                     icon={<i className="bi bi-exclamation-triangle-fill"></i>}/>
                                     }
                                     <Form noValidate validated={validated} onSubmit={handleSave} id={"upload-form"}>
                                         {/*Group select*/}
