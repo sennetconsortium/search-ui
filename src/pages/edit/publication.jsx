@@ -45,7 +45,7 @@ export default function EditPublication() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache, getPreviewView} = useContext(AppContext)
+    const {_t, cache, getPreviewView, toggleBusyOverlay} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [publicationStatus, setPublicationStatus] = useState(null)
@@ -139,8 +139,20 @@ export default function EditPublication() {
         log.debug(updated_ancestors);
     }
 
+    const modalResponse = (response) => {
+        toggleBusyOverlay(false)
+
+        setModalDetails({
+            entity: cache.entities.publication,
+            type: response.title,
+            typeHeader: _t('Title'),
+            response
+        })
+    }
+
     const handleSave = async (event) => {
         setDisableSubmit(true);
+
         const form = $(event.currentTarget.form)[0]
         if (form.checkValidity() === false) {
             event.preventDefault();
@@ -155,6 +167,8 @@ export default function EditPublication() {
                 setDisableSubmit(false);
             } else {
                 log.debug("Form is valid")
+
+                toggleBusyOverlay(true)
 
                 values.issue = values.issue ? Number(values.issue) : null
                 values.volume = values.volume ? Number(values.volume) : null
@@ -177,12 +191,15 @@ export default function EditPublication() {
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
-                 await update_create_dataset(uuid, json, editMode, 'publications').then((response) => {
-                    modalResponse(response)
-                }).catch((e) => log.error(e))
+                await update_create_dataset(uuid, json, editMode, 'publications')
+                    .then((response) => {
+                        modalResponse(response)
+                    }).catch((e) => {
+                        log.error(e)
+                        toggleBusyOverlay(false)
+                    })
             }
         }
-
 
         setValidated(true);
     };
