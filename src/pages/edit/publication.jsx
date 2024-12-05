@@ -119,6 +119,11 @@ export default function EditPublication() {
                 setError(true)
                 setErrorMessage(ancestor["error"])
             } else {
+                // delete the ancestor if it already exists, append the new one
+                let idx = new_ancestors.findIndex((d) => d.uuid === ancestor.uuid)
+                if (idx > -1) {
+                    new_ancestors.splice(idx, 1)
+                }
                 new_ancestors.push(ancestor)
             }
         }
