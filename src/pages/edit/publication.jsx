@@ -8,32 +8,26 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {getAncestryData, getEntityData, update_create_dataset, update_create_entity} from '../../lib/services'
-import {
-    cleanJson,
-    eq,
-    fetchEntity,
-    getRequestHeaders
-} from '../../components/custom/js/functions'
-import AppContext from '../../context/AppContext'
-import EntityContext, {EntityProvider} from '../../context/EntityContext'
+import {getAncestryData, getEntityData, update_create_dataset} from '@/lib/services'
+import {cleanJson, eq, fetchEntity} from '@/components/custom/js/functions'
+import AppContext from '@/context/AppContext'
+import EntityContext, {EntityProvider} from '@/context/EntityContext'
 import $ from 'jquery'
 import GroupSelect from "@/components/custom/edit/GroupSelect";
 import {valid_dataset_ancestor_config} from "@/config/config";
 
-const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
-const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
-const Header = dynamic(() => import("../../components/custom/layout/Header"))
-const NotFound = dynamic(() => import("../../components/custom/NotFound"))
-const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
+const AncestorIds = dynamic(() => import('@/components/custom/edit/dataset/AncestorIds'))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const EntityHeader = dynamic(() => import('@/components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('@/components/custom/layout/entity/FormGroup'))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const SenNetPopover = dynamic(() => import("@/components/SenNetPopover"))
 
 
 export default function EditPublication() {
     const {
-        isPreview, getModal, setModalDetails, setSubmissionModal,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
