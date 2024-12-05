@@ -298,11 +298,11 @@ export default function EditPublication() {
 
                                     {/*/!*Publication URL*!/*/}
                                     <EntityFormGroup label='Publication URL' controlId='publication_url'
+                                                     type='url'
                                                      value={data.publication_url}
                                                      isRequired={true}
                                                      onChange={onChange}
                                                      text={<>The URL at the publishers server for print/pre-print (http(s)://[alpha-numeric-string].[alpha-numeric-string].[...]</>}/>
-
 
                                     {/*/!*Publication DOI*!/*/}
                                     <EntityFormGroup label='Publication DOI' controlId='publication_doi'
