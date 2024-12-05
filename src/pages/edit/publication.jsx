@@ -8,32 +8,26 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {getAncestryData, getEntityData, update_create_dataset, update_create_entity} from '../../lib/services'
-import {
-    cleanJson,
-    eq,
-    fetchEntity,
-    getRequestHeaders
-} from '../../components/custom/js/functions'
-import AppContext from '../../context/AppContext'
-import EntityContext, {EntityProvider} from '../../context/EntityContext'
+import {getAncestryData, getEntityData, update_create_dataset} from '@/lib/services'
+import {cleanJson, eq, fetchEntity} from '@/components/custom/js/functions'
+import AppContext from '@/context/AppContext'
+import EntityContext, {EntityProvider} from '@/context/EntityContext'
 import $ from 'jquery'
 import GroupSelect from "@/components/custom/edit/GroupSelect";
 import {valid_dataset_ancestor_config} from "@/config/config";
 
-const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
-const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
-const Header = dynamic(() => import("../../components/custom/layout/Header"))
-const NotFound = dynamic(() => import("../../components/custom/NotFound"))
-const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
+const AncestorIds = dynamic(() => import('@/components/custom/edit/dataset/AncestorIds'))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const EntityHeader = dynamic(() => import('@/components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('@/components/custom/layout/entity/FormGroup'))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const SenNetPopover = dynamic(() => import("@/components/SenNetPopover"))
 
 
 export default function EditPublication() {
     const {
-        isPreview, getModal, setModalDetails, setSubmissionModal,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -45,7 +39,7 @@ export default function EditPublication() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache, getPreviewView} = useContext(AppContext)
+    const {_t, cache, getPreviewView, toggleBusyOverlay} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [publicationStatus, setPublicationStatus] = useState(null)
@@ -125,6 +119,11 @@ export default function EditPublication() {
                 setError(true)
                 setErrorMessage(ancestor["error"])
             } else {
+                // delete the ancestor if it already exists, append the new one
+                let idx = new_ancestors.findIndex((d) => d.uuid === ancestor.uuid)
+                if (idx > -1) {
+                    new_ancestors.splice(idx, 1)
+                }
                 new_ancestors.push(ancestor)
             }
         }
@@ -139,8 +138,20 @@ export default function EditPublication() {
         log.debug(updated_ancestors);
     }
 
+    const modalResponse = (response) => {
+        toggleBusyOverlay(false)
+
+        setModalDetails({
+            entity: cache.entities.publication,
+            type: response.title,
+            typeHeader: _t('Title'),
+            response
+        })
+    }
+
     const handleSave = async (event) => {
         setDisableSubmit(true);
+
         const form = $(event.currentTarget.form)[0]
         if (form.checkValidity() === false) {
             event.preventDefault();
@@ -155,6 +166,8 @@ export default function EditPublication() {
                 setDisableSubmit(false);
             } else {
                 log.debug("Form is valid")
+
+                toggleBusyOverlay(true)
 
                 values.issue = values.issue ? Number(values.issue) : null
                 values.volume = values.volume ? Number(values.volume) : null
@@ -177,12 +190,15 @@ export default function EditPublication() {
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
-                 await update_create_dataset(uuid, json, editMode, 'publications').then((response) => {
-                    modalResponse(response)
-                }).catch((e) => log.error(e))
+                await update_create_dataset(uuid, json, editMode, 'publications')
+                    .then((response) => {
+                        modalResponse(response)
+                    }).catch((e) => {
+                        log.error(e)
+                        toggleBusyOverlay(false)
+                    })
             }
         }
-
 
         setValidated(true);
     };
@@ -298,11 +314,11 @@ export default function EditPublication() {
 
                                     {/*/!*Publication URL*!/*/}
                                     <EntityFormGroup label='Publication URL' controlId='publication_url'
+                                                     type='url'
                                                      value={data.publication_url}
                                                      isRequired={true}
                                                      onChange={onChange}
                                                      text={<>The URL at the publishers server for print/pre-print (http(s)://[alpha-numeric-string].[alpha-numeric-string].[...]</>}/>
-
 
                                     {/*/!*Publication DOI*!/*/}
                                     <EntityFormGroup label='Publication DOI' controlId='publication_doi'
