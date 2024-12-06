@@ -208,17 +208,9 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
                                         tabPaneCommon('0', index, ancestor, metadata, undefined, groups)
                                     )
                                 }
-                            } else if (!eq(ancestor.entity_type, cache.entities.dataset) && ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
-                                // Handle mouse source and sample table
-                                // Mice sources and all samples have their metadata inside "metadata"
+                            } else if ( ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
                                 return (
                                     tabPaneCommon('1', index, ancestor, ancestor.metadata, ancestor.cedar_mapped_metadata)
-                                )
-                            } else if (ancestor.metadata && Object.keys(ancestor.metadata).length > 0) {
-                                // Handle dataset table
-                                // Datasets have their metadata inside "metadata.metadata"
-                                return (
-                                    tabPaneCommon('2', index, ancestor, ancestor.ingest_metadata.metadata, ancestor.cedar_mapped_metadata)
                                 )
                             }
                         })}

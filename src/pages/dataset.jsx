@@ -108,7 +108,7 @@ function ViewDataset() {
                 setCitationData(citation)
 
                 for (const ancestor of ancestry.ancestors) {
-                    log.debug(ancestor)
+                    console.log(ancestor)
                     if ((ancestor.metadata && Object.keys(ancestor.metadata).length)) {
                         setAncestorHasMetadata(true)
                         break
