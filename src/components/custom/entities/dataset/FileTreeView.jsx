@@ -3,7 +3,7 @@ import Card from 'react-bootstrap/Card';
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import Link from "next/link";
 import DerivedContext from "../../../../context/DerivedContext";
-import {fetchGlobusFilepath} from "../../../../lib/services";
+import {fetch_globus_filepath} from "../../../../lib/services";
 import {FILE_KEY_SEPARATOR, getAssetsEndpoint, getAuth} from "../../../../config/config";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
 import {formatByteSize} from "../../js/functions";
@@ -47,7 +47,7 @@ export const FileTreeView = ({data, selection = {}, keys = {files: 'files', uuid
 
     useEffect( () => {
         async function fetchData() {
-            await fetchGlobusFilepath(data[keys.uuid]).then((globusData) => {
+            await fetch_globus_filepath(data[keys.uuid]).then((globusData) => {
                 setStatus(globusData.status);
                 setFilepath(globusData.filepath);
             });

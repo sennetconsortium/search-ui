@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState, useContext} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import log from 'loglevel'
 import {DataConverterNeo4J, GraphGeneric, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
 import 'provenance-ui/dist/ProvenanceUI.css'
@@ -8,7 +8,6 @@ import AppModal from "../../AppModal";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
-import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
 import {
     eq,
@@ -19,7 +18,6 @@ import {
 } from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import * as d3 from "d3";
-import {get_lineage_info} from "../../../lib/services";
 
 
 function Provenance({nodeData}) {
@@ -30,8 +28,8 @@ function Provenance({nodeData}) {
     const [loading, setLoading] = useState(true)
     const [treeData, setTreeData] = useState(null)
     const [showModal, setShowModal] = useState(false)
-    const [maxGraphWidth, setMaxGraphWidth] = useState('500px')
     const initialized = useRef(false)
+    const provUIContainerRef = useRef(null)
     const activityHidden = useRef(true)
     const hasOnAfterInfoUpdateBuild = useRef(false)
     const protocolsData = {}
@@ -301,7 +299,7 @@ function Provenance({nodeData}) {
         visitedNodes: new Set(),
         initParentKey: DataConverterNeo4J.KEY_P_ENTITY,
         displayEdgeLabels: false,
-        minHeight: 100,
+        minHeight: 130,
         noStyles: true,
         propertyPrefixClear: 'sennet:',
         selectorId: 'neo4j--page',
@@ -342,7 +340,21 @@ function Provenance({nodeData}) {
     }
 
     useEffect(() => {
+        if (!provUIContainerRef.current) return
 
+        const container = provUIContainerRef.current
+        const resizeObserver = new ResizeObserver(entries => {
+            if (!entries.length) return
+            const entry = entries[0]
+            // Subtracting 80 to prevent overflow when side menu is opened
+            // TODO: Find a better way to handle this
+            $(container).find('svg').width(entry.contentRect.width - 80)
+        })
+        resizeObserver.observe(container)
+        return () => resizeObserver.disconnect()
+    }, [loading])
+
+    useEffect(() => {
         if (nodeData.hasOwnProperty("descendants")) {
             setDescendants(nodeData.descendants)
         }
@@ -356,14 +368,6 @@ function Provenance({nodeData}) {
         const url = getEntityEndPoint() + 'entities/{id}/provenance?return_descendants=true&filter='+ encodeURI('-Publication|-Collection|-Upload')
         const itemId = data.uuid;
         const graphOps = {token, url}
-
-        const setContainerSize = () => {
-            if (window.innerWidth > 1024) {
-                setMaxGraphWidth((window.outerWidth - 200) + 'px')
-            }
-        }
-        window.onresize = () =>  setContainerSize()
-        setContainerSize()
 
         log.debug('Result from fetch', data)
 
@@ -463,15 +467,15 @@ function Provenance({nodeData}) {
         <SenNetAccordion title={'Provenance'}>
             <Tabs
                 defaultActiveKey="graph"
-                className="mb-3"
+                className="c-provenance__tabs mb-3"
                 variant="pills"
             >
                 <Tab eventKey="graph" title="Graph" >
-                    {!loading && <div style={{maxWidth: maxGraphWidth}}><ProvenanceUI options={options} data={treeData}/></div>}
+                    {!loading && <div ref={provUIContainerRef}><ProvenanceUI options={options} data={treeData}/></div>}
                     {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId} otherLegend={otherLegend} />}
                     {loading && <Spinner/>}
                     <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
-                        {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 105 }} data={treeData} />}
+                        {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 500 }} data={treeData} />}
                         {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={modalId} />}
                     </AppModal>
                 </Tab>

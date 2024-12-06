@@ -20,12 +20,12 @@ function TutorialSteps(loggedIn) {
             content: 'The faceted search options on the left side allows filtering entities by any combination of categories. Search results update automatically as you edit the selection of filters.',
         },
         {
-            target: '[data-column-id="2"].rdt_TableCol',
+            target: '#sui-tbl-checkbox-actions',
             title: <span>Sort Search Results (4/{stepsCount})</span>,
             content: 'Clicking the header of any column will sort search results. A bolded arrow indicates the current sorting selection. Clicking again will reverse the order.'
         },
         {
-            target: '[data-column-id="2"].rdt_TableCol',
+            target: '[data-column-id="sennet_id"].rdt_TableCol',
             title: <span>Reorder Columns (5/{stepsCount})</span>,
             content: <span>Column headers can be reorganized by clicking and dragging. When exporting the results table, the <code>TSV</code> that is generated will mirror the column order.</span>
         },
@@ -50,7 +50,7 @@ function TutorialSteps(loggedIn) {
         })
 
         _steps.push({
-            target: '#nav-dropdown--bulkMetadata',
+            target: '#nav-dropdown--upload-metadata',
             title: <span>Bulk uploading metadata (9/{stepsCount})</span>,
             content: <span>Select this menu to bulk upload metadata. <br /> <small className='text-muted'>Note: You may also upload metadata for a single entity during registration. See previous step for details.</small></span>
         })

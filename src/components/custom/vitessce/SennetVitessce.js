@@ -40,7 +40,7 @@ export const SennetVitessce = ({ title, id, expanded = true, className = '' }) =
                         <span className={'fw-light fs-6'}>Powered by
                             <a className={'ms-2'} target="_blank" href="http://vitessce.io/" rel="noopener noreferrer"
                                title={'Vitessce.io'}>
-                                Vitessce V3.4.9
+                                Vitessce V3.5.1
                             </a>
                         </span>
                     </div>

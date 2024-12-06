@@ -158,11 +158,25 @@ export const SEARCH_ENTITIES = {
                 isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
                 isFacetVisible: doesAggregationHaveBuckets('source.source_type')
             },
+            contains_data: {
+                label: 'Contains Data',
+                type: 'value',
+                field: 'contains_data.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
+                isFacetVisible: doesAggregationHaveBuckets('contains_data')
+            },
             has_rui_information: {
-                label: 'Is Spatially Registered',
+                label: 'Has Spatial Information',
                 type: 'value',
                 field: 'has_rui_information.keyword',
                 isExpanded: false,
+                tooltipText: `Any entity that either is a tissue block containing spatial registration information or any
+                              tissue Sample or Dataset derived from a block containing spatial registration information
+                              is considered to have spatial information associated with it.`,
                 filterType: 'any',
                 isFilterable: false,
                 facetType: 'term',

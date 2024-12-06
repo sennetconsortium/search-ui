@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {cleanJson, eq, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
+import {cleanJson, eq, extractSourceSex, fetchEntity, getDOIPattern} from "../../components/custom/js/functions";
 import {getAncestryData, getEntityData, parseJson, update_create_entity} from "../../lib/services";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
@@ -51,6 +51,7 @@ function EditSample() {
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
+    const [ruiSex, setRuiSex] = useState(undefined)
     const [ruiLocation, setRuiLocation] = useState('')
     const [showRui, setShowRui] = useState(false)
     const [showRuiButton, setShowRuiButton] = useState(false)
@@ -65,7 +66,6 @@ function EditSample() {
     const [thumbnailFileToRemove, setThumbnailFileToRemove] = useState(null)
     const [imageByteArray, setImageByteArray] = useState([])
     const alertStyle = useRef('info')
-
 
     useEffect(() => {
         const fetchSampleCategories = async () => {
@@ -95,9 +95,12 @@ function EditSample() {
     // Wait until "sampleCategories" and "editMode" are set prior to running this
     useEffect(() => {
         if (dataAccessPublic === true) {
+            const excludedElementIds = ['view-rui-json-btn']
             const form = document.getElementById("sample-form");
             const elements = form.elements;
             for (let i = 0, len = elements.length; i < len; ++i) {
+                if (excludedElementIds.includes(elements[i].id))
+                    continue
                 elements[i].setAttribute('disabled', true);
             }
         }
@@ -123,6 +126,7 @@ function EditSample() {
                 const ancestry = await getAncestryData(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
                 Object.assign(_data, ancestry)
                 setData(_data)
+                setRuiSex(extractSourceSex(_data.source))
 
                 checkProtocolUrl(_data.protocol_url)
 
@@ -393,7 +397,7 @@ function EditSample() {
                 {showRui &&
                     <RUIIntegration
                         organ={ancestorOrgan}
-                        sex={'male'}
+                        sex={ruiSex}
                         user={getUserName()}
                         blockStartLocation={ruiLocation}
                         setRuiLocation={setRuiLocation}
@@ -446,6 +450,8 @@ function EditSample() {
                                                 onChange={_onChange}/>
                                             <RUIButton
                                                 showRegisterLocationButton={showRuiButton}
+                                                ruiSex={ruiSex}
+                                                setRuiSex={setRuiSex}
                                                 ruiLocation={ruiLocation}
                                                 setShowRui={setShowRui}
                                             />

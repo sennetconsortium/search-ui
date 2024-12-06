@@ -129,7 +129,7 @@ export function getCookieDomain() {
     return process.env.NEXT_PUBLIC_COOKIE_DOMAIN
 }
 
-export const RESULTS_PER_PAGE = [10, 20, 30, 50, 100]
+export const RESULTS_PER_PAGE = [10, 20, 30, 50, 100, 250, 500]
 
 //Config options to exclude datasets from results
 export let ancestor_config = _.cloneDeep(SEARCH_ENTITIES)

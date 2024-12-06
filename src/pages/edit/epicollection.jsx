@@ -4,15 +4,14 @@ import React from "react";
 
 const EditCollection = dynamic(() => import("@/components/custom/entities/collection/EditCollection.jsx"))
 
-function CollectionEdit() {
-
+function EpicollectionEdit() {
     return (
-        <EditCollection collectionType={'Collection'} entitiesTableLabel={'Entities'} entitiesButtonLabel={'entity'}/>
+        <EditCollection collectionType={'Epicollection'} entitiesTableLabel={'Datasets'} entitiesButtonLabel={'dataset'}/>
     )
 }
 
-CollectionEdit.withWrapper = function (page) {
+EpicollectionEdit.withWrapper = function (page) {
     return <EntityProvider>{page}</EntityProvider>
 }
 
-export default CollectionEdit
+export default EpicollectionEdit
