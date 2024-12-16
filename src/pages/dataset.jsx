@@ -2,13 +2,18 @@ import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
 import {
+    getDatasetTypeDisplay,
     datasetIs,
     fetchDataCite,
     getCreationActionRelationName,
     getEntityViewUrl,
     getRequestHeaders
 } from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import {
+    get_write_privilege_for_group_uuid,
+    getAncestryData,
+    getEntityData
+} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
@@ -19,6 +24,7 @@ import WarningIcon from '@mui/icons-material/Warning'
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
 const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
 const CreationActionRelationship = dynamic(() => import("@/components/custom/entities/dataset/CreationActionRelationship"))
 const DataProducts = dynamic(() => import("@/components/custom/entities/dataset/DataProducts"))
@@ -28,18 +34,16 @@ const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
 const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"))
 const SennetVitessce = dynamic(() => import("@/components/custom/vitessce/SennetVitessce"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const Spinner = dynamic(() => import("@/components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthorized"))
 const Upload = dynamic(() => import("@/components/custom/entities/dataset/Upload"))
 
 function ViewDataset() {
     const [data, setData] = useState(null)
-    const [doiData, setDoiData] = useState(null)
+    const [citationData, setCitationData] = useState(null)
     const [ancestorHasMetadata, setAncestorHasMetadata] = useState(false)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
+    const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
     const [primaryDatasetData, setPrimaryDatasetInfo] = useState(null)
     const {
         showVitessce,
@@ -54,16 +58,22 @@ function ViewDataset() {
             if (datasetIs.primary(entity.creation_action)) {
                 const response = await fetch("/api/find?uuid=" + entity.uuid, getRequestHeaders());
                 // convert the data to json
-                const primary = await response.json();
-                setPrimaryDatasetInfo(primary)
-                setDatasetCategories(getAssaySplitData(primary))
+                let primary = await response.json();
+                if (!primary.error) {
+                    const ancestry = await getAncestryData(primary.uuid)
+                    Object.assign(primary, ancestry)
+                    setPrimaryDatasetInfo(primary)
+                    setDatasetCategories(getAssaySplitData(primary))
+                } else {
+                    log.error('fetchEntityForMultiAssayInfo', primary.error)
+                }
                 break;
             }
         }
     }
 
     useEffect(() => {
-        if (data) {
+        if (data && data.ancestors) {
             initVitessceConfig(data)
             if (datasetIs.primary(data.creation_action)) {
                 setDatasetCategories(getAssaySplitData(data))
@@ -72,39 +82,40 @@ function ViewDataset() {
             }
             fetchDataProducts(data)
         }
-    }, [data])
+    }, [data?.ancestors])
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
-
-
             log.debug('dataset: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('dataset: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('dataset: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
                 // set state with the result
-                setData(data);
-                const doi = await fetchDataCite(data.doi_url)
-                setDoiData(doi?.data)
-                for (const ancestor of data.ancestors) {
-                    console.log(ancestor)
-                    if (ancestor.metadata && Object.keys(ancestor.metadata).length) {
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid)
+                Object.assign(_data, ancestry)
+                setData(_data)
+
+                const citation = await fetchDataCite(_data.doi_url)
+                setCitationData(citation)
+
+                for (const ancestor of ancestry.ancestors) {
+                    log.debug(ancestor)
+                    if ((ancestor.metadata && Object.keys(ancestor.metadata).length) || (ancestor.ingest_metadata && Object.keys(ancestor.ingest_metadata) && 'metadata' in ancestor.ingest_metadata)) {
                         setAncestorHasMetadata(true)
                         break
                     }
                 }
 
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
             }
@@ -121,10 +132,8 @@ function ViewDataset() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data, error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -173,6 +182,13 @@ function ViewDataset() {
                                                        data-bs-parent="#sidebar">Upload</a>
                                                 </li>
                                             }
+                                            {data.collections && data.collections.length > 0 &&
+                                                <li className="nav-item">
+                                                    <a href="#Associated Collections"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Collections</a>
+                                                </li>
+                                            }
                                             {showVitessce &&
                                                 <li className="nav-item">
                                                     <a href="#Vitessce"
@@ -186,7 +202,7 @@ function ViewDataset() {
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
 
-                                            {!!((data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) || ancestorHasMetadata) &&
+                                            {!!((data.ingest_metadata && Object.keys(data.ingest_metadata).length && 'metadata' in data.ingest_metadata) || ancestorHasMetadata) &&
                                                 <li className="nav-item">
                                                     <a href="#Metadata"
                                                        className="nav-link"
@@ -200,13 +216,6 @@ function ViewDataset() {
                                                    data-bs-parent="#sidebar">Files</a>
                                             </li>
 
-                                            {!!(data.contacts && Object.keys(data.contacts).length) &&
-                                                <li className="nav-item">
-                                                    <a href="#Contacts"
-                                                       className="nav-link"
-                                                       data-bs-parent="#sidebar">Contacts</a>
-                                                </li>
-                                            }
 
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&
                                                 <li className="nav-item">
@@ -228,9 +237,9 @@ function ViewDataset() {
                                     <SidebarBtn/>
 
                                     <EntityViewHeader data={data}
-                                                      uniqueHeader={data.display_subtype || data.dataset_type}
+                                                      uniqueHeader={getDatasetTypeDisplay(data)}
                                                       entity={cache.entities.dataset.toLowerCase()}
-                                                      hasWritePrivilege={hasWritePrivilege}/>
+                                                      hasWritePrivilege={hasWritePrivilege || false}/>
 
                                     <div className="row">
                                         <div className="col-12">
@@ -239,7 +248,7 @@ function ViewDataset() {
                                                 primaryDateTitle={data.published_timestamp ? ("Publication Date") : ("Creation Date")}
                                                 primaryDate={data.published_timestamp ? (data.published_timestamp) : (data.created_timestamp)}
                                                 labId={data.lab_dataset_id}
-                                                doiData={doiData}
+                                                citationData={citationData}
                                                 secondaryDateTitle="Last Touch"
                                                 secondaryDate={data.last_modified_timestamp}
                                                 data={data}/>
@@ -253,6 +262,9 @@ function ViewDataset() {
                                             {/*Upload*/}
                                             {data.upload && data.upload.uuid && <Upload data={data.upload}/>}
 
+                                            {/*Collection*/}
+                                            {data.collections && data.collections.length > 0 && <Collections entityType='Dataset' data={data.collections}/>}
+
                                             {/* Vitessce */}
                                             <SennetVitessce data={data}/>
 
@@ -263,21 +275,16 @@ function ViewDataset() {
 
                                             {/*Metadata*/}
                                             {/*Datasets have their metadata inside "metadata.metadata"*/}
-                                            {!!((data.metadata && Object.keys(data.metadata).length && 'metadata' in data.metadata) || ancestorHasMetadata) &&
+                                            {!!((data.ingest_metadata && Object.keys(data.ingest_metadata).length && 'metadata' in data.ingest_metadata) || ancestorHasMetadata) &&
                                                 <Metadata
                                                     data={data}
-                                                    metadata={data?.metadata?.metadata}
+                                                    metadata={data?.ingest_metadata?.metadata}
                                                     mappedMetadata={data?.cedar_mapped_metadata}
-                                                    hasLineageMetadata={true}/>
+                                                />
                                             }
 
                                             {/*Files*/}
                                             <FileTreeView data={data}/>
-
-                                            {/*Contacts*/}
-                                            {!!(data.contacts && Object.keys(data.contacts).length) &&
-                                                <ContributorsContacts title={'Contacts'} data={data.contacts}/>
-                                            }
 
                                             {/*Contributors*/}
                                             {!!(data.contributors && Object.keys(data.contributors).length) &&

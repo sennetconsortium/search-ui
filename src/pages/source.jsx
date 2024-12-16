@@ -2,8 +2,8 @@ import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
-import {eq, extractSourceMappedMetadataInfo, getRequestHeaders} from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import {eq, extractSourceMappedMetadataInfo} from "@/components/custom/js/functions";
+import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
@@ -11,15 +11,13 @@ import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
 const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
 const Protocols = dynamic(() => import("@/components/custom/entities/sample/Protocols"))
 const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const Spinner = dynamic(() => import("@/components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthorized"))
-
 
 function ViewSource() {
     const router = useRouter()
@@ -30,7 +28,7 @@ function ViewSource() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext);
+    const {isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -39,33 +37,34 @@ function ViewSource() {
 
             log.debug('source: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('source: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('source: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                // set state with the result
-                if (eq(data.source_type, cache.sourceTypes.Human) && data.source_mapped_metadata) {
+                
+                if (eq(_data.source_type, cache.sourceTypes.Human) && _data.source_mapped_metadata) {
                     // Humans have their metadata inside "source_mapped_metadata" while mice have theirs inside "metadata"
                     // Humans have grouped metadata
-                    const {groups, metadata} = extractSourceMappedMetadataInfo(data.source_mapped_metadata)
+                    const {groups, metadata} = extractSourceMappedMetadataInfo(_data.source_mapped_metadata)
                     setGroups(groups)
                     setMetadata(metadata)
-                } else if (eq(data.source_type, cache.sourceTypes.Mouse) && data.metadata) {
-                    setMappedMetadata(data.cedar_mapped_metadata)
-                    setMetadata(data.metadata)
+                } else if (eq(_data.source_type, cache.sourceTypes.Mouse) && _data.metadata) {
+                    setMappedMetadata(_data.cedar_mapped_metadata)
+                    setMetadata(_data.metadata)
                 }
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid)
+                Object.assign(_data, ancestry)
+                setData(_data)
 
-                setData(data);
-
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
+
             }
         }
 
@@ -79,10 +78,8 @@ function ViewSource() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data, error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -107,6 +104,13 @@ function ViewSource() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
+                                            {data.collections && data.collections.length > 0 &&
+                                                <li className="nav-item">
+                                                    <a href="#Associated Collections"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Collections</a>
+                                                </li>
+                                            }
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
@@ -149,6 +153,9 @@ function ViewSource() {
                                                          secondaryDate={data.last_modified_timestamp}
                                                          labId={data.lab_source_id}
                                             />
+
+                                            {/*Collection*/}
+                                            {data.collections && data.collections.length > 0 && <Collections entityType='Source' data={data.collections}/>}
 
                                             {/*Provenance*/}
                                             {data &&

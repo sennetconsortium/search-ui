@@ -1,13 +1,15 @@
 import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
-import {getRequestHeaders, getStatusColor} from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import {eq, fetchDataCite, getDatasetTypeDisplay} from "@/components/custom/js/functions";
+import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
-import Table from 'react-bootstrap/Table';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
-import DerivedContext, {DerivedProvider} from "@/context/DerivedContext";
+import {DerivedProvider} from "@/context/DerivedContext";
+import ContributorsContacts from "@/components/custom/entities/ContributorsContacts";
+import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
+import VignetteList from "@/components/custom/vitessce/VignetteList";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -16,46 +18,54 @@ const Description = dynamic(() => import("@/components/custom/entities/sample/De
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const SenNetAccordion = dynamic(() => import("@/components/custom/layout/SenNetAccordion"))
-const Spinner = dynamic(() => import("@/components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthorized"))
-
 
 function ViewPublication() {
     const [data, setData] = useState(null)
+    const [citationData, setCitationData] = useState(null)
+    const [ancillaryPublicationData, setAncillaryPublicationData] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {router, isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
-    const {
-        showVitessce,
-        setVitessceConfig,
-        setIsPrimaryDataset,
-        isPrimaryDataset
-    } = useContext(DerivedContext)
-
+    const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
         // declare the async data fetching function
         const fetchData = async (uuid) => {
 
-
             log.debug('publication: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('publication: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('publication: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                // set state with the result
-                setData(data);
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid)
+                Object.assign(_data, ancestry)
+                setData(_data)
+
+                const citation = await fetchDataCite(_data.publication_url)
+                setCitationData(citation)
+
+                // there could potentially be multiple descendants
+                let ancillaryPublication = null
+                if (_data.descendants.length > 1) {
+                    // get the most recent ancillary publication
+                    ancillaryPublication = _data.descendants
+                        .sort((a, b) => new Date(b.last_modified_timestamp) - new Date(a.last_modified_timestamp))
+                        .find(d => d.dataset_type === 'Publication [ancillary]' && d.ingest_metadata?.files[0]?.rel_path)
+                } else {
+                    ancillaryPublication = _data.descendants
+                        .find(d => d.dataset_type === 'Publication [ancillary]' && d.ingest_metadata?.files[0]?.rel_path)
+                }
+
+                setAncillaryPublicationData(ancillaryPublication || {})
+
+                get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
             }
@@ -72,10 +82,23 @@ function ViewPublication() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    const getTimestamp = () => {
+        const dates = data?.publication_date.split('-')
+        return new Date( dates[0], dates[1] - 1, dates[2])
+    }
+
+    const getDatasetTypeFromAncestors = () => {
+        let res = new Set();
+        for (let d of data.ancestors) {
+            if (eq(d.entity_type, cache.entities.dataset)) {
+                res.add(getDatasetTypeDisplay(d))
+            }
+        }
+        return Array.from(res).join(', ')
+    }
+
+    if (isPreview(data, error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -102,11 +125,30 @@ function ViewPublication() {
                                             </li>
 
                                             <li className="nav-item">
+                                                <a href="#Visualizations"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Visualizations</a>
+                                            </li>
+
+                                            <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Provenance</a>
                                             </li>
 
+                                            <li className="nav-item">
+                                                <a href="#Files"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Files</a>
+                                            </li>
+
+                                            {!!(data.contacts && Object.keys(data.contacts).length) &&
+                                                <li className="nav-item">
+                                                    <a href="#Authors"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Authors</a>
+                                                </li>
+                                            }
 
                                             <li className="nav-item">
                                                 <a href="#Attribution"
@@ -121,7 +163,7 @@ function ViewPublication() {
                                     <SidebarBtn/>
 
                                     <EntityViewHeader data={data}
-                                                      uniqueHeader={data.dataset_type}
+                                                      uniqueHeader={data.ancestors ? getDatasetTypeFromAncestors() : null}
                                                       entity={cache.entities.publication.toLowerCase()}
                                                       hasWritePrivilege={hasWritePrivilege}/>
 
@@ -129,101 +171,33 @@ function ViewPublication() {
                                         <div className="col-12">
                                             {/*Description*/}
                                             <Description primaryDateTitle="Publication Date"
-                                                         primaryDate={data.published_timestamp}
+                                                         title={'Publication Details'}
+                                                         primaryDate={getTimestamp()}
                                                          secondaryDateTitle="Modification Date"
                                                          secondaryDate={data.last_modified_timestamp}
-                                                         data={data}/>
+                                                         citationData={citationData}
+                                                         data={data}
+                                                         showAuthors={true}
+                                                         showDatasetTypes={true}
+                                                         showOrgans={true}
+                                            />
 
-                                            {/*Publication Details*/}
-                                            <SenNetAccordion title={'Publication Details'}>
-                                                <div>
+                                            {/* Visualizations */}
+                                            <VignetteList 
+                                                publication={{uuid: data.uuid}}
+                                                ancillaryPublication={ancillaryPublicationData}/>
 
-                                                    <Table borderless>
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Title</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr>
-                                                            <td>{data.title}</td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </Table>
-                                                    <br/>
-                                                    <Table borderless>
-                                                        <thead>
-                                                        <tr>
-                                                            <th style={{width: '44%'}}>Venue</th>
-                                                            <th>Status</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr>
-                                                            <td>{data.publication_venue}</td>
-                                                            <td><span
-                                                                className={`${getStatusColor(data.status)} badge`}>{data.status}</span>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </Table>
-                                                    <br/>
-                                                    <Table borderless>
-                                                        <thead>
-                                                        <tr>
-                                                            <th style={{width: '44%'}}>Issue/Volume Number</th>
-                                                            <th>Pages or Article Number</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr>
-                                                            <td>{data.issue}/{data.volume}</td>
-                                                            <td>{data.pages_or_article_num}</td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </Table>
-                                                    <br/>
-                                                    {data.publication_url &&
-                                                        <Table borderless>
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Publication URL</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr>
-                                                                <td><a href={data.publication_url}
-                                                                       className={'lnk--ic pl-0'}>{data.publication_url}
-                                                                    <i className="bi bi-box-arrow-up-right"></i></a>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </Table>
-                                                    }
-                                                    {data.publication_doi &&
-                                                        <Table borderless>
-                                                            <thead>
-                                                            <tr>
-                                                                <th>Publication DOI</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr>
-                                                                <td><a href={data.publication_doi}
-                                                                       className={'lnk--ic pl-0'}>{data.publication_doi}
-                                                                    <i className="bi bi-box-arrow-up-right"></i></a>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </Table>}
-
-                                                </div>
-                                            </SenNetAccordion>
                                             {/*Provenance*/}
                                             {data &&
                                                 <Provenance nodeData={data}/>
                                             }
 
+                                            {/*Files*/}
+                                            <FileTreeView data={data}/>
+
+                                             {!!(data.contacts && Object.keys(data.contacts).length) &&
+                                                <ContributorsContacts title={'Authors'} data={data.contacts}/>
+                                            }
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>

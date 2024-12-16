@@ -1,42 +1,50 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import DataTable from 'react-data-table-component';
-import {getUBKGFullName} from "../../js/functions";
+import {getDatasetTypeDisplay, getUBKGFullName} from "../../js/functions";
 import ClipboardCopy from "../../../ClipboardCopy";
+import AppContext from "@/context/AppContext";
+import {RESULTS_PER_PAGE} from "@/config/config";
 
 const Lineage = ({ lineage }) => {
+    const {isLoggedIn} = useContext(AppContext)
 
-    const columns = [
-        {
-            name: 'SenNet ID',
-            selector: row => row.sennet_id,
-            sortable: false,
-        },
+    let columns = []
+    columns.push({
+        name: 'SenNet ID',
+        selector: row => row.sennet_id,
+        sortable: false,
+    })
+
+    columns.push(
         {
             name: 'Entity Type',
             selector: row => row.entity_type,
             sortable: true,
-        },
-        {
+        })
+    if (isLoggedIn()) {
+        columns.push({
             name: 'Lab ID',
-            selector: row => row.entity_type,
-            sortable: true,
-        },
-        {
-            name: 'Subtype',
-            selector: row => row.display_subtype,
-            sortable: true,
-        },
-        {
-            name: 'Organ',
-            selector: row => row.organ,
-            sortable: true,
-        },
-        {
-            name: 'Group Name',
-            selector: row => row.group_name,
-            sortable: true,
-        }
-    ];
+            selector:
+                row => row.lab_id,
+            sortable:
+                true,
+        })
+    }
+    columns.push({
+        name: 'Subtype',
+        selector: row => getDatasetTypeDisplay(row),
+        sortable: true,
+    })
+    columns.push({
+        name: 'Organ',
+        selector: row => row.organ,
+        sortable: true,
+    })
+    columns.push({
+        name: 'Group Name',
+        selector: row => row.group_name,
+        sortable: true,
+    })
 
     const data = [];
     {
@@ -51,8 +59,8 @@ const Lineage = ({ lineage }) => {
                             : null,
                 display_subtype: (lineage_data.sample_category ? (
                     lineage_data.sample_category
-                ) : lineage_data.display_subtype),
-                organ: getUBKGFullName(lineage_data?.origin_sample?.organ),
+                ) : getDatasetTypeDisplay(lineage_data)),
+                organ: getUBKGFullName(lineage_data?.origin_samples?.[0]?.organ || lineage_data.organ),
                 group_name: lineage_data.group_name
             });
         })
@@ -63,6 +71,7 @@ const Lineage = ({ lineage }) => {
             columns={columns}
             data={data}
             fixedHeader={true}
+            paginationRowsPerPageOptions={RESULTS_PER_PAGE}
             pagination/>
     )
 }

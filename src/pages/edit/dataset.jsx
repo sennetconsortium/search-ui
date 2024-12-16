@@ -8,13 +8,12 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {get_headers, update_create_dataset} from '../../lib/services'
+import {get_headers, getAncestryData, getEntityData, update_create_dataset} from '../../lib/services'
 import {
     cleanJson,
     eq,
     fetchEntity,
     fetchProtocols,
-    getDataTypesByProperty,
     getEntityViewUrl,
     getIsPrimaryDataset,
     getRequestHeaders,
@@ -25,6 +24,9 @@ import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import {getIngestEndPoint, valid_dataset_ancestor_config} from "../../config/config";
 import $ from 'jquery'
 import DatasetRevertButton, {statusRevertTooltip} from "../../components/custom/edit/dataset/DatasetRevertButton";
+import DataTable from "react-data-table-component";
+import AttributesUpload, {getResponseList} from "@/components/custom/edit/AttributesUpload";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
 const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
@@ -37,11 +39,10 @@ const GroupSelect = dynamic(() => import("../../components/custom/edit/GroupSele
 const Header = dynamic(() => import("../../components/custom/layout/Header"))
 const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
 const Spinner = dynamic(() => import("../../components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
 
 export default function EditDataset() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails, setSubmissionModal, setCheckDoiModal,
+        isPreview, getModal, setModalDetails, setSubmissionModal, setCheckDoiModal,
         data, setData,
         error, setError,
         values, setValues,
@@ -54,16 +55,17 @@ export default function EditDataset() {
         disableSubmit, setDisableSubmit,
         dataAccessPublic, setDataAccessPublic,
         getEntityConstraints,
-        getSampleEntityConstraints,
         buildConstraint, successIcon, errIcon, getCancelBtn,
-        isAdminOrHasValue, getAssignedToGroupNames
+        isAdminOrHasValue, getAssignedToGroupNames,
+        contactsTSV, contacts, setContacts, contributors, setContributors, setContactsAttributes, setContactsAttributesOnFail
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
+    const {_t, cache, adminGroup, isLoggedIn, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [containsHumanGeneticSequences, setContainsHumanGeneticSequences] = useState(null)
     const [dataTypes, setDataTypes] = useState(null)
     const isPrimary = useRef(false)
+
 
     useEffect(() => {
         async function fetchAncestorConstraints() {
@@ -78,7 +80,17 @@ export default function EditDataset() {
             const response = await getEntityConstraints(fullBody, {order: 'descendants', filter: 'search'})
             if (response.ok) {
                 const body = await response.json()
-                valid_dataset_ancestor_config['searchQuery']['includeFilters'] = body.description[0].description
+                const searchQuery = body.description[0].description
+                let includeFilters = []
+                for (const query of searchQuery) {
+                    let includeFilter = {
+                        "type": 'term',
+                        "field": query.keyword,
+                        "values": [query.value]
+                    }
+                    includeFilters.push(includeFilter)
+                }
+                valid_dataset_ancestor_config['searchQuery']['includeFilters'] = includeFilters
             }
         }
 
@@ -106,16 +118,8 @@ export default function EditDataset() {
                                 sub_types = sub_types.concat(constraint.sub_type || [])
                             }
                         })
-                        if (sub_types.length) {
-                            constraintsDataTypes = cache.dataTypesObj.filter(data_type => sub_types.includes(data_type["data_type"])).map(data_type => data_type.data_type);
-                            console.log('Right here')
-                            // TODO: Ensure that selected ancestors can have same descendants to avoid extending mutually exclusive ancestor datatypes (only on update of entity-api constraints)
-                            // $.extend(constraintsDataTypes, dataset_type)
-                        }
                     } // end for
-                    if ($.isEmptyObject(constraintsDataTypes)) {
-                        getDataTypesByProperty("primary", true)
-                    } else {
+                    if (!$.isEmptyObject(constraintsDataTypes)) {
                         setDataTypes(constraintsDataTypes)
                     }
                 }
@@ -145,40 +149,49 @@ export default function EditDataset() {
         const fetchData = async (uuid) => {
             log.debug('editDataset: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('editDataset: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editDataset: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setData(false)
+                setErrorMessage(_data["error"])
             } else {
-                setData(data)
-                isPrimary.current = getIsPrimaryDataset(data)
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
+                Object.assign(_data, ancestry)
+                setData(_data)
+
+                isPrimary.current = getIsPrimaryDataset(_data)
                 let immediate_ancestors = []
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    for (const ancestor of data.immediate_ancestors) {
+                if (_data.hasOwnProperty("immediate_ancestors")) {
+                    for (const ancestor of _data.immediate_ancestors) {
                         immediate_ancestors.push(ancestor.uuid)
                     }
                     await fetchAncestors(immediate_ancestors)
                 }
 
+                if (_data.contacts) {
+                    setContacts({description: {records: _data.contacts, headers: contactsTSV.headers}})
+                }
+
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
-                    'status': data.status,
-                    'lab_dataset_id': data.lab_dataset_id,
-                    'dataset_type': data.dataset_type,
-                    'description': data.description,
-                    'dataset_info': data.dataset_info,
+                    'status': _data.status,
+                    'lab_dataset_id': _data.lab_dataset_id,
+                    'dataset_type': _data.dataset_type,
+                    'description': _data.description,
+                    'dataset_info': _data.dataset_info,
                     'direct_ancestor_uuids': immediate_ancestors,
-                    'assigned_to_group_name': adminGroup ? data.assigned_to_group_name : undefined,
-                    'ingest_task': adminGroup ? data.ingest_task : undefined,
-                    'contains_human_genetic_sequences': data.contains_human_genetic_sequences
+                    'assigned_to_group_name': adminGroup ? _data.assigned_to_group_name : undefined,
+                    'ingest_task': adminGroup ? _data.ingest_task : undefined,
+                    'contains_human_genetic_sequences': _data.contains_human_genetic_sequences,
+                    'contacts': _data.contacts,
+                    'contributors': _data.contributors
                 })
                 setEditMode("Edit")
-                setContainsHumanGeneticSequences(data.contains_human_genetic_sequences)
-                setDataAccessPublic(data.data_access_level === 'public')
+                setContainsHumanGeneticSequences(_data.contains_human_genetic_sequences)
+                setDataAccessPublic(_data.data_access_level === 'public')
             }
         }
 
@@ -341,6 +354,11 @@ export default function EditDataset() {
                     values['group_uuid'] = selectedUserWriteGroupUuid
                 }
 
+                if (adminGroup && !_.isEmpty(contributors) && contributors.description.records) {
+                    values['contributors'] = contributors.description.records
+                    values['contacts'] = contacts.description.records
+                }
+
                 // Remove empty strings
                 let json = cleanJson({...values});
                 let uuid = data.uuid
@@ -355,10 +373,12 @@ export default function EditDataset() {
 
                 // Remove 'status' from values. Not a field to pass to Entity API for a normal update of Dataset
                 delete json['status']
+
+                // Temporarily disable
                 // If dataset is not `primary` then don't send direct_ancestor_uuids
-                if (data.dataset_category !== 'primary') {
-                    delete json['direct_ancestor_uuids']
-                }
+                // if (data.dataset_category !== 'primary') {
+                //     delete json['direct_ancestor_uuids']
+                // }
 
                 await update_create_dataset(uuid, json, editMode).then((response) => {
                     modalResponse(response)
@@ -379,10 +399,8 @@ export default function EditDataset() {
     }
 
 
-    if (isAuthorizing() || isUnauthorized()) {
-        return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
-        )
+    if (isPreview(error))  {
+        return getPreviewView(data)
     } else {
 
         return (
@@ -407,7 +425,7 @@ export default function EditDataset() {
                                 <Form noValidate validated={validated} id="dataset-form">
                                     {/*Group select*/}
                                     {
-                                        !(userWriteGroups.length === 1 || isEditMode()) &&
+                                        userWriteGroups && !(userWriteGroups?.length === 1 || isEditMode()) &&
                                         <GroupSelect
                                             data={data}
                                             groups={userWriteGroups}
@@ -444,7 +462,7 @@ export default function EditDataset() {
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
                                         <AncestorIds data={data} values={values} ancestors={ancestors} onChange={onChange}
-                                                     dataset_category={data.dataset_category}
+                                                     disableDelete={data.dataset_category!=='primary'}
                                                      fetchAncestors={fetchAncestors} deleteAncestor={deleteAncestor}
                                                      addButtonDisabled={data.dataset_category != null && data.dataset_category !== 'primary' }/>
                                     }
@@ -515,12 +533,31 @@ export default function EditDataset() {
                                         </Form.Group>
                                     }
 
-                                    {/*/!*Data Types*!/*/}
+                                    {/*/!*Dataset Type*!/*/}
                                     {editMode &&
                                         <DatasetType
                                             datasetTypes={dataTypes === null ? Object.values(cache.datasetTypes) : dataTypes}
                                             values={values} data={data} onChange={onChange}/>
                                     }
+
+                                    {adminGroup && <AttributesUpload ingestEndpoint={contactsTSV.uploadEndpoint} showAllInTable={true}
+                                                      setAttribute={setContactsAttributes}
+                                                      setAttributesOnFail={setContactsAttributesOnFail}
+                                                      entity={cache.entities.dataset} excludeColumns={contactsTSV.excludeColumns}
+                                                      attribute={'Contributors'} title={<h6>Contributors</h6>}
+                                                      customFileInfo={<span><a
+                                                          className='btn btn-outline-primary rounded-0 fs-8' download
+                                                          href={'https://raw.githubusercontent.com/hubmapconsortium/dataset-metadata-spreadsheet/main/contributors/latest/contributors.tsv'}> <FileDownloadIcon/>EXAMPLE.TSV</a></span>}/>}
+
+                                    {/*This table is just for showing data.creators list in edit mode. Regular table from AttributesUpload will show if user uploads new file*/}
+                                    {isEditMode && !contributors.description && data.contributors &&
+                                        <div className='c-metadataUpload__table table-responsive'>
+                                            <h6>Contributors</h6>
+                                            <DataTable
+                                                columns={getResponseList({headers: contactsTSV.headers}, contactsTSV.excludeColumns).columns}
+                                                data={data.contributors}
+                                                pagination/>
+                                        </div>}
 
                                     <div className={'d-flex flex-row-reverse'}>
 

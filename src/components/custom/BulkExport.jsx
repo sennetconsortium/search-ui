@@ -51,7 +51,7 @@ export const handleCheckAll = (setTotalSelected) => {
     getCheckAll().prop('checked', false)
 }
 
-function BulkExport({ data, raw, columns, filters, exportKind, onCheckAll, hiddenColumns, replaceFirst = 'uuid' }) {
+function BulkExport({ data = [], raw, columns, filters, exportKind, onCheckAll, hiddenColumns, replaceFirst = 'uuid' }) {
 
     const [totalSelected, setTotalSelected] = useState(0)
 
@@ -305,10 +305,6 @@ function BulkExport({ data, raw, columns, filters, exportKind, onCheckAll, hidde
             </div>
         </>
     )
-}
-
-BulkExport.defaultProps = {
-    data: []
 }
 
 BulkExport.propTypes = {

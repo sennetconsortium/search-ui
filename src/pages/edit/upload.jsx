@@ -6,29 +6,28 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {cleanJson, eq, getRequestHeaders, getStatusColor} from "../../components/custom/js/functions";
-import {update_create_dataset} from "../../lib/services";
-import AppContext from '../../context/AppContext'
-import EntityContext, {EntityProvider} from '../../context/EntityContext'
+import {cleanJson, eq, getRequestHeaders, getStatusColor, getUBKGFullName} from "@/components/custom/js/functions";
+import {getEntityData, update_create_dataset} from "@/lib/services";
+import AppContext from '@/context/AppContext'
+import EntityContext, {EntityProvider} from '@/context/EntityContext'
 import $ from "jquery";
-import DatasetRevertButton, {statusRevertTooltip} from "../../components/custom/edit/dataset/DatasetRevertButton";
+import DatasetRevertButton, {statusRevertTooltip} from "@/components/custom/edit/dataset/DatasetRevertButton";
 
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const DatasetSubmissionButton = dynamic(() => import("../../components/custom/edit/dataset/DatasetSubmissionButton"))
-const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
-const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
-const GroupSelect = dynamic(() => import("../../components/custom/edit/GroupSelect"))
-const Header = dynamic(() => import("../../components/custom/layout/Header"))
-const SenNetAlert = dynamic(() => import("../../components/SenNetAlert"))
-const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const DatasetSubmissionButton = dynamic(() => import("@/components/custom/edit/dataset/DatasetSubmissionButton"))
+const DatasetType = dynamic(() => import("@/components/custom/edit/dataset/DatasetType"))
+const EntityHeader = dynamic(() => import('@/components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('@/components/custom/layout/entity/FormGroup'))
+const GroupSelect = dynamic(() => import("@/components/custom/edit/GroupSelect"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const SenNetAlert = dynamic(() => import("@/components/SenNetAlert"))
+const SenNetPopover = dynamic(() => import("@/components/SenNetPopover"))
 
 
 function EditUpload() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -42,8 +41,7 @@ function EditUpload() {
         dataAccessPublic, setDataAccessPublic,
         getCancelBtn, isAdminOrHasValue, getAssignedToGroupNames
     } = useContext(EntityContext)
-    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay} = useContext(AppContext)
-
+    const {_t, cache, adminGroup, getBusyOverlay, toggleBusyOverlay, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [source, setSource] = useState(null)
 
@@ -67,29 +65,28 @@ function EditUpload() {
         const fetchData = async (uuid) => {
             log.debug('editUpload: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('editUpload: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editUpload: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setData(false)
+                setErrorMessage(_data["error"])
             } else {
-                setData(data);
+                setData(_data);
 
                 // Set state with default values that will be PUT to Entity API to update
                 let _values = {
-                    'title': data.title,
-                    'ingest_task': adminGroup ? data.ingest_task : undefined,
-                    'description': data.description,
-                    'assigned_to_group_name': adminGroup ? data.assigned_to_group_name : undefined,
-                    'status': data.status,
+                    'title': _data.title,
+                    'ingest_task': adminGroup ? _data.ingest_task : undefined,
+                    'description': _data.description,
+                    'assigned_to_group_name': adminGroup ? _data.assigned_to_group_name : undefined,
+                    'status': _data.status,
                 }
 
                 setValues(_values)
                 setEditMode("Edit")
-                setDataAccessPublic(data.data_access_level === 'public')
+                setDataAccessPublic(_data.data_access_level === 'public')
             }
         }
 
@@ -188,10 +185,8 @@ function EditUpload() {
         handlePut('reorganize')
     }
 
-    if (isAuthorizing() || isUnauthorized()) {
-        return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
-        )
+    if (isPreview(error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -237,7 +232,7 @@ function EditUpload() {
                                                          {/*    href={getRootURL() + 'edit/bulk/dataset?action=register'}>this*/}
                                                          {/*    page</a>.*/}
                                                      </>}
-                                                     icon={<i class="bi bi-exclamation-triangle-fill"></i>}/>
+                                                     icon={<i className="bi bi-exclamation-triangle-fill"></i>}/>
                                     }
                                     <Form noValidate validated={validated} onSubmit={handleSave} id={"upload-form"}>
                                         {/*Group select*/}
@@ -290,6 +285,44 @@ function EditUpload() {
                                                          onChange={onChange}
                                                          text={<>Free text field to enter a description of
                                                              the <code>Upload</code>.</>}/>
+
+                                        {/*/!*Intended Dataset Type*!/*/}
+                                         <DatasetType
+                                            datasetTypes={Object.values(cache.datasetTypes)}
+                                            label={'Intended Dataset Type'}
+                                            labelDescription={<>The dataset type of the intended datasets that will be
+                                                uploaded as part of this <code>Upload</code>.</>}
+                                            dataValue={'intended_dataset_type'}
+                                            values={values} data={data} onChange={onChange}/>
+
+                                        {/*/!*Intended Organ*!/*/}
+                                        <Form.Group className="mb-3" controlId="intended_organ_group">
+                                            <Form.Label>Intended Organ<span
+                                                className="required">* </span>
+                                                <SenNetPopover className={'intended_organ'}
+                                                               text={<>The organ that the data contained in
+                                                                   this <code>Upload</code> will be
+                                                                   registered/associated with.</>}>
+                                                    <i className={'bi bi-question-circle-fill'}></i>
+                                                </SenNetPopover>
+                                            </Form.Label>
+
+                                            <Form.Select required aria-label="Intended Organ" id="intended_organ" onChange={e => {
+                                                onChange(e, e.target.id, e.target.value)
+                                            }}
+                                                         defaultValue={data.intended_organ}>
+                                                <option value="">----</option>
+                                                {Object.entries(cache.organTypes).map(op => {
+                                                    return (
+                                                        <option key={op[0]} value={op[0]}>
+                                                            {op[1]}
+                                                        </option>
+                                                    );
+
+                                                })}
+                                            </Form.Select>
+
+                                        </Form.Group>
 
 
                                         <div className={'d-flex flex-row-reverse'}>

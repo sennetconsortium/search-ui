@@ -1,4 +1,9 @@
 .modal {
+  &-body {
+    .sui-layout-body__inner {
+      margin-top: 20px;
+    }
+  }
   &-xxl {
     width: 80%;
     max-width: inherit;
@@ -33,12 +38,18 @@
     }
   }
   &-full {
+    &.show {
+      .modal-dialog {
+        display: block;
+        margin: 28px auto;
+      }
+    }
     .modal-dialog {
-      max-width: 100%;
+      max-width: 100%
     }
     .c-provenance {
       height: inherit;
-      min-height: 500px;
+      min-height: 500px !important;
     }
   }
 }

@@ -26,7 +26,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
 
     const supportedSingleRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication', 'upload', 'organ', 'collection', 'dataset']
+        let notSupported = ['upload', 'organ', 'dataset']
         return entities.filter(entity => !notSupported.includes(entity))
     }
 
@@ -38,7 +38,7 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
 
     const supportedBulkRegister = () => {
         let entities = Object.keys(cache.entities)
-        let notSupported = ['publication', 'organ', 'collection', 'dataset']
+        let notSupported = ['publication', 'organ', 'collection', 'epicollection', 'dataset']
         entities = entities.filter(entity => !notSupported.includes(entity))
 
         const elem = entities.shift()
@@ -127,8 +127,9 @@ const AppNavbar = ({hidden, signoutHidden, innerRef}) => {
                         </NavDropdown>
 
                         <Nav.Link hidden={hidden || !isLoggedIn()} key={`submenuItem-md-all`}
-                                          href={`/edit/bulk/metadata`}
-                                          className={'is-subItem'}>
+                                  href={`/edit/bulk/metadata`}
+                                  id={'nav-dropdown--upload-metadata'}
+                                  className={'is-subItem'}>
                             <span>Upload metadata</span>
                         </Nav.Link>
 

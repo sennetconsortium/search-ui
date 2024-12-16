@@ -1,15 +1,16 @@
 import React from 'react';
-import {getStatusColor, getStatusDefinition} from "../../js/functions";
+import {getStatusColor, getStatusDefinition, getUBKGFullName} from '@/components/custom/js/functions'
 import Button from 'react-bootstrap/Button';
-import SenNetPopover from "../../../SenNetPopover";
-import ClipboardCopy from "../../../ClipboardCopy";
-import DataTable from "react-data-table-component";
+import SenNetPopover from '@/components/SenNetPopover';
+import ClipboardCopy from '@/components/ClipboardCopy';
+import DataTable from 'react-data-table-component';
+import log from 'loglevel'
 
-export default function AncestorsTable({formLabel, onChange, deleteAncestor, values, controlId, ancestors, dataset_category}) {
+export default function AncestorsTable({formLabel, onChange, deleteAncestor, values, controlId, ancestors, disableDelete}) {
     const _deleteAncestor = async (e, ancestorId) => {
         const old_uuids = [...values[controlId]]
         let updated_uuids = old_uuids.filter(e => e !== ancestorId)
-        console.log(updated_uuids)
+        log.debug(updated_uuids)
         onChange(e, controlId, updated_uuids);
         deleteAncestor(ancestorId);
     }
@@ -20,7 +21,14 @@ export default function AncestorsTable({formLabel, onChange, deleteAncestor, val
                 name: `${formLabel.upperCaseFirst()} ID`,
                 selector: row => row.sennet_id,
                 sortable: true,
-                format: col => <span className='pt-1 d-block'>{col.sennet_id}<ClipboardCopy text={col.sennet_id} title={'Copy SenNet ID {text} to clipboard'} /></span>,
+                format: col => {
+                    return (
+                        <span className='pt-1 d-block'>
+                            {col.sennet_id}{' '}
+                            <ClipboardCopy text={col.sennet_id} title={'Copy SenNet ID {text} to clipboard'}/>
+                        </span>
+                    )
+                }
             },
             {
                 name: 'Entity Type',
@@ -28,18 +36,22 @@ export default function AncestorsTable({formLabel, onChange, deleteAncestor, val
                 sortable: true
             },
             {
-                name: 'Subtype',
-                selector: row => row?.display_subtype,
+                name: 'Dataset Type',
+                selector: row => row.dataset_type,
                 sortable: true
             },
             {
-                name: 'Lab ID',
-                selector: row => row?.lab_tissue_sample_id || row?.lab_dataset_id,
-                sortable: true
-            },
-            {
-                name: 'Group Name',
-                selector: row => row.group_name,
+                name: 'Organ',
+                selector: row => {
+                    const organs = row.origin_samples?.map((origin_sample) => {
+                        return getUBKGFullName(origin_sample.organ_hierarchy)
+                    }) || []
+
+                    if (organs.length > 0) {
+                        return organs.join(', ')
+                    }
+                    return ''
+                },
                 sortable: true
             },
             {
@@ -47,10 +59,25 @@ export default function AncestorsTable({formLabel, onChange, deleteAncestor, val
                 selector: row => row.status,
                 sortable: true,
                 format: col => {
-                    return <span className={`${getStatusColor(col?.status)} badge`}>
-                                <SenNetPopover text={getStatusDefinition(col?.status)} className={`status-info-${col.uuid}`}>{col?.status}</SenNetPopover>
-                            </span>
+                    return (
+                        <span className={`${getStatusColor(col?.status)} badge`}>
+                            <SenNetPopover text={getStatusDefinition(col?.status)}
+                                           className={`status-info-${col.uuid}`}>
+                                {col?.status}
+                            </SenNetPopover>
+                        </span>
+                    )
                 },
+            },
+            {
+                name: 'Lab Dataset ID',
+                selector: row => row?.lab_tissue_sample_id || row?.lab_dataset_id,
+                sortable: true
+            },
+            {
+                name: 'Group',
+                selector: row => row.group_name,
+                sortable: true
             },
             {
                 name: `Action`,
@@ -58,8 +85,14 @@ export default function AncestorsTable({formLabel, onChange, deleteAncestor, val
                 sortable: false,
                 format: col => {
                     // Disable this button when the dataset is not 'primary'
-                    return <Button className="pt-0 pb-0" variant="link" onClick={(e) => _deleteAncestor(e, col.uuid)} disabled={dataset_category!=='primary'}><i className={'bi bi-trash-fill'}
-                        style={{color:"red"}}/></Button>
+                    return (
+                        <Button className="pt-0 pb-0"
+                                variant="link"
+                                onClick={(e) => _deleteAncestor(e, col.uuid)}
+                                disabled={disableDelete}>
+                            <i className={'bi bi-trash-fill'} style={{color:"red"}}/>
+                        </Button>
+                    )
                 },
             },
         ]

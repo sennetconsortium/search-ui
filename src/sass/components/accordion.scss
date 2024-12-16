@@ -33,9 +33,31 @@
   padding-right: 10px;
 }
 
+.accordion--vignette {
+  width: 100%;
+  position: relative;
+  .accordion-body {
+    min-height: 925px;
+    overflow-y: hidden;
+  }
+}
+
 .accordion--vitessce {
+  width: 100%;
+  position: relative;
   .accordion-body {
     height: 900px;
+  }
+  .accordion-collapse.show-invisible {
+    display: block;
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    overflow-x: hidden;
+  }
+  .accordion-collapse.show-invisible.show {
+    position: inherit;
+    opacity: 1;
   }
 }
 
@@ -63,6 +85,14 @@
       margin-left: 0;
       margin-right: 8px;
       line-height: 1.9;
+    }
+  }
+}
+
+.accordion-metadata {
+  .accordion-button {
+    @include sm-mx {
+      display: inherit;
     }
   }
 }

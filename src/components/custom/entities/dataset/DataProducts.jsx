@@ -18,6 +18,7 @@ function DataProducts({ files, data }) {
                                 </Link>
                             </div>}
                 {files && (files.length > 0) && <FileTreeView data={{files, uuid: files[0].uuid}}
+                                                              keys={{files: 'files', uuid: 'uuid'}}
                                                               showDownloadAllButton={true}
                                                               showQAButton={false}
                                                               showDataProductButton={false}
@@ -30,8 +31,6 @@ function DataProducts({ files, data }) {
         </>
     )
 }
-
-DataProducts.defaultProps = {}
 
 DataProducts.propTypes = {
     children: PropTypes.node

@@ -13,13 +13,13 @@ import SelectedFilters from "../../layout/SelectedFilters";
 import {getUBKGFullName} from "../../js/functions";
 import SenNetPopover from "../../../SenNetPopover";
 import SearchUIContainer from 'search-ui/components/core/SearchUIContainer';
-import SearchUIContext from 'search-ui/components/core/SearchUIContext';
 import FacetsContent from '../../search/FacetsContent';
 import AppContext from "../../../../context/AppContext";
+import { useSearchUIContext } from "search-ui/components/core/SearchUIContext";
 
 function BodyContent({ handleChangeSource, data }) {
     const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
-    const { filters } = useContext(SearchUIContext)
+    const { filters } = useSearchUIContext();
     const includedExclude = useRef(false)
 
     exclude_dataset_config['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
@@ -51,6 +51,12 @@ function BodyContent({ handleChangeSource, data }) {
 }
 
 const AncestorId = ({fetchSource, onChange, source, data}) => {
+    const {
+        adminGroup,
+        authorized,
+        hasAuthenticationCookie
+    } = useContext(AppContext);
+
     const [showHideModal, setShowHideModal] = useState(false)
 
     const handleSearchFormSubmit = (event, onSubmit) => {
@@ -75,6 +81,12 @@ const AncestorId = ({fetchSource, onChange, source, data}) => {
         onChange(e, 'direct_ancestor_uuid', sourceId);
         fetchSource(sourceId);
         hideModal();
+    }
+
+    const authState = {
+        isAuthenticated: hasAuthenticationCookie() === true,
+        isAuthorized: authorized === true,
+        isAdmin: adminGroup === true
     }
 
     return (
@@ -106,7 +118,7 @@ const AncestorId = ({fetchSource, onChange, source, data}) => {
                 keyboard={false}
             >
                 <Modal.Body>
-                    <SearchUIContainer config={exclude_dataset_config} name={undefined}>
+                    <SearchUIContainer config={exclude_dataset_config} name={undefined} authState={authState}>
                         <Layout
                             header={
                                 <div className="search-box-header js-gtm--search">

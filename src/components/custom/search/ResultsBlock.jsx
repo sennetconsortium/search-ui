@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useContext, useState} from 'react'
 import PropTypes from 'prop-types'
 import {opsDict, ResultsPerPage} from "./ResultsPerPage";
 import DataTable from "react-data-table-component";
@@ -8,17 +8,17 @@ import {
 import TableResultsContext from "../../../context/TableResultsContext";
 import ColumnsDropdown from "./ColumnsDropdown";
 import {eq} from '../js/functions'
-import {COLS_ORDER_KEY} from "../../../config/config";
+import {COLS_ORDER_KEY} from "@/config/config";
 import Spinner from '../Spinner';
 
-function ResultsBlock({getTableColumns, disableRowClick, tableClassName, defaultHiddenColumns, searchContext}) {
+function ResultsBlock({getTableColumns, disableRowClick, tableClassName = '', defaultHiddenColumns = [], searchContext}) {
 
     const {
         getTableData,
         noResultsMessage,
         inModal,
         rows,
-        resultsPerPage,
+        handleSort,
         setResultsPerPage,
         currentColumns,
         filters,
@@ -26,14 +26,14 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
         handleOnRowClicked,
         handlePageChange,
         isLoading,
+        rawResponse,
+        updateTablePagination,
+        pageSize,
+        pageNumber,
     } = useContext(TableResultsContext)
 
+
     const [hiddenColumns, setHiddenColumns] = useState(null)
-
-    useEffect(() => {
-
-    }, [])
-
 
     return (
         <>
@@ -42,9 +42,13 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
                     <PagingInfo />
                     {rows.length > 0 && <ColumnsDropdown searchContext={searchContext} filters={filters} defaultHiddenColumns={defaultHiddenColumns} getTableColumns={getTableColumns} setHiddenColumns={setHiddenColumns}
                                       currentColumns={currentColumns.current} />}
-                    <ResultsPerPage resultsPerPage={resultsPerPage} setResultsPerPage={setResultsPerPage} totalRows={rows.length}  />
+                    <ResultsPerPage updateTablePagination={updateTablePagination}
+                                    resultsPerPage={pageSize}
+                                    setResultsPerPage={setResultsPerPage}
+                                    totalRows={rawResponse.record_count}  />
                 </div>
             </div>
+
 
             {<DataTable key={`results-${new Date().getTime()}`}
                         onColumnOrderChange={cols => {
@@ -57,25 +61,25 @@ function ResultsBlock({getTableColumns, disableRowClick, tableClassName, default
                         data={getTableData()}
                         theme={'plain'}
                         defaultSortAsc={false}
+                        onSort={handleSort}
+                        sortServer
                         pointerOnHover={true}
                         highlightOnHover={true}
                         noDataComponent={noResultsMessage}
                         onChangePage={handlePageChange}
                         onChangeRowsPerPage={handleRowsPerPageChange}
                         onRowClicked={!disableRowClick ? handleOnRowClicked : undefined}
-                        paginationPerPage={resultsPerPage}
+                        paginationPerPage={pageSize}
                         paginationRowsPerPageOptions={Object.keys(opsDict)}
                         pagination
+                        paginationServer
+                        paginationDefaultPage={pageNumber}
+                        paginationTotalRows={rawResponse.record_count}
                         progressPending={isLoading}
                         progressComponent={<Spinner />}
                 />}
         </>
     )
-}
-
-ResultsBlock.defaultProps = {
-    tableClassName: '',
-    defaultHiddenColumns: []
 }
 
 ResultsBlock.propTypes = {

@@ -9,7 +9,7 @@ import SenNetAccordion from "../layout/SenNetAccordion";
 import MultiProfileSelector from "./MultiProfileSelector";
 import SuspendVitessce from "./SuspendVitessce";
 
-export const SennetVitessce = ({data}) => {
+export const SennetVitessce = ({ title, id, expanded = true, className = '' }) => {
     const {
         showVitessce,
         vitessceTheme,
@@ -34,13 +34,13 @@ export const SennetVitessce = ({data}) => {
 
     return <>
         {showVitessce &&
-            <SenNetAccordion title='Visualization' id={'Vitessce'} className={'accordion--vitessce'}>
+            <SenNetAccordion title={title || 'Visualization'} id={id || 'Vitessce'} expanded={expanded} className={`accordion--vitessce ${className}`}>
                 <div className={'row'}>
                     <div className={'col p-2 m-2'}>
                         <span className={'fw-light fs-6'}>Powered by
                             <a className={'ms-2'} target="_blank" href="http://vitessce.io/" rel="noopener noreferrer"
                                title={'Vitessce.io'}>
-                                Vitessce V3.4.6
+                                Vitessce V3.5.1
                             </a>
                         </span>
                     </div>

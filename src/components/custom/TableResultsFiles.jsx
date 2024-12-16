@@ -9,8 +9,7 @@ import {
 import BulkExport, {getCheckAll, getCheckboxes, handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
 import ResultsBlock from "./search/ResultsBlock";
-import {TableResultsProvider} from "../../context/TableResultsContext";
-import $ from 'jquery'
+import {TableResultsProvider} from "@/context/TableResultsContext";
 import SenNetAlert from "../SenNetAlert";
 import ClipboardCopy from "../ClipboardCopy";
 import 'primeicons/primeicons.css';
@@ -19,8 +18,8 @@ import {Chip} from "@mui/material";
 import SenNetPopover from "../SenNetPopover";
 import AppModal from "../AppModal";
 import FileTreeView from "./entities/dataset/FileTreeView";
-import {COLS_ORDER_KEY, FILE_KEY_SEPARATOR} from "../../config/config";
-import {parseJson} from "../../lib/services";
+import {COLS_ORDER_KEY, FILE_KEY_SEPARATOR} from "@/config/config";
+import {parseJson} from "@/lib/services";
 
 const downloadSizeAttr = 'data-download-size'
 export const clearDownloadSizeLabel = () => {
@@ -189,6 +188,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         cols.push(
             {
                 name: 'Dataset SenNet ID',
+                id: 'dataset_sennet_id',
                 width: '200px',
                 selector: row => raw(row.dataset_sennet_id),
                 sortable: true,
@@ -200,6 +200,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         cols.push(
             {
                 name: 'Files',
+                id: 'description',
                 minWidth: '50%',
                 selector: row => raw(row.description),
                 sortable: true,
@@ -235,6 +236,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         cols.push(
             {
                 name: 'Sample Type',
+                id: 'samples',
                 selector: row => {
                     let val = raw(row.samples)
                     if (val) {
@@ -250,6 +252,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         cols.push(
             {
                 name: 'Dataset Type',
+                id: 'dataset_types',
                 selector: row => {
                     let val = raw(row.dataset_types)
                     if (val) {
@@ -264,6 +267,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         cols.push(
             {
                 name: 'Size',
+                id: 'size',
                 selector: row => raw(row.size),
                 sortable: true,
                 reorder: true,
@@ -328,6 +332,7 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     running.</small>
                 </> />
                 <ResultsBlock
+                    index={'files'}
                     searchContext={`files.${tableContext.current}`}
                     tableClassName={'rdt_Results--Files'}
                     getTableColumns={getTableColumns}
@@ -337,7 +342,6 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
                     modalSize={'xl'}
                     showModal={showModal}
                     modalTitle={'Files Details'}
-                    //<DataTable columns={getModalColumns()} data={modalData} className={'rdt_Results--Files'} />
                     modalBody={
                         <FileTreeView data={treeViewData}
                         showQAButton={false}
@@ -359,8 +363,6 @@ function TableResultsFiles({children, filters, forData = false, rowFn, inModal =
         </>
     )
 }
-
-TableResultsFiles.defaultProps = {}
 
 TableResultsFiles.propTypes = {
     children: PropTypes.node,

@@ -3,8 +3,7 @@ import RUIModal from "./RUIModal";
 import {Button, Form, OverlayTrigger, Popover} from 'react-bootstrap';
 import AppContext from "../../../../../context/AppContext";
 
-
-const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
+const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui, ruiSex, setRuiSex}) => {
     const {cache } = useContext(AppContext)
 
     const [showRuiLocationModal, setShowRuiLocationModal] = useState(false)
@@ -51,16 +50,42 @@ const RuiButton = ({showRegisterLocationButton, ruiLocation, setShowRui}) => {
             <div>
                 {
                     showRegisterLocationButton &&
-                    <Button variant={'outline-primary'}
-                            className={'rounded-0 mb-2'}
-                            onClick={handleRegisterLocationClick}>
-                        Register location
-                    </Button>
+                    <>
+                        {ruiSex !== undefined ? (
+                            <Button variant={'outline-primary'}
+                                    className={'rounded-0 mb-2'}
+                                    onClick={handleRegisterLocationClick}>
+                                Register location
+                            </Button>
+                        ) : (
+                            <>
+                                <Button variant={'outline-primary'}
+                                        className={'rounded-0 mb-2'}
+                                        onClick={() => {
+                                            setRuiSex('Male');
+                                            handleRegisterLocationClick()
+                                        }}>
+                                    Register location (Male Source)
+                                </Button>
+                                <Button variant={'outline-primary'}
+                                className={'rounded-0 mb-2 ms-2'}
+                                        onClick={() => {
+                                            setRuiSex('Female');
+                                            handleRegisterLocationClick()
+                                        }}>
+                                    Register location (Female Source)
+                                </Button>
+                            </>
+                        )
+                    }
+                    </>
                 }
                 {
                     ruiLocation &&
                     <>
-                        <Button variant={'outline-success'} className={'rounded-0 mb-2 ms-2'}
+                        <Button id={'view-rui-json-btn'}
+                                variant={'outline-success'}
+                                className={'rounded-0 mb-2 ms-2'}
                                 onClick={() => setShowRuiLocationModal(true)}>
                             View JSON
                         </Button>

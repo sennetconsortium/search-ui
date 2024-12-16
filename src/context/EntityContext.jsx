@@ -3,21 +3,21 @@ import { useRouter } from 'next/router'
 import {
     get_read_write_privileges,
     get_user_write_groups,
-} from '../lib/services'
+} from '@/lib/services'
 import log from 'loglevel'
-import {APP_ROUTES} from '../config/constants'
-import AppModal from '../components/AppModal'
+import {APP_ROUTES} from '@/config/constants'
+import AppModal from '@/components/AppModal'
 import AppContext from './AppContext'
-import {eq, fetchProtocols, getHeaders} from "../components/custom/js/functions";
-import {getEntityEndPoint} from "../config/config";
+import {eq, fetchProtocols, getHeaders} from "@/components/custom/js/functions";
+import {getEntityEndPoint} from "@/config/config";
 import {Button} from 'react-bootstrap'
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import ClipboardCopy from "../components/ClipboardCopy";
+import ClipboardCopy from "@/components/ClipboardCopy";
 const EntityContext = createContext()
 
 export const EntityProvider = ({ children }) => {
-    const {_t, cache } = useContext(AppContext)
+    const {_t, cache, hasPublicAccess } = useContext(AppContext)
     const router = useRouter()
     const [authorized, setAuthorized] = useState(null)
     const [validated, setValidated] = useState(false)
@@ -40,8 +40,20 @@ export const EntityProvider = ({ children }) => {
     const [response, setResponse] = useState()
     const [warningClasses, setWarningClasses] = useState({})
 
+    const [contacts, setContacts] = useState([])
+    const [contributors, setContributors] = useState([])
+    const contactsTSV = {
+        excludeColumns: ['metadata_schema_id'],
+        headers: ['first_name', 'last_name', 'middle_name_or_initial	display_name','affiliation','orcid','email',
+            'is_contact','is_principal_investigator','is_operator', 'metadata_schema_id'],
+        uploadEndpoint: 'validate-tsv'
+    }
+
     const isUnauthorized = () => {
-        return authorized === false
+        if (hasPublicAccess(data)) {
+            return false
+        }
+        return (authorized === false)
     }
 
     const isAuthorizing = () => {
@@ -79,7 +91,7 @@ export const EntityProvider = ({ children }) => {
 
         get_user_write_groups()
             .then((response) => {
-                if (response.user_write_groups.length === 1) {
+                if (response.user_write_groups?.length === 1) {
                     setSelectedUserWriteGroupUuid(
                         response.user_write_groups[0].uuid
                     )
@@ -177,14 +189,18 @@ export const EntityProvider = ({ children }) => {
             setResponse(response)
         } else {
             const verb = isEditMode() ? 'Updating' : 'Registering'
-            setHasSubmissionError(true)
-            setModalTitle(<span>{errIcon()}<span className={'title-text'}>Error {verb} {entity}</span></span>)
-            let responseText = ""
+            let responseText = "An unexpected issue occurred. The request could not have been completed."
+            let title = `Error ${verb} ${entity}`
+
             if ("error" in response) {
                 responseText = response.error
             } else if ("statusText" in response) {
                 responseText = response.statusText
             }
+
+            setHasSubmissionError(true)
+            setModalTitle(<span>{errIcon()}<span className={'title-text'}>{title}</span></span>)
+
             setModalBody(responseText)
         }
     }
@@ -266,10 +282,34 @@ export const EntityProvider = ({ children }) => {
         }
     }
 
+    const setContactsAttributes = (resp) => {
+        if (!resp.description) return
+        setContributors(resp)
+        let _contacts = []
+        for (let creator of resp?.description?.records) {
+            if (eq(creator.is_contact, 'true') || eq(creator.is_contact, 'yes')) {
+                _contacts.push(creator)
+            }
+        }
+        setContacts({description: {records: _contacts, headers: resp.description.headers}})
+        setDisableSubmit(false)
+    }
+
+    const setContactsAttributesOnFail = (resp) => {
+        setContributors({description: {}})
+        setContacts([])
+        setDisableSubmit(true)
+    }
+
+    const isPreview = (error) => {
+        if (error  && hasPublicAccess(data)) return false
+        return ((isUnauthorized() || isAuthorizing()) || !data)
+    }
+
     return (
         <EntityContext.Provider
             value={{
-                isUnauthorized, isAuthorizing,
+                isUnauthorized, isAuthorizing, isPreview,
                 getModal, setModalDetails,
                 setSubmissionModal,
                 setCheckDoiModal,
@@ -290,7 +330,8 @@ export const EntityProvider = ({ children }) => {
                 getEntityConstraints, getSampleEntityConstraints, buildConstraint,
                 getMetadataNote, successIcon, errIcon, checkProtocolUrl,
                 warningClasses, setWarningClasses, getCancelBtn,
-                isAdminOrHasValue, getAssignedToGroupNames
+                isAdminOrHasValue, getAssignedToGroupNames,
+                contactsTSV, contacts, setContacts, contributors, setContributors, setContactsAttributes, setContactsAttributesOnFail
             }}
         >
             {children}

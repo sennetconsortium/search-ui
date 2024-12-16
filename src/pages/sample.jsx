@@ -2,8 +2,7 @@ import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
-import {getRequestHeaders} from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
@@ -12,15 +11,14 @@ import {APP_ROUTES} from "@/config/constants";
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
+const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
 const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
 const Protocols = dynamic(() => import("@/components/custom/entities/sample/Protocols"))
 const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const Spinner = dynamic(() => import("@/components/custom/Spinner"))
 const Tissue = dynamic(() => import("@/components/custom/entities/sample/Tissue"))
-const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthorized"))
 
 
 function ViewSample() {
@@ -31,7 +29,7 @@ function ViewSample() {
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
 
-    const {isRegisterHidden, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext)
+    const {isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -39,19 +37,19 @@ function ViewSample() {
         const fetchData = async (uuid) => {
             log.debug('sample: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('sample: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('sample: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                // set state with the result
-                setData(data);
-                for (const ancestor of data.ancestors) {
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid)
+                Object.assign(_data, ancestry)
+                setData(_data)
+                for (const ancestor of _data.ancestors) {
                     log.debug(ancestor)
                     if (ancestor.metadata && Object.keys(ancestor.metadata).length) {
                         setAncestorHasMetadata(true)
@@ -59,10 +57,11 @@ function ViewSample() {
                     }
                 }
 
-                get_write_privilege_for_group_uuid(data.group_uuid)
+                get_write_privilege_for_group_uuid(_data.group_uuid)
                     .then(response => {
                         setHasWritePrivilege(response.has_write_privs)
                     }).catch(log.error)
+
             }
         }
 
@@ -77,10 +76,8 @@ function ViewSample() {
         }
     }, [router]);
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data, error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -110,6 +107,13 @@ function ViewSample() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Tissue</a>
                                             </li>
+                                            {data.collections && data.collections.length > 0 &&
+                                                <li className="nav-item">
+                                                    <a href="#Associated Collections"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Collections</a>
+                                                </li>
+                                            }
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
@@ -160,6 +164,9 @@ function ViewSample() {
                                                 <Tissue data={data}/>
                                             }
 
+                                            {/*Collection*/}
+                                            {data.collections && data.collections.length > 0 && <Collections entityType='Sample' data={data.collections}/>}
+
                                             {/*Provenance*/}
                                             {data &&
                                                 <Provenance nodeData={data}/>
@@ -172,7 +179,7 @@ function ViewSample() {
                                                     data={data}
                                                     metadata={data?.metadata}
                                                     mappedMetadata={data?.cedar_mapped_metadata}
-                                                    hasLineageMetadata={true}/>
+                                                    />
                                             }
 
                                             {/*Protocols*/}

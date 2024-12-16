@@ -15,6 +15,10 @@
             background: rgba(0, 0, 0, 0.03);
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
+
+        @include sm-mx {
+            position: relative;
+        }
     }
 
     > svg {
@@ -34,7 +38,14 @@
         }
     }
 
+    .c-provenance__tabs {
+        li:first-child {
+            padding-left: 0 !important;
+        }
+    }
+
     .c-legend {
+        font-size: 12px;
         &__item {
             &--Expand {
                 .c-legend__label__text {

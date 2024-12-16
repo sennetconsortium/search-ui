@@ -3,10 +3,11 @@ import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
 import {getRequestHeaders} from "@/components/custom/js/functions";
-import {get_write_privilege_for_group_uuid} from "@/lib/services";
+import {callService, get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
+import {getEntityEndPoint} from "@/config/config";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -16,8 +17,6 @@ const Description = dynamic(() => import("@/components/custom/entities/sample/De
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const FileTreeView = dynamic(() => import("@/components/custom/entities/dataset/FileTreeView"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const Spinner = dynamic(() => import("@/components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("@/components/custom/layout/Unauthorized"))
 
 
 function ViewUpload() {
@@ -26,7 +25,7 @@ function ViewUpload() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {isRegisterHidden, isLoggedIn, isUnauthorized, isAuthorizing, _t, cache} = useContext(AppContext);
+    const {isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext);
 
     // only executed on init rendering, see the []
     useEffect(() => {
@@ -35,21 +34,23 @@ function ViewUpload() {
 
             log.debug('upload: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('upload: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('upload: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setErrorMessage(_data["error"])
                 setData(false)
             } else {
-                // set state with the result
-                setData(data);
-                get_write_privilege_for_group_uuid(data.group_uuid).then(response => {
+                setData(_data)
+                const datasets = await callService(null,  `${getEntityEndPoint()}uploads/${_data.uuid}/datasets`)
+                Object.assign(_data, {datasets})
+                setData(_data)
+
+                get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
                 }).catch(log.error)
+
             }
         }
 
@@ -66,10 +67,8 @@ function ViewUpload() {
 
     console.log("Test cache in source: ", cache)
 
-    if ((isAuthorizing() || isUnauthorized()) && !data) {
-        return (
-            data == null ? <Spinner/> : <Unauthorized/>
-        )
+    if (isPreview(data, error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -99,7 +98,7 @@ function ViewUpload() {
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Files</a>
                                             </li>
-                                            {data.datasets.length > 0 && <li className="nav-item">
+                                            {data.datasets?.length > 0 && <li className="nav-item">
                                                 <a href="#Datasets"
                                                    className="nav-link"
                                                    data-bs-parent="#sidebar">Datasets</a>
@@ -134,7 +133,7 @@ function ViewUpload() {
                                             <FileTreeView data={data}/>
 
                                             {/*Datasets*/}
-                                            {data.datasets.length > 0 && <Datasets data={data.datasets}/>}
+                                            {data.datasets?.length > 0 && <Datasets data={data.datasets}/>}
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>

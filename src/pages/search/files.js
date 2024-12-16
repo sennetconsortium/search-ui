@@ -2,33 +2,38 @@ import dynamic from "next/dynamic";
 import React, {useContext} from "react";
 import {ErrorBoundary, SearchBox} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
-import {TableResultsFiles} from '../../components/custom/TableResultsFiles'
-import {APP_TITLE} from "../../config/config";
-import {SEARCH_FILES} from "../../config/search/files"
+import {TableResultsFiles} from '@/components/custom/TableResultsFiles'
+import {APP_TITLE} from "@/config/config";
+import {SEARCH_FILES} from "@/config/search/files"
 import CustomClearSearchBox from "../../components/custom/layout/CustomClearSearchBox";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import AppContext from "../../context/AppContext";
-import SelectedFilters from "../../components/custom/layout/SelectedFilters";
-import {getUBKGFullName} from "../../components/custom/js/functions";
+import AppContext from "@/context/AppContext";
+import SelectedFilters from "@/components/custom/layout/SelectedFilters";
+import {getUBKGFullName} from "@/components/custom/js/functions";
 
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const BodyContent = dynamic(() => import("../../components/custom/search/BodyContent"))
-const FacetsContent = dynamic(() => import("../../components/custom/search/FacetsContent"))
-const Header = dynamic(() => import("../../components/custom/layout/Header"))
-const SearchDropdown = dynamic(() => import("../../components/custom/search/SearchDropdown"))
-const SearchUIContainer = dynamic(() => import("search-ui/components/core/SearchUIContainer"))
-const SelectedFacets = dynamic(() => import("../../components/custom/search/SelectedFacets"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const BodyContent = dynamic(() => import("@/components/custom/search/BodyContent"))
+const FacetsContent = dynamic(() => import("@/components/custom/search/FacetsContent"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const InvalidToken = dynamic(() => import("@/components/custom/layout/InvalidToken"))
+const SearchDropdown = dynamic(() => import("@/components/custom/search/SearchDropdown"))
+const SearchUIContainer = dynamic(() => import("@/search-ui/components/core/SearchUIContainer"))
+const SelectedFacets = dynamic(() => import("@/components/custom/search/SelectedFacets"))
+const Spinner = dynamic(() => import("@/components/custom/Spinner"))
 
 
 function SearchFiles() {
     const {
         _t,
         logout,
+        adminGroup,
         isRegisterHidden,
+        hasInvalidToken,
+        validatingToken,
+        authorized,
         isAuthorizing,
         isUnauthorized,
         hasAuthenticationCookie
@@ -38,19 +43,28 @@ function SearchFiles() {
         onSubmit(event)
     }
 
-    if (isAuthorizing()) {
+    if (validatingToken() || isAuthorizing()) {
         return <Spinner/>
+    } else if (hasInvalidToken()) {
+        return <InvalidToken/>
     } else {
         if (isUnauthorized() && hasAuthenticationCookie()) {
             // This is a scenario in which the GLOBUS token is expired but the token still exists in the user's cookies
             logout()
             window.location.reload()
         }
+
+        const authState = {
+            isAuthenticated: hasAuthenticationCookie() === true,
+            isAuthorized: authorized === true,
+            isAdmin: adminGroup === true
+        }
+
         return (
             <>
                 <Header title={APP_TITLE}/>
 
-                <SearchUIContainer config={SEARCH_FILES} name='files'>
+                <SearchUIContainer config={SEARCH_FILES} name='files' authState={authState}>
                     <AppNavbar hidden={isRegisterHidden}/>
                     <ErrorBoundary>
                         <Layout

@@ -6,8 +6,8 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
-import {cleanJson, eq, fetchEntity, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
-import {get_ancestor_organs, parseJson, update_create_entity} from "../../lib/services";
+import {cleanJson, eq, extractSourceSex, fetchEntity, getDOIPattern} from "../../components/custom/js/functions";
+import {getAncestryData, getEntityData, parseJson, update_create_entity} from "../../lib/services";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import {getUserName, isRuiSupported} from "../../config/config";
@@ -27,13 +27,11 @@ const RUIIntegration = dynamic(() => import("../../components/custom/edit/sample
 const RUIButton = dynamic(() => import("../../components/custom/edit/sample/rui/RUIButton"))
 const SampleCategory = dynamic(() => import("../../components/custom/edit/sample/SampleCategory"))
 const SenNetAlert = dynamic(() => import("../../components/SenNetAlert"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
 const ThumbnailSelector = dynamic(() => import("../../components/custom/edit/ThumbnailSelector"))
-const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
 
 function EditSample() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -49,10 +47,11 @@ function EditSample() {
         getMetadataNote, checkProtocolUrl,
         warningClasses, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache, filterImageFilesToAdd} = useContext(AppContext)
+    const {_t, cache, filterImageFilesToAdd, getPreviewView} = useContext(AppContext)
     const router = useRouter()
     const [source, setSource] = useState(null)
     const [sourceId, setSourceId] = useState(null)
+    const [ruiSex, setRuiSex] = useState(undefined)
     const [ruiLocation, setRuiLocation] = useState('')
     const [showRui, setShowRui] = useState(false)
     const [showRuiButton, setShowRuiButton] = useState(false)
@@ -67,7 +66,6 @@ function EditSample() {
     const [thumbnailFileToRemove, setThumbnailFileToRemove] = useState(null)
     const [imageByteArray, setImageByteArray] = useState([])
     const alertStyle = useRef('info')
-
 
     useEffect(() => {
         const fetchSampleCategories = async () => {
@@ -97,9 +95,12 @@ function EditSample() {
     // Wait until "sampleCategories" and "editMode" are set prior to running this
     useEffect(() => {
         if (dataAccessPublic === true) {
+            const excludedElementIds = ['view-rui-json-btn']
             const form = document.getElementById("sample-form");
             const elements = form.elements;
             for (let i = 0, len = elements.length; i < len; ++i) {
+                if (excludedElementIds.includes(elements[i].id))
+                    continue
                 elements[i].setAttribute('disabled', true);
             }
         }
@@ -112,56 +113,59 @@ function EditSample() {
         const fetchData = async (uuid) => {
             log.debug('editSample: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('editSample: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editSample: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setData(false)
+                setErrorMessage(_data["error"])
             } else {
-                setData(data);
 
-                checkProtocolUrl(data.protocol_url)
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
+                Object.assign(_data, ancestry)
+                setData(_data)
+                setRuiSex(extractSourceSex(_data.source))
+
+                checkProtocolUrl(_data.protocol_url)
 
                 // Show organ input group if sample category is 'organ'
-                if (eq(data.sample_category, cache.sampleCategories.Organ)) {
+                if (eq(_data.sample_category, cache.sampleCategories.Organ)) {
                     set_organ_group_hide('')
                 }
 
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
-                    'sample_category': data.sample_category,
-                    'organ': data.organ,
-                    'organ_other': data.organ_other,
-                    'protocol_url': data.protocol_url,
-                    'lab_tissue_sample_id': data.lab_tissue_sample_id,
-                    'description': data.description,
-                    'direct_ancestor_uuid': data.immediate_ancestors[0].uuid,
-                    'metadata': data.metadata
+                    'sample_category': _data.sample_category,
+                    'organ': _data.organ,
+                    'organ_other': _data.organ_other,
+                    'protocol_url': _data.protocol_url,
+                    'lab_tissue_sample_id': _data.lab_tissue_sample_id,
+                    'description': _data.description,
+                    'direct_ancestor_uuid': _data.immediate_ancestors[0].uuid,
+                    'metadata': _data.metadata
                 })
-                if (data.image_files) {
-                    setValues(prevState => ({...prevState, image_files: data.image_files}))
+                if (_data.image_files) {
+                    setValues(prevState => ({...prevState, image_files: _data.image_files}))
                 }
-                if (data.thumbnail_file) {
-                    setValues(prevState => ({...prevState, thumbnail_file: data.thumbnail_file}))
+                if (_data.thumbnail_file) {
+                    setValues(prevState => ({...prevState, thumbnail_file: _data.thumbnail_file}))
                 }
-                setImageFilesToAdd(data.image_files)
-                setThumbnailFileToAdd(data.thumbnail_file)
+                setImageFilesToAdd(_data.image_files)
+                setThumbnailFileToAdd(_data.thumbnail_file)
                 setEditMode("Edit")
-                setDataAccessPublic(data.data_access_level === 'public')
+                setDataAccessPublic(_data.data_access_level === 'public')
 
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    await fetchSource(data.immediate_ancestors[0].uuid);
+                if (_data.hasOwnProperty("immediate_ancestors")) {
+                    await fetchSource(_data.immediate_ancestors[0].uuid);
                 }
 
-                let ancestor_organ = await get_ancestor_organs(data.uuid)
-                setAncestorOrgan(ancestor_organ)
-                setAncestorSource([getSourceType(data.source)])
+                setAncestorOrgan(_data.organ ? [_data.organ] : [_data?.origin_samples[0].organ])
+                setAncestorSource([getSourceType(_data.source)])
 
-                if (data['rui_location'] !== undefined) {
-                    setRuiLocation(data['rui_location'])
+                if (_data['rui_location'] !== undefined) {
+                    setRuiLocation(_data['rui_location'])
                     setShowRuiButton(true)
                 }
             }
@@ -255,9 +259,9 @@ function EditSample() {
             let ancestor_organ = []
             if (source.hasOwnProperty("organ")) {
                 ancestor_organ.push(source['organ'])
-            } else if (source.hasOwnProperty("origin_sample")) {
-                if (source.origin_sample.hasOwnProperty("organ")) {
-                    ancestor_organ.push(source.origin_sample['organ'])
+            } else if (source.hasOwnProperty("origin_samples")) {
+                if (source.origin_samples[0].hasOwnProperty("organ")) {
+                    ancestor_organ.push(source.origin_samples[0]['organ'])
                 }
             }
             setAncestorOrgan(ancestor_organ)
@@ -375,10 +379,8 @@ function EditSample() {
         }
     }
 
-    if (isAuthorizing() || isUnauthorized()) {
-        return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
-        )
+    if (isPreview(error))  {
+        return getPreviewView(data)
     } else {
         return (
             <>
@@ -395,7 +397,7 @@ function EditSample() {
                 {showRui &&
                     <RUIIntegration
                         organ={ancestorOrgan}
-                        sex={'male'}
+                        sex={ruiSex}
                         user={getUserName()}
                         blockStartLocation={ruiLocation}
                         setRuiLocation={setRuiLocation}
@@ -448,6 +450,8 @@ function EditSample() {
                                                 onChange={_onChange}/>
                                             <RUIButton
                                                 showRegisterLocationButton={showRuiButton}
+                                                ruiSex={ruiSex}
+                                                setRuiSex={setRuiSex}
                                                 ruiLocation={ruiLocation}
                                                 setShowRui={setShowRui}
                                             />

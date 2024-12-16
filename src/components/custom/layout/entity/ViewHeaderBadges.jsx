@@ -1,20 +1,42 @@
-import PropTypes from "prop-types";
-import {displayBodyHeader, eq, getStatusColor, getStatusDefinition, getUBKGFullName} from "../../js/functions";
-import React, {Fragment, useContext} from "react";
-import AppContext from "../../../../context/AppContext";
-import SenNetPopover from "../../../SenNetPopover";
-import StatusError from "../../../StatusError";
+import ClipboardCopy from "@/components/ClipboardCopy";
+import SenNetPopover from "@/components/SenNetPopover";
+import StatusError from "@/components/StatusError";
+import { APP_ROUTES } from "@/config/constants";
+import { getOrganByCode } from "@/config/organs";
+import AppContext from "@/context/AppContext";
 import Link from "next/link";
-import {APP_ROUTES} from "../../../../config/constants";
-import {organDetails} from "../../../../config/organs";
-import ClipboardCopy from "../../../ClipboardCopy";
+import PropTypes from "prop-types";
+import {Fragment, useContext, useEffect, useState} from "react";
+import {
+    getDatasetTypeDisplay,
+    displayBodyHeader,
+    eq,
+    getStatusColor,
+    getStatusDefinition,
+    getUBKGFullName
+} from "../../js/functions";
 
 function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader, hasWritePrivilege}) {
     const {cache} = useContext(AppContext)
+    const [organs, setOrgans] = useState([])
 
     const getOrganRoute = (ruiCode) => {
-        return `${APP_ROUTES.organs}/${organDetails[ruiCode].urlParamName}`
+        const organ = getOrganByCode(ruiCode)
+        if (!organ) return
+        return `${APP_ROUTES.organs}/${organ.path}`
     }
+
+    useEffect(() => {
+        let organs = new Set()
+        if (data && data.origin_samples) {
+            data.origin_samples.map(origin_sample => {
+                organs.add(origin_sample.organ)
+            })
+            // Need to convert Set to Array
+            setOrgans(Array.from(organs))
+        }
+    }, [data]);
+
 
     return (
         <Fragment>
@@ -52,22 +74,36 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                     ) : (
                         <h5 className={"title_badge"}>
                             <span className="badge bg-secondary me-2">
-                                    {getUBKGFullName(data.dataset_type)}
+                                    {getUBKGFullName(getDatasetTypeDisplay(data))}
                             </span>
                         </h5>
                     )
                     }
                 </Fragment>) : (
                 <Fragment>
-                    {data.origin_sample &&
-                        <Link href={getOrganRoute(data.origin_sample.organ)}>
-                            <h5 className={"title_badge"}>
-                                <span className="badge bg-secondary me-2">
-                                    {displayBodyHeader(getUBKGFullName(data.origin_sample.organ))}
-                                </span>
-                            </h5>
-                        </Link>
+                    {organs && organs.length > 0 &&
+                        organs.map(organ => (
+                            <Fragment key={organ}>
+                                {/* Some organs don't have an organ page */}
+                                {getOrganRoute(organ) ? (
+                                    <a href={getOrganRoute(organ)}>
+                                        <h5 className={"title_badge"}>
+                                        <span className="badge bg-secondary me-2">
+                                            {displayBodyHeader(getUBKGFullName(organ))}
+                                        </span>
+                                        </h5>
+                                    </a>
+                                ) : (
+                                    <h5 className={"title_badge"}>
+                                    <span className="badge bg-secondary me-2">
+                                        {displayBodyHeader(getUBKGFullName(organ))}
+                                    </span>
+                                    </h5>
+                                )}
+                            </Fragment>
+                        ))
                     }
+
                     {data.source_type &&
                         <h5 className={"title_badge"}>
                             <span className="badge bg-secondary me-2">
@@ -95,16 +131,9 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
                     {data.status &&
                         <h5 className={"title_badge"}>
                         <span className={`badge ${getStatusColor(data.status)} me-2`}>
-
-                        {(data.status === 'Invalid' || data.status === 'Error') && hasWritePrivilege ?
-                            (
-                                <StatusError text={data.status}
-                                             error={data.pipeline_message ? data.pipeline_message : data.validation_message}/>
-                            ) : (
-                                <SenNetPopover text={getStatusDefinition(data.status)} className={'status-info'}>
+                            <SenNetPopover text={getStatusDefinition(data.status)} className={'status-info'}>
                                     {displayBodyHeader(data.status)}
-                                </SenNetPopover>
-                            )}
+                            </SenNetPopover>
                         </span>
 
                         </h5>
@@ -113,12 +142,12 @@ function ViewHeaderBadges({data, uniqueHeader, uniqueHeaderUrl, isMetadataHeader
             )
             }
 
-            {data?.doi_url &&
+            {(data?.doi_url || data?.publication_doi) &&
                 <h5 className={"title_badge"}>
-                            <span className={`${getStatusColor(data.status)} badge`}>
-                                DOI: <a href={data.doi_url} className={'lnk--nodecor'} style={{color: 'white'}}>{data.registered_doi}</a>
-                                &nbsp;<ClipboardCopy text={data.registered_doi} className={'lnk--white'} />
-                            </span>
+                    <span className={`${getStatusColor(data.status)} badge`}>
+                        DOI: <a href={data.doi_url || data?.publication_url} className={'lnk--nodecor'} style={{color: 'white'}}>{data.registered_doi || data?.publication_doi}</a>
+                        &nbsp;<ClipboardCopy text={data.registered_doi || data?.publication_doi} className={'lnk--white'} />
+                    </span>
                 </h5>
             }
 
@@ -133,4 +162,5 @@ ViewHeaderBadges.propTypes = {
     isMetadataHeader: PropTypes.bool
 }
 
-export {ViewHeaderBadges}
+export { ViewHeaderBadges };
+

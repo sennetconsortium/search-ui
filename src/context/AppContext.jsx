@@ -1,20 +1,20 @@
 import React, { createContext, useEffect, useState} from 'react'
 import { useRouter } from 'next/router'
-import { goToSearch } from '../components/custom/js/functions'
+import {eq, goToSearch} from '@/components/custom/js/functions'
 import { getCookie, setCookie } from 'cookies-next'
 import log from 'loglevel'
 import {
     check_valid_token,
-    get_auth_header,
     get_read_write_privileges,
     get_user_write_groups,
     has_data_admin_privs
-} from '../lib/services'
-import {deleteCookies} from "../lib/auth";
-import {APP_ROUTES} from "../config/constants";
-import {getIngestEndPoint, STORAGE_KEY} from "../config/config";
+} from '@/lib/services'
+import {deleteCookies} from "@/lib/auth";
+import {APP_ROUTES} from "@/config/constants";
+import {STORAGE_KEY} from "@/config/config";
 import AppModal from "../components/AppModal";
 import Spinner from "../components/custom/Spinner";
+import Unauthorized from "@/components/custom/layout/Unauthorized";
 
 const AppContext = createContext()
 
@@ -142,8 +142,21 @@ export const AppProvider = ({ cache, banners, children }) => {
         return validToken === null
     }
 
-    const isUnauthorized = () => {
-        return authorized === false  
+    const hasPublicAccess = (data) => {
+        let publicAccess = false
+        if (data) {
+            publicAccess = (eq(data.data_access_level, 'public') || eq(data.status, 'published')
+                    || ((eq(data.entity_type, 'Collection') || eq(data.entity_type, 'Epicollection')) && data.doi_url))
+                && !router.pathname.contains('edit')
+        }
+        return publicAccess
+    }
+
+    const isUnauthorized = (data) => {
+        if (hasPublicAccess(data)) {
+            return false
+        }
+        return (authorized === false)
     }
 
     const isAuthorizing = () => {
@@ -254,7 +267,16 @@ export const AppProvider = ({ cache, banners, children }) => {
     const handleSidebar = () => {
         setSidebarVisible(!sidebarVisible)
     }
-    
+
+    const isPreview = (data, error) => {
+        if (error && hasPublicAccess(data)) return false
+        return ((isUnauthorized(data) || isAuthorizing()) || !data)
+    }
+
+    const getPreviewView = (data) => {
+        return isUnauthorized(data) && data != null ? <Unauthorized/> : <Spinner/>
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -267,6 +289,9 @@ export const AppProvider = ({ cache, banners, children }) => {
                 isLoggedIn,
                 isAuthorizing,
                 isUnauthorized,
+                hasPublicAccess,
+                isPreview,
+                getPreviewView,
                 hasInvalidToken,
                 validatingToken,
                 logout,

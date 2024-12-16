@@ -1,10 +1,10 @@
-import React, {Component} from "react";
-import {Button, Modal} from "react-bootstrap";
-import Spinner from "../../../Spinner";
-import {parseJson} from "../../../../../lib/services";
-import AppModal from "../../../../AppModal";
+import AppModal from "@/components/AppModal";
+import Spinner from "@/components/custom/Spinner";
+import { parseJson } from "@/lib/services";
 import Script from "next/script";
-import {Helmet, HelmetProvider} from "react-helmet-async";
+import React, { Component } from "react";
+import { Button, Modal } from "react-bootstrap";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 class RUIIntegration extends Component {
     constructor(props) {
@@ -22,7 +22,6 @@ class RUIIntegration extends Component {
      * Update the ccf-rui config and add a resize screen event listener
      */
     componentDidMount() {
-        console.log("RUI...", this.props);
         this.updateHeight();
         this.updateRUIConfig();
         window.addEventListener("resize", this.updateHeight.bind(this));
@@ -81,8 +80,8 @@ class RUIIntegration extends Component {
     }
 
     updateRUIConfig() {
-        const organ = this.props.cache.organTypes[this.props.organ];
-        const [_, organType, organSide] = organ.match(
+        const completeOrgan = this.props.cache.organs.find(x => x.rui_code === this.props.organ[0])
+        const [_, organType, organSide] = completeOrgan['term'].match(
             /^((?:\w)+(?: \w+)?)(?: \((Right|Left)\))?$/
         );
         const sex = this.props.sex;
@@ -91,15 +90,15 @@ class RUIIntegration extends Component {
         const self = this;
 
         const rui = this.ruiRef.current;
-        rui.baseHref = "https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/"
+        rui.baseHref = "https://cdn.humanatlas.io/ui/ccf-rui/"
         rui.user = {
             firstName: firstName || "",
             lastName: lastName || "",
         };
         rui.organ = {
-            ontologyId: this.props.organ[0],
+            ontologyId: completeOrgan["organ_uberon_url"],
             name: organType.toLowerCase(),
-            sex: sex?.toLowerCase() || "female",
+            sex: sex?.toLowerCase() || undefined,
             side: organSide?.toLowerCase(),
         };
 
@@ -132,12 +131,11 @@ class RUIIntegration extends Component {
         return (
             <HelmetProvider>
                 <Helmet>
-                    <link rel="stylesheet"
-                          href={"https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/styles.css"}/>
-                    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&amp;display=swap"
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&amp;display=swap"
                           rel="stylesheet"/>
-                    <link rel="stylesheet"
-                          href={"https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Sharp|Material+Icons+Outlined"}/>
+                    <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined"
+                          rel="stylesheet"/>
+                    <link href="https://cdn.humanatlas.io/ui/ccf-rui/styles.css" rel="stylesheet"/>
                 </Helmet>
                 <div className="webgl-content mat-typography rui">
                     <div
@@ -196,7 +194,7 @@ class RUIIntegration extends Component {
 
                         <Script
                             only="edit/sample"
-                            src="https://cdn.jsdelivr.net/gh/hubmapconsortium/ccf-ui@3/rui/wc.js"
+                            src="https://cdn.humanatlas.io/ui/ccf-rui/wc.js"
                         />
                     </div>
                 </div>

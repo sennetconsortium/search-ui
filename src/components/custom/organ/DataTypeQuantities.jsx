@@ -1,108 +1,115 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import DataTable from "react-data-table-component";
-import useLocalSettings from "../../../hooks/useLocalSettings";
-import { getOrganDataTypeQuantities } from "../../../lib/services";
-import SenNetAccordion from "../layout/SenNetAccordion";
+import { APP_ROUTES } from '@/config/constants'
+import useLocalSettings from '@/hooks/useLocalSettings'
+import { getOrganDataTypeQuantities } from '@/lib/services'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import DataTable from 'react-data-table-component'
+import { searchUIQueryString } from '../js/functions'
+import SenNetAccordion from '../layout/SenNetAccordion'
+import {RESULTS_PER_PAGE} from "@/config/config";
 
-const DataTypeQuantities = ({ id, ruiCode }) => {
-    const router = useRouter();
-    const {setLocalSettings} = useLocalSettings();
-    const [dataTypes, setDataTypes] = useState(null);
+/**
+ * DataTypeQuantities component displays the quantities for a given organ in a SenNetAccordion.
+ *
+ * @param {Object} props - The properties object.
+ * @param {string} props.id - The id of the SenNetAccordion.
+ * @param {import('@/config/organs').Organ} props.organ - The organ to display in the component.
+ *
+ * @returns {JSX.Element} The JSX code for the HumanReferenceAtlas component.
+ */
+const DataTypeQuantities = ({ id, organ }) => {
+    const { setLocalSettings } = useLocalSettings()
+    const [dataTypes, setDataTypes] = useState(null)
 
     useEffect(() => {
-        if (!ruiCode) {
-            return;
-        }
-
         const getQuantities = async () => {
-            const qtys = await getOrganDataTypeQuantities(ruiCode);
+            const qtys = await getOrganDataTypeQuantities(organ.codes)
             const res = Object.entries(qtys || []).map((qty) => {
-                return { dataType: qty[0], count: qty[1] };
-            });
-            setDataTypes(res);
-        };
-        getQuantities();
-    }, [ruiCode]);
+                return { dataType: qty[0], count: qty[1] }
+            })
+            setDataTypes(res)
+        }
+        getQuantities()
+    }, [organ])
 
-    const searchUrl =
-        "/search?size=n_10000_n&" +
-        "filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&" +
-        "filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=origin_sample.organ&" +
-        `filters%5B1%5D%5Bvalues%5D%5B0%5D=${ruiCode}&filters%5B1%5D%5Btype%5D=any&` +
-        "sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc";
+    const searchUrl = `${APP_ROUTES.search}?` + searchUIQueryString([
+        { field: 'entity_type', values: ['Dataset'], type: 'any' },
+        { field: 'origin_samples.organ', values: organ.codes, type: 'any' }
+    ], 20)
 
     const searchUrlForDatasetType = (datasetType) => {
-        return (
-            "/search?size=n_10000_n&" +
-            "filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&" +
-            "filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=origin_sample.organ&" +
-            `filters%5B1%5D%5Bvalues%5D%5B0%5D=${ruiCode}&filters%5B1%5D%5Btype%5D=any&` +
-            `filters%5B2%5D%5Bfield%5D=dataset_type&filters%5B2%5D%5Bvalues%5D%5B0%5D=${datasetType}&filters%5B2%5D%5Btype%5D=any&` +
-            "sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc"
-        );
-    };
-
-    const handleSearchPageClick = (e) => {
-        e.preventDefault();
-        // Expand the relevant facets on the search page
-        setLocalSettings("entities", {
-            "entity_type": { isExpanded: true },
-            "origin_sample.organ": { isExpanded: true },
-        })
-        router.push(searchUrl);
+        return `${APP_ROUTES.search}?` + searchUIQueryString([
+            { field: 'entity_type', values: ['Dataset'], type: 'any' },
+            { field: 'origin_samples.organ', values: organ.codes, type: 'any' },
+            { field: 'dataset_type', values: [datasetType], type: 'any' }
+        ], 20)
     }
 
-    const handleDatasetTypeRowClick = (e, datasetType) => {
-        e.preventDefault();
+    const handleSearchPageClick = (e) => {
+        e.preventDefault()
         // Expand the relevant facets on the search page
-        setLocalSettings("entities", {
-            "entity_type": { isExpanded: true },
-            "origin_sample.organ": { isExpanded: true },
-            "dataset_type": { isExpanded: true },
+        setLocalSettings('entities', {
+            entity_type: { isExpanded: true },
+            'origin_samples.organ': { isExpanded: true }
         })
-        router.push(searchUrlForDatasetType(datasetType));
+        window.location = e.target.href
+    }
+
+    const handleDatasetTypeRowClick = (e) => {
+        e.preventDefault()
+        // Expand the relevant facets on the search page
+        setLocalSettings('entities', {
+            entity_type: { isExpanded: true },
+            'origin_samples.organ': { isExpanded: true },
+            dataset_type: { isExpanded: true }
+        })
+        window.location = e.target.href
     }
 
     const columns = [
         {
-            name: "Dataset Type",
+            name: 'Dataset Type',
             sortable: true,
             cell: (row, index, column, id) => {
                 return (
                     <Link
-                        href=""
-                        onClick={(e) => handleDatasetTypeRowClick(e, row.dataType)}
+                        href={searchUrlForDatasetType(row.dataType)}
+                        onClick={handleDatasetTypeRowClick}
                     >
                         {row.dataType}
                     </Link>
-                );
-            },
+                )
+            }
         },
         {
-            name: "Count",
+            name: 'Count',
             selector: (row) => row.count,
-            sortable: true,
-        },
-    ];
+            sortable: true
+        }
+    ]
 
     return (
-        <SenNetAccordion id={id} title="Dataset Types" afterTitle={undefined}>
-            <div className="d-flex flex-row-reverse">
+        <SenNetAccordion id={id} title='Dataset Types' afterTitle={undefined}>
+            <div className='d-flex flex-row-reverse'>
                 <Link
-                    className="btn btn-outline-primary rounded-0"
-                    href=""
+                    className='btn btn-outline-primary rounded-0'
+                    href={searchUrl}
                     onClick={handleSearchPageClick}
                 >
                     View on search page
                 </Link>
             </div>
-            {dataTypes != null && (
-                <DataTable columns={columns} data={dataTypes} fixedHeader={true} pagination />
+            {dataTypes && (
+                <DataTable
+                    columns={columns}
+                    data={dataTypes}
+                    fixedHeader={true}
+                    paginationRowsPerPageOptions={RESULTS_PER_PAGE}
+                    pagination
+                />
             )}
         </SenNetAccordion>
-    );
-};
+    )
+}
 
-export default DataTypeQuantities;
+export default DataTypeQuantities

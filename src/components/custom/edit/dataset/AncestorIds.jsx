@@ -1,43 +1,45 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {Form} from 'react-bootstrap';
-import {Results, SearchBox} from "@elastic/react-search-ui";
-import {Layout} from "@elastic/react-search-ui-views";
+import {Results, SearchBox} from '@elastic/react-search-ui';
+import {Layout} from '@elastic/react-search-ui-views';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {valid_dataset_ancestor_config} from "../../../../config/config";
-import {TableResultsEntities} from '../../TableResultsEntities'
-import AncestorsTable from "./AncestorsTable";
-import CustomClearSearchBox from "../../layout/CustomClearSearchBox";
-import addons from "../../js/addons/addons";
+import {valid_dataset_ancestor_config} from '@/config/config';
+import {TableResultsEntities} from '@/components/custom/TableResultsEntities'
+import AncestorsTable from './AncestorsTable';
+import CustomClearSearchBox from '@/components/custom/layout/CustomClearSearchBox';
+import addons from '@/components/custom/js/addons/addons';
 import $ from 'jquery'
-import SelectedFilters from "../../layout/SelectedFilters";
-import {getDataTypesByProperty, getUBKGFullName} from "../../js/functions";
-import SenNetPopover from "../../../SenNetPopover";
+import SelectedFilters from '@/components/custom/layout/SelectedFilters';
+import {getUBKGFullName} from '@/components/custom/js/functions';
+import SenNetPopover from '@/components/SenNetPopover';
+import FacetsContent from '@/components/custom/search/FacetsContent';
+import AppContext from '@/context/AppContext';
 import SearchUIContainer from 'search-ui/components/core/SearchUIContainer';
-import FacetsContent from '../../search/FacetsContent';
-import SearchUIContext from 'search-ui/components/core/SearchUIContext';
-import AppContext from "../../../../context/AppContext";
+import { useSearchUIContext } from 'search-ui/components/core/SearchUIContext';
 
 function BodyContent({ handleChangeAncestor, data }) {
-    const { wasSearched, filters } = useContext(SearchUIContext)
     const {hasAuthenticationCookie, isUnauthorized } = useContext(AppContext)
-    const addConditional = (key, entity) => {
-        valid_dataset_ancestor_config['searchQuery']['conditionalFacets'][key] = ({filters}) => {
-            return hasAuthenticationCookie() && !isUnauthorized() &&
-                filters.some((filter) => filter.field === "entity_type" && filter.values.includes(entity))
+    const { wasSearched, filters } = useSearchUIContext();
+    const includedExclude = useRef(false)
+
+    valid_dataset_ancestor_config['searchQuery']['conditionalFacets']['rui_location'] = ({filters}) => {
+        return hasAuthenticationCookie() && !isUnauthorized() &&
+            filters.some((filter) => filter.field === "entity_type" && filter.values.includes('Sample'))
+    }
+
+    valid_dataset_ancestor_config['searchQuery']['conditionalFacets']['ancestors.rui_location'] = () => false
+
+    useEffect(() => {
+        if (!includedExclude.current && data && data.uuid) {
+            includedExclude.current = true
+            valid_dataset_ancestor_config['searchQuery']['excludeFilters'].push({
+                keyword: "uuid.keyword",
+                value: data['uuid']
+            })
         }
-    }
-
-    addConditional('rui_location','Sample' )
-    addConditional('ancestors.rui_location', 'Dataset')
-
-    if (data && data.uuid) {
-        valid_dataset_ancestor_config['searchQuery']['excludeFilters'] = [{
-            keyword: "uuid.keyword",
-            value: data['uuid']
-        }]
-    }
+    }, [])
 
     return (
         <div
@@ -53,19 +55,19 @@ function BodyContent({ handleChangeAncestor, data }) {
 }
 
 export default function AncestorIds({values, onChange, fetchAncestors, deleteAncestor, ancestors, otherWithAdd, onShowModal, formLabelPlural,
-                                        formLabel = 'ancestor', controlId = 'direct_ancestor_uuids', dataset_category, addButtonDisabled, data}) {
+                                        formLabel = 'ancestor', controlId = 'direct_ancestor_uuids',  disableDelete, addButtonDisabled, data}) {
     const [showHideModal, setShowHideModal] = useState(false)
+    const {
+        adminGroup,
+        authorized,
+        hasAuthenticationCookie
+    } = useContext(AppContext);
 
-    useEffect(() => {
-        // Return an array of data types that should be excluded from search
-        // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
-        const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false)
-        valid_dataset_ancestor_config['searchQuery']['excludeFilters'].push({
-            keyword: "dataset_type.keyword",
-            value: excludeNonPrimaryTypes
-        });
-    }, [])
-
+    const authState = {
+        isAuthenticated: hasAuthenticationCookie() === true,
+        isAuthorized: authorized === true,
+        isAdmin: adminGroup === true
+    }
 
     const handleSearchFormSubmit = (event, onSubmit) => {
         onSubmit(event)
@@ -126,8 +128,8 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
 
             {/*Ancestor Information Box*/}
             {ancestors && ancestors.length !== 0 &&
-                <AncestorsTable controlId={controlId} formLabel={formLabel} values={values} onChange={onChange}
-                                ancestors={ancestors} deleteAncestor={deleteAncestor} dataset_category={dataset_category}/>
+                <AncestorsTable controlId={controlId} formLabel='SenNet' values={values} onChange={onChange}
+                                ancestors={ancestors} deleteAncestor={deleteAncestor} disableDelete={disableDelete}/>
             }
 
             {/*Disable the button if the dataset is not 'primary'*/}
@@ -138,8 +140,6 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
                 {otherWithAdd}
             </InputGroup>
 
-
-
             <Modal
                 size="xxl"
                 show={showHideModal}
@@ -148,7 +148,7 @@ export default function AncestorIds({values, onChange, fetchAncestors, deleteAnc
                 keyboard={false}
             >
                 <Modal.Body>
-                    <SearchUIContainer config={valid_dataset_ancestor_config} name={undefined}>
+                    <SearchUIContainer config={valid_dataset_ancestor_config} name={undefined} authState={authState}>
                         <Layout
                             header={
                                 <div className="search-box-header js-gtm--search">

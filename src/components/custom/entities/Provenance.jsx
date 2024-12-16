@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState, useContext} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import log from 'loglevel'
 import {DataConverterNeo4J, GraphGeneric, ProvenanceUI, Legend} from 'provenance-ui/dist/index'
 import 'provenance-ui/dist/ProvenanceUI.css'
@@ -8,9 +8,9 @@ import AppModal from "../../AppModal";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import $ from 'jquery'
-import AppContext from "../../../context/AppContext";
 import Lineage from "./sample/Lineage";
 import {
+    eq,
     fetchProtocols,
     getClickableLink,
     getCreationActionRelationName,
@@ -18,7 +18,6 @@ import {
 } from "../js/functions";
 import SenNetAccordion from "../layout/SenNetAccordion";
 import * as d3 from "d3";
-import {get_lineage_info} from "../../../lib/services";
 
 
 function Provenance({nodeData}) {
@@ -29,14 +28,11 @@ function Provenance({nodeData}) {
     const [loading, setLoading] = useState(true)
     const [treeData, setTreeData] = useState(null)
     const [showModal, setShowModal] = useState(false)
-    const [maxGraphWidth, setMaxGraphWidth] = useState('500px')
     const initialized = useRef(false)
+    const provUIContainerRef = useRef(null)
     const activityHidden = useRef(true)
     const hasOnAfterInfoUpdateBuild = useRef(false)
     const protocolsData = {}
-    const { _t } = useContext(AppContext)
-    const [error, setError] = useState(false)
-    const [errorMessage, setErrorMessage] = useState(null)
     let cbTimeout;
     let cbTimeout2;
 
@@ -134,12 +130,17 @@ function Provenance({nodeData}) {
         return sz
     }
 
+    const modalId = 'neo4j--modal'
+
     const onInitializationComplete = (selectorId) => {
         clearTimeout(cbTimeout)
         cbTimeout = setTimeout(()=>{
             const ui = window.ProvenanceTreeD3[selectorId]
             d3.select(`#${selectorId} #node--${data.uuid}`).dispatch('click')
-            ui.disableZoom()
+
+            if (!eq(selectorId, modalId)) {
+                ui.disableZoom()
+            }
         }, 1000)
     }
 
@@ -159,6 +160,7 @@ function Provenance({nodeData}) {
             $el.click()
         }
     }
+
     const onInfoCloseClick = (ops) => {
         const treeId = ops.options.selectorId
         const uuid = $('#Metadata-collapse .nav-item .active').attr('data-uuid')
@@ -191,6 +193,10 @@ function Provenance({nodeData}) {
         return {href: `/api/json?view=${btoa(value.replaceAll("'", '"'))}`, value: `${value.substr(0, 20)}...}`}
     }
 
+    const publicationUrl = (d, property, value) => {
+        return {href: nodeData?.publication_url, value: nodeData?.publication_venue}
+    }
+
     const protocolUrl = (d, property, value) => {
         buildProtocolData(d)
         let data = protocolsData[value]
@@ -200,7 +206,10 @@ function Provenance({nodeData}) {
 
     const graphOptions = {
         idNavigate: {
-            props: {'sennet:sennet_id': true, 'sennet:protocol_url': {callback: protocolUrl}, 'sennet:processing_information': {callback: jsonView}},
+            props: {'sennet:sennet_id': true,
+                'manuscript': {callback: publicationUrl},
+                'sennet:protocol_url': {callback: protocolUrl},
+                'sennet:processing_information': {callback: jsonView}},
             url: '/{subType}?uuid={id}',
             exclude: {
                 'Activity': ['sennet:sennet_id']
@@ -210,13 +219,17 @@ function Provenance({nodeData}) {
             Source: '#ffc255',
             Sample:  '#ebb5c8',
             Dataset: '#8ecb93',
+            Publication: '#a556d9',
             Activity: '#f16766'
         },
         propertyMap: {
             'sennet:created_by_user_displayname': 'agent',
-            'sennet:creation_action': 'category'
+            'sennet:creation_action': 'category',
+            'sennet:publication_venue': 'manuscript'
         },
         imageMap: {
+            "Source|sennet:source_type|Mouse": null,
+            "Source|sennet:source_type|Mouse Organoid": null,
             "Sample|sennet:sample_category|Organ": null,
             "Sample|sennet:sample_category|Block": null,
             "Sample|sennet:sample_category|Section": null,
@@ -224,6 +237,24 @@ function Provenance({nodeData}) {
             "Dataset|sennet:creation_action|Processed Dataset": null,
         },
         imageMapActions: {
+            "Source|sennet:source_type|Mouse": {
+                fn: 'append',
+                type: 'g',
+                data: [
+                    {
+                        draw: 'M22.9,22.9H7.1c-3.5,0-6.4-2.9-6.4-6.4v-2.9c0-3.5,2.9-6.4,6.4-6.4h15.7c3.5,0,6.4,2.9,6.4,6.4v2.9C29.3,20,26.4,22.9,22.9,22.9z'
+                    }
+                ]
+            },
+            "Source|sennet:source_type|Mouse Organoid": {
+                fn: 'append',
+                type: 'g',
+                data: [
+                    {
+                        draw: 'M22.9,22.9H7.1c-3.5,0-6.4-2.9-6.4-6.4v-2.9c0-3.5,2.9-6.4,6.4-6.4h15.7c3.5,0,6.4,2.9,6.4,6.4v2.9C29.3,20,26.4,22.9,22.9,22.9z'
+                    }
+                ]
+            },
             "Dataset|sennet:creation_action|Component Dataset": {
                 fn: 'append',
                 type: 'g',
@@ -268,7 +299,7 @@ function Provenance({nodeData}) {
         visitedNodes: new Set(),
         initParentKey: DataConverterNeo4J.KEY_P_ENTITY,
         displayEdgeLabels: false,
-        minHeight: 100,
+        minHeight: 130,
         noStyles: true,
         propertyPrefixClear: 'sennet:',
         selectorId: 'neo4j--page',
@@ -298,6 +329,7 @@ function Provenance({nodeData}) {
             Source: ['sennet:source_type'],
             Sample: ['sennet:sample_category', 'sennet:organ'],
             Dataset: ['sennet:creation_action', 'sennet:title', 'sennet:dataset_type'],
+            Publication: ['sennet:title', 'sennet:publication_venue', 'sennet:publication_date'],
             Activity: ['sennet:created_timestamp', 'sennet:protocol_url', 'sennet:processing_information', 'sennet:created_by_user_displayname']
         },
         callbacks: {
@@ -308,21 +340,26 @@ function Provenance({nodeData}) {
     }
 
     useEffect(() => {
-        async function fetchLineage (lineageDescriptor, setLineage) {
-            let lineage = await get_lineage_info(data.uuid, lineageDescriptor);
-            if (lineage.hasOwnProperty("error")) {
-                setError(true)
-                setErrorMessage(lineage["error"])
-            } else {
-               setLineage(lineage)
-            }
-        }
+        if (!provUIContainerRef.current) return
 
+        const container = provUIContainerRef.current
+        const resizeObserver = new ResizeObserver(entries => {
+            if (!entries.length) return
+            const entry = entries[0]
+            // Subtracting 80 to prevent overflow when side menu is opened
+            // TODO: Find a better way to handle this
+            $(container).find('svg').width(entry.contentRect.width - 80)
+        })
+        resizeObserver.observe(container)
+        return () => resizeObserver.disconnect()
+    }, [loading])
+
+    useEffect(() => {
         if (nodeData.hasOwnProperty("descendants")) {
-            fetchLineage("descendants", setDescendants);
+            setDescendants(nodeData.descendants)
         }
         if (nodeData.hasOwnProperty("ancestors")) {
-            fetchLineage("ancestors", setAncestors);
+            setAncestors(nodeData.ancestors)
         }
 
         if (initialized.current) return
@@ -331,10 +368,6 @@ function Provenance({nodeData}) {
         const url = getEntityEndPoint() + 'entities/{id}/provenance?return_descendants=true&filter='+ encodeURI('-Publication|-Collection|-Upload')
         const itemId = data.uuid;
         const graphOps = {token, url}
-
-        const setContainerSize = () => setMaxGraphWidth((window.outerWidth - 200) + 'px')
-        window.onresize = () =>  setContainerSize()
-        setContainerSize()
 
         log.debug('Result from fetch', data)
 
@@ -374,7 +407,7 @@ function Provenance({nodeData}) {
             const graph = new GraphGeneric(graphOps)
             graph.service({callback: handleResult, url: url.replace('{id}', itemId)})
         }
-    }, [data])
+    }, [data?.ancestors, data?.descendants])
 
     const handleModal = (e) => {
         setShowModal(!showModal)
@@ -408,14 +441,13 @@ function Provenance({nodeData}) {
         }
     }
 
-    const modalId = 'neo4j--modal'
-
     const help = {
         title: 'Help, Provenance Graph',
-        legend: `<li><code>Sample</code> shapes <span class="shape pink shape--diamond">diamond</span>, <span class="shape pink shape--sq">square</span>, 
-                    <span class="shape pink shape--rect">rectangle</span> and <span class="shape pink shape--circle">ellipse</span> correspond to <code>sample_category</code>  of
+        legend: `<li><code>Source</code> shapes <span class="shape yellow shape--circle">circle</span> and <span class="shape shape--stadium">stadium</span> correspond to <code>source_type</code> of Human and Mouse respectively. </li>
+                <li><code>Sample</code> shapes <span class="shape pink shape--diamond">diamond</span>, <span class="shape pink shape--sq">square</span>, 
+                    <span class="shape pink shape--rect">rectangle</span> and <span class="shape pink shape--circle">circle</span> correspond to <code>sample_category</code>  of
                 <code>organ</code>, <code>block</code>, <code>section</code> and <code>suspension</code> respectively.</li>
-                <li><code>Dataset</code> shapes <span class="shape green shape--circle">ellipse</span>, <span class="shape shape--blob">"blob"</span>, and <span class="shape shape--triangle">triangle</span> correspond to <code>category</code> of <code>primary</code>, <code>processed</code> and <code>component</code> respectively.</li>`
+                <li><code>Dataset</code> shapes <span class="shape green shape--circle">circle</span>, <span class="shape shape--blob">"blob"</span>, and <span class="shape shape--triangle">triangle</span> correspond to <code>category</code> of <code>primary</code>, <code>processed</code> and <code>component</code> respectively.</li>`
     }
 
     const legend = {
@@ -435,15 +467,15 @@ function Provenance({nodeData}) {
         <SenNetAccordion title={'Provenance'}>
             <Tabs
                 defaultActiveKey="graph"
-                className="mb-3"
+                className="c-provenance__tabs mb-3"
                 variant="pills"
             >
                 <Tab eventKey="graph" title="Graph" >
-                    {!loading && <div style={{maxWidth: maxGraphWidth}}><ProvenanceUI options={options} data={treeData}/></div>}
+                    {!loading && <div ref={provUIContainerRef}><ProvenanceUI options={options} data={treeData}/></div>}
                     {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={options.selectorId} otherLegend={otherLegend} />}
                     {loading && <Spinner/>}
                     <AppModal showModal={showModal} handleClose={handleModal} showCloseButton={true} showHomeButton={false} modalTitle='Provenance' modalSize='xl' className='modal-full'>
-                        {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 105 }} data={treeData} />}
+                        {!loading && <ProvenanceUI options={{...options, selectorId: modalId, minHeight: 500 }} data={treeData} />}
                         {!loading && <Legend colorMap={legend} className='c-legend--flex c-legend--btns' help={help} actionMap={actionMap} selectorId={modalId} />}
                     </AppModal>
                 </Tab>

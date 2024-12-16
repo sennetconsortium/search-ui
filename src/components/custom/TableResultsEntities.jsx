@@ -12,15 +12,15 @@ import ClipboardCopy from "../ClipboardCopy";
 import BulkExport, {handleCheckbox} from "./BulkExport";
 import {getOptions} from "./search/ResultsPerPage";
 import ResultsBlock from "./search/ResultsBlock";
-import {TableResultsProvider} from "../../context/TableResultsContext";
+import {TableResultsProvider} from "@/context/TableResultsContext";
 import SenNetPopover from "../SenNetPopover";
 import {Chip} from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import AppModal from "../AppModal";
-import {parseJson} from "../../lib/services";
-import {COLS_ORDER_KEY} from "../../config/config";
+import {parseJson} from "@/lib/services";
+import {COLS_ORDER_KEY} from "@/config/config";
 
-function TableResultsEntities({children, filters, onRowClicked, currentColumns, forData = false, rowFn, inModal = false}) {
+function TableResultsEntities({children, filters, onRowClicked, currentColumns, forData = false, rowFn, inModal = false, rawResponse}) {
 
     let hasMultipleEntityTypes = checkMultipleFilterType(filters);
     const {isLoggedIn, cache, getGroupName} = useContext(AppContext)
@@ -49,7 +49,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         setModalTitle(<h5>Description for <code>{raw(row.sennet_id)}</code><ClipboardCopy text={raw(row.sennet_id)} /></h5>)
     }
 
-    const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], _isLoggedIn, includeLabIdCol = true, includeGroupCol = true}) => {
+    const defaultColumns = ({hasMultipleEntityTypes = true, columns = [], includeGroupCol = true}) => {
         let cols = []
         if (!inModal) {
             cols.push({
@@ -67,6 +67,7 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         cols.push(
             {
                 name: 'SenNet ID',
+                id: 'sennet_id',
                 selector: row => raw(row.sennet_id),
                 sortable: true,
                 reorder: true,
@@ -76,27 +77,18 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         if (hasMultipleEntityTypes) {
             cols.push({
                 name: 'Entity Type',
+                id: 'entity_type',
                 selector: row => raw(row.entity_type),
                 sortable: true,
                 reorder: true,
                 format: row => <span data-field='entity_type'>{raw(row.entity_type)}</span>,
             })
         }
-        if (includeLabIdCol && isLoggedIn() || _isLoggedIn) {
-            cols.push({
-                name: 'Lab ID',
-                selector: row => {
-                    return raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)
-                },
-                format: row => <span data-field='lab_id'>{raw(row.lab_tissue_sample_id) || raw(row.lab_source_id) || raw(row.lab_dataset_id)}</span>,
-                sortable: true,
-                reorder: true,
-            })
-        }
         cols = cols.concat(columns)
         if (includeGroupCol) {
             cols.push({
                 name: 'Group',
+                id: 'group_name',
                 selector: row => raw(row.group_name),
                 sortable: true,
                 reorder: true,
@@ -107,71 +99,139 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         return cols;
     }
 
-    const reusableColumns = {
-        Status:  {
-            name: 'Status',
-            selector: row => raw(row.status),
-            format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover text={getStatusDefinition(raw(row.status))} className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
-            sortable: true,
-            reorder: true,
-        },
-        Organ: {
-            name: 'Organ',
-            selector: row => getUBKGFullName(raw(row.origin_sample)?.organ),
-            sortable: true,
-            reorder: true,
-        },
-        SourceType: {
-            name: 'Type',
-            selector: row => raw(row.source_type),
-            sortable: true,
-            reorder: true,
-        },
-        SampleCategory: {
-            name: 'Category',
-            selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : '',
-            sortable: true,
-            reorder: true,
-        },
-        DatasetType: {
-            name: 'Dataset Type',
-            selector: row => {
-                let val = raw(row.dataset_type)
-                if (val) {
-                    return Array.isArray(val) ? getUBKGFullName(val[0]) : val
-                } else {
-                    return ''
-                }
-            },
-            sortable: true,
-            reorder: true,
-        },
+    const reusableColumns = {}
+    reusableColumns['Status'] = {
+        name: 'Status',
+        id: 'status',
+        selector: row => raw(row.status),
+        format: (row) => <span className={`${getStatusColor(raw(row.status))} badge`}><SenNetPopover
+            text={getStatusDefinition(raw(row.status))}
+            className={`status-info-${getId(row)}`}>{raw(row.status)}</SenNetPopover></span>,
+        sortable: true,
+        reorder: true,
     }
+
+    reusableColumns['Organ'] = {
+        name: 'Organ',
+        id: 'origin_samples.organ_hierarchy',
+        selector: row => {
+            let organs = new Set()
+            if(row.origin_samples) {
+                raw(row.origin_samples).forEach((origin_sample) => {
+                    organs.add(getUBKGFullName(origin_sample.organ_hierarchy))
+                })
+                if (organs.size > 0) {
+                    return [...organs].join(', ')
+                }
+            }
+            return ''
+        },
+        sortable: true,
+        reorder: true,
+    }
+
+    reusableColumns['SourceType'] = {
+        name: 'Type',
+        id: 'source_type',
+        selector: row => raw(row.source_type),
+        sortable: true,
+        reorder: true,
+    }
+
+    reusableColumns['SampleCategory'] = {
+        name: 'Category',
+        id: 'sample_category',
+        selector: row => raw(row.sample_category) ? displayBodyHeader(raw(row.sample_category)) : '',
+        sortable: true,
+        reorder: true,
+    }
+
+    reusableColumns['DatasetType'] = {
+        name: 'Dataset Type',
+        id: 'dataset_type',
+        selector: row => {
+            let val = raw(row.dataset_type_hierarchy)?.second_level || raw(row.dataset_type)
+            if (val) {
+                return Array.isArray(val) ? getUBKGFullName(val[0]) : val
+            } else {
+                return ''
+            }
+        },
+        sortable: true,
+        reorder: true,
+    }
+
+    if (isLoggedIn()) {
+        reusableColumns['LabSourceID'] = {
+            name: 'Lab Source ID',
+            id: 'lab_source_id',
+            selector: row => {
+                return raw(row.lab_source_id)
+            },
+            format: row => <span data-field='lab_source_id'>{raw(row.lab_source_id)}</span>,
+            sortable: true,
+            reorder: true,
+        }
+
+        reusableColumns['LabSampleID'] = {
+            name: 'Lab Sample ID',
+            id: 'lab_tissue_sample_id',
+            selector: row => {
+                return raw(row.lab_tissue_sample_id)
+            },
+            format: row => <span data-field='lab_tissue_sample_id'>{raw(row.lab_tissue_sample_id)}</span>,
+            sortable: true,
+            reorder: true,
+        }
+
+        reusableColumns['LabDatasetID'] = {
+            name: 'Lab Dataset ID',
+            id: 'lab_dataset_id',
+            selector: row => {
+                return raw(row.lab_dataset_id)
+            },
+            format: row => <span data-field='lab_dataset_id'>{raw(row.lab_dataset_id)}</span>,
+            sortable: true,
+            reorder: true,
+        }
+    }
+
 
     const sourceColumns = [
         reusableColumns.SourceType
     ]
+    if(isLoggedIn()){
+        sourceColumns.push(reusableColumns.LabSourceID)
+    }
 
     const sampleColumns = [
         reusableColumns.SampleCategory,
-        reusableColumns.Organ
+        reusableColumns.Organ,
     ]
+    if(isLoggedIn()){
+        sampleColumns.push(reusableColumns.LabSampleID)
+    }
 
     const datasetColumns = [
         reusableColumns.DatasetType,
         reusableColumns.Organ,
         reusableColumns.Status
     ]
+     if(isLoggedIn()){
+        datasetColumns.push(reusableColumns.LabDatasetID)
+    }
 
     const uploadColumns = [
         {
             name: 'Title',
+            id: 'title',
             selector: row => raw(row.title),
             sortable: true,
             reorder: true,
         },
         {
             name: 'Description',
+            id: 'description',
             selector: row => raw(row.description),
             sortable: true,
             reorder: true,
@@ -195,13 +255,25 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
     const collectionColumns = [
         {
             name: 'Title',
+            id: 'title',
             selector: row => raw(row.title),
             sortable: true,
             reorder: true,
         },
         {
             name: 'Description',
+            id: 'description',
             selector: row => raw(row.description),
+            sortable: true,
+            reorder: true,
+        }
+    ]
+
+    const publicationColumns = [
+        {
+            name: 'Title',
+            id: 'title',
+            selector: row => raw(row.title),
             sortable: true,
             reorder: true,
         }
@@ -238,10 +310,13 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
                     } else if (hasOneEntity && eq(entityType, cache.entities.upload)) {
                         includeLabIdCol = false
                         columns = uploadColumns
-                    } else if (hasOneEntity && eq(entityType, cache.entities.collection)) {
+                    } else if (hasOneEntity && (eq(entityType, cache.entities.collection) || eq(entityType, cache.entities.epicollection))) {
                         includeLabIdCol = false
                         includeGroupCol = false
                         columns = collectionColumns
+                    } else if (hasOneEntity && eq(entityType, cache.entities.publication)) {
+                        includeLabIdCol = false
+                        columns = publicationColumns
                     } else {
                         tableContext.current = 'multi'
                         log.debug('Table Results', hasMultipleEntityTypes)
@@ -268,35 +343,40 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
     }
 
     // Prepare opsDict
-    getOptions(children.length)
+    getOptions(rawResponse?.record_count || children.length)
 
     const getSearchContext = () => `entities.${tableContext.current}`
 
     return (
         <>
-            <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children} filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw} inModal={inModal}>
-                <ResultsBlock
-                    searchContext={getSearchContext}
-                    defaultHiddenColumns={Object.values(defaultHiddenColumns)}
-                    getTableColumns={getTableColumns}
-                />
-                <AppModal
-                    className={`modal--searchEntities`}
-                    modalSize={'xl'}
-                    showModal={showModal}
-                    modalTitle={modalTitle}
-                    modalBody={modalBody}
-                    handleClose={() => { setShowModal(false)}}
-                    showHomeButton={false}
-                    showCloseButton={true}
-                    closeButtonLabel={'Okay'}
-                />
-            </TableResultsProvider>
+            {defaultHiddenColumns &&
+                <TableResultsProvider columnsRef={currentColumns} getId={getId} getHotLink={getHotLink} rows={children}
+                                      filters={filters} onRowClicked={onRowClicked} forData={forData} raw={raw}
+                                      inModal={inModal}>
+                    <ResultsBlock
+                        index={'entities'}
+                        searchContext={getSearchContext}
+                        defaultHiddenColumns={Object.values(defaultHiddenColumns)}
+                        getTableColumns={getTableColumns}
+                    />
+                    <AppModal
+                        className={`modal--searchEntities`}
+                        modalSize={'xl'}
+                        showModal={showModal}
+                        modalTitle={modalTitle}
+                        modalBody={modalBody}
+                        handleClose={() => {
+                            setShowModal(false)
+                        }}
+                        showHomeButton={false}
+                        showCloseButton={true}
+                        closeButtonLabel={'Okay'}
+                    />
+                </TableResultsProvider>
+            }
         </>
     )
 }
-
-TableResultsEntities.defaultProps = {}
 
 TableResultsEntities.propTypes = {
     children: PropTypes.node,

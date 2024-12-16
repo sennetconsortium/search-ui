@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from "@elastic/react-search-ui-views";
 import log from "loglevel";
 import {cleanJson, eq, getDOIPattern, getRequestHeaders} from "../../components/custom/js/functions";
-import {update_create_entity} from "../../lib/services";
+import {getEntityData, update_create_entity} from "../../lib/services";
 import AppContext from '../../context/AppContext'
 import EntityContext, {EntityProvider} from '../../context/EntityContext'
 import {SenPopoverOptions} from "../../components/SenNetPopover";
@@ -22,13 +22,11 @@ const Header = dynamic(() => import("../../components/custom/layout/Header"))
 const ImageSelector = dynamic(() => import("../../components/custom/edit/ImageSelector"))
 const SenNetAlert = dynamic(() => import("../../components/SenNetAlert"))
 const SourceType = dynamic(() => import("../../components/custom/edit/source/SourceType"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
 
 
 function EditSource() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -43,7 +41,7 @@ function EditSource() {
         getMetadataNote, checkProtocolUrl,
         warningClasses, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, filterImageFilesToAdd, cache} = useContext(AppContext)
+    const {_t, filterImageFilesToAdd, cache, getPreviewView} = useContext(AppContext)
 
     const router = useRouter()
     const [source, setSource] = useState(null)
@@ -70,33 +68,32 @@ function EditSource() {
         const fetchData = async (uuid) => {
             log.debug('editSource: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('editSource: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editSource: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setData(false)
+                setErrorMessage(_data["error"])
             } else {
-                setData(data);
+                setData(_data);
 
-                checkProtocolUrl(data.protocol_url)
+                checkProtocolUrl(_data.protocol_url)
 
                 // Set state with default values that will be PUT to Entity API to update
                 let _values = {
-                    'lab_source_id': data.lab_source_id,
-                    'protocol_url': data.protocol_url,
-                    'description': data.description,
-                    'source_type': data.source_type,
-                    'metadata': data.metadata
+                    'lab_source_id': _data.lab_source_id,
+                    'protocol_url': _data.protocol_url,
+                    'description': _data.description,
+                    'source_type': _data.source_type,
+                    'metadata': _data.metadata
                 }
-                if (data.image_files) {
-                    _values['image_files'] = data.image_files
+                if (_data.image_files) {
+                    _values['image_files'] = _data.image_files
                 }
                 setValues(_values)
                 setEditMode("Edit")
-                setDataAccessPublic(data.data_access_level === 'public')
+                setDataAccessPublic(_data.data_access_level === 'public')
             }
         }
 
@@ -222,10 +219,8 @@ function EditSource() {
         }
     };
 
-    if (isAuthorizing() || isUnauthorized()) {
-        return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
-        )
+    if (isPreview(error))  {
+        return getPreviewView(data)
     } else {
         console.log(values)
         return (

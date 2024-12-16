@@ -8,33 +8,26 @@ import Form from 'react-bootstrap/Form';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {update_create_entity} from '../../lib/services'
-import {
-    cleanJson,
-    eq,
-    fetchEntity,
-    getRequestHeaders
-} from '../../components/custom/js/functions'
-import AppContext from '../../context/AppContext'
-import EntityContext, {EntityProvider} from '../../context/EntityContext'
+import {getAncestryData, getEntityData, update_create_dataset} from '@/lib/services'
+import {cleanJson, eq, fetchEntity} from '@/components/custom/js/functions'
+import AppContext from '@/context/AppContext'
+import EntityContext, {EntityProvider} from '@/context/EntityContext'
 import $ from 'jquery'
-import {valid_dataset_ancestor_config} from "../../config/config";
+import GroupSelect from "@/components/custom/edit/GroupSelect";
+import {valid_dataset_ancestor_config} from "@/config/config";
 
-const AncestorIds = dynamic(() => import('../../components/custom/edit/dataset/AncestorIds'))
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const EntityHeader = dynamic(() => import('../../components/custom/layout/entity/Header'))
-const EntityFormGroup = dynamic(() => import('../../components/custom/layout/entity/FormGroup'))
-const Header = dynamic(() => import("../../components/custom/layout/Header"))
-const NotFound = dynamic(() => import("../../components/custom/NotFound"))
-const SenNetPopover = dynamic(() => import("../../components/SenNetPopover"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
-const Unauthorized = dynamic(() => import("../../components/custom/layout/Unauthorized"))
+const AncestorIds = dynamic(() => import('@/components/custom/edit/dataset/AncestorIds'))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const EntityHeader = dynamic(() => import('@/components/custom/layout/entity/Header'))
+const EntityFormGroup = dynamic(() => import('@/components/custom/layout/entity/FormGroup'))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const SenNetPopover = dynamic(() => import("@/components/SenNetPopover"))
 
 
 export default function EditPublication() {
     const {
-        isUnauthorized, isAuthorizing, getModal, setModalDetails, setSubmissionModal,
+        isPreview, getModal, setModalDetails,
         data, setData,
         error, setError,
         values, setValues,
@@ -46,41 +39,40 @@ export default function EditPublication() {
         selectedUserWriteGroupUuid,
         disableSubmit, setDisableSubmit, getCancelBtn
     } = useContext(EntityContext)
-    const {_t, cache} = useContext(AppContext)
+    const {_t, cache, getPreviewView, toggleBusyOverlay} = useContext(AppContext)
     const router = useRouter()
     const [ancestors, setAncestors] = useState(null)
     const [publicationStatus, setPublicationStatus] = useState(null)
 
-    useEffect(() => {
-        valid_dataset_ancestor_config['searchQuery']['includeFilters'] = [
-            {
-                "keyword": "entity_type.keyword",
-                "value": "Dataset"
-            }]
-    }, [])
-
-
     // only executed on init rendering, see the []
     useEffect(() => {
+        // Update valid_dataset_ancestor_config to only display `Dataset` as valid ancestors
+        valid_dataset_ancestor_config['searchQuery']['includeFilters'] = [{
+            "type": 'term',
+            "field": 'entity_type.keyword',
+            "values": ['Dataset']
+        }]
 
         // declare the async data fetching function
         const fetchData = async (uuid) => {
             log.debug('editPublication: getting data...', uuid)
             // get the data from the api
-            const response = await fetch("/api/find?uuid=" + uuid, getRequestHeaders());
-            // convert the data to json
-            const data = await response.json();
+            const _data = await getEntityData(uuid, ['ancestors', 'descendants']);
 
-            log.debug('editPublication: Got data', data)
-            if (data.hasOwnProperty("error")) {
+            log.debug('editPublication: Got data', _data)
+            if (_data.hasOwnProperty("error")) {
                 setError(true)
-                setErrorMessage(data["error"])
+                setData(false)
+                setErrorMessage(_data["error"])
             } else {
-                setData(data);
+                setData(_data)
+                const ancestry = await getAncestryData(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
+                Object.assign(_data, ancestry)
+                setData(_data)
 
                 let immediate_ancestors = []
-                if (data.hasOwnProperty("immediate_ancestors")) {
-                    for (const ancestor of data.immediate_ancestors) {
+                if (_data.hasOwnProperty("immediate_ancestors")) {
+                    for (const ancestor of _data.immediate_ancestors) {
                         immediate_ancestors.push(ancestor.uuid)
                     }
                     await fetchAncestors(immediate_ancestors)
@@ -88,12 +80,12 @@ export default function EditPublication() {
 
                 // Set state with default values that will be PUT to Entity API to update
                 setValues({
-                    'lab_dataset_id': data.lab_dataset_id || data.title,
-                    'dataset_type': data.dataset_type,
-                    'description': data.description,
-                    'dataset_info': data.dataset_info,
+                    'lab_dataset_id': _data.lab_dataset_id || _data.title,
+                    'dataset_type': _data.dataset_type,
+                    'description': _data.description,
+                    'dataset_info': _data.dataset_info,
                     'direct_ancestor_uuids': immediate_ancestors,
-                    'publication_status': data.publication_status
+                    'publication_status': _data.publication_status
                 })
                 setEditMode("Edit")
             }
@@ -127,6 +119,11 @@ export default function EditPublication() {
                 setError(true)
                 setErrorMessage(ancestor["error"])
             } else {
+                // delete the ancestor if it already exists, append the new one
+                let idx = new_ancestors.findIndex((d) => d.uuid === ancestor.uuid)
+                if (idx > -1) {
+                    new_ancestors.splice(idx, 1)
+                }
                 new_ancestors.push(ancestor)
             }
         }
@@ -141,8 +138,20 @@ export default function EditPublication() {
         log.debug(updated_ancestors);
     }
 
+    const modalResponse = (response) => {
+        toggleBusyOverlay(false)
+
+        setModalDetails({
+            entity: cache.entities.publication,
+            type: response.title,
+            typeHeader: _t('Title'),
+            response
+        })
+    }
+
     const handleSave = async (event) => {
         setDisableSubmit(true);
+
         const form = $(event.currentTarget.form)[0]
         if (form.checkValidity() === false) {
             event.preventDefault();
@@ -158,6 +167,8 @@ export default function EditPublication() {
             } else {
                 log.debug("Form is valid")
 
+                toggleBusyOverlay(true)
+
                 values.issue = values.issue ? Number(values.issue) : null
                 values.volume = values.volume ? Number(values.volume) : null
 
@@ -168,24 +179,26 @@ export default function EditPublication() {
                 values['contains_human_genetic_sequences'] = false
 
                 if (!values['group_uuid'] && editMode === 'Register') {
-
                     values['group_uuid'] = selectedUserWriteGroupUuid || userWriteGroups[0]?.uuid
                 }
+
+                if (isEditMode) {
+                    delete values['dataset_type']
+                }
+
                 // Remove empty strings
                 let json = cleanJson(values);
                 let uuid = data.uuid
 
-                await update_create_entity(uuid, json, editMode, cache.entities.publication).then((response) => {
-                    setModalDetails({
-                        entity: cache.entities.publication,
-                        type: response.title,
-                        typeHeader: _t('Title'),
-                        response
+                await update_create_dataset(uuid, json, editMode, 'publications')
+                    .then((response) => {
+                        modalResponse(response)
+                    }).catch((e) => {
+                        log.error(e)
+                        toggleBusyOverlay(false)
                     })
-                }).catch((e) => log.error(e))
             }
         }
-
 
         setValidated(true);
     };
@@ -198,13 +211,8 @@ export default function EditPublication() {
         setPublicationStatus(false)
     }
 
-    // TODO: remove this return when ready to support
-    return <NotFound />
-
-    if (isAuthorizing() || isUnauthorized()) {
-        return (
-            isUnauthorized() ? <Unauthorized/> : <Spinner/>
-        )
+    if (isPreview(error))  {
+        return getPreviewView(data)
     } else {
 
         return (
@@ -227,12 +235,19 @@ export default function EditPublication() {
                             bodyContent={
                                 <Form noValidate validated={validated}>
                                     {/*Group select*/}
-
+                                    {
+                                        !(userWriteGroups.length === 1 || isEditMode()) &&
+                                        <GroupSelect
+                                            data={data}
+                                            groups={userWriteGroups}
+                                            onGroupSelectChange={onChange}
+                                            entity_type={'dataset'}/>
+                                    }
 
                                     {/*Ancestor IDs*/}
                                     {/*editMode is only set when page is ready to load */}
                                     {editMode &&
-                                        <AncestorIds values={values} ancestors={ancestors} onChange={onChange}
+                                        <AncestorIds data={data} values={values} ancestors={ancestors} onChange={onChange}
                                                      fetchAncestors={fetchAncestors} deleteAncestor={deleteAncestor}/>
                                     }
 
@@ -249,6 +264,19 @@ export default function EditPublication() {
                                                      isRequired={true}
                                                      onChange={onChange}
                                                      text={<>The venue of the publication, journal, conference, preprint server, etc.</>}/>
+
+                                    <div className='row'>
+                                        <div className='col-md-3'>
+                                            {/*/!*Publication Date*!/*/}
+                                            <EntityFormGroup label='Publication Date' controlId='publication_date'
+                                                             isRequired={true}
+                                                             type={'date'}
+                                                             placeholder={'mm/dd/YYYY'}
+                                                             value={data.publication_date}
+                                                             onChange={onChange}
+                                                             text={<>The date of the publication.</>}/>
+                                        </div>
+                                    </div>
 
                                     {/*/!*Human Gene Sequences*!/*/}
                                     {editMode &&
@@ -286,25 +314,24 @@ export default function EditPublication() {
 
                                     {/*/!*Publication URL*!/*/}
                                     <EntityFormGroup label='Publication URL' controlId='publication_url'
+                                                     type='url'
                                                      value={data.publication_url}
                                                      isRequired={true}
                                                      onChange={onChange}
                                                      text={<>The URL at the publishers server for print/pre-print (http(s)://[alpha-numeric-string].[alpha-numeric-string].[...]</>}/>
-
-                                    {/*/!*Publication Date*!/*/}
-                                    <EntityFormGroup label='Publication Date' controlId='publication_date'
-                                                     isRequired={true}
-                                                     type={'date'}
-                                                     placeholder={'mm/dd/YYYY'}
-                                                     value={data.publication_date}
-                                                     onChange={onChange}
-                                                     text={<>The date of the publication.</>}/>
 
                                     {/*/!*Publication DOI*!/*/}
                                     <EntityFormGroup label='Publication DOI' controlId='publication_doi'
                                                      value={data.publication_doi}
                                                      onChange={onChange}
                                                      text={<>The doi of the publication. (##.####/[alpha-numeric-string])</>}/>
+
+                                    {/*/!*OMAP DOI*!/*/}
+                                    <EntityFormGroup label='OMAP DOI' controlId='omap_doi'
+                                                     value={data.omap_doi}
+                                                     onChange={onChange}
+                                                     text={<>A DOI pointing to an Organ Mapping Antibody Panel relevant to this publication</>}/>
+
 
                                     {/*/!*Issue*!/*/}
                                     <EntityFormGroup label='Issue Number' controlId='issue'
@@ -328,7 +355,7 @@ export default function EditPublication() {
 
 
                                     {/*/!*Description*!/*/}
-                                    <EntityFormGroup label='DOI Abstract' type='textarea' controlId='description'
+                                    <EntityFormGroup label='Abstract' type='textarea' controlId='description'
                                                      value={data.description}
                                                      onChange={onChange}
                                                      text={<>An abstract publicly available when the <code>Publication</code> is published.  This will be included with the DOI information of the published <code>Publication</code>.</>}/>

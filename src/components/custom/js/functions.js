@@ -1,7 +1,6 @@
-import {COLS_ORDER_KEY, getAuth, getProtocolsToken, getRootURL} from "../../../config/config";
-import {APP_ROUTES} from "../../../config/constants";
+import { getAuth, getRootURL } from "@/config/config";
+import { APP_ROUTES } from "@/config/constants";
 import log from "loglevel";
-import React from "react";
 
 export function getHeaders() {
     const myHeaders = new Headers();
@@ -44,40 +43,31 @@ export async function fetchEntity(ancestorId, paramKey = 'uuid') {
 }
 
 export function getProtocolId(protocolUrl) {
-    // The ID is everything after "dx.doi.org/"
-    const regex = new RegExp("(?<=dx.doi.org/).*")
-    return regex.exec(protocolUrl)
-}
-
-export function formatCitation(data, url) {
-    let result = []
-    const creators = data.attributes.creators;
-    for (let i = 0; i < creators.length; i++) {
-        result.push(<span key={creators[i].name}>
-            {creators[i].familyName} {creators[i].givenName[0]}
-            {i == creators.length - 1 ? `. ` : `, `} </span>)
-    }
-    result.push(<span key={`${data}-title`} className={'fw-light'}>{data.attributes?.titles[0].title}</span>)
-    result.push(<span key={`${data}-publisher`}>. {data.attributes?.publisher}. {data.attributes.publicationYear}.</span>)
-    return <>
-        {result}
-        <span> Available from: <br /><a className='lnk--ic' href={url}>{url} <i
-            className="bi bi-box-arrow-up-right"></i></a></span>
-        <hr/>
-        <span><a className='lnk--ic' href={`https://commons.datacite.org/${url.replace('https://', '')}`}>View the DataCite page<i
-            className="bi bi-box-arrow-up-right"></i></a></span>
-    </>
+    // The ID is everything after "doi.org/"
+    const regex = new RegExp("(?<=doi.org/).*")
+    return regex.exec(protocolUrl)[0]
 }
 
 export async function fetchDataCite(protocolUrl) {
     if (!protocolUrl) return null
-    const regex = new RegExp("(?<=doi.org/).*")
-    const protocolId = regex.exec(protocolUrl)
-    const response = await fetch(`https://api.datacite.org/dois/${protocolId}`)
-    if (!response.ok) {
+    let headers = new Headers()
+    headers.append("Accept", "text/x-bibliography; style=american-medical-association")
+    let requestOptions = {
+        method: 'GET',
+        headers: headers
+    }
+
+    try {
+        const response = await fetch(protocolUrl, requestOptions)
+        if (!response.ok) {
+            return null
+        }
+
+        return response.text()
+    } catch (e) {
+        log.error(e)
         return null
     }
-    return response.json()
 }
 
 export async function fetchProtocols(protocolUrl) {
@@ -126,8 +116,6 @@ export function getUBKGFullName(term) {
         return window.UBKG_CACHE.organTypes[term]
     } else if (term in window.UBKG_CACHE.datasetTypes) {
         return window.UBKG_CACHE.datasetTypes[term]
-    } else if (window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type['data_type'] === term).length > 0) {
-        return window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type['data_type'] === term).map(data_type => data_type.description)[0];
     } else {
         return getNormalizedName(term)
     }
@@ -146,23 +134,15 @@ const normalizedNames = {
     "frozen in liquid nitrogen": "Frozen in Liquid Nitrogen",
 }
 
+export const getDatasetTypeDisplay = (data) => {
+    return data.dataset_type_hierarchy?.second_level || data.display_subtype || data.dataset_type
+}
+
 function getNormalizedName(term) {
     if (term && normalizedNames.hasOwnProperty(term.toLowerCase())) {
         return normalizedNames[term.toLowerCase()]
     }
     return term
-}
-
-export function getDataTypes() {
-    return window.UBKG_CACHE.dataTypes
-}
-
-export function getDatasetTypes() {
-    return window.UBKG_CACHE.datasetTypes
-}
-
-export function getDataTypesByProperty(property, value) {
-    return window.UBKG_CACHE.dataTypesObj.filter(data_type => data_type[property] === value).map(data_type => data_type.data_type);
 }
 
 export function getIsPrimaryDataset(data) {
@@ -434,6 +414,12 @@ Object.assign(String.prototype, {
     upperCaseFirst() {
         return this[0].toUpperCase() + this.slice(1);
     },
+    titleCase() {
+        return this.replace(
+            /\w\S*/g,
+            text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase()
+        )
+    },
     contains(needle) {
         return this.indexOf(needle) !== -1
     },
@@ -546,6 +532,26 @@ export const THEME = {
     },
 }
 
+export const extractSourceSex = (source) => {
+    // Default to `undefined`
+    let sex = undefined
+    // First check if Source has metadata
+    if ('metadata' in source) {
+        // Source metadata will have a top level object such as organ_donor_data or living_donor_data
+        let metadataKey = Object.keys(source.metadata)[0]
+        source.metadata[metadataKey].some(function (metadataObject) {
+            if (metadataObject['grouping_concept_preferred_term'] === 'Sex') {
+                // Check that the value for Sex is Male or Female, otherwise set to `undefined`
+                sex = (metadataObject['preferred_term'] === 'Male' || metadataObject['preferred_term'] === 'Female') ? metadataObject['preferred_term'] : undefined
+                console.log(sex)
+                return sex
+            }
+        })
+    }
+
+    return sex
+}
+
 export const extractSourceMappedMetadataInfo = (sourceMappedMetadata) => {
     const groups = {}
     const metadata = {}
@@ -557,4 +563,29 @@ export const extractSourceMappedMetadataInfo = (sourceMappedMetadata) => {
         groups: groups,
         metadata: metadata
     }
+}
+
+/**
+ * @typedef {Object} Filter
+ * @property {string} field - The field to filter on
+ * @property {string[]} values - The values to filter on
+ * @property {string} type - The type of filter
+ */
+
+/**
+ * @param {Filter[]} filters - The filters to convert to a query string
+ * @param {number} [size] - The number of results to return per page
+ * @returns {string} - The url encodes query string
+ */
+export const searchUIQueryString = (filters, size=20) => {
+    const segments = filters.map((filter, idx) => {
+        let segment = encodeURIComponent(`filters[${idx}][field]`) + `=${filter.field}&`
+        segment += filter.values
+            .map((value, i) => encodeURIComponent(`filters[${idx}][values][${i}]`) + `=${encodeURIComponent(value)}&`)
+            .join('')
+        segment += encodeURIComponent(`filters[${idx}][type]`) + `=${filter.type}`
+        return segment
+    })
+
+    return `size=n_${size}_n&` + segments.join('&')
 }

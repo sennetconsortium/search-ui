@@ -2,63 +2,69 @@ import dynamic from "next/dynamic";
 import React, {useContext} from "react";
 import {ErrorBoundary, SearchBox} from "@elastic/react-search-ui";
 import {Layout} from "@elastic/react-search-ui-views";
-import {APP_TITLE} from "../../config/config";
-import {SEARCH_METADATA} from "../../config/search/metadata"
+import {APP_TITLE} from "@/config/config";
+import {SEARCH_METADATA} from "@/config/search/metadata"
 import CustomClearSearchBox from "../../components/custom/layout/CustomClearSearchBox";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import AppContext from "../../context/AppContext";
-import SelectedFilters from "../../components/custom/layout/SelectedFilters";
-import {getDataTypesByProperty, getUBKGFullName} from "../../components/custom/js/functions";
-import {TableResultsEntities} from "../../components/custom/TableResultsEntities";
+import AppContext from "@/context/AppContext";
+import SelectedFilters from "@/components/custom/layout/SelectedFilters";
+import {getUBKGFullName} from "@/components/custom/js/functions";
+import {TableResultsEntities} from "@/components/custom/TableResultsEntities";
 
-const AppFooter = dynamic(() => import("../../components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("../../components/custom/layout/AppNavbar"))
-const BodyContent = dynamic(() => import("../../components/custom/search/BodyContent"))
-const FacetsContent = dynamic(() => import("../../components/custom/search/FacetsContent"))
-const Header = dynamic(() => import("../../components/custom/layout/Header"))
-const SearchDropdown = dynamic(() => import("../../components/custom/search/SearchDropdown"))
-const SearchUIContainer = dynamic(() => import("search-ui/components/core/SearchUIContainer"))
-const SelectedFacets = dynamic(() => import("../../components/custom/search/SelectedFacets"))
-const Spinner = dynamic(() => import("../../components/custom/Spinner"))
+const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
+const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
+const BodyContent = dynamic(() => import("@/components/custom/search/BodyContent"))
+const FacetsContent = dynamic(() => import("@/components/custom/search/FacetsContent"))
+const Header = dynamic(() => import("@/components/custom/layout/Header"))
+const InvalidToken = dynamic(() => import("@/components/custom/layout/InvalidToken"))
+const SearchDropdown = dynamic(() => import("@/components/custom/search/SearchDropdown"))
+const SearchUIContainer = dynamic(() => import("@/search-ui/components/core/SearchUIContainer"))
+const SelectedFacets = dynamic(() => import("@/components/custom/search/SelectedFacets"))
+const Spinner = dynamic(() => import("@/components/custom/Spinner"))
 
 
 function SearchMetadata() {
     const {
         _t,
         logout,
+        adminGroup,
         isRegisterHidden,
+        hasInvalidToken,
+        validatingToken,
+        authorized,
         isAuthorizing,
         isUnauthorized,
         hasAuthenticationCookie
     } = useContext(AppContext);
 
-    // Return an array of data types that should be excluded from search
-    // const excludeDataTypes = getDataTypesByProperty("vis-only", true)
-    const excludeNonPrimaryTypes = getDataTypesByProperty("primary", false)
-    SEARCH_METADATA['searchQuery']['excludeFilters'].push({
-        keyword: "dataset_type.keyword",
-        value: excludeNonPrimaryTypes
-    });
-
     function handleSearchFormSubmit(event, onSubmit) {
         onSubmit(event)
     }
 
-    if (isAuthorizing()) {
+    if (validatingToken() || isAuthorizing()) {
         return <Spinner/>
+    } else if (hasInvalidToken()) {
+        return <InvalidToken/>
     } else {
         if (isUnauthorized() && hasAuthenticationCookie()) {
             // This is a scenario in which the GLOBUS token is expired but the token still exists in the user's cookies
             logout()
             window.location.reload()
         }
+
+        const authState = {
+            isAuthenticated: hasAuthenticationCookie() === true,
+            isAuthorized: authorized === true,
+            isAdmin: adminGroup === true
+        }
+
         return (
             <>
                 <Header title={APP_TITLE}/>
 
-                <SearchUIContainer config={SEARCH_METADATA} name='metadata'>
+                <SearchUIContainer config={SEARCH_METADATA} name='metadata' authState={authState}>
                     <AppNavbar hidden={isRegisterHidden}/>
                     <ErrorBoundary>
                         <Layout

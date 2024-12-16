@@ -1,5 +1,13 @@
-import {FilterIsSelected, getAuth, getEntitiesIndex, getSearchEndPoint} from "../config";
-import SearchAPIConnector from "search-ui/packages/search-api-connector";
+import { searchUIQueryString } from '@/components/custom/js/functions';
+import SearchAPIConnector from 'search-ui/packages/search-api-connector';
+import {
+    doFiltersContainField,
+    doesAggregationHaveBuckets,
+    doesTermFilterContainValues,
+    getAuth,
+    getEntitiesIndex,
+    getSearchEndPoint,
+} from '../config';
 
 const connector = new SearchAPIConnector({
     indexName: getEntitiesIndex(),
@@ -12,20 +20,23 @@ export const SEARCH_METADATA = {
     searchQuery: {
         excludeFilters: [
             {
-                keyword: "entity_type.keyword",
-                value: "Collection"
+                type: 'term',
+                field: 'entity_type.keyword',
+                values: ['Collection', 'Publication', 'Upload']
             },
             {
-                keyword: "entity_type.keyword",
-                value: "Publication"
+                type: 'term',
+                field: 'sample_category.keyword',
+                values: ['Organ'],
             },
             {
-                keyword: "sample_category.keyword",
-                value: "Organ",
+                type: 'term',
+                field: 'dataset_category.keyword',
+                values: ['codcc-processed', 'lab-processed']
             },
             {
-                keyword: "dataset_category.keyword",
-                value: ["codcc-processed", "lab-processed"]
+                type: 'exists',
+                field: 'next_revision_uuid',
             }
         ],
         facets: {
@@ -36,6 +47,9 @@ export const SEARCH_METADATA = {
                 isExpanded: true,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: true,
+                isFacetVisible: doesAggregationHaveBuckets('entity_type')
             },
             source_type: {
                 label: 'Source Type',
@@ -44,6 +58,9 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Source']),
+                isFacetVisible: doesAggregationHaveBuckets('source_type')
             },
             sample_category: {
                 label: 'Sample Category',
@@ -52,6 +69,9 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
+                isFacetVisible: doesAggregationHaveBuckets('sample_category')
             },
             dataset_type: {
                 label: 'Dataset Type',
@@ -60,213 +80,207 @@ export const SEARCH_METADATA = {
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: true,
+                isFacetVisible: doesAggregationHaveBuckets('dataset_type')
             },
 
             // Source Human
-            "source_mapped_metadata.sex.value": {
-                label: 'Sex',
-                type: 'value',
-                field: 'source_mapped_metadata.sex.value.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "source_mapped_metadata.race.value": {
-                label: 'Race',
-                type: 'value',
-                field: 'source_mapped_metadata.race.value.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "source_mapped_metadata.age.value": {
+            'source_mapped_metadata.age.value': {
                 label: 'Age',
                 type: 'range',
                 field: 'source_mapped_metadata.age.value',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
-                uiInterval: 1,
+                facetType: 'histogram',
+                aggregationInterval: 1,
+                isAggregationActive: doesTermFilterContainValues('source_type', ['Human']),
+                isFacetVisible: doesAggregationHaveBuckets('source_mapped_metadata.age.value')
             },
-            "source_mapped_metadata.body_mass_index.value": {
+            'source_mapped_metadata.body_mass_index.value': {
                 label: 'Body Mass Index',
                 type: 'range',
                 field: 'source_mapped_metadata.body_mass_index.value',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
-                uiInterval: 1,
+                facetType: 'histogram',
+                aggregationInterval: 1,
+                isAggregationActive: doesTermFilterContainValues('source_type', ['Human']),
+                isFacetVisible: doesAggregationHaveBuckets('source_mapped_metadata.body_mass_index.value')
+            },
+            'source_mapped_metadata.race.value': {
+                label: 'Race',
+                type: 'value',
+                field: 'source_mapped_metadata.race.value.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('source_type', ['Human']),
+                isFacetVisible: doesAggregationHaveBuckets('source_mapped_metadata.race.value')
+            },
+            'source_mapped_metadata.sex.value': {
+                label: 'Sex',
+                type: 'value',
+                field: 'source_mapped_metadata.sex.value.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('source_type', ['Human']),
+                isFacetVisible: doesAggregationHaveBuckets('source_mapped_metadata.sex.value')
             },
 
             // Source Mouse
-            "metadata.strain": {
-                label: 'Strain',
-                type: 'value',
-                field: 'metadata.strain.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.sex": {
-                label: 'Sex',
-                type: 'value',
-                field: 'metadata.sex.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.is_embryo": {
-                label: 'Is Embryo',
-                type: 'value',
-                field: 'metadata.is_embryo.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.is_deceased": {
-                label: 'Is Deceased',
-                type: 'value',
-                field: 'metadata.is_deceased.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.euthanization_method": {
+            'metadata.euthanization_method': {
                 label: 'Euthanization Method',
                 type: 'value',
                 field: 'metadata.euthanization_method.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('source_type', ['Mouse']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.euthanization_method')
             },
-
-            // Sample Block
-            "metadata.volume_value": {
-                label: 'Volume',
-                type: 'range',
-                field: 'metadata.volume_value',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                uiType: 'numrange',
-                uiInterval: (filters) => {
-                    if (filters.some((filter) => filter.values.includes('ml'))) {
-                        return 0.1
-                    }
-                    return 1000
-                },
-            },
-            "metadata.volume_unit": {
-                label: 'Volume Unit',
+            'metadata.is_embryo': {
+                label: 'Is Embryo',
                 type: 'value',
-                field: 'metadata.volume_unit.keyword',
+                field: 'metadata.is_embryo.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('source_type', ['Mouse']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.is_embryo')
+            },
+            'metadata.is_deceased': {
+                label: 'Is Deceased',
+                type: 'value',
+                field: 'metadata.is_deceased.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('source_type', ['Mouse']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.is_deceased')
+            },
+            'metadata.sex': {
+                label: 'Sex',
+                type: 'value',
+                field: 'metadata.sex.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('source_type', ['Mouse']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.sex')
+            },
+            'metadata.strain': {
+                label: 'Strain',
+                type: 'value',
+                field: 'metadata.strain.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('source_type', ['Mouse']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.strain')
             },
 
             // Sample Section
-            "metadata.thickness_value": {
-                label: 'Thickness',
-                type: 'range',
-                field: 'metadata.thickness_value',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                uiType: 'numrange',
-                uiInterval: (filters) => {
-                    if (filters.some((filter) => filter.values.includes('um'))) {
-                        return 1
-                    }
-                    return 0.1
-                },
-            },
-            "metadata.thickness_unit": {
-                label: 'Thickness Unit',
-                type: 'value',
-                field: 'metadata.thickness_unit.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.area_value": {
+            'metadata.area_value': {
                 label: 'Area',
                 type: 'range',
                 field: 'metadata.area_value',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
+                facetType: 'histogram',
+                aggregationInterval: 1,
+                isAggregationActive: doFiltersContainField('metadata.area_unit'),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.area_value')
             },
-            "metadata.area_unit": {
+            'metadata.area_unit': {
                 label: 'Area Unit',
                 type: 'value',
                 field: 'metadata.area_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-            },
-
-            // Sample Suspension
-            "metadata.suspension_entity_type": {
-                label: 'Suspension Entity Type',
-                type: 'value',
-                field: 'metadata.suspension_entity_type.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.suspension_entity_count": {
-                label: 'Suspension Entity Number',
-                type: 'range',
-                field: 'metadata.suspension_entity_count',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                uiType: 'numrange',
-                uiInterval: 100000,
-            },
-            "metadata.is_suspension_enriched": {
-                label: 'Is Suspension Enriched',
-                type: 'value',
-                field: 'metadata.is_suspension_enriched.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-
-            // Sample Block/Suspension Shared
-            "metadata.tissue_weight_value": {
-                label: 'Tissue Weight',
-                type: 'range',
-                field: 'metadata.tissue_weight_value',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                uiType: 'numrange',
-                uiInterval: 5,
-            },
-            "metadata.tissue_weight_unit": {
-                label: 'Tissue Weight Unit',
-                type: 'value',
-                field: 'metadata.tissue_weight_unit.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('sample_category', ['Section']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.area_unit')
             },
 
             // Sample Shared
-            "metadata.source_storage_duration_value": {
+            'metadata.preparation_condition': {
+                label: 'Preparation Condition',
+                type: 'value',
+                field: 'metadata.preparation_condition.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.preparation_condition')
+            },
+            'metadata.preparation_medium': {
+                label: 'Preparation Medium',
+                type: 'value',
+                field: 'metadata.preparation_medium.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.preparation_medium')
+            },
+            'metadata.storage_method': {
+                label: 'Preparation Method',
+                type: 'value',
+                field: 'metadata.storage_method.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.storage_method')
+            },
+            'metadata.processing_time_value': {
+                label: 'Processing Time',
+                type: 'range',
+                field: 'metadata.processing_time_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'histogram',
+                aggregationInterval: 1,
+                isAggregationActive: doFiltersContainField('metadata.processing_time_unit'),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.processing_time_value')
+            },
+            'metadata.processing_time_unit': {
+                label: 'Processing Time Unit',
+                type: 'value',
+                field: 'metadata.processing_time_unit.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.processing_time_unit')
+            },
+            'metadata.source_storage_duration_value': {
                 label: 'Storage Duration',
                 type: 'range',
                 field: 'metadata.source_storage_duration_value',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-                uiType: 'numrange',
-                uiInterval: (filters) => {
+                facetType: 'histogram',
+                aggregationInterval: (filters) => {
                     if (filters.some((filter) => filter.values.includes('day'))) {
                         return 5
                     }
@@ -275,180 +289,212 @@ export const SEARCH_METADATA = {
                     }
                     return 1
                 },
+                isAggregationActive: doFiltersContainField('metadata.source_storage_duration_unit'),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.source_storage_duration_value')
             },
-            "metadata.source_storage_duration_unit": {
+            'metadata.source_storage_duration_unit': {
                 label: 'Storage Duration Unit',
                 type: 'value',
                 field: 'metadata.source_storage_duration_unit.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.source_storage_duration_unit')
             },
-            "metadata.preparation_medium": {
-                label: 'Preparation Medium',
-                type: 'value',
-                field: 'metadata.preparation_medium.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.preparation_condition": {
-                label: 'Preparation Condition',
-                type: 'value',
-                field: 'metadata.preparation_condition.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.storage_medium": {
+            'metadata.storage_medium': {
                 label: 'Storage Medium',
                 type: 'value',
                 field: 'metadata.storage_medium.keyword',
                 isExpanded: false,
                 filterType: 'any',
                 isFilterable: false,
-            },
-            "metadata.storage_method": {
-                label: 'Preparation Method',
-                type: 'value',
-                field: 'metadata.storage_method.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-
-            "metadata.processing_time_value": {
-                label: 'Processing Time',
-                type: 'range',
-                field: 'metadata.processing_time_value',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-                uiType: 'numrange',
-            },
-            "metadata.processing_time_unit": {
-                label: 'Processing Time Unit',
-                type: 'value',
-                field: 'metadata.processing_time_unit.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-
-            // Dataset
-            "metadata.metadata.assay_category": {
-                label: 'Assay Category',
-                type: 'value',
-                field: 'metadata.metadata.assay_category.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.metadata.analyte_class": {
-                label: 'Analyte Class',
-                type: 'value',
-                field: 'metadata.metadata.analyte_class.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.metadata.operator": {
-                label: 'Operator',
-                type: 'value',
-                field: 'metadata.metadata.operator.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.metadata.acquisition_instrument_model": {
-                label: 'Acquisition Instrument Model',
-                type: 'value',
-                field: 'metadata.metadata.acquisition_instrument_model.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-            "metadata.metadata.acquisition_instrument_vendor": {
-                label: 'Acquisition Instrument Vendor',
-                type: 'value',
-                field: 'metadata.metadata.acquisition_instrument_vendor.keyword',
-                isExpanded: false,
-                filterType: 'any',
-                isFilterable: false,
-            },
-        },
-        disjunctiveFacets: [],
-        conditionalFacets: {
-            source_type: FilterIsSelected('entity_type', 'Source'),
-            sample_category: FilterIsSelected('entity_type', 'Sample'),
-
-            // Source Human
-            "source_mapped_metadata.sex": FilterIsSelected('source_type', 'Human'),
-            "source_mapped_metadata.race": FilterIsSelected('source_type', 'Human'),
-            "source_mapped_metadata.age.value": FilterIsSelected('source_type', 'Human'),
-            "source_mapped_metadata.body_mass_index.value": FilterIsSelected('source_type', 'Human'),
-
-            // Source Mouse
-            "metadata.strain": FilterIsSelected('source_type', 'Mouse'),
-            "metadata.sex": FilterIsSelected('source_type', 'Mouse'),
-            "metadata.is_embryo": FilterIsSelected('source_type', 'Mouse'),
-            "metadata.is_deceased": FilterIsSelected('source_type', 'Mouse'),
-            "metadata.euthanization_method": FilterIsSelected('source_type', 'Mouse'),
-
-            // Sample Block
-            "metadata.volume_unit": FilterIsSelected('sample_category', 'Block'),
-            "metadata.volume_value": ({filters}) => {
-                return filters.some((filter) => filter.field === 'metadata.volume_unit')
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Sample']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.storage_medium')
             },
 
             // Sample Section
-            "metadata.thickness_unit": FilterIsSelected('sample_category', 'Section'),
-            "metadata.thickness_value": ({filters}) => {
-                return filters.some((filter) => filter.field === 'metadata.thickness_unit')
+            'metadata.thickness_value': {
+                label: 'Thickness',
+                type: 'range',
+                field: 'metadata.thickness_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'histogram',
+                aggregationInterval: (filters) => {
+                    if (filters.some((filter) => filter.values.includes('um'))) {
+                        return 1
+                    }
+                    return 0.1
+                },
+                isAggregationActive: doFiltersContainField('metadata.thickness_unit'),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.thickness_value')
             },
-            "metadata.area_unit": FilterIsSelected('sample_category', 'Section'),
-            "metadata.area_value": ({filters}) => {
-                return filters.some((filter) => filter.field === 'metadata.area_unit')
+            'metadata.thickness_unit': {
+                label: 'Thickness Unit',
+                type: 'value',
+                field: 'metadata.thickness_unit.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('sample_category', ['Section']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.thickness_unit')
+            },
+
+            // Sample Block/Suspension Shared
+            'metadata.tissue_weight_value': {
+                label: 'Tissue Weight',
+                type: 'range',
+                field: 'metadata.tissue_weight_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'histogram',
+                aggregationInterval: 5,
+                isAggregationActive: doFiltersContainField('metadata.tissue_weight_unit'),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.tissue_weight_value')
+            },
+            'metadata.tissue_weight_unit': {
+                label: 'Tissue Weight Unit',
+                type: 'value',
+                field: 'metadata.tissue_weight_unit.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('sample_category', ['Block', 'Suspension']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.tissue_weight_unit')
+            },
+
+            // Sample Block
+            'metadata.volume_value': {
+                label: 'Volume',
+                type: 'range',
+                field: 'metadata.volume_value',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'histogram',
+                aggregationInterval: (filters) => {
+                    if (filters.some((filter) => filter.values.includes('ml'))) {
+                        return 0.1
+                    }
+                    return 1000
+                },
+                isAggregationActive: doFiltersContainField('metadata.volume_unit'), 
+                isFacetVisible: doesAggregationHaveBuckets('metadata.volume_value')
+            },
+            'metadata.volume_unit': {
+                label: 'Volume Unit',
+                type: 'value',
+                field: 'metadata.volume_unit.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('sample_category', ['Block']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.volume_unit')
             },
 
             // Sample Suspension
-            "metadata.suspension_entity_type": FilterIsSelected('sample_category', 'Suspension'),
-            "metadata.suspension_entity_count": FilterIsSelected('sample_category', 'Suspension'),
-            "metadata.is_suspension_enriched": FilterIsSelected('sample_category', 'Suspension'),
-
-            // Sample Block/Suspension Shared
-            "metadata.tissue_weight_unit": ({filters}) => {
-                return filters.some(
-                    (filter) =>
-                        filter.field === 'sample_category' &&
-                        (filter.values.includes('Block') || filter.values.includes('Suspension'))
-                )
-           }, 
-            "metadata.tissue_weight_value": ({filters}) => {
-                return filters.some((filter) => filter.field === 'metadata.tissue_weight_unit')
-            }, 
-
-            // Sample Shared
-            "metadata.source_storage_duration_unit": FilterIsSelected('entity_type', 'Sample'),
-            "metadata.source_storage_duration_value": ({filters}) => {
-                return filters.some((filter) => filter.field === 'metadata.source_storage_duration_unit')
-            }, 
-            "metadata.preparation_medium": FilterIsSelected('entity_type', 'Sample'),
-            "metadata.preparation_condition": FilterIsSelected('entity_type', 'Sample'),
-            "metadata.storage_medium": FilterIsSelected('entity_type', 'Sample'),
-            "metadata.storage_method": FilterIsSelected('entity_type', 'Sample'),
-            "metadata.processing_time_unit": FilterIsSelected('entity_type', 'Sample'),
-            "metadata.processing_time_value": ({filters}) => {
-                return filters.some((filter) => filter.field === 'metadata.processing_time_unit')
-            }, 
+            'metadata.suspension_entity_type': {
+                label: 'Suspension Entity Type',
+                type: 'value',
+                field: 'metadata.suspension_entity_type.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('sample_category', ['Suspension']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.suspension_entity_type')
+            },
+            'metadata.suspension_entity_count': {
+                label: 'Suspension Entity Number',
+                type: 'range',
+                field: 'metadata.suspension_entity_count',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'histogram',
+                aggregationInterval: 100000,
+                isAggregationActive: doesTermFilterContainValues('sample_category', ['Suspension']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.suspension_entity_count')
+            },
+            'metadata.is_suspension_enriched': {
+                label: 'Is Suspension Enriched',
+                type: 'value',
+                field: 'metadata.is_suspension_enriched.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('sample_category', ['Suspension']),
+                isFacetVisible: doesAggregationHaveBuckets('metadata.is_suspension_enriched')
+            },
 
             // Dataset
-            "metadata.metadata.assay_category": FilterIsSelected('entity_type', 'Dataset'),
-            "metadata.metadata.analyte_class": FilterIsSelected('entity_type', 'Dataset'),
-            "metadata.metadata.operator": FilterIsSelected('entity_type', 'Dataset'),
-            "metadata.metadata.acquisition_instrument_model": FilterIsSelected('entity_type', 'Dataset'),
-            "metadata.metadata.acquisition_instrument_vendor": FilterIsSelected('entity_type', 'Dataset'),
+            'ingest_metadata.metadata.acquisition_instrument_model': {
+                label: 'Acquisition Instrument Model',
+                type: 'value',
+                field: 'ingest_metadata.metadata.acquisition_instrument_model.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Dataset']),
+                isFacetVisible: doesAggregationHaveBuckets('ingest_metadata.metadata.acquisition_instrument_model')
+            },
+            'ingest_metadata.metadata.acquisition_instrument_vendor': {
+                label: 'Acquisition Instrument Vendor',
+                type: 'value',
+                field: 'ingest_metadata.metadata.acquisition_instrument_vendor.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Dataset']),
+                isFacetVisible: doesAggregationHaveBuckets('ingest_metadata.metadata.acquisition_instrument_vendor')
+            },
+            'ingest_metadata.metadata.analyte_class': {
+                label: 'Analyte Class',
+                type: 'value',
+                field: 'ingest_metadata.metadata.analyte_class.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Dataset']),
+                isFacetVisible: doesAggregationHaveBuckets('ingest_metadata.metadata.analyte_class')
+            },
+            'ingest_metadata.metadata.assay_category': {
+                label: 'Assay Category',
+                type: 'value',
+                field: 'ingest_metadata.metadata.assay_category.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Dataset']),
+                isFacetVisible: doesAggregationHaveBuckets('ingest_metadata.metadata.assay_category')
+            },
+            'ingest_metadata.metadata.operator': {
+                label: 'Operator',
+                type: 'value',
+                field: 'ingest_metadata.metadata.operator.keyword',
+                isExpanded: false,
+                filterType: 'any',
+                isFilterable: false,
+                facetType: 'term',
+                isAggregationActive: doesTermFilterContainValues('entity_type', ['Dataset']),
+                isFacetVisible: doesAggregationHaveBuckets('ingest_metadata.metadata.operator')
+            },
         },
+        disjunctiveFacets: [],
+        conditionalFacets: {},
         search_fields: {
             all_text: {type: 'value'},
         },
@@ -456,92 +502,123 @@ export const SEARCH_METADATA = {
             'sennet_id',
             'entity_type',
             'uuid',
-            'created_by_user_displayname',
-            'created_by_user_email',
             'lab_tissue_sample_id',
             'lab_source_id',
             'lab_dataset_id',
             'sample_category',
-            'ancestors.sample_category',
             'group_name',
             'source_type',
-            'source.source_type',
-            'last_modified_timestamp',
             'dataset_type',
             'status',
-            'origin_sample.organ',
-            'organ'
+            'origin_samples.organ',
+            'origin_samples.organ_hierarchy',
+            'organ',
+            'title',
+            'description',
         ],
+        // Moving this configuration into `searchQuery` so the config inside search-tools can read this
+        trackTotalHits: true,
     },
     initialState: {
-        resultsPerPage: 10000,
+        current: 1,
+        resultsPerPage: 20,
         sortList: [{
-            field: "last_modified_timestamp",
-            direction: "desc"
+            field: 'last_modified_timestamp',
+            direction: 'desc'
         }]
     },
+    urlPushDebounceLength: 100,
     trackUrlState: true,
     apiConnector: connector,
     hasA11yNotifications: true,
     a11yNotificationMessages: {
         searchResults: ({start, end, totalResults, searchTerm}) =>
-            `Searching for "${searchTerm}". Showing ${start} to ${end} results out of ${totalResults}.`,
+            `Searching for '${searchTerm}'. Showing ${start} to ${end} results out of ${totalResults}.`,
     },
+
+    // Discover page configuration
     discover: [
         {
             title: 'All Human Sources',
             description: 'Human sources of all ages and sexes.',
             entityType: 'source',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Source&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=source_type&filters%5B1%5D%5Bvalues%5D%5B0%5D=Human&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Source'], type: 'any'},
+                {field: 'source_type', values: ['Human'], type: 'any'}
+            ])
         },
         {
             title: 'C57BL/6 Mouse Sources',
             description: 'Mouse sources from the C57BL/6 strain',
             entityType: 'source',
-            queryString: 'size=n_10000_n&filters[0][field]=entity_type&filters[0][values][0]=Source&filters[0][type]=any&filters[1][field]=source_type&filters[1][values][0]=Mouse&filters[1][type]=any&filters[2][field]=metadata.strain&filters[2][values][0]=C57BL%2F6&filters[2][type]=any&sort[0][field]=last_modified_timestamp&sort[0][direction]=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Source'], type: 'any'},
+                {field: 'source_type', values: ['Mouse'], type: 'any'},
+                {field: 'metadata.strain', values: ['C57BL/6'], type: 'any'}
+            ])
         },
         {
             title: 'All Mouse Sources',
             description: 'Mouse sources of all strains, sexes, and embryo statuses.',
             entityType: 'source',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Source&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=source_type&filters%5B1%5D%5Bvalues%5D%5B0%5D=Mouse&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Source'], type: 'any'},
+                {field: 'source_type', values: ['Mouse'], type: 'any'}
+            ])
         },
         {
             title: 'All Block Samples',
             description: 'Block samples of all weights, volumes, and preparation conditions.',
             entityType: 'sample',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Sample&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=sample_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=Block&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Sample'], type: 'any'},
+                {field: 'sample_category', values: ['Block'], type: 'any'}
+            ])
         },
         {
             title: 'All Section Samples',
             description: 'Section samples of all thicknesses and preparation conditions.',
             entityType: 'sample',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Sample&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=sample_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=Section&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Sample'], type: 'any'},
+                {field: 'sample_category', values: ['Section'], type: 'any'}
+            ])
         },
         {
             title: 'All Suspension Samples',
             description: 'Suspension samples of all entity types, enrichment, and preparation conditions.',
             entityType: 'sample',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Sample&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=sample_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=Suspension&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Sample'], type: 'any'},
+                {field: 'sample_category', values: ['Suspension'], type: 'any'}
+            ])
         },
         {
             title: 'All Nucleic Datasets',
             description: 'Datasets with the nucleic acid and protein analyte class.',
             entityType: 'dataset',
-            queryString: 'size=n_10000_n&filters[0][field]=entity_type&filters[0][values][0]=Dataset&filters[0][type]=any&filters[1][field]=metadata.metadata.analyte_class&filters[1][values][0]=Nucleic acid and protein&filters[1][type]=any&sort[0][field]=last_modified_timestamp&sort[0][direction]=desc'
-
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Dataset'], type: 'any'},
+                {field: 'ingest_metadata.metadata.analyte_class', values: ['Nucleic acid and protein'], type: 'any'}
+            ])
         },
         {
             title: 'All RNA Datasets',
             description: 'Datasets with the RNA analyte class.',
             entityType: 'dataset',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=metadata.metadata.analyte_class&filters%5B1%5D%5Bvalues%5D%5B0%5D=RNA&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Dataset'], type: 'any'},
+                {field: 'ingest_metadata.metadata.analyte_class', values: ['RNA'], type: 'any'}
+            ])
         },
         {
             title: 'All Sequence Datasets',
             description: 'Datasets with the sequence assay category.',
             entityType: 'dataset',
-            queryString: 'size=n_10000_n&filters%5B0%5D%5Bfield%5D=entity_type&filters%5B0%5D%5Bvalues%5D%5B0%5D=Dataset&filters%5B0%5D%5Btype%5D=any&filters%5B1%5D%5Bfield%5D=metadata.metadata.assay_category&filters%5B1%5D%5Bvalues%5D%5B0%5D=sequence&filters%5B1%5D%5Btype%5D=any&sort%5B0%5D%5Bfield%5D=last_modified_timestamp&sort%5B0%5D%5Bdirection%5D=desc'
+            queryString: searchUIQueryString([
+                {field: 'entity_type', values: ['Dataset'], type: 'any'},
+                {field: 'ingest_metadata.metadata.assay_category', values: ['sequence'], type: 'any'}
+            ])
         },
     ],
 }
