@@ -131,8 +131,8 @@ export async function get_read_write_privileges() {
     }
 }
 
-export async function call_privs_service(path) {
-    const url = getIngestEndPoint() + 'privs/' + path;
+export async function call_privs_service(path, base='privs/') {
+    const url = getIngestEndPoint() + base + path;
     const request_options = {
         method: 'GET',
         headers: get_headers()
@@ -165,6 +165,11 @@ export async function get_write_privilege_for_group_uuid(group_uuid) {
 export async function get_user_write_groups() {
     log.debug('FETCHING USER WRITE GROUPS')
     return await call_privs_service('user-write-groups')
+}
+
+export async function get_provider_groups() {
+    log.debug('FETCHING Provider GROUPS')
+    return await call_privs_service('data-provider-groups', 'metadata/')
 }
 
 
