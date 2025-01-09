@@ -157,24 +157,6 @@ class RUIIntegration extends Component {
                             </div>
                         )}
 
-                        <Modal.Footer id="rui-footer">
-                            <Button
-                                variant="outline-secondary rounded-0 my-3 mx-2"
-                                onClick={() =>
-                                    this.setState({showCancelModal: true})
-                                }
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="outline-primary rounded-0 my-3 mx-2"
-                                disabled={!this.state.ruiLoaded}
-                                onClick={() => this.clickRegister()}
-                            >
-                                Register
-                            </Button>
-                        </Modal.Footer>
-
                         <AppModal
                             modalTitle={"Cancel Registration?"}
                             modalBody={
@@ -194,9 +176,27 @@ class RUIIntegration extends Component {
 
                         <Script
                             only="edit/sample"
+                            type="module"
                             src="https://cdn.humanatlas.io/ui/ccf-rui/wc.js"
                         />
                     </div>
+                    <Modal.Footer id="rui-footer">
+                        <Button
+                            variant="outline-secondary rounded-0 my-3 mx-2"
+                            onClick={() =>
+                                this.setState({showCancelModal: true})
+                            }
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="outline-primary rounded-0 my-3 mx-2"
+                            disabled={!this.state.ruiLoaded}
+                            onClick={() => this.clickRegister()}
+                        >
+                            Register
+                        </Button>
+                    </Modal.Footer>
                 </div>
             </HelmetProvider>
         );
