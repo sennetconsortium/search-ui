@@ -1,9 +1,9 @@
-import {useContext, useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import {Form} from 'react-bootstrap';
 import SenNetPopover from '../../../SenNetPopover'
 import AppContext from '../../../../context/AppContext'
 
-function SourceType( { data, onChange } ) {
+function SourceType( { data, dataValue, onChange, label, labelDescription} ) {
     const { cache } = useContext(AppContext)
 
     useEffect(() => {
@@ -12,10 +12,10 @@ function SourceType( { data, onChange } ) {
     return (
         //Source Type
         <>
-            <Form.Group className="mb-3" controlId="source_type">
-                <Form.Label>Source Type <span
+            <Form.Group className="mb-3" controlId={dataValue ? dataValue : "source_type"}>
+                <Form.Label>{label ? label : `Source Type` }<span
                     className="required">* </span>
-                    <SenNetPopover className={'source_type'} text={<>
+                    <SenNetPopover className={dataValue ? dataValue : 'source_type'} text={labelDescription ? labelDescription : <>
                         The type of this <code>Source</code>. Choose from one of the available options.<br />
                         <small className='popover-note text-muted'>Note: CCF Registration User Interface (CCF-RUI) tool is only available for <code>{cache.sourceTypes.Human}</code> and <code>{cache.sourceTypes['Human Organoid']}</code> types.</small>
                     </>}>
@@ -23,9 +23,9 @@ function SourceType( { data, onChange } ) {
                     </SenNetPopover>
                 </Form.Label>
 
-                <Form.Select required aria-label="Source Type"
-                             onChange={e => { onChange(e, e.target.id, e.target.value) }}
-                             defaultValue={data?.source_type}>
+                <Form.Select required aria-label={label ? label : `Source Type`}
+                             onChange={e => { onChange(e, dataValue ? dataValue : 'source_type', e.target.value) }}
+                             defaultValue={dataValue ? data?.[dataValue] : data?.source_type}>
                     <option value="">----</option>
                     {Object.entries(cache.sourceTypes).map(op => {
                         return (
