@@ -23,7 +23,7 @@ const GroupSelect = dynamic(() => import("@/components/custom/edit/GroupSelect")
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const SenNetAlert = dynamic(() => import("@/components/SenNetAlert"))
 const SenNetPopover = dynamic(() => import("@/components/SenNetPopover"))
-
+const SourceType = dynamic(() => import("@/components/custom/edit/source/SourceType"))
 
 function EditUpload() {
     const {
@@ -323,6 +323,15 @@ function EditUpload() {
                                             </Form.Select>
 
                                         </Form.Group>
+
+                                        {/*Intended Source Type*/}
+                                        <SourceType data={data} onChange={onChange}
+                                                    label={'Intended Source Type'}
+                                                    dataValue={'intended_source_type'}
+                                                    labelDescription={<>The source type that the data contained in
+                                                        this <code>Upload</code> will be registered/associated with.</>}
+
+                                        />
 
 
                                         <div className={'d-flex flex-row-reverse'}>
