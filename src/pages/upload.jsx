@@ -72,7 +72,7 @@ function ViewUpload() {
     } else {
         return (
             <>
-                {data && <Header title={`${data.sennet_id} | Source | SenNet`}></Header>}
+                {data && <Header title={`${data.sennet_id} | Upload | SenNet`}></Header>}
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
