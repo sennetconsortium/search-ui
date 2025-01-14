@@ -33,8 +33,9 @@ function BodyContent({ handleChangeSource, data }) {
         if (!includedExclude.current && data && data.uuid) {
             includedExclude.current = true
             exclude_dataset_config['searchQuery']['excludeFilters'].push({
-                keyword: "uuid.keyword",
-                value: data['uuid']
+                type: 'term',
+                field: 'uuid.keyword',
+                values: [data['uuid']]
             })
         }
     }, [])
