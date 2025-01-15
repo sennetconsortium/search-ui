@@ -126,10 +126,10 @@ export default function Description({data, citationData, labId, primaryDateTitle
 
 
             <CardGroup>
-            {isLoggedIn() && data && labId &&
+            {isLoggedIn() && data && labId && !eq(data.entity_type, cache.entities.upload) &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
-                                <Card.Subtitle>{eq(data.entity_type, cache.entities.upload) ? 'Title': 'Lab ID'}</Card.Subtitle>
+                                <Card.Subtitle>Lab ID</Card.Subtitle>
                                 <Card.Text>{labId}</Card.Text>
                             </Card.Body>
                         </Card>
