@@ -212,7 +212,7 @@ export default function Description({data, citationData, labId, primaryDateTitle
                     }
 
                     {/*An empty card to align things nicely*/}
-                    {eq(data.entity_type, cache.entities.upload) &&
+                    {data && eq(data.entity_type, cache.entities.upload) &&
                         <Card border={'0'} className={'pb-3'}></Card>
                     }
                 </CardGroup>
