@@ -43,7 +43,7 @@ function ViewUpload() {
                 setData(false)
             } else {
                 setData(_data)
-                const datasets = await callService(null,  `${getEntityEndPoint()}uploads/${_data.uuid}/datasets`)
+                const datasets = await callService(null,  `${getEntityEndPoint()}uploads/${_data.uuid}/datasets?lite=1`)
                 Object.assign(_data, {datasets})
                 setData(_data)
 

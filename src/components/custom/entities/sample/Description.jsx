@@ -5,6 +5,9 @@ import CardGroup from 'react-bootstrap/CardGroup';
 import AppContext from "../../../../context/AppContext";
 import {eq, formatCitation, getProtocolId, getUBKGFullName} from "../../js/functions";
 import SenNetPopover, {SenPopoverOptions} from "../../../SenNetPopover";
+import {getOrganByCode, organIcons} from "@/config/organs";
+import {Avatar, Chip} from "@mui/material";
+import {APP_ROUTES} from "@/config/constants";
 
 export default function Description({data, citationData, labId, primaryDateTitle, primaryDate, secondaryDateTitle, secondaryDate, title, showAuthors=false, showDatasetTypes=false, showOrgans=false}) {
 
@@ -48,6 +51,13 @@ export default function Description({data, citationData, labId, primaryDateTitle
             return res
         }
 
+        const getOrganMeta = () => {
+            const code = data.intended_organ
+            const organ = getOrganByCode(code)
+            const icon = organIcons[code] || organIcons.OT
+            return {icon, organ}
+        }
+
     return (
         <SenNetAccordion title={title || data?.title || 'Summary'} id={'Summary'}>
 
@@ -59,6 +69,42 @@ export default function Description({data, citationData, labId, primaryDateTitle
                         </Card.Body>
                     </Card>
                 }
+
+            {isLoggedIn() && data && eq(data.entity_type, cache.entities.upload) && <CardGroup>
+
+                <Card border={'0'} className={'pb-3'}>
+                    <Card.Body>
+                        <Card.Subtitle>Intended Source Type</Card.Subtitle>
+                        <Card.Text>{data.intended_source_type}</Card.Text>
+                    </Card.Body>
+                </Card>
+
+                <Card border={'0'} className={'pb-3'}>
+                    <Card.Body>
+                        <Card.Subtitle>Intended Organ</Card.Subtitle>
+                        <Card.Text>
+
+                            <Chip className={`no-focus bg--none ${getOrganMeta().organ?.path ? 'fs-6 lnk--txt' : 'pe-none'}`}
+                                  aria-disabled={getOrganMeta().organ?.path === undefined}
+                                  avatar={ <Avatar alt={getUBKGFullName(data.intended_organ)} src={getOrganMeta().icon} />}
+                                  label={getUBKGFullName(data.intended_organ)}
+                                  onClick={() => {
+                                      if (!getOrganMeta().organ) return
+                                      window.location = `${APP_ROUTES.organs}/${getOrganMeta().organ.path}`}
+                                  }
+                            />
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+
+                <Card border={'0'} className={'pb-3'}>
+                    <Card.Body>
+                        <Card.Subtitle>Intended Dataset Type</Card.Subtitle>
+                        <Card.Text>{data.intended_dataset_type}</Card.Text>
+                    </Card.Body>
+                </Card>
+
+            </CardGroup>}
 
                 {data && data?.publication_venue && <Card border={'0'} className={'pb-3'}>
                     <Card.Body>
@@ -126,10 +172,10 @@ export default function Description({data, citationData, labId, primaryDateTitle
 
 
             <CardGroup>
-            {isLoggedIn() && data && labId &&
+            {isLoggedIn() && data && labId && !eq(data.entity_type, cache.entities.upload) &&
                         <Card border={'0'} className={'pb-3'}>
                             <Card.Body>
-                                <Card.Subtitle>{eq(data.entity_type, cache.entities.upload) ? 'Title': 'Lab ID'}</Card.Subtitle>
+                                <Card.Subtitle>Lab ID</Card.Subtitle>
                                 <Card.Text>{labId}</Card.Text>
                             </Card.Body>
                         </Card>
@@ -163,6 +209,11 @@ export default function Description({data, citationData, labId, primaryDateTitle
                                 </Card.Text>
                             </Card.Body>
                         </Card>
+                    }
+
+                    {/*An empty card to align things nicely*/}
+                    {eq(data.entity_type, cache.entities.upload) &&
+                        <Card border={'0'} className={'pb-3'}></Card>
                     }
                 </CardGroup>
             </SenNetAccordion>
