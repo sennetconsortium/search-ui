@@ -302,6 +302,7 @@ export function getStatusColor(status) {
                 break;
             case "HOLD":
             case "QUEUED":
+            case "SCHEDULED":
                 badge_class = "badge-dark";
                 break;
             default:
