@@ -391,6 +391,9 @@ function ViewJobs({isAdmin = false}) {
 
     const getJobType = (row) => {
         let type = row.referrer.type
+        if (eq(type, 'cache')) {
+            return 'Cache'
+        }
         type = eq(type, 'validate') ? 'validation' : 'registration'
         return isMetadata(row) ? `Metadata ${type}` : `Entity ${type}`
     }
