@@ -567,6 +567,46 @@ function ViewJobs({isAdmin = false}) {
                     format: row => <span data-field='user_email'>{row.user?.email}</span>,
                 }
             )
+
+            cols.splice(-1, 0,
+                {
+                    name: 'Enqueued Date',
+                    id: 'enqueued_timestamp',
+                    selector: row => row.enqueued_timestamp || '',
+                    width: '180px',
+                    sortable: true,
+                    reorder: true,
+                    omit: true,
+                    format: row => {
+                        let timestring = ''
+                        if (row.enqueued_timestamp) {
+                            const date = new Date(row.enqueued_timestamp)
+                            timestring = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+                        }
+                        return <span data-field='enqueued-date'>{timestring}</span>
+                    },
+                }
+            )
+
+            cols.splice(-1, 0,
+                {
+                    name: 'Scheduled For Date',
+                    id: 'scheduled_for_timestamp',
+                    selector: row => row.scheduled_for_timestamp || '',
+                    width: '180px',
+                    sortable: true,
+                    reorder: true,
+                    omit: true,
+                    format: row => {
+                        let timestring = ''
+                        if (row.scheduled_for_timestamp) {
+                            const date = new Date(row.scheduled_for_timestamp)
+                            timestring = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+                        }
+                        return <span data-field='scheduled-for-timestamp'>{timestring}</span>
+                    },
+                }
+            )
         }
 
         if (hiddenColumns) {
