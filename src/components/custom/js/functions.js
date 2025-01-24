@@ -255,6 +255,8 @@ export function getJobTypeColor(type) {
                 return '#3b6b23'
             case "entity registration":
                 return '#3b6b23'
+            case "cache":
+                return '#535353'
             default:
                 break;
         }
@@ -302,6 +304,7 @@ export function getStatusColor(status) {
                 break;
             case "HOLD":
             case "QUEUED":
+            case "SCHEDULED":
                 badge_class = "badge-dark";
                 break;
             default:
