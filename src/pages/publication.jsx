@@ -12,9 +12,9 @@ import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
 import VignetteList from "@/components/custom/vitessce/VignetteList";
 import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
 import Description from "@/components/custom/entities/sample/Description";
+import AppNavbar from "@/components/custom/layout/AppNavbar"
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"), {

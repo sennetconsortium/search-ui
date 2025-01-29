@@ -8,15 +8,14 @@ import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {getEntityEndPoint} from "@/config/config";
 import Description from "@/components/custom/entities/sample/Description";
+import AppNavbar from "@/components/custom/layout/AppNavbar"
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
 const Datasets = dynamic(() => import("@/components/custom/entities/collection/Datasets"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const FileTreeView = dynamic(() => import("@/components/custom/entities/dataset/FileTreeView"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-
 
 function ViewUpload() {
     const router = useRouter()

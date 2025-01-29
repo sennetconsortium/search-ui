@@ -11,9 +11,9 @@ import {useRouter} from "next/router";
 import {callService, get_write_privilege_for_group_uuid, getEntityData} from "@/lib/services";
 import {getEntityEndPoint} from "@/config/config";
 import Description from "@/components/custom/entities/sample/Description";
+import AppNavbar from "@/components/custom/layout/AppNavbar"
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
 const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
 const Datasets = dynamic(() => import("@/components/custom/entities/collection/Datasets"))

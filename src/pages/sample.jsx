@@ -9,9 +9,9 @@ import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {APP_ROUTES} from "@/config/constants";
 import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
 import Description from "@/components/custom/entities/sample/Description";
+import AppNavbar from "@/components/custom/layout/AppNavbar"
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
 const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
