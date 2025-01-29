@@ -196,13 +196,11 @@ function ViewDataset() {
                                                    data-bs-parent="#sidebar">Upload</a>
                                             </li>
                                         }
-                                        {data.collections && data.collections.length > 0 &&
-                                            <li className="nav-item">
-                                                <a href="#Associated Collections"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Collections</a>
-                                            </li>
-                                        }
+                                        <li className="nav-item">
+                                            <a href="#Associated Collections"
+                                               className="nav-link"
+                                               data-bs-parent="#sidebar">Collections</a>
+                                        </li>
                                         {showVitessce &&
                                             <li className="nav-item">
                                                 <a href="#Vitessce"
@@ -276,7 +274,7 @@ function ViewDataset() {
                                         {isLoggedIn() && <Upload data={data.upload}/>}
 
                                         {/*Collection*/}
-                                        {data.collections && data.collections.length > 0 && <Collections entityType='Dataset' data={data.collections}/>}
+                                        <Collections entityType='Dataset' data={data.collections}/>
 
                                         {/* Vitessce */}
                                         <SennetVitessce data={data}/>

@@ -107,13 +107,11 @@ function ViewSource() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            {data.collections && data.collections.length > 0 &&
-                                                <li className="nav-item">
-                                                    <a href="#Associated Collections"
-                                                       className="nav-link"
-                                                       data-bs-parent="#sidebar">Collections</a>
-                                                </li>
-                                            }
+                                            <li className="nav-item">
+                                                <a href="#Associated Collections"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Collections</a>
+                                            </li>
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
@@ -158,7 +156,7 @@ function ViewSource() {
                                             />
 
                                             {/*Collection*/}
-                                            {data.collections && data.collections.length > 0 && <Collections entityType='Source' data={data.collections}/>}
+                                            <Collections entityType='Source' data={data.collections}/>
 
                                             {/*Provenance*/}
                                             <Provenance nodeData={data}/>
