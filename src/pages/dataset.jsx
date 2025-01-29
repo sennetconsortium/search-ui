@@ -48,7 +48,7 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
+    const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView, isLoggedIn} = useContext(AppContext)
     const [primaryDatasetData, setPrimaryDatasetInfo] = useState(null)
     const {
         showVitessce,
@@ -189,7 +189,7 @@ function ViewDataset() {
                                                    data-bs-parent="#sidebar">Data Products</a>
                                             </li>
                                         }
-                                        {data.upload && data.upload.uuid &&
+                                        {isLoggedIn() &&
                                             <li className="nav-item">
                                                 <a href="#Associated Upload"
                                                    className="nav-link"
@@ -273,7 +273,7 @@ function ViewDataset() {
                                             <DataProducts data={data} files={dataProducts}/>}
 
                                         {/*Upload*/}
-                                        {data.upload && data.upload.uuid && <Upload data={data.upload}/>}
+                                        {isLoggedIn() && <Upload data={data.upload}/>}
 
                                         {/*Collection*/}
                                         {data.collections && data.collections.length > 0 && <Collections entityType='Dataset' data={data.collections}/>}
