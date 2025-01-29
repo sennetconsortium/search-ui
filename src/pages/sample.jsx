@@ -21,8 +21,9 @@ const Provenance = dynamic(() => import("@/components/custom/entities/Provenance
     loading: () => <LoadingAccordion id="Provenance" title="Provenance" style={{ height:'490px' }} />
 })
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const Tissue = dynamic(() => import("@/components/custom/entities/sample/Tissue"))
-
+const Tissue = dynamic(() => import("@/components/custom/entities/sample/Tissue"), {
+    loading: () => <LoadingAccordion id="Tissue" title="Tissue" style={{ height:'175px' }} />
+})
 
 function ViewSample() {
     const router = useRouter()
@@ -161,9 +162,7 @@ function ViewSample() {
                                             />
 
                                             {/*Tissue*/}
-                                            {data &&
-                                                <Tissue data={data}/>
-                                            }
+                                            <Tissue data={data}/>
 
                                             {/*Collection*/}
                                             <Collections entityType='Sample' data={data.collections}/>
