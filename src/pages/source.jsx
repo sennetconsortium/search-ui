@@ -7,16 +7,19 @@ import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
+import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
+import Description from "@/components/custom/entities/sample/Description";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
 const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
 const Protocols = dynamic(() => import("@/components/custom/entities/sample/Protocols"))
-const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
+const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"), {
+    loading: () => <LoadingAccordion id="Provenance" title="Provenance" style={{ height:'490px' }} />
+})
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 
 function ViewSource() {
@@ -158,9 +161,7 @@ function ViewSource() {
                                             {data.collections && data.collections.length > 0 && <Collections entityType='Source' data={data.collections}/>}
 
                                             {/*Provenance*/}
-                                            {data &&
-                                                <Provenance nodeData={data}/>
-                                            }
+                                            <Provenance nodeData={data}/>
 
                                             {/*Metadata*/}
                                             {metadata &&

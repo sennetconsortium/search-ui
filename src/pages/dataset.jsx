@@ -20,6 +20,8 @@ import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import DerivedContext, {DerivedProvider} from "@/context/DerivedContext";
 import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
 import WarningIcon from '@mui/icons-material/Warning'
+import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
+import Description from "@/components/custom/entities/sample/Description";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
@@ -28,10 +30,11 @@ const Collections = dynamic(() => import("@/components/custom/entities/Collectio
 const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
 const CreationActionRelationship = dynamic(() => import("@/components/custom/entities/dataset/CreationActionRelationship"))
 const DataProducts = dynamic(() => import("@/components/custom/entities/dataset/DataProducts"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
-const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"))
+const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"), {
+    loading: () => <LoadingAccordion id="Provenance" title="Provenance" style={{ height:'490px' }} />
+})
 const SennetVitessce = dynamic(() => import("@/components/custom/vitessce/SennetVitessce"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 const Upload = dynamic(() => import("@/components/custom/entities/dataset/Upload"))

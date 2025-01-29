@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { forwardRef, useEffect, useState } from 'react'
 
-const SenNetAccordion = forwardRef(({ children, title, id, afterTitle, className = '', expanded = true }, ref) => {
+const SenNetAccordion = forwardRef(({ children, title, id, afterTitle, className = '', style = {}, expanded = true }, ref) => {
     const [refId, setRefId] = useState(id)
 
     useEffect(() => {
@@ -28,6 +28,7 @@ const SenNetAccordion = forwardRef(({ children, title, id, afterTitle, className
                 </div>
                 <div
                     id={`${refId}-collapse`}
+                    style={style}
                     className={`accordion-collapse collapse ${expanded ? 'show' : 'show-invisible'}`}
                 >
                     <div className='accordion-body'>{children}</div>

@@ -1,22 +1,22 @@
 import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
-import {fetchDataCite, getRequestHeaders} from "@/components/custom/js/functions";
+import {fetchDataCite} from "@/components/custom/js/functions";
 import Header from "@/components/custom/layout/Header";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "@/context/DerivedContext";
 import {useRouter} from "next/router";
-import {callService, get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
+import {callService, get_write_privilege_for_group_uuid, getEntityData} from "@/lib/services";
 import {getEntityEndPoint} from "@/config/config";
+import Description from "@/components/custom/entities/sample/Description";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
 const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
 const Datasets = dynamic(() => import("@/components/custom/entities/collection/Datasets"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 
 function ViewCollection({collectionType='Collection', entitiesLabel='Entities'}) {
@@ -46,7 +46,7 @@ function ViewCollection({collectionType='Collection', entitiesLabel='Entities'})
                 setData(false)
             } else {
                 setData(_data)
-                const entities = await callService(null,  `${getEntityEndPoint()}collections/${_data.uuid}/entities`)
+                const entities = await callService(null, `${getEntityEndPoint()}collections/${_data.uuid}/entities`, 'GET', null)
                 Object.assign(_data, {entities})
                 setData(_data)
 

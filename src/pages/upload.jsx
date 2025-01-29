@@ -2,18 +2,17 @@ import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
-import {getRequestHeaders} from "@/components/custom/js/functions";
-import {callService, get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
+import {callService, get_write_privilege_for_group_uuid, getEntityData} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {getEntityEndPoint} from "@/config/config";
+import Description from "@/components/custom/entities/sample/Description";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
 const Datasets = dynamic(() => import("@/components/custom/entities/collection/Datasets"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const FileTreeView = dynamic(() => import("@/components/custom/entities/dataset/FileTreeView"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))

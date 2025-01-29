@@ -10,13 +10,16 @@ import {DerivedProvider} from "@/context/DerivedContext";
 import ContributorsContacts from "@/components/custom/entities/ContributorsContacts";
 import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
 import VignetteList from "@/components/custom/vitessce/VignetteList";
+import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
+import Description from "@/components/custom/entities/sample/Description";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
-const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
+const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"), {
+    loading: () => <LoadingAccordion id="Provenance" title="Provenance" style={{ height:'490px' }} />
+})
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 
 function ViewPublication() {
