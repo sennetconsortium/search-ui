@@ -171,9 +171,7 @@ function ViewSample() {
                                             {data.collections && data.collections.length > 0 && <Collections entityType='Sample' data={data.collections}/>}
 
                                             {/*Provenance*/}
-                                            {data &&
-                                                <Provenance nodeData={data}/>
-                                            }
+                                            <Provenance nodeData={data}/>
 
                                             {/*Metadata*/}
                                             {/*Samples have their metadata inside "metadata"*/}
