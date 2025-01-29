@@ -12,7 +12,7 @@ import {callService, getEntityData, update_create_entity} from '@/lib/services'
 import {cleanJson, eq, fetchEntity, getIdRegEx} from '@/components/custom/js/functions'
 import AppContext from '@/context/AppContext'
 import EntityContext, {EntityProvider} from "@/context/EntityContext";
-import {getEntityEndPoint, valid_dataset_ancestor_config} from "@/config/config";
+import {getEntityEndPoint, getIngestEndPoint, valid_dataset_ancestor_config} from "@/config/config";
 import $ from 'jquery'
 import SenNetPopover, {SenPopoverOptions} from "@/components/SenNetPopover"
 import AttributesUpload, {getResponseList} from "@/components/custom/edit/AttributesUpload";
@@ -213,10 +213,27 @@ export default function EditCollection({collectionType='Collection', entitiesTab
 
         setModalDetails({
             entity: collectionType,
-            type: response.title,
+            type: response?.title,
             typeHeader: _t('Title'),
             response
         })
+    }
+
+    const handlePublish = async (event) => {
+        setDisableSubmit(true)
+        toggleBusyOverlay(true, <span>DOI publish the <code>{collectionType}</code></span>)
+        const form = $(event.currentTarget.form)[0]
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+            log.debug("Form is invalid")
+            setDisableSubmit(false)
+        } else {
+
+            const publishResult = await callService('{}', `${getIngestEndPoint()}collections/${data.uuid}/register-doi`, 'PUT')
+            modalResponse(publishResult)
+            setDisableSubmit(false)
+        }
     }
 
     const handleSave = async (event) => {
@@ -505,6 +522,17 @@ export default function EditCollection({collectionType='Collection', entitiesTab
                                                         onClick={handleSave}
                                                         disabled={disableSubmit}>
                                                     {_t('Save')}
+                                                </Button>
+                                            </SenNetPopover>}
+
+                                        {adminGroup && !data.registered_doi &&
+                                            <SenNetPopover text={<>Save changes to this <code>Collection</code>.</>}
+                                                           className={'publish-button'}>
+                                                <Button variant="outline-primary rounded-0 js-btn--publish"
+                                                        className={'me-2'}
+                                                        onClick={handlePublish}
+                                                        disabled={disableSubmit}>
+                                                    {_t('Publish')}
                                                 </Button>
                                             </SenNetPopover>}
 
