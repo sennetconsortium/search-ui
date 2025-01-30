@@ -29,7 +29,7 @@ const SenNetAccordion = forwardRef(({ children, title, id, afterTitle, className
                 <div
                     id={`${refId}-collapse`}
                     style={style}
-                    className={`accordion-collapse collapse ${expanded ? 'show' : 'show-invisible'}`}
+                    className={`accordion-collapse collapse mt-1 ${expanded ? 'show' : 'show-invisible'}`}
                 >
                     <div className='accordion-body'>{children}</div>
                 </div>
