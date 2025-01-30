@@ -8,7 +8,7 @@ import Alert from 'react-bootstrap/Alert';
 import {Layout} from '@elastic/react-search-ui-views'
 import '@elastic/react-search-ui-views/lib/styles/styles.css'
 import log from 'loglevel'
-import {callService, getEntityData, update_create_entity} from '@/lib/services'
+import {callService, filterProperties, getEntityData, update_create_entity} from '@/lib/services'
 import {cleanJson, eq, fetchEntity, getIdRegEx} from '@/components/custom/js/functions'
 import AppContext from '@/context/AppContext'
 import EntityContext, {EntityProvider} from "@/context/EntityContext";
@@ -107,7 +107,7 @@ export default function EditCollection({collectionType='Collection', entitiesTab
                 setErrorMessage(_data["error"])
             } else {
                 setData(_data)
-                const entities = await callService(null, `${getEntityEndPoint()}collections/${_data.uuid}/entities`)
+                const entities = await callService(filterProperties.collectionEntities, `${getEntityEndPoint()}collections/${_data.uuid}/entities`, 'POST')
                 Object.assign(_data, {entities})
                 setData(_data)
 
