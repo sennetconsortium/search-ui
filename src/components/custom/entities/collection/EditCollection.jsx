@@ -224,20 +224,22 @@ export default function EditCollection({collectionType='Collection', entitiesTab
         toggleBusyOverlay(true, <span>DOI publish the <code>{collectionType}</code></span>)
         const form = $(event.currentTarget.form)[0]
         if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-            log.debug("Form is invalid")
+
+            event.preventDefault()
+            event.stopPropagation()
             setDisableSubmit(false)
+            toggleBusyOverlay(false)
         } else {
 
             const publishResult = await callService('{}', `${getIngestEndPoint()}collections/${data.uuid}/register-doi`, 'PUT')
             modalResponse(publishResult)
             setDisableSubmit(false)
         }
+        setValidated(true)
     }
 
     const handleSave = async (event) => {
-        setDisableSubmit(true);
+        setDisableSubmit(true)
 
         const form = $(event.currentTarget.form)[0]
         if (form.checkValidity() === false) {
@@ -268,8 +270,8 @@ export default function EditCollection({collectionType='Collection', entitiesTab
                 }).catch((e) => log.error(e))
             }
         }
-        setValidated(true);
-    };
+        setValidated(true)
+    }
 
     const showBulkAdd = () => {
         setBulkAddBtnTooltip(
