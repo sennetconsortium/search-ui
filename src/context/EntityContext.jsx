@@ -195,6 +195,10 @@ export const EntityProvider = ({ children }) => {
             setModalBody(body)
             setValues({...values, 'contains_human_genetic_sequences': response.contains_human_genetic_sequences})
             setResponse(response)
+        } else if ('registered_doi' in response) {
+            setModalTitle(<span key='title-0'>{successIcon()}<span key='title-1'
+                                                                   className={'title-text'}> {entity} Published</span></span>)
+            setModalBody(<span key='bdy-3'><strong>{_t('Registered DOI')}:</strong> {response.registered_doi}<ClipboardCopy text={response.registered_doi} /></span>)
         } else {
             const verb = isEditMode() ? 'Updating' : 'Registering'
             let responseText = "An unexpected issue occurred. The request could not have been completed."
