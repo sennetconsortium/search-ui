@@ -282,7 +282,7 @@ export function getAncestry(uuid, {endpoints = ['ancestors', 'descendants'], oth
     let result = {}
     for (let key of allEndpoints) {
         let endpoint = propertyNameMap[key] || key
-        result[key] = callService(null, `${getEntityEndPoint()}${endpoint}/${uuid}`)
+        result[key] = callService(filterProperties.ancestry, `${getEntityEndPoint()}${endpoint}/${uuid}`, 'POST')
     }
     return result
 }
