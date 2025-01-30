@@ -24,13 +24,13 @@ const EntityViewHeaderButtons = ({entity, data, hasWritePrivilege}) => {
                 <SenNetPopover className={"view-entity"}
                                text={<>View the full JSON document of this entity.</>}>
                     <Button target='_blank' aria-label={`View JSON of the ${cache.entities[entity]}`}
-                            className={`${hasWritePrivilege ? "mx-2" : ""} js-btn--json`}
+                            className='ms-2 js-btn--json'
                             href={`/api/json/${entity}?uuid=${data.uuid}`}
                             variant="outline-primary rounded-0"><i className="bi bi-filetype-json"></i></Button>
                 </SenNetPopover>
 
                 {eq(entity, cache.entities.dataset) && eq(data.status, 'published') &&
-                    <VersionDropdown data={data}/>
+                    <VersionDropdown className='ms-2' data={data}/>
                 }
             </Stack>
 

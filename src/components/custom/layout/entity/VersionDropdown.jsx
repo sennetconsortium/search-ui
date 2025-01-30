@@ -5,7 +5,7 @@ import AppContext from "../../../../context/AppContext";
 import {getEntityEndPoint} from "../../../../config/config";
 import {getEntityViewUrl} from "../../js/functions";
 
-function VersionDropdown({data}) {
+function VersionDropdown({className = '', data}) {
 
     const {_t, cache } = useContext(AppContext)
     const [revisions, setRevisions] = useState([])
@@ -56,7 +56,7 @@ function VersionDropdown({data}) {
     }
 
     return (
-        <Dropdown>
+        <Dropdown className={className}>
             <Dropdown.Toggle  id="dropdown-basic">
                 Version {getActiveRevision()}
             </Dropdown.Toggle>
