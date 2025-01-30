@@ -10,6 +10,7 @@ import {DerivedProvider} from "@/context/DerivedContext";
 import {useRouter} from "next/router";
 import {callService, get_write_privilege_for_group_uuid, getEntityData} from "@/lib/services";
 import {getEntityEndPoint} from "@/config/config";
+import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
 import AppNavbar from "@/components/custom/layout/AppNavbar"
 import Description from "@/components/custom/entities/sample/Description";
 import Datasets from "@/components/custom/entities/collection/Datasets"
@@ -22,6 +23,7 @@ const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 function ViewCollection({collectionType='Collection', entitiesLabel='Entities'}) {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [isEntitiesLoading, setIsEntitiesLoading] = useState(true)
     const [citationData, setCitationData] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
@@ -44,11 +46,13 @@ function ViewCollection({collectionType='Collection', entitiesLabel='Entities'})
                 setError(true)
                 setErrorMessage(_data["error"])
                 setData(false)
+                setIsEntitiesLoading(false)
             } else {
                 setData(_data)
                 const entities = await callService(null, `${getEntityEndPoint()}collections/${_data.uuid}/entities`, 'GET', null)
                 Object.assign(_data, {entities})
                 setData(_data)
+                setIsEntitiesLoading(false)
 
                 const citation = await fetchDataCite(_data.doi_url)
                 setCitationData(citation)
@@ -135,7 +139,11 @@ function ViewCollection({collectionType='Collection', entitiesLabel='Entities'})
                                             />
 
                                             {/*Entities*/}
-                                            <Datasets data={data.entities} label={entitiesLabel}/>
+                                            {isEntitiesLoading ? (
+                                                <LoadingAccordion id={entitiesLabel} title={entitiesLabel} />
+                                            ) : (
+                                                <Datasets data={data.entities} label={entitiesLabel}/>
+                                            )}
 
                                             {/*Contributors*/}
                                             <ContributorsContacts title={'Contributors'} data={data.contributors}/>

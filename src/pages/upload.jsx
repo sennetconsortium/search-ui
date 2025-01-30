@@ -7,6 +7,7 @@ import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {getEntityEndPoint} from "@/config/config";
+import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
 import AppNavbar from "@/components/custom/layout/AppNavbar"
 import Description from "@/components/custom/entities/sample/Description";
 import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
@@ -20,6 +21,7 @@ const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 function ViewUpload() {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [isDatasetsLoading, setIsDatasetsLoading] = useState(true)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -39,11 +41,13 @@ function ViewUpload() {
                 setError(true)
                 setErrorMessage(_data["error"])
                 setData(false)
+                setIsDatasetsLoading(false)
             } else {
                 setData(_data)
-                const datasets = await callService(null,  `${getEntityEndPoint()}uploads/${_data.uuid}/datasets?lite=1`)
+                const datasets = await callService(null, `${getEntityEndPoint()}uploads/${_data.uuid}/datasets?lite=1`)
                 Object.assign(_data, {datasets})
                 setData(_data)
+                setIsDatasetsLoading(false)
 
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
@@ -131,12 +135,14 @@ function ViewUpload() {
                                             <FileTreeView data={data}/>
 
                                             {/*Datasets*/}
-                                            {data.datasets?.length > 0 && <Datasets data={data.datasets}/>}
+                                            {isDatasetsLoading ? (
+                                                <LoadingAccordion id='Datasets' title='Datasets' />
+                                            ) : (
+                                                <Datasets data={data.datasets}/>
+                                            )}
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>
-
-
                                         </div>
                                     </div>
                                 </main>
