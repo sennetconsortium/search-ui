@@ -1,8 +1,8 @@
-import {createContext, useCallback, useEffect, useRef, useState} from "react";
+import {createContext, useCallback, useRef, useState} from "react";
 import $ from "jquery";
-import {datasetIs, fetchEntity, getRequestHeaders} from "../components/custom/js/functions";
-import {fetchVitessceConfiguration, get_prov_info} from "../lib/services";
-import useVitessceEncoder from "../hooks/useVitessceEncoder";
+import {datasetIs, fetchEntity, getRequestHeaders} from "@/components/custom/js/functions";
+import {fetchVitessceConfiguration, get_prov_info} from "@/lib/services";
+import useVitessceEncoder from "@/hooks/useVitessceEncoder";
 
 const DerivedContext = createContext({})
 
@@ -33,6 +33,7 @@ export const DerivedProvider = ({children, showVitessceList, setShowVitessceList
                 }
             } else {
                 setVitessceConfig(config)
+                setShowVitessce(true)
             }
         }).catch(error => {
             console.error(error)
@@ -56,9 +57,7 @@ export const DerivedProvider = ({children, showVitessceList, setShowVitessceList
         if (isDatasetStatusPassed(data) && ((is_primary_dataset && data.descendants.length !== 0) || !is_primary_dataset) && data.dataset_category !== 'component') {
             // Add a check if this is a component dataset
             if (!is_primary_dataset) {
-                setShowVitessce(true)
                 await set_vitessce_config(data, data.uuid, dataset_type)
-
             } else {
                 //Call `/prov-info` and check if processed datasets are returned
                 const prov_info = await get_prov_info(data.uuid)
@@ -71,7 +70,6 @@ export const DerivedProvider = ({children, showVitessceList, setShowVitessceList
                             fetchEntity(processed_datasets[i]).then(processed_dataset => {
                                 // Check that the assay type is supported by Vitessce
                                 let processed_dataset_type = processed_dataset.dataset_type?.replace(/\s+([\[]).*?([\]])/g, "")
-                                setShowVitessce(true)
                                 setDerivedDataset(processed_dataset)
                                 set_vitessce_config(processed_dataset, processed_dataset.uuid, processed_dataset_type)
                             })

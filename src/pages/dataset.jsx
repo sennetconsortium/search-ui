@@ -277,7 +277,7 @@ function ViewDataset() {
                                         <Collections entityType='Dataset' data={data.collections}/>
 
                                         {/* Vitessce */}
-                                        <SennetVitessce data={data}/>
+                                        {showVitessce && <SennetVitessce data={data}/>}
 
                                         {/*Provenance*/}
                                         <Provenance nodeData={data}/>
