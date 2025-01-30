@@ -231,7 +231,7 @@ export default function EditCollection({collectionType='Collection', entitiesTab
             toggleBusyOverlay(false)
         } else {
 
-            const publishResult = await callService('{}', `${getIngestEndPoint()}collections/${data.uuid}/register-doi`, 'PUT')
+            const publishResult = await callService(null, `${getIngestEndPoint()}collections/${data.uuid}/register-doi`, 'PUT')
             modalResponse(publishResult)
             setDisableSubmit(false)
         }
@@ -527,7 +527,7 @@ export default function EditCollection({collectionType='Collection', entitiesTab
                                                 </Button>
                                             </SenNetPopover>}
 
-                                        {adminGroup && !data.registered_doi &&
+                                        {isEditMode() && adminGroup && !data.registered_doi &&
                                             <SenNetPopover text={<>Save changes to this <code>Collection</code>.</>}
                                                            className={'publish-button'}>
                                                 <Button variant="outline-primary rounded-0 js-btn--publish"
