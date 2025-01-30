@@ -8,12 +8,13 @@ import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {APP_ROUTES} from "@/config/constants";
 import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
-import Description from "@/components/custom/entities/sample/Description";
 import AppNavbar from "@/components/custom/layout/AppNavbar"
+import Description from "@/components/custom/entities/sample/Description";
+import Tissue from "@/components/custom/entities/sample/Tissue";
+import Collections from "@/components/custom/entities/Collections";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
-const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
 const Protocols = dynamic(() => import("@/components/custom/entities/sample/Protocols"))
@@ -21,9 +22,6 @@ const Provenance = dynamic(() => import("@/components/custom/entities/Provenance
     loading: () => <LoadingAccordion id="Provenance" title="Provenance" style={{ height:'490px' }} />
 })
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const Tissue = dynamic(() => import("@/components/custom/entities/sample/Tissue"), {
-    loading: () => <LoadingAccordion id="Tissue" title="Tissue" style={{ height:'175px' }} />
-})
 
 function ViewSample() {
     const router = useRouter()

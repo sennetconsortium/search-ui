@@ -21,12 +21,13 @@ import DerivedContext, {DerivedProvider} from "@/context/DerivedContext";
 import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
 import WarningIcon from '@mui/icons-material/Warning'
 import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
-import Description from "@/components/custom/entities/sample/Description";
 import AppNavbar from "@/components/custom/layout/AppNavbar"
+import Description from "@/components/custom/entities/sample/Description";
+import Upload from "@/components/custom/entities/dataset/Upload";
+import Collections from "@/components/custom/entities/Collections";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
-const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
 const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
 const CreationActionRelationship = dynamic(() => import("@/components/custom/entities/dataset/CreationActionRelationship"))
 const DataProducts = dynamic(() => import("@/components/custom/entities/dataset/DataProducts"))
@@ -39,7 +40,6 @@ const SennetVitessce = dynamic(() => import("@/components/custom/vitessce/Sennet
     loading: () => <LoadingAccordion id="Vitessce" title="Vitessce" style={{ height:'800px' }} />
 })
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const Upload = dynamic(() => import("@/components/custom/entities/dataset/Upload"))
 
 function ViewDataset() {
     const [data, setData] = useState(null)
