@@ -515,6 +515,7 @@ export const filterProperties = {
             "origin_samples",
             "creation_action",
             "metadata",
+            "ingest_metadata",
             "cedar_mapped_metadata",
             "source_mapped_metadata"
         ],
