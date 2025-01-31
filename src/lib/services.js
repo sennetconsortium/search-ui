@@ -280,9 +280,10 @@ export function getAncestry(uuid, {endpoints = ['ancestors', 'descendants'], oth
     }
     const allEndpoints = endpoints.concat(otherEndpoints)
     let result = {}
+    const isEdit = window.location.href.contains('edit/')
     for (let key of allEndpoints) {
         let endpoint = propertyNameMap[key] || key
-        result[key] = callService(filterProperties.ancestry, `${getEntityEndPoint()}${endpoint}/${uuid}`, 'POST')
+        result[key] = callService(isEdit ? filterProperties.ancestryEdit : filterProperties.ancestry, `${getEntityEndPoint()}${endpoint}/${uuid}`, 'POST')
     }
     return result
 }
@@ -518,6 +519,16 @@ export const filterProperties = {
             "ingest_metadata",
             "cedar_mapped_metadata",
             "source_mapped_metadata"
+        ],
+        is_include: true
+    },
+    ancestryEdit: {
+        filter_properties: [
+            "lab_source_id",
+            "lab_tissue_sample_id",
+            "lab_dataset_id",
+            "origin_samples",
+            "creation_action",
         ],
         is_include: true
     },
