@@ -83,7 +83,7 @@ export const SEARCH_ENTITIES = {
                 },
                 isFacetVisible: doesAggregationHaveBuckets('has_qa_derived_dataset')
             },
-            dataset_type_hierarchy: {
+            dataset_type: {
                 label: 'Dataset Type',
                 type: 'value',
                 field: 'dataset_type_hierarchy.second_level.keyword',
