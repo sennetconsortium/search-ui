@@ -182,7 +182,7 @@ function ViewDataset() {
                                                    data-bs-parent="#sidebar">Multi-Assay Relationship</a>
                                             </li>
                                         }
-                                        {datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action) && dataProducts && (dataProducts.length > 0) &&
+                                        {(datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action)) && dataProducts && (dataProducts.length > 0) &&
                                             <li className="nav-item">
                                                 <a href="#data-products"
                                                    className="nav-link "
@@ -266,11 +266,15 @@ function ViewDataset() {
                                             secondaryDate={data.last_modified_timestamp}
                                             data={data}/>
 
+                                        {/*Multi Assay Relationship*/}
                                         {datasetCategories && (datasetCategories.component.length > 0) &&
-                                            <CreationActionRelationship entity={data} data={datasetCategories}/>}
+                                            <CreationActionRelationship entity={data} data={datasetCategories}/>
+                                        }
 
+                                        {/*Data Products*/}
                                         {(datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action)) && dataProducts && (dataProducts.length > 0) &&
-                                            <DataProducts data={data} files={dataProducts}/>}
+                                            <DataProducts data={data} files={dataProducts}/>
+                                        }
 
                                         {/*Upload*/}
                                         {isLoggedIn() && data.upload && <Upload data={data.upload}/>}
