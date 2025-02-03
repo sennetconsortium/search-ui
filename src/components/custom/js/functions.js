@@ -145,6 +145,10 @@ function getNormalizedName(term) {
     return term
 }
 
+export function cls(...classes) {
+    return classes.filter(Boolean).join(' ')
+}
+
 export function getIsPrimaryDataset(data) {
     return eq(data.dataset_category, 'primary') || eq(data.creation_action, 'Create Dataset Activity')
 }

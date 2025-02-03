@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types'
 import { forwardRef } from 'react'
+import { cls } from '@/components/custom/js/functions'
 
 const SenNetAccordion = forwardRef(({ children, title, id, afterTitle, className = '', style = {}, expanded = true }, ref) => {
     const refId = id || title
 
     return (
-        <div id={refId} className={`accordion accordion-flush sui-result ${className}`} ref={ref}>
+        <div id={refId} className={cls('accordion accordion-flush sui-result', className)} ref={ref}>
             <div className='accordion-item'>
                 <div className='accordion-header'>
                     <button
@@ -23,7 +24,7 @@ const SenNetAccordion = forwardRef(({ children, title, id, afterTitle, className
                 <div
                     id={`${refId}-collapse`}
                     style={style}
-                    className={`accordion-collapse collapse mt-1 ${expanded ? 'show' : 'show-invisible'}`}
+                    className={cls('accordion-collapse collapse mt-1', expanded ? 'show' : 'show-invisible')}
                 >
                     <div className='accordion-body'>{children}</div>
                 </div>
