@@ -5,7 +5,7 @@ import {getEntityViewUrl} from "@/components/custom/js/functions";
 
 function Upload({ data }) {
     return (
-        <SenNetAccordion title={'Associated Upload'}>
+        <SenNetAccordion id='Upload' title='Associated Upload'>
             <Card border={'0'}>
                 <Card.Body>
                     {data && 

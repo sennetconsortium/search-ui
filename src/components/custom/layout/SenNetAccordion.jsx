@@ -1,14 +1,8 @@
 import PropTypes from 'prop-types'
-import { forwardRef, useEffect, useState } from 'react'
+import { forwardRef } from 'react'
 
 const SenNetAccordion = forwardRef(({ children, title, id, afterTitle, className = '', style = {}, expanded = true }, ref) => {
-    const [refId, setRefId] = useState(id)
-
-    useEffect(() => {
-        if (id == null && typeof title === 'string') {
-            setRefId(title)
-        }
-    }, [])
+    const refId = id || title
 
     return (
         <div id={refId} className={`accordion accordion-flush sui-result ${className}`} ref={ref}>

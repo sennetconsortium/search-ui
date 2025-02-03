@@ -18,7 +18,7 @@ function Collections({ entityType, data }) {
     }
 
     return (
-        <SenNetAccordion title='Associated Collections'>
+        <SenNetAccordion id='Collections' title='Associated Collections'>
             <Card border={'0'}>
                 <Card.Body>
                     {data && data.length > 0 ? (
