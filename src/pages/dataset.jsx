@@ -20,21 +20,26 @@ import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import DerivedContext, {DerivedProvider} from "@/context/DerivedContext";
 import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
 import WarningIcon from '@mui/icons-material/Warning'
+import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
+import AppNavbar from "@/components/custom/layout/AppNavbar"
+import Description from "@/components/custom/entities/sample/Description";
+import Upload from "@/components/custom/entities/dataset/Upload";
+import Collections from "@/components/custom/entities/Collections";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
-const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
 const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
 const CreationActionRelationship = dynamic(() => import("@/components/custom/entities/dataset/CreationActionRelationship"))
 const DataProducts = dynamic(() => import("@/components/custom/entities/dataset/DataProducts"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
-const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"))
-const SennetVitessce = dynamic(() => import("@/components/custom/vitessce/SennetVitessce"))
+const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"), {
+    loading: () => <LoadingAccordion id="Provenance" title="Provenance" style={{ height:'490px' }} />
+})
+const SennetVitessce = dynamic(() => import("@/components/custom/vitessce/SennetVitessce"), {
+    loading: () => <LoadingAccordion id="Vitessce" title="Vitessce" style={{ height:'800px' }} />
+})
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-const Upload = dynamic(() => import("@/components/custom/entities/dataset/Upload"))
 
 function ViewDataset() {
     const [data, setData] = useState(null)
@@ -43,7 +48,7 @@ function ViewDataset() {
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
-    const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView} = useContext(AppContext)
+    const {router, isRegisterHidden, _t, cache, isPreview, getPreviewView, isLoggedIn} = useContext(AppContext)
     const [primaryDatasetData, setPrimaryDatasetInfo] = useState(null)
     const {
         showVitessce,
@@ -104,8 +109,9 @@ function ViewDataset() {
                 Object.assign(_data, ancestry)
                 setData(_data)
 
-                const citation = await fetchDataCite(_data.doi_url)
-                setCitationData(citation)
+                fetchDataCite(_data.doi_url).then((citation) => {
+                    setCitationData(citation)
+                })
 
                 for (const ancestor of ancestry.ancestors) {
                     console.log(ancestor)
@@ -137,70 +143,79 @@ function ViewDataset() {
     } else {
         return (
             <>
-                {data && <Header title={`${data.sennet_id} | Dataset | SenNet`}></Header>}
+                <Header title={`${data?.sennet_id || ''} | Dataset | SenNet`}></Header>
 
                 <AppNavbar hidden={isRegisterHidden} signoutHidden={false}/>
 
                 {error &&
                     <div><Alert variant='warning'>{_t(errorMessage)}</Alert></div>
                 }
-                {data && !error &&
-                    <>
-                        <div className="container-fluid">
-                            {!datasetIs.primary(data.creation_action) && primaryDatasetData && <Alert className={'mt-4'} variant='info'><WarningIcon /> You are viewing a&nbsp;
-                                <code>{getCreationActionRelationName(data.creation_action)}</code>. To view the <code>Primary Dataset</code>, visit &nbsp;
-                                <a href={getEntityViewUrl('dataset', primaryDatasetData.uuid, {})}>{primaryDatasetData.sennet_id}</a>
-                            </Alert>}
-                            <div className="row flex-nowrap entity_body">
-                                <div className="col-auto p-0">
 
-                                    <div id="sidebar"
-                                         className="collapse collapse-horizontal sticky-top custom-sticky">
-                                        <ul id="sidebar-nav"
-                                            className="nav list-group rounded-0 text-sm-start">
+                {data && !error &&
+                    <div className="container-fluid">
+                        {/*Primary dataset alert*/}
+                        {!datasetIs.primary(data.creation_action) &&
+                            <Alert className={'mt-4'} variant='info'><WarningIcon /> You are viewing a&nbsp;
+                                <code>{getCreationActionRelationName(data.creation_action)}</code>.&nbsp;
+                                {primaryDatasetData && (
+                                    <>
+                                        <span>To view the <code>Primary Dataset</code>, visit &nbsp;</span>
+                                        <a href={getEntityViewUrl('dataset', primaryDatasetData.uuid, {})}>{primaryDatasetData.sennet_id}</a>
+                                    </>
+                                )}
+                            </Alert>
+                        }
+
+                        <div className="row flex-nowrap entity_body">
+                            <div className="col-auto p-0">
+                                <div id="sidebar"
+                                     className="collapse collapse-horizontal sticky-top custom-sticky">
+                                    <ul id="sidebar-nav" className="nav list-group rounded-0 text-sm-start">
+                                        <li className="nav-item">
+                                            <a href="#Summary"
+                                               className="nav-link "
+                                               data-bs-parent="#sidebar">Summary</a>
+                                        </li>
+                                        {datasetCategories && (datasetCategories.component.length > 0) &&
                                             <li className="nav-item">
-                                                <a href="#Summary"
+                                                <a href="#multi-assay-relationship"
                                                    className="nav-link "
-                                                   data-bs-parent="#sidebar">Summary</a>
+                                                   data-bs-parent="#sidebar">Multi-Assay Relationship</a>
                                             </li>
-                                            {datasetCategories && (datasetCategories.component.length > 0) &&
-                                                <li className="nav-item">
-                                                    <a href="#multi-assay-relationship"
-                                                       className="nav-link "
-                                                       data-bs-parent="#sidebar">Multi-Assay Relationship</a>
-                                                </li>}
-                                            {datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action) && dataProducts && (dataProducts.length > 0) &&
-                                                <li className="nav-item">
-                                                    <a href="#data-products"
-                                                       className="nav-link "
-                                                       data-bs-parent="#sidebar">Data Products</a>
-                                                </li>}
-                                            {data.upload && data.upload.uuid &&
-                                                <li className="nav-item">
-                                                    <a href="#Associated Upload"
-                                                       className="nav-link"
-                                                       data-bs-parent="#sidebar">Upload</a>
-                                                </li>
-                                            }
-                                            {data.collections && data.collections.length > 0 &&
-                                                <li className="nav-item">
-                                                    <a href="#Associated Collections"
-                                                       className="nav-link"
-                                                       data-bs-parent="#sidebar">Collections</a>
-                                                </li>
-                                            }
-                                            {showVitessce &&
-                                                <li className="nav-item">
-                                                    <a href="#Vitessce"
-                                                       className="nav-link"
-                                                       data-bs-parent="#sidebar">Visualization</a>
-                                                </li>
-                                            }
+                                        }
+                                        {(datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action)) && dataProducts && (dataProducts.length > 0) &&
                                             <li className="nav-item">
-                                                <a href="#Provenance"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Provenance</a>
+                                                <a href="#data-products"
+                                                   className="nav-link "
+                                                   data-bs-parent="#sidebar">Data Products</a>
                                             </li>
+                                        }
+                                        {isLoggedIn() && data.upload &&
+                                            <li className="nav-item">
+                                                <a href="#Upload"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Associated Upload</a>
+                                            </li>
+                                        }
+                                        {data.collections && data.collections.length > 0 && (
+                                            <li className="nav-item">
+                                                <a href="#Collections"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Associated Collections</a>
+                                            </li>
+                                        )}
+                                        {showVitessce &&
+                                            <li className="nav-item">
+                                                <a href="#Vitessce"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Visualization</a>
+                                            </li>
+                                        }
+                                        <li className="nav-item">
+                                            <a href="#Provenance"
+                                               className="nav-link"
+                                               data-bs-parent="#sidebar">Provenance</a>
+                                        </li>
 
                                             {!!((data.metadata && Object.keys(data.metadata).length || ancestorHasMetadata)) &&
                                                 <li className="nav-item">
@@ -210,68 +225,71 @@ function ViewDataset() {
                                                 </li>
                                             }
 
-                                            <li className="nav-item">
-                                                <a href="#Files"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Files</a>
-                                            </li>
+                                        <li className="nav-item">
+                                            <a href="#Files"
+                                               className="nav-link"
+                                               data-bs-parent="#sidebar">Files</a>
+                                        </li>
 
-
-                                            {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                                <li className="nav-item">
-                                                    <a href="#Contributors"
-                                                       className="nav-link"
-                                                       data-bs-parent="#sidebar">Contributors</a>
-                                                </li>
-                                            }
+                                        {!!(data.contributors && Object.keys(data.contributors).length) &&
                                             <li className="nav-item">
-                                                <a href="#Attribution"
+                                                <a href="#Contributors"
                                                    className="nav-link"
-                                                   data-bs-parent="#sidebar">Attribution</a>
+                                                   data-bs-parent="#sidebar">Contributors</a>
                                             </li>
-                                        </ul>
-                                    </div>
+                                        }
+                                        <li className="nav-item">
+                                            <a href="#Attribution"
+                                               className="nav-link"
+                                               data-bs-parent="#sidebar">Attribution</a>
+                                        </li>
+                                    </ul>
                                 </div>
+                            </div>
 
-                                <main className="col m-md-3 entity_details">
-                                    <SidebarBtn/>
+                            <main className="col m-md-3 entity_details">
+                                <SidebarBtn/>
 
-                                    <EntityViewHeader data={data}
-                                                      uniqueHeader={getDatasetTypeDisplay(data)}
-                                                      entity={cache.entities.dataset.toLowerCase()}
-                                                      hasWritePrivilege={hasWritePrivilege || false}/>
+                                <EntityViewHeader data={data}
+                                                  uniqueHeader={getDatasetTypeDisplay(data)}
+                                                  entity={cache.entities.dataset.toLowerCase()}
+                                                  hasWritePrivilege={hasWritePrivilege || false}/>
 
-                                    <div className="row">
-                                        <div className="col-12">
-                                            {/*Description*/}
-                                            <Description
-                                                primaryDateTitle={data.published_timestamp ? ("Publication Date") : ("Creation Date")}
-                                                primaryDate={data.published_timestamp ? (data.published_timestamp) : (data.created_timestamp)}
-                                                labId={data.lab_dataset_id}
-                                                citationData={citationData}
-                                                secondaryDateTitle="Last Touch"
-                                                secondaryDate={data.last_modified_timestamp}
-                                                data={data}/>
+                                <div className="row">
+                                    <div className="col-12">
+                                        {/*Description*/}
+                                        <Description
+                                            primaryDateTitle={data.published_timestamp ? ("Publication Date") : ("Creation Date")}
+                                            primaryDate={data.published_timestamp ? (data.published_timestamp) : (data.created_timestamp)}
+                                            labId={data.lab_dataset_id}
+                                            citationData={citationData}
+                                            secondaryDateTitle="Last Touch"
+                                            secondaryDate={data.last_modified_timestamp}
+                                            data={data}/>
 
-                                            {datasetCategories && (datasetCategories.component.length > 0) &&
-                                                <CreationActionRelationship entity={data} data={datasetCategories}/>}
+                                        {/*Multi Assay Relationship*/}
+                                        {datasetCategories && (datasetCategories.component.length > 0) &&
+                                            <CreationActionRelationship entity={data} data={datasetCategories}/>
+                                        }
 
-                                            {(datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action)) && dataProducts && (dataProducts.length > 0) &&
-                                                <DataProducts data={data} files={dataProducts}/>}
+                                        {/*Data Products*/}
+                                        {(datasetIs.primary(data.creation_action) || datasetIs.processed(data.creation_action)) && dataProducts && (dataProducts.length > 0) &&
+                                            <DataProducts data={data} files={dataProducts}/>
+                                        }
 
-                                            {/*Upload*/}
-                                            {data.upload && data.upload.uuid && <Upload data={data.upload}/>}
+                                        {/*Upload*/}
+                                        {isLoggedIn() && data.upload && <Upload data={data.upload}/>}
 
-                                            {/*Collection*/}
-                                            {data.collections && data.collections.length > 0 && <Collections entityType='Dataset' data={data.collections}/>}
+                                        {/*Collections*/}
+                                        {data.collections && data.collections.length > 0 && (
+                                            <Collections entityType='Dataset' data={data.collections}/>
+                                        )}
 
-                                            {/* Vitessce */}
-                                            <SennetVitessce data={data}/>
+                                        {/* Vitessce */}
+                                        {showVitessce && <SennetVitessce data={data}/>}
 
-                                            {/*Provenance*/}
-                                            {data &&
-                                                <Provenance nodeData={data}/>
-                                            }
+                                        {/*Provenance*/}
+                                        <Provenance nodeData={data}/>
 
                                             {/*Metadata*/}
                                             {/*Datasets have their metadata inside "metadata.metadata"*/}
@@ -283,23 +301,22 @@ function ViewDataset() {
                                                 />
                                             }
 
-                                            {/*Files*/}
-                                            <FileTreeView data={data}/>
+                                        {/*Files*/}
+                                        <FileTreeView data={data}/>
 
-                                            {/*Contributors*/}
-                                            {!!(data.contributors && Object.keys(data.contributors).length) &&
-                                                <ContributorsContacts title={'Contributors'} data={data.contributors}/>
-                                            }
+                                        {/*Contributors*/}
+                                        {!!(data.contributors && Object.keys(data.contributors).length) &&
+                                            <ContributorsContacts title={'Contributors'} data={data.contributors}/>
+                                        }
 
-                                            {/*Attribution*/}
-                                            <Attribution data={data}/>
+                                        {/*Attribution*/}
+                                        <Attribution data={data}/>
 
-                                        </div>
                                     </div>
-                                </main>
-                            </div>
+                                </div>
+                            </main>
                         </div>
-                    </>
+                    </div>
                 }
                 <AppFooter/>
             </>

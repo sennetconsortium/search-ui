@@ -1,6 +1,5 @@
 import React from "react";
 import Head from 'next/head'
-import {APP_TITLE} from "../../../config/config";
 
 const Header = ({title}) => {
     return (

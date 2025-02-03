@@ -7,16 +7,19 @@ import {get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
+import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
+import AppNavbar from "@/components/custom/layout/AppNavbar"
+import Description from "@/components/custom/entities/sample/Description";
+import Collections from "@/components/custom/entities/Collections";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
-const Collections = dynamic(() => import("@/components/custom/entities/Collections"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
 const Metadata = dynamic(() => import("@/components/custom/entities/Metadata"))
 const Protocols = dynamic(() => import("@/components/custom/entities/sample/Protocols"))
-const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
+const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"), {
+    loading: () => <LoadingAccordion id="Provenance" title="Provenance" style={{ height:'490px' }} />
+})
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 
 function ViewSource() {
@@ -104,13 +107,13 @@ function ViewSource() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            {data.collections && data.collections.length > 0 &&
+                                            {data.collections && data.collections.length > 0 && (
                                                 <li className="nav-item">
-                                                    <a href="#Associated Collections"
+                                                    <a href="#Collections"
                                                        className="nav-link"
-                                                       data-bs-parent="#sidebar">Collections</a>
+                                                       data-bs-parent="#sidebar">Associated Collections</a>
                                                 </li>
-                                            }
+                                            )}
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
@@ -154,13 +157,13 @@ function ViewSource() {
                                                          labId={data.lab_source_id}
                                             />
 
-                                            {/*Collection*/}
-                                            {data.collections && data.collections.length > 0 && <Collections entityType='Source' data={data.collections}/>}
+                                            {/*Collections*/}
+                                            {data.collections && data.collections.length > 0 && (
+                                                <Collections entityType='Source' data={data.collections}/>
+                                            )}
 
                                             {/*Provenance*/}
-                                            {data &&
-                                                <Provenance nodeData={data}/>
-                                            }
+                                            <Provenance nodeData={data}/>
 
                                             {/*Metadata*/}
                                             {metadata &&

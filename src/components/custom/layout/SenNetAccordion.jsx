@@ -1,17 +1,12 @@
 import PropTypes from 'prop-types'
-import { forwardRef, useEffect, useState } from 'react'
+import { forwardRef } from 'react'
+import { cls } from '@/components/custom/js/functions'
 
-const SenNetAccordion = forwardRef(({ children, title, id, afterTitle, className = '', expanded = true }, ref) => {
-    const [refId, setRefId] = useState(id)
-
-    useEffect(() => {
-        if (id == null && typeof title === 'string') {
-            setRefId(title)
-        }
-    }, [])
+const SenNetAccordion = forwardRef(({ children, title, id, afterTitle, className = '', style = {}, expanded = true }, ref) => {
+    const refId = id || title
 
     return (
-        <div id={refId} className={`accordion accordion-flush sui-result ${className}`} ref={ref}>
+        <div id={refId} className={cls('accordion accordion-flush sui-result', className)} ref={ref}>
             <div className='accordion-item'>
                 <div className='accordion-header'>
                     <button
@@ -28,7 +23,8 @@ const SenNetAccordion = forwardRef(({ children, title, id, afterTitle, className
                 </div>
                 <div
                     id={`${refId}-collapse`}
-                    className={`accordion-collapse collapse ${expanded ? 'show' : 'show-invisible'}`}
+                    style={style}
+                    className={cls('accordion-collapse collapse mt-1', expanded ? 'show' : 'show-invisible')}
                 >
                     <div className='accordion-body'>{children}</div>
                 </div>

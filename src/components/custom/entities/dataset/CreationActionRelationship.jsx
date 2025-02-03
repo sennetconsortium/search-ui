@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import SenNetAccordion from "../../layout/SenNetAccordion";
 import {getCreationActionRelationName, getDatasetTypeDisplay} from "../../js/functions";
@@ -6,13 +6,8 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import DataTable from "react-data-table-component";
 import ClipboardCopy from "../../../ClipboardCopy";
+
 function CreationActionRelationship({ entity, data }) {
-
-
-    useEffect(() => {
-
-    }, [])
-
     const relationshipNames = {
         component: 'Component Dataset (Raw)',
         processed: 'Primary Dataset (Processed)',
