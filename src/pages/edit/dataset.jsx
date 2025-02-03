@@ -158,7 +158,7 @@ export default function EditDataset() {
                 setErrorMessage(_data["error"])
             } else {
                 setData(_data)
-                const ancestry = await getAncestryData(_data.uuid, {otherEndpoints: ['immediate_ancestors']})
+                const ancestry = await getAncestryData(_data.uuid, {endpoints: ['ancestors'], otherEndpoints: ['immediate_ancestors']})
                 Object.assign(_data, ancestry)
                 setData(_data)
 
