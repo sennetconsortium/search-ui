@@ -49,24 +49,25 @@ export function getProtocolId(protocolUrl) {
 }
 
 export function fetchDataCite(protocolUrl) {
-    if (!protocolUrl) return null
-    let headers = new Headers()
-    headers.append("Accept", "text/x-bibliography; style=american-medical-association")
-    let requestOptions = {
-        method: 'GET',
-        headers: headers
-    }
     // let citationUrl = `https://citation.doi.org/format?doi=${getProtocolId(protocolUrl)}&style=american-medical-association&lang=en-US`
-
-    return fetch(protocolUrl, requestOptions).then(async (response) => {
-        if (!response.ok) {
-            return null
+    return new Promise((resolve, reject) => {
+        if (!protocolUrl) reject(null)
+        let headers = new Headers()
+        headers.append("Accept", "text/x-bibliography; style=american-medical-association")
+        let requestOptions = {
+            method: 'GET',
+            headers: headers
         }
-        return await response.text()
-    }).catch((e) => {
-        log.error(e)
-        return null
-    })
+        fetch(protocolUrl, requestOptions).then(async (response) => {
+            if (!response.ok) {
+                reject(null)
+            }
+            resolve(response.text())
+        }).catch((e) => {
+            log.error(e)
+            reject(null)
+        });
+    });
 }
 
 export async function fetchProtocols(protocolUrl) {
