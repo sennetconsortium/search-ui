@@ -515,6 +515,7 @@ export const filterProperties = {
             "lab_dataset_id",
             "origin_samples",
             "creation_action",
+            "files",
             "metadata",
             "ingest_metadata",
             "cedar_mapped_metadata",
