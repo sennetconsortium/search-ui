@@ -107,11 +107,13 @@ function ViewSource() {
                                                    className="nav-link "
                                                    data-bs-parent="#sidebar">Summary</a>
                                             </li>
-                                            <li className="nav-item">
-                                                <a href="#Associated Collections"
-                                                   className="nav-link"
-                                                   data-bs-parent="#sidebar">Collections</a>
-                                            </li>
+                                            {data.collections && data.collections.length > 0 && (
+                                                <li className="nav-item">
+                                                    <a href="#Collections"
+                                                       className="nav-link"
+                                                       data-bs-parent="#sidebar">Associated Collections</a>
+                                                </li>
+                                            )}
                                             <li className="nav-item">
                                                 <a href="#Provenance"
                                                    className="nav-link"
@@ -155,8 +157,10 @@ function ViewSource() {
                                                          labId={data.lab_source_id}
                                             />
 
-                                            {/*Collection*/}
-                                            <Collections entityType='Source' data={data.collections}/>
+                                            {/*Collections*/}
+                                            {data.collections && data.collections.length > 0 && (
+                                                <Collections entityType='Source' data={data.collections}/>
+                                            )}
 
                                             {/*Provenance*/}
                                             <Provenance nodeData={data}/>

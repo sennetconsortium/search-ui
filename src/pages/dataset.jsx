@@ -189,18 +189,20 @@ function ViewDataset() {
                                                    data-bs-parent="#sidebar">Data Products</a>
                                             </li>
                                         }
-                                        {isLoggedIn() &&
+                                        {isLoggedIn() && data.upload &&
                                             <li className="nav-item">
-                                                <a href="#Associated Upload"
+                                                <a href="#Upload"
                                                    className="nav-link"
-                                                   data-bs-parent="#sidebar">Upload</a>
+                                                   data-bs-parent="#sidebar">Associated Upload</a>
                                             </li>
                                         }
-                                        <li className="nav-item">
-                                            <a href="#Associated Collections"
-                                               className="nav-link"
-                                               data-bs-parent="#sidebar">Collections</a>
-                                        </li>
+                                        {data.collections && data.collections.length > 0 && (
+                                            <li className="nav-item">
+                                                <a href="#Collections"
+                                                   className="nav-link"
+                                                   data-bs-parent="#sidebar">Associated Collections</a>
+                                            </li>
+                                        )}
                                         {showVitessce &&
                                             <li className="nav-item">
                                                 <a href="#Vitessce"
@@ -271,10 +273,12 @@ function ViewDataset() {
                                             <DataProducts data={data} files={dataProducts}/>}
 
                                         {/*Upload*/}
-                                        {isLoggedIn() && <Upload data={data.upload}/>}
+                                        {isLoggedIn() && data.upload && <Upload data={data.upload}/>}
 
-                                        {/*Collection*/}
-                                        <Collections entityType='Dataset' data={data.collections}/>
+                                        {/*Collections*/}
+                                        {data.collections && data.collections.length > 0 && (
+                                            <Collections entityType='Dataset' data={data.collections}/>
+                                        )}
 
                                         {/* Vitessce */}
                                         {showVitessce && <SennetVitessce data={data}/>}

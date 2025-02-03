@@ -19,17 +19,11 @@ function Collections({ entityType, data }) {
 
     return (
         <SenNetAccordion id='Collections' title='Associated Collections'>
-            <Card border={'0'}>
+            <Card border='0'>
                 <Card.Body>
-                    {data && data.length > 0 ? (
-                        <p className='fw-light fs-6'>This <code>{entityType}</code> is contained in the <code>{getTitleType()}</code>&nbsp;
-                            {getCollectionsView()}
-                        </p>
-                    ) : (
-                        <p className='fw-light fs-6'>This <code>{entityType}</code> is not contained in any <code>Collections</code>&nbsp;
-                            {getCollectionsView()}
-                        </p>
-                    )}
+                    <p className='fw-light fs-6'>This <code>{entityType}</code> is contained in the <code>{getTitleType()}</code>&nbsp;
+                        {getCollectionsView()}
+                    </p>
                 </Card.Body>
             </Card>
         </SenNetAccordion>
