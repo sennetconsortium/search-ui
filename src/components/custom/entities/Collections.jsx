@@ -1,6 +1,6 @@
 import SenNetAccordion from "@/components/custom/layout/SenNetAccordion";
 import Card from 'react-bootstrap/Card';
-import ClipboardCopy from "@/components//ClipboardCopy";
+import ClipboardCopy from "@/components/ClipboardCopy";
 import {getEntityViewUrl} from "@/components/custom/js/functions";
 
 function Collections({ entityType, data }) {
