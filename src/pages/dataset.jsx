@@ -111,7 +111,7 @@ function ViewDataset() {
 
                 fetchDataCite(_data.doi_url).then((citation) => {
                     setCitationData(citation)
-                })
+                }).catch((e)=>{})
 
                 for (const ancestor of ancestry.ancestors) {
                     console.log(ancestor)

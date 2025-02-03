@@ -51,7 +51,10 @@ export function getProtocolId(protocolUrl) {
 export function fetchDataCite(protocolUrl) {
     // let citationUrl = `https://citation.doi.org/format?doi=${getProtocolId(protocolUrl)}&style=american-medical-association&lang=en-US`
     return new Promise((resolve, reject) => {
-        if (!protocolUrl) reject(null)
+        if (!protocolUrl) {
+            reject(null)
+            return
+        }
         let headers = new Headers()
         headers.append("Accept", "text/x-bibliography; style=american-medical-association")
         let requestOptions = {
