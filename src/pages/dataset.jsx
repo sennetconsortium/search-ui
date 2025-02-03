@@ -79,13 +79,13 @@ function ViewDataset() {
 
     useEffect(() => {
         if (data && data.ancestors) {
+            fetchDataProducts(data)
             initVitessceConfig(data)
             if (datasetIs.primary(data.creation_action)) {
                 setDatasetCategories(getAssaySplitData(data))
             } else {
                 fetchEntityForMultiAssayInfo()
             }
-            fetchDataProducts(data)
         }
     }, [data?.ancestors])
 
