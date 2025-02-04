@@ -530,6 +530,7 @@ export const filterProperties = {
             "lab_dataset_id",
             "origin_samples",
             "creation_action",
+            "protocol_url"
         ],
         is_include: true
     },
