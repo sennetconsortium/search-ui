@@ -464,7 +464,7 @@ function Provenance({nodeData}) {
     }
 
     return (
-        <SenNetAccordion title={'Provenance'}>
+        <SenNetAccordion title={'Provenance'} style={{ minHeight:'500px' }}>
             <Tabs
                 defaultActiveKey="graph"
                 className="c-provenance__tabs mb-3"

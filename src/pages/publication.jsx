@@ -7,16 +7,19 @@ import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "@/context/DerivedContext";
-import ContributorsContacts from "@/components/custom/entities/ContributorsContacts";
-import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
+import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
+import AppNavbar from "@/components/custom/layout/AppNavbar"
+import Description from "@/components/custom/entities/sample/Description";
 import VignetteList from "@/components/custom/vitessce/VignetteList";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
+const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
+const FileTreeView = dynamic(() => import("@/components/custom/entities/dataset/FileTreeView"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
-const Provenance = dynamic(() => import( "@/components/custom/entities/Provenance"))
+const Provenance = dynamic(() => import("@/components/custom/entities/Provenance"), {
+    loading: () => <LoadingAccordion id="Provenance" title="Provenance" style={{ height:'490px' }} />
+})
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 
 function ViewPublication() {
@@ -188,9 +191,7 @@ function ViewPublication() {
                                                 ancillaryPublication={ancillaryPublicationData}/>
 
                                             {/*Provenance*/}
-                                            {data &&
-                                                <Provenance nodeData={data}/>
-                                            }
+                                            <Provenance nodeData={data}/>
 
                                             {/*Files*/}
                                             <FileTreeView data={data}/>

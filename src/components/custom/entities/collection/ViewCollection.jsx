@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import React, {useContext, useEffect, useState} from "react";
 import log from "loglevel";
-import {fetchDataCite, getRequestHeaders} from "@/components/custom/js/functions";
+import {fetchDataCite} from "@/components/custom/js/functions";
 import Header from "@/components/custom/layout/Header";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
@@ -12,22 +12,23 @@ import {
     callService,
     filterProperties,
     get_write_privilege_for_group_uuid,
-    getAncestryData,
     getEntityData
 } from "@/lib/services";
 import {getEntityEndPoint} from "@/config/config";
+import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
+import AppNavbar from "@/components/custom/layout/AppNavbar"
+import Description from "@/components/custom/entities/sample/Description";
+import Datasets from "@/components/custom/entities/collection/Datasets"
+import ContributorsContacts from "@/components/custom/entities/ContributorsContacts"
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
 const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
-const ContributorsContacts = dynamic(() => import("@/components/custom/entities/ContributorsContacts"))
-const Datasets = dynamic(() => import("@/components/custom/entities/collection/Datasets"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
 
 function ViewCollection({collectionType='Collection', entitiesLabel='Entities'}) {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [isEntitiesLoading, setIsEntitiesLoading] = useState(true)
     const [citationData, setCitationData] = useState(null)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
@@ -50,11 +51,13 @@ function ViewCollection({collectionType='Collection', entitiesLabel='Entities'})
                 setError(true)
                 setErrorMessage(_data["error"])
                 setData(false)
+                setIsEntitiesLoading(false)
             } else {
                 setData(_data)
                 const entities = await callService(filterProperties.collectionEntities,  `${getEntityEndPoint()}collections/${_data.uuid}/entities`, 'POST')
                 Object.assign(_data, {entities})
                 setData(_data)
+                setIsEntitiesLoading(false)
 
                 const citation = await fetchDataCite(_data.doi_url)
                 setCitationData(citation)
@@ -141,7 +144,11 @@ function ViewCollection({collectionType='Collection', entitiesLabel='Entities'})
                                             />
 
                                             {/*Entities*/}
-                                            <Datasets data={data.entities} label={entitiesLabel}/>
+                                            {isEntitiesLoading ? (
+                                                <LoadingAccordion id={entitiesLabel} title={entitiesLabel} />
+                                            ) : (
+                                                <Datasets data={data.entities} label={entitiesLabel}/>
+                                            )}
 
                                             {/*Contributors*/}
                                             <ContributorsContacts title={'Contributors'} data={data.contributors}/>

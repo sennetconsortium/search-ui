@@ -48,26 +48,29 @@ export function getProtocolId(protocolUrl) {
     return regex.exec(protocolUrl)[0]
 }
 
-export async function fetchDataCite(protocolUrl) {
-    if (!protocolUrl) return null
-    let headers = new Headers()
-    headers.append("Accept", "text/x-bibliography; style=american-medical-association")
-    let requestOptions = {
-        method: 'GET',
-        headers: headers
-    }
-
-    try {
-        const response = await fetch(protocolUrl, requestOptions)
-        if (!response.ok) {
-            return null
+export function fetchDataCite(protocolUrl) {
+    // let citationUrl = `https://citation.doi.org/format?doi=${getProtocolId(protocolUrl)}&style=american-medical-association&lang=en-US`
+    return new Promise((resolve, reject) => {
+        if (!protocolUrl) {
+            reject(null)
+            return
         }
-
-        return response.text()
-    } catch (e) {
-        log.error(e)
-        return null
-    }
+        let headers = new Headers()
+        headers.append("Accept", "text/x-bibliography; style=american-medical-association")
+        let requestOptions = {
+            method: 'GET',
+            headers: headers
+        }
+        fetch(protocolUrl, requestOptions).then(async (response) => {
+            if (!response.ok) {
+                reject(null)
+            }
+            resolve(response.text())
+        }).catch((e) => {
+            log.error(e)
+            reject(null)
+        });
+    });
 }
 
 export async function fetchProtocols(protocolUrl) {
@@ -143,6 +146,10 @@ function getNormalizedName(term) {
         return normalizedNames[term.toLowerCase()]
     }
     return term
+}
+
+export function cls(...classes) {
+    return classes.filter(Boolean).join(' ')
 }
 
 export function getIsPrimaryDataset(data) {

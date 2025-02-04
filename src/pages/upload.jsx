@@ -7,27 +7,27 @@ import {
     callService,
     filterProperties,
     get_write_privilege_for_group_uuid,
-    getAncestryData,
     getEntityData
 } from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {getEntityEndPoint} from "@/config/config";
+import LoadingAccordion from "@/components/custom/layout/LoadingAccordion";
+import AppNavbar from "@/components/custom/layout/AppNavbar"
+import Description from "@/components/custom/entities/sample/Description";
+import FileTreeView from "@/components/custom/entities/dataset/FileTreeView";
+import Datasets from "@/components/custom/entities/collection/Datasets";
+import Attribution from "@/components/custom/entities/sample/Attribution";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
-const AppNavbar = dynamic(() => import("@/components/custom/layout/AppNavbar"))
-const Attribution = dynamic(() => import("@/components/custom/entities/sample/Attribution"))
-const Datasets = dynamic(() => import("@/components/custom/entities/collection/Datasets"))
-const Description = dynamic(() => import("@/components/custom/entities/sample/Description"))
 const Header = dynamic(() => import("@/components/custom/layout/Header"))
-const FileTreeView = dynamic(() => import("@/components/custom/entities/dataset/FileTreeView"))
 const SidebarBtn = dynamic(() => import("@/components/SidebarBtn"))
-
 
 function ViewUpload() {
     const router = useRouter()
     const [data, setData] = useState(null)
+    const [isDatasetsLoading, setIsDatasetsLoading] = useState(true)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null)
     const [hasWritePrivilege, setHasWritePrivilege] = useState(false)
@@ -47,11 +47,13 @@ function ViewUpload() {
                 setError(true)
                 setErrorMessage(_data["error"])
                 setData(false)
+                setIsDatasetsLoading(false)
             } else {
                 setData(_data)
                 const datasets = await callService(filterProperties.uploadsDatasets,  `${getEntityEndPoint()}uploads/${_data.uuid}/datasets`, 'POST')
                 Object.assign(_data, {datasets})
                 setData(_data)
+                setIsDatasetsLoading(false)
 
                 get_write_privilege_for_group_uuid(_data.group_uuid).then(response => {
                     setHasWritePrivilege(response.has_write_privs)
@@ -139,12 +141,14 @@ function ViewUpload() {
                                             <FileTreeView data={data}/>
 
                                             {/*Datasets*/}
-                                            {data.datasets?.length > 0 && <Datasets data={data.datasets}/>}
+                                            {isDatasetsLoading ? (
+                                                <LoadingAccordion id='Datasets' title='Datasets' />
+                                            ) : (
+                                                <Datasets data={data.datasets}/>
+                                            )}
 
                                             {/*Attribution*/}
                                             <Attribution data={data}/>
-
-
                                         </div>
                                     </div>
                                 </main>
