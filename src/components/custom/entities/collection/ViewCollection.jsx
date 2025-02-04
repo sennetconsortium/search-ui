@@ -8,7 +8,13 @@ import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
 import {DerivedProvider} from "@/context/DerivedContext";
 import {useRouter} from "next/router";
-import {callService, get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
+import {
+    callService,
+    filterProperties,
+    get_write_privilege_for_group_uuid,
+    getAncestryData,
+    getEntityData
+} from "@/lib/services";
 import {getEntityEndPoint} from "@/config/config";
 
 const AppFooter = dynamic(() => import("@/components/custom/layout/AppFooter"))
@@ -46,7 +52,7 @@ function ViewCollection({collectionType='Collection', entitiesLabel='Entities'})
                 setData(false)
             } else {
                 setData(_data)
-                const entities = await callService(null,  `${getEntityEndPoint()}collections/${_data.uuid}/entities`)
+                const entities = await callService(filterProperties.collectionEntities,  `${getEntityEndPoint()}collections/${_data.uuid}/entities`, 'POST')
                 Object.assign(_data, {entities})
                 setData(_data)
 

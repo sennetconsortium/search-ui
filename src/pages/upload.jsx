@@ -3,7 +3,13 @@ import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from 'next/router';
 import log from "loglevel";
 import {getRequestHeaders} from "@/components/custom/js/functions";
-import {callService, get_write_privilege_for_group_uuid, getAncestryData, getEntityData} from "@/lib/services";
+import {
+    callService,
+    filterProperties,
+    get_write_privilege_for_group_uuid,
+    getAncestryData,
+    getEntityData
+} from "@/lib/services";
 import AppContext from "@/context/AppContext";
 import Alert from 'react-bootstrap/Alert';
 import {EntityViewHeader} from "@/components/custom/layout/entity/ViewHeader";
@@ -43,7 +49,7 @@ function ViewUpload() {
                 setData(false)
             } else {
                 setData(_data)
-                const datasets = await callService(null,  `${getEntityEndPoint()}uploads/${_data.uuid}/datasets?lite=1`)
+                const datasets = await callService(filterProperties.uploadsDatasets,  `${getEntityEndPoint()}uploads/${_data.uuid}/datasets`, 'POST')
                 Object.assign(_data, {datasets})
                 setData(_data)
 

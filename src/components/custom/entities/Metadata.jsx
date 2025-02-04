@@ -143,7 +143,7 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
 
                             {/*Create metadata table for ancestors*/}
                             {/*We want to reverse the ordering of this array so that the furthest ancestor is on the left*/}
-                            {data.ancestors.reverse().map((ancestor, index) => {
+                            {data.ancestors?.reverse().map((ancestor, index) => {
                                 // The source nav link
                                 if (eq(ancestor.entity_type, cache.entities.source)) {
                                     if ((ancestor.source_mapped_metadata && Object.keys(ancestor.source_mapped_metadata).length) ||
@@ -198,7 +198,7 @@ function Metadata({data, metadata, mappedMetadata, groups}) {
                                     setHeaderBadges={setHeaderBadges}/>
                             </Tab.Pane>
                         }
-                        {data.ancestors.reverse().map((ancestor, index) => {
+                        {data.ancestors?.reverse().map((ancestor, index) => {
                             // Handle human source table
                             // Human sources have their metadata inside "source_mapped_metadata"
                             if (eq(ancestor.entity_type, cache.entities.source) && eq(ancestor.source_type, cache.sourceTypes.Human)) {

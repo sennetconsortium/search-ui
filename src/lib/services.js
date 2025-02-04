@@ -57,7 +57,7 @@ export async function callService(raw, url, method, headers) {
     return await fetch(url, {
         method: method,
         headers: headers,
-        body: raw,
+        body: raw && typeof raw === 'object' ? JSON.stringify(raw) : raw,
     }).then(response => response.json())
         .then(result => {
             log.info(result)
@@ -280,9 +280,10 @@ export function getAncestry(uuid, {endpoints = ['ancestors', 'descendants'], oth
     }
     const allEndpoints = endpoints.concat(otherEndpoints)
     let result = {}
+    const isEdit = window.location.href.contains('edit/')
     for (let key of allEndpoints) {
         let endpoint = propertyNameMap[key] || key
-        result[key] = callService(null, `${getEntityEndPoint()}${endpoint}/${uuid}`)
+        result[key] = callService(isEdit ? filterProperties.ancestryEdit : filterProperties.ancestry, `${getEntityEndPoint()}${endpoint}/${uuid}`, 'POST')
     }
     return result
 }
@@ -504,4 +505,48 @@ export const getSamplesByOrgan = async (organCodes) => {
             lastTouch: hit._source.last_touch,
         }
     });
+}
+
+export const filterProperties = {
+    ancestry: {
+        filter_properties: [
+            "lab_source_id",
+            "lab_tissue_sample_id",
+            "lab_dataset_id",
+            "origin_samples",
+            "creation_action",
+            "files",
+            "metadata",
+            "ingest_metadata",
+            "cedar_mapped_metadata",
+            "source_mapped_metadata"
+        ],
+        is_include: true
+    },
+    ancestryEdit: {
+        filter_properties: [
+            "lab_source_id",
+            "lab_tissue_sample_id",
+            "lab_dataset_id",
+            "origin_samples",
+            "creation_action",
+        ],
+        is_include: true
+    },
+    uploadsDatasets: {
+        filter_properties: [
+            "status",
+            "lab_dataset_id"
+        ],
+        is_include: true
+    },
+    collectionEntities: {
+        filter_properties: [
+            "status",
+            "lab_source_id",
+            "lab_tissue_sample_id",
+            "lab_dataset_id"
+        ],
+        is_include: true
+    }
 }
