@@ -161,6 +161,35 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
         reorder: true,
     }
 
+    reusableColumns['Description'] = {
+        name: 'Description',
+        id: 'description',
+        selector: row => raw(row.description),
+        sortable: true,
+        reorder: true,
+        format: (row) => {
+            const max = 100
+            const desc = raw(row.description)
+            if (!desc) {
+                return null
+            }
+            return (<div>
+                {desc.length > max ? desc.slice(0, max) : desc}
+                {desc.length > max && <SenNetPopover text={'Read full details'} className={`popover-${getId(row)}`}>
+                    <Chip label={<MoreHorizIcon />} size="small" onClick={()=> handleModal(row)} />
+                </SenNetPopover>}
+            </div>)
+        }
+    }
+
+    reusableColumns['Title'] = {
+        name: 'Title',
+        id: 'title',
+        selector: row => raw(row.title),
+        sortable: true,
+        reorder: true,
+    }
+
     if (isLoggedIn()) {
         reusableColumns['LabSourceID'] = {
             name: 'Lab Source ID',
@@ -222,51 +251,14 @@ function TableResultsEntities({children, filters, onRowClicked, currentColumns, 
     }
 
     const uploadColumns = [
-        {
-            name: 'Title',
-            id: 'title',
-            selector: row => raw(row.title),
-            sortable: true,
-            reorder: true,
-        },
-        {
-            name: 'Description',
-            id: 'description',
-            selector: row => raw(row.description),
-            sortable: true,
-            reorder: true,
-            format: (row) => {
-                const max = 100
-                const desc = raw(row.description)
-                if (!desc) {
-                    return null
-                }
-                return (<div>
-                    {desc.length > max ? desc.slice(0, max) : desc}
-                    {desc.length > max && <SenNetPopover text={'Read full details'} className={`popover-${getId(row)}`}>
-                        <Chip label={<MoreHorizIcon />} size="small" onClick={()=> handleModal(row)} />
-                    </SenNetPopover>}
-                </div>)
-            }
-        },
+        reusableColumns.Title,
+        reusableColumns.Description,
         reusableColumns.Status
     ]
 
     const collectionColumns = [
-        {
-            name: 'Title',
-            id: 'title',
-            selector: row => raw(row.title),
-            sortable: true,
-            reorder: true,
-        },
-        {
-            name: 'Description',
-            id: 'description',
-            selector: row => raw(row.description),
-            sortable: true,
-            reorder: true,
-        }
+        reusableColumns.Title,
+        reusableColumns.Description
     ]
 
     const publicationColumns = [
